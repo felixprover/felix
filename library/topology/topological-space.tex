@@ -1,0 +1,1064 @@
+\import{topology/family.tex}
+\import{set/cons.tex}
+
+\section{Topological spaces}\label{form_sec_topospaces}
+
+\begin{struct}\label{topological_space}
+    A topological space $X$ is a onesorted structure equipped with
+    \begin{enumerate}
+        \item\label{opens_family}
+            a family of open sets
+            $\opens[X]\subseteq\pow{\carrier[X]}$;
+    \end{enumerate}
+    such that
+    \begin{enumerate}
+        \item\label{carrier_open}
+            $\carrier[X]\in\opens[X]$.
+        \item\label{opens_inter}
+            for all $A,B\in\opens[X]$ we have
+                $A\inter B\in\opens[X]$.
+        \item\label{opens_unions}
+            for every $F\subseteq\opens[X]$ we have
+                $\unions{F}\in\opens[X]$.
+    \end{enumerate}
+\end{struct}
+
+\subsection{Packaging raw topologies}
+
+The following transparent constructor packages a raw topology family as a
+topological space.  Keeping this operation separate from the closure proof
+lets subsequent constructions expose their open families without duplicating
+record-level arguments.
+
+\begin{definition}\label{topological_space_on}
+    $\TopologicalSpaceOn{A}{T}=
+        \structure[topological space]{
+            \carrier=A,
+            \opens=T
+        }$.
+\end{definition}
+
+\begin{proposition}\label{topological_space_on_carrier}
+    $\carrier[\TopologicalSpaceOn{A}{T}]=A$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{topological_space_on,
+            topological_spaceaggregateprojection_carrier}.
+\end{proof}
+
+\begin{proposition}\label{topological_space_on_opens}
+    $\opens[\TopologicalSpaceOn{A}{T}]=T$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{topological_space_on,
+            topological_spaceaggregateprojection_opens}.
+\end{proof}
+
+\begin{classification}\label{topological_space_on_is_topological_space}
+    Suppose $T$ is a topology on $A$.
+    Then $\TopologicalSpaceOn{A}{T}$ is a topological space.
+\end{classification}
+\begin{proof}
+    Follows by
+        \auto{topological_space_on,topological_space,topology_family,
+            topological_spaceaggregateexact,
+            topological_spaceaggregateprojection_carrier,
+            topological_spaceaggregateprojection_opens}.
+\end{proof}
+
+\begin{theorem}\label{topological_space_on_is_exact}
+    Suppose $T$ is a topology on $A$.
+    Then $\TopologicalSpaceOn{A}{T}$ is an exact topological space.
+\end{theorem}
+\begin{proof}
+    $\TopologicalSpaceOn{A}{T}$ is a topological space by
+        \obv{topological_space_on_is_topological_space}.
+    Follows by
+        \auto{topological_space_on,topological_spaceaggregateexact}.
+\end{proof}
+
+\begin{theorem}\label{topological_space_opens_form_topology}
+    Let $X$ be a topological space.
+    Then $\opens[X]$ is a topology on $\carrier[X]$.
+\end{theorem}
+\begin{proof}
+    $\opens[X]\subseteq\pow{\carrier[X]}$
+        by \obv{opens_family}.
+    Follows by
+        \obv{topology_family,carrier_open,opens_inter,opens_unions}.
+\end{proof}
+
+\subsection{The topology-only reduct}
+
+Structures carrying additional fields need not equal their underlying
+topological-space records.  The following constructor makes that record
+explicit.
+
+\begin{definition}\label{topological_reduct}
+    $\TopologicalReduct{X}
+        =\TopologicalSpaceOn{\carrier[X]}{\opens[X]}$.
+\end{definition}
+
+\begin{proposition}\label{topological_reduct_carrier}
+    $\carrier[\TopologicalReduct{X}]=\carrier[X]$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{topological_reduct,topological_space_on_carrier}.
+\end{proof}
+
+\begin{proposition}\label{topological_reduct_opens}
+    $\opens[\TopologicalReduct{X}]=\opens[X]$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{topological_reduct,topological_space_on_opens}.
+\end{proof}
+
+\begin{theorem}\label{topological_reduct_is_exact}
+    Let $X$ be a topological space.
+    Then $\TopologicalReduct{X}$ is an exact topological space.
+\end{theorem}
+\begin{proof}
+    $\opens[X]$ is a topology on $\carrier[X]$ by
+        \obv{topological_space_opens_form_topology}.
+    Follows by
+        \auto{topological_reduct,topological_space_on_is_exact}.
+\end{proof}
+
+\begin{classification}\label{topological_reduct_is_topological_space}
+    Let $X$ be a topological space.
+    Then $\TopologicalReduct{X}$ is a topological space.
+\end{classification}
+\begin{proof}
+    Follows by \obv{topological_reduct_is_exact}.
+\end{proof}
+
+\begin{theorem}\label{topological_reduct_of_exact}
+    Suppose $X$ is an exact topological space.
+    Then $\TopologicalReduct{X}=X$.
+\end{theorem}
+\begin{proof}
+    Hence $\TopologicalReduct{X}$ is an exact topological space by
+        \obv{topological_reduct_is_exact}.
+    $\carrier[\TopologicalReduct{X}]=\carrier[X]$ and
+        $\opens[\TopologicalReduct{X}]=\opens[X]$ by
+        \obv{topological_reduct_carrier,topological_reduct_opens}.
+    Follows by structure extensionality.
+\end{proof}
+
+\subsection{Canonical examples}
+
+For a set $A$, the indiscrete topology contains only the empty set and the
+whole carrier.  We first construct it as an ordinary set-valued family; no
+parameterized instance mechanism is involved.
+
+\begin{definition}\label{indiscrete_opens}
+    $\indiscreteOpens{A}=\{\emptyset,A\}$.
+\end{definition}
+
+\begin{proposition}\label{indiscrete_opens_type}
+    $\indiscreteOpens{A}\subseteq\pow{A}$.
+\end{proposition}
+\begin{proof}
+    For every $U\in\indiscreteOpens{A}$ we have $U\subseteq A$
+        by \auto{indiscrete_opens,cons_iff,singleton_iff,emptyset_subseteq,subseteq_refl}.
+    Follows by \auto{subseteq,pow_iff}.
+\end{proof}
+
+\begin{proposition}\label{indiscrete_opens_intersection}
+    Suppose $U,V\in\indiscreteOpens{A}$.
+    Then $U\inter V\in\indiscreteOpens{A}$.
+\end{proposition}
+\begin{proof}
+    $U=\emptyset$ or $U=A$
+        by \auto{indiscrete_opens,cons_iff,singleton_iff}.
+    $V=\emptyset$ or $V=A$
+        by \auto{indiscrete_opens,cons_iff,singleton_iff}.
+    Follows by
+        \auto{indiscrete_opens,cons_iff,singleton_iff,inter_emptyset,inter_comm,inter_idempotent}.
+\end{proof}
+
+\begin{proposition}\label{indiscrete_opens_unions}
+    Suppose $F\subseteq\indiscreteOpens{A}$.
+    Then $\unions{F}\in\indiscreteOpens{A}$.
+\end{proposition}
+\begin{proof}
+    For every $U\in F$ we have $U\subseteq A$
+        by \auto{subseteq,indiscrete_opens_type,pow_iff}.
+    Hence $\unions{F}\subseteq A$ by \obv{unions_family}.
+    \begin{byCase}
+    \caseOf{$\unions{F}=\emptyset$.}
+        Follows by \auto{indiscrete_opens,cons_iff}.
+    \caseOf{$\unions{F}\neq\emptyset$.}
+        Take $x$ such that $x\in\unions{F}$ by \obv{nonempty_inhabited}.
+        Take $U\in F$ such that $x\in U$ by \obv{unions_iff}.
+        Then $U\in\indiscreteOpens{A}$ by \obv{subseteq}.
+        Hence $U=\emptyset$ or $U=A$
+            by \auto{indiscrete_opens,cons_iff,singleton_iff}.
+        We have $U\neq\emptyset$ by \obv{emptyset}.
+        Thus $U=A$.
+        Hence $A\subseteq\unions{F}$ by \auto{unions_iff,subseteq}.
+        Thus $\unions{F}=A$ by \obv{setext,subseteq}.
+        Follows by \obv{indiscrete_opens,cons_iff,singleton_iff}.
+    \end{byCase}
+\end{proof}
+
+\begin{definition}\label{indiscrete_space}
+    $\indiscreteSpace{A}=\TopologicalSpaceOn{A}{\indiscreteOpens{A}}$.
+\end{definition}
+
+\begin{theorem}\label{indiscrete_space_is_topological_space}
+    $\indiscreteSpace{A}$ is a topological space.
+\end{theorem}
+\begin{proof}
+    $A\in\indiscreteOpens{A}$
+        by \auto{indiscrete_opens,cons_iff,singleton_iff}.
+    $\indiscreteOpens{A}$ is a topology on $A$ by
+        \obv{topology_family,indiscrete_opens_type,
+            indiscrete_opens_intersection,indiscrete_opens_unions}.
+    Follows by
+        \auto{indiscrete_space,topological_space_on_is_topological_space}.
+\end{proof}
+
+\begin{definition}\label{two_point_carrier}
+    $\twoPointCarrier=\{\emptyset,\{\emptyset\}\}$.
+\end{definition}
+
+\begin{instance}\label{two_point_indiscrete_space}
+    The topological space $\TwoPointIndiscreteSpace$ is
+        $\structure{
+            \carrier=\twoPointCarrier,
+            \opens=\indiscreteOpens{\twoPointCarrier}
+        }$.
+\end{instance}
+\begin{proof}
+    $\twoPointCarrier\in\indiscreteOpens{\twoPointCarrier}$
+        by \auto{indiscrete_opens,cons_iff,singleton_iff}.
+    Follows by \auto{indiscrete_opens_type,indiscrete_opens_intersection,indiscrete_opens_unions,topological_spaceaggregateprojection_carrier,topological_spaceaggregateprojection_opens}.
+\end{proof}
+
+\begin{proposition}\label{two_point_indiscrete_space_exact}
+    $\TwoPointIndiscreteSpace$ is an exact topological space.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \obv{two_point_indiscrete_space,
+            two_point_indiscrete_spaceshape}.
+\end{proof}
+
+\begin{proposition}\label{opens_type}
+    Let $X$ be a topological space.
+    Then $\opens[X]$ is a family of subsets of $\carrier[X]$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{opens_family,pow_iff,subseteq}.
+\end{proof}
+
+\begin{abbreviation}\label{is_open_in}
+    $U$ is open iff $U\in\opens$.
+\end{abbreviation}
+
+\begin{definition}\label{is_open}
+    Let $X$ be a topological space.
+    $U$ is open in $X$ iff $U\in\opens[X]$.
+\end{definition}
+
+\begin{classification}\label{member_of_topology_is_open}
+    Let $X$ be a topological space.
+    Let $U\in\opens[X]$.
+    Then $U$ is open in $X$.
+\end{classification}
+\begin{proof}
+    Follows by \obv{is_open}.
+\end{proof}
+
+\begin{classification}\label{open_subset_carrier}
+    Let $X$ be a topological space.
+    Suppose $U$ is open in $X$.
+    Then $U\subseteq\carrier[X]$.
+\end{classification}
+\begin{proof}
+    Follows by \obv{is_open,opens_type}.
+\end{proof}
+
+\begin{classification}\label{emptyset_open}
+    Let $X$ be a topological space.
+    Then $\emptyset$ is open in $X$.
+\end{classification}
+\begin{proof}
+    We have $\unions{\emptyset} = \emptyset\subseteq\opens[X]$ by \obv{unions_emptyset,emptyset_subseteq}.
+    Follows by \auto{is_open,opens_unions}.
+\end{proof}
+
+\begin{classification}\label{carrier_is_open}
+    Let $X$ be a topological space.
+    Then $\carrier[X]$ is open in $X$.
+\end{classification}
+\begin{proof}
+    Follows by \obv{is_open,carrier_open}.
+\end{proof}
+
+\begin{proposition}\label{union_open}
+    Let $X$ be a topological space.
+    Suppose $A$, $B$ are open.
+    Then $A\union B$ is open.
+\end{proposition}
+\begin{proof}
+    $\{A, B\}\subseteq\opens$ by \auto{cons_iff,subseteq}.
+    $\unions{\{A, B\}}$ is open by \obv{opens_unions}.
+    $\unions{\{A, B\}}=A\union B$ by \obv{union_as_unions}.
+\end{proof}
+
+\begin{definition}[Interiors]\label{interiors}
+    $\interiors{A}{X} = \{ U\in\opens[X]\mid U\subseteq A\}$.
+\end{definition}
+
+\begin{definition}[Interior]\label{interior}
+    $\interior{A}{X} = \unions{\interiors{A}{X}}$.
+\end{definition}
+
+\begin{proposition}[Interior]\label{interior_elem_intro}
+    Suppose $U\in\opens[X]$ and $a\in U\subseteq A$.
+    Then $a\in\interior{A}{X}$.
+\end{proposition}
+\begin{proof}
+    $U\in\interiors{A}{X}$ by \obv{interiors}.
+    Follows by \obv{interior,unions_intro}.
+\end{proof}
+
+\begin{proposition}[Interior]\label{interior_elem_elim}
+    Suppose $a\in\interior{A}{X}$.
+    Then there exists $U\in\opens[X]$
+    such that $a\in U\subseteq A$.
+\end{proposition}
+\begin{proof}
+    Take $U\in\interiors{A}{X}$ such that $a\in U$
+        by \obv{interior,unions_iff}.
+    Then $U\in\opens[X]$ and $U\subseteq A$ by \obv{interiors}.
+    Follows by \auto.
+\end{proof}
+
+\begin{proposition}[Interior]\label{interior_elem_iff}
+    $a\in\interior{A}{X}$ iff
+    there exists $U\in\opens[X]$
+    such that $a\in U\subseteq A$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{interior_elem_intro,interior_elem_elim}.
+\end{proof}
+
+\begin{proposition}\label{interior_of_open}
+    Let $X$ be a topological space.
+    Suppose $U$ is open in $X$.
+    Then $\interior{U}{X} = U$.
+\end{proposition}
+\begin{proof}
+    We have for every $x\in\interior{U}{X}$ we have $x\in U$
+        by \auto{interior_elem_iff,subseteq}.
+    We have for every $x\in U$ we have $x\in\interior{U}{X}$
+        by \auto{is_open,interior_elem_intro,subseteq_refl}.
+    Follows by set extensionality.
+\end{proof}
+
+\begin{proposition}\label{interior_is_open}
+    Let $X$ be a topological space.
+    Then $\interior{A}{X}$ is open.
+\end{proposition}
+\begin{proof}
+    $\interiors{A}{X}\subseteq\opens[X]$ by \obv{interiors,subseteq}.
+    Follows by \auto{interior,opens_unions}.
+\end{proof}
+
+\begin{proposition}\label{interior_subseteq}
+    Then $\interior{A}{X}\subseteq A$.
+\end{proposition}
+\begin{proof}
+    For all $U\in\interiors{A}{X}$ we have $U\subseteq A$
+        by \obv{interiors}.
+    Follows by \auto{interior,unions_iff,subseteq}.
+\end{proof}
+
+\begin{proposition}\label{interior_maximal}
+    Let $X$ be a topological space.
+    Suppose $U\subseteq A\subseteq \carrier[X]$ and $U$ is open.
+    Then $U\subseteq \interior{A}{X}$.
+\end{proposition}
+\begin{proof}
+    $U\in\interiors{A}{X}$ by \obv{interiors}.
+    $U\subseteq\unions{\interiors{A}{X}}$ by \auto{unions_iff,subseteq}.
+    Follows by \obv{interior}.
+\end{proof}
+
+\begin{proposition}\label{interior_eq_self_implies_open}
+    Let $X$ be a topological space.
+    Suppose $\interior{A}{X} = A$.
+    Then $A$ is open.
+\end{proposition}
+\begin{proof}
+    $\interior{A}{X}$ is open by \obv{interior_is_open}.
+\end{proof}
+
+\begin{theorem}\label{open_iff_local_open_subsets}
+    Let $X$ be a topological space.
+    Then $U\in\opens[X]$ iff
+        for every $x\in U$ there exists $V\in\opens[X]$ such that
+            $x\in V$ and $V\subseteq U$.
+\end{theorem}
+\begin{proof}
+    If $U\in\opens[X]$, then for every $x\in U$ there exists
+        $V\in\opens[X]$ such that $x\in V$ and $V\subseteq U$ by
+        \auto{subseteq_refl}.
+    Show that if for every $x\in U$ there exists $V\in\opens[X]$ such that
+        $x\in V$ and $V\subseteq U$, then $U\in\opens[X]$.
+    \begin{subproof}
+        Assume for every $x\in U$ there exists $V\in\opens[X]$ such that
+            $x\in V$ and $V\subseteq U$.
+        $U\subseteq\interior{U}{X}$ by \auto{interior_elem_iff,subseteq}.
+        $\interior{U}{X}\subseteq U$ by \obv{interior_subseteq}.
+        $\interior{U}{X}=U$ by \obv{subseteq_antisymmetric}.
+        Follows by \obv{interior_eq_self_implies_open}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{corollary}\label{interior_eq_self_iff_open}
+    Let $X$ be a topological space.
+    Then $\interior{A}{X} = A$ iff $A$ is open in $X$.
+\end{corollary}
+\begin{proof}
+    Follows by
+        \auto{is_open,interior_eq_self_implies_open,interior_of_open}.
+\end{proof}
+
+\begin{proposition}\label{interior_carrier}
+    Let $X$ be a topological space.
+    $\interior{\carrier[X]}{X} = \carrier[X]$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{is_open,carrier_open,interior_of_open}.
+\end{proof}
+
+\begin{proposition}\label{interior_type}
+    Let $X$ be a topological space.
+    Then $\interior{A}{X}\in\pow{\carrier[X]}$.
+\end{proposition}
+\begin{proof}
+    We have $\interiors{A}{X}\subseteq \pow{\carrier[X]}$
+        by \auto{interiors,opens_type,subseteq}.
+    For all $x\in\interior{A}{X}$ we have $x\in\carrier[X]$
+        by \auto{interior,unions_iff,pow_iff,subseteq}.
+    Follows by \obv{pow_iff,subseteq}.
+\end{proof}
+
+\subsection{Closed sets}
+
+\begin{definition}[Closed sets]\label{closeds}
+    $\closeds{X} = \{ A\in\pow{\carrier[X]}\mid
+        \carrier[X]\setminus A\in\opens[X]\}$.
+\end{definition}
+
+\begin{definition}\label{is_closed_in}
+    Let $X$ be a topological space.
+    $A$ is closed in $X$ iff $A\in\closeds{X}$.
+\end{definition}
+
+\begin{definition}\label{closed_subset_of}
+    Let $X$ be a topological space.
+    $A$ is a closed subset of $X$ iff $A$ is closed in $X$.
+\end{definition}
+
+\begin{proposition}\label{closed_in_subseteq_carrier}
+    Let $X$ be a topological space.
+    Suppose $A$ is closed in $X$.
+    Then $A\subseteq\carrier[X]$.
+\end{proposition}
+\begin{proof}
+    $A\in\closeds{X}$ by \obv{is_closed_in}.
+    Hence $A\in\pow{\carrier[X]}$ by \obv{closeds}.
+    Follows by \auto{pow_iff,subseteq}.
+\end{proof}
+
+\begin{definition}\label{is_clopen_in}
+    Let $X$ be a topological space.
+    $A$ is clopen in $X$ iff $A$ is open in $X$ and closed in $X$.
+\end{definition}
+
+\begin{proposition}\label{emptyset_is_closed}
+    Let $X$ be a topological space.
+    Then $\emptyset$ is closed in $X$.
+\end{proposition}
+\begin{proof}
+    $\emptyset\subseteq\carrier[X]$ by \obv{emptyset_subseteq}.
+    $\carrier[X]\setminus \emptyset = \carrier[X]$ by \obv{setminus_emptyset}.
+    Follows by \obv{is_closed_in,closeds,pow_iff,carrier_open}.
+\end{proof}
+
+\begin{proposition}\label{carrier_is_closed}
+    Let $X$ be a topological space.
+    Then $\carrier[X]$ is closed in $X$.
+\end{proposition}
+\begin{proof}
+    $\carrier[X]\subseteq\carrier[X]$ by \obv{subseteq_refl}.
+    $\carrier[X]\setminus \carrier[X] = \emptyset$ by \obv{setminus_self}.
+    Follows by
+        \auto{emptyset_open,is_open,is_closed_in,closeds,pow_iff}.
+\end{proof}
+
+\begin{proposition}\label{opens_minus_closed_is_open}
+    Let $X$ be a topological space.
+    Suppose $A, B \subseteq \carrier[X]$.
+    Suppose $A$ is open in $X$.
+    Suppose $B$ is closed in $X$.
+    Then $A \setminus B$ is open in $X$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{is_open,is_closed_in,closeds,pow_iff,setminus_eq_emptyset_iff_subseteq,opens_inter,inter_comm_left,setminus_union,inter_assoc,inter_setminus,inter_lower_left,inter_lower_right,setminus_subseteq,double_complement,setminus_setminus,setminus_eq_inter_complement,setminus_self,setminus_inter,union_comm,emptyset_subseteq,setminus_partition}.
+\end{proof}
+
+\begin{proposition}\label{complement_of_open_elem_closeds}
+    Let $X$ be a topological space.
+    Let $U\in\opens[X]$.
+    Then $\carrier[X]\setminus U\in\closeds{X}$.
+\end{proposition}
+\begin{proof}
+    $\carrier[X]\setminus U\subseteq\carrier[X]$
+        by \obv{setminus_subseteq}.
+    $\carrier[X]\setminus U\in\pow{\carrier[X]}$
+        by \obv{pow_iff,subseteq}.
+    $U\subseteq\carrier[X]$ by \obv{opens_type}.
+    Hence $\carrier[X]\setminus(\carrier[X]\setminus U) = U$ by \obv{double_relative_complement}.
+    $\carrier[X]\setminus U$ is closed in $X$
+        by \obv{is_closed_in,closeds}.
+    Follows by \obv{closeds}.
+\end{proof}
+
+
+\begin{definition}[Closed covers]\label{closures}
+    $\closures{A}{X} = \{ D\in\pow{\carrier[X]}\mid
+        \text{$A\inter\carrier[X]\subseteq D$ and $D\in\closeds{X}$}\}$.
+\end{definition}
+
+\begin{definition}[Closure]\label{closure}
+    $\closure{A}{X} = \inters{\closures{A}{X}}$.
+\end{definition}
+
+The family of closed covers and the resulting closure are total set terms.
+They use the trace $A\inter\carrier[X]$, so elements outside the displayed
+carrier are ignored. Their familiar carrier and closure-operator laws require
+$X$ to be a topological space.
+
+\begin{proposition}\label{closures_trace}
+    $\closures{A}{X}=\closures{(A\inter\carrier[X])}{X}$.
+\end{proposition}
+\begin{proof}
+    $(A\inter\carrier[X])\inter\carrier[X]
+        =A\inter\carrier[X]$ by \obv{inter_absorb_right}.
+    Follows by \obv{closures,setext}.
+\end{proof}
+
+\begin{proposition}\label{closure_trace}
+    $\closure{A}{X}=\closure{(A\inter\carrier[X])}{X}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{closure,closures_trace}.
+\end{proof}
+
+\begin{proposition}\label{closure_emptyset}
+    Let $X$ be a topological space.
+    Then $\closure{\emptyset}{X} = \emptyset$.
+\end{proposition}
+\begin{proof}
+    $\emptyset\in\pow{\carrier[X]}$ by \auto{emptyset_subseteq,pow_iff}.
+    $\emptyset$ is closed in $X$ by \obv{emptyset_is_closed}.
+    $\emptyset\inter\carrier[X]=\emptyset$
+        by \auto{inter_comm,inter_emptyset}.
+    $\emptyset\in\closeds{X}$ by \obv{is_closed_in}.
+    $\emptyset\in\closures{\emptyset}{X}$ by \obv{closures,subseteq_refl}.
+    For all $x\in\closure{\emptyset}{X}$ we have $x\in\emptyset$
+        by \auto{closure,inters_subseteq_elem,subseteq}.
+    For all $x\in\emptyset$ we have $x\in\closure{\emptyset}{X}$
+        by \auto{emptyset_subseteq,subseteq}.
+    Follows by set extensionality.
+\end{proof}
+
+\begin{proposition}\label{closure_carrier}
+    Let $X$ be a topological space.
+    Then $\closure{\carrier[X]}{X} = \carrier[X]$.
+\end{proposition}
+\begin{proof}
+    $\carrier[X]\inter\carrier[X]=\carrier[X]$
+        by \obv{inter_idempotent}.
+    For all $D\in\closures{\carrier[X]}{X}$ we have $\carrier[X]\subseteq D$
+        by \obv{closures}.
+    For all $D\in\closures{\carrier[X]}{X}$ we have
+        $D\in\pow{\carrier[X]}$ by \obv{closures}.
+    For all $D\in\closures{\carrier[X]}{X}$ we have $D\subseteq\carrier[X]$
+        by \obv{pow_iff,subseteq}.
+    For all $D\in\closures{\carrier[X]}{X}$ we have $\carrier[X] = D$
+        by \obv{subseteq_antisymmetric}.
+    $\carrier[X]\subseteq\carrier[X]$ by \obv{subseteq_refl}.
+    $\carrier[X]\in\pow{\carrier[X]}$ by \obv{pow_iff,subseteq}.
+    $\carrier[X]\in\closeds{X}$ by
+        \auto{carrier_is_closed,is_closed_in}.
+    Now $\carrier[X]\in\closures{\carrier[X]}{X}$
+        by \obv{closures}.
+    Thus $\closures{\carrier[X]}{X} = \{\carrier[X]\}$
+        by \auto{singleton_iff_inhabited_subsingleton}.
+    Follows by \auto{inters_singleton,closure}.
+\end{proof}
+
+\begin{proposition}\label{subseteq_inters_iff_to_right}
+    Let $A,F$ be sets.
+    Suppose $A \subseteq \inters{F}$.
+    Then for all $X \in F$ we have $A \subseteq X$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{inters_subseteq_elem,subseteq}.
+\end{proof}
+
+
+\begin{proposition}\label{subseteq_of_all_then_subset_of_union}
+    Let $A,F$ be sets.
+    Suppose $F$ is inhabited and
+        for all $X \in F$ we have $A \subseteq X$.
+    Then $A \subseteq \unions{F}$.
+\end{proposition}
+\begin{proof}
+    Take $X$ such that $X\in F$.
+    $X\subseteq\unions{F}$ by \auto{unions_iff,subseteq}.
+    $A\subseteq X$.
+    Follows by \obv{subseteq_transitive}.
+\end{proof}
+
+
+
+\begin{proposition}\label{subseteq_inters_iff_to_left}
+    Let $A,F$ be sets.
+    Suppose $F$ is inhabited and
+        for all $X \in F$ we have $A \subseteq X$.
+    Then $A \subseteq \inters{F}$.
+\end{proposition}
+\begin{proof}
+    Since for all $a\in A$ we have for all $X\in F$ we have $a\in X$
+        by \auto{subseteq},
+    we have for all $a\in A$ we have $a\in\inters{F}$
+        by \auto{inters_iff_forall}.
+    Follows by \obv{subseteq}.
+\end{proof}
+
+Because the unrestricted intersection of the empty family is totalized as the
+empty set, the inhabited-family premise in the next equivalence is essential.
+
+\begin{proposition}\label{subseteq_inters_iff_new}
+    Suppose $F$ is inhabited.
+    $A \subseteq \inters{F}$ iff for all $X \in F$ we have $A \subseteq X$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{subseteq_inters_iff_to_left,subseteq_inters_iff_to_right}.
+\end{proof}
+
+\begin{proposition}\label{trace_is_subseteq_to_closure}
+    Let $X$ be a topological space.
+    Then $A\inter\carrier[X]\subseteq\closure{A}{X}$.
+\end{proposition}
+\begin{proof}
+    $A\inter\carrier[X]\subseteq\carrier[X]$
+        by \obv{inter_lower_right}.
+    $\carrier[X]\in\pow{\carrier[X]}$
+        by \auto{pow_iff,subseteq_refl}.
+    $\carrier[X]$ is closed in $X$ by \obv{carrier_is_closed}.
+    Hence $\carrier[X]\in\closeds{X}$ by \obv{is_closed_in}.
+    Thus $\carrier[X]\in\closures{A}{X}$ by \obv{closures}.
+    $\closures{A}{X}$ is inhabited.
+    For all $D\in\closures{A}{X}$ we have
+        $A\inter\carrier[X]\subseteq D$ by \obv{closures}.
+    $A\inter\carrier[X]\subseteq\inters{\closures{A}{X}}$
+        by \obv{subseteq_inters_iff_to_left}.
+    Follows by \obv{closure}.
+\end{proof}
+
+\begin{proposition}\label{set_is_subseteq_to_closure_of_the_set}
+    Let $X$ be a topological space.
+    Suppose $A \subseteq \carrier[X]$.
+    $A \subseteq \closure{A}{X}$.
+\end{proposition}
+\begin{proof}
+    $A\inter\carrier[X]=A$ by \obv{inter_absorb_supseteq_right}.
+    Follows by \auto{trace_is_subseteq_to_closure}.
+\end{proof}
+
+\begin{proposition}\label{complement_of_closure_of_complement_of_x_subseteq_x}
+    Let $X$ be a topological space.
+    Suppose $A \subseteq \carrier[X]$.
+    $(\carrier[X] \setminus \closure{(\carrier[X]\setminus A)}{X}) \subseteq A$.
+\end{proposition}
+\begin{proof}
+    For all $x\in\carrier[X]\setminus\closure{(\carrier[X]\setminus A)}{X}$
+    we have $x\in\carrier[X]$
+        by \obv{setminus_elim_left}.
+    For all $x\in\carrier[X]\setminus\closure{(\carrier[X]\setminus A)}{X}$
+    we have $x\notin\closure{(\carrier[X]\setminus A)}{X}$
+        by \obv{setminus_elim_right}.
+    For all $x$ we have if
+    $x\in\carrier[X]\setminus\closure{(\carrier[X]\setminus A)}{X}$ and
+    $x\in\carrier[X]\setminus A$, then
+    $x\in\closure{(\carrier[X]\setminus A)}{X}$
+        by \auto{set_is_subseteq_to_closure_of_the_set,setminus_subseteq,subseteq}.
+    For all $x\in\carrier[X]\setminus\closure{(\carrier[X]\setminus A)}{X}$
+    we have $x\in A$ by \auto{setminus}.
+    Follows by \obv{subseteq}.
+\end{proof}
+
+\begin{proposition}\label{complement_of_closed_is_open}
+    Let $X$ be a topological space.
+    Suppose $A \subseteq \carrier[X]$.
+    Suppose $A$ is closed in $X$.
+    Then $\carrier[X] \setminus A$ is open in $X$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{is_open,is_closed_in,closeds}.
+\end{proof}
+
+\begin{proposition}\label{complement_of_open_is_closed}
+    Let $X$ be a topological space.
+    Suppose $A \subseteq \carrier[X]$.
+    Suppose $A$ is open in $X$.
+    Then $\carrier[X] \setminus A$ is closed in $X$.
+\end{proposition}
+\begin{proof}
+    $\carrier[X]\setminus A\subseteq\carrier[X]$
+        by \obv{setminus_subseteq}.
+    Hence $\carrier[X]\setminus A\in\pow{\carrier[X]}$
+        by \obv{pow_iff,subseteq}.
+    $\carrier[X]\setminus(\carrier[X]\setminus A)=A$
+        by \obv{double_relative_complement}.
+    $A\in\opens[X]$ by \obv{is_open}.
+    Hence $\carrier[X]\setminus A\in\closeds{X}$ by \obv{closeds}.
+    Follows by \obv{is_closed_in}.
+\end{proof}
+
+\begin{proposition}\label{intersection_of_closed_is_closed}
+    Let $X$ be a topological space.
+    Suppose $A, B \subseteq \carrier[X]$.
+    Suppose $A$ is closed in $X$.
+    Suppose $B$ is closed in $X$.
+    Then $A \inter B$ is closed in $X$.
+\end{proposition}
+\begin{proof}
+    $A\inter B\subseteq\carrier[X]$ by \obv{inter_subseteq}.
+    $\carrier[X] \setminus A, \carrier[X] \setminus B \in \opens[X]$
+        by \auto{is_closed_in,closeds}.
+    $(\carrier[X] \setminus A) \union (\carrier[X] \setminus B)
+        \in \opens[X]$ by \obv{union_open}.
+    $\carrier[X]\setminus(A\inter B)
+        =(\carrier[X]\setminus A)\union(\carrier[X]\setminus B)$
+        by \obv{setminus_inter}.
+    $A\inter B\in\pow{\carrier[X]}$ by \obv{pow_iff,subseteq}.
+    Hence $A\inter B\in\closeds{X}$ by \obv{closeds}.
+    Follows by \obv{is_closed_in}.
+\end{proof}
+
+\begin{proposition}\label{union_of_closed_is_closed}
+    Let $X$ be a topological space.
+    Suppose $A, B \subseteq \carrier[X]$.
+    Suppose $A$ is closed in $X$.
+    Suppose $B$ is closed in $X$.
+    Then $A \union B$ is closed in $X$.
+\end{proposition}
+\begin{proof}
+    $A\union B\subseteq\carrier[X]$ by \auto{subseteq_union_iff}.
+    $\carrier[X] \setminus A, \carrier[X] \setminus B \in \opens[X]$
+        by \auto{is_closed_in,closeds}.
+    $(\carrier[X] \setminus A) \inter (\carrier[X] \setminus B)
+        \in \opens[X]$ by \obv{opens_inter}.
+    $\carrier[X]\setminus(A\union B)
+        =(\carrier[X]\setminus A)\inter(\carrier[X]\setminus B)$
+        by \obv{setminus_union}.
+    $A\union B\in\pow{\carrier[X]}$ by \obv{pow_iff,subseteq}.
+    Hence $A\union B\in\closeds{X}$ by \obv{closeds}.
+    Follows by \obv{is_closed_in}.
+\end{proof}
+
+\begin{proposition}\label{closed_minus_open_is_closed}
+    Let $X$ be a topological space.
+    Suppose $A, B \subseteq \carrier[X]$.
+    Suppose $A$ is open in $X$.
+    Suppose $B$ is closed in $X$.
+    Then $B \setminus A$ is closed in $X$.
+\end{proposition}
+\begin{proof}
+    $\carrier[X]\setminus A\subseteq\carrier[X]$
+        by \obv{setminus_subseteq}.
+    $\carrier[X]\setminus A$ is closed in $X$
+        by \obv{complement_of_open_is_closed}.
+    $B\inter(\carrier[X]\setminus A)$ is closed in $X$
+        by \obv{intersection_of_closed_is_closed}.
+    Follows by \obv{setminus_eq_inter_complement}.
+\end{proof}
+
+
+
+\begin{proposition}\label{intersection_of_closed_is_closed_infinite}
+    Let $X$ be a topological space.
+    Suppose $F \subseteq \pow{\carrier[X]}$.
+    Suppose for all $A \in F$ we have $A$ is closed in $X$.
+    Suppose $F$ is inhabited.
+    Then $\inters{F}$ is closed in $X$.
+\end{proposition}
+\begin{proof}
+    Let $F' = \{Y \in \pow{\carrier[X]} \mid \text{there exists $C \in F$ such that $Y = \carrier[X] \setminus C$ }\} $.
+    Show for all $Y$ we have if $Y\in F'$, then $Y$ is open in $X$.
+    \begin{subproof}
+        Fix $Y$.
+        Assume $Y\in F'$.
+        Take $C$ such that $C\in F$ and
+            $Y=\carrier[X]\setminus C$.
+        $C$ is closed in $X$.
+        $\carrier[X]\setminus C$ is open in $X$
+            by \auto{complement_of_closed_is_open,pow_iff,subseteq}.
+    \end{subproof}
+    $F'\subseteq\opens[X]$ by \auto{is_open,subseteq}.
+    $\unions{F'}$ is open in $X$ by \obv{is_open,opens_unions}.
+    $\unions{F'}\subseteq\carrier[X]$
+        by \obv{opens_type,unions_iff,pow_iff,subseteq}.
+    $\inters{F}\subseteq\carrier[X]$
+        by \auto{inters_iff_forall,pow_iff,subseteq}.
+    Show $\inters{F} = \carrier[X] \setminus (\unions{F'})$.
+    \begin{subproof}
+        Show for all $a$ we have if $a\in\inters{F}$, then
+            $a\in\carrier[X]\setminus\unions{F'}$.
+        \begin{subproof}
+            Fix $a$.
+            Assume $a\in\inters{F}$.
+            $a\in\carrier[X]$
+                by \obv{inters_iff_forall,pow_iff,subseteq}.
+            For all $A\in F$ we have $a\in A$
+                by \obv{inters_destr}.
+            For all $A\in F$ we have
+                $a\notin\carrier[X]\setminus A$ by \obv{setminus}.
+            $a\notin\unions{F'}$ by \auto{unions_iff}.
+            Follows by \obv{setminus_intro}.
+        \end{subproof}
+        Show for all $a$ we have if
+            $a\in\carrier[X]\setminus\unions{F'}$, then $a\in\inters{F}$.
+        \begin{subproof}
+            Fix $a$.
+            Assume $a\in\carrier[X]\setminus\unions{F'}$.
+            Then $a\in\carrier[X]$ and $a\notin\unions{F'}$
+                by \obv{setminus}.
+            Show that for every $A\in F$ we have $a\in A$.
+            \begin{subproof}
+                Fix $A\in F$.
+                Then $A\subseteq\carrier[X]$
+                    by \auto{pow_iff,subseteq}.
+                $\carrier[X]\setminus A\subseteq\carrier[X]$
+                    by \obv{setminus_subseteq}.
+                Hence $\carrier[X]\setminus A\in\pow{\carrier[X]}$
+                    by \obv{powerset_intro}.
+                Hence $\carrier[X]\setminus A\in F'$.
+                Thus $a\notin\carrier[X]\setminus A$
+                    by \auto{unions_iff}.
+                Hence $a\in A$ by \auto{setminus}.
+            \end{subproof}
+            Follows by \auto{inters_iff_forall}.
+        \end{subproof}
+        Follows by set extensionality.
+    \end{subproof}
+    Follows by \auto{complement_of_open_is_closed}.
+\end{proof}
+
+\begin{proposition}\label{closure_is_closed}
+    Let $X$ be a topological space.
+    Then $\closure{A}{X}$ is closed in $X$.
+\end{proposition}
+\begin{proof}
+    $A\inter\carrier[X]\subseteq\carrier[X]$
+        by \obv{inter_lower_right}.
+    $\carrier[X]\in\closeds{X}$ by
+        \auto{carrier_is_closed,is_closed_in}.
+    $\carrier[X]\in\closures{A}{X}$
+        by \obv{closures,pow_iff,subseteq_refl}.
+    $\closures{A}{X}$ is inhabited.
+    $\closures{A}{X}\subseteq\pow{\carrier[X]}$ by \obv{closures,subseteq}.
+    For all $B\in\closures{A}{X}$ we have $B\in\closeds{X}$
+        by \obv{closures}.
+    Hence for all $B\in\closures{A}{X}$ we have $B$ is closed in $X$
+        by \obv{is_closed_in}.
+    $\inters{\closures{A}{X}}$ is closed in $X$
+        by \obv{intersection_of_closed_is_closed_infinite}.
+    Follows by \obv{closure}.
+\end{proof}
+
+\begin{corollary}\label{closure_elem_closeds}
+    Let $X$ be a topological space.
+    Then $\closure{A}{X}\in\closeds{X}$.
+\end{corollary}
+\begin{proof}
+    $\closure{A}{X}$ is closed in $X$ by \obv{closure_is_closed}.
+    Follows by \obv{is_closed_in}.
+\end{proof}
+
+
+
+\begin{proposition}\label{closure_is_minimal_closed_set}
+    Let $X$ be a topological space.
+    Suppose $A \subseteq \carrier[X]$.
+    For all $Y \in \closeds{X}$ such that $A \subseteq Y$ we have $\closure{A}{X} \subseteq Y$.
+\end{proposition}
+\begin{proof}
+    $A\inter\carrier[X]=A$
+        by \obv{inter_absorb_supseteq_right}.
+    For all $Y\in\closeds{X}$ such that $A\subseteq Y$ we have
+        $Y\in\closures{A}{X}$ by \obv{closeds,closures}.
+    For all $Y\in\closeds{X}$ such that $A\subseteq Y$ we have
+        $\inters{\closures{A}{X}}\subseteq Y$
+        by \obv{inters_subseteq_elem}.
+    Follows by \auto{closure}.
+\end{proof}
+
+\begin{proposition}\label{interior_is_maximal}
+    Let $X$ be a topological space.
+    Suppose $A \subseteq \carrier[X]$.
+    For all $Y \in \opens[X]$ such that $Y \subseteq A$ we have $Y \subseteq \interior{A}{X}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{interior_maximal}.
+\end{proof}
+
+\begin{proposition}\label{complement_interior_eq_closure_complement}
+    Let $X$ be a topological space.
+    Suppose $A \subseteq \carrier[X]$.
+    $\carrier[X]\setminus\interior{A}{X} = \closure{(\carrier[X]\setminus A)}{X}$.
+\end{proposition}
+\begin{proof}
+    $\carrier[X]\setminus A\subseteq\carrier[X]$ by \obv{setminus_subseteq}.
+    $\carrier[X]\in\closeds{X}$
+        by \auto{carrier_is_closed,is_closed_in}.
+    $\closure{(\carrier[X]\setminus A)}{X}\subseteq\carrier[X]$
+        by \obv{closure_is_minimal_closed_set}.
+    $\carrier[X]\setminus\closure{(\carrier[X]\setminus A)}{X}$
+        is open in $X$ by \obv{closure_is_closed,complement_of_closed_is_open}.
+    $\carrier[X]\setminus\closure{(\carrier[X]\setminus A)}{X}\subseteq A$
+        by \obv{complement_of_closure_of_complement_of_x_subseteq_x}.
+    $\carrier[X]\setminus\closure{(\carrier[X]\setminus A)}{X}
+        \subseteq\interior{A}{X}$ by \obv{is_open,interior_maximal}.
+    $\carrier[X]\setminus\interior{A}{X}
+        \subseteq\carrier[X]\setminus
+            (\carrier[X]\setminus\closure{(\carrier[X]\setminus A)}{X})$
+        by \obv{subseteq_implies_setminus_supseteq}.
+    $\carrier[X]\setminus
+        (\carrier[X]\setminus\closure{(\carrier[X]\setminus A)}{X})
+        =\closure{(\carrier[X]\setminus A)}{X}$
+        by \obv{double_relative_complement}.
+    $\carrier[X]\setminus\interior{A}{X}
+        \subseteq\closure{(\carrier[X]\setminus A)}{X}$
+        by \obv{subseteq_transitive}.
+
+    $\interior{A}{X}\subseteq A$ by \obv{interior_subseteq}.
+    $\carrier[X]\setminus A
+        \subseteq\carrier[X]\setminus\interior{A}{X}$
+        by \obv{subseteq_implies_setminus_supseteq}.
+    $\carrier[X]\setminus\interior{A}{X}\in\closeds{X}$
+        by \obv{interior_is_open,complement_of_open_elem_closeds}.
+    $\closure{(\carrier[X]\setminus A)}{X}
+        \subseteq\carrier[X]\setminus\interior{A}{X}$
+        by \obv{closure_is_minimal_closed_set}.
+    Follows by \obv{subseteq_antisymmetric}.
+\end{proof}
+
+
+
+\begin{definition}[Frontier]\label{frontier}
+    $\frontier{A}{X} = \closure{A}{X}\setminus\interior{A}{X}$.
+\end{definition}
+
+Like interior and closure, frontier is a total derived set term. Its familiar
+topological properties remain guarded by the assumption that $X$ is a
+topological space.
+
+\begin{proposition}\label{closure_interior_frontier_is_in_carrier}
+    Let $X$ be a topological space.
+    Suppose $A \subseteq \carrier[X]$.
+    Then $\closure{A}{X}, \interior{A}{X}, \frontier{A}{X} \subseteq \carrier[X]$.
+\end{proposition}
+\begin{proof}
+    $\carrier[X]\in\closeds{X}$
+        by \auto{carrier_is_closed,is_closed_in}.
+    $\closure{A}{X}\subseteq\carrier[X]$
+        by \obv{closure_is_minimal_closed_set}.
+    $\interior{A}{X}\subseteq\carrier[X]$
+        by \auto{interior_type,pow_iff,subseteq}.
+    $\frontier{A}{X}\subseteq\carrier[X]$
+        by \auto{frontier,setminus_subseteq,subseteq_transitive}.
+\end{proof}
+
+\begin{proposition}\label{frontier_is_closed}
+    Let $X$ be a topological space.
+    Suppose $A \subseteq \carrier[X]$.
+    Then $\frontier{A}{X}$ is closed in $X$.
+\end{proposition}
+\begin{proof}
+    $\closure{A}{X},\interior{A}{X}\subseteq\carrier[X]$
+        by \obv{closure_interior_frontier_is_in_carrier}.
+    $\closure{A}{X}$ is closed in $X$ by \obv{closure_is_closed}.
+    $\interior{A}{X}$ is open in $X$ by \obv{is_open,interior_is_open}.
+    $\closure{A}{X}\setminus\interior{A}{X}$ is closed in $X$
+        by \obv{closed_minus_open_is_closed}.
+    Follows by \obv{frontier}.
+\end{proof}
+
+\begin{proposition}\label{setdifference_eq_intersection_with_complement}
+    Suppose $A,B \subseteq C$.
+    Then $A \setminus B = A \inter (C \setminus B)$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{setminus_eq_inter_complement}.
+\end{proof}
+
+
+
+\begin{proposition}\label{frontier_as_inter}
+    Let $X$ be a topological space.
+    Suppose $A \subseteq \carrier[X]$.
+    $\frontier{A}{X} = \closure{A}{X} \inter \closure{(\carrier[X]\setminus A)}{X}$.
+\end{proposition}
+\begin{proof}
+    $\closure{A}{X}\setminus\interior{A}{X}
+        =\closure{A}{X}\inter(\carrier[X]\setminus\interior{A}{X})$
+        by \auto{setdifference_eq_intersection_with_complement,closure_interior_frontier_is_in_carrier}.
+    $\closure{A}{X}\inter(\carrier[X]\setminus\interior{A}{X})
+        =\closure{A}{X}\inter\closure{(\carrier[X]\setminus A)}{X}$
+        by \obv{complement_interior_eq_closure_complement}.
+    Follows by \obv{frontier}.
+\end{proof}
+
+\begin{proposition}\label{frontier_of_emptyset}
+    Let $X$ be a topological space.
+    Then $\frontier{\emptyset}{X} = \emptyset$.
+\end{proposition}
+\begin{proof}
+    $\interior{\emptyset}{X}=\emptyset$
+        by \obv{emptyset_open,interior_of_open}.
+    Follows by \auto{frontier,closure_emptyset,setminus_self}.
+\end{proof}
+
+\begin{proposition}\label{frontier_of_carrier}
+    Let $X$ be a topological space.
+    Then $\frontier{\carrier[X]}{X} = \emptyset$.
+\end{proposition}
+\begin{proof}
+    $\frontier{\carrier[X]}{X} = \carrier[X]\setminus\carrier[X]$
+        by \obv{frontier,interior_carrier,closure_carrier}.
+    Follows by \auto{setminus_self}.
+\end{proof}
+
+\begin{definition}\label{neighbourhoods}
+    $\neighbourhoods{x}{X} = \{N\in\pow{\carrier[X]} \mid \exists U\in\opens[X]. x\in U\subseteq N\}$.
+\end{definition}
+
+\begin{definition}\label{neighbourhoods_set}
+    $\neighbourhoodsSet{x}{X} = \{N\in\pow{\carrier[X]} \mid \exists U\in\opens[X]. x\subseteq U\subseteq N\}$.
+\end{definition}

@@ -1,0 +1,1343 @@
+\import{relation/well-founded.tex}
+\import{order/well-order.tex}
+\import{set/logical-graph.tex}
+
+\section{Codomain-free well-founded recursion}
+
+This chapter constructs recursive set functions without prescribing a common
+set of possible values.  The proof uses recursive partials on arbitrary
+initial segments.  Any two such partials agree where both are defined; the
+points covered by a partial therefore have unique values, which relational
+Replacement collects into the global graph.  No set of all partials, Zorn
+argument, or set-level choice function enters the construction.
+
+\subsection{Recursive partials for a logical step}
+
+\begin{definition}\label{recursive_set_function}
+    $\recursiveSetFunction{f}$ iff $f$ is a function.
+\end{definition}
+
+\begin{definition}\label{recursive_initial_segment}
+    $\recursiveInitialSegment{f}{A}{R}$ iff
+        $\dom{f}$ is an initial segment of $A$ with respect to $R$.
+\end{definition}
+
+\begin{definition}\label{recursive_set_function_op}
+    $\recursiveSetFunctionOp:\Set\to\Prop
+        =\fun{f:\Set}{\recursiveSetFunction{f}}$.
+\end{definition}
+
+\begin{definition}\label{recursive_initial_segment_op}
+    $\recursiveInitialSegmentOp:\Set\to\Set\to\Set\to\Prop
+        =\fun{f,A,R:\Set}{\recursiveInitialSegment{f}{A}{R}}$.
+\end{definition}
+
+\begin{definition}\label{unbounded_recursive_history_op}
+    $\unboundedRecursiveHistoryOp:
+        \Set\to\Set\to\Set\to\Set\to\Prop
+        =\fun{A,R,x,p:\Set}{
+                        \Apply{\recursiveSetFunctionOp}{p}\land
+                        \dom{p}=\downward{R}{x}}$.
+\end{definition}
+
+\begin{proposition}\label{unbounded_recursive_history_iff}
+    $\forall A,R,x,p:\Set.
+        \Apply{\unboundedRecursiveHistoryOp}
+            {A,R,x,p}
+        \iff
+        (\Apply{\recursiveSetFunctionOp}{p}\land
+         \dom{p}=\downward{R}{x})$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{unbounded_recursive_history_op}.
+\end{proof}
+
+\begin{proposition}\label{restriction_is_unbounded_recursive_history}
+    Suppose $R$ is a binary relation on $A$.
+    Suppose $f$ is a function and $\dom{f}=A$.
+    Let $x\in A$.
+    Then $\Apply{\unboundedRecursiveHistoryOp}
+        {A,R,x,\restrl{f}{\downward{R}{x}}}$.
+\end{proposition}
+\begin{proof}
+    $\downward{R}{x}\subseteq A$ by
+        \obv{binary_relation_downward_subseteq}.
+    Hence $\downward{R}{x}\subseteq\dom{f}$.
+    Hence $\recursiveSetFunction{\restrl{f}{\downward{R}{x}}}$ by
+        \obv{recursive_set_function}.
+    $\dom{\restrl{f}{\downward{R}{x}}}
+        =\dom{f}\inter\downward{R}{x}$ by
+        \obv{dom_of_restrl_eq_inter}.
+    Hence $\dom{\restrl{f}{\downward{R}{x}}}
+        =\downward{R}{x}$ by
+        \obv{inter_absorb_supseteq_left}.
+    Follows by
+        \obv{unbounded_recursive_history_op,recursive_set_function_op}.
+\end{proof}
+
+\begin{definition}\label{unbounded_recursive_partial_op}
+    $\unboundedRecursivePartialOp:
+        \Set\to\Set\to
+        (\Set\to\Set\to\Set)\to\Set\to\Prop
+        =\fun{A,R:\Set}{
+                \fun{H:\Set\to\Set\to\Set}{
+                    \fun{f:\Set}{
+                        \Apply{\recursiveSetFunctionOp}{f}\land
+                        \Apply{\recursiveInitialSegmentOp}
+                            {f,A,R}\land
+                        (\forall x:\Set.\ x\in\dom{f}\implies
+                            \apply{f}{x}=\Apply{H}
+                                {x,\restrl{f}{\downward{R}{x}}})}}}$.
+\end{definition}
+
+\begin{definition}\label{unbounded_recursive_solution_op}
+    $\unboundedRecursiveSolutionOp:
+        \Set\to\Set\to
+        (\Set\to\Set\to\Set)\to\Set\to\Prop
+        =\fun{A,R:\Set}{
+                \fun{H:\Set\to\Set\to\Set}{
+                    \fun{f:\Set}{
+                        \Apply{\unboundedRecursivePartialOp}
+                            {A,R,H,f}\land
+                        \dom{f}=A}}}$.
+\end{definition}
+
+\begin{proposition}\label{unbounded_recursive_partial_iff}
+    $\forall A,R:\Set.\ \forall H:\Set\to\Set\to\Set.
+     \forall f:\Set.
+        \Apply{\unboundedRecursivePartialOp}
+            {A,R,H,f}
+        \iff
+        (\Apply{\recursiveSetFunctionOp}{f}\land
+         \Apply{\recursiveInitialSegmentOp}{f,A,R}\land
+         (\forall x:\Set.\ x\in\dom{f}\implies
+            \apply{f}{x}=\Apply{H}
+                {x,\restrl{f}{\downward{R}{x}}}))$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{unbounded_recursive_partial_op}.
+\end{proof}
+
+\begin{proposition}\label{unbounded_recursive_solution_iff}
+    $\forall A,R:\Set.\ \forall H:\Set\to\Set\to\Set.
+     \forall f:\Set.
+        \Apply{\unboundedRecursiveSolutionOp}
+            {A,R,H,f}
+        \iff
+        (\Apply{\unboundedRecursivePartialOp}
+            {A,R,H,f}\land
+         \dom{f}=A)$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{unbounded_recursive_solution_op}.
+\end{proof}
+
+\subsection{Agreement of partials}
+
+\begin{proposition}\label{unbounded_recursive_partial_function}
+    $\forall A,R:\Set.\ \forall H:\Set\to\Set\to\Set.
+     \forall f:\Set.
+        \Apply{\unboundedRecursivePartialOp}
+            {A,R,H,f}
+        \implies \recursiveSetFunction{f}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{unbounded_recursive_partial_iff,recursive_set_function_op}.
+\end{proof}
+
+\begin{proposition}\label{unbounded_recursive_partial_initial}
+    $\forall A,R:\Set.\ \forall H:\Set\to\Set\to\Set.
+     \forall f:\Set.
+        \Apply{\unboundedRecursivePartialOp}
+            {A,R,H,f}
+        \implies
+        \recursiveInitialSegment{f}{A}{R}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{unbounded_recursive_partial_iff,recursive_initial_segment_op}.
+\end{proof}
+
+\begin{proposition}\label{unbounded_recursive_partial_equation}
+    $\forall A,R:\Set.\ \forall H:\Set\to\Set\to\Set.
+     \forall f,x:\Set.
+        (\Apply{\unboundedRecursivePartialOp}
+            {A,R,H,f}\land x\in\dom{f})
+        \implies
+        \apply{f}{x}=\Apply{H}
+            {x,\restrl{f}{\downward{R}{x}}}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{unbounded_recursive_partial_iff}.
+\end{proof}
+
+\begin{proposition}\label{unbounded_recursive_partial_domain_subseteq}
+    $\forall A,R:\Set.\ \forall H:\Set\to\Set\to\Set.
+     \forall f:\Set.
+        \Apply{\unboundedRecursivePartialOp}
+            {A,R,H,f}
+        \implies \dom{f}\subseteq A$.
+\end{proposition}
+\begin{proof}
+    Fix $A,R,H,f$.
+    Assume
+        $\Apply{\unboundedRecursivePartialOp}
+            {A,R,H,f}$.
+    $\recursiveInitialSegment{f}{A}{R}$ by
+        \obv{unbounded_recursive_partial_initial}.
+    Follows by
+        \auto{recursive_initial_segment,initial_segment}.
+\end{proof}
+
+\begin{proposition}\label{recursive_history_predecessor_common}
+    Suppose $\recursiveInitialSegment{f}{A}{R}$ and
+        $\recursiveInitialSegment{g}{A}{R}$.
+    Let $x\in\dom{f}\inter\dom{g}$.
+    Let $y\in A$.
+    Suppose $y\mathrel{R}x$.
+    Then $y\in\dom{f}\inter\dom{g}$.
+\end{proposition}
+\begin{proof}
+    $x\in\dom{f}$ and $x\in\dom{g}$ by \obv{inter}.
+    Hence $y\in\dom{f}$ and $y\in\dom{g}$ by
+        \auto{recursive_initial_segment,initial_segment}.
+    Follows by \obv{inter_intro}.
+\end{proof}
+
+\begin{proposition}\label{recursive_history_agreement}
+    Suppose $R$ is a binary relation on $A$.
+    Suppose $\recursiveSetFunction{f}$ and $\recursiveSetFunction{g}$.
+    Suppose $\recursiveInitialSegment{f}{A}{R}$ and
+        $\recursiveInitialSegment{g}{A}{R}$.
+    Let $x\in\dom{f}\inter\dom{g}$.
+    Suppose for every $y\in A$ such that $y\mathrel{R}x$ we have
+        $f(y)=g(y)$.
+    Then
+        $\restrl{f}{\downward{R}{x}}=
+            \restrl{g}{\downward{R}{x}}$.
+\end{proposition}
+\begin{proof}
+    Show that for every $y\in\downward{R}{x}$ such that
+        $y\in\dom{f}\union\dom{g}$ we have
+        $y\in\dom{f}\inter\dom{g}$ and $f(y)=g(y)$.
+    \begin{subproof}
+        Fix $y$.
+        Assume $y\in\downward{R}{x}$.
+        Assume $y\in\dom{f}\union\dom{g}$.
+        $y\mathrel{R}x$ by \obv{downward_closure_iff}.
+        $y\in A$ by \obv{subseteq,times_tuple_elim}.
+        $y\in\dom{f}\inter\dom{g}$ by
+            \obv{recursive_history_predecessor_common}.
+        $f(y)=g(y)$.
+    \end{subproof}
+    Follows by \obv{restrictions_agree}.
+\end{proof}
+
+\begin{theorem}\label{unbounded_recursive_partials_agree_on_carrier}
+    Suppose $R$ is a binary relation on $A$ and $R$ is well-founded on $A$.
+    Then $\forall f,g:\Set.\ \forall H:\Set\to\Set\to\Set.
+        (\Apply{\unboundedRecursivePartialOp}
+            {A,R,H,f}\land
+         \Apply{\unboundedRecursivePartialOp}
+            {A,R,H,g})
+        \implies
+        (\forall x:\Set.\ x\in A\implies
+            (x\in\dom{f}\inter\dom{g}\implies
+                \apply{f}{x}=\apply{g}{x}))$.
+\end{theorem}
+\begin{proof}
+    Fix $f,g,H$.
+    Assume
+        $\Apply{\unboundedRecursivePartialOp}
+            {A,R,H,f}\land
+         \Apply{\unboundedRecursivePartialOp}
+            {A,R,H,g}$.
+    Show that $\forall x:\Set.\ x\in A\implies
+        (x\in\dom{f}\inter\dom{g}\implies
+            \apply{f}{x}=\apply{g}{x})$.
+    \begin{subproof}
+        $\recursiveSetFunction{f}$ by
+            \obv{unbounded_recursive_partial_function}.
+        $\recursiveSetFunction{g}$ by
+            \obv{unbounded_recursive_partial_function}.
+        $\recursiveInitialSegment{f}{A}{R}$ by
+            \obv{unbounded_recursive_partial_initial}.
+        $\recursiveInitialSegment{g}{A}{R}$ by
+            \obv{unbounded_recursive_partial_initial}.
+        Let $P:\Set\to\Prop=\fun{x:\Set}{
+            x\in\dom{f}\inter\dom{g}\implies
+                \apply{f}{x}=\apply{g}{x}}$.
+        Show that $\forall x:\Set.\ x\in A\implies
+            ((\forall y:\Set.\ (y\in A\land y\mathrel{R}x)
+                \implies\Apply{P}{y})
+            \implies\Apply{P}{x})$.
+        \begin{subproof}
+            Fix $x$.
+            Assume $x\in A$.
+            Assume $\forall y:\Set.\ (y\in A\land y\mathrel{R}x)
+                \implies\Apply{P}{y}$.
+            Show that $x\in\dom{f}\inter\dom{g}\implies
+                \apply{f}{x}=\apply{g}{x}$.
+            \begin{subproof}
+                Assume $x\in\dom{f}\inter\dom{g}$.
+                Show that
+                    $\restrl{f}{\downward{R}{x}}=
+                        \restrl{g}{\downward{R}{x}}$.
+                \begin{subproof}
+                    Show that $\forall y:\Set.
+                        (y\in\downward{R}{x}\land
+                         y\in\dom{f}\union\dom{g})
+                        \implies
+                        (y\in\dom{f}\inter\dom{g}\land
+                         \apply{f}{y}=\apply{g}{y})$.
+                    \begin{subproof}
+                        Fix $y$.
+                        Assume
+                            $y\in\downward{R}{x}\land
+                             y\in\dom{f}\union\dom{g}$.
+                        $y\mathrel{R}x$ by \obv{downward_closure_iff}.
+                        $y\in A$ by \obv{subseteq,times_tuple_elim}.
+                        $y\in\dom{f}\inter\dom{g}$ by
+                            \obv{recursive_history_predecessor_common}.
+                        $\Apply{P}{y}$.
+                    \end{subproof}
+                    Follows by
+                        \obv{restrictions_agree,recursive_set_function}.
+                \end{subproof}
+                $f(x)=\Apply{H}
+                    {x,\restrl{f}{\downward{R}{x}}}$ by
+                    \obv{unbounded_recursive_partial_equation,inter}.
+                $g(x)=\Apply{H}
+                    {x,\restrl{g}{\downward{R}{x}}}$ by
+                    \obv{unbounded_recursive_partial_equation,inter}.
+                \begin{align*}
+                    f(x)
+                        &= \Apply{H}
+                            {x,\restrl{f}{\downward{R}{x}}}
+                        \\
+                        &= \Apply{H}
+                            {x,\restrl{g}{\downward{R}{x}}}
+                        \\
+                        &= g(x)
+                \end{align*}
+            \end{subproof}
+        \end{subproof}
+        Follows by \auto{well_founded_induction}.
+    \end{subproof}
+\end{proof}
+
+\begin{corollary}\label{unbounded_recursive_partials_agree}
+    Suppose $R$ is a binary relation on $A$ and $R$ is well-founded on $A$.
+    Then $\forall f,g:\Set.\ \forall H:\Set\to\Set\to\Set.
+        (\Apply{\unboundedRecursivePartialOp}
+            {A,R,H,f}\land
+         \Apply{\unboundedRecursivePartialOp}
+            {A,R,H,g})
+        \implies
+        (\forall x:\Set.\ x\in\dom{f}\inter\dom{g}\implies
+            \apply{f}{x}=\apply{g}{x})$.
+\end{corollary}
+\begin{proof}
+    Fix $f,g,H$.
+    Assume
+        $\Apply{\unboundedRecursivePartialOp}
+            {A,R,H,f}\land
+         \Apply{\unboundedRecursivePartialOp}
+            {A,R,H,g}$.
+    Fix $x$.
+    Assume $x\in\dom{f}\inter\dom{g}$.
+    $x\in A$ by
+        \auto{inter,unbounded_recursive_partial_domain_subseteq,subseteq}.
+    Follows by \obv{unbounded_recursive_partials_agree_on_carrier}.
+\end{proof}
+
+\subsection{The canonical covered-point graph}
+
+\begin{definition}\label{unbounded_recursive_covered_op}
+    $\unboundedRecursiveCoveredOp:
+        \Set\to\Set\to(\Set\to\Set\to\Set)\to\Set
+        =\fun{A,R:\Set}{
+                \fun{H:\Set\to\Set\to\Set}{
+                    \{x\in A\mid
+                        \exists f:\Set.
+                            \Apply{\unboundedRecursivePartialOp}
+                                {A,R,H,f}\land
+                            x\in\dom{f}\}}}$.
+\end{definition}
+
+\begin{proposition}\label{unbounded_recursive_covered_iff}
+    $\forall A,R:\Set.\ \forall H:\Set\to\Set\to\Set.
+     \forall x:\Set.
+        x\in\Apply{\unboundedRecursiveCoveredOp}
+            {A,R,H}
+        \iff
+        (x\in A\land
+         (\exists f:\Set.
+            \Apply{\unboundedRecursivePartialOp}
+                {A,R,H,f}\land
+            x\in\dom{f}))$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{unbounded_recursive_covered_op}.
+\end{proof}
+
+\begin{definition}\label{unbounded_recursive_value_candidate_op}
+    $\unboundedRecursiveValueCandidateOp:
+        \Set\to\Set\to(\Set\to\Set\to\Set)\to
+        \Set\to\Prop
+        =\fun{A,R:\Set}{
+                \fun{H:\Set\to\Set\to\Set}{
+                    \fun{p:\Set}{
+                        \exists f:\Set.
+                            \Apply{\unboundedRecursivePartialOp}
+                                {A,R,H,f}\land
+                            \fst{p}\in\dom{f}\land
+                            \snd{p}=\apply{f}{\fst{p}}}}}$.
+\end{definition}
+
+\begin{definition}\label{unbounded_recursive_value_op}
+    $\unboundedRecursiveValueOp:
+        \Set\to\Set\to(\Set\to\Set\to\Set)\to\Set\to\Set
+        =\fun{A,R:\Set}{
+                \fun{H:\Set\to\Set\to\Set}{
+                    \fun{x:\Set}{
+                        \Select[\Set]{
+                            \fun{y:\Set}{
+                                \Apply{\unboundedRecursiveValueCandidateOp}
+                                    {A,R,H,(x,y)}}}}}}$.
+\end{definition}
+
+\begin{proposition}\label{unbounded_recursive_covered_has_value_candidate}
+    $\forall A,R:\Set.\ \forall H:\Set\to\Set\to\Set.
+     \forall x:\Set.
+        x\in\Apply{\unboundedRecursiveCoveredOp}
+            {A,R,H}
+        \implies
+        (\exists y:\Set.
+            \Apply{\unboundedRecursiveValueCandidateOp}
+                {A,R,H,(x,y)})$.
+\end{proposition}
+\begin{proof}
+    Fix $A,R$, $H$, and $x$.
+    Assume
+        $x\in\Apply{\unboundedRecursiveCoveredOp}
+            {A,R,H}$.
+    Take $f$ such that
+        $\Apply{\unboundedRecursivePartialOp}
+            {A,R,H,f}\land x\in\dom{f}$ by
+        \auto{unbounded_recursive_covered_op}.
+    Let $y=\apply{f}{x}$.
+    $\Apply{\unboundedRecursiveValueCandidateOp}
+        {A,R,H,(x,y)}$ by
+        \auto{unbounded_recursive_value_candidate_op,fst_eq,snd_eq}.
+\end{proof}
+
+\begin{proposition}\label{unbounded_recursive_selected_value_candidate}
+    $\forall A,R:\Set.\ \forall H:\Set\to\Set\to\Set.
+     \forall x:\Set.
+        (\exists y:\Set.
+            \Apply{\unboundedRecursiveValueCandidateOp}
+                {A,R,H,(x,y)})
+        \implies
+        \Apply{\unboundedRecursiveValueCandidateOp}
+            {A,R,H,(x,
+                \Apply{\unboundedRecursiveValueOp}
+                    {A,R,H,x})}$.
+\end{proposition}
+\begin{proof}
+    Fix $A,R,H,x$.
+    Assume $\exists y:\Set.
+        \Apply{\unboundedRecursiveValueCandidateOp}
+            {A,R,H,(x,y)}$.
+    Follows by \auto{unbounded_recursive_value_op}.
+\end{proof}
+
+\begin{theorem}\label{unbounded_recursive_value_candidate_unique}
+    Suppose $R$ is a binary relation on $A$ and $R$ is well-founded on $A$.
+    Then $\forall H:\Set\to\Set\to\Set.\ \forall x,y,z:\Set.
+        (\Apply{\unboundedRecursiveValueCandidateOp}
+            {A,R,H,(x,y)}\land
+         \Apply{\unboundedRecursiveValueCandidateOp}
+            {A,R,H,(x,z)})
+        \implies y=z$.
+\end{theorem}
+\begin{proof}
+    Fix $H$ and $x,y,z$.
+    Assume
+        $\Apply{\unboundedRecursiveValueCandidateOp}
+            {A,R,H,(x,y)}\land
+         \Apply{\unboundedRecursiveValueCandidateOp}
+            {A,R,H,(x,z)}$.
+    Take $f$ such that
+        $\Apply{\unboundedRecursivePartialOp}
+            {A,R,H,f}\land x\in\dom{f}\land y=\apply{f}{x}$ by
+        \auto{unbounded_recursive_value_candidate_op,fst_eq,snd_eq}.
+    Take $g$ such that
+        $\Apply{\unboundedRecursivePartialOp}
+            {A,R,H,g}\land x\in\dom{g}\land z=\apply{g}{x}$ by
+        \auto{unbounded_recursive_value_candidate_op,fst_eq,snd_eq}.
+    $\Apply{\unboundedRecursivePartialOp}
+        {A,R,H,f}$.
+    $\Apply{\unboundedRecursivePartialOp}
+        {A,R,H,g}$.
+    $x\in\dom{f}$.
+    $x\in\dom{g}$.
+    $y=\apply{f}{x}$.
+    $z=\apply{g}{x}$.
+    $x\in A$ by
+        \auto{unbounded_recursive_partial_domain_subseteq,subseteq}.
+    $x\in\dom{f}\inter\dom{g}$ by \obv{inter_intro}.
+    Hence $\apply{f}{x}=\apply{g}{x}$ by
+        \obv{unbounded_recursive_partials_agree_on_carrier}.
+\end{proof}
+
+\begin{corollary}\label{unbounded_recursive_selected_value_unique}
+    Suppose $R$ is a binary relation on $A$ and $R$ is well-founded on $A$.
+    Then $\forall H:\Set\to\Set\to\Set.\ \forall x,y:\Set.
+        (x\in\Apply{\unboundedRecursiveCoveredOp}
+            {A,R,H}\land
+         \Apply{\unboundedRecursiveValueCandidateOp}
+            {A,R,H,(x,y)})
+        \implies
+        \Apply{\unboundedRecursiveValueOp}
+            {A,R,H,x}=y$.
+\end{corollary}
+\begin{proof}
+    Fix $H$ and $x,y$.
+    Assume
+        $x\in\Apply{\unboundedRecursiveCoveredOp}
+            {A,R,H}\land
+         \Apply{\unboundedRecursiveValueCandidateOp}
+            {A,R,H,(x,y)}$.
+    $\exists z:\Set.
+        \Apply{\unboundedRecursiveValueCandidateOp}
+            {A,R,H,(x,z)}$ by
+        \obv{unbounded_recursive_covered_has_value_candidate}.
+    $\Apply{\unboundedRecursiveValueCandidateOp}
+        {A,R,H,(x,
+            \Apply{\unboundedRecursiveValueOp}
+                {A,R,H,x})}$ by
+        \obv{unbounded_recursive_selected_value_candidate}.
+    Follows by \obv{unbounded_recursive_value_candidate_unique}.
+\end{proof}
+
+\begin{definition}\label{unbounded_recursive_glue_op}
+    $\unboundedRecursiveGlueOp:
+        \Set\to\Set\to(\Set\to\Set\to\Set)\to\Set
+        =\fun{A,R:\Set}{
+                \fun{H:\Set\to\Set\to\Set}{
+                    \Apply{\graphOnDomainOp}
+                        {A,\fun{x:\Set}{
+                            \Apply{\unboundedRecursiveValueOp}
+                                {A,R,H,x}}}}}$.
+\end{definition}
+
+\begin{proposition}\label{unbounded_recursive_glue_domain}
+    $\forall A,R:\Set.\ \forall H:\Set\to\Set\to\Set.
+        \dom{\Apply{\unboundedRecursiveGlueOp}{A,R,H}}
+        =A$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{unbounded_recursive_glue_op,logical_graph_on_domain_dom}.
+\end{proof}
+
+\begin{definition}\label{unbounded_recursive_covered_graph_op}
+    $\unboundedRecursiveCoveredGraphOp:
+        \Set\to\Set\to(\Set\to\Set\to\Set)\to\Set
+        =\fun{A,R:\Set}{
+                \fun{H:\Set\to\Set\to\Set}{
+                    \restrl{
+                        \Apply{\unboundedRecursiveGlueOp}
+                            {A,R,H}}
+                        {\Apply{\unboundedRecursiveCoveredOp}
+                            {A,R,H}}}}$.
+\end{definition}
+
+\subsection{Extension without a codomain bound}
+
+\begin{proposition}\label{extend_set_function_at_new_point}
+    Let $f$ be a function.
+    Suppose $x\notin\dom{f}$.
+    Then $\cons{(x,b)}{f}$ is a function and
+        $\dom{\cons{(x,b)}{f}}=\cons{x}{\dom{f}}$.
+\end{proposition}
+\begin{proof}
+    Let $B=\cons{b}{\ran{f}}$.
+    Show that $f$ is a function to $B$.
+    \begin{subproof}
+        For every $u\in\dom{f}$ we have $f(u)\in\ran{f}$
+            by \auto{fun_ran_iff}.
+        Hence for every $u\in\dom{f}$ we have $f(u)\in B$
+            by \auto{cons_iff}.
+    \end{subproof}
+    Hence $f\in\funs{\dom{f}}{B}$ by \obv{funs_intro}.
+    $b\in B$ by \auto{cons_iff}.
+    Hence $\cons{(x,b)}{f}\in\funs{\cons{x}{\dom{f}}}{B}$
+        by \obv{extend_function_at_new_point}.
+    Follows by \obv{funs_is_function,funs}.
+\end{proof}
+
+\begin{proposition}\label{extend_set_function_at_new_point_new_value}
+    Let $f$ be a function.
+    Suppose $x\notin\dom{f}$.
+    Then $\apply{\cons{(x,b)}{f}}{x}=b$.
+\end{proposition}
+\begin{proof}
+    $\cons{(x,b)}{f}$ is a function by
+        \auto{extend_set_function_at_new_point}.
+    $(x,b)\in\cons{(x,b)}{f}$ by \auto{cons_iff}.
+    Follows by \obv{function_apply_intro}.
+\end{proof}
+
+\begin{proposition}\label{extend_set_function_at_new_point_old_value}
+    Let $f$ be a function.
+    Suppose $x\notin\dom{f}$.
+    Let $y\in\dom{f}$.
+    Then $\apply{\cons{(x,b)}{f}}{y}=f(y)$.
+\end{proposition}
+\begin{proof}
+    $\cons{(x,b)}{f}$ is a function by
+        \auto{extend_set_function_at_new_point}.
+    $(y,f(y))\in f$ by \obv{function_apply_elim}.
+    Hence $(y,f(y))\in\cons{(x,b)}{f}$ by \auto{cons_iff}.
+    Follows by \obv{function_apply_intro}.
+\end{proof}
+
+\begin{proposition}\label{extend_set_function_at_new_point_restriction_at}
+    Let $f$ be a function.
+    Suppose $x\notin\dom{f}$.
+    Suppose $D=\dom{f}$.
+    Then $\restrl{\cons{(x,b)}{f}}{D}=f$.
+\end{proposition}
+\begin{proof}
+    Let $g=\cons{(x,b)}{f}$.
+    $g$ is a function by
+        \auto{extend_set_function_at_new_point}.
+    Show that every element of $\restrl{g}{D}$ is an element of $f$.
+    \begin{subproof}
+        Fix $w\in\restrl{g}{D}$.
+        Hence $w\in g$ by \obv{restrl_subseteq,subseteq}.
+        Take $y\in\dom{g}$ such that $w=(y,g(y))$ by
+            \obv{function_member_elim}.
+        $y\in D$ by \auto{restrl_iff,pair_eq_iff}.
+        Hence $y\in\dom{f}$.
+        $w=(x,b)$ or $w\in f$ by \obv{cons_iff}.
+        If $w=(x,b)$, then $y=x$ by \auto{pair_eq_iff}.
+        Hence $w\in f$.
+    \end{subproof}
+    Show that every element of $f$ is an element of
+        $\restrl{g}{D}$.
+    \begin{subproof}
+        Fix $w\in f$.
+        Take $y\in\dom{f}$ such that $w=(y,f(y))$ by
+            \obv{function_member_elim}.
+        Hence $y\in D$.
+        $w\in g$ by \auto{cons_iff}.
+        Follows by \auto{restrl_iff,pair_eq_iff}.
+    \end{subproof}
+    Follows by \obv{setext}.
+\end{proof}
+
+\begin{corollary}\label{extend_set_function_at_new_point_restriction}
+    Let $f$ be a function.
+    Suppose $x\notin\dom{f}$.
+    Then $\restrl{\cons{(x,b)}{f}}{\dom{f}}=f$.
+\end{corollary}
+\begin{proof}
+    Follows by
+        \obv{extend_set_function_at_new_point_restriction_at}.
+\end{proof}
+
+\begin{lemma}\label{unbounded_recursive_extension_restriction}
+    Suppose $R$ is a binary relation on $A$.
+    Suppose $\recursiveSetFunction{f}$ and
+        $\recursiveInitialSegment{f}{A}{R}$.
+    Let $x\in A\setminus\dom{f}$.
+    Suppose for every $y\in A$ such that $y\mathrel{R}x$ we have
+        $y\in\dom{f}$.
+    Let $g=\cons{(x,b)}{f}$.
+    Let $z\in\dom{g}$.
+    Then
+        $\restrl{g}{\downward{R}{z}}
+            =\restrl{f}{\downward{R}{z}}$.
+\end{lemma}
+\begin{proof}
+    $f$ is a function by \obv{recursive_set_function}.
+    $x\notin\dom{f}$ by \obv{setminus}.
+    $g$ is a function by \auto{extend_set_function_at_new_point}.
+    $\dom{g}=\cons{x}{\dom{f}}$ by
+        \auto{extend_set_function_at_new_point}.
+    $f\subseteq g$ by \auto{subseteq,cons_iff}.
+    Show that for every $y\in\downward{R}{z}$ such that
+        $y\in\dom{g}\union\dom{f}$ we have
+        $y\in\dom{g}\inter\dom{f}$ and $g(y)=f(y)$.
+    \begin{subproof}
+        Fix $y$.
+        Assume $y\in\downward{R}{z}$.
+        Assume $y\in\dom{g}\union\dom{f}$.
+        $y\mathrel{R}z$ by \obv{downward_closure_iff}.
+        $y\in A$ by \obv{subseteq,times_tuple_elim}.
+        $z=x$ or $z\in\dom{f}$ by \auto{cons_iff}.
+        Hence $y\in\dom{f}$ by
+            \auto{recursive_initial_segment,initial_segment}.
+        Thus $y\in\dom{g}$ by \auto{subseteq,dom_iff}.
+        Hence $y\in\dom{g}\inter\dom{f}$ by \obv{inter_intro}.
+        Follows by \obv{subfunction_apply}.
+    \end{subproof}
+    Follows by \obv{restrictions_agree}.
+\end{proof}
+
+\begin{proposition}\label{recursive_initial_segment_extension}
+    Suppose $R$ is a binary relation on $A$.
+    Let $f$ be a function.
+    Suppose $\dom{f}$ is an initial segment of $A$ with respect to $R$.
+    Let $x\in A\setminus\dom{f}$.
+    Suppose for every $y\in A$ such that $y\mathrel{R}x$ we have
+        $y\in\dom{f}$.
+    Let $g=\cons{(x,b)}{f}$.
+    Then $\dom{g}$ is an initial segment of $A$ with respect to $R$.
+\end{proposition}
+\begin{proof}
+    $x\notin\dom{f}$ by \obv{setminus}.
+    $\dom{g}=\cons{x}{\dom{f}}$ by
+        \auto{extend_set_function_at_new_point}.
+    $\dom{g}\subseteq A$ by
+        \auto{cons_iff,setminus,initial_segment,subseteq}.
+    Show that for all $z,y$ such that $z\in\dom{g}$ and $y\in A$
+        and $y\mathrel{R}z$ we have $y\in\dom{g}$.
+    \begin{subproof}
+        Fix $z,y$.
+        Assume $z\in\dom{g}$ and $y\in A$ and $y\mathrel{R}z$.
+        $z=x$ or $z\in\dom{f}$ by \auto{cons_iff}.
+        Hence $y\in\dom{f}$ by \auto{initial_segment}.
+        Follows by \auto{cons_iff}.
+    \end{subproof}
+    Follows by \obv{initial_segment}.
+\end{proof}
+
+\begin{proposition}\label{extend_unbounded_recursive_partial}
+    Suppose $R$ is a binary relation on $A$.
+    Then $\forall H:\Set\to\Set\to\Set.\ \forall f,x,g:\Set.
+        (\Apply{\unboundedRecursivePartialOp}
+            {A,R,H,f}\land
+         x\in A\setminus\dom{f}\land
+         (\forall y:\Set.\ (y\in A\land y\mathrel{R}x)
+            \implies y\in\dom{f})\land
+         g=\cons{
+            (x,\Apply{H}{x,
+                \restrl{f}{\downward{R}{x}}})}
+            {f})
+        \implies
+        \Apply{\unboundedRecursivePartialOp}
+            {A,R,H,g}$.
+\end{proposition}
+\begin{proof}
+    Fix $H$ and $f,x,g$.
+    Assume
+        $\Apply{\unboundedRecursivePartialOp}
+            {A,R,H,f}\land
+         x\in A\setminus\dom{f}\land
+         (\forall y:\Set.\ (y\in A\land y\mathrel{R}x)
+            \implies y\in\dom{f})\land
+         g=\cons{
+            (x,\Apply{H}{x,
+                \restrl{f}{\downward{R}{x}}})}
+            {f}$.
+    $\recursiveSetFunction{f}$ by
+        \obv{unbounded_recursive_partial_function}.
+    $\recursiveInitialSegment{f}{A}{R}$ by
+        \obv{unbounded_recursive_partial_initial}.
+    $x\in A\setminus\dom{f}$.
+    $\forall y:\Set.\ (y\in A\land y\mathrel{R}x)
+        \implies y\in\dom{f}$.
+    Let $b=\Apply{H}{x,
+        \restrl{f}{\downward{R}{x}}}$.
+    $g=\cons{(x,b)}{f}$.
+    $f$ is a function by \obv{recursive_set_function}.
+    $\dom{f}$ is an initial segment of $A$ with respect to $R$ by
+        \obv{recursive_initial_segment}.
+    $x\notin\dom{f}$ by \obv{setminus}.
+    $g$ is a function by \auto{extend_set_function_at_new_point}.
+    $\dom{g}=\cons{x}{\dom{f}}$ by
+        \auto{extend_set_function_at_new_point}.
+    $\dom{g}$ is an initial segment of $A$ with respect to $R$ by
+        \obv{recursive_initial_segment_extension}.
+    $\recursiveSetFunction{g}$ by \obv{recursive_set_function}.
+    $\recursiveInitialSegment{g}{A}{R}$ by
+        \obv{recursive_initial_segment}.
+    Show that for every $z\in\dom{g}$ we have
+        $g(z)=\Apply{H}
+            {z,\restrl{g}{\downward{R}{z}}}$.
+    \begin{subproof}
+        Fix $z\in\dom{g}$.
+        $z=x$ or $z\in\dom{f}$ by \auto{cons_iff}.
+        $\restrl{g}{\downward{R}{z}}
+            =\restrl{f}{\downward{R}{z}}$ by
+            \obv{unbounded_recursive_extension_restriction}.
+        $f\subseteq g$ by \auto{subseteq,cons_iff}.
+        $(x,\Apply{H}{x,
+            \restrl{f}{\downward{R}{x}}})\in g$
+            by \obv{cons_left}.
+        Follows by \auto{function_apply_intro,subfunction_apply,unbounded_recursive_partial_equation}.
+    \end{subproof}
+    Follows by \obv{unbounded_recursive_partial_op,recursive_set_function_op,recursive_initial_segment_op}.
+\end{proof}
+
+\subsection{The canonical recursive partial}
+
+\begin{proposition}\label{unbounded_recursive_covered_subseteq}
+    $\forall A,R:\Set.\ \forall H:\Set\to\Set\to\Set.
+        \Apply{\unboundedRecursiveCoveredOp}
+            {A,R,H}
+        \subseteq A$.
+\end{proposition}
+\begin{proof}
+    Fix $A,R,H$.
+    Show that for every
+        $x\in\Apply{\unboundedRecursiveCoveredOp}
+            {A,R,H}$
+        we have $x\in A$.
+    \begin{subproof}
+        Fix
+            $x\in\Apply{\unboundedRecursiveCoveredOp}
+                {A,R,H}$.
+        Follows by \auto{unbounded_recursive_covered_iff}.
+    \end{subproof}
+    Follows by \obv{subseteq}.
+\end{proof}
+
+\begin{proposition}\label{unbounded_recursive_glue_function}
+    $\forall A,R:\Set.\ \forall H:\Set\to\Set\to\Set.
+        \recursiveSetFunction{
+            \Apply{\unboundedRecursiveGlueOp}
+                {A,R,H}}$.
+\end{proposition}
+\begin{proof}
+    Fix $A,R,H$.
+    Let $F=\Apply{\unboundedRecursiveGlueOp}
+        {A,R,H}$.
+    $F\in\funs{A}{\ran{F}}$ by
+        \auto{unbounded_recursive_glue_op,logical_graph_on_domain_function}.
+    Hence $F$ is a function by \obv{funs_is_function}.
+    Follows by \obv{recursive_set_function}.
+\end{proof}
+
+\begin{proposition}\label{unbounded_recursive_covered_graph_function}
+    $\forall A,R:\Set.\ \forall H:\Set\to\Set\to\Set.
+        \recursiveSetFunction{
+            \Apply{\unboundedRecursiveCoveredGraphOp}
+                {A,R,H}}$.
+\end{proposition}
+\begin{proof}
+    Fix $A,R,H$.
+    Let $F=\Apply{\unboundedRecursiveGlueOp}
+        {A,R,H}$.
+    Let $C=\Apply{\unboundedRecursiveCoveredOp}
+        {A,R,H}$.
+    Let $g=\Apply{\unboundedRecursiveCoveredGraphOp}
+        {A,R,H}$.
+    $\recursiveSetFunction{F}$ by
+        \obv{unbounded_recursive_glue_function}.
+    Hence $F$ is a function by \obv{recursive_set_function}.
+    $g=\restrl{F}{C}$ by
+        \auto{unbounded_recursive_covered_graph_op}.
+    Hence $g$ is a function by \auto{restrl_of_function_is_function}.
+    Follows by \obv{recursive_set_function}.
+\end{proof}
+
+\begin{proposition}\label{unbounded_recursive_covered_graph_domain}
+    $\forall A,R:\Set.\ \forall H:\Set\to\Set\to\Set.
+        \dom{
+            \Apply{\unboundedRecursiveCoveredGraphOp}
+                {A,R,H}}
+        =\Apply{\unboundedRecursiveCoveredOp}
+            {A,R,H}$.
+\end{proposition}
+\begin{proof}
+    Fix $A,R,H$.
+    Let $F=\Apply{\unboundedRecursiveGlueOp}
+        {A,R,H}$.
+    Let $C=\Apply{\unboundedRecursiveCoveredOp}
+        {A,R,H}$.
+    Let $g=\Apply{\unboundedRecursiveCoveredGraphOp}
+        {A,R,H}$.
+    $F$ is a function by
+        \auto{unbounded_recursive_glue_function,recursive_set_function}.
+    $\dom{F}=A$ by \auto{unbounded_recursive_glue_domain}.
+    $C\subseteq A$ by \auto{unbounded_recursive_covered_subseteq}.
+    $g=\restrl{F}{C}$ by
+        \auto{unbounded_recursive_covered_graph_op}.
+    $\dom{g}=\dom{F}\inter C$ by
+        \auto{dom_of_restrl_eq_inter}.
+    $A\inter C=C$ by \obv{inter_absorb_supseteq_left}.
+    \begin{align*}
+        \dom{\Apply{\unboundedRecursiveCoveredGraphOp}{A,R,H}}
+            &= \dom{g}
+            \\
+            &= \dom{F}\inter C
+            \\
+            &= A\inter C
+            \\
+            &= C
+            \\
+            &= \Apply{\unboundedRecursiveCoveredOp}{A,R,H}
+    \end{align*}
+\end{proof}
+
+\begin{proposition}\label{unbounded_recursive_covered_graph_initial}
+    Suppose $R$ is a binary relation on $A$.
+    Then $\forall H:\Set\to\Set\to\Set.
+        \recursiveInitialSegment{
+            \Apply{\unboundedRecursiveCoveredGraphOp}
+                {A,R,H}}
+            {A}{R}$.
+\end{proposition}
+\begin{proof}
+    Fix $H$.
+    Let $C=\Apply{\unboundedRecursiveCoveredOp}
+        {A,R,H}$.
+    Let $g=\Apply{\unboundedRecursiveCoveredGraphOp}
+        {A,R,H}$.
+    $C\subseteq A$ by \auto{unbounded_recursive_covered_subseteq}.
+    Show that for all $z,y$ such that $z\in C$ and $y\in A$ and
+        $y\mathrel{R}z$ we have $y\in C$.
+    \begin{subproof}
+        Fix $z,y$.
+        Assume $z\in C$ and $y\in A$ and $y\mathrel{R}z$.
+        Take $f$ such that
+            $\Apply{\unboundedRecursivePartialOp}
+            {A,R,H,f}\land z\in\dom{f}$ by
+            \auto{unbounded_recursive_covered_iff}.
+        $z\in\dom{f}$.
+        $\recursiveInitialSegment{f}{A}{R}$ by
+            \obv{unbounded_recursive_partial_initial}.
+        Hence $y\in\dom{f}$ by
+            \auto{recursive_initial_segment,initial_segment}.
+        Follows by \auto{unbounded_recursive_covered_iff}.
+    \end{subproof}
+    Hence $C$ is an initial segment of $A$ with respect to $R$ by
+        \obv{initial_segment}.
+    $\dom{g}=C$ by
+        \auto{unbounded_recursive_covered_graph_domain}.
+    Follows by \obv{recursive_initial_segment}.
+\end{proof}
+
+\begin{theorem}\label{unbounded_recursive_covered_graph_agrees}
+    Suppose $R$ is a binary relation on $A$ and $R$ is well-founded on $A$.
+    Then $\forall H:\Set\to\Set\to\Set.\ \forall f,x:\Set.
+        (\Apply{\unboundedRecursivePartialOp}
+            {A,R,H,f}\land x\in\dom{f})
+        \implies
+        \apply{
+            \Apply{\unboundedRecursiveCoveredGraphOp}
+                {A,R,H}}
+            {x}
+        =\apply{f}{x}$.
+\end{theorem}
+\begin{proof}
+    Fix $H$ and $f,x$.
+    Assume
+        $\Apply{\unboundedRecursivePartialOp}
+            {A,R,H,f}\land x\in\dom{f}$.
+    Let $C=\Apply{\unboundedRecursiveCoveredOp}
+        {A,R,H}$.
+    Let $F=\Apply{\unboundedRecursiveGlueOp}
+        {A,R,H}$.
+    Let $g=\Apply{\unboundedRecursiveCoveredGraphOp}
+        {A,R,H}$.
+    Let $v=\Apply{\unboundedRecursiveValueOp}
+        {A,R,H,x}$.
+    $\Apply{\unboundedRecursivePartialOp}
+        {A,R,H,f}$.
+    $x\in\dom{f}$.
+    $x\in A$ by
+        \auto{unbounded_recursive_partial_domain_subseteq,subseteq}.
+    $x\in C$ by \auto{unbounded_recursive_covered_iff}.
+    $\Apply{\unboundedRecursiveValueCandidateOp}
+        {A,R,H,(x,\apply{f}{x})}$ by
+        \auto{unbounded_recursive_value_candidate_op,fst_eq,snd_eq}.
+    Hence $v=\apply{f}{x}$ by
+        \obv{unbounded_recursive_selected_value_unique}.
+    $F$ is a function by
+        \auto{unbounded_recursive_glue_function,recursive_set_function}.
+    $\dom{F}=A$ by \auto{unbounded_recursive_glue_domain}.
+    $C\subseteq A$ by \auto{unbounded_recursive_covered_subseteq}.
+    $g=\restrl{F}{C}$ by
+        \auto{unbounded_recursive_covered_graph_op}.
+    Hence $g(x)=F(x)$ by \auto{restrl_of_function_apply}.
+    $F(x)=v$ by
+        \auto{unbounded_recursive_glue_op,logical_graph_on_domain_apply}.
+\end{proof}
+
+\begin{theorem}\label{unbounded_recursive_covered_graph_equation}
+    Suppose $R$ is a binary relation on $A$ and $R$ is well-founded on $A$.
+    Then $\forall H:\Set\to\Set\to\Set.\ \forall x:\Set.
+        x\in\Apply{\unboundedRecursiveCoveredOp}
+            {A,R,H}
+        \implies
+        \apply{
+            \Apply{\unboundedRecursiveCoveredGraphOp}
+                {A,R,H}}
+            {x}
+        =\Apply{H}{x,
+            \restrl{
+                \Apply{\unboundedRecursiveCoveredGraphOp}
+                    {A,R,H}}
+                {\downward{R}{x}}}$.
+\end{theorem}
+\begin{proof}
+    Fix $H$ and $x$.
+    Assume
+        $x\in\Apply{\unboundedRecursiveCoveredOp}
+            {A,R,H}$.
+    Let $C=\Apply{\unboundedRecursiveCoveredOp}
+        {A,R,H}$.
+    Let $g=\Apply{\unboundedRecursiveCoveredGraphOp}
+        {A,R,H}$.
+    Take $f$ such that
+        $\Apply{\unboundedRecursivePartialOp}
+            {A,R,H,f}\land x\in\dom{f}$ by
+        \auto{unbounded_recursive_covered_iff}.
+    $\Apply{\unboundedRecursivePartialOp}
+        {A,R,H,f}$.
+    $x\in\dom{f}$.
+    $\recursiveSetFunction{f}$ by
+        \obv{unbounded_recursive_partial_function}.
+    $\recursiveInitialSegment{f}{A}{R}$ by
+        \obv{unbounded_recursive_partial_initial}.
+    $\recursiveSetFunction{g}$ by
+        \obv{unbounded_recursive_covered_graph_function}.
+    $\recursiveInitialSegment{g}{A}{R}$ by
+        \auto{unbounded_recursive_covered_graph_initial}.
+    $\dom{g}=C$ by
+        \auto{unbounded_recursive_covered_graph_domain}.
+    Hence $x\in\dom{g}$.
+    Show that for every $y\in A$ such that $y\mathrel{R}x$ we have
+        $f(y)=g(y)$.
+    \begin{subproof}
+        Fix $y$.
+        Assume $y\in A$ and $y\mathrel{R}x$.
+        $y\in\dom{f}$ by
+            \auto{recursive_initial_segment,initial_segment}.
+        Hence $g(y)=f(y)$ by
+            \auto{unbounded_recursive_covered_graph_agrees}.
+    \end{subproof}
+    $x\in\dom{f}\inter\dom{g}$ by \obv{inter_intro}.
+    Hence
+        $\restrl{f}{\downward{R}{x}}
+            =\restrl{g}{\downward{R}{x}}$ by
+        \obv{recursive_history_agreement}.
+    $g(x)=f(x)$ by
+        \auto{unbounded_recursive_covered_graph_agrees}.
+    $f(x)=\Apply{H}{x,
+        \restrl{f}{\downward{R}{x}}}$ by
+        \obv{unbounded_recursive_partial_equation}.
+\end{proof}
+
+\begin{theorem}\label{unbounded_recursive_covered_graph_partial}
+    Suppose $R$ is a binary relation on $A$ and $R$ is well-founded on $A$.
+    Then $\forall H:\Set\to\Set\to\Set.
+        \Apply{\unboundedRecursivePartialOp}
+            {A,R,H,\Apply{\unboundedRecursiveCoveredGraphOp}
+                {A,R,H}}$.
+\end{theorem}
+\begin{proof}
+    Fix $H$.
+    Let $C=\Apply{\unboundedRecursiveCoveredOp}
+        {A,R,H}$.
+    Let $g=\Apply{\unboundedRecursiveCoveredGraphOp}
+        {A,R,H}$.
+    $\recursiveSetFunction{g}$ by
+        \obv{unbounded_recursive_covered_graph_function}.
+    $\recursiveInitialSegment{g}{A}{R}$ by
+        \auto{unbounded_recursive_covered_graph_initial}.
+    $\dom{g}=C$ by
+        \auto{unbounded_recursive_covered_graph_domain}.
+    Show that for every $x\in\dom{g}$ we have
+        $g(x)=\Apply{H}{x,
+            \restrl{g}{\downward{R}{x}}}$.
+    \begin{subproof}
+        Fix $x\in\dom{g}$.
+        $x\in C$.
+        Follows by
+            \auto{unbounded_recursive_covered_graph_equation}.
+    \end{subproof}
+    Follows by \auto{unbounded_recursive_partial_op,recursive_set_function_op,recursive_initial_segment_op}.
+\end{proof}
+
+\begin{theorem}\label{unbounded_recursive_covered_progressive}
+    Suppose $R$ is a binary relation on $A$ and $R$ is well-founded on $A$.
+    Then $\forall H:\Set\to\Set\to\Set.
+        \forall x:\Set.\ x\in A\implies
+            ((\forall y:\Set.\ (y\in A\land y\mathrel{R}x)
+                \implies
+                y\in\Apply{\unboundedRecursiveCoveredOp}
+                    {A,R,H})
+            \implies
+            x\in\Apply{\unboundedRecursiveCoveredOp}
+                {A,R,H})$.
+\end{theorem}
+\begin{proof}
+    Fix $H$.
+    Let $C=\Apply{\unboundedRecursiveCoveredOp}
+        {A,R,H}$.
+    Let $g=\Apply{\unboundedRecursiveCoveredGraphOp}
+        {A,R,H}$.
+    Show that for every $x\in A$ we have
+        if for every $y\in A$ such that $y\mathrel{R}x$ we have $y\in C$,
+        then $x\in C$.
+    \begin{subproof}
+        Fix $x\in A$.
+        Suppose for every $y\in A$ such that $y\mathrel{R}x$ we have
+            $y\in C$.
+        Suppose not.
+        $\Apply{\unboundedRecursivePartialOp}
+            {A,R,H,g}$ by
+            \obv{unbounded_recursive_covered_graph_partial}.
+        $\dom{g}=C$ by
+            \auto{unbounded_recursive_covered_graph_domain}.
+        $x\in A\setminus\dom{g}$ by \obv{setminus}.
+        $\forall y:\Set.\ (y\in A\land y\mathrel{R}x)
+            \implies y\in\dom{g}$.
+        Let $b=\Apply{H}{x,
+            \restrl{g}{\downward{R}{x}}}$.
+        Let $q=\cons{(x,b)}{g}$.
+        $q=\cons{
+            (x,\Apply{H}{x,
+                \restrl{g}{\downward{R}{x}}})}
+            {g}$.
+        $\Apply{\unboundedRecursivePartialOp}
+            {A,R,H,q}$ by
+            \obv{extend_unbounded_recursive_partial}.
+        $\recursiveSetFunction{q}$ by
+            \obv{unbounded_recursive_partial_function}.
+        $(x,b)\in q$ by \obv{cons_left}.
+        Hence $x\in\dom{q}$ by \obv{dom_intro}.
+        Thus $x\in C$ by \auto{unbounded_recursive_covered_iff}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{unbounded_recursive_covered_eq_carrier}
+    Suppose $R$ is a binary relation on $A$ and $R$ is well-founded on $A$.
+    Then $\forall H:\Set\to\Set\to\Set.
+        \Apply{\unboundedRecursiveCoveredOp}
+            {A,R,H}
+        =A$.
+\end{theorem}
+\begin{proof}
+    Fix $H$.
+    Let $C=\Apply{\unboundedRecursiveCoveredOp}
+        {A,R,H}$.
+    $C\subseteq A$ by \auto{unbounded_recursive_covered_subseteq}.
+    $C$ is progressive for $R$ on $A$ by
+        \auto{progressive_on,unbounded_recursive_covered_progressive}.
+    Hence $A\subseteq C$ by \obv{well_founded_induction_set}.
+    Follows by \obv{subseteq_antisymmetric}.
+\end{proof}
+
+\begin{theorem}\label{unbounded_well_founded_recursion_exists}
+    Suppose $R$ is a binary relation on $A$ and $R$ is well-founded on $A$.
+    Then $\forall H:\Set\to\Set\to\Set.
+        \exists f:\Set.
+            \Apply{\unboundedRecursiveSolutionOp}
+                {A,R,H,f}$.
+\end{theorem}
+\begin{proof}
+    Fix $H$.
+    Let $g=\Apply{\unboundedRecursiveCoveredGraphOp}
+        {A,R,H}$.
+    $\Apply{\unboundedRecursivePartialOp}
+        {A,R,H,g}$ by
+        \obv{unbounded_recursive_covered_graph_partial}.
+    $\dom{g}
+        =\Apply{\unboundedRecursiveCoveredOp}
+            {A,R,H}$ by
+        \auto{unbounded_recursive_covered_graph_domain}.
+    Hence $\dom{g}=A$ by
+        \auto{unbounded_recursive_covered_eq_carrier}.
+    $\Apply{\unboundedRecursiveSolutionOp}
+        {A,R,H,g}$ by \obv{unbounded_recursive_solution_op}.
+\end{proof}
+
+\begin{theorem}\label{unbounded_well_founded_recursion_unique}
+    Suppose $R$ is a binary relation on $A$ and $R$ is well-founded on $A$.
+    Then $\forall H:\Set\to\Set\to\Set.\ \forall f,g:\Set.
+        (\Apply{\unboundedRecursiveSolutionOp}
+            {A,R,H,f}\land
+         \Apply{\unboundedRecursiveSolutionOp}
+            {A,R,H,g})
+        \implies f=g$.
+\end{theorem}
+\begin{proof}
+    Fix $H$ and $f,g$.
+    Assume
+        $\Apply{\unboundedRecursiveSolutionOp}
+            {A,R,H,f}\land
+         \Apply{\unboundedRecursiveSolutionOp}
+            {A,R,H,g}$.
+    $\Apply{\unboundedRecursivePartialOp}
+        {A,R,H,f}\land
+     \Apply{\unboundedRecursivePartialOp}
+        {A,R,H,g}$ by \obv{unbounded_recursive_solution_iff}.
+    $\dom{f}=A$ and $\dom{g}=A$ by
+        \obv{unbounded_recursive_solution_iff}.
+    $\dom{f}=\dom{g}$.
+    $\dom{f}\subseteq\dom{g}$ and $\dom{g}\subseteq\dom{f}$ by
+        \obv{subseteq}.
+    $f$ and $g$ are functions by
+        \auto{unbounded_recursive_partial_function,recursive_set_function}.
+    Show that $f\subseteq g$.
+    \begin{subproof}
+        Show that for every $x\in\dom{f}$ we have $f(x)=g(x)$.
+        \begin{subproof}
+            Fix $x\in\dom{f}$.
+            $x\in\dom{g}$.
+            Hence $x\in\dom{f}\inter\dom{g}$ by \obv{inter_intro}.
+            Follows by \obv{unbounded_recursive_partials_agree}.
+        \end{subproof}
+        Follows by \obv{fun_subseteq}.
+    \end{subproof}
+    Show that $g\subseteq f$.
+    \begin{subproof}
+        Show that for every $x\in\dom{g}$ we have $g(x)=f(x)$.
+        \begin{subproof}
+            Fix $x\in\dom{g}$.
+            $x\in\dom{f}$.
+            Hence $x\in\dom{f}\inter\dom{g}$ by \obv{inter_intro}.
+            $f(x)=g(x)$ by \obv{unbounded_recursive_partials_agree}.
+        \end{subproof}
+        Follows by \obv{fun_subseteq}.
+    \end{subproof}
+    Follows by \obv{subseteq_antisymmetric}.
+\end{proof}
+
+\subsection{The named recursor}
+
+\begin{definition}\label{unbounded_well_founded_recursion_op}
+    $\unboundedWellFoundedRecursionOp:
+        \Set\to\Set\to(\Set\to\Set\to\Set)\to\Set
+        =\fun{A,R:\Set}{
+                \fun{H:\Set\to\Set\to\Set}{
+                    \Select[\Set]{\fun{f:\Set}{
+                        \Apply{\unboundedRecursiveSolutionOp}
+                            {A,R,H,f}}}}}$.
+\end{definition}
+
+The term above is total in the logical framework.  Its specification is
+available under the well-foundedness hypotheses below; no off-guard value is
+claimed.  Naming the unique solution uses typed logical selection only after
+existence and uniqueness have been proved.
+
+\begin{theorem}\label{unbounded_well_founded_recursion_solution}
+    Suppose $R$ is a binary relation on $A$ and $R$ is well-founded on $A$.
+    Then $\forall H:\Set\to\Set\to\Set.
+        \Apply{\unboundedRecursiveSolutionOp}
+            {A,R,H,\Apply{\unboundedWellFoundedRecursionOp}
+                {A,R,H}}$.
+\end{theorem}
+\begin{proof}
+    Fix $H$.
+    $\exists f:\Set.
+        \Apply{\unboundedRecursiveSolutionOp}
+            {A,R,H,f}$ by \obv{unbounded_well_founded_recursion_exists}.
+    Follows by \auto{unbounded_well_founded_recursion_op}.
+\end{proof}
+
+\begin{theorem}\label{unbounded_well_founded_recursion_function}
+    Suppose $R$ is a binary relation on $A$ and $R$ is well-founded on $A$.
+    Then $\forall H:\Set\to\Set\to\Set.
+        \Apply{\recursiveSetFunctionOp}{
+            \Apply{\unboundedWellFoundedRecursionOp}
+            {A,R,H}}$.
+\end{theorem}
+\begin{proof}
+    Fix $H$.
+    Let $f=\Apply{\unboundedWellFoundedRecursionOp}
+        {A,R,H}$.
+    $\Apply{\unboundedRecursiveSolutionOp}
+        {A,R,H,f}$ by \obv{unbounded_well_founded_recursion_solution}.
+    Hence $\Apply{\unboundedRecursivePartialOp}
+        {A,R,H,f}$ by \obv{unbounded_recursive_solution_iff}.
+    Hence $\recursiveSetFunction{f}$ by
+        \obv{unbounded_recursive_partial_function}.
+    Follows by \obv{recursive_set_function_op}.
+\end{proof}
+
+\begin{theorem}\label{unbounded_well_founded_recursion_domain}
+    Suppose $R$ is a binary relation on $A$ and $R$ is well-founded on $A$.
+    Then $\forall H:\Set\to\Set\to\Set.
+        \dom{\Apply{\unboundedWellFoundedRecursionOp}
+            {A,R,H}}=A$.
+\end{theorem}
+\begin{proof}
+    Fix $H$.
+    Follows by \auto{unbounded_well_founded_recursion_solution,unbounded_recursive_solution_iff}.
+\end{proof}
+
+\begin{theorem}\label{unbounded_well_founded_recursion_equation}
+    Suppose $R$ is a binary relation on $A$ and $R$ is well-founded on $A$.
+    Then $\forall H:\Set\to\Set\to\Set.\ \forall x:\Set.\ x\in A
+        \implies
+        \apply{
+            \Apply{\unboundedWellFoundedRecursionOp}
+                {A,R,H}}
+            {x}
+        =\Apply{H}{x,
+            \restrl{
+                \Apply{\unboundedWellFoundedRecursionOp}
+                    {A,R,H}}
+                {\downward{R}{x}}}$.
+\end{theorem}
+\begin{proof}
+    Fix $H$ and $x\in A$.
+    Let $f=\Apply{\unboundedWellFoundedRecursionOp}
+        {A,R,H}$.
+    $\Apply{\unboundedRecursiveSolutionOp}
+        {A,R,H,f}$ by \obv{unbounded_well_founded_recursion_solution}.
+    Hence $\Apply{\unboundedRecursivePartialOp}
+        {A,R,H,f}$ by \obv{unbounded_recursive_solution_iff}.
+    $\dom{f}=A$ by \obv{unbounded_recursive_solution_iff}.
+    Hence $x\in\dom{f}$.
+    Follows by \auto{unbounded_recursive_partial_equation}.
+\end{proof}
+
+\begin{theorem}\label{unbounded_well_founded_recursion_characterization}
+    Suppose $R$ is a binary relation on $A$ and $R$ is well-founded on $A$.
+    Then $\forall H:\Set\to\Set\to\Set.\ \forall f:\Set.
+        (\Apply{\recursiveSetFunctionOp}{f}\land\dom{f}=A\land
+         (\forall x:\Set.\ x\in A\implies
+            \apply{f}{x}=\Apply{H}{x,
+                \restrl{f}{\downward{R}{x}}}))
+        \implies
+        f=\Apply{\unboundedWellFoundedRecursionOp}
+            {A,R,H}$.
+\end{theorem}
+\begin{proof}
+    Fix $H$ and $f$.
+    Assume $\Apply{\recursiveSetFunctionOp}{f}\land\dom{f}=A\land
+        (\forall x:\Set.\ x\in A\implies
+            \apply{f}{x}=\Apply{H}{x,
+                \restrl{f}{\downward{R}{x}}})$.
+    $\Apply{\recursiveSetFunctionOp}{f}$.
+    Hence $\recursiveSetFunction{f}$ by \obv{recursive_set_function_op}.
+    $\dom{f}=A$.
+    $\forall x:\Set.\ x\in A\implies
+        \apply{f}{x}=\Apply{H}{x,
+            \restrl{f}{\downward{R}{x}}}$.
+    $\dom{f}$ is an initial segment of $A$ with respect to $R$ by
+        \obv{carrier_initial_segment}.
+    Hence $\recursiveInitialSegment{f}{A}{R}$ by
+        \obv{recursive_initial_segment}.
+    Hence $\Apply{\unboundedRecursivePartialOp}
+        {A,R,H,f}$ by \obv{unbounded_recursive_partial_op,recursive_set_function_op,recursive_initial_segment_op}.
+    Hence $\Apply{\unboundedRecursiveSolutionOp}
+        {A,R,H,f}$ by \obv{unbounded_recursive_solution_op}.
+    Let $g=\Apply{\unboundedWellFoundedRecursionOp}
+        {A,R,H}$.
+    $\Apply{\unboundedRecursiveSolutionOp}
+        {A,R,H,g}$ by \obv{unbounded_well_founded_recursion_solution}.
+    Follows by \auto{unbounded_well_founded_recursion_unique}.
+\end{proof}

@@ -1,0 +1,813 @@
+\section{The successor bound for eventually different families}
+
+\import{silver/almost-disjoint.tex}
+
+The argument in this section uses neighbourhoods indexed by stationary
+supports.  All such supports are subsets of the fixed set $T$, and all
+neighbourhoods are subsets of the fixed family $F$.
+
+\begin{definition}\label{stationary_subsets_of}
+    $\stationarySubsetsOf{T}{\lambda}
+        =\{S\in\pow{T}\mid
+            \text{$S$ is stationary in $\lambda$}\}$.
+\end{definition}
+
+\begin{definition}\label{silver_bounded_on}
+    $\silverBoundedOn{E}{f}{g}{S}$ iff
+        for every $i\in S$ we have
+            $(E(i))(g(i))\subseteq(E(i))(f(i))$.
+\end{definition}
+
+\begin{definition}\label{silver_support_neighbourhood}
+    $\silverSupportNeighbourhood{E}{F}{f}{S}
+        =\{g\in F\mid \silverBoundedOn{E}{f}{g}{S}\}$.
+\end{definition}
+
+\begin{definition}\label{silver_support_neighbourhood_family}
+    $\silverSupportNeighbourhoodFamily{E}{F}{f}{T}{\lambda}
+        =\{(S,\silverSupportNeighbourhood{E}{F}{f}{S})
+            \mid S\in\stationarySubsetsOf{T}{\lambda}\}$.
+\end{definition}
+
+\begin{definition}\label{silver_neighbourhood}
+    $\silverNeighbourhood{E}{F}{f}{T}{\lambda}
+        =\unions{\ran{
+            \silverSupportNeighbourhoodFamily{E}{F}{f}{T}{\lambda}}}$.
+\end{definition}
+
+\begin{definition}\label{silver_neighbourhood_assignment}
+    $\silverNeighbourhoodAssignment{E}{F}{T}{\lambda}
+        =\{(f,\silverNeighbourhood{E}{F}{f}{T}{\lambda})\mid f\in F\}$.
+\end{definition}
+
+\begin{definition}\label{silver_less_set}
+    $\silverLessSet{E}{f}{g}{R}
+        =\{i\in R\mid (E(i))(f(i))\in(E(i))(g(i))\}$.
+\end{definition}
+
+\begin{definition}\label{silver_coordinate_range}
+    $\silverCoordinateRange{G}{i}=\{g(i)\mid g\in G\}$.
+\end{definition}
+
+\begin{definition}\label{silver_coordinate_family}
+    $\silverCoordinateFamily{G}{\lambda}
+        =\{(i,\silverCoordinateRange{G}{i})\mid i\in\lambda\}$.
+\end{definition}
+
+\begin{definition}\label{silver_neighbourhood_cover}
+    $\silverNeighbourhoodCover{N}{b}{I}
+        =\{(i,N(b(i)))\mid i\in I\}$.
+\end{definition}
+
+\begin{proposition}\label{stationary_subsets_of_elim}
+    Let $S\in\stationarySubsetsOf{T}{\lambda}$.
+    Then $S\subseteq T$ and $S$ is stationary in $\lambda$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{stationary_subsets_of,powerset_elim}.
+\end{proof}
+
+\begin{proposition}\label{silver_coordinate_family_type}
+    Let $B=\silverCoordinateFamily{G}{\lambda}$.
+    Then $B$ is a function on $\lambda$ and
+        for every $i\in\lambda$ we have
+            $B(i)=\silverCoordinateRange{G}{i}$.
+\end{proposition}
+\begin{proof}
+    $B$ is a relation by \auto{relation,silver_coordinate_family}.
+    $B$ is right-unique
+        by \auto{rightunique,silver_coordinate_family,pair_eq_iff}.
+    $\dom{B}=\lambda$
+        by \auto{setext,dom_iff,silver_coordinate_family,pair_eq_iff}.
+    Hence $B$ is a function on $\lambda$.
+    For every $i\in\lambda$ we have
+        $(i,\silverCoordinateRange{G}{i})\in B$
+        by \obv{silver_coordinate_family}.
+    Hence for every $i\in\lambda$ we have
+        $B(i)=\silverCoordinateRange{G}{i}$
+        by \obv{function_apply_intro}.
+\end{proof}
+
+\begin{proposition}\label{silver_less_sets_partition_difference}
+    Suppose $\cardinalSequenceValues{c}{\lambda}$.
+    Suppose $T\subseteq\lambda$.
+    Suppose $A$ is a function on $\lambda$.
+    Suppose $E$ is a function on $T$.
+    Suppose for every $u\in T$ we have
+        $E(u)\in\bijections{A(u)}{\cardSucc{c(u)}}$.
+    Let $f\in\dependentProduct{\lambda}{A}$.
+    Let $g\in\dependentProduct{\lambda}{A}$.
+    Let $R=T\setminus\silverEventualEqualitySet{f}{g}{\lambda}$.
+    Let $L=\silverLessSet{E}{f}{g}{R}$.
+    Let $M=\silverLessSet{E}{g}{f}{R}$.
+    Then $R=L\union M$.
+\end{proposition}
+\begin{proof}
+    $L\subseteq R$ and $M\subseteq R$
+        by \auto{silver_less_set,subseteq}.
+    Hence $L\union M\subseteq R$ by \obv{subseteq_union_iff}.
+    Show that every element of $R$ is an element of $L\union M$.
+    \begin{subproof}
+        Fix $i\in R$.
+        Hence $i\in T$ and
+            $i\notin\silverEventualEqualitySet{f}{g}{\lambda}$
+            by \auto{setminus_elim_left,setminus_elim_right}.
+        Hence $i\in\lambda$ by \obv{subseteq}.
+        Hence $f(i)\neq g(i)$
+            by \auto{silver_eventual_equality_set}.
+        Hence $E(i)\in\bijections{A(i)}{\cardSucc{c(i)}}$.
+        Hence $E(i)\in\funs{A(i)}{\cardSucc{c(i)}}$
+            by \obv{bijections_to_funs}.
+        $f(i)\in A(i)$ by \obv{dependent_product_coordinate}.
+        $g(i)\in A(i)$ by \obv{dependent_product_coordinate}.
+        Hence $(E(i))(f(i))\in\cardSucc{c(i)}$
+            by \obv{funs_type_apply}.
+        Hence $(E(i))(g(i))\in\cardSucc{c(i)}$
+            by \obv{funs_type_apply}.
+        $E(i)\in\inj{A(i)}{\cardSucc{c(i)}}$ by
+            \auto{bijections_to_funs,bijection_is_function,bijections_dom,bijections,inj,injective_function}.
+        Show that $(E(i))(f(i))\neq(E(i))(g(i))$.
+        \begin{subproof}
+            Suppose $(E(i))(f(i))=(E(i))(g(i))$.
+            Hence $f(i)=g(i)$ by \obv{inj}.
+            Contradiction.
+        \end{subproof}
+        $c(i)$ is a cardinal by \obv{cardinal_sequence_values}.
+        Hence $\cardSucc{c(i)}$ is an ordinal
+            by \auto{cardinal_successor_is_cardinal,cardinal,initial_ordinal}.
+        Hence $(E(i))(f(i))$ and $(E(i))(g(i))$ are ordinals
+            by \obv{elem_of_ordinal_is_ordinal}.
+        Hence $(E(i))(f(i))\in(E(i))(g(i))$ or
+            $(E(i))(g(i))\in(E(i))(f(i))$
+            by \obv{ordinal_elem_connex}.
+        Hence $i\in L$ or $i\in M$ by \auto{silver_less_set}.
+        Follows by \obv{union_iff}.
+    \end{subproof}
+    Hence $R\subseteq L\union M$ by \obv{subseteq}.
+    Follows by \obv{subseteq_antisymmetric}.
+\end{proof}
+
+\begin{proposition}\label{silver_coordinate_range_iff}
+    $x\in\silverCoordinateRange{G}{i}$ iff
+        there exists $g\in G$ such that $x=g(i)$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{silver_coordinate_range}.
+\end{proof}
+
+\begin{theorem}\label{silver_family_in_coordinate_product}
+    Suppose $A$ is a function on $\lambda$.
+    Suppose $G\subseteq\dependentProduct{\lambda}{A}$.
+    Let $B=\silverCoordinateFamily{G}{\lambda}$.
+    Then $B$ is a function on $\lambda$ and
+        $G\subseteq\dependentProduct{\lambda}{B}$.
+\end{theorem}
+\begin{proof}
+    $B$ is a function on $\lambda$ and
+        for every $i\in\lambda$ we have
+            $B(i)=\silverCoordinateRange{G}{i}$
+        by \obv{silver_coordinate_family_type}.
+    Show that every element of $G$ is an element of
+        $\dependentProduct{\lambda}{B}$.
+    \begin{subproof}
+        Fix $g\in G$.
+        Hence $g\in\dependentProduct{\lambda}{A}$ by \obv{subseteq}.
+        Hence $g\in\funs{\lambda}{\unions{\ran{A}}}$
+            by \obv{dependent_product_iff}.
+        Hence $g$ is a function and $\dom{g}=\lambda$
+            by \obv{funs_is_function,funs}.
+        For every $i\in\lambda$ we have
+            $g(i)\in\silverCoordinateRange{G}{i}$
+            by \obv{silver_coordinate_range_iff}.
+        Hence for every $i\in\lambda$ we have $g(i)\in B(i)$
+            by \auto.
+        Hence for every $i\in\lambda$ we have
+            $g(i)\in\unions{\ran{B}}$
+            by \obv{indexed_family_member_union}.
+        Hence $g$ is a function to $\unions{\ran{B}}$.
+        Hence $g\in\funs{\lambda}{\unions{\ran{B}}}$
+            by \obv{funs_intro}.
+        Follows by \obv{dependent_product_iff}.
+    \end{subproof}
+    Hence $G\subseteq\dependentProduct{\lambda}{B}$
+        by \obv{subseteq}.
+\end{proof}
+
+\begin{proposition}\label{stationary_subsets_of_subseteq_powerset}
+    Suppose $T\subseteq\lambda$.
+    Then $\stationarySubsetsOf{T}{\lambda}\subseteq\pow{\lambda}$.
+\end{proposition}
+\begin{proof}
+    Every element of $\stationarySubsetsOf{T}{\lambda}$ is a subset of $T$
+        by \obv{stationary_subsets_of_elim}.
+    Hence every element of $\stationarySubsetsOf{T}{\lambda}$
+        is a subset of $\lambda$ by \obv{subseteq_transitive}.
+    Follows by \obv{subseteq,powerset_intro}.
+\end{proof}
+
+\begin{proposition}\label{silver_support_neighbourhood_subseteq}
+    $\silverSupportNeighbourhood{E}{F}{f}{S}\subseteq F$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{silver_support_neighbourhood,subseteq}.
+\end{proof}
+
+\begin{proposition}\label{silver_support_neighbourhood_family_type}
+    Let $I=\stationarySubsetsOf{T}{\lambda}$.
+    Let $H=\silverSupportNeighbourhoodFamily{E}{F}{f}{T}{\lambda}$.
+    Then $H$ is a function on $I$ and
+        for every $S\in I$ we have
+            $H(S)=\silverSupportNeighbourhood{E}{F}{f}{S}$.
+\end{proposition}
+\begin{proof}
+    $H$ is a relation
+        by \auto{relation,silver_support_neighbourhood_family}.
+    $H$ is right-unique by
+        \auto{rightunique,silver_support_neighbourhood_family,pair_eq_iff}.
+    $\dom{H}=I$ by
+        \auto{setext,dom_iff,silver_support_neighbourhood_family,pair_eq_iff}.
+    Hence $H$ is a function on $I$.
+    For every $S\in I$ we have
+        $(S,\silverSupportNeighbourhood{E}{F}{f}{S})\in H$
+        by \auto{silver_support_neighbourhood_family}.
+    Hence for every $S\in I$ we have
+        $H(S)=\silverSupportNeighbourhood{E}{F}{f}{S}$
+        by \obv{function_apply_intro}.
+\end{proof}
+
+\begin{proposition}\label{silver_neighbourhood_iff}
+    Let $H=\silverSupportNeighbourhoodFamily{E}{F}{f}{T}{\lambda}$.
+    Then $g\in\silverNeighbourhood{E}{F}{f}{T}{\lambda}$ iff
+        there exists $S\in\stationarySubsetsOf{T}{\lambda}$ such that
+            $g\in\silverSupportNeighbourhood{E}{F}{f}{S}$.
+\end{proposition}
+\begin{proof}
+    $H$ is a function on $\stationarySubsetsOf{T}{\lambda}$ and
+        for every $S\in\stationarySubsetsOf{T}{\lambda}$ we have
+            $H(S)=\silverSupportNeighbourhood{E}{F}{f}{S}$
+        by \auto{silver_support_neighbourhood_family_type}.
+    Follows by \auto{silver_neighbourhood,unions_iff,fun_ran_iff}.
+\end{proof}
+
+\begin{proposition}\label{silver_neighbourhood_subseteq}
+    $\silverNeighbourhood{E}{F}{f}{T}{\lambda}\subseteq F$.
+\end{proposition}
+\begin{proof}
+    Show that every element of $\silverNeighbourhood{E}{F}{f}{T}{\lambda}$
+        is an element of $F$.
+    \begin{subproof}
+        Fix $g\in\silverNeighbourhood{E}{F}{f}{T}{\lambda}$.
+        Take $S\in\stationarySubsetsOf{T}{\lambda}$ such that
+            $g\in\silverSupportNeighbourhood{E}{F}{f}{S}$
+            by \auto{silver_neighbourhood_iff}.
+        Follows by \obv{silver_support_neighbourhood_subseteq,subseteq}.
+    \end{subproof}
+    Follows by \obv{subseteq}.
+\end{proof}
+
+\begin{proposition}\label{silver_neighbourhood_assignment_type}
+    Let $N=\silverNeighbourhoodAssignment{E}{F}{T}{\lambda}$.
+    Then $N$ is a function on $F$ and for every $f\in F$ we have
+        $N(f)=\silverNeighbourhood{E}{F}{f}{T}{\lambda}$.
+\end{proposition}
+\begin{proof}
+    $N$ is a relation by \auto{relation,silver_neighbourhood_assignment}.
+    $N$ is right-unique
+        by \auto{rightunique,silver_neighbourhood_assignment,pair_eq_iff}.
+    $\dom{N}=F$
+        by \auto{setext,dom_iff,silver_neighbourhood_assignment,pair_eq_iff}.
+    Hence $N$ is a function on $F$.
+    For every $f\in F$ we have
+        $(f,\silverNeighbourhood{E}{F}{f}{T}{\lambda})\in N$
+        by \obv{silver_neighbourhood_assignment}.
+    Hence for every $f\in F$ we have
+        $N(f)=\silverNeighbourhood{E}{F}{f}{T}{\lambda}$
+        by \obv{function_apply_intro}.
+\end{proof}
+
+\begin{proposition}\label{silver_neighbourhood_reflexive}
+    Suppose $T$ is stationary in $\lambda$.
+    Let $f\in F$.
+    Then $f\in\silverNeighbourhood{E}{F}{f}{T}{\lambda}$.
+\end{proposition}
+\begin{proof}
+    $T\subseteq\lambda$ by \obv{stationary_in_elim}.
+    Hence $T\in\pow{T}$ by \obv{powerset_intro,subseteq_refl}.
+    Hence $T\in\stationarySubsetsOf{T}{\lambda}$
+        by \obv{stationary_subsets_of}.
+    For every $i\in T$ we have
+        $(E(i))(f(i))\subseteq(E(i))(f(i))$
+        by \obv{subseteq_refl}.
+    Hence $\silverBoundedOn{E}{f}{f}{T}$
+        by \obv{silver_bounded_on}.
+    Hence $f\in\silverSupportNeighbourhood{E}{F}{f}{T}$
+        by \obv{silver_support_neighbourhood}.
+    Follows by \auto{silver_neighbourhood_iff}.
+\end{proof}
+
+\begin{theorem}\label{silver_support_neighbourhood_cardinal_bound}
+    Let $\kappa$ be a singular cardinal.
+    Let $\lambda=\cofinality{\kappa}$.
+    Suppose $\naturals\in\lambda$.
+    Suppose $\normalMap{c}{\lambda}{\kappa}$.
+    Suppose $c$ is index-dominating on $\lambda$.
+    Suppose $\infiniteCardinalSequenceValues{c}{\lambda}$.
+    Suppose $\powerClosedBelow{\lambda}{\kappa}$.
+    Suppose $T$ is stationary in $\lambda$.
+    Suppose $A$ is a function on $\lambda$.
+    Suppose $F\subseteq\dependentProduct{\lambda}{A}$.
+    Suppose $\eventuallyDifferentFamily{F}{\lambda}$.
+    Suppose $E$ is a function on $T$.
+    Suppose for every $u\in T$ we have
+        $E(u)\in\bijections{A(u)}{\cardSucc{c(u)}}$.
+    Let $f\in F$.
+    Let $S\in\stationarySubsetsOf{T}{\lambda}$.
+    Then $\cardLe{\silverSupportNeighbourhood{E}{F}{f}{S}}{\kappa}$.
+\end{theorem}
+\begin{proof}
+    $\cardinalSequenceValues{c}{\lambda}$
+        by \obv{infinite_cardinal_sequence_values_are_cardinal_values}.
+    Let $G=\silverSupportNeighbourhood{E}{F}{f}{S}$.
+    $S\subseteq T$ and $S$ is stationary in $\lambda$
+        by \obv{stationary_subsets_of_elim}.
+    Hence $S\subseteq\lambda$ by \obv{stationary_in_elim}.
+    $G\subseteq F$ by \auto{silver_support_neighbourhood_subseteq}.
+    Hence $G\subseteq\dependentProduct{\lambda}{A}$
+        by \obv{subseteq_transitive}.
+    $\eventuallyDifferentFamily{G}{\lambda}$
+        by \obv{eventually_different_family_subset}.
+    Let $B=\silverCoordinateFamily{G}{\lambda}$.
+    $B$ is a function on $\lambda$ and
+        $G\subseteq\dependentProduct{\lambda}{B}$
+        by \obv{silver_family_in_coordinate_product}.
+    Show that for every $i\in S$ we have $\cardLe{B(i)}{c(i)}$.
+    \begin{subproof}
+        Fix $i\in S$.
+        Hence $i\in T$ by \obv{subseteq}.
+        Hence $i\in\lambda$ by \obv{subseteq}.
+        Hence $E(i)\in\bijections{A(i)}{\cardSucc{c(i)}}$.
+        Hence $E(i)\in\funs{A(i)}{\cardSucc{c(i)}}$
+            by \obv{bijections_to_funs}.
+        Hence $E(i)$ is a function and $\dom{E(i)}=A(i)$
+            by \obv{funs_is_function,funs}.
+        $E(i)$ is injective by \obv{bijections}.
+        $f\in\dependentProduct{\lambda}{A}$ by \obv{subseteq}.
+        Hence $f(i)\in A(i)$ by \obv{dependent_product_coordinate}.
+        Hence $(E(i))(f(i))\in\cardSucc{c(i)}$
+            by \obv{funs_type_apply}.
+        $c(i)$ is an infinite cardinal
+            by \obv{infinite_cardinal_sequence_value}.
+        Let $D=\suc{(E(i))(f(i))}$.
+        $\cardLe{D}{c(i)}$
+            by \auto{inclusive_initial_segment_cardinal_le}.
+        Show that $B(i)\subseteq A(i)$.
+        \begin{subproof}
+            Show that every element of $B(i)$ is an element of $A(i)$.
+            \begin{subproof}
+                Fix $x\in B(i)$.
+                $B(i)=\silverCoordinateRange{G}{i}$
+                    by \obv{silver_coordinate_family_type}.
+                Hence $x\in\silverCoordinateRange{G}{i}$.
+                Take $g\in G$ such that $x=g(i)$
+                    by \obv{silver_coordinate_range_iff}.
+                Hence $g\in\dependentProduct{\lambda}{A}$ by \obv{subseteq}.
+                Hence $g(i)\in A(i)$
+                    by \obv{dependent_product_coordinate}.
+            \end{subproof}
+            Follows by \obv{subseteq}.
+        \end{subproof}
+        Hence $B(i)\subseteq\dom{E(i)}$.
+        Hence $E(i)\in\inj{A(i)}{\cardSucc{c(i)}}$ by
+            \auto{bijections_to_funs,bijection_is_function,bijections_dom,bijections,inj,injective_function}.
+        Let $r=\restrl{E(i)}{B(i)}$.
+        Hence $r\in\inj{B(i)}{\cardSucc{c(i)}}$
+            by \auto{inj_restrl}.
+        Hence $r$ is a function and $\dom{r}=B(i)$ and
+            $r$ is injective
+            by \auto{inj,funs_is_function,funs,injective_function}.
+        Show that for every $x\in B(i)$ we have $r(x)\in D$.
+        \begin{subproof}
+            Fix $x\in B(i)$.
+            $B(i)=\silverCoordinateRange{G}{i}$
+                by \obv{silver_coordinate_family_type}.
+            Hence $x\in\silverCoordinateRange{G}{i}$.
+            Take $g\in G$ such that $x=g(i)$
+                by \obv{silver_coordinate_range_iff}.
+            Hence $x\in\dom{E(i)}$ by \obv{subseteq}.
+            Hence $\silverBoundedOn{E}{f}{g}{S}$
+                by \auto{silver_support_neighbourhood}.
+            Hence $(E(i))(g(i))\subseteq(E(i))(f(i))$
+                by \obv{silver_bounded_on}.
+            $g\in\dependentProduct{\lambda}{A}$ by \obv{subseteq}.
+            Hence $g(i)\in A(i)$
+                by \obv{dependent_product_coordinate}.
+            Hence $(E(i))(g(i))\in\cardSucc{c(i)}$
+                by \obv{funs_type_apply}.
+            $\cardSucc{c(i)}$ is an ordinal
+                by \auto{cardinal_successor_is_cardinal,cardinal,initial_ordinal}.
+            Hence $(E(i))(g(i))$ and $(E(i))(f(i))$ are ordinals
+                by \obv{elem_of_ordinal_is_ordinal}.
+            Hence $(E(i))(g(i))\in(E(i))(f(i))$ or
+                $(E(i))(g(i))=(E(i))(f(i))$
+                by \obv{ordinal_subseteq_implies_elem_or_eq}.
+            Hence $(E(i))(g(i))\in D$ by \auto{suc_iff}.
+            $r(x)=(E(i))(x)$ by \auto{restrl_of_function_apply}.
+        \end{subproof}
+        Hence $r$ is a function to $D$.
+        Hence $r\in\funs{B(i)}{D}$ by \obv{funs_intro}.
+        Hence $r\in\inj{B(i)}{D}$ by \obv{inj,injective_function}.
+        Hence $\cardLe{B(i)}{D}$ by \obv{cardinal_le}.
+        Follows by \obv{cardinal_le_transitive}.
+    \end{subproof}
+    Follows by \auto{silver_first_almost_disjoint_bound}.
+\end{proof}
+
+\begin{theorem}\label{silver_neighbourhood_cardinal_bound}
+    Let $\kappa$ be a singular cardinal.
+    Let $\lambda=\cofinality{\kappa}$.
+    Suppose $\naturals\in\lambda$.
+    Suppose $\normalMap{c}{\lambda}{\kappa}$.
+    Suppose $c$ is index-dominating on $\lambda$.
+    Suppose $\infiniteCardinalSequenceValues{c}{\lambda}$.
+    Suppose $\powerClosedBelow{\lambda}{\kappa}$.
+    Suppose $T$ is stationary in $\lambda$.
+    Suppose $A$ is a function on $\lambda$.
+    Suppose $F\subseteq\dependentProduct{\lambda}{A}$.
+    Suppose $\eventuallyDifferentFamily{F}{\lambda}$.
+    Suppose $E$ is a function on $T$.
+    Suppose for every $u\in T$ we have
+        $E(u)\in\bijections{A(u)}{\cardSucc{c(u)}}$.
+    Let $f\in F$.
+    Then $\cardLe{\silverNeighbourhood{E}{F}{f}{T}{\lambda}}{\kappa}$.
+\end{theorem}
+\begin{proof}
+    $\cardinalSequenceValues{c}{\lambda}$
+        by \obv{infinite_cardinal_sequence_values_are_cardinal_values}.
+    $T\subseteq\lambda$ by \obv{stationary_in_elim}.
+    Let $I=\stationarySubsetsOf{T}{\lambda}$.
+    $I\subseteq\pow{\lambda}$
+        by \auto{stationary_subsets_of_subseteq_powerset}.
+    Hence $\cardLe{I}{\pow{\lambda}}$ by \obv{subseteq_cardinal_le}.
+    $\cardOne\in\naturals$
+        by \auto{cardinal_one,omega_empty,omega_successor}.
+    Hence $\cardTwo\in\naturals$
+        by \auto{cardinal_two_successor,omega_successor}.
+    $\naturals\subseteq\kappa$
+        by \obv{naturals_subseteq_infinite_cardinal}.
+    Hence $\cardTwo\in\kappa$ by \obv{subseteq}.
+    Hence $\card{\pow{\lambda}}\in\kappa$
+        by \obv{power_closed_below_powerset}.
+    Hence $\cardLe{\pow{\lambda}}{\kappa}$
+        by \obv{card_belongs_to_cardinal_implies_cardinal_le}.
+    Hence $\cardLe{I}{\kappa}$ by \obv{cardinal_le_transitive}.
+    Let $H=\silverSupportNeighbourhoodFamily{E}{F}{f}{T}{\lambda}$.
+    $H$ is a function on $I$ and for every $S\in I$ we have
+        $H(S)=\silverSupportNeighbourhood{E}{F}{f}{S}$
+        by \obv{silver_support_neighbourhood_family_type}.
+    For every $S\in I$ we have $\cardLe{H(S)}{\kappa}$
+        by \auto{silver_support_neighbourhood_cardinal_bound}.
+    Hence $\cardLe{\unions{\ran{H}}}{\kappa}$
+        by \obv{indexed_union_infinite_cardinal_bound}.
+    $\silverNeighbourhood{E}{F}{f}{T}{\lambda}=\unions{\ran{H}}$
+        by \obv{silver_neighbourhood}.
+\end{proof}
+
+\begin{theorem}\label{silver_neighbourhood_orientation}
+    Let $\lambda$ be a regular cardinal.
+    Suppose $\naturals\in\lambda$.
+    Suppose $\cardinalSequenceValues{c}{\lambda}$.
+    Suppose $T$ is stationary in $\lambda$.
+    Suppose $A$ is a function on $\lambda$.
+    Suppose $F\subseteq\dependentProduct{\lambda}{A}$.
+    Suppose $\eventuallyDifferentFamily{F}{\lambda}$.
+    Suppose $E$ is a function on $T$.
+    Suppose for every $u\in T$ we have
+        $E(u)\in\bijections{A(u)}{\cardSucc{c(u)}}$.
+    Let $f\in F$.
+    Let $g\in F$.
+    Suppose $f\neq g$.
+    Then $f\in\silverNeighbourhood{E}{F}{g}{T}{\lambda}$ or
+        $g\in\silverNeighbourhood{E}{F}{f}{T}{\lambda}$.
+\end{theorem}
+\begin{proof}
+    $\lambda$ is an infinite cardinal and
+        $\cofinality{\lambda}=\lambda$ by \obv{regular_cardinal}.
+    Hence $\lambda$ is a limit ordinal
+        by \obv{infinite_cardinal_is_limit_ordinal}.
+    $\naturals\in\cofinality{\lambda}$.
+    $T\subseteq\lambda$ by \obv{stationary_in_elim}.
+    $f\in\dependentProduct{\lambda}{A}$ by \obv{subseteq}.
+    $g\in\dependentProduct{\lambda}{A}$ by \obv{subseteq}.
+    $\eventuallyDifferent{f}{g}{\lambda}$
+        by \obv{eventually_different_family}.
+    Hence $\ordinalBounded{
+        \silverEventualEqualitySet{f}{g}{\lambda}}{\lambda}$
+        by \obv{eventually_different}.
+    Let $R=T\setminus\silverEventualEqualitySet{f}{g}{\lambda}$.
+    $R$ is stationary in $\lambda$
+        by \auto{stationary_remove_bounded}.
+    Hence $R\subseteq\lambda$ by \obv{stationary_in_elim}.
+    $R\subseteq T$ by \auto{setminus_subseteq}.
+    Let $L=\silverLessSet{E}{f}{g}{R}$.
+    Let $M=\silverLessSet{E}{g}{f}{R}$.
+    $R=L\union M$ by \obv{silver_less_sets_partition_difference}.
+    Hence $L\union M$ is stationary in $\lambda$.
+    $L\subseteq R$ and $M\subseteq R$
+        by \auto{silver_less_set,subseteq}.
+    Hence $L\subseteq\lambda$ and $M\subseteq\lambda$
+        by \obv{subseteq_transitive}.
+    Hence $L$ is stationary in $\lambda$ or
+        $M$ is stationary in $\lambda$
+        by \obv{stationary_union_component}.
+    \begin{byCase}
+        \caseOf{$L$ is stationary in $\lambda$.}
+            $L\subseteq T$ by \obv{subseteq_transitive}.
+            Hence $L\in\pow{T}$ by \obv{powerset_intro}.
+            Hence $L\in\stationarySubsetsOf{T}{\lambda}$
+                by \obv{stationary_subsets_of}.
+            Show that $\silverBoundedOn{E}{g}{f}{L}$.
+            \begin{subproof}
+                Show that for every $i\in L$ we have
+                    $(E(i))(f(i))\subseteq(E(i))(g(i))$.
+                \begin{subproof}
+                    Fix $i\in L$.
+                    Hence $i\in R$ and
+                        $(E(i))(f(i))\in(E(i))(g(i))$
+                        by \obv{silver_less_set}.
+                    Hence $i\in T$ by \obv{subseteq}.
+                    Hence $i\in\lambda$ by \obv{subseteq}.
+                    Hence $E(i)\in\bijections{A(i)}{\cardSucc{c(i)}}$.
+                    Hence $E(i)\in\funs{A(i)}{\cardSucc{c(i)}}$
+                        by \obv{bijections_to_funs}.
+                    $g(i)\in A(i)$ by \obv{dependent_product_coordinate}.
+                    Hence $(E(i))(g(i))\in\cardSucc{c(i)}$
+                        by \obv{funs_type_apply}.
+                    $c(i)$ is a cardinal
+                        by \obv{cardinal_sequence_values}.
+                    Hence $\cardSucc{c(i)}$ is an ordinal
+                        by \auto{cardinal_successor_is_cardinal,cardinal,initial_ordinal}.
+                    Hence $(E(i))(g(i))$ is an ordinal
+                        by \obv{elem_of_ordinal_is_ordinal}.
+                    Hence $(E(i))(f(i))$ is an ordinal
+                        by \obv{elem_of_ordinal_is_ordinal}.
+                    Follows by \obv{ordinal_elem_implies_subseteq}.
+                \end{subproof}
+                Follows by \obv{silver_bounded_on}.
+            \end{subproof}
+            Hence $f\in\silverSupportNeighbourhood{E}{F}{g}{L}$
+                by \obv{silver_support_neighbourhood}.
+            Hence $f\in\silverNeighbourhood{E}{F}{g}{T}{\lambda}$
+                by \auto{silver_neighbourhood_iff}.
+        \caseOf{$M$ is stationary in $\lambda$.}
+            $M\subseteq T$ by \obv{subseteq_transitive}.
+            Hence $M\in\pow{T}$ by \obv{powerset_intro}.
+            Hence $M\in\stationarySubsetsOf{T}{\lambda}$
+                by \obv{stationary_subsets_of}.
+            Show that $\silverBoundedOn{E}{f}{g}{M}$.
+            \begin{subproof}
+                Show that for every $i\in M$ we have
+                    $(E(i))(g(i))\subseteq(E(i))(f(i))$.
+                \begin{subproof}
+                    Fix $i\in M$.
+                    Hence $i\in R$ and
+                        $(E(i))(g(i))\in(E(i))(f(i))$
+                        by \obv{silver_less_set}.
+                    Hence $i\in T$ by \obv{subseteq}.
+                    Hence $i\in\lambda$ by \obv{subseteq}.
+                    Hence $E(i)\in\bijections{A(i)}{\cardSucc{c(i)}}$.
+                    Hence $E(i)\in\funs{A(i)}{\cardSucc{c(i)}}$
+                        by \obv{bijections_to_funs}.
+                    $f(i)\in A(i)$ by \obv{dependent_product_coordinate}.
+                    Hence $(E(i))(f(i))\in\cardSucc{c(i)}$
+                        by \obv{funs_type_apply}.
+                    $c(i)$ is a cardinal
+                        by \obv{cardinal_sequence_values}.
+                    Hence $\cardSucc{c(i)}$ is an ordinal
+                        by \auto{cardinal_successor_is_cardinal,cardinal,initial_ordinal}.
+                    Hence $(E(i))(f(i))$ is an ordinal
+                        by \obv{elem_of_ordinal_is_ordinal}.
+                    Hence $(E(i))(g(i))$ is an ordinal
+                        by \obv{elem_of_ordinal_is_ordinal}.
+                    Follows by \obv{ordinal_elem_implies_subseteq}.
+                \end{subproof}
+                Follows by \obv{silver_bounded_on}.
+            \end{subproof}
+            Hence $g\in\silverSupportNeighbourhood{E}{F}{f}{M}$
+                by \obv{silver_support_neighbourhood}.
+            Hence $g\in\silverNeighbourhood{E}{F}{f}{T}{\lambda}$
+                by \auto{silver_neighbourhood_iff}.
+    \end{byCase}
+\end{proof}
+
+\begin{theorem}\label{oriented_neighbourhood_successor_bound}
+    Let $\kappa$ be an infinite cardinal.
+    Suppose $N$ is a function on $F$.
+    Suppose for every $x\in F$ we have $N(x)\subseteq F$ and
+        $\cardLe{N(x)}{\kappa}$ and $x\in N(x)$.
+    Suppose for all $x,y\in F$ such that $x\neq y$ we have
+        $x\in N(y)$ or $y\in N(x)$.
+    Then $\cardLe{F}{\cardSucc{\kappa}}$.
+\end{theorem}
+\begin{proof}
+    Let $K=\cardSucc{\kappa}$.
+    $\kappa$ is an ordinal by \auto{cardinal,initial_ordinal}.
+    $K$ is a cardinal by \obv{cardinal_successor_is_cardinal}.
+    Hence $K$ is an initial ordinal by \obv{cardinal}.
+    Hence $K$ is an ordinal by \obv{initial_ordinal}.
+    $\card{F}$ is an initial ordinal
+        by \obv{card_is_initial_ordinal}.
+    Hence $\card{F}$ is an ordinal by \obv{initial_ordinal}.
+    \begin{byCase}
+        \caseOf{$\card{F}\subseteq K$.}
+            $\card{K}=K$ by \obv{card_of_cardinal}.
+            Hence $\card{F}\subseteq\card{K}$.
+            Follows by \obv{card_subseteq_iff_cardinal_le}.
+        \caseOf{$\lnot(\card{F}\subseteq K)$.}
+            $K\subseteq\card{F}$
+                by \obv{ordinal_subseteq_or_subseteq}.
+            $K\neq\card{F}$.
+            Hence $K\in\card{F}$
+                by \obv{ordinal_subseteq_implies_elem_or_eq}.
+            Hence $K\subseteq\card{F}$
+                by \obv{ordinal_elem_implies_subseteq}.
+            $\card{F}\approx F$ by \obv{card_equinumerous}.
+            Take $b$ such that $b\in\bijections{\card{F}}{F}$
+                by \obv{equinum}.
+            Hence $b\in\funs{\card{F}}{F}$
+                by \obv{bijections_to_funs}.
+            Hence $b$ is a function and $\dom{b}=\card{F}$
+                by \obv{funs_is_function,funs}.
+            $b$ is injective by \obv{bijections}.
+            $\ran{b}=F$ by \auto{bijections,surj,ran_of_surj}.
+            $b\in\inj{\card{F}}{F}$ by
+                \auto{bijections_to_funs,bijection_is_function,bijections_dom,bijections,inj,injective_function}.
+            Let $r=\restrl{b}{K}$.
+            Hence $r\in\inj{K}{F}$ by \auto{inj_restrl}.
+            Hence $r$ is a function and $\dom{r}=K$ and
+                $r$ is injective
+                by \auto{inj,funs_is_function,funs,injective_function}.
+            Let $H=\silverNeighbourhoodCover{N}{b}{K}$.
+            $H$ is a relation
+                by \auto{relation,silver_neighbourhood_cover}.
+            $H$ is right-unique by
+                \auto{rightunique,silver_neighbourhood_cover,pair_eq_iff}.
+            Hence $H$ is a function.
+            $\dom{H}=K$ by
+                \auto{setext,dom_iff,silver_neighbourhood_cover,pair_eq_iff}.
+            Hence $H$ is a function on $K$.
+            For every $i\in K$ we have $b(i)\in F$
+                by \obv{funs_type_apply,subseteq}.
+            Hence for every $i\in K$ we have
+                $H(i)=N(b(i))$
+                by \auto{silver_neighbourhood_cover,function_apply_intro}.
+            Show that $F\subseteq\unions{\ran{H}}$.
+            \begin{subproof}
+                Show that every element of $F$ is an element of
+                    $\unions{\ran{H}}$.
+                \begin{subproof}
+                    Fix $x\in F$.
+                    Hence $x\in\ran{b}$.
+                    Take $\alpha\in\dom{b}$ such that $b(\alpha)=x$
+                        by \auto{fun_ran_iff}.
+                    Hence $\alpha\in\card{F}$ by \auto.
+                    \begin{byCase}
+                        \caseOf{$\alpha\in K$.}
+                            Hence $H(\alpha)=N(b(\alpha))$.
+                            Hence $x\in H(\alpha)$ by \auto.
+                            $H(\alpha)\in\ran{H}$
+                                by \auto{fun_ran_iff}.
+                            Follows by \auto{unions_iff}.
+                        \caseOf{$\alpha\notin K$.}
+                            Suppose not.
+                            Show that $r\in\inj{K}{N(x)}$.
+                            \begin{subproof}
+                                Show that for every $i\in K$ we have
+                                    $r(i)\in N(x)$.
+                                \begin{subproof}
+                                    Fix $i\in K$.
+                                    Hence $H(i)=N(b(i))$.
+                                    $H(i)\in\ran{H}$
+                                        by \auto{fun_ran_iff}.
+                                    Hence $x\notin H(i)$
+                                        by \auto{unions_iff}.
+                                    Hence $x\notin N(b(i))$.
+                                    Show that $b(i)\neq x$.
+                                    \begin{subproof}
+                                        Suppose $b(i)=x$.
+                                        Hence $b(i)=b(\alpha)$.
+                                        Hence $i=\alpha$
+                                            by \obv{injective_function}.
+                                        Contradiction.
+                                    \end{subproof}
+                                    $b(i)\in F$.
+                                    Hence $b(i)\in N(x)$ or
+                                        $x\in N(b(i))$.
+                                    Hence $b(i)\in N(x)$.
+                                    $r(i)=b(i)$
+                                        by \auto{restrl_of_function_apply}.
+                                \end{subproof}
+                                Hence $r$ is a function to $N(x)$
+                                    by \auto.
+                                Hence $r\in\funs{K}{N(x)}$
+                                    by \obv{funs_intro}.
+                                Follows by \auto{inj,injective_function}.
+                            \end{subproof}
+                            Hence $\cardLe{K}{N(x)}$ by \auto{cardinal_le}.
+                            $\cardLe{N(x)}{\kappa}$ by \auto.
+                            Hence $\cardLe{K}{\kappa}$
+                                by \obv{cardinal_le_transitive}.
+                            Take $e$ such that $e\in\inj{K}{\kappa}$
+                                by \auto{cardinal_le}.
+                            $K=\hartogs{\kappa}$
+                                by \obv{cardinal_successor}.
+                            Contradiction by \auto{hartogs_theorem}.
+                    \end{byCase}
+                \end{subproof}
+                Follows by \obv{subseteq}.
+            \end{subproof}
+            $K$ is a regular cardinal
+                by \auto{infinite_cardinal_successor_is_regular}.
+            Hence $K$ is an infinite cardinal
+                by \obv{regular_cardinal}.
+            $\kappa\in K$ by \obv{cardinal_belongs_to_successor}.
+            Hence $\kappa\subseteq K$
+                by \obv{ordinal_elem_implies_subseteq}.
+            Hence $\cardLe{\kappa}{K}$
+                by \obv{subseteq_cardinal_le}.
+            For every $i\in K$ we have $\cardLe{H(i)}{\kappa}$
+                by \auto.
+            Hence for every $i\in K$ we have $\cardLe{H(i)}{K}$
+                by \auto{cardinal_le_transitive}.
+            $\cardLe{K}{K}$
+                by \obv{subseteq_refl,subseteq_cardinal_le}.
+            Follows by \auto{indexed_cover_infinite_cardinal_bound}.
+    \end{byCase}
+\end{proof}
+
+\begin{theorem}\label{silver_second_almost_disjoint_bound}
+    Let $\kappa$ be a singular cardinal.
+    Let $\lambda=\cofinality{\kappa}$.
+    Suppose $\naturals\in\lambda$.
+    Suppose $\normalMap{c}{\lambda}{\kappa}$.
+    Suppose $c$ is index-dominating on $\lambda$.
+    Suppose $\infiniteCardinalSequenceValues{c}{\lambda}$.
+    Suppose $\powerClosedBelow{\lambda}{\kappa}$.
+    Suppose $T$ is stationary in $\lambda$.
+    Suppose $A$ is a function on $\lambda$.
+    Suppose $F\subseteq\dependentProduct{\lambda}{A}$.
+    Suppose $\eventuallyDifferentFamily{F}{\lambda}$.
+    Suppose for every $u\in T$ we have
+        $\card{A(u)}=\cardSucc{c(u)}$.
+    Then $\cardLe{F}{\cardSucc{\kappa}}$.
+\end{theorem}
+\begin{proof}
+    $\cardinalSequenceValues{c}{\lambda}$
+        by \obv{infinite_cardinal_sequence_values_are_cardinal_values}.
+    Hence $\kappa$ is a limit ordinal
+        by \obv{infinite_cardinal_is_limit_ordinal}.
+    $\cofinality{\kappa}$ is a regular cardinal
+        by \obv{cofinality_of_limit_is_regular}.
+    Hence $\lambda$ is a regular cardinal.
+    $T\subseteq\lambda$ by \obv{stationary_in_elim}.
+    Let $A_0=\restrl{A}{T}$.
+    $A$ is a function and $\dom{A}=\lambda$.
+    Hence $A_0$ is a function by \auto{restrl_of_function_is_function}.
+    Hence $\dom{A_0}=T$
+        by \auto{dom_of_restrl_eq_inter,inter_absorb_supseteq_left}.
+    Hence $A_0$ is a function on $T$.
+    For every $i\in T$ we have $A_0(i)=A(i)$
+        by \auto{restrl_of_function_apply}.
+    Take $E$ such that $E$ is a function on $T$ and
+        for every $i\in T$ we have
+            $E(i)\in\bijections{A_0(i)}{\card{A_0(i)}}$
+        by \obv{indexed_family_cardinal_bijections}.
+    Hence for every $i\in T$ we have
+        $E(i)\in\bijections{A(i)}{\cardSucc{c(i)}}$ by \auto.
+    Let $N=\silverNeighbourhoodAssignment{E}{F}{T}{\lambda}$.
+    $N$ is a function on $F$ and for every $f\in F$ we have
+        $N(f)=\silverNeighbourhood{E}{F}{f}{T}{\lambda}$
+        by \obv{silver_neighbourhood_assignment_type}.
+    Show that for every $f\in F$ we have $N(f)\subseteq F$ and
+        $\cardLe{N(f)}{\kappa}$ and $f\in N(f)$.
+    \begin{subproof}
+        Fix $f\in F$.
+        Hence $N(f)=\silverNeighbourhood{E}{F}{f}{T}{\lambda}$.
+        $\silverNeighbourhood{E}{F}{f}{T}{\lambda}\subseteq F$
+            by \obv{silver_neighbourhood_subseteq}.
+        $\cardLe{\silverNeighbourhood{E}{F}{f}{T}{\lambda}}{\kappa}$
+            by \obv{silver_neighbourhood_cardinal_bound}.
+        $f\in\silverNeighbourhood{E}{F}{f}{T}{\lambda}$
+            by \obv{silver_neighbourhood_reflexive}.
+    \end{subproof}
+    Show that for all $f,g\in F$ such that $f\neq g$ we have
+        $f\in N(g)$ or $g\in N(f)$.
+    \begin{subproof}
+        Fix $f,g\in F$ such that $f\neq g$.
+        $f\in\silverNeighbourhood{E}{F}{g}{T}{\lambda}$ or
+            $g\in\silverNeighbourhood{E}{F}{f}{T}{\lambda}$
+            by \obv{silver_neighbourhood_orientation}.
+        $N(f)=\silverNeighbourhood{E}{F}{f}{T}{\lambda}$ and
+            $N(g)=\silverNeighbourhood{E}{F}{g}{T}{\lambda}$.
+    \end{subproof}
+    Follows by \obv{oriented_neighbourhood_successor_bound}.
+\end{proof}

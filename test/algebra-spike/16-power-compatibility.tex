@@ -1,0 +1,220 @@
+\import{test/algebra-spike/01-ring-reducts.tex}
+\import{algebra/group/power.tex}
+\import{algebra/ordered.tex}
+
+\section{Monoid-power compatibility}
+
+This fixture gives natural powers one monoid-level iteration owner and checks
+that the existing group and ring terms retain their old equations under the
+new bodies.
+
+\begin{definition}\label{spike16_monoid_right_map}
+    $\spikeMonoidRightMap{M}{x}=
+        \{(y,\mul[M](y,x))\mid y\in\carrier[M]\}$.
+\end{definition}
+
+\begin{proposition}\label{spike16_monoid_right_map_iff}
+    $(y,z)\in\spikeMonoidRightMap{M}{x}$ iff
+        $y\in\carrier[M]$ and $z=\mul[M](y,x)$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{spike16_monoid_right_map,pair_eq_iff}.
+\end{proof}
+
+\begin{proposition}\label{spike16_monoid_right_map_type}
+    Let $M$ be a monoid.
+    Let $x\in\carrier[M]$.
+    Then $\spikeMonoidRightMap{M}{x}\in
+        \funs{\carrier[M]}{\carrier[M]}$.
+\end{proposition}
+\begin{proof}
+    Let $f=\spikeMonoidRightMap{M}{x}$.
+    $f$ is a relation by
+        \auto{relation,spike16_monoid_right_map}.
+    $f$ is right-unique by
+        \auto{rightunique,spike16_monoid_right_map_iff}.
+    Hence $f$ is a function by \auto.
+    $\dom{f}=\carrier[M]$ by
+        \auto{setext,dom_iff,spike16_monoid_right_map_iff}.
+    Show that for every $y\in\dom{f}$ we have $f(y)\in\carrier[M]$.
+    \begin{subproof}
+        Fix $y\in\dom{f}$.
+        Hence $y\in\carrier[M]$ by \auto.
+        $f(y)=\mul[M](y,x)$ by
+            \auto{function_apply_intro,spike16_monoid_right_map_iff}.
+        Follows by \auto{monoid_is_magma,magma_welldef}.
+    \end{subproof}
+    Hence $f$ is a function to $\carrier[M]$ by \auto.
+    Follows by \auto{funs_intro}.
+\end{proof}
+
+\begin{proposition}\label{spike16_monoid_right_map_apply}
+    Let $M$ be a monoid.
+    Let $x,y\in\carrier[M]$.
+    Then $\apply{\spikeMonoidRightMap{M}{x}}{y}=\mul[M](y,x)$.
+\end{proposition}
+\begin{proof}
+    $\spikeMonoidRightMap{M}{x}$ is a function by
+        \auto{spike16_monoid_right_map_type,funs_is_function}.
+    $(y,\mul[M](y,x))\in\spikeMonoidRightMap{M}{x}$ by
+        \auto{spike16_monoid_right_map_iff}.
+    Follows by \auto{function_apply_intro}.
+\end{proof}
+
+\begin{definition}\label{spike16_monoid_power}
+    $\spikeMonoidPower{M}{x}{n}=
+        \iterationAt{\spikeMonoidRightMap{M}{x}}{\neutral[M]}{n}$.
+\end{definition}
+
+\begin{proposition}\label{spike16_monoid_power_zero}
+    $\spikeMonoidPower{M}{x}{\emptyset}=\neutral[M]$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{spike16_monoid_power,iteration_at_zero}.
+\end{proof}
+
+\begin{proposition}\label{spike16_monoid_power_type}
+    Let $M$ be a monoid.
+    Let $x\in\carrier[M]$.
+    Let $n$ be a natural number.
+    Then $\spikeMonoidPower{M}{x}{n}\in\carrier[M]$.
+\end{proposition}
+\begin{proof}
+    $\spikeMonoidRightMap{M}{x}\in
+        \funs{\carrier[M]}{\carrier[M]}$
+        by \auto{spike16_monoid_right_map_type}.
+    $\neutral[M]\in\carrier[M]$ by
+        \auto{monoid_is_unital_magma,unitalmagma_type}.
+    Follows by
+        \auto{spike16_monoid_power,iteration_at_closed}.
+\end{proof}
+
+\begin{proposition}\label{spike16_monoid_power_successor}
+    Let $M$ be a monoid.
+    Let $x\in\carrier[M]$.
+    Let $n$ be a natural number.
+    Then $\spikeMonoidPower{M}{x}{\suc{n}}
+        =\mul[M](\spikeMonoidPower{M}{x}{n},x)$.
+\end{proposition}
+\begin{proof}
+    $\spikeMonoidPower{M}{x}{n}\in\carrier[M]$
+        by \auto{spike16_monoid_power_type}.
+    $\spikeMonoidPower{M}{x}{\suc{n}}
+        =\apply{\spikeMonoidRightMap{M}{x}}{\spikeMonoidPower{M}{x}{n}}$
+        by \auto{spike16_monoid_power,iteration_at_successor}.
+    Follows by \auto{spike16_monoid_right_map_apply}.
+\end{proof}
+
+\subsection{The group compatibility view}
+
+\begin{definition}\label{spike16_group_power_body}
+    $\spikeGroupPower{G}{a}{n}=\spikeMonoidPower{G}{a}{n}$.
+\end{definition}
+
+\begin{proposition}\label{spike16_group_right_map_is_old_translation}
+    $\spikeMonoidRightMap{G}{a}=\RightTranslation{G}{a}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{spike16_monoid_right_map,right_translation,setext}.
+\end{proof}
+
+\begin{theorem}\label{spike16_group_power_iteration_eq}
+    $\spikeGroupPower{G}{a}{n}
+        =\iterationAt{\RightTranslation{G}{a}}{\neutral[G]}{n}$.
+\end{theorem}
+\begin{proof}
+    Follows by
+        \auto{spike16_group_power_body,spike16_monoid_power,
+            spike16_group_right_map_is_old_translation}.
+\end{proof}
+
+\begin{theorem}\label{spike16_group_power_new_body_eq_old}
+    $\spikeGroupPower{G}{a}{n}=\groupPower{G}{a}{n}$.
+\end{theorem}
+\begin{proof}
+    Follows by
+        \auto{spike16_group_power_iteration_eq,group_power}.
+\end{proof}
+
+\subsection{The ring-natural compatibility view}
+
+\begin{definition}\label{spike16_ring_natural_body}
+    $\spikeRingNatural{R}{n}=
+        \spikeMonoidPower{\AdditiveGroup{R}}{\ringOne[R]}{n}$.
+\end{definition}
+
+\begin{proposition}\label{spike16_ring_natural_zero}
+    $\spikeRingNatural{R}{\emptyset}=\ringZero[R]$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{spike16_ring_natural_body,spike16_monoid_power_zero,
+            spike_additive_group_fields}.
+\end{proof}
+
+\begin{proposition}\label{spike16_ring_natural_successor}
+    Let $R$ be a ring.
+    Let $n$ be a natural number.
+    Then $\spikeRingNatural{R}{\suc{n}}
+        =\ringAdd[R](\spikeRingNatural{R}{n},\ringOne[R])$.
+\end{proposition}
+\begin{proof}
+    $\AdditiveGroup{R}$ is a monoid by
+        \auto{spike_additive_group_is_exact,commutative_group,group}.
+    $\ringOne[R]\in\carrier[R]$ by \auto{ring_one_type}.
+    Hence $\ringOne[R]\in\carrier[\AdditiveGroup{R}]$
+        by \auto{spike_additive_group_fields}.
+    $\spikeRingNatural{R}{\suc{n}}
+        =\mul[\AdditiveGroup{R}](
+            \spikeRingNatural{R}{n},\ringOne[R])$
+        by \auto{spike16_ring_natural_body,
+            spike16_monoid_power_successor}.
+    Follows by \auto{spike_additive_group_fields}.
+\end{proof}
+
+\begin{theorem}\label{spike16_ring_natural_new_body_eq_old}
+    Let $R$ be a ring.
+    Let $n$ be a natural number.
+    Then $\spikeRingNatural{R}{n}=\ringNatural{R}{n}$.
+\end{theorem}
+\begin{proof}
+    Let $C=\{k\in\naturals\mid
+        \spikeRingNatural{R}{k}=\ringNatural{R}{k}\}$.
+    $\emptyset\in C$ by
+        \auto{omega_empty,spike16_ring_natural_zero,
+            ring_natural_zero}.
+    Show that for every $k\in C$ we have $\suc{k}\in C$.
+    \begin{subproof}
+        Fix $k\in C$.
+        Then $k$ is a natural number and
+            $\spikeRingNatural{R}{k}=\ringNatural{R}{k}$.
+        $\spikeRingNatural{R}{\suc{k}}
+            =\ringAdd[R](\spikeRingNatural{R}{k},\ringOne[R])$
+            by \auto{spike16_ring_natural_successor}.
+        $\ringNatural{R}{\suc{k}}
+            =\ringAdd[R](\ringNatural{R}{k},\ringOne[R])$
+            by \auto{ring_natural_successor}.
+        $\suc{k}$ is a natural number by \auto{omega_successor}.
+        Follows by \auto.
+    \end{subproof}
+    Hence $C$ is an inductive set by \auto{inductive_set}.
+    Hence every natural number is an element of $C$
+        by \auto{omega_minimal}.
+    Thus $n\in C$.
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{spike16_ring_natural_recursion_eq}
+    Let $R$ be a ring.
+    Let $n$ be a natural number.
+    Then $\spikeRingNatural{R}{n}
+        =\Apply{\naturalRecOp}{\ringZero[R],
+            \Apply{\ringNaturalStepOp}{R},n}$.
+\end{theorem}
+\begin{proof}
+    Follows by
+        \auto{spike16_ring_natural_new_body_eq_old,ring_natural}.
+\end{proof}

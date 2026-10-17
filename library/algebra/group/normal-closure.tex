@@ -1,0 +1,452 @@
+\import{algebra/group/generated.tex}
+\import{algebra/group/normal.tex}
+
+\section{Normal closure}
+
+Normal closure is a carrier-level construction in an explicit ambient group.
+It is the bounded intersection of all normal subgroup carriers containing the
+input, so direct membership and the least-normal-subgroup universal property
+are the primary API.
+
+\begin{definition}\label{normal_subgroup_cover_family}
+    Let $G$ be a group.
+    Let $A$ be a subset of $\carrier[G]$.
+    $\normalSubgroupCoverFamily{A}{G}=
+        \{N\in\pow{\carrier[G]}\mid
+            \normalSubgroup{N}{G}\land A\subseteq N\}$.
+\end{definition}
+
+\begin{proposition}\label{normal_subgroup_cover_family_iff}
+    Let $G$ be a group.
+    Let $A$ be a subset of $\carrier[G]$.
+    $N\in\normalSubgroupCoverFamily{A}{G}$ iff
+        $N\subseteq\carrier[G]$ and
+        $\normalSubgroup{N}{G}$ and
+        $A\subseteq N$.
+\end{proposition}
+\begin{proof}
+    Show that if $N\in\normalSubgroupCoverFamily{A}{G}$, then
+        $N\subseteq\carrier[G]$ and
+        $\normalSubgroup{N}{G}$ and $A\subseteq N$.
+    \begin{subproof}
+        Assume $N\in\normalSubgroupCoverFamily{A}{G}$.
+        Hence $N\in\pow{\carrier[G]}$ and
+            $\normalSubgroup{N}{G}$ and $A\subseteq N$ by
+            \obv{normal_subgroup_cover_family}.
+        Hence $N\subseteq\carrier[G]$ by
+            \obv{powerset_elim}.
+    \end{subproof}
+    Show that if $N\subseteq\carrier[G]$ and
+        $\normalSubgroup{N}{G}$ and $A\subseteq N$, then
+        $N\in\normalSubgroupCoverFamily{A}{G}$.
+    \begin{subproof}
+        Assume $N\subseteq\carrier[G]$ and
+            $\normalSubgroup{N}{G}$ and $A\subseteq N$.
+        Hence $N\in\pow{\carrier[G]}$ by
+            \obv{powerset_intro}.
+        Follows by \obv{normal_subgroup_cover_family}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{proposition}\label{normal_subgroup_cover_family_contains_carrier}
+    Let $G$ be a group.
+    Let $A$ be a subset of $\carrier[G]$.
+    Then $\carrier[G]\in\normalSubgroupCoverFamily{A}{G}$.
+\end{proposition}
+\begin{proof}
+    $\normalSubgroup{\carrier[G]}{G}$ by
+        \obv{full_carrier_normal_subgroup}.
+    Follows by
+        \auto{normal_subgroup_cover_family_iff,subseteq_refl}.
+\end{proof}
+
+\begin{corollary}\label{normal_subgroup_cover_family_inhabited}
+    Let $G$ be a group.
+    Let $A$ be a subset of $\carrier[G]$.
+    Then $\normalSubgroupCoverFamily{A}{G}$ is inhabited.
+\end{corollary}
+\begin{proof}
+    Follows by
+        \obv{normal_subgroup_cover_family_contains_carrier}.
+\end{proof}
+
+\begin{definition}\label{normal_closure}
+    Let $G$ be a group.
+    Let $A$ be a subset of $\carrier[G]$.
+    $\normalClosure{A}{G}=
+        \inters{\normalSubgroupCoverFamily{A}{G}}$.
+\end{definition}
+
+\begin{proposition}\label{normal_closure_subseteq_carrier}
+    Let $G$ be a group.
+    Let $A$ be a subset of $\carrier[G]$.
+    Then $\normalClosure{A}{G}\subseteq\carrier[G]$.
+\end{proposition}
+\begin{proof}
+    $\carrier[G]\in\normalSubgroupCoverFamily{A}{G}$ by
+        \obv{normal_subgroup_cover_family_contains_carrier}.
+    $\inters{\normalSubgroupCoverFamily{A}{G}}\subseteq\carrier[G]$ by
+        \obv{inters_subseteq_elem}.
+    Follows by \obv{normal_closure}.
+\end{proof}
+
+\begin{proposition}\label{normal_closure_contains_generators}
+    Let $G$ be a group.
+    Let $A$ be a subset of $\carrier[G]$.
+    Then $A\subseteq\normalClosure{A}{G}$.
+\end{proposition}
+\begin{proof}
+    $\normalSubgroupCoverFamily{A}{G}$ is inhabited by
+        \obv{normal_subgroup_cover_family_inhabited}.
+    For every $N\in\normalSubgroupCoverFamily{A}{G}$ we have
+        $A\subseteq N$ by
+        \obv{normal_subgroup_cover_family_iff}.
+    Hence $A\subseteq\inters{\normalSubgroupCoverFamily{A}{G}}$ by
+        \obv{inters_greatest}.
+    Follows by \obv{normal_closure}.
+\end{proof}
+
+\begin{theorem}\label{normal_closure_is_normal_subgroup}
+    Let $G$ be a group.
+    Let $A$ be a subset of $\carrier[G]$.
+    Then $\normalSubgroup{\normalClosure{A}{G}}{G}$.
+\end{theorem}
+\begin{proof}
+    Let $C=\normalSubgroupCoverFamily{A}{G}$.
+    Let $N=\normalClosure{A}{G}$.
+    $C$ is inhabited by
+        \auto{normal_subgroup_cover_family_inhabited}.
+    For every $K\in C$ we have $\normalSubgroup{K}{G}$ by
+        \auto{normal_subgroup_cover_family_iff}.
+    Hence for every $K\in C$ we have $\subgroup{K}{G}$ by
+        \obv{normal_subgroup_is_subgroup}.
+    $N=\inters{C}$ by \obv{normal_closure}.
+    Hence $\subgroup{N}{G}$ by
+        \auto{subgroup_family_intersection}.
+    Show that for all $a\in\carrier[G]$ we have for every $x\in N$
+        we have $\conjugate{G}{a}{x}\in N$.
+    \begin{subproof}
+        Fix $a\in\carrier[G]$.
+        Fix $x\in N$.
+        Show that for every $K\in C$ we have
+            $\conjugate{G}{a}{x}\in K$.
+        \begin{subproof}
+            Fix $K\in C$.
+            $x\in\inters{C}$.
+            Hence $x\in K$ by \obv{inters_destr}.
+            $\normalSubgroup{K}{G}$ by
+                \obv{normal_subgroup_cover_family_iff}.
+            Follows by
+                \obv{normal_subgroup_closed_under_conjugation}.
+        \end{subproof}
+        Hence $\conjugate{G}{a}{x}\in\inters{C}$ by
+            \obv{inters_intro}.
+    \end{subproof}
+    Follows by \auto{normal_subgroup_iff_closed_under_conjugation}.
+\end{proof}
+
+\begin{theorem}\label{normal_closure_least}
+    Let $G$ be a group.
+    Let $A$ be a subset of $\carrier[G]$.
+    Suppose $\normalSubgroup{N}{G}$ and $A\subseteq N$.
+    Then $\normalClosure{A}{G}\subseteq N$.
+\end{theorem}
+\begin{proof}
+    $N\subseteq\carrier[G]$ by
+        \obv{normal_subgroup_subseteq}.
+    Hence $N\in\normalSubgroupCoverFamily{A}{G}$ by
+        \auto{normal_subgroup_cover_family_iff}.
+    $\inters{\normalSubgroupCoverFamily{A}{G}}\subseteq N$ by
+        \obv{inters_subseteq_elem}.
+    Follows by \obv{normal_closure}.
+\end{proof}
+
+\begin{theorem}\label{normal_closure_iff}
+    Let $G$ be a group.
+    Let $A$ be a subset of $\carrier[G]$.
+    Then $x\in\normalClosure{A}{G}$ iff for every $N$ such that
+        $\normalSubgroup{N}{G}$ and $A\subseteq N$ we have $x\in N$.
+\end{theorem}
+\begin{proof}
+    Let $C=\normalSubgroupCoverFamily{A}{G}$.
+    $C$ is inhabited by
+        \auto{normal_subgroup_cover_family_inhabited}.
+    Show that if $x\in\normalClosure{A}{G}$, then for every $N$ such that
+        $\normalSubgroup{N}{G}$ and $A\subseteq N$ we have $x\in N$.
+    \begin{subproof}
+        Assume $x\in\normalClosure{A}{G}$.
+        Hence $x\in\inters{C}$ by \obv{normal_closure}.
+        Fix $N$.
+        Assume $\normalSubgroup{N}{G}$ and $A\subseteq N$.
+        $N\subseteq\carrier[G]$ by
+            \obv{normal_subgroup_subseteq}.
+        Hence $N\in C$ by
+            \auto{normal_subgroup_cover_family_iff}.
+        Follows by \obv{inters_destr}.
+    \end{subproof}
+    Show that if for every $N$ such that
+        $\normalSubgroup{N}{G}$ and $A\subseteq N$ we have $x\in N$, then
+        $x\in\normalClosure{A}{G}$.
+    \begin{subproof}
+        Assume that for every $N$ such that
+            $\normalSubgroup{N}{G}$ and $A\subseteq N$ we have $x\in N$.
+        Show that for every $N\in C$ we have $x\in N$.
+        \begin{subproof}
+            Fix $N\in C$.
+            $\normalSubgroup{N}{G}$ and $A\subseteq N$ by
+                \auto{normal_subgroup_cover_family_iff}.
+        \end{subproof}
+        Hence $x\in\inters{C}$ by \obv{inters_intro}.
+        Follows by \obv{normal_closure}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{normal_closure_universal_property}
+    Let $G$ be a group.
+    Let $A$ be a subset of $\carrier[G]$.
+    Suppose $\normalSubgroup{N}{G}$.
+    Then $\normalClosure{A}{G}\subseteq N$ iff $A\subseteq N$.
+\end{theorem}
+\begin{proof}
+    $A\subseteq\normalClosure{A}{G}$ by
+        \obv{normal_closure_contains_generators}.
+    Follows by \auto{normal_closure_least,subseteq_transitive}.
+\end{proof}
+
+\begin{corollary}\label{normal_closure_of_normal_subgroup}
+    Let $G$ be a group.
+    Let $N$ be a subset of $\carrier[G]$.
+    Suppose $\normalSubgroup{N}{G}$.
+    Then $\normalClosure{N}{G}=N$.
+\end{corollary}
+\begin{proof}
+    $G$ is a group and $N\subseteq\carrier[G]$ by
+        \obv{normal_subgroup_ambient_group,normal_subgroup_subseteq}.
+    $N\subseteq\normalClosure{N}{G}$ by
+        \obv{normal_closure_contains_generators}.
+    $N\subseteq N$ by \obv{subseteq_refl}.
+    $\normalClosure{N}{G}\subseteq N$ by
+        \obv{normal_closure_least}.
+    Follows by \obv{subseteq_antisymmetric}.
+\end{proof}
+
+\begin{proposition}\label{normal_closure_monotone}
+    Let $G$ be a group.
+    Let $A,B\subseteq\carrier[G]$.
+    Suppose $A\subseteq B$.
+    Then $\normalClosure{A}{G}\subseteq\normalClosure{B}{G}$.
+\end{proposition}
+\begin{proof}
+    $A\subseteq\carrier[G]$ by \obv{subseteq_transitive}.
+    $\normalSubgroup{\normalClosure{B}{G}}{G}$ by
+        \obv{normal_closure_is_normal_subgroup}.
+    $B\subseteq\normalClosure{B}{G}$ by
+        \obv{normal_closure_contains_generators}.
+    Hence $A\subseteq\normalClosure{B}{G}$ by
+        \obv{subseteq_transitive}.
+    Follows by \obv{normal_closure_least}.
+\end{proof}
+
+\subsection{Generation by all conjugates}
+
+\begin{definition}\label{conjugate_union}
+    $\conjugateUnion{G}{A}=
+        \{y\in\carrier[G]\mid
+            \text{there exists $a\in\carrier[G]$ such that
+                $y\in\conjugateSubset{G}{a}{A}$}\}$.
+\end{definition}
+
+\begin{proposition}\label{conjugate_union_iff}
+    $y\in\conjugateUnion{G}{A}$ iff
+        $y\in\carrier[G]$ and
+        there exists $a\in\carrier[G]$ such that
+            $y\in\conjugateSubset{G}{a}{A}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{conjugate_union}.
+\end{proof}
+
+\begin{proposition}\label{conjugate_union_subseteq_carrier}
+    $\conjugateUnion{G}{A}\subseteq\carrier[G]$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{subseteq,conjugate_union_iff}.
+\end{proof}
+
+\begin{classification}\label{conjugate_union_is_subset_in_group}
+    Let $G$ be a group.
+    Then $\conjugateUnion{G}{A}\subseteq\carrier[G]$.
+\end{classification}
+\begin{proof}
+    Follows by \obv{conjugate_union_subseteq_carrier}.
+\end{proof}
+
+\begin{proposition}\label{conjugate_union_contains_generators}
+    Let $G$ be a group.
+    Let $A$ be a subset of $\carrier[G]$.
+    Then $A\subseteq\conjugateUnion{G}{A}$.
+\end{proposition}
+\begin{proof}
+    $\neutral[G]\in\carrier[G]$ by
+        \obv{group_is_monoid,monoid_is_unital_magma,unitalmagma_type}.
+    $\conjugateSubset{G}{\neutral[G]}{A}=A$ by
+        \obv{conjugate_subset_by_neutral}.
+    Show that for every $x\in A$ we have
+        $x\in\conjugateUnion{G}{A}$.
+    \begin{subproof}
+        Fix $x\in A$.
+        Hence $x\in\carrier[G]$ by \obv{subseteq}.
+        $x\in\conjugateSubset{G}{\neutral[G]}{A}$.
+        Follows by \obv{conjugate_union_iff}.
+    \end{subproof}
+    Follows by \obv{subseteq}.
+\end{proof}
+
+\begin{theorem}\label{conjugate_union_closed_under_conjugation}
+    Let $G$ be a group.
+    Let $A$ be a subset of $\carrier[G]$.
+    Let $a\in\carrier[G]$.
+    Then
+        $\conjugateSubset{G}{a}{\conjugateUnion{G}{A}}
+            \subseteq\conjugateUnion{G}{A}$.
+\end{theorem}
+\begin{proof}
+    Let $B=\conjugateUnion{G}{A}$.
+    $B\subseteq\carrier[G]$ by
+        \auto{conjugate_union_subseteq_carrier}.
+    Show that for every $y\in\conjugateSubset{G}{a}{B}$ we have
+        $y\in B$.
+    \begin{subproof}
+        Fix $y\in\conjugateSubset{G}{a}{B}$.
+        Take $x\in B\inter\carrier[G]$ such that
+            $y=\conjugate{G}{a}{x}$ by
+            \obv{conjugate_subset_iff}.
+        Hence $x\in B$ and $x\in\carrier[G]$ by
+            \obv{inter_elim_left,inter_elim_right}.
+        Take $b\in\carrier[G]$ such that
+            $x\in\conjugateSubset{G}{b}{A}$ by
+            \auto{conjugate_union_iff}.
+        $\conjugateSubset{G}{b}{A}\subseteq\carrier[G]$ by
+            \obv{conjugate_subset_subseteq_carrier}.
+        Hence $x\in\conjugateSubset{G}{b}{A}\inter\carrier[G]$ by
+            \obv{inter_intro}.
+        Hence $y\in
+            \conjugateSubset{G}{a}{\conjugateSubset{G}{b}{A}}$ by
+            \auto{conjugate_subset_iff}.
+        $\mul[G](a,b)\in\carrier[G]$ by
+            \obv{group_is_monoid,monoid_is_magma,magma_welldef}.
+        $\conjugateSubset{G}{\mul[G](a,b)}{A}=
+            \conjugateSubset{G}{a}{\conjugateSubset{G}{b}{A}}$ by
+            \obv{conjugate_subset_composition}.
+        Hence $y\in\conjugateSubset{G}{\mul[G](a,b)}{A}$.
+        $\conjugateSubset{G}{\mul[G](a,b)}{A}
+            \subseteq\carrier[G]$ by
+            \obv{conjugate_subset_subseteq_carrier}.
+        Hence $y\in\carrier[G]$ by \obv{subseteq}.
+        Follows by \obv{conjugate_union_iff}.
+    \end{subproof}
+    Follows by \obv{subseteq}.
+\end{proof}
+
+\begin{theorem}\label{generated_conjugate_union_is_normal_subgroup}
+    Let $G$ be a group.
+    Let $A$ be a subset of $\carrier[G]$.
+    Then
+        $\normalSubgroup
+            {\generatedSubgroup{\conjugateUnion{G}{A}}{G}}{G}$.
+\end{theorem}
+\begin{proof}
+    Let $B=\conjugateUnion{G}{A}$.
+    Let $Q=\generatedSubgroup{B}{G}$.
+    $B\subseteq\carrier[G]$ by
+        \auto{conjugate_union_subseteq_carrier}.
+    $\subgroup{Q}{G}$ by
+        \auto{generated_subgroup_is_subgroup}.
+    Hence $Q\subseteq\carrier[G]$ by
+        \obv{subgroup_subseteq}.
+    Show that for all $a\in\carrier[G]$ we have for every $x\in Q$
+        we have $\conjugate{G}{a}{x}\in Q$.
+    \begin{subproof}
+        Fix $a\in\carrier[G]$.
+        Fix $x\in Q$.
+        Let $c=\ConjugationMap{G}{a}$.
+        $\groupHom{c}{G}{G}$ by
+            \auto{conjugation_map_group_hom}.
+        $c\in\funs{\carrier[G]}{\carrier[G]}$ by
+            \obv{group_hom_type}.
+        $\img{c}{B}$ is a subset of $\carrier[G]$ by
+            \auto{img_subseteq_ran,group_hom_type,funs_ran,subseteq_transitive}.
+        $\img{c}{Q}=\generatedSubgroup{\img{c}{B}}{G}$ by
+            \auto{group_hom_image_generated_subgroup}.
+        $B\inter\carrier[G]=B$ by
+            \obv{inter_absorb_supseteq_right}.
+        Hence $\img{c}{B}=\conjugateSubset{G}{a}{B}$ by
+            \obv{conjugate_subset}.
+        $\conjugateSubset{G}{a}{B}\subseteq B$ by
+            \auto{conjugate_union_closed_under_conjugation}.
+        Hence $\img{c}{B}\subseteq B$.
+        Hence
+            $\generatedSubgroup{\img{c}{B}}{G}\subseteq Q$ by
+            \obv{generated_subgroup_monotone}.
+        Hence $\img{c}{Q}\subseteq Q$.
+        $x\in\carrier[G]$ by \obv{subseteq}.
+        $\apply{c}{x}=\conjugate{G}{a}{x}$ by
+            \auto{conjugation_map_apply}.
+        $\apply{c}{x}\in\img{c}{Q}$ by
+            \auto{group_hom_image_iff}.
+        Follows by \obv{subseteq}.
+    \end{subproof}
+    Follows by \auto{normal_subgroup_iff_closed_under_conjugation}.
+\end{proof}
+
+\begin{theorem}\label{normal_closure_is_generated_by_conjugates}
+    Let $G$ be a group.
+    Let $A$ be a subset of $\carrier[G]$.
+    Then
+        $\normalClosure{A}{G}=
+            \generatedSubgroup{\conjugateUnion{G}{A}}{G}$.
+\end{theorem}
+\begin{proof}
+    Let $B=\conjugateUnion{G}{A}$.
+    Let $N=\normalClosure{A}{G}$.
+    Let $Q=\generatedSubgroup{B}{G}$.
+    $B\subseteq\carrier[G]$ by
+        \auto{conjugate_union_subseteq_carrier}.
+    $A\subseteq B$ by
+        \obv{conjugate_union_contains_generators}.
+    $B\subseteq Q$ by
+        \obv{generated_subgroup_contains_generators}.
+    Hence $A\subseteq Q$ by \obv{subseteq_transitive}.
+    $\normalSubgroup{Q}{G}$ by
+        \auto{generated_conjugate_union_is_normal_subgroup}.
+    Hence $N\subseteq Q$ by \auto{normal_closure_least}.
+    $\normalSubgroup{N}{G}$ by
+        \auto{normal_closure_is_normal_subgroup}.
+    Hence $\subgroup{N}{G}$ by
+        \obv{normal_subgroup_is_subgroup}.
+    $A\subseteq N$ by
+        \obv{normal_closure_contains_generators}.
+    Show that $B\subseteq N$.
+    \begin{subproof}
+        Show that for every $y\in B$ we have $y\in N$.
+        \begin{subproof}
+            Fix $y\in B$.
+            Take $a\in\carrier[G]$ such that
+                $y\in\conjugateSubset{G}{a}{A}$ by
+                \auto{conjugate_union_iff}.
+            Take $x\in A\inter\carrier[G]$ such that
+                $y=\conjugate{G}{a}{x}$ by
+                \obv{conjugate_subset_iff}.
+            Hence $x\in A$ by \obv{inter_elim_left}.
+            Hence $x\in N$ by \obv{subseteq}.
+            Hence $\conjugate{G}{a}{x}\in N$ by
+                \obv{normal_subgroup_closed_under_conjugation}.
+        \end{subproof}
+        Follows by \obv{subseteq}.
+    \end{subproof}
+    Hence $Q\subseteq N$ by
+        \auto{generated_subgroup_least}.
+    Follows by \obv{subseteq_antisymmetric}.
+\end{proof}

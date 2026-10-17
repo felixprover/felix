@@ -1,0 +1,1541 @@
+\import{algebra/group/automorphism-tower-transport.tex}
+\import{recursion/transfinite.tex}
+
+\section{Canonical transport between coherent tower segments}
+
+Fixing a base isomorphism determines the stage comparison recursively.  At a
+successor the comparison is automorphism transport.  At a limit it is the
+unique comparison supplied by the semantic direct-limit property.  Logical
+selection names that unique set-coded graph; all mathematical laws below are
+guarded by coherent segment hypotheses.
+
+\begin{definition}\label{tower_limit_transport}
+    $\towerLimitTransport{T}{U}{\lambda}{p}=
+        \Select[\Set]{\fun{u:\Set}{
+            \groupDirectSystemLimitIsomorphism
+                {p}
+                {\towerEarlierSystem{T}{\lambda}}
+                {\towerEarlierSystem{U}{\lambda}}
+                {\towerStage{T}{\lambda}}
+                {\towerIncomingFamily{T}{\lambda}}
+                {\towerStage{U}{\lambda}}
+                {\towerIncomingFamily{U}{\lambda}}
+                {u}}}$.
+\end{definition}
+
+\begin{theorem}\label{tower_limit_transport_specification}
+    Suppose $\coherentTowerSegment{T}{G}{\theta}$ and
+        $\coherentTowerSegment{U}{H}{\theta}$.
+    Let $\lambda\in\theta$.
+    Suppose $\lambda$ is a limit ordinal.
+    Suppose $\groupDirectSystemIsomorphism{p}
+        {\towerEarlierSystem{T}{\lambda}}
+        {\towerEarlierSystem{U}{\lambda}}$.
+    Then $\groupDirectSystemLimitIsomorphism
+        {p}
+        {\towerEarlierSystem{T}{\lambda}}
+        {\towerEarlierSystem{U}{\lambda}}
+        {\towerStage{T}{\lambda}}
+        {\towerIncomingFamily{T}{\lambda}}
+        {\towerStage{U}{\lambda}}
+        {\towerIncomingFamily{U}{\lambda}}
+        {\towerLimitTransport{T}{U}{\lambda}{p}}$.
+\end{theorem}
+\begin{proof}
+    $\directLimitCocone
+        {\towerEarlierSystem{T}{\lambda}}
+        {\towerStage{T}{\lambda}}
+        {\towerIncomingFamily{T}{\lambda}}$ and
+    $\directLimitCocone
+        {\towerEarlierSystem{U}{\lambda}}
+        {\towerStage{U}{\lambda}}
+        {\towerIncomingFamily{U}{\lambda}}$ by
+        \obv{coherent_tower_segment_limit}.
+    Hence there exists $u$ such that
+        $\groupDirectSystemLimitIsomorphism
+            {p}
+            {\towerEarlierSystem{T}{\lambda}}
+            {\towerEarlierSystem{U}{\lambda}}
+            {\towerStage{T}{\lambda}}
+            {\towerIncomingFamily{T}{\lambda}}
+            {\towerStage{U}{\lambda}}
+            {\towerIncomingFamily{U}{\lambda}}
+            {u}$ by
+        \auto{group_direct_system_limit_isomorphism_exists_unique}.
+    Follows by \auto{tower_limit_transport}.
+\end{proof}
+
+\begin{definition}\label{tower_transport_successor_step}
+    $\towerTransportSuccessorStep{T}{U}{\beta}{p}=
+        \automorphismTransport{\apply{p}{\beta}}
+            {\towerStage{T}{\beta}}{\towerStage{U}{\beta}}$.
+\end{definition}
+
+\begin{definition}\label{tower_transport_nonzero_step}
+    $\towerTransportNonzeroStep{T}{U}{\alpha}{p}=
+        \Apply{\logicalIfSetOp}
+            {\towerSuccessorCase{\alpha},\towerTransportSuccessorStep{T}{U}{\unions{\alpha}}{p},\towerLimitTransport{T}{U}{\alpha}{p}}$.
+\end{definition}
+
+\begin{definition}\label{tower_transport_step_op}
+    $\towerTransportStepOp:
+        \Set\to\Set\to\Set\to\Set\to\Set\to\Set=
+        \fun{e,T,U,\alpha,p:\Set}{
+                \Apply{\logicalIfSetOp}
+                    {(\alpha=\emptyset),e,\towerTransportNonzeroStep{T}{U}{\alpha}{p}}}$.
+\end{definition}
+
+\begin{abbreviation}\label{tower_transport_step}
+    $\towerTransportStep{e}{T}{U}{\alpha}{p}=
+        \Apply{\towerTransportStepOp}{e,T,U,\alpha,p}$.
+\end{abbreviation}
+
+\begin{proposition}\label{tower_transport_step_zero}
+    $\towerTransportStep{e}{T}{U}{\emptyset}{p}=e$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \obv{tower_transport_step_op,logical_if_set_true}.
+\end{proof}
+
+\begin{proposition}\label{tower_transport_step_nonzero}
+    Suppose $\alpha\neq\emptyset$.
+    Then $\towerTransportStep{e}{T}{U}{\alpha}{p}=
+        \towerTransportNonzeroStep{T}{U}{\alpha}{p}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \obv{tower_transport_step_op,logical_if_set_false}.
+\end{proof}
+
+\begin{proposition}\label{tower_transport_nonzero_step_successor}
+    Suppose $\towerSuccessorCase{\alpha}$.
+    Then $\towerTransportNonzeroStep{T}{U}{\alpha}{p}=
+        \towerTransportSuccessorStep{T}{U}{\unions{\alpha}}{p}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \obv{tower_transport_nonzero_step,logical_if_set_true}.
+\end{proof}
+
+\begin{proposition}\label{tower_transport_nonzero_step_limit}
+    Suppose $\lnot\towerSuccessorCase{\alpha}$.
+    Then $\towerTransportNonzeroStep{T}{U}{\alpha}{p}=
+        \towerLimitTransport{T}{U}{\alpha}{p}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \obv{tower_transport_nonzero_step,logical_if_set_false}.
+\end{proof}
+
+\begin{proposition}\label{tower_transport_step_successor_ordinal}
+    Let $\alpha$ be a successor ordinal.
+    Then $\towerTransportStep{e}{T}{U}{\alpha}{p}=
+        \towerTransportSuccessorStep{T}{U}{\unions{\alpha}}{p}$.
+\end{proposition}
+\begin{proof}
+    $\alpha\neq\emptyset$ by \obv{zero_not_successorordinal}.
+    $\towerSuccessorCase{\alpha}$ by
+        \obv{tower_successor_case}.
+    $\towerTransportStep{e}{T}{U}{\alpha}{p}=
+        \towerTransportNonzeroStep{T}{U}{\alpha}{p}$ by
+        \obv{tower_transport_step_nonzero}.
+    $\towerTransportNonzeroStep{T}{U}{\alpha}{p}=
+        \towerTransportSuccessorStep{T}{U}{\unions{\alpha}}{p}$ by
+        \obv{tower_transport_nonzero_step_successor}.
+\end{proof}
+
+\begin{corollary}\label{tower_transport_step_successor}
+    Let $\beta$ be an ordinal.
+    Then $\towerTransportStep{e}{T}{U}{\suc{\beta}}{p}=
+        \towerTransportSuccessorStep{T}{U}{\beta}{p}$.
+\end{corollary}
+\begin{proof}
+    Follows by
+        \auto{ordinal_successor_data,
+            tower_transport_step_successor_ordinal}.
+\end{proof}
+
+\begin{proposition}\label{tower_transport_step_limit}
+    Let $\lambda$ be a limit ordinal.
+    Then $\towerTransportStep{e}{T}{U}{\lambda}{p}=
+        \towerLimitTransport{T}{U}{\lambda}{p}$.
+\end{proposition}
+\begin{proof}
+    $\lambda\neq\emptyset$ by \obv{zero_not_limitordinal}.
+    $\lambda$ is not a successor ordinal by
+        \obv{limit_ordinal_is_not_successor_ordinal}.
+    Hence $\lnot\towerSuccessorCase{\lambda}$ by
+        \obv{tower_successor_case}.
+    Follows by
+        \auto{tower_transport_step_nonzero,
+            tower_transport_nonzero_step_limit}.
+\end{proof}
+
+\begin{definition}\label{tower_transport_family}
+    $\towerTransportFamily{e}{T}{U}=
+        \Apply{\unboundedOrdinalRecursionOp}
+            {\carrier[T],\Apply{\towerTransportStepOp}{e,T,U}}$.
+\end{definition}
+
+\begin{proposition}\label{tower_transport_family_function}
+    Suppose $\carrier[T]$ is an ordinal.
+    Then $\towerTransportFamily{e}{T}{U}$ is a function.
+\end{proposition}
+\begin{proof}
+    Let $f=\Apply{\unboundedOrdinalRecursionOp}
+        {\carrier[T],\Apply{\towerTransportStepOp}{e,T,U}}$.
+    $\Apply{\recursiveSetFunctionOp}{f}$ by
+        \obv{unbounded_ordinal_recursion_function}.
+    $f=\towerTransportFamily{e}{T}{U}$ by
+        \obv{tower_transport_family}.
+    Hence $\Apply{\recursiveSetFunctionOp}{
+        \towerTransportFamily{e}{T}{U}}$.
+    Hence $\recursiveSetFunction{\towerTransportFamily{e}{T}{U}}$ by
+        \obv{recursive_set_function_op}.
+    Follows by \obv{recursive_set_function}.
+\end{proof}
+
+\begin{proposition}\label{tower_transport_family_domain}
+    Suppose $\carrier[T]$ is an ordinal.
+    Then $\dom{\towerTransportFamily{e}{T}{U}}=\carrier[T]$.
+\end{proposition}
+\begin{proof}
+    Let $f=\Apply{\unboundedOrdinalRecursionOp}
+        {\carrier[T],\Apply{\towerTransportStepOp}{e,T,U}}$.
+    $\dom{f}=\carrier[T]$ by
+        \auto{unbounded_ordinal_recursion_domain}.
+    $f=\towerTransportFamily{e}{T}{U}$ by
+        \obv{tower_transport_family}.
+\end{proof}
+
+\begin{proposition}\label{tower_transport_family_type}
+    Suppose $\carrier[T]$ is an ordinal.
+    Then $\towerTransportFamily{e}{T}{U}\in
+        \funs{\carrier[T]}{\ran{\towerTransportFamily{e}{T}{U}}}$.
+\end{proposition}
+\begin{proof}
+    Let $F=\towerTransportFamily{e}{T}{U}$.
+    $F$ is a function and $\dom{F}=\carrier[T]$ by
+        \auto{tower_transport_family_function,
+            tower_transport_family_domain}.
+    $F\in\funs{\dom{F}}{\ran{F}}$ by
+        \obv{function_exact_type_to_range}.
+\end{proof}
+
+\begin{proposition}\label{tower_transport_family_equation}
+    Suppose $\carrier[T]$ is an ordinal.
+    Let $\alpha\in\carrier[T]$.
+    Then $\apply{\towerTransportFamily{e}{T}{U}}{\alpha}=
+        \towerTransportStep{e}{T}{U}{\alpha}{
+            \restrl{\towerTransportFamily{e}{T}{U}}{\alpha}}$.
+\end{proposition}
+\begin{proof}
+    Let $f=\Apply{\unboundedOrdinalRecursionOp}
+        {\carrier[T],\Apply{\towerTransportStepOp}{e,T,U}}$.
+    $\apply{f}{\alpha}=
+        \Apply{\towerTransportStepOp}{e,T,U,\alpha,\restrl{f}{\alpha}}$ by
+        \auto{unbounded_ordinal_recursion_equation}.
+    $f=\towerTransportFamily{e}{T}{U}$ by
+        \obv{tower_transport_family}.
+    $\Apply{\towerTransportStepOp}{e,T,U,\alpha,\restrl{f}{\alpha}}=
+        \towerTransportStep{e}{T}{U}{\alpha}{\restrl{f}{\alpha}}$ by
+        \obv{tower_transport_step_op}.
+\end{proof}
+
+\subsection{The bounded transport invariant}
+
+\begin{definition}\label{tower_transport_at}
+    $\towerTransportAt{E}{T}{U}{\alpha}$ iff
+        $\groupIsomorphism{\apply{E}{\alpha}}
+            {\towerStage{T}{\alpha}}{\towerStage{U}{\alpha}}$ and
+        for every $\beta\in\alpha$ we have
+            $\apply{E}{\alpha}\circ\towerBond{T}{\beta}{\alpha}=
+                \towerBond{U}{\beta}{\alpha}\circ\apply{E}{\beta}$.
+\end{definition}
+
+\begin{definition}\label{tower_transport_below}
+    $\towerTransportBelow{E}{T}{U}{\alpha}$ iff
+        for every $\gamma\in\alpha$ we have
+            $\towerTransportAt{E}{T}{U}{\gamma}$.
+\end{definition}
+
+\begin{proposition}\label{tower_transport_at_component}
+    Suppose $\towerTransportAt{E}{T}{U}{\alpha}$.
+    Then $\groupIsomorphism{\apply{E}{\alpha}}
+        {\towerStage{T}{\alpha}}{\towerStage{U}{\alpha}}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{tower_transport_at}.
+\end{proof}
+
+\begin{proposition}\label{tower_transport_at_strict_square}
+    Suppose $\towerTransportAt{E}{T}{U}{\alpha}$.
+    Let $\beta\in\alpha$.
+    Then $\apply{E}{\alpha}\circ\towerBond{T}{\beta}{\alpha}=
+        \towerBond{U}{\beta}{\alpha}\circ\apply{E}{\beta}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{tower_transport_at}.
+\end{proof}
+
+\begin{proposition}\label{tower_transport_below_at}
+    Suppose $\towerTransportBelow{E}{T}{U}{\alpha}$.
+    Let $\gamma\in\alpha$.
+    Then $\towerTransportAt{E}{T}{U}{\gamma}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{tower_transport_below}.
+\end{proof}
+
+\begin{theorem}\label{tower_transport_bounded_induction}
+    Let $\theta$ be an ordinal.
+    Suppose for every $\alpha\in\theta$ such that
+        $\towerTransportBelow{E}{T}{U}{\alpha}$ we have
+        $\towerTransportAt{E}{T}{U}{\alpha}$.
+    Then $\towerTransportBelow{E}{T}{U}{\theta}$.
+\end{theorem}
+\begin{proof}
+    Let $P:\Set\to\Prop=\fun{\alpha:\Set}{
+        \towerTransportAt{E}{T}{U}{\alpha}}$.
+    Show that $\forall \alpha:\Set.\ \alpha\in\theta\implies
+        ((\forall \gamma:\Set.\ \gamma\in\alpha\implies
+            \Apply{P}{\gamma})
+        \implies\Apply{P}{\alpha})$.
+    \begin{subproof}
+        Fix $\alpha\in\theta$.
+        Assume $\forall \gamma:\Set.\ \gamma\in\alpha\implies
+            \Apply{P}{\gamma}$.
+        Show that $\towerTransportBelow{E}{T}{U}{\alpha}$.
+        \begin{subproof}
+            Show that for every $\gamma\in\alpha$ we have
+                $\towerTransportAt{E}{T}{U}{\gamma}$.
+            \begin{subproof}
+                Fix $\gamma\in\alpha$.
+                $\Apply{P}{\gamma}$.
+            \end{subproof}
+            Follows by \obv{tower_transport_below}.
+        \end{subproof}
+        Hence $\towerTransportAt{E}{T}{U}{\alpha}$.
+    \end{subproof}
+    Hence $\forall \alpha:\Set.\ \alpha\in\theta\implies
+        \Apply{P}{\alpha}$ by
+        \obv{bounded_transfinite_induction}.
+    Show that for every $\alpha\in\theta$ we have
+        $\towerTransportAt{E}{T}{U}{\alpha}$.
+    \begin{subproof}
+        Fix $\alpha\in\theta$.
+        $\Apply{P}{\alpha}$.
+    \end{subproof}
+    Follows by \obv{tower_transport_below}.
+\end{proof}
+
+\begin{proposition}\label{tower_transport_self_square}
+    Suppose $\towerSegmentDiagram{T}{G}{\theta}$ and
+        $\towerSegmentDiagram{U}{H}{\theta}$.
+    Let $\alpha\in\theta$.
+    Suppose $\groupIsomorphism{e}
+        {\towerStage{T}{\alpha}}{\towerStage{U}{\alpha}}$.
+    Then $e\circ\towerBond{T}{\alpha}{\alpha}=
+        \towerBond{U}{\alpha}{\alpha}\circ e$.
+\end{proposition}
+\begin{proof}
+    $\towerBond{T}{\alpha}{\alpha}=
+        \identity{\carrier[\towerStage{T}{\alpha}]}$ and
+    $\towerBond{U}{\alpha}{\alpha}=
+        \identity{\carrier[\towerStage{U}{\alpha}]}$ by
+        \obv{tower_segment_bond_identity}.
+    $e\in\funs{\carrier[\towerStage{T}{\alpha}]}
+        {\carrier[\towerStage{U}{\alpha}]}$ by
+        \obv{group_isomorphism_is_hom,group_hom_type}.
+    $e\circ\identity{\carrier[\towerStage{T}{\alpha}]}=e$ and
+        $\identity{\carrier[\towerStage{U}{\alpha}]}\circ e=e$ by
+        \obv{funs_circ_identity_right,funs_identity_circ_left}.
+\end{proof}
+
+\begin{proposition}\label{tower_transport_at_nonstrict_square}
+    Suppose $\towerSegmentDiagram{T}{G}{\theta}$ and
+        $\towerSegmentDiagram{U}{H}{\theta}$.
+    Let $\alpha\in\theta$.
+    Suppose $\towerTransportAt{E}{T}{U}{\alpha}$.
+    Let $\beta\in\suc{\alpha}$.
+    Then $\apply{E}{\alpha}\circ\towerBond{T}{\beta}{\alpha}=
+        \towerBond{U}{\beta}{\alpha}\circ\apply{E}{\beta}$.
+\end{proposition}
+\begin{proof}
+    If $\beta\in\alpha$, then
+        $\apply{E}{\alpha}\circ\towerBond{T}{\beta}{\alpha}=
+            \towerBond{U}{\beta}{\alpha}\circ\apply{E}{\beta}$ by
+        \obv{tower_transport_at_strict_square}.
+    If $\beta=\alpha$, then
+        $\groupIsomorphism{\apply{E}{\alpha}}
+            {\towerStage{T}{\alpha}}{\towerStage{U}{\alpha}}$ by
+        \obv{tower_transport_at_component}.
+    If $\beta=\alpha$, then
+        $\apply{E}{\alpha}\circ\towerBond{T}{\beta}{\alpha}=
+            \towerBond{U}{\beta}{\alpha}\circ\apply{E}{\beta}$ by
+        \auto{tower_transport_self_square}.
+    Follows by \auto{suc_iff}.
+\end{proof}
+
+\begin{proposition}\label{tower_transport_below_nonstrict_square}
+    Suppose $\towerSegmentDiagram{T}{G}{\theta}$ and
+        $\towerSegmentDiagram{U}{H}{\theta}$.
+    Let $\lambda\in\theta$.
+    Suppose $\towerTransportBelow{E}{T}{U}{\lambda}$.
+    Let $\alpha,\beta\in\lambda$.
+    Suppose $\alpha\subseteq\beta$.
+    Then $\apply{E}{\beta}\circ\towerBond{T}{\alpha}{\beta}=
+        \towerBond{U}{\alpha}{\beta}\circ\apply{E}{\alpha}$.
+\end{proposition}
+\begin{proof}
+    $\towerTransportAt{E}{T}{U}{\beta}$ by
+        \obv{tower_transport_below_at}.
+    Hence $\alpha$ and $\beta$ are ordinals by
+        \obv{elem_of_ordinal_is_ordinal}.
+    Hence $\alpha\in\beta$ or $\alpha=\beta$ by
+        \obv{ordinal_subseteq_implies_elem_or_eq}.
+    Hence $\alpha\in\suc{\beta}$ by \auto{suc_iff}.
+    $\beta\in\theta$ by \obv{ordinal_transitivity}.
+    Follows by \obv{tower_transport_at_nonstrict_square}.
+\end{proof}
+
+\begin{proposition}\label{tower_transport_restriction_family_type}
+    Let $E\in\funs{\theta}{\ran{E}}$.
+    Suppose $\lambda\subseteq\theta$.
+    Let $p=\restrl{E}{\lambda}$.
+    Then $p\in\funs{\lambda}{\ran{p}}$.
+\end{proposition}
+\begin{proof}
+    $p\in\funs{\lambda}{\ran{E}}$ by
+        \auto{funs_restrl}.
+    Hence $p$ is a function and $\dom{p}=\lambda$ by
+        \obv{funs_is_function,funs_elim}.
+    $p\in\funs{\dom{p}}{\ran{p}}$ by
+        \obv{function_exact_type_to_range}.
+\end{proof}
+
+\begin{proposition}\label{tower_transport_earlier_system_context}
+    Suppose $\coherentTowerSegment{T}{G}{\theta}$ and
+        $\coherentTowerSegment{U}{H}{\theta}$.
+    Let $\lambda\in\theta$.
+    Suppose $\lambda\neq\emptyset$.
+    Then $\towerEarlierSystem{T}{\lambda}$ is a group direct system and
+        $\towerEarlierSystem{U}{\lambda}$ is a group direct system and
+        $\carrier[\towerEarlierSystem{T}{\lambda}]=
+            \carrier[\towerEarlierSystem{U}{\lambda}]$ and
+        $\leq[\towerEarlierSystem{T}{\lambda}]=
+            \leq[\towerEarlierSystem{U}{\lambda}]$.
+\end{proposition}
+\begin{proof}
+    $\towerSegmentDiagram{T}{G}{\theta}$ and
+        $\towerSegmentDiagram{U}{H}{\theta}$ by
+        \obv{coherent_tower_segment_diagram}.
+    $\towerEarlierSystem{T}{\lambda}$ is a group direct system and
+        $\towerEarlierSystem{U}{\lambda}$ is a group direct system by
+        \obv{tower_earlier_system_is_system}.
+    $\carrier[\towerEarlierSystem{T}{\lambda}]=\lambda=
+        \carrier[\towerEarlierSystem{U}{\lambda}]$ and
+        $\leq[\towerEarlierSystem{T}{\lambda}]=\subseteqrel{\lambda}=
+        \leq[\towerEarlierSystem{U}{\lambda}]$ by
+        \obv{tower_earlier_system_carrier,
+            tower_earlier_system_order}.
+\end{proof}
+
+\begin{proposition}\label{tower_transport_restriction_component}
+    Suppose $\coherentTowerSegment{T}{G}{\theta}$ and
+        $\coherentTowerSegment{U}{H}{\theta}$.
+    Let $\lambda\in\theta$.
+    Suppose $E\in\funs{\theta}{\ran{E}}$ and
+        $\towerTransportBelow{E}{T}{U}{\lambda}$.
+    Let $p=\restrl{E}{\lambda}$.
+    Let $\alpha\in\lambda$.
+    Then $\groupIsomorphism{\apply{p}{\alpha}}
+        {\directSystemGroup{\towerEarlierSystem{T}{\lambda}}{\alpha}}
+        {\directSystemGroup{\towerEarlierSystem{U}{\lambda}}{\alpha}}$.
+\end{proposition}
+\begin{proof}
+    $\towerSegmentDiagram{T}{G}{\theta}$ and
+        $\towerSegmentDiagram{U}{H}{\theta}$ by
+        \obv{coherent_tower_segment_diagram}.
+    $E$ is a function and $\dom{E}=\theta$ by
+        \obv{funs_is_function,funs_elim}.
+    $\theta$ is an ordinal by
+        \obv{tower_segment_diagram_data}.
+    Hence $\lambda$ is an ordinal by
+        \obv{elem_of_ordinal_is_ordinal}.
+    Hence $\lambda\subseteq\theta$ by
+        \obv{ordinal_elem_implies_subseteq}.
+    $\apply{p}{\alpha}=\apply{E}{\alpha}$ by
+        \auto{restrl_of_function_apply}.
+    $\towerTransportAt{E}{T}{U}{\alpha}$ by
+        \obv{tower_transport_below_at}.
+    Hence $\groupIsomorphism{\apply{E}{\alpha}}
+        {\towerStage{T}{\alpha}}{\towerStage{U}{\alpha}}$ by
+        \obv{tower_transport_at_component}.
+    $\directSystemGroup{\towerEarlierSystem{T}{\lambda}}{\alpha}=
+        \towerStage{T}{\alpha}$ by
+        \obv{tower_earlier_system_group_under_diagram}.
+    $\directSystemGroup{\towerEarlierSystem{U}{\lambda}}{\alpha}=
+        \towerStage{U}{\alpha}$ by
+        \obv{tower_earlier_system_group_under_diagram}.
+\end{proof}
+
+\begin{proposition}\label{tower_transport_restriction_square}
+    Suppose $\coherentTowerSegment{T}{G}{\theta}$ and
+        $\coherentTowerSegment{U}{H}{\theta}$.
+    Let $\lambda\in\theta$.
+    Suppose $E\in\funs{\theta}{\ran{E}}$ and
+        $\towerTransportBelow{E}{T}{U}{\lambda}$.
+    Let $p=\restrl{E}{\lambda}$.
+    Let $\alpha,\beta\in\lambda$.
+    Suppose $\alpha\mathrel{
+        \leq[\towerEarlierSystem{T}{\lambda}]}\beta$.
+    Then $\apply{p}{\beta}\circ
+            \directSystemBond{\towerEarlierSystem{T}{\lambda}}
+                {\alpha}{\beta}=
+        \directSystemBond{\towerEarlierSystem{U}{\lambda}}
+                {\alpha}{\beta}\circ\apply{p}{\alpha}$.
+\end{proposition}
+\begin{proof}
+    $\towerSegmentDiagram{T}{G}{\theta}$ and
+        $\towerSegmentDiagram{U}{H}{\theta}$ by
+        \obv{coherent_tower_segment_diagram}.
+    $E$ is a function and $\dom{E}=\theta$ by
+        \obv{funs_is_function,funs_elim}.
+    $\theta$ is an ordinal by
+        \obv{tower_segment_diagram_data}.
+    Hence $\lambda$ is an ordinal by
+        \obv{elem_of_ordinal_is_ordinal}.
+    Hence $\lambda\subseteq\theta$ by
+        \obv{ordinal_elem_implies_subseteq}.
+    $\alpha\subseteq\beta$ by
+        \obv{tower_earlier_system_indices_ordered}.
+    $\apply{E}{\beta}\circ\towerBond{T}{\alpha}{\beta}=
+        \towerBond{U}{\alpha}{\beta}\circ\apply{E}{\alpha}$ by
+        \obv{tower_transport_below_nonstrict_square}.
+    $\apply{p}{\alpha}=\apply{E}{\alpha}$ by
+        \auto{restrl_of_function_apply}.
+    $\apply{p}{\beta}=\apply{E}{\beta}$ by
+        \auto{restrl_of_function_apply}.
+    $\directSystemBond{\towerEarlierSystem{T}{\lambda}}
+            {\alpha}{\beta}=\towerBond{T}{\alpha}{\beta}$ by
+        \obv{tower_earlier_system_bond_under_diagram}.
+    $\directSystemBond{\towerEarlierSystem{U}{\lambda}}
+            {\alpha}{\beta}=\towerBond{U}{\alpha}{\beta}$ by
+        \obv{tower_earlier_system_bond_under_diagram}.
+\end{proof}
+
+\begin{proposition}\label{tower_transport_restriction_system_type}
+    Let $E\in\funs{\theta}{\ran{E}}$.
+    Suppose $\lambda\subseteq\theta$.
+    Let $p=\restrl{E}{\lambda}$.
+    Then $p\in\funs{
+        \carrier[\towerEarlierSystem{T}{\lambda}]}{\ran{p}}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{tower_transport_restriction_family_type,
+            tower_earlier_system_carrier}.
+\end{proof}
+
+\begin{proposition}\label{tower_transport_restriction_component_isomorphisms}
+    Suppose $\coherentTowerSegment{T}{G}{\theta}$ and
+        $\coherentTowerSegment{U}{H}{\theta}$.
+    Let $\lambda\in\theta$.
+    Suppose $E\in\funs{\theta}{\ran{E}}$ and
+        $\towerTransportBelow{E}{T}{U}{\lambda}$.
+    Let $p=\restrl{E}{\lambda}$.
+    Then $\groupDirectSystemComponentIsomorphisms{p}
+        {\towerEarlierSystem{T}{\lambda}}
+        {\towerEarlierSystem{U}{\lambda}}$.
+\end{proposition}
+\begin{proof}
+    Show that for every
+        $i\in\carrier[\towerEarlierSystem{T}{\lambda}]$ we have
+        $\groupIsomorphism{\apply{p}{i}}
+            {\directSystemGroup{\towerEarlierSystem{T}{\lambda}}{i}}
+            {\directSystemGroup{\towerEarlierSystem{U}{\lambda}}{i}}$.
+    \begin{subproof}
+        Fix $i\in\carrier[\towerEarlierSystem{T}{\lambda}]$.
+        Hence $i\in\lambda$ by \obv{tower_earlier_system_carrier}.
+        Follows by \obv{tower_transport_restriction_component}.
+    \end{subproof}
+    Follows by
+        \obv{group_direct_system_component_isomorphisms_intro}.
+\end{proof}
+
+\begin{proposition}\label{tower_transport_restriction_system_square}
+    Suppose $\coherentTowerSegment{T}{G}{\theta}$ and
+        $\coherentTowerSegment{U}{H}{\theta}$.
+    Let $\lambda\in\theta$.
+    Suppose $E\in\funs{\theta}{\ran{E}}$ and
+        $\towerTransportBelow{E}{T}{U}{\lambda}$.
+    Let $p=\restrl{E}{\lambda}$.
+    Let $a,b\in\carrier[\towerEarlierSystem{T}{\lambda}]$.
+    Suppose $a\mathrel{
+        \leq[\towerEarlierSystem{T}{\lambda}]}b$.
+    Then $\apply{p}{b}\circ
+            \directSystemBond{\towerEarlierSystem{T}{\lambda}}{a}{b}=
+        \directSystemBond{\towerEarlierSystem{U}{\lambda}}{a}{b}
+            \circ\apply{p}{a}$.
+\end{proposition}
+\begin{proof}
+    $a,b\in\lambda$ by \obv{tower_earlier_system_carrier}.
+    Follows by \obv{tower_transport_restriction_square}.
+\end{proof}
+
+\begin{proposition}\label{tower_transport_restriction_squares}
+    Suppose $\coherentTowerSegment{T}{G}{\theta}$ and
+        $\coherentTowerSegment{U}{H}{\theta}$.
+    Let $\lambda\in\theta$.
+    Suppose $E\in\funs{\theta}{\ran{E}}$ and
+        $\towerTransportBelow{E}{T}{U}{\lambda}$.
+    Let $p=\restrl{E}{\lambda}$.
+    Then $\groupDirectSystemIsomorphismSquares{p}
+        {\towerEarlierSystem{T}{\lambda}}
+        {\towerEarlierSystem{U}{\lambda}}$.
+\end{proposition}
+\begin{proof}
+    Show that for all
+        $a,b\in\carrier[\towerEarlierSystem{T}{\lambda}]$ such that
+        $a\mathrel{\leq[\towerEarlierSystem{T}{\lambda}]}b$ we have
+        $\apply{p}{b}\circ
+            \directSystemBond{\towerEarlierSystem{T}{\lambda}}{a}{b}=
+        \directSystemBond{\towerEarlierSystem{U}{\lambda}}{a}{b}
+            \circ\apply{p}{a}$.
+    \begin{subproof}
+        Fix $a,b\in\carrier[\towerEarlierSystem{T}{\lambda}]$.
+        Assume $a\mathrel{
+            \leq[\towerEarlierSystem{T}{\lambda}]}b$.
+        Follows by \obv{tower_transport_restriction_system_square}.
+    \end{subproof}
+    Follows by \obv{group_direct_system_isomorphism_squares_intro}.
+\end{proof}
+
+\begin{proposition}\label{tower_transport_earlier_system_common_shape}
+    Suppose $\coherentTowerSegment{T}{G}{\theta}$ and
+        $\coherentTowerSegment{U}{H}{\theta}$.
+    Let $\lambda\in\theta$.
+    Suppose $\lambda\neq\emptyset$.
+    Then $\groupDirectSystemCommonShape
+        {\towerEarlierSystem{T}{\lambda}}
+        {\towerEarlierSystem{U}{\lambda}}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \obv{group_direct_system_common_shape_intro,
+            tower_transport_earlier_system_context}.
+\end{proof}
+
+\begin{proposition}\label{tower_transport_restriction_system_type_under_segment}
+    Suppose $\coherentTowerSegment{T}{G}{\theta}$.
+    Let $\lambda\in\theta$.
+    Suppose $\lambda\neq\emptyset$.
+    Suppose $E\in\funs{\theta}{\ran{E}}$.
+    Let $p=\restrl{E}{\lambda}$.
+    Then $p\in\funs{
+        \carrier[\towerEarlierSystem{T}{\lambda}]}{\ran{p}}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{coherent_tower_segment_diagram,
+            tower_segment_restriction_context,
+            tower_transport_restriction_system_type}.
+\end{proof}
+
+\begin{proposition}\label{tower_transport_restriction_isomorphism_from_component_and_squares}
+    Suppose $\coherentTowerSegment{T}{G}{\theta}$ and
+        $\coherentTowerSegment{U}{H}{\theta}$.
+    Let $\lambda\in\theta$.
+    Suppose $\lambda\neq\emptyset$.
+    Suppose $E\in\funs{\theta}{\ran{E}}$.
+    Let $p=\restrl{E}{\lambda}$.
+    Suppose $\groupDirectSystemComponentIsomorphisms{p}
+        {\towerEarlierSystem{T}{\lambda}}
+        {\towerEarlierSystem{U}{\lambda}}$ and
+        $\groupDirectSystemIsomorphismSquares{p}
+            {\towerEarlierSystem{T}{\lambda}}
+            {\towerEarlierSystem{U}{\lambda}}$.
+    Then $\groupDirectSystemIsomorphism{p}
+        {\towerEarlierSystem{T}{\lambda}}
+        {\towerEarlierSystem{U}{\lambda}}$.
+\end{proposition}
+\begin{proof}
+    $\groupDirectSystemCommonShape
+        {\towerEarlierSystem{T}{\lambda}}
+        {\towerEarlierSystem{U}{\lambda}}$ by
+        \obv{tower_transport_earlier_system_common_shape}.
+    $p\in\funs{\carrier[\towerEarlierSystem{T}{\lambda}]}{\ran{p}}$ by
+        \obv{tower_transport_restriction_system_type_under_segment}.
+    Follows by \obv{group_direct_system_isomorphism_from_parts}.
+\end{proof}
+
+\begin{proposition}\label{tower_transport_restriction_isomorphism_from_squares}
+    Suppose $\coherentTowerSegment{T}{G}{\theta}$ and
+        $\coherentTowerSegment{U}{H}{\theta}$.
+    Let $\lambda\in\theta$.
+    Suppose $\lambda\neq\emptyset$.
+    Suppose $E\in\funs{\theta}{\ran{E}}$ and
+        $\towerTransportBelow{E}{T}{U}{\lambda}$.
+    Let $p=\restrl{E}{\lambda}$.
+    Suppose $\groupDirectSystemIsomorphismSquares{p}
+        {\towerEarlierSystem{T}{\lambda}}
+        {\towerEarlierSystem{U}{\lambda}}$.
+    Then $\groupDirectSystemIsomorphism{p}
+        {\towerEarlierSystem{T}{\lambda}}
+        {\towerEarlierSystem{U}{\lambda}}$.
+\end{proposition}
+\begin{proof}
+    $\groupDirectSystemComponentIsomorphisms{p}
+        {\towerEarlierSystem{T}{\lambda}}
+        {\towerEarlierSystem{U}{\lambda}}$ by
+        \obv{tower_transport_restriction_component_isomorphisms}.
+    Follows by
+        \obv{tower_transport_restriction_isomorphism_from_component_and_squares}.
+\end{proof}
+
+\begin{theorem}\label{tower_transport_below_system_isomorphism}
+    Suppose $\coherentTowerSegment{T}{G}{\theta}$ and
+        $\coherentTowerSegment{U}{H}{\theta}$.
+    Let $\lambda\in\theta$.
+    Suppose $\lambda\neq\emptyset$.
+    Suppose $E\in\funs{\theta}{\ran{E}}$ and
+        $\towerTransportBelow{E}{T}{U}{\lambda}$.
+    Let $p=\restrl{E}{\lambda}$.
+    Then $\groupDirectSystemIsomorphism{p}
+        {\towerEarlierSystem{T}{\lambda}}
+        {\towerEarlierSystem{U}{\lambda}}$.
+\end{theorem}
+\begin{proof}
+    Follows by
+        \obv{tower_transport_restriction_isomorphism_from_squares,
+            tower_transport_restriction_squares}.
+\end{proof}
+
+\subsection{Zero and successor transport}
+
+\begin{proposition}\label{tower_transport_family_restriction_apply}
+    Suppose $\carrier[T]$ is an ordinal.
+    Let $\alpha\in\carrier[T]$.
+    Let $\beta\in\alpha$.
+    Let $F=\towerTransportFamily{e}{T}{U}$.
+    Then $\apply{\restrl{F}{\alpha}}{\beta}=\apply{F}{\beta}$.
+\end{proposition}
+\begin{proof}
+    $F$ is a function and $\dom{F}=\carrier[T]$ by
+        \auto{tower_transport_family_function,
+            tower_transport_family_domain}.
+    $\alpha$ is an ordinal and $\alpha\subseteq\carrier[T]$ by
+        \obv{elem_of_ordinal_is_ordinal,
+            ordinal_elem_implies_subseteq}.
+    Follows by \obv{restrl_of_function_apply}.
+\end{proof}
+
+\begin{proposition}\label{tower_transport_family_zero_equation}
+    Suppose $\coherentTowerSegment{T}{G}{\theta}$.
+    Suppose $\emptyset\in\theta$.
+    Let $F=\towerTransportFamily{e}{T}{U}$.
+    Then $\apply{F}{\emptyset}=e$.
+\end{proposition}
+\begin{proof}
+    $\towerSegmentDiagram{T}{G}{\theta}$ by
+        \obv{coherent_tower_segment_diagram}.
+    Hence $\carrier[T]=\theta$ and $\carrier[T]$ is an ordinal by
+        \obv{tower_segment_diagram_data}.
+    $\apply{F}{\emptyset}=
+        \towerTransportStep{e}{T}{U}{\emptyset}{\restrl{F}{\emptyset}}$ by
+        \auto{tower_transport_family_equation}.
+    Follows by \auto{tower_transport_step_zero}.
+\end{proof}
+
+\begin{proposition}\label{tower_transport_successor_step_value_bridge}
+    Suppose $x=\towerTransportSuccessorStep{T}{U}{\delta}{p}$ and
+        $\apply{p}{\delta}=d$.
+    Then $x=\automorphismTransport{d}
+        {\towerStage{T}{\delta}}{\towerStage{U}{\delta}}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{tower_transport_successor_step}.
+\end{proof}
+
+\begin{proposition}\label{tower_transport_family_successor_step_equation}
+    Suppose $\coherentTowerSegment{T}{G}{\theta}$.
+    Let $\delta\in\theta$.
+    Suppose $\suc{\delta}\in\theta$.
+    Let $F=\towerTransportFamily{e}{T}{U}$.
+    Let $p=\restrl{F}{\suc{\delta}}$.
+    Then $\apply{F}{\suc{\delta}}=
+        \towerTransportSuccessorStep{T}{U}{\delta}{p}$.
+\end{proposition}
+\begin{proof}
+    $\towerSegmentDiagram{T}{G}{\theta}$ by
+        \obv{coherent_tower_segment_diagram}.
+    Hence $\carrier[T]=\theta$ and $\theta$ is an ordinal by
+        \obv{tower_segment_diagram_data}.
+    Hence $\delta$ is an ordinal by
+        \obv{elem_of_ordinal_is_ordinal}.
+    $\apply{F}{\suc{\delta}}=
+        \towerTransportStep{e}{T}{U}{\suc{\delta}}{p}$ by
+        \auto{tower_transport_family_equation}.
+    Follows by \auto{tower_transport_step_successor}.
+\end{proof}
+
+\begin{proposition}\label{tower_transport_family_successor_restriction_value}
+    Suppose $\carrier[T]$ is an ordinal.
+    Suppose $\suc{\delta}\in\carrier[T]$.
+    Let $F=\towerTransportFamily{e}{T}{U}$.
+    Let $p=\restrl{F}{\suc{\delta}}$.
+    Then $\apply{p}{\delta}=\apply{F}{\delta}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{suc_intro_self,
+            tower_transport_family_restriction_apply}.
+\end{proof}
+
+\begin{proposition}\label{tower_transport_family_successor_carrier_context}
+    Suppose $\coherentTowerSegment{T}{G}{\theta}$.
+    Suppose $\suc{\delta}\in\theta$.
+    Then $\carrier[T]$ is an ordinal and
+        $\suc{\delta}\in\carrier[T]$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{coherent_tower_segment_diagram,
+            tower_segment_diagram_data}.
+\end{proof}
+
+\begin{proposition}\label{tower_transport_family_successor_equation}
+    Suppose $\coherentTowerSegment{T}{G}{\theta}$.
+    Let $\delta\in\theta$.
+    Suppose $\suc{\delta}\in\theta$.
+    Let $F=\towerTransportFamily{e}{T}{U}$.
+    Then $\apply{F}{\suc{\delta}}=
+        \automorphismTransport{\apply{F}{\delta}}
+            {\towerStage{T}{\delta}}{\towerStage{U}{\delta}}$.
+\end{proposition}
+\begin{proof}
+    Let $p=\restrl{F}{\suc{\delta}}$.
+    $\carrier[T]$ is an ordinal and
+        $\suc{\delta}\in\carrier[T]$ by
+        \obv{tower_transport_family_successor_carrier_context}.
+    $\apply{F}{\suc{\delta}}=
+        \towerTransportSuccessorStep{T}{U}{\delta}{p}$ by
+        \obv{tower_transport_family_successor_step_equation}.
+    $\apply{p}{\delta}=\apply{F}{\delta}$ by
+        \obv{tower_transport_family_successor_restriction_value}.
+    Follows by \obv{tower_transport_successor_step_value_bridge}.
+\end{proof}
+
+\begin{proposition}\label{tower_transport_zero_component}
+    Suppose $\coherentTowerSegment{T}{G}{\theta}$ and
+        $\coherentTowerSegment{U}{H}{\theta}$.
+    Suppose $\emptyset\in\theta$ and
+        $\groupIsomorphism{e}{G}{H}$.
+    Let $F=\towerTransportFamily{e}{T}{U}$.
+    Then $\groupIsomorphism{\apply{F}{\emptyset}}
+        {\towerStage{T}{\emptyset}}{\towerStage{U}{\emptyset}}$.
+\end{proposition}
+\begin{proof}
+    $\towerSegmentDiagram{T}{G}{\theta}$ and
+        $\towerSegmentDiagram{U}{H}{\theta}$ by
+        \obv{coherent_tower_segment_diagram}.
+    $\apply{F}{\emptyset}=e$ by
+        \obv{tower_transport_family_zero_equation}.
+    $\towerStage{T}{\emptyset}=G$ and
+        $\towerStage{U}{\emptyset}=H$ by
+        \obv{tower_segment_base}.
+\end{proof}
+
+\begin{proposition}\label{tower_transport_at_zero}
+    Suppose $\coherentTowerSegment{T}{G}{\theta}$ and
+        $\coherentTowerSegment{U}{H}{\theta}$.
+    Suppose $\emptyset\in\theta$ and
+        $\groupIsomorphism{e}{G}{H}$.
+    Let $F=\towerTransportFamily{e}{T}{U}$.
+    Then $\towerTransportAt{F}{T}{U}{\emptyset}$.
+\end{proposition}
+\begin{proof}
+    $\groupIsomorphism{\apply{F}{\emptyset}}
+        {\towerStage{T}{\emptyset}}{\towerStage{U}{\emptyset}}$ by
+        \obv{tower_transport_zero_component}.
+    Show that for every $\beta\in\emptyset$ we have
+        $\apply{F}{\emptyset}\circ
+            \towerBond{T}{\beta}{\emptyset}=
+        \towerBond{U}{\beta}{\emptyset}\circ\apply{F}{\beta}$.
+    \begin{subproof}
+        Follows by \auto{emptyset}.
+    \end{subproof}
+    Follows by \obv{tower_transport_at}.
+\end{proof}
+
+\begin{proposition}\label{tower_transport_successor_component}
+    Suppose $\towerSegmentDiagram{T}{G}{\theta}$ and
+        $\towerSegmentDiagram{U}{H}{\theta}$.
+    Let $\delta\in\theta$.
+    Suppose $\suc{\delta}\in\theta$ and
+        $\towerTransportAt{E}{T}{U}{\delta}$.
+    Suppose $\apply{E}{\suc{\delta}}=
+        \automorphismTransport{\apply{E}{\delta}}
+            {\towerStage{T}{\delta}}{\towerStage{U}{\delta}}$.
+    Then $\groupIsomorphism{\apply{E}{\suc{\delta}}}
+        {\towerStage{T}{\suc{\delta}}}
+        {\towerStage{U}{\suc{\delta}}}$.
+\end{proposition}
+\begin{proof}
+    $\groupIsomorphism{\apply{E}{\delta}}
+        {\towerStage{T}{\delta}}{\towerStage{U}{\delta}}$ by
+        \obv{tower_transport_at_component}.
+    Hence $\groupIsomorphism{
+        \automorphismTransport{\apply{E}{\delta}}
+            {\towerStage{T}{\delta}}{\towerStage{U}{\delta}}}
+        {\automorphismGroup{\towerStage{T}{\delta}}}
+        {\automorphismGroup{\towerStage{U}{\delta}}}$ by
+        \obv{automorphism_transport_group_isomorphism}.
+    $\towerStage{T}{\suc{\delta}}=
+        \automorphismGroup{\towerStage{T}{\delta}}$ and
+        $\towerStage{U}{\suc{\delta}}=
+        \automorphismGroup{\towerStage{U}{\delta}}$ by
+        \auto{tower_segment_successor}.
+\end{proof}
+
+\begin{proposition}\label{tower_transport_successor_square}
+    Suppose $\towerSegmentDiagram{T}{G}{\theta}$ and
+        $\towerSegmentDiagram{U}{H}{\theta}$.
+    Let $\delta\in\theta$.
+    Suppose $\suc{\delta}\in\theta$ and
+        $\towerTransportAt{E}{T}{U}{\delta}$.
+    Suppose $\apply{E}{\suc{\delta}}=
+        \automorphismTransport{\apply{E}{\delta}}
+            {\towerStage{T}{\delta}}{\towerStage{U}{\delta}}$.
+    Let $\beta\in\suc{\delta}$.
+    Then $\apply{E}{\suc{\delta}}\circ
+            \towerBond{T}{\beta}{\suc{\delta}}=
+        \towerBond{U}{\beta}{\suc{\delta}}\circ
+            \apply{E}{\beta}$.
+\end{proposition}
+\begin{proof}
+    $\groupIsomorphism{\apply{E}{\delta}}
+        {\towerStage{T}{\delta}}{\towerStage{U}{\delta}}$ by
+        \obv{tower_transport_at_component}.
+    $\apply{E}{\delta}\circ\towerBond{T}{\beta}{\delta}=
+        \towerBond{U}{\beta}{\delta}\circ\apply{E}{\beta}$ by
+        \obv{tower_transport_at_nonstrict_square}.
+    $\automorphismTransport{\apply{E}{\delta}}
+            {\towerStage{T}{\delta}}{\towerStage{U}{\delta}}
+            \circ\innerMap{\towerStage{T}{\delta}}=
+        \innerMap{\towerStage{U}{\delta}}\circ
+            \apply{E}{\delta}$ by
+        \obv{automorphism_transport_inner_naturality}.
+    Hence
+        $\automorphismTransport{\apply{E}{\delta}}
+                {\towerStage{T}{\delta}}{\towerStage{U}{\delta}}
+                \circ
+                (\innerMap{\towerStage{T}{\delta}}\circ
+                    \towerBond{T}{\beta}{\delta})=
+            (\innerMap{\towerStage{U}{\delta}}\circ
+                \towerBond{U}{\beta}{\delta})\circ
+                    \apply{E}{\beta}$ by
+        \obv{commuting_squares_composition}.
+    $\towerBond{T}{\beta}{\suc{\delta}}=
+        \innerMap{\towerStage{T}{\delta}}\circ
+            \towerBond{T}{\beta}{\delta}$ and
+        $\towerBond{U}{\beta}{\suc{\delta}}=
+        \innerMap{\towerStage{U}{\delta}}\circ
+            \towerBond{U}{\beta}{\delta}$ by
+        \obv{tower_successor_bond_factorization}.
+\end{proof}
+
+\begin{proposition}\label{tower_transport_at_successor}
+    Suppose $\towerSegmentDiagram{T}{G}{\theta}$ and
+        $\towerSegmentDiagram{U}{H}{\theta}$.
+    Let $\delta\in\theta$.
+    Suppose $\suc{\delta}\in\theta$ and
+        $\towerTransportAt{E}{T}{U}{\delta}$.
+    Suppose $\apply{E}{\suc{\delta}}=
+        \automorphismTransport{\apply{E}{\delta}}
+            {\towerStage{T}{\delta}}{\towerStage{U}{\delta}}$.
+    Then $\towerTransportAt{E}{T}{U}{\suc{\delta}}$.
+\end{proposition}
+\begin{proof}
+    $\groupIsomorphism{\apply{E}{\suc{\delta}}}
+        {\towerStage{T}{\suc{\delta}}}
+        {\towerStage{U}{\suc{\delta}}}$ by
+        \obv{tower_transport_successor_component}.
+    Show that for every $\beta\in\suc{\delta}$ we have
+        $\apply{E}{\suc{\delta}}\circ
+            \towerBond{T}{\beta}{\suc{\delta}}=
+        \towerBond{U}{\beta}{\suc{\delta}}\circ
+            \apply{E}{\beta}$.
+    \begin{subproof}
+        Fix $\beta\in\suc{\delta}$.
+        Follows by \obv{tower_transport_successor_square}.
+    \end{subproof}
+    Follows by \obv{tower_transport_at}.
+\end{proof}
+
+\subsection{Limit transport}
+
+\begin{proposition}\label{tower_transport_family_type_under_segment}
+    Suppose $\coherentTowerSegment{T}{G}{\theta}$.
+    Let $F=\towerTransportFamily{e}{T}{U}$.
+    Then $F\in\funs{\theta}{\ran{F}}$.
+\end{proposition}
+\begin{proof}
+    $\towerSegmentDiagram{T}{G}{\theta}$ by
+        \obv{coherent_tower_segment_diagram}.
+    Hence $\carrier[T]=\theta$ and $\carrier[T]$ is an ordinal by
+        \obv{tower_segment_diagram_data}.
+    Follows by \auto{tower_transport_family_type}.
+\end{proof}
+
+\begin{proposition}\label{tower_transport_family_limit_equation}
+    Suppose $\coherentTowerSegment{T}{G}{\theta}$.
+    Let $\lambda\in\theta$.
+    Suppose $\lambda$ is a limit ordinal.
+    Let $F=\towerTransportFamily{e}{T}{U}$.
+    Let $p=\restrl{F}{\lambda}$.
+    Then $\apply{F}{\lambda}=\towerLimitTransport{T}{U}{\lambda}{p}$.
+\end{proposition}
+\begin{proof}
+    $\towerSegmentDiagram{T}{G}{\theta}$ by
+        \obv{coherent_tower_segment_diagram}.
+    Hence $\carrier[T]=\theta$ and $\carrier[T]$ is an ordinal by
+        \obv{tower_segment_diagram_data}.
+    $\apply{F}{\lambda}=
+        \towerTransportStep{e}{T}{U}{\lambda}{p}$ by
+        \auto{tower_transport_family_equation}.
+    Follows by \auto{tower_transport_step_limit}.
+\end{proof}
+
+\begin{proposition}\label{tower_transport_family_limit_system_isomorphism}
+    Suppose $\coherentTowerSegment{T}{G}{\theta}$ and
+        $\coherentTowerSegment{U}{H}{\theta}$.
+    Let $\lambda\in\theta$.
+    Suppose $\lambda$ is a limit ordinal and
+        $\towerTransportBelow{F}{T}{U}{\lambda}$.
+    Suppose $F=\towerTransportFamily{e}{T}{U}$.
+    Let $p=\restrl{F}{\lambda}$.
+    Then $\groupDirectSystemIsomorphism{p}
+        {\towerEarlierSystem{T}{\lambda}}
+        {\towerEarlierSystem{U}{\lambda}}$.
+\end{proposition}
+\begin{proof}
+    $F\in\funs{\theta}{\ran{F}}$ by
+        \obv{tower_transport_family_type_under_segment}.
+    $\lambda\neq\emptyset$ by \obv{zero_not_limitordinal}.
+    Follows by \obv{tower_transport_below_system_isomorphism}.
+\end{proof}
+
+\begin{proposition}\label{tower_transport_family_limit_selected_isomorphism}
+    Suppose $\coherentTowerSegment{T}{G}{\theta}$ and
+        $\coherentTowerSegment{U}{H}{\theta}$.
+    Let $\lambda\in\theta$.
+    Suppose $\lambda$ is a limit ordinal and
+        $\towerTransportBelow{F}{T}{U}{\lambda}$.
+    Suppose $F=\towerTransportFamily{e}{T}{U}$.
+    Let $p=\restrl{F}{\lambda}$.
+    Then $\groupDirectSystemLimitIsomorphism
+        {p}
+        {\towerEarlierSystem{T}{\lambda}}
+        {\towerEarlierSystem{U}{\lambda}}
+        {\towerStage{T}{\lambda}}
+        {\towerIncomingFamily{T}{\lambda}}
+        {\towerStage{U}{\lambda}}
+        {\towerIncomingFamily{U}{\lambda}}
+        {\apply{F}{\lambda}}$.
+\end{proposition}
+\begin{proof}
+    $\groupDirectSystemIsomorphism{p}
+        {\towerEarlierSystem{T}{\lambda}}
+        {\towerEarlierSystem{U}{\lambda}}$ by
+        \obv{tower_transport_family_limit_system_isomorphism}.
+    Hence $\groupDirectSystemLimitIsomorphism
+        {p}
+        {\towerEarlierSystem{T}{\lambda}}
+        {\towerEarlierSystem{U}{\lambda}}
+        {\towerStage{T}{\lambda}}
+        {\towerIncomingFamily{T}{\lambda}}
+        {\towerStage{U}{\lambda}}
+        {\towerIncomingFamily{U}{\lambda}}
+        {\towerLimitTransport{T}{U}{\lambda}{p}}$ by
+        \obv{tower_limit_transport_specification}.
+    $\apply{F}{\lambda}=\towerLimitTransport{T}{U}{\lambda}{p}$ by
+        \obv{tower_transport_family_limit_equation}.
+\end{proof}
+
+\begin{proposition}\label{tower_transport_family_limit_component}
+    Suppose $\coherentTowerSegment{T}{G}{\theta}$ and
+        $\coherentTowerSegment{U}{H}{\theta}$.
+    Let $\lambda\in\theta$.
+    Suppose $\lambda$ is a limit ordinal and
+        $\towerTransportBelow{F}{T}{U}{\lambda}$.
+    Suppose $F=\towerTransportFamily{e}{T}{U}$.
+    Then $\groupIsomorphism{\apply{F}{\lambda}}
+        {\towerStage{T}{\lambda}}{\towerStage{U}{\lambda}}$.
+\end{proposition}
+\begin{proof}
+    Let $p=\restrl{F}{\lambda}$.
+    $\groupDirectSystemLimitIsomorphism
+        {p}
+        {\towerEarlierSystem{T}{\lambda}}
+        {\towerEarlierSystem{U}{\lambda}}
+        {\towerStage{T}{\lambda}}
+        {\towerIncomingFamily{T}{\lambda}}
+        {\towerStage{U}{\lambda}}
+        {\towerIncomingFamily{U}{\lambda}}
+        {\apply{F}{\lambda}}$ by
+        \obv{tower_transport_family_limit_selected_isomorphism}.
+    Follows by \obv{group_direct_system_limit_isomorphism_is_iso}.
+\end{proof}
+
+\begin{proposition}\label{tower_transport_family_limit_compatibility}
+    Suppose $\coherentTowerSegment{T}{G}{\theta}$ and
+        $\coherentTowerSegment{U}{H}{\theta}$.
+    Let $\lambda\in\theta$.
+    Suppose $\lambda$ is a limit ordinal and
+        $\towerTransportBelow{F}{T}{U}{\lambda}$.
+    Suppose $F=\towerTransportFamily{e}{T}{U}$.
+    Let $p=\restrl{F}{\lambda}$.
+    Let $\beta\in\lambda$.
+    Then $\apply{F}{\lambda}\circ
+            \apply{\towerIncomingFamily{T}{\lambda}}{\beta}=
+        \apply{\towerIncomingFamily{U}{\lambda}}{\beta}\circ
+            \apply{p}{\beta}$.
+\end{proposition}
+\begin{proof}
+    $\beta\in\carrier[\towerEarlierSystem{T}{\lambda}]$ by
+        \obv{tower_earlier_system_carrier}.
+    $\groupDirectSystemLimitIsomorphism
+        {p}
+        {\towerEarlierSystem{T}{\lambda}}
+        {\towerEarlierSystem{U}{\lambda}}
+        {\towerStage{T}{\lambda}}
+        {\towerIncomingFamily{T}{\lambda}}
+        {\towerStage{U}{\lambda}}
+        {\towerIncomingFamily{U}{\lambda}}
+        {\apply{F}{\lambda}}$ by
+        \obv{tower_transport_family_limit_selected_isomorphism}.
+    Follows by
+        \obv{group_direct_system_limit_isomorphism_compatibility}.
+\end{proof}
+
+\begin{proposition}\label{tower_transport_family_limit_square}
+    Suppose $\coherentTowerSegment{T}{G}{\theta}$ and
+        $\coherentTowerSegment{U}{H}{\theta}$.
+    Let $\lambda\in\theta$.
+    Suppose $\lambda$ is a limit ordinal and
+        $\towerTransportBelow{F}{T}{U}{\lambda}$.
+    Suppose $F=\towerTransportFamily{e}{T}{U}$.
+    Let $\beta\in\lambda$.
+    Then $\apply{F}{\lambda}\circ\towerBond{T}{\beta}{\lambda}=
+        \towerBond{U}{\beta}{\lambda}\circ\apply{F}{\beta}$.
+\end{proposition}
+\begin{proof}
+    Let $p=\restrl{F}{\lambda}$.
+    $\apply{F}{\lambda}\circ
+            \apply{\towerIncomingFamily{T}{\lambda}}{\beta}=
+        \apply{\towerIncomingFamily{U}{\lambda}}{\beta}\circ
+            \apply{p}{\beta}$ by
+        \obv{tower_transport_family_limit_compatibility}.
+    $\apply{\towerIncomingFamily{T}{\lambda}}{\beta}=
+        \towerBond{T}{\beta}{\lambda}$ and
+        $\apply{\towerIncomingFamily{U}{\lambda}}{\beta}=
+        \towerBond{U}{\beta}{\lambda}$ by
+        \obv{tower_incoming_family_apply}.
+    $\towerSegmentDiagram{T}{G}{\theta}$ by
+        \obv{coherent_tower_segment_diagram}.
+    Hence $\carrier[T]=\theta$ and $\carrier[T]$ is an ordinal by
+        \auto{tower_segment_diagram_data}.
+    $\apply{p}{\beta}=\apply{F}{\beta}$ by
+        \auto{tower_transport_family_restriction_apply}.
+\end{proof}
+
+\begin{proposition}\label{tower_transport_at_limit}
+    Suppose $\coherentTowerSegment{T}{G}{\theta}$ and
+        $\coherentTowerSegment{U}{H}{\theta}$.
+    Let $\lambda\in\theta$.
+    Suppose $\lambda$ is a limit ordinal and
+        $\towerTransportBelow{F}{T}{U}{\lambda}$.
+    Suppose $F=\towerTransportFamily{e}{T}{U}$.
+    Then $\towerTransportAt{F}{T}{U}{\lambda}$.
+\end{proposition}
+\begin{proof}
+    $\groupIsomorphism{\apply{F}{\lambda}}
+        {\towerStage{T}{\lambda}}{\towerStage{U}{\lambda}}$ by
+        \obv{tower_transport_family_limit_component}.
+    Show that for every $\beta\in\lambda$ we have
+        $\apply{F}{\lambda}\circ\towerBond{T}{\beta}{\lambda}=
+        \towerBond{U}{\beta}{\lambda}\circ\apply{F}{\beta}$.
+    \begin{subproof}
+        Fix $\beta\in\lambda$.
+        Follows by \obv{tower_transport_family_limit_square}.
+    \end{subproof}
+    Follows by \obv{tower_transport_at}.
+\end{proof}
+
+\subsection{Transfinite propagation and coherent invariance}
+
+\begin{proposition}\label{coherent_tower_length_is_ordinal}
+    Suppose $\coherentTowerSegment{T}{G}{\theta}$.
+    Then $\theta$ is an ordinal.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{coherent_tower_segment_diagram,
+            tower_segment_diagram_data}.
+\end{proof}
+
+\begin{proposition}\label{coherent_tower_index_is_ordinal}
+    Suppose $\coherentTowerSegment{T}{G}{\theta}$.
+    Let $\alpha\in\theta$.
+    Then $\alpha$ is an ordinal.
+\end{proposition}
+\begin{proof}
+    $\towerSegmentDiagram{T}{G}{\theta}$ by
+        \obv{coherent_tower_segment_diagram}.
+    Hence $\theta$ is an ordinal by
+        \obv{tower_segment_diagram_data}.
+    Follows by \obv{elem_of_ordinal_is_ordinal}.
+\end{proof}
+
+\begin{proposition}\label{coherent_tower_successor_predecessor_context}
+    Suppose $\coherentTowerSegment{T}{G}{\theta}$.
+    Let $\alpha\in\theta$.
+    Suppose $\alpha$ is a successor ordinal.
+    Then there exists an ordinal $\delta$ such that
+        $\alpha=\suc{\delta}$ and $\delta\in\theta$.
+\end{proposition}
+\begin{proof}
+    Take an ordinal $\delta$ such that $\alpha=\suc{\delta}$ by
+        \obv{successor_ordinal}.
+    $\delta\in\alpha$ by \obv{suc_intro_self}.
+    $\theta$ is an ordinal by
+        \obv{coherent_tower_length_is_ordinal}.
+    Hence $\delta\in\theta$ by \obv{ordinal_transitivity}.
+\end{proof}
+
+\begin{proposition}\label{tower_transport_successor_from_below}
+    Suppose $\coherentTowerSegment{T}{G}{\theta}$ and
+        $\coherentTowerSegment{U}{H}{\theta}$.
+    Let $\alpha\in\theta$.
+    Suppose $\alpha$ is a successor ordinal and
+        $\towerTransportBelow{F}{T}{U}{\alpha}$.
+    Suppose $F=\towerTransportFamily{e}{T}{U}$.
+    Then $\towerTransportAt{F}{T}{U}{\alpha}$.
+\end{proposition}
+\begin{proof}
+    Take an ordinal $\delta$ such that
+        $\alpha=\suc{\delta}$ and $\delta\in\theta$ by
+        \obv{coherent_tower_successor_predecessor_context}.
+    $\delta\in\alpha$ by \obv{suc_intro_self}.
+    Hence $\towerTransportAt{F}{T}{U}{\delta}$ by
+        \obv{tower_transport_below_at}.
+    $\towerSegmentDiagram{T}{G}{\theta}$ and
+        $\towerSegmentDiagram{U}{H}{\theta}$ by
+        \obv{coherent_tower_segment_diagram}.
+    $\apply{F}{\suc{\delta}}=
+        \automorphismTransport{\apply{F}{\delta}}
+            {\towerStage{T}{\delta}}{\towerStage{U}{\delta}}$ by
+        \obv{tower_transport_family_successor_equation}.
+    Hence $\towerTransportAt{F}{T}{U}{\suc{\delta}}$ by
+        \obv{tower_transport_at_successor}.
+\end{proof}
+
+\begin{proposition}\label{tower_transport_at_from_ordinal_cases}
+    Let $\alpha$ be an ordinal.
+    Suppose $\alpha=\emptyset\implies
+        \towerTransportAt{F}{T}{U}{\alpha}$.
+    Suppose if $\alpha$ is a limit ordinal then
+        $\towerTransportAt{F}{T}{U}{\alpha}$.
+    Suppose if $\alpha$ is a successor ordinal then
+        $\towerTransportAt{F}{T}{U}{\alpha}$.
+    Then $\towerTransportAt{F}{T}{U}{\alpha}$.
+\end{proposition}
+\begin{proof}
+    $\alpha=\emptyset$ or $\emptyset\in\alpha$ by
+        \obv{ordinal_empty_or_emptyset_elem}.
+    If $\emptyset\in\alpha$, then $\emptyset\precedes\alpha$.
+    Hence if $\emptyset\in\alpha$, then
+        $\alpha$ is a limit ordinal or
+        $\alpha$ is a successor ordinal by
+        \obv{positive_ordinal_is_limit_or_successor}.
+\end{proof}
+
+\begin{proposition}\label{coherent_tower_transport_zero_case}
+    Suppose $\coherentTowerSegment{T}{G}{\theta}$ and
+        $\coherentTowerSegment{U}{H}{\theta}$ and
+        $\groupIsomorphism{e}{G}{H}$.
+    Let $\alpha\in\theta$.
+    Suppose $\alpha=\emptyset$ and
+        $F=\towerTransportFamily{e}{T}{U}$.
+    Then $\towerTransportAt{F}{T}{U}{\alpha}$.
+\end{proposition}
+\begin{proof}
+    $\emptyset\in\theta$.
+    Follows by \obv{tower_transport_at_zero}.
+\end{proof}
+
+\begin{proposition}\label{coherent_tower_transport_limit_case}
+    Suppose $\coherentTowerSegment{T}{G}{\theta}$ and
+        $\coherentTowerSegment{U}{H}{\theta}$.
+    Let $\alpha\in\theta$.
+    Suppose $\alpha$ is a limit ordinal and
+        $\towerTransportBelow{F}{T}{U}{\alpha}$ and
+        $F=\towerTransportFamily{e}{T}{U}$.
+    Then $\towerTransportAt{F}{T}{U}{\alpha}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{tower_transport_at_limit}.
+\end{proof}
+
+\begin{proposition}\label{coherent_tower_transport_step}
+    Suppose $\coherentTowerSegment{T}{G}{\theta}$ and
+        $\coherentTowerSegment{U}{H}{\theta}$ and
+        $\groupIsomorphism{e}{G}{H}$.
+    Let $\alpha\in\theta$.
+    Suppose $\towerTransportBelow{F}{T}{U}{\alpha}$ and
+        $F=\towerTransportFamily{e}{T}{U}$.
+    Then $\towerTransportAt{F}{T}{U}{\alpha}$.
+\end{proposition}
+\begin{proof}
+    $\alpha$ is an ordinal by
+        \obv{coherent_tower_index_is_ordinal}.
+    $\alpha=\emptyset$ or $\emptyset\in\alpha$ by
+        \obv{ordinal_empty_or_emptyset_elem}.
+    If $\alpha=\emptyset$, then
+        $\towerTransportAt{F}{T}{U}{\alpha}$ by
+        \obv{coherent_tower_transport_zero_case}.
+    If $\emptyset\in\alpha$, then $\emptyset\precedes\alpha$.
+    Hence if $\emptyset\in\alpha$, then
+        $\alpha$ is a limit ordinal or
+        $\alpha$ is a successor ordinal by
+        \obv{positive_ordinal_is_limit_or_successor}.
+    If $\alpha$ is a limit ordinal, then
+        $\towerTransportAt{F}{T}{U}{\alpha}$ by
+        \obv{coherent_tower_transport_limit_case}.
+    If $\alpha$ is a successor ordinal, then
+        $\towerTransportAt{F}{T}{U}{\alpha}$ by
+        \obv{tower_transport_successor_from_below}.
+\end{proof}
+
+\begin{theorem}\label{coherent_tower_transport_below}
+    Suppose $\coherentTowerSegment{T}{G}{\theta}$ and
+        $\coherentTowerSegment{U}{H}{\theta}$ and
+        $\groupIsomorphism{e}{G}{H}$.
+    Let $F=\towerTransportFamily{e}{T}{U}$.
+    Then $\towerTransportBelow{F}{T}{U}{\theta}$.
+\end{theorem}
+\begin{proof}
+    $\theta$ is an ordinal by
+        \auto{coherent_tower_segment_diagram,
+            tower_segment_diagram_data}.
+    Show that for every $\alpha\in\theta$ such that
+        $\towerTransportBelow{F}{T}{U}{\alpha}$ we have
+        $\towerTransportAt{F}{T}{U}{\alpha}$.
+    \begin{subproof}
+        Fix $\alpha$.
+        Assume $\alpha\in\theta$.
+        Assume $\towerTransportBelow{F}{T}{U}{\alpha}$.
+        Follows by \obv{coherent_tower_transport_step}.
+    \end{subproof}
+    Follows by \obv{tower_transport_bounded_induction}.
+\end{proof}
+
+\begin{theorem}\label{coherent_tower_transport_component}
+    Suppose $\coherentTowerSegment{T}{G}{\theta}$ and
+        $\coherentTowerSegment{U}{H}{\theta}$ and
+        $\groupIsomorphism{e}{G}{H}$.
+    Let $F=\towerTransportFamily{e}{T}{U}$.
+    Let $\alpha\in\theta$.
+    Then $\groupIsomorphism{\apply{F}{\alpha}}
+        {\towerStage{T}{\alpha}}{\towerStage{U}{\alpha}}$.
+\end{theorem}
+\begin{proof}
+    $\towerTransportBelow{F}{T}{U}{\theta}$ by
+        \obv{coherent_tower_transport_below}.
+    Hence $\towerTransportAt{F}{T}{U}{\alpha}$ by
+        \obv{tower_transport_below_at}.
+    Follows by \obv{tower_transport_at_component}.
+\end{proof}
+
+\begin{theorem}\label{coherent_tower_transport_square}
+    Suppose $\coherentTowerSegment{T}{G}{\theta}$ and
+        $\coherentTowerSegment{U}{H}{\theta}$ and
+        $\groupIsomorphism{e}{G}{H}$.
+    Let $F=\towerTransportFamily{e}{T}{U}$.
+    Let $\alpha,\beta\in\theta$.
+    Suppose $\alpha\subseteq\beta$.
+    Then $\apply{F}{\beta}\circ\towerBond{T}{\alpha}{\beta}=
+        \towerBond{U}{\alpha}{\beta}\circ\apply{F}{\alpha}$.
+\end{theorem}
+\begin{proof}
+    $\towerTransportBelow{F}{T}{U}{\theta}$ by
+        \obv{coherent_tower_transport_below}.
+    Hence $\towerTransportAt{F}{T}{U}{\beta}$ by
+        \obv{tower_transport_below_at}.
+    $\alpha$ is an ordinal by
+        \obv{coherent_tower_index_is_ordinal}.
+    $\beta$ is an ordinal by
+        \obv{coherent_tower_index_is_ordinal}.
+    Hence $\alpha\in\beta$ or $\alpha=\beta$ by
+        \obv{ordinal_subseteq_implies_elem_or_eq}.
+    Hence $\alpha\in\suc{\beta}$ by \auto{suc_iff}.
+    $\towerSegmentDiagram{T}{G}{\theta}$ and
+        $\towerSegmentDiagram{U}{H}{\theta}$ by
+        \obv{coherent_tower_segment_diagram}.
+    Follows by \obv{tower_transport_at_nonstrict_square}.
+\end{proof}
+
+\begin{theorem}\label{coherent_tower_transport_isomorphism}
+    Suppose $\coherentTowerSegment{T}{G}{\theta}$ and
+        $\coherentTowerSegment{U}{H}{\theta}$ and
+        $\groupIsomorphism{e}{G}{H}$.
+    Let $F=\towerTransportFamily{e}{T}{U}$.
+    Then $\towerSegmentIsomorphism{F}{T}{U}$.
+\end{theorem}
+\begin{proof}
+    $\towerSegmentDiagram{T}{G}{\theta}$ and
+        $\towerSegmentDiagram{U}{H}{\theta}$ by
+        \obv{coherent_tower_segment_diagram}.
+    Hence $\groupTowerSegmentData{T}$ and
+        $\groupTowerSegmentData{U}$ by
+        \obv{tower_segment_diagram_is_group_data}.
+    $\carrier[T]=\theta=\carrier[U]$ by
+        \obv{tower_segment_diagram_data}.
+    $F\in\funs{\theta}{\ran{F}}$ by
+        \obv{tower_transport_family_type_under_segment}.
+    Show that for every $\alpha\in\theta$ we have
+        $\groupIsomorphism{\apply{F}{\alpha}}
+            {\towerStage{T}{\alpha}}{\towerStage{U}{\alpha}}$.
+    \begin{subproof}
+        Fix $\alpha\in\theta$.
+        Follows by \obv{coherent_tower_transport_component}.
+    \end{subproof}
+    Show that for all $\alpha,\beta\in\theta$ such that
+        $\alpha\subseteq\beta$ we have
+        $\apply{F}{\beta}\circ\towerBond{T}{\alpha}{\beta}=
+        \towerBond{U}{\alpha}{\beta}\circ\apply{F}{\alpha}$.
+    \begin{subproof}
+        Fix $\alpha,\beta\in\theta$.
+        Assume $\alpha\subseteq\beta$.
+        Follows by \obv{coherent_tower_transport_square}.
+    \end{subproof}
+    Follows by \obv{tower_segment_isomorphism}.
+\end{proof}
+
+\subsection{Recursive characterization}
+
+\begin{definition}\label{tower_transport_recursion}
+    $\towerTransportRecursion{E}{e}{T}{U}$ iff
+        $E$ is a function and
+        $\dom{E}=\carrier[T]$ and
+        for every $\alpha\in\carrier[T]$ we have
+            $\apply{E}{\alpha}=
+                \towerTransportStep{e}{T}{U}{\alpha}{\restrl{E}{\alpha}}$.
+\end{definition}
+
+\begin{proposition}\label{tower_transport_recursion_function}
+    Suppose $\towerTransportRecursion{E}{e}{T}{U}$.
+    Then $E$ is a function.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{tower_transport_recursion}.
+\end{proof}
+
+\begin{proposition}\label{tower_transport_recursion_domain}
+    Suppose $\towerTransportRecursion{E}{e}{T}{U}$.
+    Then $\dom{E}=\carrier[T]$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{tower_transport_recursion}.
+\end{proof}
+
+\begin{proposition}\label{tower_transport_recursion_equation}
+    Suppose $\towerTransportRecursion{E}{e}{T}{U}$.
+    Let $\alpha\in\carrier[T]$.
+    Then $\apply{E}{\alpha}=
+        \towerTransportStep{e}{T}{U}{\alpha}{\restrl{E}{\alpha}}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{tower_transport_recursion}.
+\end{proof}
+
+\begin{proposition}\label{tower_transport_family_satisfies_recursion}
+    Suppose $\carrier[T]$ is an ordinal.
+    Then $\towerTransportRecursion
+        {\towerTransportFamily{e}{T}{U}}{e}{T}{U}$.
+\end{proposition}
+\begin{proof}
+    $\towerTransportFamily{e}{T}{U}$ is a function by
+        \obv{tower_transport_family_function}.
+    $\dom{\towerTransportFamily{e}{T}{U}}=\carrier[T]$ by
+        \obv{tower_transport_family_domain}.
+    For every $\alpha\in\carrier[T]$ we have
+        $\apply{\towerTransportFamily{e}{T}{U}}{\alpha}=
+        \towerTransportStep{e}{T}{U}{\alpha}{
+            \restrl{\towerTransportFamily{e}{T}{U}}{\alpha}}$ by
+        \obv{tower_transport_family_equation}.
+    Follows by \obv{tower_transport_recursion}.
+\end{proof}
+
+\begin{theorem}\label{tower_transport_recursion_unique}
+    Suppose $\carrier[T]$ is an ordinal and
+        $\towerTransportRecursion{E}{e}{T}{U}$.
+    Then $E=\towerTransportFamily{e}{T}{U}$.
+\end{theorem}
+\begin{proof}
+    Hence $\Apply{\recursiveSetFunctionOp}{E}$ by
+        \obv{recursive_set_function,recursive_set_function_op}.
+    $\dom{E}=\carrier[T]$ by
+        \obv{tower_transport_recursion_domain}.
+    Show that for every $\alpha\in\carrier[T]$ we have
+        $\apply{E}{\alpha}=
+        \Apply{\towerTransportStepOp}
+                {e,T,U,\alpha,\restrl{E}{\alpha}}$.
+    \begin{subproof}
+        Fix $\alpha\in\carrier[T]$.
+        $\apply{E}{\alpha}=
+            \towerTransportStep{e}{T}{U}{\alpha}{\restrl{E}{\alpha}}$ by
+            \obv{tower_transport_recursion_equation}.
+    \end{subproof}
+    Hence $E=
+        \Apply{\unboundedOrdinalRecursionOp}
+            {\carrier[T],\Apply{\towerTransportStepOp}{e,T,U}}$ by
+        \obv{unbounded_ordinal_recursion_characterization}.
+    Follows by \obv{tower_transport_family}.
+\end{proof}
+
+\begin{corollary}\label{tower_transport_recursive_families_equal}
+    Suppose $\carrier[T]$ is an ordinal and
+        $\towerTransportRecursion{E}{e}{T}{U}$ and
+        $\towerTransportRecursion{D}{e}{T}{U}$.
+    Then $E=D$.
+\end{corollary}
+\begin{proof}
+    $E=\towerTransportFamily{e}{T}{U}$ and
+        $D=\towerTransportFamily{e}{T}{U}$ by
+        \obv{tower_transport_recursion_unique}.
+\end{proof}
+
+\subsection{Comparison with the canonical segment}
+
+\begin{theorem}\label{coherent_tower_segment_isomorphic_to_canonical}
+    Suppose $\coherentTowerSegment{T}{G}{\theta}$.
+    Let $C=\automorphismTowerSegment{G}{\theta}$.
+    Let $e=\identity{\carrier[G]}$.
+    Let $F=\towerTransportFamily{e}{T}{C}$.
+    Then $\towerSegmentIsomorphism{F}{T}{C}$.
+\end{theorem}
+\begin{proof}
+    $\towerSegmentDiagram{T}{G}{\theta}$ by
+        \obv{coherent_tower_segment_diagram}.
+    Hence $G$ is a group and $\theta$ is an ordinal by
+        \obv{tower_segment_diagram_data}.
+    Hence $\coherentTowerSegment{C}{G}{\theta}$ by
+        \auto{automorphism_tower_segment_is_coherent}.
+    $\groupIsomorphism{e}{G}{G}$ by
+        \auto{identity_group_isomorphism}.
+    Follows by \obv{coherent_tower_transport_isomorphism}.
+\end{proof}

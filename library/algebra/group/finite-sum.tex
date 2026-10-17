@@ -1,0 +1,69 @@
+\import{algebra/group/subgroup.tex}
+\import{algebra/monoid/finite-fold.tex}
+
+\section{Finite sums in subgroups}
+
+\begin{theorem}\label{subgroup_contains_finite_sum}
+    Let $G$ be a commutative group.
+    Suppose $\subgroup{H}{G}$.
+    Suppose $A$ is finite and $f\in\funs{A}{\carrier[G]}$.
+    Suppose for every $a\in A$ we have $f(a)\in H$.
+    Then $\finiteSum{G}{A}{f}\in H$.
+\end{theorem}
+\begin{proof}
+    Hence $G$ is a monoid by \obv{group_is_monoid}.
+    For all $x,y\in\carrier[G]$ we have $\mul[G](x,y)=\mul[G](y,x)$ by
+        \obv{commutative_group_commutative}.
+    Let $C=\{B\in\pow{A}\mid
+        \finiteSum{G}{B}{\restrl{f}{B}}\in H\}$.
+    $\emptyset\in\pow{A}$ by \obv{powerset_bottom}.
+    $\restrl{f}{\emptyset}\in\funs{\emptyset}{\carrier[G]}$ by
+        \obv{funs_restrl,emptyset_subseteq}.
+    $\finiteSum{G}{\emptyset}{\restrl{f}{\emptyset}}=\neutral[G]$ by
+        \obv{finite_sum,monoid_finite_fold_empty}.
+    $\neutral[G]\in H$ by \obv{subgroup_neutral}.
+    Hence $\emptyset\in C$.
+    Show that for all $B,b$ such that $B\in C$ and $b\in A$ we have
+        $\cons{b}{B}\in C$.
+    \begin{subproof}
+        Fix $B,b$.
+        Assume $B\in C$ and $b\in A$.
+        $B\subseteq A$ by \obv{powerset_elim}.
+        Hence $\cons{b}{B}\subseteq A$ by \obv{cons_subseteq_intro}.
+        Hence $\cons{b}{B}\in\pow{A}$ by \obv{powerset_intro}.
+        $B$ is finite by \obv{subseteq_finite_is_finite}.
+        $\restrl{f}{B}\in\funs{B}{\carrier[G]}$ and
+            $\restrl{f}{\cons{b}{B}}\in
+                \funs{\cons{b}{B}}{\carrier[G]}$ by
+            \obv{funs_restrl}.
+        $\finiteSum{G}{B}{\restrl{f}{B}}\in H$.
+        $f(b)\in H$.
+        \begin{byCase}
+        \caseOf{$b\in B$.}
+            $\cons{b}{B}=B$ by \obv{cons_absorb}.
+            Hence $\finiteSum{G}{\cons{b}{B}}{
+                \restrl{f}{\cons{b}{B}}}\in H$.
+        \caseOf{$b\notin B$.}
+            $B\subseteq\cons{b}{B}$ by \auto{subseteq,cons_iff}.
+            Hence $\restrl{\restrl{f}{\cons{b}{B}}}{B}
+                =\restrl{f}{B}$ by \obv{restrl_restrl}.
+            $f$ is a function and $\dom{f}=A$ by
+                \obv{funs_is_function,funs_elim}.
+            Hence $\apply{\restrl{f}{\cons{b}{B}}}{b}=f(b)$ by
+                \auto{restrl_of_function_apply,cons_iff}.
+            $\finiteSum{G}{\cons{b}{B}}{
+                    \restrl{f}{\cons{b}{B}}}
+                =\mul[G](\finiteSum{G}{B}{\restrl{f}{B}},f(b))$ by
+                \auto{finite_sum,monoid_finite_fold_fresh_adjoin}.
+            $\mul[G](\finiteSum{G}{B}{\restrl{f}{B}},f(b))\in H$ by
+                \obv{subgroup_mul}.
+            Hence $\finiteSum{G}{\cons{b}{B}}{
+                \restrl{f}{\cons{b}{B}}}\in H$.
+        \end{byCase}
+    \end{subproof}
+    Hence $A\in C$ by \obv{finite_induction}.
+    $f$ is a function and $\dom{f}=A$ by
+        \obv{funs_is_function,funs_elim}.
+    $\restrl{f}{\dom{f}}=f$ by \obv{restrl_by_dom}.
+    Hence $\restrl{f}{A}=f$.
+\end{proof}

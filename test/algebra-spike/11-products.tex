@@ -1,0 +1,3492 @@
+\import{test/algebra-spike/01-ring-reducts.tex}
+\import{test/algebra-spike/02-module-reduct.tex}
+\import{test/algebra-spike/09-finite-fold.tex}
+\import{test/algebra-spike/10-finite-support.tex}
+\import{set/logical-graph.tex}
+\import{algebra/group/isomorphism.tex}
+
+\section{Dependent products and direct sums}
+
+\subsection{Reindexing dependent functions}
+
+Precomposition is the contravariant reindexing operation.  Its definition is
+independent of finiteness; finiteness enters only when the graph is restricted
+to finitely supported functions.
+
+\begin{definition}\label{spike_precomposition_op}
+    $\spikePrecompositionOp:\Set\to\Set\to\Set
+        =\fun{e,x:\Set}{x\circ e}$.
+\end{definition}
+
+\begin{definition}\label{spike_dependent_reindex}
+    $\dependentReindex{I}{J}{A}{e}
+        =\Apply{\graphOnOp}{
+            \dependentProduct{I}{A},
+            \dependentProduct{J}{A\circ e},
+            \Apply{\spikePrecompositionOp}{e}}$.
+\end{definition}
+
+\begin{proposition}\label{spike_dependent_reindex_type}
+    Suppose $A$ is a function on $I$.
+    Let $e\in\funs{J}{I}$.
+    Then
+        $\dependentReindex{I}{J}{A}{e}\in
+            \funs{\dependentProduct{I}{A}}{
+                \dependentProduct{J}{A\circ e}}$.
+\end{proposition}
+\begin{proof}
+    For every $x\in\dependentProduct{I}{A}$ we have
+        $x\circ e\in\dependentProduct{J}{A\circ e}$ by
+        \auto{spike_dependent_precomposition_type}.
+    Follows by
+        \auto{spike_dependent_reindex,spike_precomposition_op,
+            logical_graph_on_function}.
+\end{proof}
+
+\subsection{Pointwise group operations}
+
+\begin{definition}\label{spike_group_carrier_op}
+    $\spikeGroupCarrierOp:\Set\to\Set\to\Set
+        =\fun{G,i:\Set}{\carrier[G(i)]}$.
+\end{definition}
+
+\begin{definition}\label{spike_group_carrier_family}
+    $\spikeGroupCarrierFamily{I}{G}
+        =\Apply{\graphOnDomainOp}{
+            I,\Apply{\spikeGroupCarrierOp}{G}}$.
+\end{definition}
+
+\begin{proposition}\label{spike_group_carrier_family_type}
+    Suppose $G$ is a function on $I$.
+    Then $\spikeGroupCarrierFamily{I}{G}$ is a function on $I$.
+\end{proposition}
+\begin{proof}
+    $\spikeGroupCarrierFamily{I}{G}\in
+        \funs{I}{\ran{\spikeGroupCarrierFamily{I}{G}}}$ by
+        \auto{spike_group_carrier_family,
+            logical_graph_on_domain_function}.
+    Follows by \auto{funs_is_function,funs}.
+\end{proof}
+
+\begin{proposition}\label{spike_group_carrier_family_apply}
+    Suppose $G$ is a function on $I$ and $i\in I$.
+    Then
+        $\apply{\spikeGroupCarrierFamily{I}{G}}{i}
+            =\carrier[G(i)]$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{spike_group_carrier_family,spike_group_carrier_op,
+            logical_graph_on_domain_apply}.
+\end{proof}
+
+\begin{definition}\label{spike_group_neutral_op}
+    $\spikeGroupNeutralOp:\Set\to\Set\to\Set
+        =\fun{G,i:\Set}{\neutral[G(i)]}$.
+\end{definition}
+
+\begin{definition}\label{spike_product_group_neutral}
+    $\spikeProductGroupNeutral{I}{G}
+        =\Apply{\graphOnDomainOp}{
+            I,\Apply{\spikeGroupNeutralOp}{G}}$.
+\end{definition}
+
+\begin{proposition}\label{spike_product_group_neutral_coordinate}
+    Let $i\in I$.
+    Then
+        $\apply{\spikeProductGroupNeutral{I}{G}}{i}
+            =\neutral[G(i)]$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{spike_product_group_neutral,spike_group_neutral_op,
+            logical_graph_on_domain_apply}.
+\end{proof}
+
+\begin{proposition}\label{spike_product_group_neutral_type}
+    Suppose $G$ is a function on $I$.
+    Suppose for every $j\in I$ we have $G(j)$ is a group.
+    Then
+        $\spikeProductGroupNeutral{I}{G}\in
+            \dependentProduct{I}{\spikeGroupCarrierFamily{I}{G}}$.
+\end{proposition}
+\begin{proof}
+    Let $C=\spikeGroupCarrierFamily{I}{G}$.
+    Let $z=\spikeProductGroupNeutral{I}{G}$.
+    $C$ is a function on $I$ by
+        \auto{spike_group_carrier_family_type}.
+    $z\in\funs{I}{\ran{z}}$ by
+        \auto{spike_product_group_neutral,
+            logical_graph_on_domain_function}.
+    Hence $z$ is a function and $\dom{z}=I$ by
+        \auto{funs_is_function,funs}.
+    Show that for every $i\in I$ we have $z(i)\in C(i)$.
+    \begin{subproof}
+        Fix $i\in I$.
+        $z(i)=\neutral[G(i)]$ by
+            \auto{spike_product_group_neutral_coordinate}.
+        $C(i)=\carrier[G(i)]$ by
+            \auto{spike_group_carrier_family_apply}.
+        $G(i)$ is a group by \auto.
+        Hence $G(i)$ is a monoid by \auto{group_is_monoid}.
+        Hence $G(i)$ is a unital magma by
+            \auto{monoid_is_unital_magma}.
+        Follows by \auto{unitalmagma_type}.
+    \end{subproof}
+    Show that $z\in\funs{I}{\unions{\ran{C}}}$.
+    \begin{subproof}
+        Show that for every $i\in\dom{z}$ we have
+            $z(i)\in\unions{\ran{C}}$.
+        \begin{subproof}
+            Fix $i\in\dom{z}$.
+            Hence $i\in I$ by \auto.
+            $z(i)\in C(i)$ by \auto.
+            Follows by \auto{indexed_family_member_union}.
+        \end{subproof}
+        Hence $z$ is a function to $\unions{\ran{C}}$ by
+            \auto.
+        Follows by \auto{funs_intro}.
+    \end{subproof}
+    Follows by \auto{dependent_product_iff}.
+\end{proof}
+
+\begin{definition}\label{spike_group_product_coordinate_op}
+    $\spikeGroupProductCoordinateOp:
+        \Set\to\Set\to\Set\to\Set\to\Set
+        =\fun{G,x,y,i:\Set}{\mul[G(i)](x(i),y(i))}$.
+\end{definition}
+
+\begin{definition}\label{spike_pointwise_group_product_op}
+    $\spikePointwiseGroupProductOp:
+        \Set\to\Set\to\Set\to\Set\to\Set
+        =\fun{I,G,x,y:\Set}{
+            \Apply{\graphOnDomainOp}{
+                I,\Apply{\spikeGroupProductCoordinateOp}{G,x,y}}}$.
+\end{definition}
+
+\begin{proposition}\label{spike_pointwise_group_product_coordinate}
+    Let $i\in I$.
+    Then
+        $\apply{\Apply{\spikePointwiseGroupProductOp}{I,G,x,y}}{i}
+            =\mul[G(i)](x(i),y(i))$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{spike_pointwise_group_product_op,
+            spike_group_product_coordinate_op,
+            logical_graph_on_domain_apply}.
+\end{proof}
+
+\begin{proposition}\label{spike_pointwise_group_product_type}
+    Suppose $G$ is a function on $I$.
+    Suppose for every $j\in I$ we have $G(j)$ is a group.
+    Let
+        $x,y\in\dependentProduct
+            {I}{\spikeGroupCarrierFamily{I}{G}}$.
+    Then
+        $\Apply{\spikePointwiseGroupProductOp}{I,G,x,y}\in
+            \dependentProduct{I}{\spikeGroupCarrierFamily{I}{G}}$.
+\end{proposition}
+\begin{proof}
+    Let $C=\spikeGroupCarrierFamily{I}{G}$.
+    Let $u=\Apply{\spikePointwiseGroupProductOp}{I,G,x,y}$.
+    $C$ is a function on $I$ by
+        \auto{spike_group_carrier_family_type}.
+    $u\in\funs{I}{\ran{u}}$ by
+        \auto{spike_pointwise_group_product_op,
+            logical_graph_on_domain_function}.
+    Hence $u$ is a function and $\dom{u}=I$ by
+        \auto{funs_is_function,funs}.
+    Show that for every $i\in I$ we have $u(i)\in C(i)$.
+    \begin{subproof}
+        Fix $i\in I$.
+        $x(i),y(i)\in C(i)$ by
+            \auto{dependent_product_coordinate}.
+        $C(i)=\carrier[G(i)]$ by
+            \auto{spike_group_carrier_family_apply}.
+        $G(i)$ is a group by \auto.
+        Hence $G(i)$ is a monoid by \auto{group_is_monoid}.
+        Hence $G(i)$ is a magma by \auto{monoid_is_magma}.
+        $u(i)=\mul[G(i)](x(i),y(i))$ by
+            \auto{spike_pointwise_group_product_coordinate}.
+        Follows by \auto{magma_welldef}.
+    \end{subproof}
+    Show that $u\in\funs{I}{\unions{\ran{C}}}$.
+    \begin{subproof}
+        Show that for every $i\in\dom{u}$ we have
+            $u(i)\in\unions{\ran{C}}$.
+        \begin{subproof}
+            Fix $i\in\dom{u}$.
+            Hence $i\in I$ by \auto.
+            $u(i)\in C(i)$ by \auto.
+            Follows by \auto{indexed_family_member_union}.
+        \end{subproof}
+        Hence $u$ is a function to $\unions{\ran{C}}$ by
+            \auto.
+        Follows by \auto{funs_intro}.
+    \end{subproof}
+    Follows by \auto{dependent_product_iff}.
+\end{proof}
+
+\begin{definition}\label{spike_group_inverse_coordinate_op}
+    $\spikeGroupInverseCoordinateOp:
+        \Set\to\Set\to\Set\to\Set
+        =\fun{G,x,i:\Set}{\groupInv[G(i)](x(i))}$.
+\end{definition}
+
+\begin{definition}\label{spike_pointwise_group_inverse_op}
+    $\spikePointwiseGroupInverseOp:
+        \Set\to\Set\to\Set\to\Set
+        =\fun{I,G,x:\Set}{
+            \Apply{\graphOnDomainOp}{
+                I,\Apply{\spikeGroupInverseCoordinateOp}{G,x}}}$.
+\end{definition}
+
+\begin{proposition}\label{spike_pointwise_group_inverse_coordinate}
+    Let $i\in I$.
+    Then
+        $\apply{\Apply{\spikePointwiseGroupInverseOp}{I,G,x}}{i}
+            =\groupInv[G(i)](x(i))$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{spike_pointwise_group_inverse_op,
+            spike_group_inverse_coordinate_op,
+            logical_graph_on_domain_apply}.
+\end{proof}
+
+\begin{proposition}\label{spike_pointwise_group_inverse_type}
+    Suppose $G$ is a function on $I$.
+    Suppose for every $i\in I$ we have $G(i)$ is a group.
+    Let
+        $x\in\dependentProduct
+            {I}{\spikeGroupCarrierFamily{I}{G}}$.
+    Then
+        $\Apply{\spikePointwiseGroupInverseOp}{I,G,x}\in
+            \dependentProduct{I}{\spikeGroupCarrierFamily{I}{G}}$.
+\end{proposition}
+\begin{proof}
+    Let $C=\spikeGroupCarrierFamily{I}{G}$.
+    Let $u=\Apply{\spikePointwiseGroupInverseOp}{I,G,x}$.
+    $C$ is a function on $I$ by
+        \auto{spike_group_carrier_family_type}.
+    $u\in\funs{I}{\ran{u}}$ by
+        \auto{spike_pointwise_group_inverse_op,
+            logical_graph_on_domain_function}.
+    Hence $u$ is a function and $\dom{u}=I$ by
+        \auto{funs_is_function,funs}.
+    Show that for every $i\in I$ we have $u(i)\in C(i)$.
+    \begin{subproof}
+        Fix $i\in I$.
+        $x(i)\in C(i)$ by \auto{dependent_product_coordinate}.
+        $C(i)=\carrier[G(i)]$ by
+            \auto{spike_group_carrier_family_apply}.
+        $u(i)=\groupInv[G(i)](x(i))$ by
+            \auto{spike_pointwise_group_inverse_coordinate}.
+        Follows by \auto{group_inverse_type}.
+    \end{subproof}
+    Show that $u\in\funs{I}{\unions{\ran{C}}}$.
+    \begin{subproof}
+        Show that for every $i\in\dom{u}$ we have
+            $u(i)\in\unions{\ran{C}}$.
+        \begin{subproof}
+            Fix $i\in\dom{u}$.
+            Hence $i\in I$ by \auto.
+            $u(i)\in C(i)$ by \auto.
+            Follows by \auto{indexed_family_member_union}.
+        \end{subproof}
+        Hence $u$ is a function to $\unions{\ran{C}}$ by
+            \auto.
+        Follows by \auto{funs_intro}.
+    \end{subproof}
+    Follows by \auto{dependent_product_iff}.
+\end{proof}
+
+\begin{proposition}\label{spike_dependent_product_extensionality}
+    Suppose $A$ is a function on $I$.
+    Let $x,y\in\dependentProduct{I}{A}$.
+    Suppose for every $i\in I$ we have $x(i)=y(i)$.
+    Then $x=y$.
+\end{proposition}
+\begin{proof}
+    $x,y\in\funs{I}{\unions{\ran{A}}}$ by
+        \auto{dependent_product_iff}.
+    Follows by \auto{typed_functions_equal_from_agreement}.
+\end{proof}
+
+\subsection{The indexed product group}
+
+\begin{definition}\label{spike_product_group}
+    $\ProductGroup{I}{G}=
+        \structure[group]{
+            \carrier=
+                \dependentProduct
+                    {I}{\spikeGroupCarrierFamily{I}{G}},
+            \mul=
+                \Apply{\binaryGraphOnOp}{
+                    \dependentProduct
+                        {I}{\spikeGroupCarrierFamily{I}{G}},
+                    \dependentProduct
+                        {I}{\spikeGroupCarrierFamily{I}{G}},
+                    \Apply{\spikePointwiseGroupProductOp}{I,G}},
+            \neutral=\spikeProductGroupNeutral{I}{G},
+            \groupInv=
+                \Apply{\graphOnOp}{
+                    \dependentProduct
+                        {I}{\spikeGroupCarrierFamily{I}{G}},
+                    \dependentProduct
+                        {I}{\spikeGroupCarrierFamily{I}{G}},
+                    \Apply{\spikePointwiseGroupInverseOp}{I,G}}
+        }$.
+\end{definition}
+
+\begin{proposition}\label{spike_product_group_fields}
+    Let $C=\spikeGroupCarrierFamily{I}{G}$.
+    Let $D=\dependentProduct{I}{C}$.
+    $\carrier[\ProductGroup{I}{G}]=D$ and
+    $\mul[\ProductGroup{I}{G}]
+        =\Apply{\binaryGraphOnOp}{
+            D,D,\Apply{\spikePointwiseGroupProductOp}{I,G}}$ and
+    $\neutral[\ProductGroup{I}{G}]
+        =\spikeProductGroupNeutral{I}{G}$ and
+    $\groupInv[\ProductGroup{I}{G}]
+        =\Apply{\graphOnOp}{
+            D,D,\Apply{\spikePointwiseGroupInverseOp}{I,G}}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{spike_product_group,
+            groupaggregateprojection_carrier,groupaggregateprojection_mul,
+            groupaggregateprojection_neutral,groupaggregateprojection_groupInv}.
+\end{proof}
+
+\begin{proposition}\label{spike_product_group_mul_coordinate}
+    Suppose $G$ is a function on $I$.
+    Suppose for every $j\in I$ we have $G(j)$ is a group.
+    Let $P=\ProductGroup{I}{G}$.
+    Let $x,y\in\carrier[P]$ and $i\in I$.
+    Then
+        $\apply{\mul[P](x,y)}{i}
+            =\mul[G(i)](x(i),y(i))$.
+\end{proposition}
+\begin{proof}
+    Let $C=\spikeGroupCarrierFamily{I}{G}$.
+    Let $D=\dependentProduct{I}{C}$.
+    $\carrier[P]=D$ and
+        $\mul[P]=\Apply{\binaryGraphOnOp}{
+            D,D,\Apply{\spikePointwiseGroupProductOp}{I,G}}$ by
+        \auto{spike_product_group_fields}.
+    Hence $x,y\in D$ by \auto.
+    $\mul[P](x,y)
+        =\Apply{\spikePointwiseGroupProductOp}{I,G,x,y}$ by
+        \auto{logical_binary_graph_on_apply}.
+    Follows by
+        \auto{spike_pointwise_group_product_coordinate}.
+\end{proof}
+
+\begin{proposition}\label{spike_product_group_inverse_coordinate}
+    Suppose $G$ is a function on $I$.
+    Suppose for every $j\in I$ we have $G(j)$ is a group.
+    Let $P=\ProductGroup{I}{G}$.
+    Let $x\in\carrier[P]$ and $i\in I$.
+    Then
+        $\apply{\groupInv[P](x)}{i}
+            =\groupInv[G(i)](x(i))$.
+\end{proposition}
+\begin{proof}
+    Let $C=\spikeGroupCarrierFamily{I}{G}$.
+    Let $D=\dependentProduct{I}{C}$.
+    $\carrier[P]=D$ and
+        $\groupInv[P]=\Apply{\graphOnOp}{
+            D,D,\Apply{\spikePointwiseGroupInverseOp}{I,G}}$ by
+        \auto{spike_product_group_fields}.
+    Hence $x\in D$ by \auto.
+    $\groupInv[P](x)
+        =\Apply{\spikePointwiseGroupInverseOp}{I,G,x}$ by
+        \auto{logical_graph_on_apply}.
+    Follows by
+        \auto{spike_pointwise_group_inverse_coordinate}.
+\end{proof}
+
+\begin{proposition}\label{spike_product_group_neutral_coordinate_exact}
+    Let $P=\ProductGroup{I}{G}$.
+    Let $i\in I$.
+    Then $\neutral[P](i)=\neutral[G(i)]$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{spike_product_group_fields,
+            spike_product_group_neutral_coordinate}.
+\end{proof}
+
+\begin{theorem}\label{spike_product_group_is_exact}
+    Suppose $G$ is a function on $I$.
+    Suppose for every $i\in I$ we have $G(i)$ is a group.
+    Then $\ProductGroup{I}{G}$ is an exact group.
+\end{theorem}
+\begin{proof}
+    Let $C=\spikeGroupCarrierFamily{I}{G}$.
+    Let $D=\dependentProduct{I}{C}$.
+    Let $P=\ProductGroup{I}{G}$.
+    $C$ is a function on $I$ by
+        \auto{spike_group_carrier_family_type}.
+    $\carrier[P]=D$ by \auto{spike_product_group_fields}.
+    Show that $\mul[P]\in\funs{D\times D}{D}$.
+    \begin{subproof}
+        For all $x,y\in D$ we have
+            $\Apply{\spikePointwiseGroupProductOp}{I,G,x,y}\in D$ by
+            \auto{spike_pointwise_group_product_type}.
+        Follows by
+            \auto{spike_product_group_fields,
+                logical_binary_graph_on_function}.
+    \end{subproof}
+    $\neutral[P]\in D$ by
+        \auto{spike_product_group_fields,
+            spike_product_group_neutral_type}.
+    Show that $\groupInv[P]\in\funs{D}{D}$.
+    \begin{subproof}
+        For every $x\in D$ we have
+            $\Apply{\spikePointwiseGroupInverseOp}{I,G,x}\in D$ by
+            \auto{spike_pointwise_group_inverse_type}.
+        Follows by
+            \auto{spike_product_group_fields,
+                logical_graph_on_function}.
+    \end{subproof}
+    Hence for all $x,y\in D$ we have $\mul[P](x,y)\in D$ by
+        \auto{funs_type_apply,times_tuple_intro}.
+    Hence for every $x\in D$ we have $\groupInv[P](x)\in D$ by
+        \auto{funs_type_apply}.
+
+    Show that for all $x,y,z\in D$ we have
+        $\mul[P](x,\mul[P](y,z))=\mul[P](\mul[P](x,y),z)$.
+    \begin{subproof}
+        Fix $x,y,z\in D$.
+        $\mul[P](y,z),\mul[P](x,y)\in D$ by \auto.
+        Show that for every $i\in I$ we have
+            $\apply{\mul[P](x,\mul[P](y,z))}{i}
+                =\apply{\mul[P](\mul[P](x,y),z)}{i}$.
+        \begin{subproof}
+            Fix $i\in I$.
+            $x(i),y(i),z(i)\in C(i)$ by
+                \auto{dependent_product_coordinate}.
+            $C(i)=\carrier[G(i)]$ by
+                \auto{spike_group_carrier_family_apply}.
+            Follows by
+                \auto{spike_product_group_mul_coordinate,
+                    group_is_monoid,monoid_assoc}.
+        \end{subproof}
+        Follows by \auto{spike_dependent_product_extensionality}.
+    \end{subproof}
+
+    Show that for every $x\in D$ we have
+        $\mul[P](x,\neutral[P])=x$.
+    \begin{subproof}
+        Fix $x\in D$.
+        Show that for every $i\in I$ we have
+            $\apply{\mul[P](x,\neutral[P])}{i}=x(i)$.
+        \begin{subproof}
+            Fix $i\in I$.
+            $x(i)\in C(i)$ by \auto{dependent_product_coordinate}.
+            $C(i)=\carrier[G(i)]$ by
+                \auto{spike_group_carrier_family_apply}.
+            Follows by
+                \auto{spike_product_group_mul_coordinate,
+                    spike_product_group_neutral_coordinate_exact,
+                    group_is_monoid,monoid_is_unital_magma,
+                    unitalmagma_right}.
+        \end{subproof}
+        Follows by \auto{spike_dependent_product_extensionality}.
+    \end{subproof}
+
+    Show that for every $x\in D$ we have
+        $\mul[P](\neutral[P],x)=x$.
+    \begin{subproof}
+        Fix $x\in D$.
+        Show that for every $i\in I$ we have
+            $\apply{\mul[P](\neutral[P],x)}{i}=x(i)$.
+        \begin{subproof}
+            Fix $i\in I$.
+            $x(i)\in C(i)$ by \auto{dependent_product_coordinate}.
+            $C(i)=\carrier[G(i)]$ by
+                \auto{spike_group_carrier_family_apply}.
+            Follows by
+                \auto{spike_product_group_mul_coordinate,
+                    spike_product_group_neutral_coordinate_exact,
+                    group_is_monoid,monoid_is_unital_magma,
+                    unitalmagma_left}.
+        \end{subproof}
+        Follows by \auto{spike_dependent_product_extensionality}.
+    \end{subproof}
+
+    Show that for every $x\in D$ we have
+        $\mul[P](x,\groupInv[P](x))=\neutral[P]$.
+    \begin{subproof}
+        Fix $x\in D$.
+        Show that for every $i\in I$ we have
+            $\apply{\mul[P](x,\groupInv[P](x))}{i}
+                =\neutral[P](i)$.
+        \begin{subproof}
+            Fix $i\in I$.
+            $x(i)\in C(i)$ by \auto{dependent_product_coordinate}.
+            $C(i)=\carrier[G(i)]$ by
+                \auto{spike_group_carrier_family_apply}.
+            Follows by
+                \auto{spike_product_group_mul_coordinate,
+                    spike_product_group_inverse_coordinate,
+                    spike_product_group_neutral_coordinate_exact,
+                    group_inverse_right}.
+        \end{subproof}
+        Follows by \auto{spike_dependent_product_extensionality}.
+    \end{subproof}
+
+    Show that for every $x\in D$ we have
+        $\mul[P](\groupInv[P](x),x)=\neutral[P]$.
+    \begin{subproof}
+        Fix $x\in D$.
+        Show that for every $i\in I$ we have
+            $\apply{\mul[P](\groupInv[P](x),x)}{i}
+                =\neutral[P](i)$.
+        \begin{subproof}
+            Fix $i\in I$.
+            $x(i)\in C(i)$ by \auto{dependent_product_coordinate}.
+            $C(i)=\carrier[G(i)]$ by
+                \auto{spike_group_carrier_family_apply}.
+            Follows by
+                \auto{spike_product_group_mul_coordinate,
+                    spike_product_group_inverse_coordinate,
+                    spike_product_group_neutral_coordinate_exact,
+                    group_inverse_left}.
+        \end{subproof}
+        Follows by \auto{spike_dependent_product_extensionality}.
+    \end{subproof}
+
+    Hence $P$ is a magma by
+        \auto{spike_product_group,groupaggregateexact,magma}.
+    Hence $P$ is a unital magma by
+        \auto{spike_product_group,groupaggregateexact,unitalmagma}.
+    Hence $P$ is a monoid by
+        \auto{spike_product_group,groupaggregateexact,monoid}.
+    Hence $P$ is a group by
+        \auto{spike_product_group,groupaggregateexact,group}.
+    Follows by \auto{spike_product_group,groupaggregateexact}.
+\end{proof}
+
+\begin{proposition}\label{spike_product_group_is_commutative}
+    Suppose $G$ is a function on $I$.
+    Suppose for every $i\in I$ we have $G(i)$ is a commutative group.
+    Then $\ProductGroup{I}{G}$ is a commutative group.
+\end{proposition}
+\begin{proof}
+    Let $C=\spikeGroupCarrierFamily{I}{G}$.
+    Let $D=\dependentProduct{I}{C}$.
+    Let $P=\ProductGroup{I}{G}$.
+    For every $i\in I$ we have $G(i)$ is a group by
+        \auto{commutative_group_is_group}.
+    $C$ is a function on $I$ by
+        \auto{spike_group_carrier_family_type}.
+    Hence $P$ is an exact group by
+        \auto{spike_product_group_is_exact}.
+    Hence $P$ is a group by \auto.
+    Hence $P$ is a monoid by \auto{group_is_monoid}.
+    Hence $P$ is a magma by \auto{monoid_is_magma}.
+    $\carrier[P]=D$ by \auto{spike_product_group_fields}.
+    Show that for all $x,y\in\carrier[P]$ we have
+        $\mul[P](x,y)=\mul[P](y,x)$.
+    \begin{subproof}
+        Fix $x,y\in\carrier[P]$.
+        Hence $x,y\in D$ by \auto{spike_product_group_fields}.
+        $\mul[P](x,y),\mul[P](y,x)\in\carrier[P]$ by
+            \auto{magma_welldef}.
+        Hence $\mul[P](x,y),\mul[P](y,x)\in D$ by \auto.
+        Show that for every $i\in I$ we have
+            $\apply{\mul[P](x,y)}{i}
+                =\apply{\mul[P](y,x)}{i}$.
+        \begin{subproof}
+            Fix $i\in I$.
+            $x(i),y(i)\in C(i)$ by
+                \auto{dependent_product_coordinate}.
+            $C(i)=\carrier[G(i)]$ by
+                \auto{spike_group_carrier_family_apply}.
+            Follows by
+                \auto{spike_product_group_mul_coordinate,
+                    commutative_group_commutative}.
+        \end{subproof}
+        Follows by \auto{spike_dependent_product_extensionality}.
+    \end{subproof}
+    Follows by \auto{group,commutative_group}.
+\end{proof}
+
+\begin{proposition}\label{spike_empty_product_group_is_exact}
+    Then $\ProductGroup{\emptyset}{\emptyset}$ is an exact group.
+\end{proposition}
+\begin{proof}
+    $\emptyset$ is a function on $\emptyset$ by
+        \auto{emptyset_is_function_on_emptyset}.
+    For every $i\in\emptyset$ we have
+        $\apply{\emptyset}{i}$ is a group by \auto{emptyset}.
+    Follows by \auto{spike_product_group_is_exact}.
+\end{proof}
+
+\begin{proposition}\label{spike_singleton_product_group_is_exact}
+    Let $H$ be a group.
+    Then
+        $\ProductGroup{\{i\}}{\{i\}\times\{H\}}$
+        is an exact group.
+\end{proposition}
+\begin{proof}
+    Let $G=\{i\}\times\{H\}$.
+    $G\in\funs{\{i\}}{\{H\}}$ by \auto{constant_graph_type}.
+    Hence $G$ is a function on $\{i\}$ by
+        \auto{funs_is_function,funs}.
+    For every $j\in\{i\}$ we have $G(j)=H$ by
+        \auto{constant_graph_application}.
+    Hence for every $j\in\{i\}$ we have $G(j)$ is a group by
+        \auto.
+    Follows by \auto{spike_product_group_is_exact}.
+\end{proof}
+
+\begin{proposition}\label{spike_dependent_reindex_apply}
+    Suppose $A$ is a function on $I$.
+    Let $e\in\funs{J}{I}$ and $x\in\dependentProduct{I}{A}$.
+    Then $\apply{\dependentReindex{I}{J}{A}{e}}{x}=x\circ e$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{spike_dependent_reindex,spike_precomposition_op,
+            logical_graph_on_apply}.
+\end{proof}
+
+\begin{definition}\label{spike_dependent_direct_sum_reindex}
+    $\dependentDirectSumReindex{I}{J}{A}{z}{e}
+        =\Apply{\graphOnOp}{
+            \dependentFinitelySupportedFunctions{I}{A}{z},
+            \dependentFinitelySupportedFunctions
+                {J}{A\circ e}{z\circ e},
+            \Apply{\spikePrecompositionOp}{e}}$.
+\end{definition}
+
+\begin{proposition}\label{spike_dependent_direct_sum_reindex_type}
+    Suppose $A$ is a function on $I$.
+    Let $e\in\funs{J}{I}$ and $z\in\dependentProduct{I}{A}$.
+    Suppose for every $i\in I$ we have
+        $\preimg{e}{\{i\}}$ is finite.
+    Then
+        $\dependentDirectSumReindex{I}{J}{A}{z}{e}\in
+            \funs{
+                \dependentFinitelySupportedFunctions{I}{A}{z}}{
+                \dependentFinitelySupportedFunctions
+                    {J}{A\circ e}{z\circ e}}$.
+\end{proposition}
+\begin{proof}
+    For every
+        $x\in\dependentFinitelySupportedFunctions{I}{A}{z}$
+    we have
+        $x\circ e\in
+            \dependentFinitelySupportedFunctions
+                {J}{A\circ e}{z\circ e}$ by
+        \auto{spike_finite_support_precomposition}.
+    Follows by
+        \auto{spike_dependent_direct_sum_reindex,
+            spike_precomposition_op,logical_graph_on_function}.
+\end{proof}
+
+\begin{proposition}\label{spike_dependent_direct_sum_reindex_apply}
+    Suppose $A$ is a function on $I$.
+    Let $e\in\funs{J}{I}$ and $z\in\dependentProduct{I}{A}$.
+    Suppose for every $i\in I$ we have
+        $\preimg{e}{\{i\}}$ is finite.
+    Let
+        $x\in\dependentFinitelySupportedFunctions{I}{A}{z}$.
+    Then
+        $\apply{\dependentDirectSumReindex{I}{J}{A}{z}{e}}{x}
+            =x\circ e$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{spike_dependent_direct_sum_reindex,
+            spike_precomposition_op,logical_graph_on_apply}.
+\end{proof}
+
+\begin{lemma}\label{spike_bijection_has_finite_fibers}
+    Let $e\in\bijections{J}{I}$.
+    Then for every $i\in I$ we have
+        $\preimg{e}{\{i\}}$ is finite.
+\end{lemma}
+\begin{proof}
+    Fix $i\in I$.
+    Let $F=\preimg{e}{\{i\}}$.
+    $F=\img{\converse{e}}{\{i\}}$ by
+        \auto{preim_eq_img_of_converse}.
+    $\converse{e}\in\bijections{I}{J}$ by
+        \auto{bijection_converse_is_bijection}.
+    Hence $\converse{e}\in\funs{I}{J}$ by
+        \auto{bijections_to_funs}.
+    Hence $\converse{e}$ is a function by
+        \auto{bijection_is_function}.
+    $\dom{\converse{e}}=I$ by \auto{bijections_dom}.
+    $\{i\}$ is finite by \auto{singleton_is_finite}.
+    $\{i\}\subseteq\dom{\converse{e}}$ by
+        \auto{singleton_subset_intro}.
+    $\img{\converse{e}}{\{i\}}$ is finite by
+        \auto{finite_function_image}.
+    Follows by \auto.
+\end{proof}
+
+\subsection{The finite-support product of commutative groups}
+
+\begin{proposition}\label{spike_product_group_mul_support}
+    Suppose $G$ is a function on $I$.
+    Suppose for every $i\in I$ we have $G(i)$ is a group.
+    Let $P=\ProductGroup{I}{G}$.
+    Let $z=\neutral[P]$.
+    Let $x,y\in\carrier[P]$.
+    Then
+        $\dependentSupport{I}{\mul[P](x,y)}{z}
+            \subseteq
+        \dependentSupport{I}{x}{z}\union
+            \dependentSupport{I}{y}{z}$.
+\end{proposition}
+\begin{proof}
+    Let $C=\spikeGroupCarrierFamily{I}{G}$.
+    Let $D=\dependentProduct{I}{C}$.
+    $\carrier[P]=D$ by \auto{spike_product_group_fields}.
+    Hence $x,y\in D$ by \auto.
+    Show that every element of
+        $\dependentSupport{I}{\mul[P](x,y)}{z}$ is an element of
+        $\dependentSupport{I}{x}{z}\union
+            \dependentSupport{I}{y}{z}$.
+    \begin{subproof}
+        Fix $i\in\dependentSupport{I}{\mul[P](x,y)}{z}$.
+        Hence $i\in I$ and
+            $\apply{\mul[P](x,y)}{i}\neq z(i)$ by
+            \auto{spike_dependent_support_iff}.
+        Show that $i\in\dependentSupport{I}{x}{z}$ or
+            $i\in\dependentSupport{I}{y}{z}$.
+        \begin{subproof}
+            Suppose not.
+            Hence $i\notin\dependentSupport{I}{x}{z}$ and
+                $i\notin\dependentSupport{I}{y}{z}$ by \auto.
+            Hence $x(i)=z(i)$ and $y(i)=z(i)$ by
+                \auto{spike_dependent_support_iff}.
+            $z(i)=\neutral[G(i)]$ by
+                \auto{spike_product_group_neutral_coordinate_exact}.
+            $G(i)$ is a group by \auto.
+            Hence $G(i)$ is a monoid by \auto{group_is_monoid}.
+            Hence $G(i)$ is a unital magma by
+                \auto{monoid_is_unital_magma}.
+            $\apply{\mul[P](x,y)}{i}
+                =\mul[G(i)](x(i),y(i))$ by
+                \auto{spike_product_group_mul_coordinate}.
+            Hence $\apply{\mul[P](x,y)}{i}
+                =\mul[G(i)](\neutral[G(i)],\neutral[G(i)])$ by
+                \auto.
+            $\neutral[G(i)]\in\carrier[G(i)]$ by
+                \auto{unitalmagma_type}.
+            $\mul[G(i)](\neutral[G(i)],\neutral[G(i)])
+                =\neutral[G(i)]$ by \auto{unitalmagma_left}.
+            Hence $\apply{\mul[P](x,y)}{i}=z(i)$ by \auto.
+            Contradiction.
+        \end{subproof}
+        Follows by \auto{union_iff}.
+    \end{subproof}
+    Follows by \auto{subseteq}.
+\end{proof}
+
+\begin{proposition}\label{spike_product_group_inverse_support}
+    Suppose $G$ is a function on $I$.
+    Suppose for every $i\in I$ we have $G(i)$ is a group.
+    Let $P=\ProductGroup{I}{G}$.
+    Let $z=\neutral[P]$.
+    Let $x\in\carrier[P]$.
+    Then
+        $\dependentSupport{I}{\groupInv[P](x)}{z}
+            \subseteq\dependentSupport{I}{x}{z}$.
+\end{proposition}
+\begin{proof}
+    Let $C=\spikeGroupCarrierFamily{I}{G}$.
+    Let $D=\dependentProduct{I}{C}$.
+    $\carrier[P]=D$ by \auto{spike_product_group_fields}.
+    Hence $x\in D$ by \auto.
+    Show that every element of
+        $\dependentSupport{I}{\groupInv[P](x)}{z}$ is an element of
+        $\dependentSupport{I}{x}{z}$.
+    \begin{subproof}
+        Fix $i\in\dependentSupport{I}{\groupInv[P](x)}{z}$.
+        Hence $i\in I$ and
+            $\apply{\groupInv[P](x)}{i}\neq z(i)$ by
+            \auto{spike_dependent_support_iff}.
+        Show that $i\in\dependentSupport{I}{x}{z}$.
+        \begin{subproof}
+            Suppose not.
+            Hence $x(i)=z(i)$ by
+                \auto{spike_dependent_support_iff}.
+            $z(i)=\neutral[G(i)]$ by
+                \auto{spike_product_group_neutral_coordinate_exact}.
+            $G(i)$ is a group by \auto.
+            $\apply{\groupInv[P](x)}{i}
+                =\groupInv[G(i)](x(i))$ by
+                \auto{spike_product_group_inverse_coordinate}.
+            Hence $\apply{\groupInv[P](x)}{i}=z(i)$ by
+                \auto{group_inverse_neutral}.
+            Contradiction.
+        \end{subproof}
+        Follows.
+    \end{subproof}
+    Follows by \auto{subseteq}.
+\end{proof}
+
+\begin{definition}\label{spike_direct_sum_group}
+    $\DirectSumGroup{I}{G}
+        =\subgroupStructure{
+            \ProductGroup{I}{G}}{
+            \dependentFinitelySupportedFunctions
+                {I}{\spikeGroupCarrierFamily{I}{G}}{
+                    \spikeProductGroupNeutral{I}{G}}}$.
+\end{definition}
+
+\begin{proposition}\label{spike_direct_sum_group_carrier}
+    $\carrier[\DirectSumGroup{I}{G}]
+        =\dependentFinitelySupportedFunctions
+            {I}{\spikeGroupCarrierFamily{I}{G}}{
+                \spikeProductGroupNeutral{I}{G}}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{spike_direct_sum_group,subgroup_structure_carrier}.
+\end{proof}
+
+\begin{theorem}\label{spike_direct_sum_group_subgroup}
+    Suppose $G$ is a function on $I$.
+    Suppose for every $i\in I$ we have $G(i)$ is a commutative group.
+    Let $P=\ProductGroup{I}{G}$.
+    Let $C=\spikeGroupCarrierFamily{I}{G}$.
+    Let $z=\spikeProductGroupNeutral{I}{G}$.
+    Let $D=\dependentFinitelySupportedFunctions{I}{C}{z}$.
+    Then $\subgroup{D}{P}$.
+\end{theorem}
+\begin{proof}
+    For every $i\in I$ we have $G(i)$ is a group by
+        \auto{commutative_group_is_group}.
+    $P$ is an exact group by \auto{spike_product_group_is_exact}.
+    Hence $P$ is a group by \auto.
+    $\carrier[P]=\dependentProduct{I}{C}$ by
+        \auto{spike_product_group_fields}.
+    Show that every element of $D$ is an element of $\carrier[P]$.
+    \begin{subproof}
+        Fix $x\in D$.
+        $x\in\dependentProduct{I}{C}$ by
+            \auto{spike_dependent_finitely_supported_functions_iff}.
+        Follows by \auto.
+    \end{subproof}
+    Hence $D\subseteq\carrier[P]$ by \auto{subseteq}.
+    $z=\neutral[P]$ by \auto{spike_product_group_fields}.
+    $z\in\dependentProduct{I}{C}$ by
+        \auto{spike_product_group_neutral_type}.
+    $\dependentSupport{I}{z}{z}=\emptyset$ by
+        \auto{setext,spike_dependent_support_iff,emptyset}.
+    Hence $\dependentSupport{I}{z}{z}$ is finite by
+        \auto{emptyset_is_finite}.
+    Hence $\neutral[P]\in D$ by
+        \auto{spike_dependent_finitely_supported_functions_iff}.
+
+    Show that for all $x,y\in D$ we have $\mul[P](x,y)\in D$.
+    \begin{subproof}
+        Fix $x,y\in D$.
+        Hence $x,y\in\carrier[P]$ by \auto{subseteq}.
+        $P$ is a monoid by \auto{group_is_monoid}.
+        Hence $P$ is a magma by \auto{monoid_is_magma}.
+        Hence $\mul[P](x,y)\in\carrier[P]$ by
+            \auto{magma_welldef}.
+        $\dependentSupport{I}{x}{z}$ and
+            $\dependentSupport{I}{y}{z}$ are finite by
+            \auto{spike_dependent_finitely_supported_functions_iff}.
+        Hence
+            $\dependentSupport{I}{x}{z}\union
+                \dependentSupport{I}{y}{z}$ is finite by
+            \auto{union_of_finite_is_finite}.
+        $\dependentSupport{I}{\mul[P](x,y)}{z}
+            \subseteq
+            \dependentSupport{I}{x}{z}\union
+                \dependentSupport{I}{y}{z}$ by
+            \auto{spike_product_group_mul_support}.
+        Hence $\dependentSupport{I}{\mul[P](x,y)}{z}$ is finite by
+            \auto{subseteq_finite_is_finite}.
+        $\mul[P](x,y)\in\dependentProduct{I}{C}$ by \auto.
+        Follows by
+            \auto{spike_dependent_finitely_supported_functions_iff}.
+    \end{subproof}
+
+    Show that for every $x\in D$ we have $\groupInv[P](x)\in D$.
+    \begin{subproof}
+        Fix $x\in D$.
+        Hence $x\in\carrier[P]$ by \auto{subseteq}.
+        $\groupInv[P](x)\in\carrier[P]$ by
+            \auto{group_inverse_type}.
+        $\dependentSupport{I}{x}{z}$ is finite by
+            \auto{spike_dependent_finitely_supported_functions_iff}.
+        $\dependentSupport{I}{\groupInv[P](x)}{z}
+            \subseteq\dependentSupport{I}{x}{z}$ by
+            \auto{spike_product_group_inverse_support}.
+        Hence $\dependentSupport{I}{\groupInv[P](x)}{z}$ is finite by
+            \auto{subseteq_finite_is_finite}.
+        $\groupInv[P](x)\in\dependentProduct{I}{C}$ by \auto.
+        Follows by
+            \auto{spike_dependent_finitely_supported_functions_iff}.
+    \end{subproof}
+    Follows by \auto{subgroup}.
+\end{proof}
+
+\begin{theorem}\label{spike_direct_sum_group_is_exact}
+    Suppose $G$ is a function on $I$.
+    Suppose for every $i\in I$ we have $G(i)$ is a commutative group.
+    Then $\DirectSumGroup{I}{G}$ is an exact commutative group.
+\end{theorem}
+\begin{proof}
+    Let $P=\ProductGroup{I}{G}$.
+    Let $D=\dependentFinitelySupportedFunctions
+        {I}{\spikeGroupCarrierFamily{I}{G}}{
+            \spikeProductGroupNeutral{I}{G}}$.
+    $\subgroup{D}{P}$ by \auto{spike_direct_sum_group_subgroup}.
+    Hence $D\subseteq\carrier[P]$ by \auto{subgroup_subseteq}.
+    Hence $\DirectSumGroup{I}{G}$ is an exact group by
+        \auto{spike_direct_sum_group,
+            subgroup_structure_is_exact_group}.
+    Hence $\DirectSumGroup{I}{G}$ is a group by \auto.
+    $P$ is a commutative group by
+        \auto{spike_product_group_is_commutative}.
+    Show that for all $x,y\in\carrier[\DirectSumGroup{I}{G}]$ we have
+        $\mul[\DirectSumGroup{I}{G}](x,y)
+            =\mul[\DirectSumGroup{I}{G}](y,x)$.
+    \begin{subproof}
+        Fix $x,y\in\carrier[\DirectSumGroup{I}{G}]$.
+        Hence $x,y\in D$ by
+            \auto{spike_direct_sum_group_carrier}.
+        Hence $x,y\in\carrier[P]$ by \auto{subseteq}.
+        $\mul[P](x,y)=\mul[P](y,x)$ by
+            \auto{commutative_group_commutative}.
+        Hence
+            $\mul[\DirectSumGroup{I}{G}](x,y)=\mul[P](x,y)$ and
+            $\mul[\DirectSumGroup{I}{G}](y,x)=\mul[P](y,x)$ by
+            \auto{spike_direct_sum_group,
+                subgroup_structure_mul_apply}.
+        Follows by \auto.
+    \end{subproof}
+    Hence $\DirectSumGroup{I}{G}$ is a commutative group by
+        \auto{group,commutative_group}.
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{spike_finite_direct_sum_group_eq_product_group}
+    Suppose $I$ is finite.
+    Suppose $G$ is a function on $I$.
+    Suppose for every $i\in I$ we have $G(i)$ is a commutative group.
+    Then $\DirectSumGroup{I}{G}=\ProductGroup{I}{G}$.
+\end{theorem}
+\begin{proof}
+    Let $P=\ProductGroup{I}{G}$.
+    Let $C=\spikeGroupCarrierFamily{I}{G}$.
+    Let $z=\spikeProductGroupNeutral{I}{G}$.
+    Let $D=\dependentFinitelySupportedFunctions{I}{C}{z}$.
+    $\carrier[P]=\dependentProduct{I}{C}$ by
+        \auto{spike_product_group_fields}.
+    Show that $D=\carrier[P]$.
+    \begin{subproof}
+        Show that every element of $D$ is an element of $\carrier[P]$.
+        \begin{subproof}
+            Fix $x\in D$.
+            $x\in\dependentProduct{I}{C}$ by
+                \auto{spike_dependent_finitely_supported_functions_iff}.
+            Follows by \auto.
+        \end{subproof}
+        Hence $D\subseteq\carrier[P]$ by \auto{subseteq}.
+        Show that every element of $\carrier[P]$ is an element of $D$.
+        \begin{subproof}
+            Fix $x\in\carrier[P]$.
+            Hence $x\in\dependentProduct{I}{C}$ by \auto.
+            $\dependentSupport{I}{x}{z}\subseteq I$ by
+                \auto{spike_dependent_support_subseteq}.
+            Hence $\dependentSupport{I}{x}{z}$ is finite by
+                \auto{subseteq_finite_is_finite}.
+            Follows by
+                \auto{spike_dependent_finitely_supported_functions_iff}.
+        \end{subproof}
+        Hence $\carrier[P]\subseteq D$ by \auto{subseteq}.
+        Follows by \auto{subseteq_antisymmetric}.
+    \end{subproof}
+    Hence
+        $\DirectSumGroup{I}{G}
+            =\subgroupStructure{P}{\carrier[P]}$ by
+        \auto{spike_direct_sum_group}.
+    $P$ is an exact group by
+        \auto{spike_product_group_is_exact,
+            commutative_group_is_group}.
+    Hence $\reduct[group]{P}=P$ by
+        \auto{exact_group_reduct_eq}.
+    $\subgroupStructure{P}{\carrier[P]}=\reduct[group]{P}$ by
+        \auto{full_subgroup_structure_eq_group_reduct}.
+    Follows by \auto.
+\end{proof}
+
+\begin{lemma}\label{spike_pulled_back_family_round_trip}
+    Suppose $A$ is a function on $I$.
+    Let $e\in\bijections{J}{I}$.
+    Then $(A\circ e)\circ\converse{e}=A$.
+\end{lemma}
+\begin{proof}
+    $A$ is a function and $\dom{A}=I$ by \auto.
+    Hence $A\in\funs{I}{\ran{A}}$ by
+        \auto{function_exact_type_to_range}.
+    $e\circ\converse{e}=\identity{I}$ by
+        \auto{bijection_circ_converse}.
+    $(A\circ e)\circ\converse{e}
+        =A\circ(e\circ\converse{e})$ by \auto{circ_assoc}.
+    Hence $(A\circ e)\circ\converse{e}
+        =A\circ\identity{I}$ by \auto.
+    Follows by \auto{funs_circ_identity_right}.
+\end{proof}
+
+\begin{lemma}\label{spike_reindexed_section_round_trip}
+    Let $e\in\bijections{J}{I}$.
+    Let $x\in\funs{I}{B}$.
+    Then $(x\circ e)\circ\converse{e}=x$.
+\end{lemma}
+\begin{proof}
+    $e\circ\converse{e}=\identity{I}$ by
+        \auto{bijection_circ_converse}.
+    $(x\circ e)\circ\converse{e}
+        =x\circ(e\circ\converse{e})$ by \auto{circ_assoc}.
+    Hence $(x\circ e)\circ\converse{e}
+        =x\circ\identity{I}$ by \auto.
+    Follows by \auto{funs_circ_identity_right}.
+\end{proof}
+
+\begin{lemma}\label{spike_reverse_reindexed_section_round_trip}
+    Let $e\in\bijections{J}{I}$.
+    Let $x\in\funs{J}{B}$.
+    Then $(x\circ\converse{e})\circ e=x$.
+\end{lemma}
+\begin{proof}
+    $\converse{e}\circ e=\identity{J}$ by
+        \auto{bijection_converse_circ}.
+    $(x\circ\converse{e})\circ e
+        =x\circ(\converse{e}\circ e)$ by \auto{circ_assoc}.
+    Hence $(x\circ\converse{e})\circ e
+        =x\circ\identity{J}$ by \auto.
+    Follows by \auto{funs_circ_identity_right}.
+\end{proof}
+
+\begin{theorem}\label{spike_bijective_direct_sum_reindex}
+    Suppose $A$ is a function on $I$.
+    Let $e\in\bijections{J}{I}$ and
+        $z\in\dependentProduct{I}{A}$.
+    Then
+        $\dependentDirectSumReindex{I}{J}{A}{z}{e}$ is a bijection
+        from
+            $\dependentFinitelySupportedFunctions{I}{A}{z}$
+        to
+            $\dependentFinitelySupportedFunctions
+                {J}{A\circ e}{z\circ e}$.
+\end{theorem}
+\begin{proof}
+    Let $D=\dependentFinitelySupportedFunctions{I}{A}{z}$.
+    Let
+        $E=\dependentFinitelySupportedFunctions
+            {J}{A\circ e}{z\circ e}$.
+    Let $r=\dependentDirectSumReindex{I}{J}{A}{z}{e}$.
+    $e\in\funs{J}{I}$ by \auto{bijections_to_funs}.
+    For every $i\in I$ we have $\preimg{e}{\{i\}}$ is finite by
+        \auto{spike_bijection_has_finite_fibers}.
+    Hence $r\in\funs{D}{E}$ by
+        \auto{spike_dependent_direct_sum_reindex_type}.
+    Hence $r$ is a function and $\dom{r}=D$ by
+        \auto{funs_is_function,funs}.
+    Show that $r$ is injective.
+    \begin{subproof}
+        Show that for all $x,y\in\dom{r}$ such that $r(x)=r(y)$
+            we have $x=y$.
+        \begin{subproof}
+            Fix $x,y\in\dom{r}$.
+            Assume $r(x)=r(y)$.
+            Hence $x,y\in D$ by \auto.
+            $x,y\in\dependentProduct{I}{A}$ by
+                \auto{spike_dependent_finitely_supported_functions_iff}.
+            Hence $x,y\in\funs{I}{\unions{\ran{A}}}$ by
+                \auto{dependent_product_iff}.
+            $r(x)=x\circ e$ and $r(y)=y\circ e$ by
+                \auto{spike_dependent_direct_sum_reindex_apply}.
+            Hence $x\circ e=y\circ e$ by \auto.
+            $(x\circ e)\circ\converse{e}=x$ and
+                $(y\circ e)\circ\converse{e}=y$ by
+                \auto{spike_reindexed_section_round_trip}.
+            Follows by \auto.
+        \end{subproof}
+        Follows by \auto{injective_function}.
+    \end{subproof}
+    Show that $r\in\surj{D}{E}$.
+    \begin{subproof}
+        Show that for every $y\in E$ there exists $x\in D$
+            such that $r(x)=y$.
+        \begin{subproof}
+            Fix $y\in E$.
+            Let $x=y\circ\converse{e}$.
+            $A$ is a function and $\dom{A}=I$ by \auto.
+            Hence $A\in\funs{I}{\ran{A}}$ by
+                \auto{function_exact_type_to_range}.
+            Hence $A\circ e\in\funs{J}{\ran{A}}$ by
+                \auto{funs_circ}.
+            Hence $A\circ e$ is a function on $J$ by
+                \auto{funs_is_function,funs}.
+            $\converse{e}\in\bijections{I}{J}$ by
+                \auto{bijection_converse_is_bijection}.
+            Hence $\converse{e}\in\funs{I}{J}$ by
+                \auto{bijections_to_funs}.
+            For every $j\in J$ we have
+                $\preimg{\converse{e}}{\{j\}}$ is finite by
+                \auto{spike_bijection_has_finite_fibers}.
+            $y\in\dependentFinitelySupportedFunctions
+                {J}{A\circ e}{z\circ e}$ by \auto.
+            $z\circ e\in\dependentProduct{J}{A\circ e}$ by
+                \auto{spike_dependent_precomposition_type}.
+            Hence
+                $x\in\dependentFinitelySupportedFunctions
+                    {I}{(A\circ e)\circ\converse{e}}{
+                        (z\circ e)\circ\converse{e}}$ by
+                \auto{spike_finite_support_precomposition}.
+            $(A\circ e)\circ\converse{e}=A$ by
+                \auto{spike_pulled_back_family_round_trip}.
+            $z\in\funs{I}{\unions{\ran{A}}}$ by
+                \auto{dependent_product_iff}.
+            $(z\circ e)\circ\converse{e}=z$ by
+                \auto{spike_reindexed_section_round_trip}.
+            Hence $x\in D$ by \auto.
+            $y\in\dependentProduct{J}{A\circ e}$ by
+                \auto{spike_dependent_finitely_supported_functions_iff}.
+            Hence $y\in\funs{J}{\unions{\ran{A\circ e}}}$ by
+                \auto{dependent_product_iff}.
+            $r(x)=x\circ e$ by
+                \auto{spike_dependent_direct_sum_reindex_apply}.
+            $x\circ e=y$ by
+                \auto{spike_reverse_reindexed_section_round_trip}.
+            Follows by \auto.
+        \end{subproof}
+        Follows by \auto{surj}.
+    \end{subproof}
+    Follows by \auto{bijections}.
+\end{proof}
+
+\begin{proposition}\label{spike_bijective_direct_sum_reindex_inverse}
+    Suppose $A$ is a function on $I$.
+    Let $e\in\bijections{J}{I}$ and
+        $z\in\dependentProduct{I}{A}$.
+    Let $r=\dependentDirectSumReindex{I}{J}{A}{z}{e}$.
+    Let
+        $s=\dependentDirectSumReindex
+            {J}{I}{A\circ e}{z\circ e}{\converse{e}}$.
+    Then for every
+        $x\in\dependentFinitelySupportedFunctions{I}{A}{z}$
+    we have $s(r(x))=x$ and for every
+        $y\in\dependentFinitelySupportedFunctions
+            {J}{A\circ e}{z\circ e}$
+    we have $r(s(y))=y$.
+\end{proposition}
+\begin{proof}
+    $e\in\funs{J}{I}$ by \auto{bijections_to_funs}.
+    $A$ is a function and $\dom{A}=I$ by \auto.
+    Hence $A\in\funs{I}{\ran{A}}$ by
+        \auto{function_exact_type_to_range}.
+    Hence $A\circ e\in\funs{J}{\ran{A}}$ by \auto{funs_circ}.
+    Hence $A\circ e$ is a function on $J$ by
+        \auto{funs_is_function,funs}.
+    $(A\circ e)\circ\converse{e}=A$ by
+        \auto{spike_pulled_back_family_round_trip}.
+    $z\in\funs{I}{\unions{\ran{A}}}$ by
+        \auto{dependent_product_iff}.
+    $z\circ e\in\dependentProduct{J}{A\circ e}$ by
+        \auto{spike_dependent_precomposition_type}.
+    $(z\circ e)\circ\converse{e}=z$ by
+        \auto{spike_reindexed_section_round_trip}.
+    $\converse{e}\in\bijections{I}{J}$ by
+        \auto{bijection_converse_is_bijection}.
+    Hence $\converse{e}\in\funs{I}{J}$ by
+        \auto{bijections_to_funs}.
+    Hence for every $i\in I$ we have
+        $\preimg{e}{\{i\}}$ is finite by
+        \auto{spike_bijection_has_finite_fibers}.
+    Hence for every $j\in J$ we have
+        $\preimg{\converse{e}}{\{j\}}$ is finite by
+        \auto{spike_bijection_has_finite_fibers}.
+    $r\in\funs{
+        \dependentFinitelySupportedFunctions{I}{A}{z}}{
+        \dependentFinitelySupportedFunctions
+            {J}{A\circ e}{z\circ e}}$ by
+        \auto{spike_dependent_direct_sum_reindex_type}.
+    $s\in\funs{
+        \dependentFinitelySupportedFunctions
+            {J}{A\circ e}{z\circ e}}{
+        \dependentFinitelySupportedFunctions
+            {I}{(A\circ e)\circ\converse{e}}{
+                (z\circ e)\circ\converse{e}}}$ by
+        \auto{spike_dependent_direct_sum_reindex_type}.
+    Hence $s\in\funs{
+        \dependentFinitelySupportedFunctions
+            {J}{A\circ e}{z\circ e}}{
+        \dependentFinitelySupportedFunctions{I}{A}{z}}$ by
+        \auto.
+    For every
+        $x\in\dependentFinitelySupportedFunctions{I}{A}{z}$
+    we have $r(x)=x\circ e$ by
+        \auto{spike_dependent_direct_sum_reindex_apply}.
+    For every
+        $x\in\dependentFinitelySupportedFunctions{I}{A}{z}$
+    we have
+        $r(x)\in\dependentFinitelySupportedFunctions
+            {J}{A\circ e}{z\circ e}$ by
+        \auto{funs_type_apply}.
+    For every
+        $x\in\dependentFinitelySupportedFunctions{I}{A}{z}$
+    we have $s(r(x))=(x\circ e)\circ\converse{e}$ by
+        \auto{spike_dependent_direct_sum_reindex_apply}.
+    For every
+        $x\in\dependentFinitelySupportedFunctions{I}{A}{z}$
+    we have $x\in\funs{I}{\unions{\ran{A}}}$ by
+        \auto{spike_dependent_finitely_supported_functions_iff,
+            dependent_product_iff}.
+    Hence for every
+        $x\in\dependentFinitelySupportedFunctions{I}{A}{z}$
+    we have $(x\circ e)\circ\converse{e}=x$ by
+        \auto{spike_reindexed_section_round_trip}.
+    Hence for every
+        $x\in\dependentFinitelySupportedFunctions{I}{A}{z}$
+    we have $s(r(x))=x$ by \auto.
+    For every
+        $y\in\dependentFinitelySupportedFunctions
+            {J}{A\circ e}{z\circ e}$
+    we have $s(y)=y\circ\converse{e}$ by
+        \auto{spike_dependent_direct_sum_reindex_apply}.
+    For every
+        $y\in\dependentFinitelySupportedFunctions
+            {J}{A\circ e}{z\circ e}$
+    we have $s(y)\in
+        \dependentFinitelySupportedFunctions{I}{A}{z}$ by
+        \auto{funs_type_apply}.
+    For every
+        $y\in\dependentFinitelySupportedFunctions
+            {J}{A\circ e}{z\circ e}$
+    we have $r(s(y))=(y\circ\converse{e})\circ e$ by
+        \auto{spike_dependent_direct_sum_reindex_apply}.
+    For every
+        $y\in\dependentFinitelySupportedFunctions
+            {J}{A\circ e}{z\circ e}$
+    we have $y\in\funs{J}{\unions{\ran{A\circ e}}}$ by
+        \auto{spike_dependent_finitely_supported_functions_iff,
+            dependent_product_iff}.
+    Hence for every
+        $y\in\dependentFinitelySupportedFunctions
+            {J}{A\circ e}{z\circ e}$
+    we have $(y\circ\converse{e})\circ e=y$ by
+        \auto{spike_reverse_reindexed_section_round_trip}.
+    Follows by \auto.
+\end{proof}
+
+\subsection{Reindexing direct sums of groups}
+
+\begin{proposition}\label{spike_pulled_back_group_carrier_family}
+    Suppose $G$ is a function on $I$.
+    Let $e\in\funs{J}{I}$.
+    Then
+        $\spikeGroupCarrierFamily{I}{G}\circ e
+            =\spikeGroupCarrierFamily{J}{G\circ e}$.
+\end{proposition}
+\begin{proof}
+    Let $C=\spikeGroupCarrierFamily{I}{G}$.
+    Let $D=\spikeGroupCarrierFamily{J}{G\circ e}$.
+    $G$ is a function and $\dom{G}=I$ by \auto.
+    Hence $G\in\funs{I}{\ran{G}}$ by
+        \auto{function_exact_type_to_range}.
+    Hence $G\circ e\in\funs{J}{\ran{G}}$ by \auto{funs_circ}.
+    Hence $G\circ e$ is a function on $J$ by
+        \auto{funs_is_function,funs}.
+    $e$ is a function and $G$ is composable with $e$ by
+        \auto{funs_is_function,funs_ran,funs}.
+    $C$ is a function on $I$ and $D$ is a function on $J$ by
+        \auto{spike_group_carrier_family_type}.
+    Hence $C\in\funs{I}{\ran{C}}$ by
+        \auto{function_exact_type_to_range}.
+    Hence $C\circ e\in\funs{J}{\ran{C}}$ by \auto{funs_circ}.
+    $D\in\funs{J}{\ran{D}}$ by
+        \auto{function_exact_type_to_range}.
+    $e$ is a function by \auto{funs_is_function}.
+    $C$ is composable with $e$ and $G$ is composable with $e$ by
+        \auto{funs_ran,funs}.
+    Show that for every $j\in J$ we have
+        $(C\circ e)(j)=D(j)$.
+    \begin{subproof}
+        Fix $j\in J$.
+        Hence $j\in\dom{e}$ and $e(j)\in I$ by
+            \auto{funs,funs_type_apply}.
+        $(C\circ e)(j)=C(e(j))$ by \auto{circ_apply}.
+        $C(e(j))=\carrier[G(e(j))]$ by
+            \auto{spike_group_carrier_family_apply}.
+        $(G\circ e)(j)=G(e(j))$ by \auto{circ_apply}.
+        $D(j)=\carrier[(G\circ e)(j)]$ by
+            \auto{spike_group_carrier_family_apply}.
+        Follows by \auto.
+    \end{subproof}
+    Follows by \auto{typed_functions_equal_from_agreement}.
+\end{proof}
+
+\begin{proposition}\label{spike_pulled_back_group_neutral_section}
+    Suppose $G$ is a function on $I$.
+    Suppose for every $i\in I$ we have $G(i)$ is a group.
+    Let $e\in\funs{J}{I}$.
+    Then
+        $\spikeProductGroupNeutral{I}{G}\circ e
+            =\spikeProductGroupNeutral{J}{G\circ e}$.
+\end{proposition}
+\begin{proof}
+    Let $z=\spikeProductGroupNeutral{I}{G}$.
+    Let $w=\spikeProductGroupNeutral{J}{G\circ e}$.
+    $G$ is a function and $\dom{G}=I$ by \auto.
+    Hence $G\in\funs{I}{\ran{G}}$ by
+        \auto{function_exact_type_to_range}.
+    Hence $G\circ e\in\funs{J}{\ran{G}}$ by \auto{funs_circ}.
+    Hence $G\circ e$ is a function on $J$ by
+        \auto{funs_is_function,funs}.
+    $e$ is a function and $G$ is composable with $e$ by
+        \auto{funs_is_function,funs_ran,funs}.
+    Show that for every $j\in J$ we have
+        $(G\circ e)(j)$ is a group.
+    \begin{subproof}
+        Fix $j\in J$.
+        $j\in\dom{e}$ by \auto{funs}.
+        $e(j)\in I$ by \auto{funs_type_apply}.
+        $(G\circ e)(j)=G(e(j))$ by \auto{circ_apply}.
+        Follows by \auto.
+    \end{subproof}
+    $z\in\dependentProduct
+        {I}{\spikeGroupCarrierFamily{I}{G}}$ and
+        $w\in\dependentProduct
+            {J}{\spikeGroupCarrierFamily{J}{G\circ e}}$ by
+        \auto{spike_product_group_neutral_type}.
+    Hence $z\in\funs{I}{
+        \unions{\ran{\spikeGroupCarrierFamily{I}{G}}}}$ and
+        $w\in\funs{J}{
+            \unions{\ran{\spikeGroupCarrierFamily{J}{G\circ e}}}}$ by
+        \auto{dependent_product_iff}.
+    $z$ is composable with $e$ by \auto{funs_ran,funs}.
+    Hence $z\circ e\in\funs{J}{
+        \unions{\ran{\spikeGroupCarrierFamily{I}{G}}}}$ by
+        \auto{funs_circ}.
+    Show that for every $j\in J$ we have $(z\circ e)(j)=w(j)$.
+    \begin{subproof}
+        Fix $j\in J$.
+        $e(j)\in I$ by \auto{funs_type_apply}.
+        $(z\circ e)(j)=z(e(j))$ by
+            \auto{circ_apply,funs_is_function,funs}.
+        $z(e(j))=\neutral[G(e(j))]$ by
+            \auto{spike_product_group_neutral_coordinate}.
+        $(G\circ e)(j)=G(e(j))$ by
+            \auto{circ_apply,funs_is_function,funs}.
+        $w(j)=\neutral[(G\circ e)(j)]$ by
+            \auto{spike_product_group_neutral_coordinate}.
+        Follows by \auto.
+    \end{subproof}
+    Follows by \auto{typed_functions_equal_from_agreement}.
+\end{proof}
+
+\begin{definition}\label{spike_direct_sum_group_reindex}
+    $\directSumGroupReindex{I}{J}{G}{e}
+        =\dependentDirectSumReindex
+            {I}{J}{\spikeGroupCarrierFamily{I}{G}}{
+                \spikeProductGroupNeutral{I}{G}}{e}$.
+\end{definition}
+
+\begin{proposition}\label{spike_direct_sum_group_reindex_type}
+    Suppose $G$ is a function on $I$.
+    Suppose for every $i\in I$ we have $G(i)$ is a commutative group.
+    Let $e\in\funs{J}{I}$.
+    Suppose for every $i\in I$ we have
+        $\preimg{e}{\{i\}}$ is finite.
+    Then
+        $\directSumGroupReindex{I}{J}{G}{e}\in
+            \funs{\carrier[\DirectSumGroup{I}{G}]}{
+                \carrier[\DirectSumGroup{J}{G\circ e}]}$.
+\end{proposition}
+\begin{proof}
+    Let $C=\spikeGroupCarrierFamily{I}{G}$.
+    Let $z=\spikeProductGroupNeutral{I}{G}$.
+    For every $i\in I$ we have $G(i)$ is a group by
+        \auto{commutative_group_is_group}.
+    $C$ is a function on $I$ by
+        \auto{spike_group_carrier_family_type}.
+    $z\in\dependentProduct{I}{C}$ by
+        \auto{spike_product_group_neutral_type}.
+    Hence
+        $\directSumGroupReindex{I}{J}{G}{e}\in
+            \funs{
+                \dependentFinitelySupportedFunctions{I}{C}{z}}{
+                \dependentFinitelySupportedFunctions
+                    {J}{C\circ e}{z\circ e}}$ by
+        \auto{spike_direct_sum_group_reindex,
+            spike_dependent_direct_sum_reindex_type}.
+    $C\circ e=\spikeGroupCarrierFamily{J}{G\circ e}$ by
+        \auto{spike_pulled_back_group_carrier_family}.
+    $z\circ e=\spikeProductGroupNeutral{J}{G\circ e}$ by
+        \auto{spike_pulled_back_group_neutral_section}.
+    Follows by
+        \auto{spike_direct_sum_group_carrier}.
+\end{proof}
+
+\begin{proposition}\label{spike_direct_sum_group_reindex_apply}
+    Suppose $G$ is a function on $I$.
+    Suppose for every $i\in I$ we have $G(i)$ is a commutative group.
+    Let $e\in\funs{J}{I}$.
+    Suppose for every $i\in I$ we have
+        $\preimg{e}{\{i\}}$ is finite.
+    Let $x\in\carrier[\DirectSumGroup{I}{G}]$.
+    Then $\apply{\directSumGroupReindex{I}{J}{G}{e}}{x}=x\circ e$.
+\end{proposition}
+\begin{proof}
+    Let $C=\spikeGroupCarrierFamily{I}{G}$.
+    Let $z=\spikeProductGroupNeutral{I}{G}$.
+    $x\in\dependentFinitelySupportedFunctions{I}{C}{z}$ by
+        \auto{spike_direct_sum_group_carrier}.
+    Follows by
+        \auto{spike_direct_sum_group_reindex,
+            spike_dependent_direct_sum_reindex_apply,
+            commutative_group_is_group,
+            spike_group_carrier_family_type,
+            spike_product_group_neutral_type}.
+\end{proof}
+
+\begin{proposition}\label{spike_direct_sum_group_mul_coordinate}
+    Suppose $G$ is a function on $I$.
+    Suppose for every $j\in I$ we have $G(j)$ is a commutative group.
+    Let $S=\DirectSumGroup{I}{G}$.
+    Let $x,y\in\carrier[S]$ and $i\in I$.
+    Then
+        $\apply{\mul[S](x,y)}{i}
+            =\mul[G(i)](x(i),y(i))$.
+\end{proposition}
+\begin{proof}
+    Let $P=\ProductGroup{I}{G}$.
+    Let $D=\dependentFinitelySupportedFunctions
+        {I}{\spikeGroupCarrierFamily{I}{G}}{
+            \spikeProductGroupNeutral{I}{G}}$.
+    $\subgroup{D}{P}$ by
+        \auto{spike_direct_sum_group_subgroup}.
+    For every $j\in I$ we have $G(j)$ is a group by
+        \auto{commutative_group_is_group}.
+    $D\subseteq\carrier[P]$ by \auto{subgroup_subseteq}.
+    $\carrier[S]=D$ by \auto{spike_direct_sum_group_carrier}.
+    Hence $x,y\in D$ by \auto.
+    Hence $x,y\in\carrier[P]$ by \auto{subseteq}.
+    $\mul[S](x,y)=\mul[P](x,y)$ by
+        \auto{spike_direct_sum_group,
+            subgroup_structure_mul_apply}.
+    Follows by \auto{spike_product_group_mul_coordinate}.
+\end{proof}
+
+\begin{theorem}\label{spike_direct_sum_group_reindex_hom}
+    Suppose $G$ is a function on $I$.
+    Suppose for every $i\in I$ we have $G(i)$ is a commutative group.
+    Let $e\in\funs{J}{I}$.
+    Suppose for every $i\in I$ we have
+        $\preimg{e}{\{i\}}$ is finite.
+    Then
+        $\groupHom
+            {\directSumGroupReindex{I}{J}{G}{e}}
+            {\DirectSumGroup{I}{G}}
+            {\DirectSumGroup{J}{G\circ e}}$.
+\end{theorem}
+\begin{proof}
+    Let $S=\DirectSumGroup{I}{G}$.
+    Let $T=\DirectSumGroup{J}{G\circ e}$.
+    Let $r=\directSumGroupReindex{I}{J}{G}{e}$.
+    $G$ is a function and $\dom{G}=I$ by \auto.
+    Hence $G\in\funs{I}{\ran{G}}$ by
+        \auto{function_exact_type_to_range}.
+    Hence $G\circ e\in\funs{J}{\ran{G}}$ by \auto{funs_circ}.
+    Hence $G\circ e$ is a function on $J$ by
+        \auto{funs_is_function,funs}.
+    $e$ is a function and $G$ is composable with $e$ by
+        \auto{funs_is_function,funs_ran,funs}.
+    Show that for every $j\in J$ we have
+        $(G\circ e)(j)$ is a commutative group.
+    \begin{subproof}
+        Fix $j\in J$.
+        $j\in\dom{e}$ by \auto{funs}.
+        $e(j)\in I$ by \auto{funs_type_apply}.
+        $(G\circ e)(j)=G(e(j))$ by \auto{circ_apply}.
+        Follows by \auto.
+    \end{subproof}
+    $S$ is a commutative group by
+        \auto{spike_direct_sum_group_is_exact}.
+    $T$ is a commutative group by
+        \auto{spike_direct_sum_group_is_exact}.
+    Hence $S$ is a group and $T$ is a group by
+        \auto{commutative_group_is_group}.
+    $r\in\funs{\carrier[S]}{\carrier[T]}$ by
+        \auto{spike_direct_sum_group_reindex_type}.
+    Hence $r$ is a function by \auto{funs_is_function}.
+    Show that for all $x,y\in\carrier[S]$ we have
+        $r(\mul[S](x,y))=\mul[T](r(x),r(y))$.
+    \begin{subproof}
+        Fix $x,y\in\carrier[S]$.
+        $S$ is a group by \auto{commutative_group_is_group}.
+        Hence $S$ is a monoid by \auto{group_is_monoid}.
+        Hence $S$ is a magma by \auto{monoid_is_magma}.
+        $T$ is a group by \auto{commutative_group_is_group}.
+        Hence $T$ is a monoid by \auto{group_is_monoid}.
+        Hence $T$ is a magma by \auto{monoid_is_magma}.
+        $\mul[S](x,y)\in\carrier[S]$ by \auto{magma_welldef}.
+        Hence $x,y,\mul[S](x,y)\in
+            \dependentProduct
+                {I}{\spikeGroupCarrierFamily{I}{G}}$ by
+            \auto{spike_direct_sum_group_carrier,
+                spike_dependent_finitely_supported_functions_iff}.
+        Hence $x,y,\mul[S](x,y)\in\funs{I}{
+            \unions{\ran{\spikeGroupCarrierFamily{I}{G}}}}$ by
+            \auto{dependent_product_iff}.
+        $r(x),r(y)\in\carrier[T]$ by \auto{funs_type_apply}.
+        Hence $r(\mul[S](x,y)),\mul[T](r(x),r(y))\in\carrier[T]$ by
+            \auto{funs_type_apply,magma_welldef}.
+        Hence
+            $r(\mul[S](x,y)),\mul[T](r(x),r(y))\in
+                \dependentProduct
+                    {J}{\spikeGroupCarrierFamily{J}{G\circ e}}$ by
+            \auto{spike_direct_sum_group_carrier,
+                spike_dependent_finitely_supported_functions_iff}.
+        Show that for every $j\in J$ we have
+            $\apply{r(\mul[S](x,y))}{j}
+                =\apply{\mul[T](r(x),r(y))}{j}$.
+        \begin{subproof}
+            Fix $j\in J$.
+            $j\in\dom{e}$ by \auto{funs}.
+            $e(j)\in I$ by \auto{funs_type_apply}.
+            $r(\mul[S](x,y))=\mul[S](x,y)\circ e$ and
+                $r(x)=x\circ e$ and $r(y)=y\circ e$ by
+                \auto{spike_direct_sum_group_reindex_apply}.
+            $x$ is a function and $y$ is a function and
+                $\mul[S](x,y)$ is a function by
+                \auto{funs_is_function}.
+            $x$ is composable with $e$ and $y$ is composable with $e$
+                and $\mul[S](x,y)$ is composable with $e$ by
+                \auto{funs_ran,funs}.
+            Hence
+                $\apply{r(\mul[S](x,y))}{j}
+                    =\apply{\mul[S](x,y)}{e(j)}$ by
+                \auto{circ_apply}.
+            $\apply{r(x)}{j}=x(e(j))$ by \auto{circ_apply}.
+            $\apply{r(y)}{j}=y(e(j))$ by \auto{circ_apply}.
+            $\apply{\mul[S](x,y)}{e(j)}
+                =\mul[G(e(j))](x(e(j)),y(e(j)))$ by
+                \auto{spike_direct_sum_group_mul_coordinate}.
+            $(G\circ e)(j)=G(e(j))$ by
+                \auto{circ_apply,funs_is_function,funs}.
+            $\apply{\mul[T](r(x),r(y))}{j}
+                =\mul[(G\circ e)(j)]
+                    (\apply{r(x)}{j},\apply{r(y)}{j})$ by
+                \auto{spike_direct_sum_group_mul_coordinate}.
+            Follows by \auto.
+        \end{subproof}
+        Follows by \auto{spike_dependent_product_extensionality,
+            spike_group_carrier_family_type}.
+    \end{subproof}
+    Follows by \auto{group_hom}.
+\end{proof}
+
+\begin{theorem}\label{spike_bijective_direct_sum_group_reindex}
+    Suppose $G$ is a function on $I$.
+    Suppose for every $i\in I$ we have $G(i)$ is a commutative group.
+    Let $e\in\bijections{J}{I}$.
+    Then
+        $\groupIsomorphism
+            {\directSumGroupReindex{I}{J}{G}{e}}
+            {\DirectSumGroup{I}{G}}
+            {\DirectSumGroup{J}{G\circ e}}$.
+\end{theorem}
+\begin{proof}
+    Let $C=\spikeGroupCarrierFamily{I}{G}$.
+    Let $z=\spikeProductGroupNeutral{I}{G}$.
+    Let $r=\directSumGroupReindex{I}{J}{G}{e}$.
+    $e\in\funs{J}{I}$ by \auto{bijections_to_funs}.
+    For every $i\in I$ we have $\preimg{e}{\{i\}}$ is finite by
+        \auto{spike_bijection_has_finite_fibers}.
+    Hence
+        $\groupHom{r}{\DirectSumGroup{I}{G}}{
+            \DirectSumGroup{J}{G\circ e}}$ by
+        \auto{spike_direct_sum_group_reindex_hom}.
+    $C$ is a function on $I$ by
+        \auto{spike_group_carrier_family_type}.
+    For every $i\in I$ we have $G(i)$ is a group by
+        \auto{commutative_group_is_group}.
+    $z\in\dependentProduct{I}{C}$ by
+        \auto{spike_product_group_neutral_type}.
+    $\dependentDirectSumReindex{I}{J}{C}{z}{e}$ is a bijection from
+        $\dependentFinitelySupportedFunctions{I}{C}{z}$ to
+        $\dependentFinitelySupportedFunctions
+            {J}{C\circ e}{z\circ e}$ by
+        \auto{spike_bijective_direct_sum_reindex}.
+    $C\circ e=\spikeGroupCarrierFamily{J}{G\circ e}$ by
+        \auto{spike_pulled_back_group_carrier_family}.
+    $z\circ e=\spikeProductGroupNeutral{J}{G\circ e}$ by
+        \auto{spike_pulled_back_group_neutral_section}.
+    Hence $r\in\bijections{
+        \carrier[\DirectSumGroup{I}{G}]}{
+        \carrier[\DirectSumGroup{J}{G\circ e}]}$ by
+        \auto{spike_direct_sum_group_reindex,
+            spike_direct_sum_group_carrier}.
+    Follows by \auto{group_isomorphism}.
+\end{proof}
+
+\subsection{Products of modules}
+
+\begin{definition}\label{spike_module_additive_group_op}
+    $\spikeModuleAdditiveGroupOp:\Set\to\Set\to\Set
+        =\fun{M,i:\Set}{\ModuleAdditiveGroup{M(i)}}$.
+\end{definition}
+
+\begin{definition}\label{spike_module_additive_group_family}
+    $\spikeModuleAdditiveGroupFamily{I}{M}
+        =\Apply{\graphOnDomainOp}{
+            I,\Apply{\spikeModuleAdditiveGroupOp}{M}}$.
+\end{definition}
+
+\begin{proposition}\label{spike_module_additive_group_family_type}
+    Suppose $M$ is a function on $I$.
+    Then $\spikeModuleAdditiveGroupFamily{I}{M}$ is a function on $I$.
+\end{proposition}
+\begin{proof}
+    $\spikeModuleAdditiveGroupFamily{I}{M}\in
+        \funs{I}{\ran{\spikeModuleAdditiveGroupFamily{I}{M}}}$ by
+        \auto{spike_module_additive_group_family,
+            logical_graph_on_domain_function}.
+    Follows by \auto{funs_is_function,funs}.
+\end{proof}
+
+\begin{proposition}\label{spike_module_additive_group_family_apply}
+    Suppose $M$ is a function on $I$ and $i\in I$.
+    Then
+        $\apply{\spikeModuleAdditiveGroupFamily{I}{M}}{i}
+            =\ModuleAdditiveGroup{M(i)}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{spike_module_additive_group_family,
+            spike_module_additive_group_op,
+            logical_graph_on_domain_apply}.
+\end{proof}
+
+\begin{proposition}\label{spike_module_product_carrier_coordinate}
+    Suppose $M$ is a function on $I$ and $i\in I$.
+    Let $A=\spikeModuleAdditiveGroupFamily{I}{M}$.
+    Then
+        $\apply{\spikeGroupCarrierFamily{I}{A}}{i}=\carrier[M(i)]$.
+\end{proposition}
+\begin{proof}
+    $A$ is a function on $I$ by
+        \auto{spike_module_additive_group_family_type}.
+    $A(i)=\ModuleAdditiveGroup{M(i)}$ by
+        \auto{spike_module_additive_group_family_apply}.
+    $\apply{\spikeGroupCarrierFamily{I}{A}}{i}=\carrier[A(i)]$ by
+        \auto{spike_group_carrier_family_apply}.
+    Follows by \auto{spike_module_additive_group_fields}.
+\end{proof}
+
+\begin{definition}\label{spike_module_scalar_coordinate_op}
+    $\spikeModuleScalarCoordinateOp:
+        \Set\to\Set\to\Set\to\Set\to\Set
+        =\fun{M,a,x,i:\Set}{\scalarMul[M(i)](a,x(i))}$.
+\end{definition}
+
+\begin{definition}\label{spike_pointwise_module_scalar_op}
+    $\spikePointwiseModuleScalarOp:
+        \Set\to\Set\to\Set\to\Set\to\Set
+        =\fun{I,M,a,x:\Set}{
+            \Apply{\graphOnDomainOp}{
+                I,\Apply{\spikeModuleScalarCoordinateOp}{M,a,x}}}$.
+\end{definition}
+
+\begin{proposition}\label{spike_pointwise_module_scalar_coordinate}
+    Let $i\in I$.
+    Then
+        $\apply{\Apply{\spikePointwiseModuleScalarOp}{I,M,a,x}}{i}
+            =\scalarMul[M(i)](a,x(i))$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{spike_pointwise_module_scalar_op,
+            spike_module_scalar_coordinate_op,
+            logical_graph_on_domain_apply}.
+\end{proof}
+
+\begin{proposition}\label{spike_pointwise_module_scalar_type}
+    Let $R$ be a ring.
+    Suppose $M$ is a function on $I$.
+    Suppose for every $i\in I$ we have $M(i)$ is a left module over $R$.
+    Let $A=\spikeModuleAdditiveGroupFamily{I}{M}$.
+    Let $C=\spikeGroupCarrierFamily{I}{A}$.
+    Let $a\in\carrier[R]$ and $x\in\dependentProduct{I}{C}$.
+    Then
+        $\Apply{\spikePointwiseModuleScalarOp}{I,M,a,x}
+            \in\dependentProduct{I}{C}$.
+\end{proposition}
+\begin{proof}
+    Let $u=\Apply{\spikePointwiseModuleScalarOp}{I,M,a,x}$.
+    $A$ is a function on $I$ by
+        \auto{spike_module_additive_group_family_type}.
+    $C$ is a function on $I$ by
+        \auto{spike_group_carrier_family_type}.
+    $u\in\funs{I}{\ran{u}}$ by
+        \auto{spike_pointwise_module_scalar_op,
+            logical_graph_on_domain_function}.
+    Hence $u$ is a function and $\dom{u}=I$ by
+        \auto{funs_is_function,funs}.
+    Show that for every $i\in I$ we have $u(i)\in C(i)$.
+    \begin{subproof}
+        Fix $i\in I$.
+        $x(i)\in C(i)$ by \auto{dependent_product_coordinate}.
+        $C(i)=\carrier[M(i)]$ by
+            \auto{spike_module_product_carrier_coordinate}.
+        $u(i)=\scalarMul[M(i)](a,x(i))$ by
+            \auto{spike_pointwise_module_scalar_coordinate}.
+        Follows by \auto{module_scalar_type}.
+    \end{subproof}
+    Show that $u\in\funs{I}{\unions{\ran{C}}}$.
+    \begin{subproof}
+        Show that for every $i\in\dom{u}$ we have
+            $u(i)\in\unions{\ran{C}}$.
+        \begin{subproof}
+            Fix $i\in\dom{u}$.
+            Hence $i\in I$ by \auto.
+            $u(i)\in C(i)$ by \auto.
+            Follows by \auto{indexed_family_member_union}.
+        \end{subproof}
+        Hence $u$ is a function to $\unions{\ran{C}}$ by \auto.
+        Follows by \auto{funs_intro}.
+    \end{subproof}
+    Follows by \auto{dependent_product_iff}.
+\end{proof}
+
+\begin{definition}\label{spike_product_module_additive_group}
+    $\spikeProductModuleAdditiveGroup{I}{M}
+        =\ProductGroup{I}{\spikeModuleAdditiveGroupFamily{I}{M}}$.
+\end{definition}
+
+\begin{definition}\label{spike_product_module_scalar_graph}
+    $\spikeProductModuleScalarGraph{R}{I}{M}
+        =\Apply{\heteroBinaryGraphOnOp}{
+            \carrier[R],
+            \carrier[\spikeProductModuleAdditiveGroup{I}{M}],
+            \Apply{\spikePointwiseModuleScalarOp}{I,M}}$.
+\end{definition}
+
+\begin{definition}\label{spike_product_module}
+    $\ProductModule{R}{I}{M}=
+        \structure[left module over R]{
+            \carrier=\carrier[\spikeProductModuleAdditiveGroup{I}{M}],
+            \mul=\mul[\spikeProductModuleAdditiveGroup{I}{M}],
+            \neutral=\neutral[\spikeProductModuleAdditiveGroup{I}{M}],
+            \groupInv=\groupInv[\spikeProductModuleAdditiveGroup{I}{M}],
+            \scalarMul=\spikeProductModuleScalarGraph{R}{I}{M}
+        }$.
+\end{definition}
+
+\begin{proposition}\label{spike_product_module_fields}
+    Let $A=\spikeModuleAdditiveGroupFamily{I}{M}$.
+    Let $Q=\ProductGroup{I}{A}$.
+    Let $P=\ProductModule{R}{I}{M}$.
+    $\carrier[P]=\carrier[Q]$ and
+    $\mul[P]=\mul[Q]$ and
+    $\neutral[P]=\neutral[Q]$ and
+    $\groupInv[P]=\groupInv[Q]$ and
+    $\scalarMul[P]=\Apply{\heteroBinaryGraphOnOp}{
+        \carrier[R],\carrier[Q],
+        \Apply{\spikePointwiseModuleScalarOp}{I,M}}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{spike_product_module,
+            spike_product_module_additive_group,
+            spike_product_module_scalar_graph,
+            left_moduleaggregateprojection_carrier,
+            left_moduleaggregateprojection_mul,
+            left_moduleaggregateprojection_neutral,
+            left_moduleaggregateprojection_groupInv,
+            left_moduleaggregateprojection_scalarMul}.
+\end{proof}
+
+\begin{proposition}\label{spike_product_module_scalar_type}
+    Let $R$ be a ring.
+    Suppose $M$ is a function on $I$.
+    Suppose for every $i\in I$ we have $M(i)$ is a left module over $R$.
+    Let $P=\ProductModule{R}{I}{M}$.
+    Then
+        $\scalarMul[P]\in
+            \funs{\carrier[R]\times\carrier[P]}{\carrier[P]}$.
+\end{proposition}
+\begin{proof}
+    Let $A=\spikeModuleAdditiveGroupFamily{I}{M}$.
+    Let $Q=\ProductGroup{I}{A}$.
+    Let $C=\spikeGroupCarrierFamily{I}{A}$.
+    $A$ is a function on $I$ by
+        \auto{spike_module_additive_group_family_type}.
+    $\carrier[Q]=\dependentProduct{I}{C}$ by
+        \auto{spike_product_group_fields}.
+    $\carrier[P]=\carrier[Q]$ by
+        \auto{spike_product_module_fields}.
+    For all $a,x$ such that $a\in\carrier[R]$ and
+        $x\in\carrier[Q]$ we have
+        $\Apply{\spikePointwiseModuleScalarOp}{I,M,a,x}
+            \in\carrier[Q]$ by
+        \auto{spike_pointwise_module_scalar_type}.
+    Follows by
+        \auto{spike_product_module_fields,
+            logical_heterogeneous_binary_graph_on_type}.
+\end{proof}
+
+\begin{proposition}\label{spike_product_module_scalar_coordinate}
+    Let $R$ be a ring.
+    Suppose $M$ is a function on $I$.
+    Suppose for every $j\in I$ we have $M(j)$ is a left module over $R$.
+    Let $P=\ProductModule{R}{I}{M}$.
+    Let $a\in\carrier[R]$ and $x\in\carrier[P]$.
+    Let $i\in I$.
+    Then
+        $\apply{\scalarMul[P](a,x)}{i}
+            =\scalarMul[M(i)](a,x(i))$.
+\end{proposition}
+\begin{proof}
+    Let $A=\spikeModuleAdditiveGroupFamily{I}{M}$.
+    Let $Q=\ProductGroup{I}{A}$.
+    $\carrier[P]=\carrier[Q]$ and
+        $\scalarMul[P]=\Apply{\heteroBinaryGraphOnOp}{
+            \carrier[R],\carrier[Q],
+            \Apply{\spikePointwiseModuleScalarOp}{I,M}}$ by
+        \auto{spike_product_module_fields}.
+    Hence $x\in\carrier[Q]$ by \auto.
+    $\scalarMul[P](a,x)
+        =\Apply{\spikePointwiseModuleScalarOp}{I,M,a,x}$ by
+        \auto{logical_heterogeneous_binary_graph_on_apply}.
+    Follows by
+        \auto{spike_pointwise_module_scalar_coordinate}.
+\end{proof}
+
+\begin{proposition}\label{spike_product_module_add_coordinate}
+    Let $R$ be a ring.
+    Suppose $M$ is a function on $I$.
+    Suppose for every $j\in I$ we have $M(j)$ is a left module over $R$.
+    Let $P=\ProductModule{R}{I}{M}$.
+    Let $x,y\in\carrier[P]$.
+    Let $i\in I$.
+    Then
+        $\apply{\mul[P](x,y)}{i}=\mul[M(i)](x(i),y(i))$.
+\end{proposition}
+\begin{proof}
+    Let $A=\spikeModuleAdditiveGroupFamily{I}{M}$.
+    Let $Q=\ProductGroup{I}{A}$.
+    $A$ is a function on $I$ by
+        \auto{spike_module_additive_group_family_type}.
+    Show that for every $j\in I$ we have $A(j)$ is a group.
+    \begin{subproof}
+        Fix $j\in I$.
+        $A(j)=\ModuleAdditiveGroup{M(j)}$ by
+            \auto{spike_module_additive_group_family_apply}.
+        Follows by
+            \auto{spike_module_additive_group_is_exact,
+                commutative_group_is_group}.
+    \end{subproof}
+    $\carrier[P]=\carrier[Q]$ and $\mul[P]=\mul[Q]$ by
+        \auto{spike_product_module_fields}.
+    Hence $x,y\in\carrier[Q]$ by \auto.
+    $\apply{\mul[Q](x,y)}{i}=\mul[A(i)](x(i),y(i))$ by
+        \auto{spike_product_group_mul_coordinate}.
+    $A(i)=\ModuleAdditiveGroup{M(i)}$ by
+        \auto{spike_module_additive_group_family_apply}.
+    $\mul[A(i)]=\mul[M(i)]$ by
+        \auto{spike_module_additive_group_fields}.
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{spike_product_module_intro}
+    Let $R$ be a ring.
+    Suppose $M$ is a function on $I$.
+    Let $P=\ProductModule{R}{I}{M}$.
+    Suppose $P$ is a commutative group.
+    Suppose
+        $\scalarMul[P]\in
+            \funs{\carrier[R]\times\carrier[P]}{\carrier[P]}$.
+    Suppose for all $a,x,y$ such that $a\in\carrier[R]$ and
+        $x,y\in\carrier[P]$ we have
+        $\scalarMul[P](a,\mul[P](x,y))
+            =\mul[P](\scalarMul[P](a,x),\scalarMul[P](a,y))$.
+    Suppose for all $a,b,x$ such that $a,b\in\carrier[R]$ and
+        $x\in\carrier[P]$ we have
+        $\scalarMul[P](\ringAdd[R](a,b),x)
+            =\mul[P](\scalarMul[P](a,x),\scalarMul[P](b,x))$.
+    Suppose for all $a,b,x$ such that $a,b\in\carrier[R]$ and
+        $x\in\carrier[P]$ we have
+        $\scalarMul[P](a,\scalarMul[P](b,x))
+            =\scalarMul[P](\ringMul[R](a,b),x)$.
+    Suppose for every $x\in\carrier[P]$ we have
+        $\scalarMul[P](\ringOne[R],x)=x$.
+    Then $P$ is an exact left module over $R$.
+\end{theorem}
+\begin{proof}
+    It is not the case that it is not the case that
+        $P$ is a left module over $R$ by
+        \auto{spike_product_module,left_moduleaggregateexact,
+            left_module}.
+    Hence $P$ is a left module over $R$ by \auto.
+    Follows by
+        \auto{spike_product_module,left_moduleaggregateexact}.
+\end{proof}
+
+\begin{theorem}\label{spike_product_module_is_exact}
+    Let $R$ be a ring.
+    Suppose $M$ is a function on $I$.
+    Suppose for every $i\in I$ we have $M(i)$ is a left module over $R$.
+    Then $\ProductModule{R}{I}{M}$ is an exact left module over $R$.
+\end{theorem}
+\begin{proof}
+    Let $A=\spikeModuleAdditiveGroupFamily{I}{M}$.
+    Let $Q=\ProductGroup{I}{A}$.
+    Let $C=\spikeGroupCarrierFamily{I}{A}$.
+    Let $P=\ProductModule{R}{I}{M}$.
+    $A$ is a function on $I$ by
+        \auto{spike_module_additive_group_family_type}.
+    Show that for every $i\in I$ we have $A(i)$ is a commutative group.
+    \begin{subproof}
+        Fix $i\in I$.
+        $A(i)=\ModuleAdditiveGroup{M(i)}$ by
+            \auto{spike_module_additive_group_family_apply}.
+        Follows by \auto{spike_module_additive_group_is_exact}.
+    \end{subproof}
+    Hence for every $i\in I$ we have $A(i)$ is a group by
+        \auto{commutative_group_is_group}.
+    Hence $Q$ is an exact group by
+        \auto{spike_product_group_is_exact}.
+    $Q$ is a commutative group by
+        \auto{spike_product_group_is_commutative}.
+    Hence $Q$ is a group by \auto{commutative_group_is_group}.
+    Hence $Q$ is a monoid by \auto{group_is_monoid}.
+    Hence $Q$ is a unital magma by \auto{monoid_is_unital_magma}.
+    Hence $Q$ is a magma by \auto{monoid_is_magma}.
+    $\carrier[P]=\carrier[Q]$ and $\mul[P]=\mul[Q]$ and
+        $\neutral[P]=\neutral[Q]$ and
+        $\groupInv[P]=\groupInv[Q]$ by
+        \auto{spike_product_module_fields}.
+    $\mul[P]\in
+        \funs{\carrier[P]\times\carrier[P]}{\carrier[P]}$ by
+        \auto{magma_mul_graph}.
+    $\neutral[P]\in\carrier[P]$ by \auto{unitalmagma_type}.
+    $\groupInv[P]\in\funs{\carrier[P]}{\carrier[P]}$ by
+        \auto{group_inverse_graph}.
+    For all $x,y,z\in\carrier[P]$ we have
+        $\mul[P](x,\mul[P](y,z))=\mul[P](\mul[P](x,y),z)$ by
+        \auto{monoid_assoc}.
+    For every $x\in\carrier[P]$ we have
+        $\mul[P](x,\neutral[P])=x$ and
+        $\mul[P](\neutral[P],x)=x$ by
+        \auto{unitalmagma_right,unitalmagma_left}.
+    For every $x\in\carrier[P]$ we have
+        $\mul[P](x,\groupInv[P](x))=\neutral[P]$ and
+        $\mul[P](\groupInv[P](x),x)=\neutral[P]$ by
+        \auto{group_inverse_right,group_inverse_left}.
+    Hence $P$ is a magma by
+        \auto{spike_product_module,left_moduleaggregateexact,magma}.
+    Hence $P$ is a unital magma by
+        \auto{spike_product_module,left_moduleaggregateexact,
+            unitalmagma}.
+    Hence $P$ is a monoid by
+        \auto{spike_product_module,left_moduleaggregateexact,monoid}.
+    Hence $P$ is a group by
+        \auto{spike_product_module,left_moduleaggregateexact,group}.
+    For all $x,y\in\carrier[P]$ we have
+        $\mul[P](x,y)=\mul[P](y,x)$ by
+        \auto{commutative_group_commutative}.
+    Hence $P$ is a commutative group by
+        \auto{group,commutative_group}.
+    $\scalarMul[P]\in
+        \funs{\carrier[R]\times\carrier[P]}{\carrier[P]}$ by
+        \auto{spike_product_module_scalar_type}.
+    $\carrier[P]=\dependentProduct{I}{C}$ by
+        \auto{spike_product_group_fields}.
+    $C$ is a function on $I$ by
+        \auto{spike_group_carrier_family_type}.
+
+    Show that for all $a,x,y$ such that $a\in\carrier[R]$ and
+        $x,y\in\carrier[P]$ we have
+        $\scalarMul[P](a,\mul[P](x,y))
+            =\mul[P](\scalarMul[P](a,x),\scalarMul[P](a,y))$.
+    \begin{subproof}
+        Fix $a,x,y$.
+        Assume $a\in\carrier[R]$ and $x,y\in\carrier[P]$.
+        $\mul[P](x,y),\scalarMul[P](a,x),\scalarMul[P](a,y)
+            \in\carrier[P]$ by
+            \auto{magma_welldef,spike_product_module_scalar_type,
+                funs_type_apply,times_tuple_intro}.
+        Hence
+            $\scalarMul[P](a,\mul[P](x,y)),
+                \mul[P](\scalarMul[P](a,x),\scalarMul[P](a,y))
+            \in\carrier[P]$ by
+            \auto{magma_welldef,spike_product_module_scalar_type,
+                funs_type_apply,times_tuple_intro}.
+        Hence
+            $\scalarMul[P](a,\mul[P](x,y)),
+                \mul[P](\scalarMul[P](a,x),\scalarMul[P](a,y))
+            \in\dependentProduct{I}{C}$ by \auto.
+        Show that for every $i\in I$ we have
+            $\apply{\scalarMul[P](a,\mul[P](x,y))}{i}
+                =\apply{\mul[P]
+                    (\scalarMul[P](a,x),\scalarMul[P](a,y))}{i}$.
+        \begin{subproof}
+            Fix $i\in I$.
+            $x(i),y(i)\in C(i)$ by
+                \auto{dependent_product_coordinate}.
+            $C(i)=\carrier[M(i)]$ by
+                \auto{spike_module_product_carrier_coordinate}.
+            Follows by
+                \auto{spike_product_module_scalar_coordinate,
+                    spike_product_module_add_coordinate,
+                    module_scalar_vector_distributive}.
+        \end{subproof}
+        Follows by \auto{spike_dependent_product_extensionality}.
+    \end{subproof}
+
+    Show that for all $a,b,x$ such that $a,b\in\carrier[R]$ and
+        $x\in\carrier[P]$ we have
+        $\scalarMul[P](\ringAdd[R](a,b),x)
+            =\mul[P](\scalarMul[P](a,x),\scalarMul[P](b,x))$.
+    \begin{subproof}
+        Fix $a,b,x$.
+        Assume $a,b\in\carrier[R]$ and $x\in\carrier[P]$.
+        $\ringAdd[R](a,b)\in\carrier[R]$ by \auto{ring_add_type}.
+        $\scalarMul[P](a,x),\scalarMul[P](b,x)\in\carrier[P]$ by
+            \auto{spike_product_module_scalar_type,
+                funs_type_apply,times_tuple_intro}.
+        Hence
+            $\scalarMul[P](\ringAdd[R](a,b),x),
+                \mul[P](\scalarMul[P](a,x),\scalarMul[P](b,x))
+            \in\carrier[P]$ by
+            \auto{spike_product_module_scalar_type,
+                funs_type_apply,times_tuple_intro,magma_welldef}.
+        Hence
+            $\scalarMul[P](\ringAdd[R](a,b),x),
+                \mul[P](\scalarMul[P](a,x),\scalarMul[P](b,x))
+            \in\dependentProduct{I}{C}$ by \auto.
+        Show that for every $i\in I$ we have
+            $\apply{\scalarMul[P](\ringAdd[R](a,b),x)}{i}
+                =\apply{\mul[P]
+                    (\scalarMul[P](a,x),\scalarMul[P](b,x))}{i}$.
+        \begin{subproof}
+            Fix $i\in I$.
+            $x(i)\in C(i)$ by \auto{dependent_product_coordinate}.
+            $C(i)=\carrier[M(i)]$ by
+                \auto{spike_module_product_carrier_coordinate}.
+            Follows by
+                \auto{spike_product_module_scalar_coordinate,
+                    spike_product_module_add_coordinate,
+                    module_scalar_add_distributive}.
+        \end{subproof}
+        Follows by \auto{spike_dependent_product_extensionality}.
+    \end{subproof}
+
+    Show that for all $a,b,x$ such that $a,b\in\carrier[R]$ and
+        $x\in\carrier[P]$ we have
+        $\scalarMul[P](a,\scalarMul[P](b,x))
+            =\scalarMul[P](\ringMul[R](a,b),x)$.
+    \begin{subproof}
+        Fix $a,b,x$.
+        Assume $a,b\in\carrier[R]$ and $x\in\carrier[P]$.
+        $\ringMul[R](a,b)\in\carrier[R]$ by \auto{ring_mul_type}.
+        $\scalarMul[P](b,x)\in\carrier[P]$ by
+            \auto{spike_product_module_scalar_type,
+                funs_type_apply,times_tuple_intro}.
+        Hence
+            $\scalarMul[P](a,\scalarMul[P](b,x)),
+                \scalarMul[P](\ringMul[R](a,b),x)
+            \in\carrier[P]$ by
+            \auto{spike_product_module_scalar_type,
+                funs_type_apply,times_tuple_intro}.
+        Hence
+            $\scalarMul[P](a,\scalarMul[P](b,x)),
+                \scalarMul[P](\ringMul[R](a,b),x)
+            \in\dependentProduct{I}{C}$ by \auto.
+        Show that for every $i\in I$ we have
+            $\apply{\scalarMul[P](a,\scalarMul[P](b,x))}{i}
+                =\apply{\scalarMul[P](\ringMul[R](a,b),x)}{i}$.
+        \begin{subproof}
+            Fix $i\in I$.
+            $x(i)\in C(i)$ by \auto{dependent_product_coordinate}.
+            $C(i)=\carrier[M(i)]$ by
+                \auto{spike_module_product_carrier_coordinate}.
+            Follows by
+                \auto{spike_product_module_scalar_coordinate,
+                    module_scalar_associative}.
+        \end{subproof}
+        Follows by \auto{spike_dependent_product_extensionality}.
+    \end{subproof}
+
+    Show that for every $x\in\carrier[P]$ we have
+        $\scalarMul[P](\ringOne[R],x)=x$.
+    \begin{subproof}
+        Fix $x\in\carrier[P]$.
+        $\ringOne[R]\in\carrier[R]$ by \auto{ring_one_type}.
+        $\scalarMul[P](\ringOne[R],x)\in\carrier[P]$ by
+            \auto{spike_product_module_scalar_type,
+                funs_type_apply,times_tuple_intro}.
+        Show that for every $i\in I$ we have
+            $\apply{\scalarMul[P](\ringOne[R],x)}{i}=x(i)$.
+        \begin{subproof}
+            Fix $i\in I$.
+            $x(i)\in C(i)$ by \auto{dependent_product_coordinate}.
+            $C(i)=\carrier[M(i)]$ by
+                \auto{spike_module_product_carrier_coordinate}.
+            Follows by
+                \auto{spike_product_module_scalar_coordinate,
+                    module_scalar_one}.
+        \end{subproof}
+        Follows by \auto{spike_dependent_product_extensionality}.
+    \end{subproof}
+    Follows by \auto{spike_product_module_intro}.
+\end{proof}
+
+\begin{proposition}\label{spike_empty_product_module_is_exact}
+    Let $R$ be a ring.
+    Then $\ProductModule{R}{\emptyset}{\emptyset}$
+        is an exact left module over $R$.
+\end{proposition}
+\begin{proof}
+    $\emptyset$ is a function on $\emptyset$ by
+        \auto{emptyset_is_function_on_emptyset}.
+    For every $i\in\emptyset$ we have
+        $\apply{\emptyset}{i}$ is a left module over $R$ by
+        \auto{emptyset}.
+    Follows by \auto{spike_product_module_is_exact}.
+\end{proof}
+
+\begin{proposition}\label{spike_singleton_product_module_is_exact}
+    Let $N$ be a left module over $R$.
+    Then
+        $\ProductModule{R}{\{i\}}{\{i\}\times\{N\}}$
+        is an exact left module over $R$.
+\end{proposition}
+\begin{proof}
+    $R$ is a ring by \auto{module_scalar_ring}.
+    Let $M=\{i\}\times\{N\}$.
+    $M\in\funs{\{i\}}{\{N\}}$ by \auto{constant_graph_type}.
+    Hence $M$ is a function on $\{i\}$ by
+        \auto{funs_is_function,funs}.
+    For every $j\in\{i\}$ we have $M(j)=N$ by
+        \auto{constant_graph_application}.
+    Hence for every $j\in\{i\}$ we have
+        $M(j)$ is a left module over $R$ by \auto.
+    Follows by \auto{spike_product_module_is_exact}.
+\end{proof}
+
+\subsection{Direct sums of modules}
+
+\begin{proposition}\label{spike_pointwise_module_scalar_support}
+    Let $R$ be a ring.
+    Suppose $M$ is a function on $I$.
+    Suppose for every $i\in I$ we have $M(i)$ is a left module over $R$.
+    Let $A=\spikeModuleAdditiveGroupFamily{I}{M}$.
+    Let $C=\spikeGroupCarrierFamily{I}{A}$.
+    Let $z=\spikeProductGroupNeutral{I}{A}$.
+    Let $a\in\carrier[R]$ and $x\in\dependentProduct{I}{C}$.
+    Then
+        $\dependentSupport{I}{
+            \Apply{\spikePointwiseModuleScalarOp}{I,M,a,x}}{z}
+        \subseteq\dependentSupport{I}{x}{z}$.
+\end{proposition}
+\begin{proof}
+    Let $u=\Apply{\spikePointwiseModuleScalarOp}{I,M,a,x}$.
+    Show that every element of $\dependentSupport{I}{u}{z}$
+        is an element of $\dependentSupport{I}{x}{z}$.
+    \begin{subproof}
+        Fix $i\in\dependentSupport{I}{u}{z}$.
+        Hence $i\in I$ and $u(i)\neq z(i)$ by
+            \auto{spike_dependent_support_iff}.
+        Show that $i\in\dependentSupport{I}{x}{z}$.
+        \begin{subproof}
+            Suppose not.
+            Hence $x(i)=z(i)$ by
+                \auto{spike_dependent_support_iff}.
+            $A$ is a function on $I$ by
+                \auto{spike_module_additive_group_family_type}.
+            $A(i)=\ModuleAdditiveGroup{M(i)}$ by
+                \auto{spike_module_additive_group_family_apply}.
+            $z(i)=\neutral[A(i)]$ by
+                \auto{spike_product_group_neutral_coordinate}.
+            Hence $z(i)=\neutral[M(i)]$ by
+                \auto{spike_module_additive_group_fields}.
+            $u(i)=\scalarMul[M(i)](a,x(i))$ by
+                \auto{spike_pointwise_module_scalar_coordinate}.
+            Hence $u(i)=\neutral[M(i)]$ by
+                \auto{module_scalar_vector_zero}.
+            Hence $u(i)=z(i)$ by \auto.
+            Contradiction.
+        \end{subproof}
+        Follows.
+    \end{subproof}
+    Follows by \auto{subseteq}.
+\end{proof}
+
+\begin{definition}\label{spike_direct_sum_module_additive_group}
+    $\spikeDirectSumModuleAdditiveGroup{I}{M}
+        =\DirectSumGroup
+            {I}{\spikeModuleAdditiveGroupFamily{I}{M}}$.
+\end{definition}
+
+\begin{definition}\label{spike_direct_sum_module_scalar_graph}
+    $\spikeDirectSumModuleScalarGraph{R}{I}{M}
+        =\Apply{\heteroBinaryGraphOnOp}{
+            \carrier[R],
+            \carrier[\spikeDirectSumModuleAdditiveGroup{I}{M}],
+            \Apply{\spikePointwiseModuleScalarOp}{I,M}}$.
+\end{definition}
+
+\begin{definition}\label{spike_direct_sum_module}
+    $\DirectSumModule{R}{I}{M}=
+        \structure[left module over R]{
+            \carrier=\carrier[\spikeDirectSumModuleAdditiveGroup{I}{M}],
+            \mul=\mul[\spikeDirectSumModuleAdditiveGroup{I}{M}],
+            \neutral=\neutral[\spikeDirectSumModuleAdditiveGroup{I}{M}],
+            \groupInv=\groupInv[
+                \spikeDirectSumModuleAdditiveGroup{I}{M}],
+            \scalarMul=\spikeDirectSumModuleScalarGraph{R}{I}{M}
+        }$.
+\end{definition}
+
+\begin{proposition}\label{spike_direct_sum_module_fields}
+    Let $A=\spikeModuleAdditiveGroupFamily{I}{M}$.
+    Let $Q=\DirectSumGroup{I}{A}$.
+    Let $P=\DirectSumModule{R}{I}{M}$.
+    $\carrier[P]=\carrier[Q]$ and
+    $\mul[P]=\mul[Q]$ and
+    $\neutral[P]=\neutral[Q]$ and
+    $\groupInv[P]=\groupInv[Q]$ and
+    $\scalarMul[P]=\Apply{\heteroBinaryGraphOnOp}{
+        \carrier[R],\carrier[Q],
+        \Apply{\spikePointwiseModuleScalarOp}{I,M}}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{spike_direct_sum_module,
+            spike_direct_sum_module_additive_group,
+            spike_direct_sum_module_scalar_graph,
+            left_moduleaggregateprojection_carrier,
+            left_moduleaggregateprojection_mul,
+            left_moduleaggregateprojection_neutral,
+            left_moduleaggregateprojection_groupInv,
+            left_moduleaggregateprojection_scalarMul}.
+\end{proof}
+
+\begin{proposition}\label{spike_direct_sum_module_scalar_type}
+    Let $R$ be a ring.
+    Suppose $M$ is a function on $I$.
+    Suppose for every $i\in I$ we have $M(i)$ is a left module over $R$.
+    Let $P=\DirectSumModule{R}{I}{M}$.
+    Then
+        $\scalarMul[P]\in
+            \funs{\carrier[R]\times\carrier[P]}{\carrier[P]}$.
+\end{proposition}
+\begin{proof}
+    Let $A=\spikeModuleAdditiveGroupFamily{I}{M}$.
+    Let $C=\spikeGroupCarrierFamily{I}{A}$.
+    Let $z=\spikeProductGroupNeutral{I}{A}$.
+    Let $D=\dependentFinitelySupportedFunctions{I}{C}{z}$.
+    Let $Q=\DirectSumGroup{I}{A}$.
+    $A$ is a function on $I$ by
+        \auto{spike_module_additive_group_family_type}.
+    Show that for every $i\in I$ we have
+        $A(i)$ is a commutative group.
+    \begin{subproof}
+        Fix $i\in I$.
+        $A(i)=\ModuleAdditiveGroup{M(i)}$ by
+            \auto{spike_module_additive_group_family_apply}.
+        Follows by \auto{spike_module_additive_group_is_exact}.
+    \end{subproof}
+    $\carrier[P]=\carrier[Q]=D$ by
+        \auto{spike_direct_sum_module_fields,
+            spike_direct_sum_group_carrier}.
+    Show that for all $a,x$ such that $a\in\carrier[R]$ and
+        $x\in D$ we have
+        $\Apply{\spikePointwiseModuleScalarOp}{I,M,a,x}\in D$.
+    \begin{subproof}
+        Fix $a,x$.
+        Assume $a\in\carrier[R]$ and $x\in D$.
+        Hence $x\in\dependentProduct{I}{C}$ and
+            $\dependentSupport{I}{x}{z}$ is finite by
+            \auto{spike_dependent_finitely_supported_functions_iff}.
+        Let $u=\Apply{\spikePointwiseModuleScalarOp}{I,M,a,x}$.
+        $u\in\dependentProduct{I}{C}$ by
+            \auto{spike_pointwise_module_scalar_type}.
+        $\dependentSupport{I}{u}{z}
+            \subseteq\dependentSupport{I}{x}{z}$ by
+            \auto{spike_pointwise_module_scalar_support}.
+        Hence $\dependentSupport{I}{u}{z}$ is finite by
+            \auto{subseteq_finite_is_finite}.
+        Follows by
+            \auto{spike_dependent_finitely_supported_functions_iff}.
+    \end{subproof}
+    Follows by
+        \auto{spike_direct_sum_module_fields,
+            logical_heterogeneous_binary_graph_on_type}.
+\end{proof}
+
+\begin{proposition}\label{spike_direct_sum_module_scalar_coordinate}
+    Let $R$ be a ring.
+    Suppose $M$ is a function on $I$.
+    Suppose for every $j\in I$ we have $M(j)$ is a left module over $R$.
+    Let $P=\DirectSumModule{R}{I}{M}$.
+    Let $a\in\carrier[R]$ and $x\in\carrier[P]$.
+    Let $i\in I$.
+    Then
+        $\apply{\scalarMul[P](a,x)}{i}
+            =\scalarMul[M(i)](a,x(i))$.
+\end{proposition}
+\begin{proof}
+    Let $A=\spikeModuleAdditiveGroupFamily{I}{M}$.
+    Let $Q=\DirectSumGroup{I}{A}$.
+    $\carrier[P]=\carrier[Q]$ and
+        $\scalarMul[P]=\Apply{\heteroBinaryGraphOnOp}{
+            \carrier[R],\carrier[Q],
+            \Apply{\spikePointwiseModuleScalarOp}{I,M}}$ by
+        \auto{spike_direct_sum_module_fields}.
+    Hence $x\in\carrier[Q]$ by \auto.
+    $\scalarMul[P](a,x)
+        =\Apply{\spikePointwiseModuleScalarOp}{I,M,a,x}$ by
+        \auto{logical_heterogeneous_binary_graph_on_apply}.
+    Follows by
+        \auto{spike_pointwise_module_scalar_coordinate}.
+\end{proof}
+
+\begin{proposition}\label{spike_direct_sum_module_add_coordinate}
+    Let $R$ be a ring.
+    Suppose $M$ is a function on $I$.
+    Suppose for every $j\in I$ we have $M(j)$ is a left module over $R$.
+    Let $P=\DirectSumModule{R}{I}{M}$.
+    Let $x,y\in\carrier[P]$.
+    Let $i\in I$.
+    Then
+        $\apply{\mul[P](x,y)}{i}=\mul[M(i)](x(i),y(i))$.
+\end{proposition}
+\begin{proof}
+    Let $A=\spikeModuleAdditiveGroupFamily{I}{M}$.
+    Let $Q=\DirectSumGroup{I}{A}$.
+    $A$ is a function on $I$ by
+        \auto{spike_module_additive_group_family_type}.
+    Show that for every $j\in I$ we have
+        $A(j)$ is a commutative group.
+    \begin{subproof}
+        Fix $j\in I$.
+        $A(j)=\ModuleAdditiveGroup{M(j)}$ by
+            \auto{spike_module_additive_group_family_apply}.
+        Follows by \auto{spike_module_additive_group_is_exact}.
+    \end{subproof}
+    $\carrier[P]=\carrier[Q]$ and $\mul[P]=\mul[Q]$ by
+        \auto{spike_direct_sum_module_fields}.
+    Hence $x,y\in\carrier[Q]$ by \auto.
+    $\apply{\mul[Q](x,y)}{i}=\mul[A(i)](x(i),y(i))$ by
+        \auto{spike_direct_sum_group_mul_coordinate}.
+    $A(i)=\ModuleAdditiveGroup{M(i)}$ by
+        \auto{spike_module_additive_group_family_apply}.
+    $\mul[A(i)]=\mul[M(i)]$ by
+        \auto{spike_module_additive_group_fields}.
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{spike_direct_sum_module_intro}
+    Let $R$ be a ring.
+    Suppose $M$ is a function on $I$.
+    Let $P=\DirectSumModule{R}{I}{M}$.
+    Suppose $P$ is a commutative group.
+    Suppose
+        $\scalarMul[P]\in
+            \funs{\carrier[R]\times\carrier[P]}{\carrier[P]}$.
+    Suppose for all $a,x,y$ such that $a\in\carrier[R]$ and
+        $x,y\in\carrier[P]$ we have
+        $\scalarMul[P](a,\mul[P](x,y))
+            =\mul[P](\scalarMul[P](a,x),\scalarMul[P](a,y))$.
+    Suppose for all $a,b,x$ such that $a,b\in\carrier[R]$ and
+        $x\in\carrier[P]$ we have
+        $\scalarMul[P](\ringAdd[R](a,b),x)
+            =\mul[P](\scalarMul[P](a,x),\scalarMul[P](b,x))$.
+    Suppose for all $a,b,x$ such that $a,b\in\carrier[R]$ and
+        $x\in\carrier[P]$ we have
+        $\scalarMul[P](a,\scalarMul[P](b,x))
+            =\scalarMul[P](\ringMul[R](a,b),x)$.
+    Suppose for every $x\in\carrier[P]$ we have
+        $\scalarMul[P](\ringOne[R],x)=x$.
+    Then $P$ is an exact left module over $R$.
+\end{theorem}
+\begin{proof}
+    It is not the case that it is not the case that
+        $P$ is a left module over $R$ by
+        \auto{spike_direct_sum_module,left_moduleaggregateexact,
+            left_module}.
+    Hence $P$ is a left module over $R$ by \auto.
+    Follows by
+        \auto{spike_direct_sum_module,left_moduleaggregateexact}.
+\end{proof}
+
+\begin{theorem}\label{spike_direct_sum_module_is_exact}
+    Let $R$ be a ring.
+    Suppose $M$ is a function on $I$.
+    Suppose for every $i\in I$ we have $M(i)$ is a left module over $R$.
+    Then $\DirectSumModule{R}{I}{M}$
+        is an exact left module over $R$.
+\end{theorem}
+\begin{proof}
+    Let $A=\spikeModuleAdditiveGroupFamily{I}{M}$.
+    Let $Q=\DirectSumGroup{I}{A}$.
+    Let $C=\spikeGroupCarrierFamily{I}{A}$.
+    Let $P=\DirectSumModule{R}{I}{M}$.
+    $A$ is a function on $I$ by
+        \auto{spike_module_additive_group_family_type}.
+    Show that for every $i\in I$ we have $A(i)$ is a commutative group.
+    \begin{subproof}
+        Fix $i\in I$.
+        $A(i)=\ModuleAdditiveGroup{M(i)}$ by
+            \auto{spike_module_additive_group_family_apply}.
+        Follows by \auto{spike_module_additive_group_is_exact}.
+    \end{subproof}
+    Hence $Q$ is an exact commutative group by
+        \auto{spike_direct_sum_group_is_exact}.
+    Hence $Q$ is a group by \auto{commutative_group_is_group}.
+    Hence $Q$ is a monoid by \auto{group_is_monoid}.
+    Hence $Q$ is a unital magma by \auto{monoid_is_unital_magma}.
+    Hence $Q$ is a magma by \auto{monoid_is_magma}.
+    $\carrier[P]=\carrier[Q]$ and $\mul[P]=\mul[Q]$ and
+        $\neutral[P]=\neutral[Q]$ and
+        $\groupInv[P]=\groupInv[Q]$ by
+        \auto{spike_direct_sum_module_fields}.
+    $\mul[P]\in
+        \funs{\carrier[P]\times\carrier[P]}{\carrier[P]}$ by
+        \auto{magma_mul_graph}.
+    $\neutral[P]\in\carrier[P]$ by \auto{unitalmagma_type}.
+    $\groupInv[P]\in\funs{\carrier[P]}{\carrier[P]}$ by
+        \auto{group_inverse_graph}.
+    For all $x,y,z\in\carrier[P]$ we have
+        $\mul[P](x,\mul[P](y,z))=\mul[P](\mul[P](x,y),z)$ by
+        \auto{monoid_assoc}.
+    For every $x\in\carrier[P]$ we have
+        $\mul[P](x,\neutral[P])=x$ and
+        $\mul[P](\neutral[P],x)=x$ by
+        \auto{unitalmagma_right,unitalmagma_left}.
+    For every $x\in\carrier[P]$ we have
+        $\mul[P](x,\groupInv[P](x))=\neutral[P]$ and
+        $\mul[P](\groupInv[P](x),x)=\neutral[P]$ by
+        \auto{group_inverse_right,group_inverse_left}.
+    Hence $P$ is a magma by
+        \auto{spike_direct_sum_module,left_moduleaggregateexact,magma}.
+    Hence $P$ is a unital magma by
+        \auto{spike_direct_sum_module,left_moduleaggregateexact,
+            unitalmagma}.
+    Hence $P$ is a monoid by
+        \auto{spike_direct_sum_module,left_moduleaggregateexact,monoid}.
+    Hence $P$ is a group by
+        \auto{spike_direct_sum_module,left_moduleaggregateexact,group}.
+    For all $x,y\in\carrier[P]$ we have
+        $\mul[P](x,y)=\mul[P](y,x)$ by
+        \auto{commutative_group_commutative}.
+    Hence $P$ is a commutative group by
+        \auto{group,commutative_group}.
+    $\scalarMul[P]\in
+        \funs{\carrier[R]\times\carrier[P]}{\carrier[P]}$ by
+        \auto{spike_direct_sum_module_scalar_type}.
+    $\carrier[P]=
+        \dependentFinitelySupportedFunctions
+            {I}{C}{\spikeProductGroupNeutral{I}{A}}$ by
+        \auto{spike_direct_sum_module_fields,
+            spike_direct_sum_group_carrier}.
+    Hence $\carrier[P]\subseteq\dependentProduct{I}{C}$ by
+        \auto{spike_dependent_finitely_supported_functions_iff,
+            subseteq}.
+    $C$ is a function on $I$ by
+        \auto{spike_group_carrier_family_type}.
+
+    Show that for all $a,x,y$ such that $a\in\carrier[R]$ and
+        $x,y\in\carrier[P]$ we have
+        $\scalarMul[P](a,\mul[P](x,y))
+            =\mul[P](\scalarMul[P](a,x),\scalarMul[P](a,y))$.
+    \begin{subproof}
+        Fix $a,x,y$.
+        Assume $a\in\carrier[R]$ and $x,y\in\carrier[P]$.
+        $\mul[P](x,y),\scalarMul[P](a,x),\scalarMul[P](a,y)
+            \in\carrier[P]$ by
+            \auto{magma_welldef,spike_direct_sum_module_scalar_type,
+                funs_type_apply,times_tuple_intro}.
+        Hence
+            $\scalarMul[P](a,\mul[P](x,y)),
+                \mul[P](\scalarMul[P](a,x),\scalarMul[P](a,y))
+            \in\carrier[P]$ by
+            \auto{magma_welldef,spike_direct_sum_module_scalar_type,
+                funs_type_apply,times_tuple_intro}.
+        Hence
+            $\scalarMul[P](a,\mul[P](x,y)),
+                \mul[P](\scalarMul[P](a,x),\scalarMul[P](a,y))
+            \in\dependentProduct{I}{C}$ by \auto{subseteq}.
+        Show that for every $i\in I$ we have
+            $\apply{\scalarMul[P](a,\mul[P](x,y))}{i}
+                =\apply{\mul[P]
+                    (\scalarMul[P](a,x),\scalarMul[P](a,y))}{i}$.
+        \begin{subproof}
+            Fix $i\in I$.
+            $x(i),y(i)\in C(i)$ by
+                \auto{dependent_product_coordinate,subseteq}.
+            $C(i)=\carrier[M(i)]$ by
+                \auto{spike_module_product_carrier_coordinate}.
+            Follows by
+                \auto{spike_direct_sum_module_scalar_coordinate,
+                    spike_direct_sum_module_add_coordinate,
+                    module_scalar_vector_distributive}.
+        \end{subproof}
+        Follows by \auto{spike_dependent_product_extensionality}.
+    \end{subproof}
+
+    Show that for all $a,b,x$ such that $a,b\in\carrier[R]$ and
+        $x\in\carrier[P]$ we have
+        $\scalarMul[P](\ringAdd[R](a,b),x)
+            =\mul[P](\scalarMul[P](a,x),\scalarMul[P](b,x))$.
+    \begin{subproof}
+        Fix $a,b,x$.
+        Assume $a,b\in\carrier[R]$ and $x\in\carrier[P]$.
+        $\ringAdd[R](a,b)\in\carrier[R]$ by \auto{ring_add_type}.
+        $\scalarMul[P](a,x),\scalarMul[P](b,x)\in\carrier[P]$ by
+            \auto{spike_direct_sum_module_scalar_type,
+                funs_type_apply,times_tuple_intro}.
+        Hence
+            $\scalarMul[P](\ringAdd[R](a,b),x),
+                \mul[P](\scalarMul[P](a,x),\scalarMul[P](b,x))
+            \in\carrier[P]$ by
+            \auto{spike_direct_sum_module_scalar_type,
+                funs_type_apply,times_tuple_intro,magma_welldef}.
+        Hence
+            $\scalarMul[P](\ringAdd[R](a,b),x),
+                \mul[P](\scalarMul[P](a,x),\scalarMul[P](b,x))
+            \in\dependentProduct{I}{C}$ by \auto{subseteq}.
+        Show that for every $i\in I$ we have
+            $\apply{\scalarMul[P](\ringAdd[R](a,b),x)}{i}
+                =\apply{\mul[P]
+                    (\scalarMul[P](a,x),\scalarMul[P](b,x))}{i}$.
+        \begin{subproof}
+            Fix $i\in I$.
+            $x(i)\in C(i)$ by
+                \auto{dependent_product_coordinate,subseteq}.
+            $C(i)=\carrier[M(i)]$ by
+                \auto{spike_module_product_carrier_coordinate}.
+            Follows by
+                \auto{spike_direct_sum_module_scalar_coordinate,
+                    spike_direct_sum_module_add_coordinate,
+                    module_scalar_add_distributive}.
+        \end{subproof}
+        Follows by \auto{spike_dependent_product_extensionality}.
+    \end{subproof}
+
+    Show that for all $a,b,x$ such that $a,b\in\carrier[R]$ and
+        $x\in\carrier[P]$ we have
+        $\scalarMul[P](a,\scalarMul[P](b,x))
+            =\scalarMul[P](\ringMul[R](a,b),x)$.
+    \begin{subproof}
+        Fix $a,b,x$.
+        Assume $a,b\in\carrier[R]$ and $x\in\carrier[P]$.
+        $\ringMul[R](a,b)\in\carrier[R]$ by \auto{ring_mul_type}.
+        $\scalarMul[P](b,x)\in\carrier[P]$ by
+            \auto{spike_direct_sum_module_scalar_type,
+                funs_type_apply,times_tuple_intro}.
+        Hence
+            $\scalarMul[P](a,\scalarMul[P](b,x)),
+                \scalarMul[P](\ringMul[R](a,b),x)
+            \in\carrier[P]$ by
+            \auto{spike_direct_sum_module_scalar_type,
+                funs_type_apply,times_tuple_intro}.
+        Hence
+            $\scalarMul[P](a,\scalarMul[P](b,x)),
+                \scalarMul[P](\ringMul[R](a,b),x)
+            \in\dependentProduct{I}{C}$ by \auto{subseteq}.
+        Show that for every $i\in I$ we have
+            $\apply{\scalarMul[P](a,\scalarMul[P](b,x))}{i}
+                =\apply{\scalarMul[P](\ringMul[R](a,b),x)}{i}$.
+        \begin{subproof}
+            Fix $i\in I$.
+            $x(i)\in C(i)$ by
+                \auto{dependent_product_coordinate,subseteq}.
+            $C(i)=\carrier[M(i)]$ by
+                \auto{spike_module_product_carrier_coordinate}.
+            Follows by
+                \auto{spike_direct_sum_module_scalar_coordinate,
+                    module_scalar_associative}.
+        \end{subproof}
+        Follows by \auto{spike_dependent_product_extensionality}.
+    \end{subproof}
+
+    Show that for every $x\in\carrier[P]$ we have
+        $\scalarMul[P](\ringOne[R],x)=x$.
+    \begin{subproof}
+        Fix $x\in\carrier[P]$.
+        $\ringOne[R]\in\carrier[R]$ by \auto{ring_one_type}.
+        $\scalarMul[P](\ringOne[R],x)\in\carrier[P]$ by
+            \auto{spike_direct_sum_module_scalar_type,
+                funs_type_apply,times_tuple_intro}.
+        Show that for every $i\in I$ we have
+            $\apply{\scalarMul[P](\ringOne[R],x)}{i}=x(i)$.
+        \begin{subproof}
+            Fix $i\in I$.
+            $x(i)\in C(i)$ by
+                \auto{dependent_product_coordinate,subseteq}.
+            $C(i)=\carrier[M(i)]$ by
+                \auto{spike_module_product_carrier_coordinate}.
+            Follows by
+                \auto{spike_direct_sum_module_scalar_coordinate,
+                    module_scalar_one}.
+        \end{subproof}
+        Follows by \auto{spike_dependent_product_extensionality,subseteq}.
+    \end{subproof}
+    Follows by \auto{spike_direct_sum_module_intro}.
+\end{proof}
+
+\begin{theorem}\label{spike_finite_direct_sum_module_eq_product_module}
+    Let $R$ be a ring.
+    Suppose $I$ is finite.
+    Suppose $M$ is a function on $I$.
+    Suppose for every $i\in I$ we have $M(i)$ is a left module over $R$.
+    Then
+        $\DirectSumModule{R}{I}{M}=\ProductModule{R}{I}{M}$.
+\end{theorem}
+\begin{proof}
+    Let $A=\spikeModuleAdditiveGroupFamily{I}{M}$.
+    Let $D=\DirectSumModule{R}{I}{M}$.
+    Let $P=\ProductModule{R}{I}{M}$.
+    $A$ is a function on $I$ by
+        \auto{spike_module_additive_group_family_type}.
+    Show that for every $i\in I$ we have
+        $A(i)$ is a commutative group.
+    \begin{subproof}
+        Fix $i\in I$.
+        $A(i)=\ModuleAdditiveGroup{M(i)}$ by
+            \auto{spike_module_additive_group_family_apply}.
+        Follows by \auto{spike_module_additive_group_is_exact}.
+    \end{subproof}
+    $\DirectSumGroup{I}{A}=\ProductGroup{I}{A}$ by
+        \auto{spike_finite_direct_sum_group_eq_product_group}.
+    $D$ is an exact left module over $R$ by
+        \auto{spike_direct_sum_module_is_exact}.
+    $P$ is an exact left module over $R$ by
+        \auto{spike_product_module_is_exact}.
+    $\carrier[D]=\carrier[P]$ and $\mul[D]=\mul[P]$ and
+        $\neutral[D]=\neutral[P]$ and
+        $\groupInv[D]=\groupInv[P]$ by
+        \auto{spike_direct_sum_module_fields,
+            spike_product_module_fields}.
+    $\scalarMul[D]=\scalarMul[P]$ by
+        \auto{spike_direct_sum_module_fields,
+            spike_product_module_fields}.
+    Follows by
+        \auto{spike_direct_sum_module,spike_product_module,
+            spike_direct_sum_module_additive_group,
+            spike_product_module_additive_group,
+            spike_direct_sum_module_scalar_graph,
+            spike_product_module_scalar_graph}.
+\end{proof}
+
+\subsection{Dependent projections and mediators}
+
+\begin{definition}\label{spike_dependent_projection_value_op}
+    $\spikeDependentProjectionValueOp:\Set\to\Set\to\Set
+        =\fun{i,x:\Set}{x(i)}$.
+\end{definition}
+
+\begin{definition}\label{spike_dependent_projection}
+    $\dependentProjection{I}{A}{i}
+        =\Apply{\graphOnOp}{
+            \dependentProduct{I}{A},A(i),
+            \Apply{\spikeDependentProjectionValueOp}{i}}$.
+\end{definition}
+
+\begin{proposition}\label{spike_dependent_projection_type}
+    Suppose $A$ is a function on $I$ and $i\in I$.
+    Then
+        $\dependentProjection{I}{A}{i}\in
+            \funs{\dependentProduct{I}{A}}{A(i)}$.
+\end{proposition}
+\begin{proof}
+    For every $x\in\dependentProduct{I}{A}$ we have $x(i)\in A(i)$ by
+        \auto{dependent_product_coordinate}.
+    Follows by
+        \auto{spike_dependent_projection,
+            spike_dependent_projection_value_op,
+            logical_graph_on_function}.
+\end{proof}
+
+\begin{proposition}\label{spike_dependent_projection_apply}
+    Suppose $A$ is a function on $I$ and $i\in I$.
+    Let $x\in\dependentProduct{I}{A}$.
+    Then $\apply{\dependentProjection{I}{A}{i}}{x}=x(i)$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{spike_dependent_projection,
+            spike_dependent_projection_value_op,
+            logical_graph_on_apply}.
+\end{proof}
+
+\begin{definition}\label{spike_dependent_mediator_coordinate_op}
+    $\spikeDependentMediatorCoordinateOp:
+        \Set\to\Set\to\Set\to\Set
+        =\fun{f,x,i:\Set}{\apply{\apply{f}{i}}{x}}$.
+\end{definition}
+
+\begin{definition}\label{spike_dependent_mediator_section_op}
+    $\spikeDependentMediatorSectionOp:
+        \Set\to\Set\to\Set\to\Set
+        =\fun{I,f,x:\Set}{
+            \Apply{\graphOnDomainOp}{
+                I,\Apply{\spikeDependentMediatorCoordinateOp}{f,x}}}$.
+\end{definition}
+
+\begin{proposition}\label{spike_dependent_mediator_section_coordinate}
+    Let $i\in I$.
+    Then
+        $\apply{\Apply{\spikeDependentMediatorSectionOp}{I,f,x}}{i}
+            =\apply{\apply{f}{i}}{x}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{spike_dependent_mediator_section_op,
+            spike_dependent_mediator_coordinate_op,
+            logical_graph_on_domain_apply}.
+\end{proof}
+
+\begin{proposition}\label{spike_dependent_mediator_section_type}
+    Suppose $A$ is a function on $I$ and $f$ is a function on $I$.
+    Suppose for every $i\in I$ we have $f(i)\in\funs{X}{A(i)}$.
+    Let $x\in X$.
+    Then
+        $\Apply{\spikeDependentMediatorSectionOp}{I,f,x}
+            \in\dependentProduct{I}{A}$.
+\end{proposition}
+\begin{proof}
+    Let $u=\Apply{\spikeDependentMediatorSectionOp}{I,f,x}$.
+    $u\in\funs{I}{\ran{u}}$ by
+        \auto{spike_dependent_mediator_section_op,
+            logical_graph_on_domain_function}.
+    Hence $u$ is a function and $\dom{u}=I$ by
+        \auto{funs_is_function,funs}.
+    Show that for every $i\in I$ we have $u(i)\in A(i)$.
+    \begin{subproof}
+        Fix $i\in I$.
+        $u(i)=\apply{\apply{f}{i}}{x}$ by
+            \auto{spike_dependent_mediator_section_coordinate}.
+        Follows by \auto{funs_type_apply}.
+    \end{subproof}
+    Show that $u\in\funs{I}{\unions{\ran{A}}}$.
+    \begin{subproof}
+        Show that for every $i\in\dom{u}$ we have
+            $u(i)\in\unions{\ran{A}}$.
+        \begin{subproof}
+            Fix $i\in\dom{u}$.
+            Hence $i\in I$ by \auto.
+            $u(i)\in A(i)$ by \auto.
+            Follows by \auto{indexed_family_member_union}.
+        \end{subproof}
+        Hence $u$ is a function to $\unions{\ran{A}}$ by \auto.
+        Follows by \auto{funs_intro}.
+    \end{subproof}
+    Follows by \auto{dependent_product_iff}.
+\end{proof}
+
+\begin{definition}\label{spike_dependent_mediator}
+    $\dependentMediator{X}{I}{A}{f}
+        =\Apply{\graphOnOp}{
+            X,\dependentProduct{I}{A},
+            \Apply{\spikeDependentMediatorSectionOp}{I,f}}$.
+\end{definition}
+
+\begin{proposition}\label{spike_dependent_mediator_type}
+    Suppose $A$ is a function on $I$ and $f$ is a function on $I$.
+    Suppose for every $i\in I$ we have $f(i)\in\funs{X}{A(i)}$.
+    Then
+        $\dependentMediator{X}{I}{A}{f}\in
+            \funs{X}{\dependentProduct{I}{A}}$.
+\end{proposition}
+\begin{proof}
+    For every $x\in X$ we have
+        $\Apply{\spikeDependentMediatorSectionOp}{I,f,x}
+            \in\dependentProduct{I}{A}$ by
+        \auto{spike_dependent_mediator_section_type}.
+    Follows by
+        \auto{spike_dependent_mediator,logical_graph_on_function}.
+\end{proof}
+
+\begin{proposition}\label{spike_dependent_mediator_apply}
+    Suppose $A$ is a function on $I$ and $f$ is a function on $I$.
+    Suppose for every $i\in I$ we have $f(i)\in\funs{X}{A(i)}$.
+    Let $x\in X$.
+    Then
+        $\apply{\dependentMediator{X}{I}{A}{f}}{x}
+            =\Apply{\spikeDependentMediatorSectionOp}{I,f,x}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{spike_dependent_mediator,logical_graph_on_apply}.
+\end{proof}
+
+\begin{proposition}\label{spike_dependent_mediator_coordinate}
+    Suppose $A$ is a function on $I$ and $f$ is a function on $I$.
+    Suppose for every $j\in I$ we have $f(j)\in\funs{X}{A(j)}$.
+    Let $x\in X$ and $i\in I$.
+    Then
+        $\apply{\apply{\dependentMediator{X}{I}{A}{f}}{x}}{i}
+            =\apply{\apply{f}{i}}{x}$.
+\end{proposition}
+\begin{proof}
+    $\apply{\dependentMediator{X}{I}{A}{f}}{x}
+        =\Apply{\spikeDependentMediatorSectionOp}{I,f,x}$ by
+        \auto{spike_dependent_mediator_apply}.
+    Follows by
+        \auto{spike_dependent_mediator_section_coordinate}.
+\end{proof}
+
+\subsection{Point-mass inclusions}
+
+\begin{definition}\label{spike_direct_sum_group_inclusion}
+    $\directSumGroupInclusion{I}{G}{i}
+        =\dependentPointMassMap
+            {I}{\spikeGroupCarrierFamily{I}{G}}{
+                \spikeProductGroupNeutral{I}{G}}{i}$.
+\end{definition}
+
+\begin{proposition}\label{spike_direct_sum_group_inclusion_type}
+    Suppose $G$ is a function on $I$.
+    Suppose for every $j\in I$ we have $G(j)$ is a commutative group.
+    Let $i\in I$.
+    Then
+        $\directSumGroupInclusion{I}{G}{i}\in
+            \funs{\carrier[G(i)]}{
+                \carrier[\DirectSumGroup{I}{G}]}$.
+\end{proposition}
+\begin{proof}
+    Let $C=\spikeGroupCarrierFamily{I}{G}$.
+    Let $z=\spikeProductGroupNeutral{I}{G}$.
+    $C$ is a function on $I$ by
+        \auto{spike_group_carrier_family_type}.
+    For every $j\in I$ we have $G(j)$ is a group by
+        \auto{commutative_group_is_group}.
+    $z\in\dependentProduct{I}{C}$ by
+        \auto{spike_product_group_neutral_type}.
+    $\dependentPointMassMap{I}{C}{z}{i}\in
+        \funs{C(i)}{
+            \dependentFinitelySupportedFunctions{I}{C}{z}}$ by
+        \auto{spike_dependent_point_mass_map_type}.
+    $C(i)=\carrier[G(i)]$ by
+        \auto{spike_group_carrier_family_apply}.
+    Follows by
+        \auto{spike_direct_sum_group_inclusion,
+            spike_direct_sum_group_carrier}.
+\end{proof}
+
+\begin{proposition}\label{spike_direct_sum_group_inclusion_apply}
+    Suppose $G$ is a function on $I$.
+    Suppose for every $j\in I$ we have $G(j)$ is a commutative group.
+    Let $i\in I$ and $a\in\carrier[G(i)]$.
+    Then
+        $\apply{\directSumGroupInclusion{I}{G}{i}}{a}
+            =\dependentPointMass
+                {I}{\spikeGroupCarrierFamily{I}{G}}{
+                    \spikeProductGroupNeutral{I}{G}}{i}{a}$.
+\end{proposition}
+\begin{proof}
+    Let $C=\spikeGroupCarrierFamily{I}{G}$.
+    Let $z=\spikeProductGroupNeutral{I}{G}$.
+    $C$ is a function on $I$ by
+        \auto{spike_group_carrier_family_type}.
+    For every $j\in I$ we have $G(j)$ is a group by
+        \auto{commutative_group_is_group}.
+    $z\in\dependentProduct{I}{C}$ by
+        \auto{spike_product_group_neutral_type}.
+    $C(i)=\carrier[G(i)]$ by
+        \auto{spike_group_carrier_family_apply}.
+    Follows by
+        \auto{spike_direct_sum_group_inclusion,
+            spike_dependent_point_mass_map_apply}.
+\end{proof}
+
+\begin{theorem}\label{spike_direct_sum_group_inclusion_hom}
+    Suppose $G$ is a function on $I$.
+    Suppose for every $j\in I$ we have $G(j)$ is a commutative group.
+    Let $i\in I$.
+    Then
+        $\groupHom
+            {\directSumGroupInclusion{I}{G}{i}}
+            {G(i)}{\DirectSumGroup{I}{G}}$.
+\end{theorem}
+\begin{proof}
+    Let $C=\spikeGroupCarrierFamily{I}{G}$.
+    Let $z=\spikeProductGroupNeutral{I}{G}$.
+    Let $S=\DirectSumGroup{I}{G}$.
+    Let $m=\directSumGroupInclusion{I}{G}{i}$.
+    $G(i)$ is a group by
+        \auto{commutative_group_is_group}.
+    $S$ is a commutative group by
+        \auto{spike_direct_sum_group_is_exact}.
+    Hence $S$ is a group by \auto{commutative_group_is_group}.
+    $m\in\funs{\carrier[G(i)]}{\carrier[S]}$ by
+        \auto{spike_direct_sum_group_inclusion_type}.
+    $C$ is a function on $I$ by
+        \auto{spike_group_carrier_family_type}.
+    For every $j\in I$ we have $G(j)$ is a group by
+        \auto{commutative_group_is_group}.
+    $z\in\dependentProduct{I}{C}$ by
+        \auto{spike_product_group_neutral_type}.
+    Show that for all $a,b\in\carrier[G(i)]$ we have
+        $m(\mul[G(i)](a,b))=\mul[S](m(a),m(b))$.
+    \begin{subproof}
+        Fix $a,b\in\carrier[G(i)]$.
+        $G(i)$ is a monoid by \auto{group_is_monoid}.
+        Hence $G(i)$ is a magma by \auto{monoid_is_magma}.
+        $\mul[G(i)](a,b)\in\carrier[G(i)]$ by
+            \auto{magma_welldef}.
+        $m(a),m(b)\in\carrier[S]$ by
+            \auto{funs_type_apply}.
+        Hence $m(\mul[G(i)](a,b)),\mul[S](m(a),m(b))
+            \in\carrier[S]$ by
+            \auto{funs_type_apply,group_is_monoid,
+                monoid_is_magma,magma_welldef}.
+        Hence $m(\mul[G(i)](a,b)),\mul[S](m(a),m(b))
+            \in\dependentProduct{I}{C}$ by
+            \auto{spike_direct_sum_group_carrier,
+                spike_dependent_finitely_supported_functions_iff}.
+        Show that for every $j\in I$ we have
+            $\apply{m(\mul[G(i)](a,b))}{j}
+                =\apply{\mul[S](m(a),m(b))}{j}$.
+        \begin{subproof}
+            Fix $j\in I$.
+            \begin{byCase}
+            \caseOf{$j=i$.}
+                Follows by
+                    \auto{spike_direct_sum_group_inclusion_apply,
+                        spike_dependent_point_mass_selected,
+                        spike_direct_sum_group_mul_coordinate,
+                        spike_group_carrier_family_apply}.
+            \caseOf{$j\neq i$.}
+                $C(i)=\carrier[G(i)]$ by
+                    \auto{spike_group_carrier_family_apply}.
+                $\mul[G(i)](a,b)\in C(i)$ by \auto.
+                $\apply{m(\mul[G(i)](a,b))}{j}=z(j)$ and
+                    $\apply{m(a)}{j}=z(j)$ and
+                    $\apply{m(b)}{j}=z(j)$ by
+                    \auto{spike_direct_sum_group_inclusion_apply,
+                        spike_dependent_point_mass_other}.
+                $z(j)=\neutral[G(j)]$ by
+                    \auto{spike_product_group_neutral_coordinate}.
+                $G(j)$ is a monoid by \auto{group_is_monoid}.
+                Hence $G(j)$ is a unital magma by
+                    \auto{monoid_is_unital_magma}.
+                $\apply{\mul[S](m(a),m(b))}{j}
+                    =\mul[G(j)](\apply{m(a)}{j},\apply{m(b)}{j})$ by
+                    \auto{spike_direct_sum_group_mul_coordinate}.
+                Hence $\apply{\mul[S](m(a),m(b))}{j}
+                    =\mul[G(j)](\neutral[G(j)],\neutral[G(j)])$ by
+                    \auto.
+                $\neutral[G(j)]\in\carrier[G(j)]$ by
+                    \auto{unitalmagma_type}.
+                $\mul[G(j)](\neutral[G(j)],\neutral[G(j)])
+                    =\neutral[G(j)]$ by \auto{unitalmagma_left}.
+                Follows by \auto.
+            \end{byCase}
+        \end{subproof}
+        Follows by \auto{spike_dependent_product_extensionality}.
+    \end{subproof}
+    Follows by \auto{group_hom}.
+\end{proof}
+
+\begin{definition}\label{spike_direct_sum_module_inclusion}
+    $\directSumModuleInclusion{R}{I}{M}{i}
+        =\directSumGroupInclusion
+            {I}{\spikeModuleAdditiveGroupFamily{I}{M}}{i}$.
+\end{definition}
+
+\begin{proposition}\label{spike_direct_sum_module_inclusion_type}
+    Let $R$ be a ring.
+    Suppose $M$ is a function on $I$.
+    Suppose for every $j\in I$ we have $M(j)$ is a left module over $R$.
+    Let $i\in I$.
+    Then
+        $\directSumModuleInclusion{R}{I}{M}{i}\in
+            \funs{\carrier[M(i)]}{
+                \carrier[\DirectSumModule{R}{I}{M}]}$.
+\end{proposition}
+\begin{proof}
+    Let $A=\spikeModuleAdditiveGroupFamily{I}{M}$.
+    Let $Q=\DirectSumGroup{I}{A}$.
+    Let $S=\DirectSumModule{R}{I}{M}$.
+    $A$ is a function on $I$ by
+        \auto{spike_module_additive_group_family_type}.
+    Show that for every $j\in I$ we have $A(j)$ is a commutative group.
+    \begin{subproof}
+        Fix $j\in I$.
+        $A(j)=\ModuleAdditiveGroup{M(j)}$ by
+            \auto{spike_module_additive_group_family_apply}.
+        Follows by \auto{spike_module_additive_group_is_exact}.
+    \end{subproof}
+    $\carrier[A(i)]=\carrier[M(i)]$ by
+        \auto{spike_module_additive_group_family_apply,
+            spike_module_additive_group_fields}.
+    $\carrier[S]=\carrier[Q]$ by
+        \auto{spike_direct_sum_module_fields}.
+    Follows by
+        \auto{spike_direct_sum_module_inclusion,
+            spike_direct_sum_group_inclusion_type}.
+\end{proof}
+
+\begin{proposition}\label{spike_direct_sum_module_inclusion_apply}
+    Let $R$ be a ring.
+    Suppose $M$ is a function on $I$.
+    Suppose for every $j\in I$ we have $M(j)$ is a left module over $R$.
+    Let $i\in I$ and $x\in\carrier[M(i)]$.
+    Then
+        $\apply{\directSumModuleInclusion{R}{I}{M}{i}}{x}
+            =\dependentPointMass
+                {I}{\spikeGroupCarrierFamily{I}{
+                    \spikeModuleAdditiveGroupFamily{I}{M}}}{
+                    \spikeProductGroupNeutral{I}{
+                        \spikeModuleAdditiveGroupFamily{I}{M}}}{i}{x}$.
+\end{proposition}
+\begin{proof}
+    Let $A=\spikeModuleAdditiveGroupFamily{I}{M}$.
+    $A$ is a function on $I$ by
+        \auto{spike_module_additive_group_family_type}.
+    Show that for every $j\in I$ we have $A(j)$ is a commutative group.
+    \begin{subproof}
+        Fix $j\in I$.
+        $A(j)=\ModuleAdditiveGroup{M(j)}$ by
+            \auto{spike_module_additive_group_family_apply}.
+        Follows by \auto{spike_module_additive_group_is_exact}.
+    \end{subproof}
+    $\carrier[A(i)]=\carrier[M(i)]$ by
+        \auto{spike_module_additive_group_family_apply,
+            spike_module_additive_group_fields}.
+    Follows by
+        \auto{spike_direct_sum_module_inclusion,
+            spike_direct_sum_group_inclusion_apply}.
+\end{proof}
+
+\begin{theorem}\label{spike_direct_sum_module_inclusion_linear}
+    Let $R$ be a ring.
+    Suppose $M$ is a function on $I$.
+    Suppose for every $j\in I$ we have $M(j)$ is a left module over $R$.
+    Let $i\in I$.
+    Then $\directSumModuleInclusion{R}{I}{M}{i}$ is a linear map from
+        $M(i)$ to $\DirectSumModule{R}{I}{M}$ over $R$.
+\end{theorem}
+\begin{proof}
+    Let $A=\spikeModuleAdditiveGroupFamily{I}{M}$.
+    Let $Q=\DirectSumGroup{I}{A}$.
+    Let $S=\DirectSumModule{R}{I}{M}$.
+    Let $C=\spikeGroupCarrierFamily{I}{A}$.
+    Let $z=\spikeProductGroupNeutral{I}{A}$.
+    Let $m=\directSumModuleInclusion{R}{I}{M}{i}$.
+    $A$ is a function on $I$ by
+        \auto{spike_module_additive_group_family_type}.
+    Show that for every $j\in I$ we have $A(j)$ is a commutative group.
+    \begin{subproof}
+        Fix $j\in I$.
+        $A(j)=\ModuleAdditiveGroup{M(j)}$ by
+            \auto{spike_module_additive_group_family_apply}.
+        Follows by \auto{spike_module_additive_group_is_exact}.
+    \end{subproof}
+    $C$ is a function on $I$ by
+        \auto{spike_group_carrier_family_type}.
+    For every $j\in I$ we have $A(j)$ is a group by
+        \auto{commutative_group_is_group}.
+    $z\in\dependentProduct{I}{C}$ by
+        \auto{spike_product_group_neutral_type}.
+    $S$ is an exact left module over $R$ by
+        \auto{spike_direct_sum_module_is_exact}.
+    $m\in\funs{\carrier[M(i)]}{\carrier[S]}$ by
+        \auto{spike_direct_sum_module_inclusion_type}.
+    $m=\directSumGroupInclusion{I}{A}{i}$ by
+        \auto{spike_direct_sum_module_inclusion}.
+    $\groupHom{m}{A(i)}{Q}$ by
+        \auto{spike_direct_sum_group_inclusion_hom}.
+    $A(i)=\ModuleAdditiveGroup{M(i)}$ by
+        \auto{spike_module_additive_group_family_apply}.
+    $\carrier[A(i)]=\carrier[M(i)]$ and
+        $\mul[A(i)]=\mul[M(i)]$ by
+        \auto{spike_module_additive_group_fields}.
+    $\carrier[S]=\carrier[Q]$ and $\mul[S]=\mul[Q]$ by
+        \auto{spike_direct_sum_module_fields}.
+    Hence for all $x,y\in\carrier[M(i)]$ we have
+        $m(\mul[M(i)](x,y))=\mul[S](m(x),m(y))$ by
+        \auto{group_hom_mul}.
+
+    Show that for all $a,x$ such that $a\in\carrier[R]$ and
+        $x\in\carrier[M(i)]$ we have
+        $m(\scalarMul[M(i)](a,x))=\scalarMul[S](a,m(x))$.
+    \begin{subproof}
+        Fix $a,x$.
+        Assume $a\in\carrier[R]$ and $x\in\carrier[M(i)]$.
+        $\scalarMul[M(i)](a,x)\in\carrier[M(i)]$ by
+            \auto{module_scalar_type,funs_type_apply,times_tuple_intro}.
+        $m(x)\in\carrier[S]$ by \auto{funs_type_apply}.
+        Hence $m(\scalarMul[M(i)](a,x)),\scalarMul[S](a,m(x))
+            \in\carrier[S]$ by
+            \auto{funs_type_apply,spike_direct_sum_module_scalar_type,
+                times_tuple_intro}.
+        Hence $m(\scalarMul[M(i)](a,x)),\scalarMul[S](a,m(x))
+            \in\dependentProduct{I}{C}$ by
+            \auto{spike_direct_sum_module_fields,
+                spike_direct_sum_group_carrier,
+                spike_dependent_finitely_supported_functions_iff}.
+        Show that for every $j\in I$ we have
+            $\apply{m(\scalarMul[M(i)](a,x))}{j}
+                =\apply{\scalarMul[S](a,m(x))}{j}$.
+        \begin{subproof}
+            Fix $j\in I$.
+            \begin{byCase}
+            \caseOf{$j=i$.}
+                $C(i)=\carrier[M(i)]$ by
+                    \auto{spike_group_carrier_family_apply,
+                        spike_module_additive_group_family_apply,
+                        spike_module_additive_group_fields}.
+                $\scalarMul[M(i)](a,x)\in C(i)$ by \auto.
+                $\apply{m(\scalarMul[M(i)](a,x))}{i}
+                    =\scalarMul[M(i)](a,x)$ by
+                    \auto{spike_direct_sum_module_inclusion_apply,
+                        spike_dependent_point_mass_selected}.
+                $\apply{m(x)}{i}=x$ by
+                    \auto{spike_direct_sum_module_inclusion_apply,
+                        spike_dependent_point_mass_selected}.
+                $\apply{\scalarMul[S](a,m(x))}{i}
+                    =\scalarMul[M(i)](a,\apply{m(x)}{i})$ by
+                    \auto{spike_direct_sum_module_scalar_coordinate}.
+                Follows by \auto.
+            \caseOf{$j\neq i$.}
+                $C(i)=\carrier[M(i)]$ by
+                    \auto{spike_group_carrier_family_apply,
+                        spike_module_additive_group_family_apply,
+                        spike_module_additive_group_fields}.
+                $\scalarMul[M(i)](a,x)\in C(i)$ by \auto.
+                $\apply{m(\scalarMul[M(i)](a,x))}{j}=z(j)$ and
+                    $\apply{m(x)}{j}=z(j)$ by
+                    \auto{spike_direct_sum_module_inclusion_apply,
+                        spike_dependent_point_mass_other}.
+                $z(j)=\neutral[A(j)]$ by
+                    \auto{spike_product_group_neutral_coordinate}.
+                $A(j)=\ModuleAdditiveGroup{M(j)}$ by
+                    \auto{spike_module_additive_group_family_apply}.
+                $\neutral[A(j)]=\neutral[M(j)]$ by
+                    \auto{spike_module_additive_group_fields}.
+                $\apply{\scalarMul[S](a,m(x))}{j}
+                    =\scalarMul[M(j)](a,\apply{m(x)}{j})$ by
+                    \auto{spike_direct_sum_module_scalar_coordinate}.
+                $\scalarMul[M(j)](a,\neutral[M(j)])
+                    =\neutral[M(j)]$ by
+                    \auto{module_scalar_vector_zero}.
+                Follows by \auto.
+            \end{byCase}
+        \end{subproof}
+        Follows by \auto{spike_dependent_product_extensionality}.
+    \end{subproof}
+    Follows by \auto{linear_map}.
+\end{proof}
+
+\subsection{Direct-sum assembly mediators}
+
+For a finitely supported section, the assembly map folds the images of its
+nonzero coordinates.  The fold is canonical, so the construction contains no
+selected enumeration of the support.
+
+\begin{definition}\label{spike_direct_sum_group_contribution_op}
+    $\spikeDirectSumGroupContributionOp:
+        \Set\to\Set\to\Set\to\Set
+        =\fun{f,x,i:\Set}{\apply{\apply{f}{i}}{\apply{x}{i}}}$.
+\end{definition}
+
+\begin{definition}\label{spike_direct_sum_group_contribution}
+    $\spikeDirectSumGroupContribution{I}{G}{H}{f}{x}
+        =\Apply{\graphOnOp}{
+            \dependentSupport{I}{x}{\spikeProductGroupNeutral{I}{G}},
+            \carrier[H],
+            \Apply{\spikeDirectSumGroupContributionOp}{f,x}}$.
+\end{definition}
+
+\begin{proposition}\label{spike_direct_sum_group_contribution_apply}
+    Suppose $G$ is a function on $I$ and $f$ is a function on $I$.
+    Let $i\in\dependentSupport{I}{x}{
+        \spikeProductGroupNeutral{I}{G}}$.
+    Then
+        $\apply{\spikeDirectSumGroupContribution{I}{G}{H}{f}{x}}{i}
+            =\apply{\apply{f}{i}}{x(i)}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{spike_direct_sum_group_contribution,
+            spike_direct_sum_group_contribution_op,
+            logical_graph_on_apply}.
+\end{proof}
+
+\begin{proposition}\label{spike_direct_sum_group_contribution_type}
+    Suppose $G$ is a function on $I$ and $H$ is a group.
+    Suppose for every $i\in I$ we have $G(i)$ is a group.
+    Suppose $f$ is a function on $I$ and
+        for every $i\in I$ we have $\groupHom{f(i)}{G(i)}{H}$.
+    Let $x\in\carrier[\DirectSumGroup{I}{G}]$.
+    Then
+        $\spikeDirectSumGroupContribution{I}{G}{H}{f}{x}\in
+            \funs{\dependentSupport{I}{x}{
+                \spikeProductGroupNeutral{I}{G}}}{\carrier[H]}$.
+\end{proposition}
+\begin{proof}
+    Let $C=\spikeGroupCarrierFamily{I}{G}$.
+    Let $z=\spikeProductGroupNeutral{I}{G}$.
+    Let $D=\dependentSupport{I}{x}{z}$.
+    $x\in\dependentFinitelySupportedFunctions{I}{C}{z}$ by
+        \auto{spike_direct_sum_group_carrier}.
+    Hence $x\in\dependentProduct{I}{C}$ by
+        \auto{spike_dependent_finitely_supported_functions_iff}.
+    Show that for every $i\in D$ we have
+        $\apply{\apply{f}{i}}{x(i)}\in\carrier[H]$.
+    \begin{subproof}
+        Fix $i\in D$.
+        Hence $i\in I$ by \auto{spike_dependent_support_iff}.
+        $x(i)\in C(i)$ by \auto{dependent_product_coordinate}.
+        $C(i)=\carrier[G(i)]$ by
+            \auto{spike_group_carrier_family_apply}.
+        $f(i)\in\funs{\carrier[G(i)]}{\carrier[H]}$ by
+            \auto{group_hom_type}.
+        Follows by \auto{funs_type_apply}.
+    \end{subproof}
+    Hence for every $i\in D$ we have
+        $\Apply{\Apply{\spikeDirectSumGroupContributionOp}{f,x}}{i}
+            \in\carrier[H]$ by
+        \auto{spike_direct_sum_group_contribution_op}.
+    $\Apply{\graphOnOp}{D,\carrier[H],
+        \Apply{\spikeDirectSumGroupContributionOp}{f,x}}
+        \in\funs{D}{\carrier[H]}$ by
+        \auto{logical_graph_on_function}.
+    Follows by \auto{spike_direct_sum_group_contribution}.
+\end{proof}
+
+\begin{definition}\label{spike_direct_sum_group_mediator_value_op}
+    $\spikeDirectSumGroupMediatorValueOp:
+        \Set\to\Set\to\Set\to\Set\to\Set\to\Set
+        =\fun{I,G,H,f,x:\Set}{
+            \finiteFold{H}{
+                \dependentSupport{I}{x}{
+                    \spikeProductGroupNeutral{I}{G}}}{
+                \spikeDirectSumGroupContribution{I}{G}{H}{f}{x}}}$.
+\end{definition}
+
+\begin{definition}\label{spike_direct_sum_group_mediator}
+    $\directSumGroupMediator{I}{G}{H}{f}
+        =\Apply{\graphOnOp}{
+            \carrier[\DirectSumGroup{I}{G}],\carrier[H],
+            \Apply{\spikeDirectSumGroupMediatorValueOp}{I,G,H,f}}$.
+\end{definition}
+
+\begin{proposition}\label{spike_direct_sum_group_mediator_value_type}
+    Suppose $G$ is a function on $I$.
+    Suppose for every $i\in I$ we have $G(i)$ is a commutative group.
+    Let $H$ be a commutative group.
+    Suppose $f$ is a function on $I$ and
+        for every $i\in I$ we have $\groupHom{f(i)}{G(i)}{H}$.
+    Let $x\in\carrier[\DirectSumGroup{I}{G}]$.
+    Then
+        $\Apply{\spikeDirectSumGroupMediatorValueOp}{I,G,H,f,x}
+            \in\carrier[H]$.
+\end{proposition}
+\begin{proof}
+    Let $z=\spikeProductGroupNeutral{I}{G}$.
+    Let $D=\dependentSupport{I}{x}{z}$.
+    Let $c=\spikeDirectSumGroupContribution{I}{G}{H}{f}{x}$.
+    $x\in\dependentFinitelySupportedFunctions
+        {I}{\spikeGroupCarrierFamily{I}{G}}{z}$ by
+        \auto{spike_direct_sum_group_carrier}.
+    Hence $D$ is finite by
+        \auto{spike_dependent_finitely_supported_functions_iff}.
+    $H$ is a group by \auto{commutative_group_is_group}.
+    Hence $H$ is a monoid by \auto{group_is_monoid}.
+    For all $u,v\in\carrier[H]$ we have
+        $\mul[H](u,v)=\mul[H](v,u)$ by
+        \auto{commutative_group_commutative}.
+    For every $i\in I$ we have $G(i)$ is a group by
+        \auto{commutative_group_is_group}.
+    $c\in\funs{D}{\carrier[H]}$ by
+        \auto{spike_direct_sum_group_contribution_type}.
+    $\finiteFold{H}{D}{c}\in\carrier[H]$ by
+        \auto{spike_finite_fold_canonical}.
+    Follows by \auto{spike_direct_sum_group_mediator_value_op}.
+\end{proof}
+
+\begin{proposition}\label{spike_direct_sum_group_mediator_type}
+    Suppose $G$ is a function on $I$.
+    Suppose for every $i\in I$ we have $G(i)$ is a commutative group.
+    Let $H$ be a commutative group.
+    Suppose $f$ is a function on $I$ and
+        for every $i\in I$ we have $\groupHom{f(i)}{G(i)}{H}$.
+    Then
+        $\directSumGroupMediator{I}{G}{H}{f}\in
+            \funs{\carrier[\DirectSumGroup{I}{G}]}{\carrier[H]}$.
+\end{proposition}
+\begin{proof}
+    For every $x\in\carrier[\DirectSumGroup{I}{G}]$ we have
+        $\Apply{\spikeDirectSumGroupMediatorValueOp}{I,G,H,f,x}
+            \in\carrier[H]$ by
+        \auto{spike_direct_sum_group_mediator_value_type}.
+    Follows by
+        \auto{spike_direct_sum_group_mediator,
+            logical_graph_on_function}.
+\end{proof}
+
+\begin{proposition}\label{spike_direct_sum_group_mediator_apply}
+    Suppose $G$ is a function on $I$.
+    Suppose for every $i\in I$ we have $G(i)$ is a commutative group.
+    Let $H$ be a commutative group.
+    Suppose $f$ is a function on $I$ and
+        for every $i\in I$ we have $\groupHom{f(i)}{G(i)}{H}$.
+    Let $x\in\carrier[\DirectSumGroup{I}{G}]$.
+    Then
+        $\apply{\directSumGroupMediator{I}{G}{H}{f}}{x}
+            =\finiteFold{H}{
+                \dependentSupport{I}{x}{
+                    \spikeProductGroupNeutral{I}{G}}}{
+                \spikeDirectSumGroupContribution{I}{G}{H}{f}{x}}$.
+\end{proposition}
+\begin{proof}
+    $\apply{\directSumGroupMediator{I}{G}{H}{f}}{x}
+        =\Apply{\spikeDirectSumGroupMediatorValueOp}{I,G,H,f,x}$ by
+        \auto{spike_direct_sum_group_mediator,
+            logical_graph_on_apply}.
+    Follows by \auto{spike_direct_sum_group_mediator_value_op}.
+\end{proof}
+
+\begin{proposition}\label{spike_linear_map_additive_group_hom}
+    Suppose $f$ is a linear map from $M$ to $N$ over $R$.
+    Then
+        $\groupHom{f}{\ModuleAdditiveGroup{M}}{
+            \ModuleAdditiveGroup{N}}$.
+\end{proposition}
+\begin{proof}
+    $M$ is a left module over $R$ and $N$ is a left module over $R$ by
+        \auto{linear_map}.
+    Hence $\ModuleAdditiveGroup{M}$ is a commutative group and
+        $\ModuleAdditiveGroup{N}$ is a commutative group by
+        \auto{spike_module_additive_group_is_exact}.
+    Hence $\ModuleAdditiveGroup{M}$ is a group and
+        $\ModuleAdditiveGroup{N}$ is a group by
+        \auto{commutative_group_is_group}.
+    $f\in\funs{\carrier[\ModuleAdditiveGroup{M}]}{
+        \carrier[\ModuleAdditiveGroup{N}]}$ by
+        \auto{linear_map,spike_module_additive_group_fields}.
+    For all $x,y\in\carrier[\ModuleAdditiveGroup{M}]$ we have
+        $f(\mul[\ModuleAdditiveGroup{M}](x,y))
+            =\mul[\ModuleAdditiveGroup{N}](f(x),f(y))$ by
+        \auto{linear_map,spike_module_additive_group_fields}.
+    Follows by \auto{group_hom}.
+\end{proof}
+
+\begin{definition}\label{spike_direct_sum_module_mediator}
+    $\directSumModuleMediator{R}{I}{M}{N}{f}
+        =\directSumGroupMediator
+            {I}{\spikeModuleAdditiveGroupFamily{I}{M}}{
+                \ModuleAdditiveGroup{N}}{f}$.
+\end{definition}
+
+\begin{proposition}\label{spike_direct_sum_module_mediator_type}
+    Let $R$ be a ring.
+    Suppose $M$ is a function on $I$.
+    Suppose for every $i\in I$ we have $M(i)$ is a left module over $R$.
+    Let $N$ be a left module over $R$.
+    Suppose $f$ is a function on $I$ and for every $i\in I$ we have
+        $f(i)$ is a linear map from $M(i)$ to $N$ over $R$.
+    Then
+        $\directSumModuleMediator{R}{I}{M}{N}{f}\in
+            \funs{\carrier[\DirectSumModule{R}{I}{M}]}{
+                \carrier[N]}$.
+\end{proposition}
+\begin{proof}
+    Let $A=\spikeModuleAdditiveGroupFamily{I}{M}$.
+    Let $B=\ModuleAdditiveGroup{N}$.
+    Let $D=\DirectSumModule{R}{I}{M}$.
+    Let $Q=\DirectSumGroup{I}{A}$.
+    $A$ is a function on $I$ by
+        \auto{spike_module_additive_group_family_type}.
+    Show that for every $i\in I$ we have $A(i)$ is a commutative group.
+    \begin{subproof}
+        Fix $i\in I$.
+        $A(i)=\ModuleAdditiveGroup{M(i)}$ by
+            \auto{spike_module_additive_group_family_apply}.
+        Follows by \auto{spike_module_additive_group_is_exact}.
+    \end{subproof}
+    $B$ is a commutative group by
+        \auto{spike_module_additive_group_is_exact}.
+    Show that for every $i\in I$ we have $\groupHom{f(i)}{A(i)}{B}$.
+    \begin{subproof}
+        Fix $i\in I$.
+        $A(i)=\ModuleAdditiveGroup{M(i)}$ by
+            \auto{spike_module_additive_group_family_apply}.
+        Follows by \auto{spike_linear_map_additive_group_hom}.
+    \end{subproof}
+    $\directSumGroupMediator{I}{A}{B}{f}\in
+        \funs{\carrier[Q]}{\carrier[B]}$ by
+        \auto{spike_direct_sum_group_mediator_type}.
+    $\carrier[D]=\carrier[Q]$ by
+        \auto{spike_direct_sum_module_fields}.
+    $\carrier[B]=\carrier[N]$ by
+        \auto{spike_module_additive_group_fields}.
+    Follows by \auto{spike_direct_sum_module_mediator}.
+\end{proof}
+
+\begin{proposition}\label{spike_direct_sum_module_mediator_apply}
+    Let $R$ be a ring.
+    Suppose $M$ is a function on $I$.
+    Suppose for every $i\in I$ we have $M(i)$ is a left module over $R$.
+    Let $N$ be a left module over $R$.
+    Suppose $f$ is a function on $I$ and for every $i\in I$ we have
+        $f(i)$ is a linear map from $M(i)$ to $N$ over $R$.
+    Let $x\in\carrier[\DirectSumModule{R}{I}{M}]$.
+    Then
+        $\apply{\directSumModuleMediator{R}{I}{M}{N}{f}}{x}
+            =\finiteFold{\ModuleAdditiveGroup{N}}{
+                \dependentSupport{I}{x}{
+                    \spikeProductGroupNeutral{I}{
+                        \spikeModuleAdditiveGroupFamily{I}{M}}}}{
+                \spikeDirectSumGroupContribution
+                    {I}{\spikeModuleAdditiveGroupFamily{I}{M}}{
+                        \ModuleAdditiveGroup{N}}{f}{x}}$.
+\end{proposition}
+\begin{proof}
+    Let $A=\spikeModuleAdditiveGroupFamily{I}{M}$.
+    Let $B=\ModuleAdditiveGroup{N}$.
+    Let $D=\DirectSumModule{R}{I}{M}$.
+    Let $Q=\DirectSumGroup{I}{A}$.
+    $A$ is a function on $I$ by
+        \auto{spike_module_additive_group_family_type}.
+    Show that for every $i\in I$ we have $A(i)$ is a commutative group.
+    \begin{subproof}
+        Fix $i\in I$.
+        $A(i)=\ModuleAdditiveGroup{M(i)}$ by
+            \auto{spike_module_additive_group_family_apply}.
+        Follows by \auto{spike_module_additive_group_is_exact}.
+    \end{subproof}
+    $B$ is a commutative group by
+        \auto{spike_module_additive_group_is_exact}.
+    Show that for every $i\in I$ we have $\groupHom{f(i)}{A(i)}{B}$.
+    \begin{subproof}
+        Fix $i\in I$.
+        $A(i)=\ModuleAdditiveGroup{M(i)}$ by
+            \auto{spike_module_additive_group_family_apply}.
+        Follows by \auto{spike_linear_map_additive_group_hom}.
+    \end{subproof}
+    $\carrier[D]=\carrier[Q]$ by
+        \auto{spike_direct_sum_module_fields}.
+    Hence $x\in\carrier[Q]$ by \auto.
+    Follows by
+        \auto{spike_direct_sum_module_mediator,
+            spike_direct_sum_group_mediator_apply}.
+\end{proof}

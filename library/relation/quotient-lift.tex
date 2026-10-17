@@ -1,0 +1,890 @@
+\import{relation/equivalence.tex}
+\import{function.tex}
+\import{set/logical-graph.tex}
+
+\section{Maps induced on quotients}
+
+The constructions here are relation-first: their input and output maps are
+ordinary set-coded graphs.  In particular, the descended graph is defined by
+the existence of related representatives and never by choosing a
+representative of a quotient class.
+
+\begin{definition}\label{quotient_projection}
+    $\quotientProjection{A}{E}=
+        \{(a,\equivalenceClass{E}{a})\mid a\in A\}$.
+\end{definition}
+
+\begin{proposition}\label{quotient_projection_iff}
+    $(a,C)\in\quotientProjection{A}{E}$ iff
+        $a\in A$ and $C=\equivalenceClass{E}{a}$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{quotient_projection}.
+\end{proof}
+
+\begin{proposition}\label{quotient_projection_type}
+    Suppose $E$ is an equivalence on $A$.
+    Then $\quotientProjection{A}{E}\in
+        \funs{A}{\quotient{A}{E}}$.
+\end{proposition}
+\begin{proof}
+    Let $q=\quotientProjection{A}{E}$.
+    Show that $q$ is a relation.
+    \begin{subproof}
+        Show that for every $w\in q$ there exist $x,y$ such that
+            $w=(x,y)$.
+        \begin{subproof}
+            Fix $w\in q$.
+            Take $a\in A$ such that
+                $w=(a,\equivalenceClass{E}{a})$ by
+                \obv{quotient_projection}.
+            Follows by \auto.
+        \end{subproof}
+        Follows by \obv{relation}.
+    \end{subproof}
+    Show that $q$ is right-unique.
+    \begin{subproof}
+        Show that for all $a,C,D$ such that $(a,C),(a,D)\in q$
+            we have $C=D$.
+        \begin{subproof}
+            Fix $a,C,D$.
+            Assume $(a,C),(a,D)\in q$.
+            $C=\equivalenceClass{E}{a}$ and
+                $D=\equivalenceClass{E}{a}$ by
+                \auto{quotient_projection_iff}.
+        \end{subproof}
+        Follows by \obv{rightunique}.
+    \end{subproof}
+    Show that $\dom{q}=A$.
+    \begin{subproof}
+        For every $a\in\dom{q}$ we have $a\in A$ by
+            \auto{dom_iff,quotient_projection_iff}.
+        For every $a\in A$ we have $a\in\dom{q}$ by
+            \auto{dom_iff,quotient_projection_iff}.
+        Follows by \obv{setext}.
+    \end{subproof}
+    Show that $q$ is a function to $\quotient{A}{E}$.
+    \begin{subproof}
+        Show that for every $a\in\dom{q}$ we have
+            $q(a)\in\quotient{A}{E}$.
+        \begin{subproof}
+            Fix $a\in\dom{q}$.
+            $a\in A$.
+            $q(a)=\equivalenceClass{E}{a}$ by
+                \obv{function_apply_intro,quotient_projection_iff}.
+            Follows by \obv{quotient}.
+        \end{subproof}
+    \end{subproof}
+    Follows by \auto{funs_intro}.
+\end{proof}
+
+\begin{proposition}\label{quotient_projection_apply}
+    Suppose $E$ is an equivalence on $A$.
+    Let $a\in A$.
+    Then $\apply{\quotientProjection{A}{E}}{a}=
+        \equivalenceClass{E}{a}$.
+\end{proposition}
+\begin{proof}
+    $\quotientProjection{A}{E}$ is a function by
+        \auto{quotient_projection_type,funs_is_function}.
+    $(a,\equivalenceClass{E}{a})\in\quotientProjection{A}{E}$ by
+        \obv{quotient_projection_iff}.
+    Follows by \obv{function_apply_intro}.
+\end{proof}
+
+\begin{theorem}\label{quotient_projection_surjective}
+    Suppose $E$ is an equivalence on $A$.
+    Then $\quotientProjection{A}{E}\in
+        \surj{A}{\quotient{A}{E}}$.
+\end{theorem}
+\begin{proof}
+    $\quotientProjection{A}{E}\in
+        \funs{A}{\quotient{A}{E}}$ by
+        \obv{quotient_projection_type}.
+    Show that for every $C\in\quotient{A}{E}$ there exists $a\in A$
+        such that $(\quotientProjection{A}{E})(a)=C$.
+    \begin{subproof}
+        Fix $C\in\quotient{A}{E}$.
+        Take $a\in A$ such that $C=\equivalenceClass{E}{a}$ by
+            \obv{quotient}.
+        $(\quotientProjection{A}{E})(a)
+            =\equivalenceClass{E}{a}$ by
+            \obv{quotient_projection_apply}.
+        Follows by \auto.
+    \end{subproof}
+    Follows by \obv{surj}.
+\end{proof}
+
+\begin{definition}\label{quotient_compatible}
+    $\quotientCompatible{f}{A}{E}$ iff
+        for all $a,b\in A$ such that $a\mathrel{E}b$ we have
+            $f(a)=f(b)$.
+\end{definition}
+
+\begin{definition}\label{quotient_descent}
+    $\quotientDescent{f}{A}{E}=
+        \{(C,y)\mid C\in\quotient{A}{E},y\in\ran{f}\mid
+            \exists a\in C.\ (a,y)\in f\}$.
+\end{definition}
+
+\begin{proposition}\label{quotient_descent_iff}
+    $(C,y)\in\quotientDescent{f}{A}{E}$ iff
+        $C\in\quotient{A}{E}$ and
+        there exists $a\in C$ such that $(a,y)\in f$.
+\end{proposition}
+\begin{proof}
+    Show that if $(C,y)\in\quotientDescent{f}{A}{E}$, then
+        $C\in\quotient{A}{E}$ and
+        there exists $a\in C$ such that $(a,y)\in f$.
+    \begin{subproof}
+        Assume $(C,y)\in\quotientDescent{f}{A}{E}$.
+        Follows by \auto{quotient_descent,pair_eq_iff}.
+    \end{subproof}
+    Show that if $C\in\quotient{A}{E}$ and
+        there exists $a\in C$ such that $(a,y)\in f$, then
+        $(C,y)\in\quotientDescent{f}{A}{E}$.
+    \begin{subproof}
+        Assume $C\in\quotient{A}{E}$ and
+            there exists $a\in C$ such that $(a,y)\in f$.
+        Take $a\in C$ such that $(a,y)\in f$.
+        $y\in\ran{f}$ by \auto{ran_iff}.
+        Follows by \obv{quotient_descent}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{quotient_descent_range}
+    Suppose $E$ is an equivalence on $A$.
+    Suppose $f$ is a relation and $\dom{f}\subseteq A$.
+    Then
+        $\ran{\quotientDescent{f}{A}{E}}=\ran{f}$.
+\end{theorem}
+\begin{proof}
+    Show that every element of
+        $\ran{\quotientDescent{f}{A}{E}}$ is an element of $\ran{f}$.
+    \begin{subproof}
+        Fix $y\in\ran{\quotientDescent{f}{A}{E}}$.
+        Take $C$ such that
+            $(C,y)\in\quotientDescent{f}{A}{E}$ by
+            \obv{ran_iff}.
+        Take $a\in C$ such that $(a,y)\in f$ by
+            \auto{quotient_descent_iff}.
+        Follows by \auto{ran_iff}.
+    \end{subproof}
+    Hence
+        $\ran{\quotientDescent{f}{A}{E}}\subseteq\ran{f}$ by
+        \obv{subseteq}.
+
+    Show that every element of $\ran{f}$ is an element of
+        $\ran{\quotientDescent{f}{A}{E}}$.
+    \begin{subproof}
+        Fix $y\in\ran{f}$.
+        Take $a$ such that $(a,y)\in f$ by \obv{ran_iff}.
+        Hence $a\in\dom{f}$ by \obv{dom_intro}.
+        Hence $a\in A$ by \obv{elem_subseteq}.
+        $\equivalenceClass{E}{a}\in\quotient{A}{E}$ by
+            \obv{quotient}.
+        $a\in\equivalenceClass{E}{a}$ by
+            \obv{equivclasses_inhabited_equivalenceon}.
+        Hence
+            $(\equivalenceClass{E}{a},y)
+                \in\quotientDescent{f}{A}{E}$ by
+            \obv{quotient_descent_iff}.
+        Follows by \auto{ran_iff}.
+    \end{subproof}
+    Hence $\ran{f}\subseteq
+        \ran{\quotientDescent{f}{A}{E}}$ by \obv{subseteq}.
+    Follows by \obv{subseteq_antisymmetric}.
+\end{proof}
+
+\begin{lemma}\label{quotient_common_class_equivalent}
+    Suppose $E$ is an equivalence on $A$.
+    Suppose $a,b\in C\in\quotient{A}{E}$.
+    Then $a\mathrel{E}b$.
+\end{lemma}
+\begin{proof}
+    Take $c\in A$ such that $C=\equivalenceClass{E}{c}$ by
+        \obv{quotient}.
+    $a,b\in A$ by \obv{quotient_elems_type}.
+    $a\mathrel{E}c$ and $b\mathrel{E}c$ by
+        \auto{downward_closure_iff}.
+    Hence $c\mathrel{E}b$ by \obv{symmetric}.
+    Follows by \obv{transitive}.
+\end{proof}
+
+\begin{theorem}\label{quotient_descent_type}
+    Suppose $E$ is an equivalence on $A$.
+    Suppose $f\in\funs{A}{B}$ and $\quotientCompatible{f}{A}{E}$.
+    Then $\quotientDescent{f}{A}{E}\in
+        \funs{\quotient{A}{E}}{B}$.
+\end{theorem}
+\begin{proof}
+    Let $g=\quotientDescent{f}{A}{E}$.
+    Show that $g$ is a relation.
+    \begin{subproof}
+        Show that for every $w\in g$ there exist $x,y$ such that
+            $w=(x,y)$.
+        \begin{subproof}
+            Fix $w\in g$.
+            Take $C,y$ such that $C\in\quotient{A}{E}$ and
+                $y\in\ran{f}$ and $w=(C,y)$ by
+                \auto{quotient_descent}.
+            Follows by \auto.
+        \end{subproof}
+        Follows by \obv{relation}.
+    \end{subproof}
+    Show that $g$ is right-unique.
+    \begin{subproof}
+        Show that for all $C,y,z$ such that $(C,y),(C,z)\in g$
+            we have $y=z$.
+        \begin{subproof}
+            Fix $C,y,z$.
+            Assume $(C,y),(C,z)\in g$.
+            Take $a\in C$ such that $(a,y)\in f$ by
+                \auto{quotient_descent_iff}.
+            Take $b\in C$ such that $(b,z)\in f$ by
+                \auto{quotient_descent_iff}.
+            $C\in\quotient{A}{E}$ by \auto{quotient_descent_iff}.
+            $a,b\in A$ by \obv{quotient_elems_type}.
+            $a\mathrel{E}b$ by \obv{quotient_common_class_equivalent}.
+            $f(a)=f(b)$ by \obv{quotient_compatible}.
+            $f(a)=y$ and $f(b)=z$ by
+                \obv{funs_is_function,function_apply_intro}.
+        \end{subproof}
+        Follows by \obv{rightunique}.
+    \end{subproof}
+    Show that $\dom{g}=\quotient{A}{E}$.
+    \begin{subproof}
+        For every $C\in\dom{g}$ we have $C\in\quotient{A}{E}$ by
+            \auto{dom_iff,quotient_descent_iff}.
+        Show that for every $C\in\quotient{A}{E}$ we have $C\in\dom{g}$.
+        \begin{subproof}
+            Fix $C\in\quotient{A}{E}$.
+            Take $a$ such that $a\in C$ by
+                \obv{quotient_elems_inhabited}.
+            $a\in A$ by \obv{quotient_elems_type}.
+            $(a,f(a))\in f$ by
+                \obv{funs_is_function,funs_elim,function_apply_elim}.
+            Hence $(C,f(a))\in g$ by \auto{quotient_descent_iff}.
+            Follows by \auto{dom_iff}.
+        \end{subproof}
+        Follows by \obv{setext}.
+    \end{subproof}
+    Show that $g$ is a function to $B$.
+    \begin{subproof}
+        Show that for every $C\in\dom{g}$ we have $g(C)\in B$.
+        \begin{subproof}
+            Fix $C\in\dom{g}$.
+            $(C,g(C))\in g$ by \obv{function_apply_elim}.
+            Take $a\in C$ such that $(a,g(C))\in f$ by
+                \auto{quotient_descent_iff}.
+            $a\in A$ by \obv{quotient_elems_type}.
+            Follows by \obv{funs,rels_type_ran}.
+        \end{subproof}
+    \end{subproof}
+    Follows by \auto{funs_intro}.
+\end{proof}
+
+\begin{theorem}\label{quotient_descent_surjective_iff}
+    Suppose $E$ is an equivalence on $A$.
+    Suppose $f\in\funs{A}{B}$ and
+        $\quotientCompatible{f}{A}{E}$.
+    Then
+        $\quotientDescent{f}{A}{E}
+                \in\surj{\quotient{A}{E}}{B}$
+        iff $f\in\surj{A}{B}$.
+\end{theorem}
+\begin{proof}
+    Let $g=\quotientDescent{f}{A}{E}$.
+    $g\in\funs{\quotient{A}{E}}{B}$ by
+        \auto{quotient_descent_type}.
+    $f$ is a relation and $\dom{f}=A$ by
+        \obv{funs_is_relation,funs_elim}.
+    Hence $\dom{f}\subseteq A$ by \obv{subseteq_refl}.
+    $\ran{g}=\ran{f}$ by
+        \auto{quotient_descent_range}.
+    $g\in\surj{\quotient{A}{E}}{B}$ iff $\ran{g}=B$ by
+        \obv{funs_surj_iff}.
+    $f\in\surj{A}{B}$ iff $\ran{f}=B$ by
+        \obv{funs_surj_iff}.
+    Follows by \auto.
+\end{proof}
+
+\begin{proposition}\label{quotient_descent_apply}
+    Suppose $E$ is an equivalence on $A$.
+    Suppose $f\in\funs{A}{B}$ and $\quotientCompatible{f}{A}{E}$.
+    Let $a\in A$.
+    Then
+        $\apply{\quotientDescent{f}{A}{E}}{\equivalenceClass{E}{a}}
+            =f(a)$.
+\end{proposition}
+\begin{proof}
+    Let $g=\quotientDescent{f}{A}{E}$.
+    $g$ is a function by \auto{quotient_descent_type,funs_is_function}.
+    $a\in\equivalenceClass{E}{a}$ by
+        \obv{equivclasses_inhabited_equivalenceon}.
+    $(a,f(a))\in f$ by
+        \obv{funs_is_function,funs_elim,function_apply_elim}.
+    $\equivalenceClass{E}{a}\in\quotient{A}{E}$ by \obv{quotient}.
+    Hence $(\equivalenceClass{E}{a},f(a))\in g$ by
+        \auto{quotient_descent_iff}.
+    Follows by \obv{function_apply_intro}.
+\end{proof}
+
+\begin{theorem}\label{quotient_descent_factorization}
+    Suppose $E$ is an equivalence on $A$.
+    Suppose $f\in\funs{A}{B}$ and $\quotientCompatible{f}{A}{E}$.
+    Then
+        $\quotientDescent{f}{A}{E}\circ\quotientProjection{A}{E}=f$.
+\end{theorem}
+\begin{proof}
+    Let $g=\quotientDescent{f}{A}{E}$.
+    Let $q=\quotientProjection{A}{E}$.
+    $q\in\funs{A}{\quotient{A}{E}}$ by
+        \auto{quotient_projection_type}.
+    $g\in\funs{\quotient{A}{E}}{B}$ by
+        \auto{quotient_descent_type}.
+    $q$ is a function and $g$ is a function and $\dom{q}=A$ by
+        \auto{funs_elim}.
+    Hence $g\circ q\in\funs{A}{B}$ by \obv{funs_circ}.
+    $\ran{q}\subseteq\quotient{A}{E}$ by \obv{funs_ran}.
+    $\dom{g}=\quotient{A}{E}$ by \obv{funs_elim}.
+    Hence $\ran{q}\subseteq\dom{g}$.
+    Hence $g$ is composable with $q$.
+    Show that for every $a\in A$ we have $(g\circ q)(a)=f(a)$.
+    \begin{subproof}
+        Fix $a\in A$.
+        $(g\circ q)(a)=g(q(a))$ by \obv{circ_apply}.
+        $q(a)=\equivalenceClass{E}{a}$ by
+            \auto{quotient_projection_apply}.
+        $g(\equivalenceClass{E}{a})=f(a)$ by
+            \auto{quotient_descent_apply}.
+    \end{subproof}
+    $g\circ q$ is a function and $f$ is a function and
+        $\dom{g\circ q}=A=\dom{f}$ by
+        \obv{funs_elim,funs_is_function}.
+    $\dom{g\circ q}\subseteq\dom{f}$ and
+        $\dom{f}\subseteq\dom{g\circ q}$ by
+        \obv{subseteq_refl}.
+    For every $a\in\dom{g\circ q}$ we have
+        $(g\circ q)(a)=f(a)$.
+    Hence $g\circ q\subseteq f$ by \obv{fun_subseteq}.
+    For every $a\in\dom{f}$ we have
+        $f(a)=(g\circ q)(a)$.
+    Hence $f\subseteq g\circ q$ by \obv{fun_subseteq}.
+    Follows by \obv{subseteq_antisymmetric}.
+\end{proof}
+
+\begin{theorem}\label{quotient_descent_unique}
+    Suppose $E$ is an equivalence on $A$.
+    Suppose $f\in\funs{A}{B}$ and $\quotientCompatible{f}{A}{E}$.
+    Suppose $h\in\funs{\quotient{A}{E}}{B}$.
+    Suppose for every $a\in A$ we have
+        $h(\equivalenceClass{E}{a})=f(a)$.
+    Then $h=\quotientDescent{f}{A}{E}$.
+\end{theorem}
+\begin{proof}
+    Let $g=\quotientDescent{f}{A}{E}$.
+    $g\in\funs{\quotient{A}{E}}{B}$ by
+        \auto{quotient_descent_type}.
+    Show that for every $C\in\quotient{A}{E}$ we have $h(C)=g(C)$.
+    \begin{subproof}
+        Fix $C\in\quotient{A}{E}$.
+        Take $a\in A$ such that $C=\equivalenceClass{E}{a}$ by
+            \obv{quotient}.
+        $h(C)=f(a)$ by \auto.
+        $g(C)=f(a)$ by \auto{quotient_descent_apply}.
+    \end{subproof}
+    $h$ is a function and $g$ is a function and
+        $\dom{h}=\quotient{A}{E}=\dom{g}$ by
+        \obv{funs_elim,funs_is_function}.
+    $\dom{h}\subseteq\dom{g}$ and $\dom{g}\subseteq\dom{h}$ by
+        \obv{subseteq_refl}.
+    For every $C\in\dom{h}$ we have $h(C)=g(C)$.
+    Hence $h\subseteq g$ by \obv{fun_subseteq}.
+    For every $C\in\dom{g}$ we have $g(C)=h(C)$.
+    Hence $g\subseteq h$ by \obv{fun_subseteq}.
+    Follows by \obv{subseteq_antisymmetric}.
+\end{proof}
+
+\begin{theorem}\label{quotient_descent_unique_factorization}
+    Suppose $E$ is an equivalence on $A$.
+    Suppose $f\in\funs{A}{B}$ and $\quotientCompatible{f}{A}{E}$.
+    Let $h\in\funs{\quotient{A}{E}}{B}$.
+    Suppose $h\circ\quotientProjection{A}{E}=f$.
+    Then $h=\quotientDescent{f}{A}{E}$.
+\end{theorem}
+\begin{proof}
+    Let $q=\quotientProjection{A}{E}$.
+    $q\in\funs{A}{\quotient{A}{E}}$ by
+        \auto{quotient_projection_type}.
+    $q$ and $h$ are functions by \obv{funs_is_function}.
+    $\dom{q}=A$ by \obv{funs}.
+    $\ran{q}\subseteq\quotient{A}{E}=\dom{h}$ by
+        \obv{funs_ran,funs}.
+    Hence $h$ is composable with $q$.
+    Show that for every $a\in A$ we have
+        $h(\equivalenceClass{E}{a})=f(a)$.
+    \begin{subproof}
+        Fix $a\in A$.
+        Hence $a\in\dom{q}$.
+        Hence $(h\circ q)(a)=h(q(a))$ by \obv{circ_apply}.
+        $q(a)=\equivalenceClass{E}{a}$ by
+            \auto{quotient_projection_apply}.
+        $(h\circ q)(a)=f(a)$.
+    \end{subproof}
+    Follows by \obv{quotient_descent_unique}.
+\end{proof}
+
+\subsection{Binary descent}
+
+The binary construction allows different quotient spaces in its two input
+coordinates.  The homogeneous case is obtained by taking the same carrier
+and equivalence relation twice.
+
+\begin{definition}\label{quotient_binary_compatible}
+    $\quotientBinaryCompatible{f}{A}{E}{C}{F}$ iff
+        for all $a,a'\in A$ we have for all $c,c'\in C$ such that
+            $a\mathrel{E}a'$ and $c\mathrel{F}c'$ we have
+            $f((a,c))=f((a',c'))$.
+\end{definition}
+
+\begin{definition}\label{quotient_binary_descent}
+    $\quotientBinaryDescent{f}{A}{E}{C}{F}=
+        \{(p,y)\mid
+            p\in\quotient{A}{E}\times\quotient{C}{F},y\in\ran{f}\mid
+            \exists a\in\fst{p}.\ \exists c\in\snd{p}.\ ((a,c),y)\in f\}$.
+\end{definition}
+
+\begin{proposition}\label{quotient_binary_descent_iff}
+    $((U,V),y)\in\quotientBinaryDescent{f}{A}{E}{C}{F}$ iff
+        $U\in\quotient{A}{E}$ and $V\in\quotient{C}{F}$ and
+        there exists $a\in U$ such that there exists $c\in V$ such that
+            $((a,c),y)\in f$.
+\end{proposition}
+\begin{proof}
+    Show that if
+        $((U,V),y)\in\quotientBinaryDescent{f}{A}{E}{C}{F}$, then
+        $U\in\quotient{A}{E}$ and $V\in\quotient{C}{F}$ and
+        there exists $a\in U$ such that there exists $c\in V$ such that
+            $((a,c),y)\in f$.
+    \begin{subproof}
+        Assume $((U,V),y)\in
+            \quotientBinaryDescent{f}{A}{E}{C}{F}$.
+        $(U,V)\in\quotient{A}{E}\times\quotient{C}{F}$ by
+            \auto{quotient_binary_descent,pair_eq_iff}.
+        Hence $U\in\quotient{A}{E}$ and $V\in\quotient{C}{F}$ by
+            \obv{times_tuple_elim}.
+        $\fst{(U,V)}=U$ and $\snd{(U,V)}=V$ by
+            \obv{fst_eq,snd_eq}.
+        Take $a\in U$ such that there exists $c\in V$ such that
+            $((a,c),y)\in f$ by
+            \auto{quotient_binary_descent,pair_eq_iff}.
+        Take $c\in V$ such that $((a,c),y)\in f$.
+        Follows by \auto.
+    \end{subproof}
+    Show that if $U\in\quotient{A}{E}$ and $V\in\quotient{C}{F}$ and
+        there exists $a\in U$ such that there exists $c\in V$ such that
+            $((a,c),y)\in f$,
+        then $((U,V),y)\in
+            \quotientBinaryDescent{f}{A}{E}{C}{F}$.
+    \begin{subproof}
+        Assume $U\in\quotient{A}{E}$ and $V\in\quotient{C}{F}$ and
+            there exists $a\in U$ such that there exists $c\in V$ such that
+                $((a,c),y)\in f$.
+        Take $a\in U$ such that there exists $c\in V$ such that
+            $((a,c),y)\in f$.
+        Take $c\in V$ such that $((a,c),y)\in f$.
+        $(U,V)\in\quotient{A}{E}\times\quotient{C}{F}$ by
+            \obv{times_tuple_intro}.
+        $y\in\ran{f}$ by \auto{ran_iff}.
+        $\fst{(U,V)}=U$ and $\snd{(U,V)}=V$ by
+            \obv{fst_eq,snd_eq}.
+        Follows by \auto{quotient_binary_descent}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{quotient_binary_descent_type}
+    Suppose $E$ is an equivalence on $A$ and
+        $F$ is an equivalence on $C$.
+    Suppose $f\in\funs{A\times C}{B}$ and
+        $\quotientBinaryCompatible{f}{A}{E}{C}{F}$.
+    Then $\quotientBinaryDescent{f}{A}{E}{C}{F}\in
+        \funs{
+            \quotient{A}{E}\times\quotient{C}{F}}
+            {B}$.
+\end{theorem}
+\begin{proof}
+    Let $Q=\quotient{A}{E}\times\quotient{C}{F}$.
+    Let $g=\quotientBinaryDescent{f}{A}{E}{C}{F}$.
+    Show that $g$ is a relation.
+    \begin{subproof}
+        Show that for every $w\in g$ there exist $p,y$ such that
+            $w=(p,y)$.
+        \begin{subproof}
+            Fix $w\in g$.
+            Take $p,y$ such that $p\in Q$ and $y\in\ran{f}$ and
+                $w=(p,y)$ by \auto{quotient_binary_descent}.
+            Follows by \auto.
+        \end{subproof}
+        Follows by \obv{relation}.
+    \end{subproof}
+    Show that $g$ is right-unique.
+    \begin{subproof}
+        Show that for all $p,y,z$ such that $(p,y),(p,z)\in g$
+            we have $y=z$.
+        \begin{subproof}
+            Fix $p,y,z$.
+            Assume $(p,y),(p,z)\in g$.
+            $p\in Q$ by \auto{quotient_binary_descent}.
+            Hence $\fst{p}\in\quotient{A}{E}$ and
+                $\snd{p}\in\quotient{C}{F}$ by
+                \obv{times_proj_elim}.
+            Take $a\in\fst{p}$ such that there exists $c\in\snd{p}$
+                such that $((a,c),y)\in f$ by
+                \auto{quotient_binary_descent}.
+            Take $c\in\snd{p}$ such that $((a,c),y)\in f$.
+            Take $a'\in\fst{p}$ such that there exists $c'\in\snd{p}$
+                such that $((a',c'),z)\in f$ by
+                \auto{quotient_binary_descent}.
+            Take $c'\in\snd{p}$ such that $((a',c'),z)\in f$.
+            $a,a'\in A$ and $c,c'\in C$ by
+                \obv{quotient_elems_type}.
+            $a\mathrel{E}a'$ and $c\mathrel{F}c'$ by
+                \obv{quotient_common_class_equivalent}.
+            $f((a,c))=f((a',c'))$ by
+                \obv{quotient_binary_compatible}.
+            $f((a,c))=y$ and $f((a',c'))=z$ by
+                \obv{funs_is_function,function_apply_intro}.
+        \end{subproof}
+        Follows by \obv{rightunique}.
+    \end{subproof}
+    Show that $\dom{g}=Q$.
+    \begin{subproof}
+        For every $p\in\dom{g}$ we have $p\in Q$ by
+            \auto{dom_iff,quotient_binary_descent}.
+        Show that for every $p\in Q$ we have $p\in\dom{g}$.
+        \begin{subproof}
+            Fix $p\in Q$.
+            $\fst{p}\in\quotient{A}{E}$ and
+                $\snd{p}\in\quotient{C}{F}$ by
+                \obv{times_proj_elim}.
+            Take $a$ such that $a\in\fst{p}$ by
+                \obv{quotient_elems_inhabited}.
+            Take $c$ such that $c\in\snd{p}$ by
+                \obv{quotient_elems_inhabited}.
+            $a\in A$ and $c\in C$ by \obv{quotient_elems_type}.
+            Hence $(a,c)\in A\times C$ by \obv{times_tuple_intro}.
+            $((a,c),f((a,c)))\in f$ by
+                \obv{funs_is_function,funs_elim,function_apply_elim}.
+            $f((a,c))\in\ran{f}$ by \auto{ran_iff}.
+            Hence $(p,f((a,c)))\in g$ by
+                \auto{quotient_binary_descent}.
+            Follows by \auto{dom_iff}.
+        \end{subproof}
+        Follows by \obv{setext}.
+    \end{subproof}
+    Show that $g$ is a function to $B$.
+    \begin{subproof}
+        Show that for every $p\in\dom{g}$ we have $g(p)\in B$.
+        \begin{subproof}
+            Fix $p\in\dom{g}$.
+            $(p,g(p))\in g$ by \obv{function_apply_elim}.
+            Take $a\in\fst{p}$ such that there exists $c\in\snd{p}$
+                such that $((a,c),g(p))\in f$ by
+                \auto{quotient_binary_descent}.
+            Take $c\in\snd{p}$ such that $((a,c),g(p))\in f$.
+            $p\in Q$.
+            Hence $\fst{p}\in\quotient{A}{E}$ and
+                $\snd{p}\in\quotient{C}{F}$ by
+                \obv{times_proj_elim}.
+            $a\in A$ and $c\in C$ by \obv{quotient_elems_type}.
+            Hence $(a,c)\in A\times C$ by \obv{times_tuple_intro}.
+            Follows by \obv{funs,rels_type_ran}.
+        \end{subproof}
+    \end{subproof}
+    Follows by \auto{funs_intro}.
+\end{proof}
+
+\begin{proposition}\label{quotient_binary_descent_apply}
+    Suppose $E$ is an equivalence on $A$ and
+        $F$ is an equivalence on $C$.
+    Suppose $f\in\funs{A\times C}{B}$ and
+        $\quotientBinaryCompatible{f}{A}{E}{C}{F}$.
+    Let $a\in A$.
+    Let $c\in C$.
+    Then
+        $\apply{\quotientBinaryDescent{f}{A}{E}{C}{F}}
+            {(\equivalenceClass{E}{a},\equivalenceClass{F}{c})}
+        =f((a,c))$.
+\end{proposition}
+\begin{proof}
+    Let $g=\quotientBinaryDescent{f}{A}{E}{C}{F}$.
+    $g$ is a function by
+        \auto{quotient_binary_descent_type,funs_is_function}.
+    $a\in\equivalenceClass{E}{a}$ and
+        $c\in\equivalenceClass{F}{c}$ by
+        \obv{equivclasses_inhabited_equivalenceon}.
+    $\equivalenceClass{E}{a}\in\quotient{A}{E}$ and
+        $\equivalenceClass{F}{c}\in\quotient{C}{F}$ by
+        \obv{quotient}.
+    $((a,c),f((a,c)))\in f$ by
+        \auto{funs_is_function,funs_elim,function_apply_elim,times_tuple_intro}.
+    Hence
+        $((\equivalenceClass{E}{a},\equivalenceClass{F}{c}),f((a,c)))
+            \in g$ by \auto{quotient_binary_descent_iff}.
+    Follows by \obv{function_apply_intro}.
+\end{proof}
+
+\begin{theorem}\label{quotient_binary_descent_unique}
+    Suppose $E$ is an equivalence on $A$ and
+        $F$ is an equivalence on $C$.
+    Suppose $f\in\funs{A\times C}{B}$ and
+        $\quotientBinaryCompatible{f}{A}{E}{C}{F}$.
+    Suppose $h\in
+        \funs{\quotient{A}{E}\times\quotient{C}{F}}{B}$.
+    Suppose for all $a\in A$ we have for every $c\in C$ we have
+        $h((\equivalenceClass{E}{a},\equivalenceClass{F}{c}))
+            =f((a,c))$.
+    Then $h=\quotientBinaryDescent{f}{A}{E}{C}{F}$.
+\end{theorem}
+\begin{proof}
+    Let $Q=\quotient{A}{E}\times\quotient{C}{F}$.
+    Let $g=\quotientBinaryDescent{f}{A}{E}{C}{F}$.
+    $g\in\funs{Q}{B}$ by \auto{quotient_binary_descent_type}.
+    Show that for every $p\in Q$ we have $h(p)=g(p)$.
+    \begin{subproof}
+        Fix $p\in Q$.
+        Take $U,V$ such that $U\in\quotient{A}{E}$ and
+            $V\in\quotient{C}{F}$ and $p=(U,V)$ by
+            \obv{times_elem_is_tuple}.
+        Take $a\in A$ such that
+            $U=\equivalenceClass{E}{a}$ by \obv{quotient}.
+        Take $c\in C$ such that
+            $V=\equivalenceClass{F}{c}$ by \obv{quotient}.
+        Hence
+            $p=(\equivalenceClass{E}{a},\equivalenceClass{F}{c})$.
+        $h(p)=f((a,c))$ by \auto.
+        $g(p)=f((a,c))$ by \auto{quotient_binary_descent_apply}.
+    \end{subproof}
+    $h$ is a function and $g$ is a function and $\dom{h}=Q=\dom{g}$ by
+        \obv{funs_elim,funs_is_function}.
+    $\dom{h}\subseteq\dom{g}$ and $\dom{g}\subseteq\dom{h}$ by
+        \obv{subseteq_refl}.
+    For every $p\in\dom{h}$ we have $h(p)=g(p)$.
+    Hence $h\subseteq g$ by \obv{fun_subseteq}.
+    For every $p\in\dom{g}$ we have $g(p)=h(p)$.
+    Hence $g\subseteq h$ by \obv{fun_subseteq}.
+    Follows by \obv{subseteq_antisymmetric}.
+\end{proof}
+
+\subsection{Logical-operation corollaries}
+
+These corollaries graphify a logical operation on its set domain and then use
+the relation-first construction above.  They add no representative-selection
+interface.  In the current provider the graphification step carries the TH0
+Replacement authority documented in \obv{logical_graph_on_domain}.
+
+\begin{theorem}\label{logical_graph_quotient_compatible}
+    $\forall A,E:\Set.\ \forall H:\Set\to\Set.
+        (\forall a,b:\Set.
+            (a\in A\land b\in A\land a\mathrel{E}b)\implies
+            \Apply{H}{a}=\Apply{H}{b})
+        \implies
+        \quotientCompatible{
+            \Apply{\graphOnDomainOp}{A,H}}
+            {A}{E}$.
+\end{theorem}
+\begin{proof}
+    Fix $A,E,H$.
+    Assume $\forall a,b:\Set.
+        (a\in A\land b\in A\land a\mathrel{E}b)\implies
+        \Apply{H}{a}=\Apply{H}{b}$.
+    Let $f=\Apply{\graphOnDomainOp}{A,H}$.
+    Show that for all $a,b\in A$ such that $a\mathrel{E}b$ we have
+        $f(a)=f(b)$.
+    \begin{subproof}
+        Fix $a,b\in A$.
+        Assume $a\mathrel{E}b$.
+        $f(a)=\Apply{H}{a}$ and $f(b)=\Apply{H}{b}$ by
+            \auto{logical_graph_on_domain_apply}.
+    \end{subproof}
+    Follows by \auto{quotient_compatible}.
+\end{proof}
+
+\begin{theorem}\label{logical_quotient_descent_type}
+    Let $A,E,B$ be sets.
+    Suppose $E$ is an equivalence on $A$.
+    Then $\forall H:\Set\to\Set.
+        ((\forall a:\Set.\ a\in A\implies\Apply{H}{a}\in B)\land
+        (\forall a,b:\Set.
+            (a\in A\land b\in A\land a\mathrel{E}b)\implies
+            \Apply{H}{a}=\Apply{H}{b}))
+        \implies
+        \quotientDescent{
+            \Apply{\graphOnDomainOp}{A,H}}
+            {A}{E}
+        \in\funs{\quotient{A}{E}}{B}$.
+\end{theorem}
+\begin{proof}
+    Fix $H$.
+    Assume $\forall a:\Set.\ a\in A\implies\Apply{H}{a}\in B$.
+    Assume $\forall a,b:\Set.
+        (a\in A\land b\in A\land a\mathrel{E}b)\implies
+        \Apply{H}{a}=\Apply{H}{b}$.
+    Let $f=\Apply{\graphOnDomainOp}{A,H}$.
+    $f\in\funs{A}{B}$ by \auto{logical_graph_on_domain_type}.
+    $\quotientCompatible{f}{A}{E}$ by
+        \auto{logical_graph_quotient_compatible}.
+    Follows by \obv{quotient_descent_type}.
+\end{proof}
+
+\begin{theorem}\label{logical_quotient_descent_apply}
+    Let $A,E,B$ be sets.
+    Suppose $E$ is an equivalence on $A$.
+    Then $\forall H:\Set\to\Set.\ \forall a:\Set.
+        (a\in A\land
+        (\forall x:\Set.\ x\in A\implies\Apply{H}{x}\in B)\land
+        (\forall x,y:\Set.
+            (x\in A\land y\in A\land x\mathrel{E}y)\implies
+            \Apply{H}{x}=\Apply{H}{y}))
+        \implies
+        \apply{
+            \quotientDescent{
+                \Apply{\graphOnDomainOp}{A,H}}
+                {A}{E}}
+            {\equivalenceClass{E}{a}}
+        =\Apply{H}{a}$.
+\end{theorem}
+\begin{proof}
+    Fix $H,a$.
+    Assume $a\in A$.
+    Assume $\forall x:\Set.\ x\in A\implies\Apply{H}{x}\in B$.
+    Assume $\forall x,y:\Set.
+        (x\in A\land y\in A\land x\mathrel{E}y)\implies
+        \Apply{H}{x}=\Apply{H}{y}$.
+    Let $f=\Apply{\graphOnDomainOp}{A,H}$.
+    $f\in\funs{A}{B}$ by \auto{logical_graph_on_domain_type}.
+    $\quotientCompatible{f}{A}{E}$ by
+        \auto{logical_graph_quotient_compatible}.
+    $\apply{\quotientDescent{f}{A}{E}}{\equivalenceClass{E}{a}}
+        =f(a)$ by \obv{quotient_descent_apply}.
+    $f(a)=\Apply{H}{a}$ by
+        \auto{logical_graph_on_domain_apply}.
+\end{proof}
+
+\begin{theorem}\label{logical_binary_graph_quotient_compatible}
+    $\forall A,E,C,F:\Set.\ \forall H:\Set\to\Set\to\Set.
+        (\forall a,a',c,c':\Set.
+            (a\in A\land a'\in A\land c\in C\land c'\in C\land
+             a\mathrel{E}a'\land c\mathrel{F}c')
+            \implies
+            \Apply{H}{a,c}=\Apply{H}{a',c'})
+        \implies
+        \quotientBinaryCompatible{
+            \Apply{\heteroBinaryGraphOnOp}{A,C,H}}
+            {A}{E}{C}{F}$.
+\end{theorem}
+\begin{proof}
+    Fix $A,E,C,F,H$.
+    Assume $\forall a,a',c,c':\Set.
+        (a\in A\land a'\in A\land c\in C\land c'\in C\land
+         a\mathrel{E}a'\land c\mathrel{F}c')
+        \implies
+        \Apply{H}{a,c}=\Apply{H}{a',c'}$.
+    Let $f=\Apply{\heteroBinaryGraphOnOp}{A,C,H}$.
+    Show that for all $a,a'\in A$ we have for all $c,c'\in C$ such that
+        $a\mathrel{E}a'$ and $c\mathrel{F}c'$ we have
+        $f((a,c))=f((a',c'))$.
+    \begin{subproof}
+        Fix $a,a'\in A$ and $c,c'\in C$.
+        Assume $a\mathrel{E}a'$ and $c\mathrel{F}c'$.
+        $f((a,c))=\Apply{H}{a,c}$ and
+            $f((a',c'))=\Apply{H}{a',c'}$ by
+            \auto{logical_heterogeneous_binary_graph_on_apply}.
+    \end{subproof}
+    Follows by \auto{quotient_binary_compatible}.
+\end{proof}
+
+\begin{theorem}\label{logical_binary_quotient_descent_type}
+    Let $A,E,C,F,B$ be sets.
+    Suppose $E$ is an equivalence on $A$ and
+        $F$ is an equivalence on $C$.
+    Then $\forall H:\Set\to\Set\to\Set.
+        ((\forall a,c:\Set.
+            (a\in A\land c\in C)\implies
+            \Apply{H}{a,c}\in B)\land
+        (\forall a,a',c,c':\Set.
+            (a\in A\land a'\in A\land c\in C\land c'\in C\land
+             a\mathrel{E}a'\land c\mathrel{F}c')
+            \implies
+            \Apply{H}{a,c}=\Apply{H}{a',c'}))
+        \implies
+        \quotientBinaryDescent{
+            \Apply{\heteroBinaryGraphOnOp}{A,C,H}}
+            {A}{E}{C}{F}
+        \in\funs{
+            \quotient{A}{E}\times\quotient{C}{F}}
+            {B}$.
+\end{theorem}
+\begin{proof}
+    Fix $H$.
+    Assume $\forall a,c:\Set.
+        (a\in A\land c\in C)\implies\Apply{H}{a,c}\in B$.
+    Assume $\forall a,a',c,c':\Set.
+        (a\in A\land a'\in A\land c\in C\land c'\in C\land
+         a\mathrel{E}a'\land c\mathrel{F}c')
+        \implies
+        \Apply{H}{a,c}=\Apply{H}{a',c'}$.
+    Let $f=\Apply{\heteroBinaryGraphOnOp}{A,C,H}$.
+    $f\in\funs{A\times C}{B}$ by
+        \auto{logical_heterogeneous_binary_graph_on_type}.
+    $\quotientBinaryCompatible{f}{A}{E}{C}{F}$ by
+        \auto{logical_binary_graph_quotient_compatible}.
+    Follows by \obv{quotient_binary_descent_type}.
+\end{proof}
+
+\begin{theorem}\label{logical_binary_quotient_descent_apply}
+    Let $A,E,C,F,B$ be sets.
+    Suppose $E$ is an equivalence on $A$ and
+        $F$ is an equivalence on $C$.
+    Then $\forall H:\Set\to\Set\to\Set.\ \forall a,c:\Set.
+        (a\in A\land c\in C\land
+        (\forall x,z:\Set.
+            (x\in A\land z\in C)\implies
+            \Apply{H}{x,z}\in B)\land
+        (\forall x,x',z,z':\Set.
+            (x\in A\land x'\in A\land z\in C\land z'\in C\land
+             x\mathrel{E}x'\land z\mathrel{F}z')
+            \implies
+            \Apply{H}{x,z}=\Apply{H}{x',z'}))
+        \implies
+        \apply{
+            \quotientBinaryDescent{
+                \Apply{\heteroBinaryGraphOnOp}{A,C,H}}
+                {A}{E}{C}{F}}
+            {(\equivalenceClass{E}{a},\equivalenceClass{F}{c})}
+        =\Apply{H}{a,c}$.
+\end{theorem}
+\begin{proof}
+    Fix $H,a,c$.
+    Assume $a\in A$ and $c\in C$.
+    Assume $\forall x,z:\Set.
+        (x\in A\land z\in C)\implies\Apply{H}{x,z}\in B$.
+    Assume $\forall x,x',z,z':\Set.
+        (x\in A\land x'\in A\land z\in C\land z'\in C\land
+         x\mathrel{E}x'\land z\mathrel{F}z')
+        \implies
+        \Apply{H}{x,z}=\Apply{H}{x',z'}$.
+    Let $f=\Apply{\heteroBinaryGraphOnOp}{A,C,H}$.
+    $f\in\funs{A\times C}{B}$ by
+        \auto{logical_heterogeneous_binary_graph_on_type}.
+    $\quotientBinaryCompatible{f}{A}{E}{C}{F}$ by
+        \auto{logical_binary_graph_quotient_compatible}.
+    $\apply{\quotientBinaryDescent{f}{A}{E}{C}{F}}
+        {(\equivalenceClass{E}{a},\equivalenceClass{F}{c})}
+        =f((a,c))$ by \obv{quotient_binary_descent_apply}.
+    $f((a,c))=\Apply{H}{a,c}$ by
+        \auto{logical_heterogeneous_binary_graph_on_apply}.
+\end{proof}

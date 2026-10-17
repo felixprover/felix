@@ -1,0 +1,427 @@
+\import{algebra/group/centralizer.tex}
+\import{algebra/group/generated.tex}
+\import{algebra/group/isomorphism.tex}
+\import{algebra/group/normalizer.tex}
+
+\section{Centralizer calculus}
+
+The elementary centralizer laws are developed in
+\obv{group_centralizer}.  Here we relate centralizers to generated
+subgroups, induced subgroup structures, and structure-preserving maps.
+
+\begin{theorem}\label{group_centralizer_generated_subgroup_trace}
+    Let $G$ be a group.
+    Then
+        $\groupCentralizer{G}{
+            \generatedSubgroup{A\inter\carrier[G]}{G}}=
+         \groupCentralizer{G}{A}$.
+\end{theorem}
+\begin{proof}
+    Let $A'=A\inter\carrier[G]$ and
+        $P=\generatedSubgroup{A'}{G}$.
+    $A\inter\carrier[G]\subseteq\carrier[G]$ by
+        \obv{subseteq,inter_elim_right}.
+    Hence $A'\subseteq\carrier[G]$.
+    Hence $\subgroup{P}{G}$ and $A'\subseteq P$ by
+        \auto{generated_subgroup_is_subgroup,
+            generated_subgroup_contains_generators}.
+    Hence $\groupCentralizer{G}{P}\subseteq
+        \groupCentralizer{G}{A'}$ by
+        \obv{group_centralizer_antitone}.
+    $\groupCentralizer{G}{A'}=\groupCentralizer{G}{A}$ by
+        \auto{group_centralizer_trace}.
+    Hence $\groupCentralizer{G}{P}\subseteq
+        \groupCentralizer{G}{A}$.
+    Show that $\groupCentralizer{G}{A}\subseteq
+        \groupCentralizer{G}{P}$.
+    \begin{subproof}
+        Show that for every $x\in\groupCentralizer{G}{A}$ we have
+            $x\in\groupCentralizer{G}{P}$.
+        \begin{subproof}
+            Fix $x\in\groupCentralizer{G}{A}$.
+            Hence $x\in\carrier[G]$ by \obv{group_centralizer}.
+            $\subgroup{\groupCentralizer{G}{\{x\}}}{G}$ by
+                \obv{group_centralizer_subgroup}.
+            Show that $A'\subseteq\groupCentralizer{G}{\{x\}}$.
+            \begin{subproof}
+                Show that for every $a\in A'$ we have
+                    $a\in\groupCentralizer{G}{\{x\}}$.
+                \begin{subproof}
+                    Fix $a\in A'$.
+                    Hence $a\in A\inter\carrier[G]$.
+                    Hence $a\in\carrier[G]$ and
+                        $\commutesIn{G}{x}{a}$ by
+                        \obv{inter_elim_right,group_centralizer_iff}.
+                    Hence $\commutesIn{G}{a}{x}$ by
+                        \obv{commutes_in_symmetric}.
+                    Show that for every $y\in\{x\}\inter\carrier[G]$
+                        we have $\commutesIn{G}{a}{y}$.
+                    \begin{subproof}
+                        Fix $y\in\{x\}\inter\carrier[G]$.
+                        Hence $y=x$ by
+                            \obv{inter_elim_left,singleton_iff}.
+                    \end{subproof}
+                    Follows by \obv{group_centralizer}.
+                \end{subproof}
+                Follows by \obv{subseteq}.
+            \end{subproof}
+            Hence
+                $\generatedSubgroup{A\inter\carrier[G]}{G}
+                    \subseteq\groupCentralizer{G}{\{x\}}$ by
+                \obv{generated_subgroup_least}.
+            Hence for every
+                $u\in\generatedSubgroup{A\inter\carrier[G]}{G}$
+                we have $u\in\groupCentralizer{G}{\{x\}}$ by
+                \obv{subseteq}.
+            Show that for every $p\in P\inter\carrier[G]$ we have
+                $\commutesIn{G}{x}{p}$.
+            \begin{subproof}
+                Fix $p\in P\inter\carrier[G]$.
+                Hence $p\in P$ by \obv{inter_elim_left}.
+                Hence
+                    $p\in\generatedSubgroup{A\inter\carrier[G]}{G}$.
+                Hence $p\in\groupCentralizer{G}{\{x\}}$.
+                $x\in\{x\}\inter\carrier[G]$ by
+                    \obv{singleton_intro,inter_intro}.
+                Hence $\commutesIn{G}{p}{x}$ by
+                    \auto{group_centralizer_iff}.
+                $p\in\carrier[G]$ by \obv{inter_elim_right}.
+                Follows by \obv{commutes_in_symmetric}.
+            \end{subproof}
+            Follows by \obv{group_centralizer}.
+        \end{subproof}
+        Follows by \obv{subseteq}.
+    \end{subproof}
+    $\groupCentralizer{G}{P}=\groupCentralizer{G}{A}$ by
+        \obv{subseteq_antisymmetric}.
+\end{proof}
+
+\begin{theorem}\label{group_centralizer_generated_subgroup}
+    Let $G$ be a group.
+    Let $A\subseteq\carrier[G]$.
+    Then
+        $\groupCentralizer{G}{\generatedSubgroup{A}{G}}=
+         \groupCentralizer{G}{A}$.
+\end{theorem}
+\begin{proof}
+    $A\inter\carrier[G]=A$ by
+        \obv{inter_absorb_supseteq_right}.
+    Follows by
+        \auto{group_centralizer_generated_subgroup_trace}.
+\end{proof}
+
+\subsection{Induced subgroup structures}
+
+\begin{theorem}\label{subgroup_structure_centralizer}
+    Suppose $\subgroup{H}{G}$.
+    Then
+        $\groupCentralizer{\subgroupStructure{G}{H}}{A}=
+            H\inter\groupCentralizer{G}{A\inter H}$.
+\end{theorem}
+\begin{proof}
+    Let $S=\subgroupStructure{G}{H}$.
+    $H\subseteq\carrier[G]$ by \obv{subgroup_subseteq}.
+    $\carrier[S]=H$ by \auto{subgroup_structure_carrier}.
+    Hence $A\inter H\subseteq\carrier[G]$ by
+        \obv{subseteq,inter_elim_right}.
+    Hence $(A\inter H)\inter\carrier[G]=A\inter H$ by
+        \obv{inter_absorb_supseteq_right}.
+    Show that for every $x$ we have
+        $x\in\groupCentralizer{S}{A}$ iff
+        $x\in H\inter\groupCentralizer{G}{A\inter H}$.
+    \begin{subproof}
+        Fix $x$.
+        Show that if $x\in\groupCentralizer{S}{A}$, then
+            $x\in H\inter\groupCentralizer{G}{A\inter H}$.
+        \begin{subproof}
+            Assume $x\in\groupCentralizer{S}{A}$.
+            Hence $x\in\carrier[S]$ by
+                \obv{group_centralizer}.
+            Hence $x\in H$.
+            Hence $x\in\carrier[G]$ by
+                \obv{subseteq}.
+            Show that for every
+                $a\in(A\inter H)\inter\carrier[G]$ we have
+                $\commutesIn{G}{x}{a}$.
+            \begin{subproof}
+                Fix $a\in(A\inter H)\inter\carrier[G]$.
+                Hence $a\in A\inter H$ by \obv{inter_elim_left}.
+                Hence $a\in A$ and $a\in H$ by
+                    \obv{inter_elim_left,inter_elim_right}.
+                Hence $a\in A\inter\carrier[S]$.
+                Hence $\commutesIn{S}{x}{a}$ by
+                    \obv{group_centralizer}.
+                Hence
+                    $\commutesIn{\subgroupStructure{G}{H}}{x}{a}$.
+                Follows by
+                    \obv{subgroup_structure_commutes_iff}.
+            \end{subproof}
+            Hence $x\in\groupCentralizer{G}{A\inter H}$ by
+                \obv{group_centralizer}.
+            Follows by \obv{inter_intro}.
+        \end{subproof}
+        Show that if
+            $x\in H\inter\groupCentralizer{G}{A\inter H}$, then
+            $x\in\groupCentralizer{S}{A}$.
+        \begin{subproof}
+            Assume
+                $x\in H\inter\groupCentralizer{G}{A\inter H}$.
+            Hence $x\in H$ and
+                $x\in\groupCentralizer{G}{A\inter H}$ by
+                \obv{inter_elim_left,inter_elim_right}.
+            Hence $x\in\carrier[S]$.
+            Show that for every $a\in A\inter\carrier[S]$ we have
+                $\commutesIn{S}{x}{a}$.
+            \begin{subproof}
+                Fix $a\in A\inter\carrier[S]$.
+                Hence $a\in A$ and $a\in\carrier[S]$ by
+                    \obv{inter_elim_left,inter_elim_right}.
+                Hence $a\in H$.
+                Hence $a\in\carrier[G]$ by \obv{subseteq}.
+                Hence $a\in(A\inter H)\inter\carrier[G]$ by
+                    \obv{inter_intro}.
+                Hence $\commutesIn{G}{x}{a}$ by
+                    \obv{group_centralizer}.
+                Hence
+                    $\commutesIn{\subgroupStructure{G}{H}}{x}{a}$ by
+                    \obv{subgroup_structure_commutes_iff}.
+            \end{subproof}
+            Follows by \obv{group_centralizer}.
+        \end{subproof}
+        Follows by \auto.
+    \end{subproof}
+    Follows by \auto{setext}.
+\end{proof}
+
+\begin{corollary}\label{subgroup_structure_centralizer_of_subset}
+    Suppose $\subgroup{H}{G}$ and $A\subseteq H$.
+    Then
+        $\groupCentralizer{\subgroupStructure{G}{H}}{A}=
+            H\inter\groupCentralizer{G}{A}$.
+\end{corollary}
+\begin{proof}
+    $A\inter H=A$ by \obv{inter_absorb_supseteq_right}.
+    Follows by \auto{subgroup_structure_centralizer}.
+\end{proof}
+
+\subsection{Transport}
+
+\begin{theorem}\label{group_hom_image_centralizer_subseteq}
+    Suppose $\groupHom{f}{G}{H}$.
+    Then
+        $\img{f}{\groupCentralizer{G}{A}}
+            \subseteq
+        \groupCentralizer{H}{\img{f}{A}}$.
+\end{theorem}
+\begin{proof}
+    $f$ is a function and $\dom{f}=\carrier[G]$ by
+        \obv{group_hom_type,funs_elim}.
+    Show that for every
+        $y\in\img{f}{\groupCentralizer{G}{A}}$ we have
+        $y\in\groupCentralizer{H}{\img{f}{A}}$.
+    \begin{subproof}
+        Fix $y\in\img{f}{\groupCentralizer{G}{A}}$.
+        Take
+            $x\in\dom{f}\inter\groupCentralizer{G}{A}$ such that
+            $y=f(x)$ by \obv{img_of_function_elim}.
+        $x\in\groupCentralizer{G}{A}$ by \obv{inter_elim_right}.
+        Hence $x\in\carrier[G]$ by \obv{group_centralizer}.
+        Hence $f(x)\in\carrier[H]$ by \obv{group_hom_apply_type}.
+        Hence $y\in\carrier[H]$.
+        Show that for every $b\in\img{f}{A}\inter\carrier[H]$ we have
+            $\commutesIn{H}{y}{b}$.
+        \begin{subproof}
+            Fix $b\in\img{f}{A}\inter\carrier[H]$.
+            Hence $b\in\img{f}{A}$ by \obv{inter_elim_left}.
+            Take $a\in\dom{f}\inter A$ such that $b=f(a)$ by
+                \obv{img_of_function_elim}.
+            Hence $a\in\carrier[G]$ and $a\in A$ by
+                \obv{inter_elim_left,inter_elim_right}.
+            Hence $a\in A\inter\carrier[G]$ by \obv{inter_intro}.
+            Hence $\commutesIn{G}{x}{a}$ by
+                \obv{group_centralizer}.
+            Hence $\commutesIn{H}{f(x)}{f(a)}$ by
+                \obv{group_hom_preserves_commutes}.
+        \end{subproof}
+        Follows by \obv{group_centralizer}.
+    \end{subproof}
+    Follows by \obv{subseteq}.
+\end{proof}
+
+\begin{theorem}\label{group_isomorphism_centralizer_image}
+    Suppose $\groupIsomorphism{f}{G}{H}$.
+    Then
+        $\img{f}{\groupCentralizer{G}{A}}=
+        \groupCentralizer{H}{\img{f}{A}}$.
+\end{theorem}
+\begin{proof}
+    $\groupHom{f}{G}{H}$ and $\groupEmbedding{f}{G}{H}$ and
+        $\groupSurjection{f}{G}{H}$ by
+        \obv{group_isomorphism_is_hom,
+            group_isomorphism_is_embedding,
+            group_isomorphism_is_surjection}.
+    $f\in\surj{\carrier[G]}{\carrier[H]}$ by
+        \obv{group_surjection}.
+    Hence $f$ is a function and $\dom{f}=\carrier[G]$ by
+        \auto{surj_to_fun,funs_elim}.
+    $\img{f}{\groupCentralizer{G}{A}}\subseteq
+        \groupCentralizer{H}{\img{f}{A}}$ by
+        \obv{group_hom_image_centralizer_subseteq}.
+    Show that $\groupCentralizer{H}{\img{f}{A}}\subseteq
+        \img{f}{\groupCentralizer{G}{A}}$.
+    \begin{subproof}
+        Show that for every
+            $y\in\groupCentralizer{H}{\img{f}{A}}$ we have
+            $y\in\img{f}{\groupCentralizer{G}{A}}$.
+        \begin{subproof}
+            Fix $y\in\groupCentralizer{H}{\img{f}{A}}$.
+            Hence $y\in\carrier[H]$ by \obv{group_centralizer}.
+            Take $x\in\carrier[G]$ such that $f(x)=y$ by \obv{surj}.
+            Show that $x\in\groupCentralizer{G}{A}$.
+            \begin{subproof}
+                Show that for every $a\in A\inter\carrier[G]$ we have
+                    $\commutesIn{G}{x}{a}$.
+                \begin{subproof}
+                    Fix $a\in A\inter\carrier[G]$.
+                    Hence $a\in\carrier[G]$ and $a\in A$ by
+                        \obv{inter_elim_right,inter_elim_left}.
+                    Hence $a\in\dom{f}$.
+                    $a\in\dom{f}\inter A$ by \obv{inter_intro}.
+                    Hence $f(a)\in\img{f}{A}$ by
+                        \obv{img_of_function_intro}.
+                    $f(a)\in\carrier[H]$ by
+                        \obv{group_hom_apply_type}.
+                    Hence $f(a)\in\img{f}{A}\inter\carrier[H]$ by
+                        \obv{inter_intro}.
+                    Hence $\commutesIn{H}{y}{f(a)}$ by
+                        \obv{group_centralizer}.
+                    Hence $\commutesIn{H}{f(x)}{f(a)}$.
+                    Follows by \obv{group_embedding_commutes_iff}.
+                \end{subproof}
+                Follows by \obv{group_centralizer}.
+            \end{subproof}
+            $x\in\dom{f}$.
+            $x\in\dom{f}\inter\groupCentralizer{G}{A}$ by
+                \obv{inter_intro}.
+            Hence $f(x)\in\img{f}{\groupCentralizer{G}{A}}$ by
+                \obv{img_of_function_intro}.
+        \end{subproof}
+        Follows by \obv{subseteq}.
+    \end{subproof}
+    Follows by \obv{subseteq_antisymmetric}.
+\end{proof}
+
+\begin{corollary}\label{group_isomorphism_trivial_centralizer_image}
+    Suppose $\groupIsomorphism{f}{G}{H}$ and
+        $\groupCentralizer{G}{A}=\trivialSubgroupCarrier{G}$.
+    Then
+        $\groupCentralizer{H}{\img{f}{A}}=
+            \trivialSubgroupCarrier{H}$.
+\end{corollary}
+\begin{proof}
+    $\groupHom{f}{G}{H}$ by \obv{group_isomorphism_is_hom}.
+    $\img{f}{\groupCentralizer{G}{A}}=
+        \groupCentralizer{H}{\img{f}{A}}$ by
+        \obv{group_isomorphism_centralizer_image}.
+    $\img{f}{\trivialSubgroupCarrier{G}}=
+        \trivialSubgroupCarrier{H}$ by
+        \obv{group_hom_image_trivial_subgroup}.
+\end{proof}
+
+\subsection{Conjugation and normality}
+
+\begin{theorem}\label{group_centralizer_conjugate}
+    Let $G$ be a group.
+    Let $g\in\carrier[G]$.
+    Then
+        $\conjugateSubset{G}{g}{\groupCentralizer{G}{A}}=
+        \groupCentralizer{G}{\conjugateSubset{G}{g}{A}}$.
+\end{theorem}
+\begin{proof}
+    Let $f=\ConjugationMap{G}{g}$ and
+        $C=\groupCentralizer{G}{A}$.
+    $\groupIsomorphism{\ConjugationMap{G}{g}}{G}{G}$ by
+        \obv{conjugation_map_group_isomorphism}.
+    Hence $\groupIsomorphism{f}{G}{G}$.
+    Hence $f$ is a function and $\dom{f}=\carrier[G]$ by
+        \auto{group_isomorphism_is_hom,group_hom_type,funs_elim}.
+    $\groupCentralizer{G}{A}\subseteq\carrier[G]$ by
+        \obv{group_centralizer_subseteq}.
+    Hence $C\subseteq\carrier[G]$.
+    Hence $C\inter\carrier[G]=C$ by
+        \obv{inter_absorb_supseteq_right}.
+    Hence $\conjugateSubset{G}{g}{C}=\img{f}{C}$ by
+        \obv{conjugate_subset}.
+    Show that $\img{f}{A}=\conjugateSubset{G}{g}{A}$.
+    \begin{subproof}
+        Show that for every $y$ we have
+            $y\in\img{f}{A}$ iff
+            $y\in\conjugateSubset{G}{g}{A}$.
+        \begin{subproof}
+            Fix $y$.
+            Follows by
+                \auto{conjugate_subset,img_of_function,
+                    inter_comm,inter_assoc,inter_idempotent}.
+        \end{subproof}
+        Follows by \obv{setext}.
+    \end{subproof}
+    $\img{f}{C}=\groupCentralizer{G}{\img{f}{A}}$ by
+        \auto{group_isomorphism_centralizer_image}.
+\end{proof}
+
+\begin{theorem}\label{group_normalizer_subseteq_centralizer_normalizer}
+    Let $G$ be a group.
+    Let $A\subseteq\carrier[G]$.
+    Then
+        $\groupNormalizer{G}{A}\subseteq
+        \groupNormalizer{G}{\groupCentralizer{G}{A}}$.
+\end{theorem}
+\begin{proof}
+    Let $C=\groupCentralizer{G}{A}$.
+    $\groupCentralizer{G}{A}\subseteq\carrier[G]$ by
+        \obv{group_centralizer_subseteq}.
+    Hence $C\subseteq\carrier[G]$.
+    Show that for every $g\in\groupNormalizer{G}{A}$ we have
+        $g\in\groupNormalizer{G}{C}$.
+    \begin{subproof}
+        Fix $g\in\groupNormalizer{G}{A}$.
+        Hence $g\in\carrier[G]$ and
+            $\conjugateSubset{G}{g}{A}=A$ by
+            \obv{group_normalizer_iff}.
+        $\conjugateSubset{G}{g}{C}=
+            \groupCentralizer{G}{\conjugateSubset{G}{g}{A}}$ by
+            \auto{group_centralizer_conjugate}.
+        Hence $\conjugateSubset{G}{g}{C}=C$.
+        Follows by \obv{group_normalizer_iff}.
+    \end{subproof}
+    $\groupNormalizer{G}{A}\subseteq\groupNormalizer{G}{C}$ by
+        \obv{subseteq}.
+\end{proof}
+
+\begin{corollary}\label{normal_subgroup_centralizer_normal}
+    Let $G$ be a group.
+    Suppose $\normalSubgroup{A}{G}$.
+    Then $\normalSubgroup{\groupCentralizer{G}{A}}{G}$.
+\end{corollary}
+\begin{proof}
+    $A\subseteq\carrier[G]$ by \obv{normal_subgroup_subseteq}.
+    $\subgroup{A}{G}$ by \obv{normal_subgroup_is_subgroup}.
+    $\groupNormalizer{G}{A}=\carrier[G]$ by
+        \obv{normal_subgroup_iff_normalizer_full}.
+    Let $C=\groupCentralizer{G}{A}$.
+    $\subgroup{\groupCentralizer{G}{A}}{G}$ by
+        \obv{group_centralizer_subgroup}.
+    Hence $\subgroup{C}{G}$.
+    $\groupNormalizer{G}{A}\subseteq
+        \groupNormalizer{G}{\groupCentralizer{G}{A}}$ by
+        \obv{group_normalizer_subseteq_centralizer_normalizer}.
+    Hence $\groupNormalizer{G}{A}\subseteq
+        \groupNormalizer{G}{C}$.
+    Hence $\carrier[G]\subseteq\groupNormalizer{G}{C}$.
+    $\groupNormalizer{G}{C}\subseteq\carrier[G]$ by
+        \obv{group_normalizer_subseteq}.
+    Hence $\groupNormalizer{G}{C}=\carrier[G]$ by
+        \obv{subseteq_antisymmetric}.
+    Hence $\normalSubgroup{C}{G}$ by
+        \obv{normal_subgroup_iff_normalizer_full}.
+\end{proof}

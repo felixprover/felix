@@ -1,0 +1,143 @@
+\section{Countable compactness}
+
+\import{topology/compactness.tex}
+\import{topology/countability-axioms.tex}
+\import{topology/discrete.tex}
+\import{cardinal/countability.tex}
+\import{set/choice.tex}
+\import{set/finite.tex}
+
+\begin{definition}\label{is_countably_compact}
+    Let $X$ be a topological space.
+    $X$ is countably compact iff for every $C$ such that
+        $C$ is an open cover of $X$ and $C$ is countable
+        there exists a finite set $D$ such that
+            $D\subseteq C$ and $D$ covers $\carrier[X]$.
+\end{definition}
+
+\begin{theorem}\label{compact_implies_countably_compact}
+    Let $X$ be a topological space.
+    Suppose $X$ is compact.
+    Then $X$ is countably compact.
+\end{theorem}
+\begin{proof}
+    Show that for every $C$ such that
+        $C$ is an open cover of $X$ and $C$ is countable
+        there exists a finite set $D$ such that
+            $D\subseteq C$ and $D$ covers $\carrier[X]$.
+    \begin{subproof}
+        Fix $C$.
+        Assume $C$ is an open cover of $X$ and $C$ is countable.
+        Follows by \obv{is_compact}.
+    \end{subproof}
+    Follows by \obv{is_countably_compact}.
+\end{proof}
+
+\begin{theorem}\label{countably_infinite_closed_discrete_obstructs_countable_compactness}
+    Let $X$ be a topological space.
+    Suppose $D$ is countably infinite.
+    Suppose $D$ is closed in $X$.
+    Suppose $D$ is discrete in $X$.
+    Then $X$ is not countably compact.
+\end{theorem}
+\begin{proof}
+    $D\subseteq\carrier[X]$ by \obv{closed_in_subseteq_carrier}.
+    Show that for every $x\in D$ there exists $U\in\opens[X]$ such that
+        $U\inter D=\{x\}$.
+    \begin{subproof}
+        Follows by \auto{discrete_in_iff_ambient_open_singletons}.
+    \end{subproof}
+    Let $R=\{p\in D\times\opens[X]\mid
+        \text{$\snd{p}\inter D=\{\fst{p}\}$}\}$.
+    $R$ is a relation by \auto{relation,times_elem_is_tuple}.
+    Show that for every $x\in D$ there exists $U$ such that
+        $x\mathrel{R}U$.
+    \begin{subproof}
+        Fix $x\in D$.
+        Take $U\in\opens[X]$ such that $U\inter D=\{x\}$.
+        $(x,U)\in D\times\opens[X]$ by \obv{times_tuple_intro}.
+        $\fst{(x,U)}=x$ and $\snd{(x,U)}=U$ by \obv{fst_eq,snd_eq}.
+        Hence $(x,U)\in R$.
+    \end{subproof}
+    Take $u$ such that $u$ is a function on $D$ and
+        for every $x\in D$ we have $x\mathrel{R}u(x)$
+        by \obv{axiom_of_choice}.
+    $u$ is a function and $D=\dom{u}$.
+    Hence $\dom{u}=D$.
+    Show that for every $x\in D$ we have $u(x)\in\opens[X]$ and
+        $u(x)\inter D=\{x\}$.
+    \begin{subproof}
+        Fix $x\in D$.
+        $(x,u(x))\in R$.
+        Hence $(x,u(x))\in D\times\opens[X]$ and
+            $\snd{(x,u(x))}\inter D=\{\fst{(x,u(x))}\}$.
+        $\fst{(x,u(x))}=x$ and $\snd{(x,u(x))}=u(x)$
+            by \obv{fst_eq,snd_eq}.
+        Follows by \obv{times_tuple_elim}.
+    \end{subproof}
+    Hence $u$ is a function to $\opens[X]$ by \auto.
+    Hence $u\in\funs{D}{\opens[X]}$ by \obv{funs_intro}.
+    Let $C=\cons{\carrier[X]\setminus D}{\ran{u}}$.
+    $\carrier[X]\setminus D$ is open in $X$
+        by \obv{complement_of_closed_is_open}.
+    Hence $\carrier[X]\setminus D\in\opens[X]$ by \obv{is_open}.
+    $\ran{u}\subseteq\opens[X]$ by \obv{funs_ran}.
+    Hence $C\subseteq\opens[X]$ by \auto{cons_subseteq_intro}.
+    $D$ is countable by \obv{countably_infinite}.
+    $D\subseteq\dom{u}$ by \obv{subseteq_refl}.
+    Hence $\img{u}{D}$ is countable by \obv{countable_function_image}.
+    $\img{u}{D}=\ran{u}$ by \auto{img_dom}.
+    Hence $\ran{u}$ is countable.
+    Hence $C$ is countable by \obv{countable_cons}.
+    Show that $C$ covers $\carrier[X]$.
+    \begin{subproof}
+        Show that for every $x\in\carrier[X]$ there exists $U\in C$
+            such that $x\in U$.
+        \begin{subproof}
+            Fix $x\in\carrier[X]$.
+            \begin{byCase}
+                \caseOf{$x\in D$.}
+                    $u(x)\in\ran{u}$ by \auto{fun_ran_iff}.
+                    Hence $u(x)\in C$ by \auto{cons_iff}.
+                    $u(x)\inter D=\{x\}$.
+                    Hence $x\in u(x)\inter D$ by \obv{singleton_intro}.
+                    Hence $x\in u(x)$ by \obv{inter}.
+                \caseOf{$x\notin D$.}
+                    Hence $x\in\carrier[X]\setminus D$ by \obv{setminus}.
+                    $\carrier[X]\setminus D\in C$ by \obv{cons_left}.
+            \end{byCase}
+        \end{subproof}
+    \end{subproof}
+    Hence $C$ is an open cover of $X$ by \obv{open_cover}.
+    Suppose $X$ is countably compact.
+    Take $E$ such that $E$ is finite and $E\subseteq C$ and
+        $E$ covers $\carrier[X]$ by \auto{is_countably_compact}.
+    Show that for every $U\in E$ we have $U\inter D$ is finite.
+    \begin{subproof}
+        Fix $U\in E$.
+        Hence $U\in C$ by \obv{subseteq}.
+        $U=\carrier[X]\setminus D$ or $U\in\ran{u}$
+            by \obv{cons_iff}.
+        \begin{byCase}
+            \caseOf{$U=\carrier[X]\setminus D$.}
+                $U\inter D=\emptyset$ by
+                    \auto{setext,setminus,inter,emptyset}.
+                Follows by \obv{emptyset_is_finite}.
+            \caseOf{$U\in\ran{u}$.}
+                Take $x\in\dom{u}$ such that $u(x)=U$
+                    by \obv{fun_ran_iff}.
+                Hence $x\in D$.
+                $u(x)\inter D=\{x\}$ by \auto.
+                Hence $U\inter D=\{x\}$.
+                Follows by \auto{singleton_is_finite}.
+        \end{byCase}
+    \end{subproof}
+    Hence $\unions{E}\inter D$ is finite
+        by \obv{finite_union_has_finite_trace}.
+    $\carrier[X]\subseteq\unions{E}$ by \obv{covers_unions_intro}.
+    Hence $D\subseteq\unions{E}$ by \obv{subseteq_transitive}.
+    Hence $\unions{E}\inter D=D$ by \obv{inter_absorb_supseteq_left}.
+    Hence $D$ is finite.
+    $D$ is infinite by \obv{countably_infinite}.
+    Contradiction.
+\end{proof}

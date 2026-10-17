@@ -1,0 +1,472 @@
+\import{algebra/magma/subset.tex}
+\import{algebra/monoid/power.tex}
+
+\section{The powerset monoid}
+
+\begin{definition}\label{powerset_monoid}
+    $\PowersetMonoid{M}=\structure[unital magma]{
+        \carrier=\carrier[\PowersetMagma{M}],
+        \mul=\mul[\PowersetMagma{M}],
+        \neutral=\{\neutral[M]\}
+    }$.
+\end{definition}
+
+\begin{proposition}\label{powerset_monoid_fields}
+    $\carrier[\PowersetMonoid{M}]
+        =\carrier[\PowersetMagma{M}]$ and
+    $\mul[\PowersetMonoid{M}]=\mul[\PowersetMagma{M}]$ and
+    $\neutral[\PowersetMonoid{M}]=\{\neutral[M]\}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{powerset_monoid,
+            unitalmagmaaggregateprojection_carrier,
+            unitalmagmaaggregateprojection_mul,
+            unitalmagmaaggregateprojection_neutral}.
+\end{proof}
+
+\begin{proposition}\label{powerset_monoid_carrier}
+    $\carrier[\PowersetMonoid{M}]=\pow{\carrier[M]}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{powerset_monoid_fields,powerset_magma_carrier}.
+\end{proof}
+
+\begin{proposition}\label{powerset_monoid_multiplication}
+    $\mul[\PowersetMonoid{M}]=\mul[\PowersetMagma{M}]$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{powerset_monoid_fields}.
+\end{proof}
+
+\begin{proposition}\label{powerset_monoid_neutral}
+    $\neutral[\PowersetMonoid{M}]=\{\neutral[M]\}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{powerset_monoid_fields}.
+\end{proof}
+
+\begin{proposition}\label{powerset_monoid_mul_apply}
+    Suppose $A,B\subseteq\carrier[M]$.
+    Then $\mul[\PowersetMonoid{M}](A,B)
+        =\pointwiseProduct{M}{A}{B}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{powerset_monoid_multiplication,
+            powerset_magma_mul_apply}.
+\end{proof}
+
+\begin{theorem}\label{powerset_monoid_is_exact}
+    Let $M$ be a monoid.
+    Then $\PowersetMonoid{M}$ is an exact monoid.
+\end{theorem}
+\begin{proof}
+    Let $P=\PowersetMonoid{M}$ and $Q=\PowersetMagma{M}$.
+    $M$ is a magma by \obv{monoid_is_magma}.
+    Hence $Q$ is an exact magma by \auto{powerset_magma_is_exact}.
+    Hence $Q$ is a semigroup by \obv{powerset_magma_is_semigroup}.
+    $M$ is a unital magma by \obv{monoid_is_unital_magma}.
+
+    $\carrier[P]=\carrier[Q]$ and $\mul[P]=\mul[Q]$ and
+        $\neutral[P]=\{\neutral[M]\}$ by
+        \auto{powerset_monoid_fields}.
+    Hence $\carrier[P]=\pow{\carrier[M]}$ by
+        \auto{powerset_magma_carrier}.
+    $\mul[P]\in\funs{\carrier[P]\times\carrier[P]}{\carrier[P]}$ by
+        \obv{magma_mul_graph}.
+    Hence $P$ is a magma by
+        \auto{powerset_monoid,unitalmagmaaggregateexact,magma}.
+
+    $\neutral[M]\in\carrier[M]$ by \obv{unitalmagma_type}.
+    Hence $\{\neutral[M]\}\subseteq\carrier[M]$ by
+        \auto{singleton_iff,subseteq}.
+    Hence $\neutral[P]\in\carrier[P]$ by
+        \auto{powerset_intro}.
+
+    Show that for every $A\in\carrier[P]$ we have
+        $\mul[P](A,\neutral[P])=A$.
+    \begin{subproof}
+        Fix $A\in\carrier[P]$.
+        Hence $A\subseteq\carrier[M]$ by
+            \obv{powerset_elim}.
+        $\mul[P](A,\neutral[P])
+            =\pointwiseProduct{M}{A}{\{\neutral[M]\}}$ by
+            \auto{powerset_monoid_mul_apply}.
+        Follows by \obv{pointwise_product_neutral_singleton_right}.
+    \end{subproof}
+
+    Show that for every $A\in\carrier[P]$ we have
+        $\mul[P](\neutral[P],A)=A$.
+    \begin{subproof}
+        Fix $A\in\carrier[P]$.
+        Hence $A\subseteq\carrier[M]$ by
+            \obv{powerset_elim}.
+        $\mul[P](\neutral[P],A)
+            =\pointwiseProduct{M}{\{\neutral[M]\}}{A}$ by
+            \auto{powerset_monoid_mul_apply}.
+        Follows by \obv{pointwise_product_neutral_singleton_left}.
+    \end{subproof}
+    Hence $P$ is a unital magma by
+        \auto{powerset_monoid,unitalmagmaaggregateexact,
+            magma,unitalmagma}.
+
+    Show that for all $A,B,C\in\carrier[P]$ we have
+        $\mul[P](A,\mul[P](B,C))
+            =\mul[P](\mul[P](A,B),C)$.
+    \begin{subproof}
+        Fix $A,B,C\in\carrier[P]$.
+        Hence $A,B,C\in\carrier[Q]$.
+        Follows by \auto{semigroup_assoc}.
+    \end{subproof}
+    Hence $P$ is a monoid by
+        \obv{powerset_monoid,unitalmagmaaggregateexact,
+            magma,unitalmagma,monoid}.
+    Follows by
+        \auto{powerset_monoid,unitalmagmaaggregateexact}.
+\end{proof}
+
+\begin{theorem}\label{powerset_monoid_magma_reduct}
+    Let $M$ be a monoid.
+    Then $\reduct[magma]{\PowersetMonoid{M}}=\PowersetMagma{M}$.
+\end{theorem}
+\begin{proof}
+    $\PowersetMonoid{M}$ is an exact monoid by
+        \obv{powerset_monoid_is_exact}.
+    Hence $\reduct[magma]{\PowersetMonoid{M}}$ is an exact magma by
+        \obv{magma_reduct_is_exact_magma}.
+    Hence $\PowersetMagma{M}$ is an exact magma by
+        \obv{powerset_magma_is_exact}.
+    $\carrier[\reduct[magma]{\PowersetMonoid{M}}]
+        =\carrier[\PowersetMonoid{M}]$ and
+        $\mul[\reduct[magma]{\PowersetMonoid{M}}]
+            =\mul[\PowersetMonoid{M}]$ by
+        \obv{magmareductprojection_carrier,magmareductprojection_mul}.
+    $\carrier[\PowersetMonoid{M}]=\carrier[\PowersetMagma{M}]$ and
+        $\mul[\PowersetMonoid{M}]=\mul[\PowersetMagma{M}]$ by
+        \obv{powerset_monoid_fields}.
+    Hence
+        $\carrier[\reduct[magma]{\PowersetMonoid{M}}]
+            =\carrier[\PowersetMagma{M}]$ and
+        $\mul[\reduct[magma]{\PowersetMonoid{M}}]
+            =\mul[\PowersetMagma{M}]$.
+    Follows by structure extensionality.
+\end{proof}
+
+\section{Raw powers of subsets}
+
+\begin{definition}\label{pointwise_subset_power}
+    $\pointwiseSubsetPower{M}{A}{n}
+        =\monoidPower{\PowersetMonoid{M}}{A}{n}$.
+\end{definition}
+
+\begin{proposition}\label{pointwise_subset_power_type}
+    Let $M$ be a monoid.
+    Suppose $A\subseteq\carrier[M]$.
+    Let $n$ be a natural number.
+    Then $\pointwiseSubsetPower{M}{A}{n}\subseteq\carrier[M]$.
+\end{proposition}
+\begin{proof}
+    Let $P=\PowersetMonoid{M}$.
+    $P$ is a monoid by \obv{powerset_monoid_is_exact}.
+    $\carrier[P]=\pow{\carrier[M]}$ by
+        \auto{powerset_monoid_carrier}.
+    Hence $A\in\carrier[P]$ by \obv{powerset_intro}.
+    $\monoidPower{P}{A}{n}\in\carrier[P]$ by
+        \obv{monoid_power_type}.
+    Follows by
+        \auto{pointwise_subset_power,powerset_elim}.
+\end{proof}
+
+\begin{proposition}\label{pointwise_subset_power_zero}
+    Let $M$ be a monoid.
+    Suppose $A\subseteq\carrier[M]$.
+    Then $\pointwiseSubsetPower{M}{A}{\emptyset}
+        =\{\neutral[M]\}$.
+\end{proposition}
+\begin{proof}
+    $\pointwiseSubsetPower{M}{A}{\emptyset}
+        =\neutral[\PowersetMonoid{M}]$ by
+        \obv{pointwise_subset_power,monoid_power_zero}.
+    $\neutral[\PowersetMonoid{M}]=\{\neutral[M]\}$ by
+        \obv{powerset_monoid_neutral}.
+\end{proof}
+
+\begin{proposition}\label{pointwise_subset_power_successor}
+    Let $M$ be a monoid.
+    Suppose $A\subseteq\carrier[M]$.
+    Let $n$ be a natural number.
+    Then $\pointwiseSubsetPower{M}{A}{\suc{n}}
+        =\pointwiseProduct{M}{\pointwiseSubsetPower{M}{A}{n}}{A}$.
+\end{proposition}
+\begin{proof}
+    Let $P=\PowersetMonoid{M}$.
+    $P$ is a monoid by \obv{powerset_monoid_is_exact}.
+    $\carrier[P]=\pow{\carrier[M]}$ by
+        \auto{powerset_monoid_carrier}.
+    Hence $A\in\carrier[P]$ by \obv{powerset_intro}.
+    $\monoidPower{P}{A}{n}\in\carrier[P]$ by
+        \obv{monoid_power_type}.
+    Hence $\monoidPower{P}{A}{n}\in\pow{\carrier[M]}$.
+    Hence $\monoidPower{P}{A}{n}\subseteq\carrier[M]$ by
+        \obv{powerset_elim}.
+    $\monoidPower{P}{A}{\suc{n}}
+        =\mul[P](\monoidPower{P}{A}{n},A)$ by
+        \obv{monoid_power_successor}.
+    Follows by
+        \auto{pointwise_subset_power,powerset_monoid_mul_apply}.
+\end{proof}
+
+\begin{theorem}\label{pointwise_subset_power_addition}
+    Let $M$ be a monoid.
+    Suppose $A\subseteq\carrier[M]$.
+    Let $m,n$ be natural numbers.
+    Then $\pointwiseSubsetPower{M}{A}{m+n}
+        =\pointwiseProduct{M}{\pointwiseSubsetPower{M}{A}{m}}
+            {\pointwiseSubsetPower{M}{A}{n}}$.
+\end{theorem}
+\begin{proof}
+    Let $P=\PowersetMonoid{M}$.
+    $P$ is a monoid by \obv{powerset_monoid_is_exact}.
+    $\carrier[P]=\pow{\carrier[M]}$ by
+        \auto{powerset_monoid_carrier}.
+    Hence $A\in\carrier[P]$ by \obv{powerset_intro}.
+    $\monoidPower{P}{A}{m},\monoidPower{P}{A}{n}\in\carrier[P]$ by
+        \obv{monoid_power_type}.
+    Hence $\monoidPower{P}{A}{m},\monoidPower{P}{A}{n}
+        \in\pow{\carrier[M]}$.
+    Hence $\monoidPower{P}{A}{m},\monoidPower{P}{A}{n}
+        \subseteq\carrier[M]$ by \obv{powerset_elim}.
+    $\monoidPower{P}{A}{m+n}
+        =\mul[P](\monoidPower{P}{A}{m},\monoidPower{P}{A}{n})$ by
+        \obv{monoid_power_addition}.
+    Follows by
+        \auto{pointwise_subset_power,powerset_monoid_mul_apply}.
+\end{proof}
+
+\begin{theorem}\label{pointwise_subset_power_monotone}
+    Let $M$ be a monoid.
+    Suppose $A,B\subseteq\carrier[M]$ and $A\subseteq B$.
+    Let $n$ be a natural number.
+    Then $\pointwiseSubsetPower{M}{A}{n}
+        \subseteq\pointwiseSubsetPower{M}{B}{n}$.
+\end{theorem}
+\begin{proof}
+    Let $C=\{k\in\naturals\mid
+        \pointwiseSubsetPower{M}{A}{k}
+            \subseteq\pointwiseSubsetPower{M}{B}{k}\}$.
+    $\pointwiseSubsetPower{M}{A}{\emptyset}
+        =\{\neutral[M]\}
+        =\pointwiseSubsetPower{M}{B}{\emptyset}$ by
+        \obv{pointwise_subset_power_zero}.
+    Hence $\emptyset\in C$ by \obv{omega_empty,subseteq_refl}.
+
+    Show that for every $k\in C$ we have $\suc{k}\in C$.
+    \begin{subproof}
+        Fix $k\in C$.
+        Hence $k$ is a natural number and
+            $\pointwiseSubsetPower{M}{A}{k}
+                \subseteq\pointwiseSubsetPower{M}{B}{k}$.
+        $\pointwiseSubsetPower{M}{A}{\suc{k}}
+            =\pointwiseProduct{M}{\pointwiseSubsetPower{M}{A}{k}}{A}$
+            and
+        $\pointwiseSubsetPower{M}{B}{\suc{k}}
+            =\pointwiseProduct{M}{\pointwiseSubsetPower{M}{B}{k}}{B}$ by
+            \obv{pointwise_subset_power_successor}.
+        $\pointwiseProduct{M}{\pointwiseSubsetPower{M}{A}{k}}{A}
+            \subseteq
+            \pointwiseProduct{M}{\pointwiseSubsetPower{M}{B}{k}}{B}$ by
+            \obv{pointwise_product_monotone}.
+        Hence $\pointwiseSubsetPower{M}{A}{\suc{k}}
+            \subseteq\pointwiseSubsetPower{M}{B}{\suc{k}}$.
+        $\suc{k}$ is a natural number by \obv{omega_successor}.
+    \end{subproof}
+    Hence $C$ is an inductive set by \obv{inductive_set}.
+    Hence every natural number is an element of $C$ by
+        \obv{omega_minimal}.
+    Hence $n\in C$.
+\end{proof}
+
+\begin{theorem}\label{pointwise_subset_power_singleton}
+    Let $M$ be a monoid and $x\in\carrier[M]$.
+    Let $n$ be a natural number.
+    Then $\pointwiseSubsetPower{M}{\{x\}}{n}
+        =\{\monoidPower{M}{x}{n}\}$.
+\end{theorem}
+\begin{proof}
+    $\{x\}\subseteq\carrier[M]$ by
+        \auto{singleton_iff,subseteq}.
+    Let $C=\{k\in\naturals\mid
+        \pointwiseSubsetPower{M}{\{x\}}{k}
+            =\{\monoidPower{M}{x}{k}\}\}$.
+    $\pointwiseSubsetPower{M}{\{x\}}{\emptyset}
+        =\{\neutral[M]\}$ by
+        \obv{pointwise_subset_power_zero}.
+    $\monoidPower{M}{x}{\emptyset}=\neutral[M]$ by
+        \obv{monoid_power_zero}.
+    Hence $\emptyset\in C$ by \obv{omega_empty}.
+
+    Show that for every $k\in C$ we have $\suc{k}\in C$.
+    \begin{subproof}
+        Fix $k\in C$.
+        Hence $k$ is a natural number and
+            $\pointwiseSubsetPower{M}{\{x\}}{k}
+                =\{\monoidPower{M}{x}{k}\}$.
+        $\pointwiseSubsetPower{M}{\{x\}}{\suc{k}}
+            =\pointwiseProduct{M}{
+                \pointwiseSubsetPower{M}{\{x\}}{k}}{\{x\}}$ by
+            \obv{pointwise_subset_power_successor}.
+        Hence $\pointwiseSubsetPower{M}{\{x\}}{\suc{k}}
+            =\pointwiseProduct{M}{\{\monoidPower{M}{x}{k}\}}{\{x\}}$.
+        $\pointwiseProduct{M}{\{\monoidPower{M}{x}{k}\}}{\{x\}}
+            =\{\mul[M](\monoidPower{M}{x}{k},x)\}$ by
+            \obv{pointwise_product_singletons}.
+        $\monoidPower{M}{x}{\suc{k}}
+            =\mul[M](\monoidPower{M}{x}{k},x)$ by
+            \obv{monoid_power_successor}.
+        Hence $\pointwiseSubsetPower{M}{\{x\}}{\suc{k}}
+            =\{\monoidPower{M}{x}{\suc{k}}\}$.
+        $\suc{k}$ is a natural number by \obv{omega_successor}.
+    \end{subproof}
+    Hence $C$ is an inductive set by \obv{inductive_set}.
+    Hence every natural number is an element of $C$ by
+        \obv{omega_minimal}.
+    Hence $n\in C$.
+\end{proof}
+
+\subsection{The union of all subset powers}
+
+\begin{definition}\label{pointwise_subset_powers}
+    $\pointwiseSubsetPowers{M}{A}
+        =\unions{\{\pointwiseSubsetPower{M}{A}{n}\mid
+            n\in\naturals\}}$.
+\end{definition}
+
+\begin{proposition}\label{pointwise_subset_powers_iff}
+    $x\in\pointwiseSubsetPowers{M}{A}$ iff there exists a natural number
+        $n$ such that $x\in\pointwiseSubsetPower{M}{A}{n}$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{pointwise_subset_powers,unions_iff}.
+\end{proof}
+
+\begin{proposition}\label{pointwise_subset_powers_type}
+    Let $M$ be a monoid.
+    Suppose $A\subseteq\carrier[M]$.
+    Then $\pointwiseSubsetPowers{M}{A}\subseteq\carrier[M]$.
+\end{proposition}
+\begin{proof}
+    Show that every element of $\pointwiseSubsetPowers{M}{A}$ is an element
+        of $\carrier[M]$.
+    \begin{subproof}
+        Fix $x\in\pointwiseSubsetPowers{M}{A}$.
+        Take a natural number $n$ such that
+            $x\in\pointwiseSubsetPower{M}{A}{n}$ by
+            \obv{pointwise_subset_powers_iff}.
+        $\pointwiseSubsetPower{M}{A}{n}\subseteq\carrier[M]$ by
+            \obv{pointwise_subset_power_type}.
+        Follows by \obv{subseteq}.
+    \end{subproof}
+    Follows by \obv{subseteq}.
+\end{proof}
+
+\begin{proposition}\label{pointwise_subset_power_subseteq_powers}
+    Let $n$ be a natural number.
+    Then $\pointwiseSubsetPower{M}{A}{n}
+        \subseteq\pointwiseSubsetPowers{M}{A}$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{pointwise_subset_powers_iff,subseteq}.
+\end{proof}
+
+\begin{proposition}\label{subseteq_pointwise_subset_powers}
+    Let $M$ be a monoid.
+    Suppose $A\subseteq\carrier[M]$.
+    Then $A\subseteq\pointwiseSubsetPowers{M}{A}$.
+\end{proposition}
+\begin{proof}
+    $\suc{\emptyset}$ is a natural number by
+        \obv{omega_empty,omega_successor}.
+    $\emptyset$ is a natural number by \obv{omega_empty}.
+    $\pointwiseSubsetPower{M}{A}{\suc{\emptyset}}
+        =\pointwiseProduct{M}{
+            \pointwiseSubsetPower{M}{A}{\emptyset}}{A}$ by
+        \obv{pointwise_subset_power_successor}.
+    $\pointwiseSubsetPower{M}{A}{\emptyset}=\{\neutral[M]\}$ by
+        \obv{pointwise_subset_power_zero}.
+    $\pointwiseProduct{M}{\{\neutral[M]\}}{A}=A$ by
+        \obv{pointwise_product_neutral_singleton_left}.
+    Hence $\pointwiseSubsetPower{M}{A}{\suc{\emptyset}}=A$.
+    $\pointwiseSubsetPower{M}{A}{\suc{\emptyset}}
+        \subseteq\pointwiseSubsetPowers{M}{A}$ by
+        \obv{pointwise_subset_power_subseteq_powers}.
+\end{proof}
+
+\begin{theorem}\label{pointwise_subset_powers_monotone}
+    Let $M$ be a monoid.
+    Suppose $A,B\subseteq\carrier[M]$ and $A\subseteq B$.
+    Then $\pointwiseSubsetPowers{M}{A}
+        \subseteq\pointwiseSubsetPowers{M}{B}$.
+\end{theorem}
+\begin{proof}
+    Show that every element of $\pointwiseSubsetPowers{M}{A}$ is an element
+        of $\pointwiseSubsetPowers{M}{B}$.
+    \begin{subproof}
+        Fix $x\in\pointwiseSubsetPowers{M}{A}$.
+        Take a natural number $n$ such that
+            $x\in\pointwiseSubsetPower{M}{A}{n}$ by
+            \obv{pointwise_subset_powers_iff}.
+        $\pointwiseSubsetPower{M}{A}{n}
+            \subseteq\pointwiseSubsetPower{M}{B}{n}$ by
+            \obv{pointwise_subset_power_monotone}.
+        Hence $x\in\pointwiseSubsetPower{M}{B}{n}$ by \obv{subseteq}.
+        Follows by \auto{pointwise_subset_powers_iff}.
+    \end{subproof}
+    Follows by \obv{subseteq}.
+\end{proof}
+
+\begin{theorem}\label{pointwise_subset_powers_singleton_product}
+    Let $M$ be a monoid and $x,y\in\carrier[M]$.
+    Suppose $\mul[M](x,y)=\mul[M](y,x)$.
+    Then
+        $\pointwiseSubsetPowers{M}{\{\mul[M](x,y)\}}
+            \subseteq\pointwiseProduct{M}{
+                \pointwiseSubsetPowers{M}{\{x\}}}{
+                \pointwiseSubsetPowers{M}{\{y\}}}$.
+\end{theorem}
+\begin{proof}
+    Hence $\mul[M](x,y)\in\carrier[M]$ by \obv{magma_welldef}.
+    Show that every element of
+        $\pointwiseSubsetPowers{M}{\{\mul[M](x,y)\}}$ is an element of
+        $\pointwiseProduct{M}{
+            \pointwiseSubsetPowers{M}{\{x\}}}{
+            \pointwiseSubsetPowers{M}{\{y\}}}$.
+    \begin{subproof}
+        Fix $z\in\pointwiseSubsetPowers{M}{\{\mul[M](x,y)\}}$.
+        Take a natural number $n$ such that
+            $z\in\pointwiseSubsetPower{M}{\{\mul[M](x,y)\}}{n}$ by
+            \obv{pointwise_subset_powers_iff}.
+        $\pointwiseSubsetPower{M}{\{\mul[M](x,y)\}}{n}
+            =\{\monoidPower{M}{\mul[M](x,y)}{n}\}$ by
+            \obv{pointwise_subset_power_singleton}.
+        Hence $z=\monoidPower{M}{\mul[M](x,y)}{n}$ by
+            \auto{singleton_iff}.
+        $\monoidPower{M}{\mul[M](x,y)}{n}
+            =\mul[M](\monoidPower{M}{x}{n},
+                \monoidPower{M}{y}{n})$ by
+            \obv{monoid_power_of_commuting_product}.
+        $\pointwiseSubsetPower{M}{\{x\}}{n}
+            =\{\monoidPower{M}{x}{n}\}$ and
+            $\pointwiseSubsetPower{M}{\{y\}}{n}
+            =\{\monoidPower{M}{y}{n}\}$ by
+            \obv{pointwise_subset_power_singleton}.
+        Hence $\monoidPower{M}{x}{n}\in
+                \pointwiseSubsetPowers{M}{\{x\}}$ and
+            $\monoidPower{M}{y}{n}\in
+                \pointwiseSubsetPowers{M}{\{y\}}$ by
+            \auto{singleton_iff,pointwise_subset_powers_iff}.
+        Follows by \auto{pointwise_product_iff}.
+    \end{subproof}
+    Follows by \obv{subseteq}.
+\end{proof}

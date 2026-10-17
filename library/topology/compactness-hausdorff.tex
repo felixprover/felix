@@ -1,0 +1,212 @@
+\section{Compact subsets of Hausdorff spaces}
+
+\import{topology/compactness-filter.tex}
+\import{topology/local-compactness.tex}
+\import{topology/subspace-neighbourhood-filter.tex}
+\import{topology/separation.tex}
+
+The usual closedness theorem follows from the uniqueness of proper-filter
+limits.  A closure point supplies a proper neighbourhood-within filter; an
+ultrafilter extension has one limit at that point and, after restriction to
+the compact subspace, another limit in the subset.
+
+\begin{theorem}\label{compact_subset_of_hausdorff_is_closed}
+    Let $X$ be a Hausdorff space.
+    Suppose $K$ is compact in $X$.
+    Then $K$ is closed in $X$.
+\end{theorem}
+\begin{proof}
+    $X$ is a topological space by \obv{hausdorff_is_topological}.
+    $K\subseteq\carrier[X]$ and
+        $\subspaceTopology{X}{K}$ is compact by \obv{compact_in}.
+    Let $S=\subspaceTopology{X}{K}$.
+    Hence $S$ is a topological space.
+    $\carrier[\subspaceTopology{X}{K}]=K$ by
+        \obv{subspace_topology_carrier_of_subset}.
+    Hence $\carrier[S]=K$.
+    Thus $S$ is compact.
+
+    Show that $\closure{K}{X}\subseteq K$.
+    \begin{subproof}
+        It suffices to show that every element of $\closure{K}{X}$ is an
+            element of $K$ by \obv{subseteq}.
+        Fix $x\in\closure{K}{X}$.
+        $\closure{K}{X}\subseteq\carrier[X]$ by
+            \auto{closure_interior_frontier_is_in_carrier}.
+        Hence $x\in\carrier[X]$ by \obv{subseteq}.
+
+        Let $W=\neighbourhoodsWithin{x}{K}{X}$.
+        $x\in\closure{K}{X}$ iff
+            $\neighbourhoodsWithin{x}{K}{X}$ is a proper filter on
+            $\carrier[X]$ by
+            \obv{closure_iff_neighbourhoods_within_proper}.
+        Hence $\neighbourhoodsWithin{x}{K}{X}$ is a proper filter on
+            $\carrier[X]$.
+        Thus $W$ is a proper filter on $\carrier[X]$.
+        Hence $W$ is a filter on $\carrier[X]$ by
+            \obv{proper_filter_is_filter}.
+        Take $U$ such that $W\subseteq U$ and
+            $U$ is an ultrafilter on $\carrier[X]$ by
+            \obv{filter_extension_to_ultrafilter}.
+        Hence $U$ is a proper filter on $\carrier[X]$ by
+            \auto{ultrafilter,maximalfilter}.
+        Thus $U$ is a filter on $\carrier[X]$ by
+            \obv{proper_filter_is_filter}.
+
+        $\neighbourhoodsWithin{x}{K}{X}$ refines
+            $\neighbourhoods{x}{X}$ on $\carrier[X]$ by
+            \obv{neighbourhoods_within_refines_neighbourhoods}.
+        Hence $\neighbourhoods{x}{X}\subseteq
+            \neighbourhoodsWithin{x}{K}{X}$ by
+            \obv{filter_refines}.
+        Thus $\neighbourhoods{x}{X}\subseteq W$.
+        Hence $\neighbourhoods{x}{X}\subseteq U$ by
+            \obv{subseteq_transitive}.
+        Thus $\filterConverges{U}{x}{X}$ by
+            \obv{filter_converges}.
+
+        $\neighbourhoods{x}{X}$ is a filter on $\carrier[X]$ by
+            \obv{neighbourhoods_is_filter}.
+        Show that $K\in\neighbourhoodsWithin{x}{K}{X}$.
+        \begin{subproof}
+            $\carrier[X]\in\neighbourhoods{x}{X}$ by
+                \obv{filter}.
+            $\carrier[X]\inter(K\inter\carrier[X])=K$ by
+                \auto{inter_absorb_supseteq_left,
+                    inter_absorb_supseteq_right}.
+            $K\in\neighbourhoodsWithin{x}{K}{X}$ iff
+                $K\subseteq\carrier[X]$ and there exists
+                $N\in\neighbourhoods{x}{X}$ such that
+                $N\inter(K\inter\carrier[X])\subseteq K$ by
+                \obv{neighbourhoods_within_iff}.
+            Follows by \obv{subseteq_refl}.
+        \end{subproof}
+        Hence $K\in W$.
+        Thus $K\in U$ by \obv{subseteq}.
+
+        $\filterTrace{\carrier[X]}{U}{K}$ is an ultrafilter on $K$ by
+            \obv{filter_trace_of_ultrafilter_to_member}.
+        Hence $\filterTrace{\carrier[X]}{U}{K}$ is an ultrafilter on
+            $\carrier[\subspaceTopology{X}{K}]$.
+        Take $y\in\carrier[\subspaceTopology{X}{K}]$ such that
+            $\filterConverges{\filterTrace{\carrier[X]}{U}{K}}{y}{
+                \subspaceTopology{X}{K}}$ by
+            \auto{compact_iff_every_ultrafilter_converges}.
+        Hence $y\in K$.
+        Thus $y\in\carrier[X]$ by \obv{subseteq}.
+        $\neighbourhoods{y}{\subspaceTopology{X}{K}}
+            \subseteq\filterTrace{\carrier[X]}{U}{K}$ by
+            \obv{filter_converges}.
+
+        $\subsetInclusion{\carrier[X]}{K}\in
+            \funs{K}{\carrier[X]}$ by
+            \obv{subset_inclusion_type}.
+        $\subspaceInclusion{X}{K}
+            =\subsetInclusion{\carrier[X]}{K\inter\carrier[X]}$ by
+            \obv{subspace_inclusion_is_subset_inclusion}.
+        $K\inter\carrier[X]=K$ by
+            \obv{inter_absorb_supseteq_right}.
+        Hence $\subspaceInclusion{X}{K}
+            =\subsetInclusion{\carrier[X]}{K}$.
+        $\neighbourhoods{y}{X}$ is a filter on $\carrier[X]$ by
+            \obv{neighbourhoods_is_filter}.
+        Show that for every $N\in\neighbourhoods{y}{X}$ we have
+            $\preimg{\subsetInclusion{\carrier[X]}{K}}{N}
+                \in\neighbourhoods{y}{\subspaceTopology{X}{K}}$.
+        \begin{subproof}
+            Fix $N\in\neighbourhoods{y}{X}$.
+            $y\in K\inter\carrier[X]$ by \obv{inter_intro}.
+            $\neighbourhoods{y}{\subspaceTopology{X}{K}}
+                =\filterPullback{K\inter\carrier[X]}{\carrier[X]}{
+                    \subspaceInclusion{X}{K}}{
+                    \neighbourhoods{y}{X}}$ by
+                \obv{subspace_neighbourhood_filter_is_pullback}.
+            $\preimg{\subspaceInclusion{X}{K}}{N}\in
+                \filterPreimageFamily{K\inter\carrier[X]}{
+                    \carrier[X]}{\subspaceInclusion{X}{K}}{
+                    \neighbourhoods{y}{X}}$ by
+                \obv{filter_preimage_family_iff}.
+            $\filterPreimageFamily{K\inter\carrier[X]}{\carrier[X]}{
+                    \subspaceInclusion{X}{K}}{
+                    \neighbourhoods{y}{X}}
+                \subseteq
+                \filterPullback{K\inter\carrier[X]}{\carrier[X]}{
+                    \subspaceInclusion{X}{K}}{
+                    \neighbourhoods{y}{X}}$ by
+                \obv{subspace_inclusion_type,
+                    preimage_family_contained_in_pullback}.
+            Hence $\preimg{\subspaceInclusion{X}{K}}{N}\in
+                \filterPullback{K\inter\carrier[X]}{\carrier[X]}{
+                    \subspaceInclusion{X}{K}}{
+                    \neighbourhoods{y}{X}}$ by \obv{subseteq}.
+            Thus $\preimg{\subspaceInclusion{X}{K}}{N}\in
+                \neighbourhoods{y}{\subspaceTopology{X}{K}}$.
+        \end{subproof}
+
+        Show that $\neighbourhoods{y}{X}\subseteq U$.
+        \begin{subproof}
+            It suffices to show that every element of
+                $\neighbourhoods{y}{X}$ is an element of $U$ by
+                \obv{subseteq}.
+            Fix $N\in\neighbourhoods{y}{X}$.
+            Hence $\preimg{\subsetInclusion{\carrier[X]}{K}}{N}
+                \in\neighbourhoods{y}{\subspaceTopology{X}{K}}$.
+            Thus $\preimg{\subsetInclusion{\carrier[X]}{K}}{N}
+                \in\filterTrace{\carrier[X]}{U}{K}$.
+            $\preimg{\subsetInclusion{\carrier[X]}{K}}{N}
+                \in\filterTrace{\carrier[X]}{U}{K}$ iff
+                $\preimg{\subsetInclusion{\carrier[X]}{K}}{N}
+                    \subseteq K$ and there exists $B\in U$ such that
+                    $K\inter B\subseteq
+                        \preimg{\subsetInclusion{\carrier[X]}{K}}{N}$ by
+                \obv{filter_trace_iff}.
+            Hence $\preimg{\subsetInclusion{\carrier[X]}{K}}{N}
+                \subseteq K$ and there exists $B\in U$ such that
+                $K\inter B\subseteq
+                    \preimg{\subsetInclusion{\carrier[X]}{K}}{N}$.
+            Take $D\in U$ such that
+                $K\inter D\subseteq
+                    \preimg{\subsetInclusion{\carrier[X]}{K}}{N}$.
+            $K\inter D\in U$ by \obv{filter}.
+            $\preimg{\subsetInclusion{\carrier[X]}{K}}{N}=K\inter N$ by
+                \obv{subset_inclusion_preimage}.
+            Hence $K\inter D\subseteq K\inter N$.
+            Thus $K\inter D\subseteq N$ by
+                \auto{inter_lower_right,subseteq_transitive}.
+            $N\subseteq\carrier[X]$ by
+                \auto{neighbourhoods,pow_iff,subseteq}.
+            Follows by \obv{filter}.
+        \end{subproof}
+        Hence $\filterConverges{U}{y}{X}$ by
+            \obv{filter_converges}.
+        Show that $x=y$.
+        \begin{subproof}
+            Suppose not.
+            Take $A,B\in\opens[X]$ such that $x\in A$ and $y\in B$ and
+                $A$ is disjoint from $B$ by \obv{is_hausdorff}.
+            Hence $A\in\neighbourhoods{x}{X}$ by
+                \obv{open_set_containing_point_is_neighbourhood}.
+            $B\in\neighbourhoods{y}{X}$ by
+                \obv{open_set_containing_point_is_neighbourhood}.
+            $\neighbourhoods{x}{X}\subseteq U$.
+            $\neighbourhoods{y}{X}\subseteq U$.
+            Hence $A\in U$ by \obv{subseteq}.
+            $B\in U$ by \obv{subseteq}.
+            Thus $A\inter B\in U$ by \obv{filter}.
+            $\emptyset\notin U$ by
+                \obv{proper_filter_excludes_emptyset}.
+            Hence $A\inter B\neq\emptyset$.
+            Thus $A\inter B$ is inhabited by
+                \obv{nonempty_inhabited}.
+            Take $z$ such that $z\in A\inter B$.
+            Hence $z\in A,B$ by \obv{inter}.
+            Contradiction by \auto{disjoint}.
+        \end{subproof}
+        Hence $x\in K$.
+    \end{subproof}
+
+    $K\subseteq\closure{K}{X}$ by
+        \obv{set_is_subseteq_to_closure_of_the_set}.
+    Hence $K=\closure{K}{X}$ by \obv{subseteq_antisymmetric}.
+    $\closure{K}{X}$ is closed in $X$ by \obv{closure_is_closed}.
+\end{proof}

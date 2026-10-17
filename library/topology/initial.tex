@@ -1,0 +1,519 @@
+\section{Initial topologies}
+
+\import{topology/generated-continuity.tex}
+
+An indexed initial topology is built from two exact graphs on an index set:
+one records the target spaces and the other records the maps into them.  This
+keeps the construction set-coded while allowing the index set to be arbitrary.
+
+\begin{definition}\label{initial_topology_data}
+    $f$ is an initial mapping family from $S$ to $Y$ indexed by $I$ iff
+        $Y$ is a function on $I$ and
+        $f$ is a function on $I$ and
+        for every $i\in I$ we have $Y(i)$ is a topological space and
+            $f(i)\in\funs{S}{\carrier[Y(i)]}$.
+\end{definition}
+
+\begin{definition}\label{initial_prebasis}
+    $\initialPrebasis{S}{I}{Y}{f}
+        =\{V\in\pow{S}\mid
+            \text{there exists $i\in I$ such that there exists
+                $U\in\opens[Y(i)]$ such that
+                $V=\preimg{f(i)}{U}$}\}$.
+\end{definition}
+
+\begin{proposition}\label{initial_prebasis_type}
+    $\initialPrebasis{S}{I}{Y}{f}$ is a family of subsets of $S$.
+\end{proposition}
+\begin{proof}
+    $\initialPrebasis{S}{I}{Y}{f}\subseteq\pow{S}$ by
+        \obv{initial_prebasis,subseteq}.
+    Follows by \obv{pow_iff,subseteq}.
+\end{proof}
+
+\begin{definition}\label{initial_topology}
+    $\InitialTopology{S}{I}{Y}{f}
+        =\GeneratedTopology{S}{\initialPrebasis{S}{I}{Y}{f}}$.
+\end{definition}
+
+\begin{classification}\label{initial_topology_is_topological_space}
+    $\InitialTopology{S}{I}{Y}{f}$ is a topological space.
+\end{classification}
+\begin{proof}
+    $\initialPrebasis{S}{I}{Y}{f}$ is a family of subsets of $S$ by
+        \obv{initial_prebasis_type}.
+    Follows by
+        \auto{initial_topology,generated_topology_is_topological_space}.
+\end{proof}
+
+\begin{theorem}\label{initial_topology_is_exact}
+    $\InitialTopology{S}{I}{Y}{f}$ is an exact topological space.
+\end{theorem}
+\begin{proof}
+    $\initialPrebasis{S}{I}{Y}{f}$ is a family of subsets of $S$ by
+        \obv{initial_prebasis_type}.
+    Follows by
+        \auto{initial_topology,generated_topology_is_exact}.
+\end{proof}
+
+\begin{proposition}\label{initial_topology_carrier}
+    $\carrier[\InitialTopology{S}{I}{Y}{f}]=S$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{initial_topology,generated_topology_carrier}.
+\end{proof}
+
+\begin{proposition}\label{initial_topology_opens}
+    $\opens[\InitialTopology{S}{I}{Y}{f}]
+        =\generatedOpens{S}{\initialPrebasis{S}{I}{Y}{f}}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{initial_topology,generated_topology_opens}.
+\end{proof}
+
+\begin{theorem}\label{initial_topology_projection_continuous}
+    Suppose $f$ is an initial mapping family from $S$ to $Y$ indexed by $I$.
+    Let $i\in I$.
+    Then $f(i)$ is continuous from $\InitialTopology{S}{I}{Y}{f}$
+        to $Y(i)$.
+\end{theorem}
+\begin{proof}
+    $Y(i)$ is a topological space and
+        $f(i)\in\funs{S}{\carrier[Y(i)]}$ by
+        \obv{initial_topology_data}.
+    $\InitialTopology{S}{I}{Y}{f}$ is a topological space by
+        \obv{initial_topology_is_topological_space}.
+    $\carrier[\InitialTopology{S}{I}{Y}{f}]=S$ by
+        \obv{initial_topology_carrier}.
+    Hence $f(i)\in
+        \funs{\carrier[\InitialTopology{S}{I}{Y}{f}]}{\carrier[Y(i)]}$.
+    $\initialPrebasis{S}{I}{Y}{f}$ is a family of subsets of $S$ by
+        \obv{initial_prebasis_type}.
+    Show that for every $U\in\opens[Y(i)]$ we have
+        $\preimg{f(i)}{U}\in\opens[\InitialTopology{S}{I}{Y}{f}]$.
+    \begin{subproof}
+        Fix $U\in\opens[Y(i)]$.
+        $\preimg{f(i)}{U}\subseteq S$ by
+            \auto{preimg_subseteq_dom,funs,subseteq}.
+        Hence $\preimg{f(i)}{U}\in\pow{S}$ by
+            \obv{powerset_intro}.
+        Thus $\preimg{f(i)}{U}\in\initialPrebasis{S}{I}{Y}{f}$ by
+            \obv{initial_prebasis}.
+        $\initialPrebasis{S}{I}{Y}{f}
+            \subseteq\generatedOpens{S}{\initialPrebasis{S}{I}{Y}{f}}$
+            by \obv{generated_opens_contains}.
+        Hence $\preimg{f(i)}{U}
+            \in\generatedOpens{S}{\initialPrebasis{S}{I}{Y}{f}}$ by
+            \obv{subseteq}.
+        Follows by \obv{initial_topology_opens}.
+    \end{subproof}
+    Follows by \obv{continuous_map}.
+\end{proof}
+
+\begin{theorem}\label{initial_topology_universal_property}
+    Suppose $f$ is an initial mapping family from $S$ to $Y$ indexed by $I$.
+    Let $Z$ be a topological space.
+    Let $g\in\funs{\carrier[Z]}{S}$.
+    Then $g$ is continuous from $Z$ to $\InitialTopology{S}{I}{Y}{f}$ iff
+        for every $i\in I$ we have
+            $f(i)\circ g$ is continuous from $Z$ to $Y(i)$.
+\end{theorem}
+\begin{proof}
+    For every $i\in I$ we have $Y(i)$ is a topological space and
+        $f(i)\in\funs{S}{\carrier[Y(i)]}$ by
+        \obv{initial_topology_data}.
+    Show that if $g$ is continuous from $Z$ to
+        $\InitialTopology{S}{I}{Y}{f}$, then for every $i\in I$ we have
+        $f(i)\circ g$ is continuous from $Z$ to $Y(i)$.
+    \begin{subproof}
+        Assume $g$ is continuous from $Z$ to
+            $\InitialTopology{S}{I}{Y}{f}$.
+        Fix $i\in I$.
+        $f(i)$ is continuous from $\InitialTopology{S}{I}{Y}{f}$
+            to $Y(i)$ by \obv{initial_topology_projection_continuous}.
+        Follows by \obv{continuous_composition}.
+    \end{subproof}
+
+    Show that if for every $i\in I$ we have
+        $f(i)\circ g$ is continuous from $Z$ to $Y(i)$, then
+        $g$ is continuous from $Z$ to $\InitialTopology{S}{I}{Y}{f}$.
+    \begin{subproof}
+        Assume for every $i\in I$ we have
+            $f(i)\circ g$ is continuous from $Z$ to $Y(i)$.
+        Show that for every $V\in\initialPrebasis{S}{I}{Y}{f}$ we have
+            $\preimg{g}{V}\in\opens[Z]$.
+        \begin{subproof}
+            Fix $V\in\initialPrebasis{S}{I}{Y}{f}$.
+            Take $i\in I$ such that there exists $U\in\opens[Y(i)]$
+                such that $V=\preimg{f(i)}{U}$ by
+                \obv{initial_prebasis}.
+            Take $U\in\opens[Y(i)]$ such that
+                $V=\preimg{f(i)}{U}$.
+            $f(i)\circ g$ is continuous from $Z$ to $Y(i)$.
+            Hence $\preimg{f(i)\circ g}{U}\in\opens[Z]$ by
+                \obv{continuous_map}.
+            $f(i)\in\funs{S}{\carrier[Y(i)]}$.
+            Hence $\preimg{f(i)\circ g}{U}
+                =\preimg{g}{\preimg{f(i)}{U}}$ by
+                \obv{preimage_composition}.
+        \end{subproof}
+        $\initialPrebasis{S}{I}{Y}{f}$ is a family of subsets of $S$ by
+            \obv{initial_prebasis_type}.
+        Hence $g$ is continuous from $Z$ to
+            $\GeneratedTopology{S}{\initialPrebasis{S}{I}{Y}{f}}$ by
+            \obv{continuous_to_generated_topology_iff}.
+        $\InitialTopology{S}{I}{Y}{f}
+            =\GeneratedTopology{S}{\initialPrebasis{S}{I}{Y}{f}}$ by
+            \obv{initial_topology}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{initial_topology_is_coarsest}
+    Suppose $f$ is an initial mapping family from $S$ to $Y$ indexed by $I$.
+    Suppose $T$ is a topology on $S$.
+    Suppose for every $i\in I$ we have
+        $f(i)$ is continuous from $\TopologicalSpaceOn{S}{T}$ to $Y(i)$.
+    Then $\opens[\InitialTopology{S}{I}{Y}{f}]\subseteq T$.
+\end{theorem}
+\begin{proof}
+    $\initialPrebasis{S}{I}{Y}{f}$ is a family of subsets of $S$ by
+        \obv{initial_prebasis_type}.
+    Show that $\initialPrebasis{S}{I}{Y}{f}\subseteq T$.
+    \begin{subproof}
+        It suffices to show that every element of
+            $\initialPrebasis{S}{I}{Y}{f}$ is an element of $T$ by
+            \obv{subseteq}.
+        Fix $V\in\initialPrebasis{S}{I}{Y}{f}$.
+        Take $i\in I$ such that there exists $U\in\opens[Y(i)]$
+            such that $V=\preimg{f(i)}{U}$ by
+            \obv{initial_prebasis}.
+        Take $U\in\opens[Y(i)]$ such that
+            $V=\preimg{f(i)}{U}$.
+        $f(i)$ is continuous from $\TopologicalSpaceOn{S}{T}$ to $Y(i)$.
+        Hence $\preimg{f(i)}{U}\in
+            \opens[\TopologicalSpaceOn{S}{T}]$ by
+            \obv{continuous_map}.
+        $\opens[\TopologicalSpaceOn{S}{T}]=T$ by
+            \obv{topological_space_on_opens}.
+    \end{subproof}
+    Hence $\generatedOpens{S}{\initialPrebasis{S}{I}{Y}{f}}
+        \subseteq T$ by \obv{generated_opens_least}.
+    Follows by \obv{initial_topology_opens}.
+\end{proof}
+
+\begin{proposition}\label{empty_initial_prebasis}
+    $\initialPrebasis{S}{\emptyset}{Y}{f}=\emptyset$.
+\end{proposition}
+\begin{proof}
+    Show that every element of $\initialPrebasis{S}{\emptyset}{Y}{f}$
+        is an element of $\emptyset$.
+    \begin{subproof}
+        Fix $V\in\initialPrebasis{S}{\emptyset}{Y}{f}$.
+        Take $i\in\emptyset$ such that there exists
+            $U\in\opens[Y(i)]$ such that $V=\preimg{f(i)}{U}$ by
+            \obv{initial_prebasis}.
+        Thus $i\in\emptyset$.
+        Contradiction by \obv{emptyset}.
+    \end{subproof}
+    Hence $\initialPrebasis{S}{\emptyset}{Y}{f}\subseteq\emptyset$ by
+        \obv{subseteq}.
+    $\emptyset\subseteq\initialPrebasis{S}{\emptyset}{Y}{f}$ by
+        \obv{emptyset_subseteq}.
+    Follows by \obv{subseteq_antisymmetric}.
+\end{proof}
+
+\begin{theorem}\label{empty_initial_topology_is_indiscrete}
+    $\InitialTopology{S}{\emptyset}{Y}{f}=\indiscreteSpace{S}$.
+\end{theorem}
+\begin{proof}
+    $\generatedOpens{S}{\emptyset}=\indiscreteOpens{S}$ by
+        \obv{empty_family_generates_indiscrete_opens}.
+    Follows by
+        \auto{initial_topology,empty_initial_prebasis,generated_topology,
+            indiscrete_space}.
+\end{proof}
+
+\subsection{The topology induced by one map}
+
+\begin{definition}\label{single_initial_prebasis}
+    $\singleInitialPrebasis{S}{Y}{f}
+        =\{V\in\pow{S}\mid
+            \text{there exists $U\in\opens[Y]$ such that
+                $V=\preimg{f}{U}$}\}$.
+\end{definition}
+
+\begin{definition}\label{single_initial_topology}
+    $\SingleInitialTopology{S}{Y}{f}
+        =\GeneratedTopology{S}{\singleInitialPrebasis{S}{Y}{f}}$.
+\end{definition}
+
+\begin{proposition}\label{single_initial_prebasis_type}
+    $\singleInitialPrebasis{S}{Y}{f}$ is a family of subsets of $S$.
+\end{proposition}
+\begin{proof}
+    $\singleInitialPrebasis{S}{Y}{f}\subseteq\pow{S}$ by
+        \obv{single_initial_prebasis,subseteq}.
+    Follows by \auto{pow_iff,subseteq}.
+\end{proof}
+
+\begin{classification}\label{single_initial_topology_is_topological_space}
+    $\SingleInitialTopology{S}{Y}{f}$ is a topological space.
+\end{classification}
+\begin{proof}
+    $\singleInitialPrebasis{S}{Y}{f}$ is a family of subsets of $S$ by
+        \obv{single_initial_prebasis_type}.
+    Follows by
+        \auto{single_initial_topology,
+            generated_topology_is_topological_space}.
+\end{proof}
+
+\begin{theorem}\label{single_initial_topology_is_exact}
+    $\SingleInitialTopology{S}{Y}{f}$ is an exact topological space.
+\end{theorem}
+\begin{proof}
+    $\singleInitialPrebasis{S}{Y}{f}$ is a family of subsets of $S$ by
+        \obv{single_initial_prebasis_type}.
+    Follows by
+        \auto{single_initial_topology,generated_topology_is_exact}.
+\end{proof}
+
+\begin{proposition}\label{single_initial_topology_carrier}
+    $\carrier[\SingleInitialTopology{S}{Y}{f}]=S$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{single_initial_topology,generated_topology_carrier}.
+\end{proof}
+
+\begin{theorem}\label{single_initial_prebasis_is_topology}
+    Let $Y$ be a topological space.
+    Let $f\in\funs{S}{\carrier[Y]}$.
+    Then $\singleInitialPrebasis{S}{Y}{f}$ is a topology on $S$.
+\end{theorem}
+\begin{proof}
+    $\singleInitialPrebasis{S}{Y}{f}\subseteq\pow{S}$ by
+        \obv{single_initial_prebasis,subseteq}.
+    $\preimg{f}{\carrier[Y]}=S$ by
+        \obv{preimg_codom_of_function}.
+    Hence $S\in\singleInitialPrebasis{S}{Y}{f}$ by
+        \auto{single_initial_prebasis,carrier_open,powerset_top}.
+
+    Show that for all $A,B\in\singleInitialPrebasis{S}{Y}{f}$ we have
+        $A\inter B\in\singleInitialPrebasis{S}{Y}{f}$.
+    \begin{subproof}
+        Fix $A,B\in\singleInitialPrebasis{S}{Y}{f}$.
+        Take $U\in\opens[Y]$ such that $A=\preimg{f}{U}$ by
+            \obv{single_initial_prebasis}.
+        Take $V\in\opens[Y]$ such that $B=\preimg{f}{V}$ by
+            \obv{single_initial_prebasis}.
+        $U\inter V\in\opens[Y]$ by \obv{opens_inter}.
+        $f$ is a function by \obv{funs_is_function}.
+        $\preimg{f}{U\inter V}
+            =\preimg{f}{U}\inter\preimg{f}{V}$ by
+            \obv{function_preimage_intersection}.
+        Hence $A\inter B=\preimg{f}{U\inter V}$.
+        $A\inter B\subseteq S$ by
+            \auto{preimg_subseteq_dom,funs,subseteq}.
+        Hence $A\inter B\in\pow{S}$ by \obv{powerset_intro}.
+        Follows by
+            \obv{single_initial_prebasis}.
+    \end{subproof}
+
+    Show that for every $F\subseteq\singleInitialPrebasis{S}{Y}{f}$ we have
+        $\unions{F}\in\singleInitialPrebasis{S}{Y}{f}$.
+    \begin{subproof}
+        Fix $F\subseteq\singleInitialPrebasis{S}{Y}{f}$.
+        Let $G=\{U\in\opens[Y]\mid
+            \preimg{f}{U}\in F\}$.
+        $G\subseteq\opens[Y]$ by \obv{subseteq}.
+        Hence $\unions{G}\in\opens[Y]$ by \obv{opens_unions}.
+        Show that $\unions{F}=\preimg{f}{\unions{G}}$.
+        \begin{subproof}
+            Show that every element of $\unions{F}$ is an element of
+                $\preimg{f}{\unions{G}}$.
+            \begin{subproof}
+                Fix $x\in\unions{F}$.
+                Take $A\in F$ such that $x\in A$ by \obv{unions_iff}.
+                Hence $A\in\singleInitialPrebasis{S}{Y}{f}$.
+                Take $U\in\opens[Y]$ such that $A=\preimg{f}{U}$ by
+                    \obv{single_initial_prebasis}.
+                Hence $U\in G$.
+                Take $y\in U$ such that $(x,y)\in f$ by
+                    \obv{preimg_iff}.
+                $y\in\unions{G}$ by \auto{unions_iff}.
+                Follows by \auto{preimg_iff}.
+            \end{subproof}
+            Show that every element of $\preimg{f}{\unions{G}}$ is an
+                element of $\unions{F}$.
+            \begin{subproof}
+                Fix $x\in\preimg{f}{\unions{G}}$.
+                Take $y\in\unions{G}$ such that $(x,y)\in f$ by
+                    \obv{preimg_iff}.
+                Take $U\in G$ such that $y\in U$ by \obv{unions_iff}.
+                Hence $\preimg{f}{U}\in F$.
+                $x\in\preimg{f}{U}$ by \auto{preimg_iff}.
+                Follows by \auto{unions_iff}.
+            \end{subproof}
+            Follows by set extensionality.
+        \end{subproof}
+        $\preimg{f}{\unions{G}}\subseteq S$ by
+            \auto{preimg_subseteq_dom,funs,subseteq}.
+        Hence $\unions{F}\subseteq S$.
+        Hence $\unions{F}\in\pow{S}$ by \obv{powerset_intro}.
+        Follows by
+            \obv{single_initial_prebasis}.
+    \end{subproof}
+    Follows by \obv{topology_family}.
+\end{proof}
+
+\begin{theorem}\label{single_initial_generated_opens}
+    Let $Y$ be a topological space.
+    Let $f\in\funs{S}{\carrier[Y]}$.
+    Then $\generatedOpens{S}{\singleInitialPrebasis{S}{Y}{f}}
+        =\singleInitialPrebasis{S}{Y}{f}$.
+\end{theorem}
+\begin{proof}
+    $\singleInitialPrebasis{S}{Y}{f}$ is a topology on $S$ by
+        \obv{single_initial_prebasis_is_topology}.
+    Follows by \obv{topology_generates_itself}.
+\end{proof}
+
+\begin{theorem}\label{single_initial_topology_direct}
+    Let $Y$ be a topological space.
+    Let $f\in\funs{S}{\carrier[Y]}$.
+    Then $\SingleInitialTopology{S}{Y}{f}
+        =\TopologicalSpaceOn{S}{\singleInitialPrebasis{S}{Y}{f}}$.
+\end{theorem}
+\begin{proof}
+    Follows by
+        \obv{single_initial_topology,generated_topology,
+            single_initial_generated_opens}.
+\end{proof}
+
+\begin{proposition}\label{single_initial_topology_opens_iff}
+    Let $Y$ be a topological space.
+    Let $f\in\funs{S}{\carrier[Y]}$.
+    Then $V\in\opens[\SingleInitialTopology{S}{Y}{f}]$ iff
+        there exists $U\in\opens[Y]$ such that $V=\preimg{f}{U}$.
+\end{proposition}
+\begin{proof}
+    $\opens[\SingleInitialTopology{S}{Y}{f}]
+        =\singleInitialPrebasis{S}{Y}{f}$ by
+        \auto{single_initial_topology_direct,
+            topological_space_on_opens}.
+    $V\in\singleInitialPrebasis{S}{Y}{f}$ iff
+        $V\in\pow{S}$ and there exists $U\in\opens[Y]$ such that
+            $V=\preimg{f}{U}$ by \obv{single_initial_prebasis}.
+    If there exists $U\in\opens[Y]$ such that $V=\preimg{f}{U}$, then
+        $V\subseteq S$ by \auto{preimg_subseteq_dom,funs,subseteq}.
+    Follows by \auto{powerset_intro}.
+\end{proof}
+
+\begin{theorem}\label{single_initial_topology_universal_property}
+    Let $Y,Z$ be topological spaces.
+    Let $f\in\funs{S}{\carrier[Y]}$.
+    Let $g\in\funs{\carrier[Z]}{S}$.
+    Then $g$ is continuous from $Z$ to $\SingleInitialTopology{S}{Y}{f}$
+        iff $f\circ g$ is continuous from $Z$ to $Y$.
+\end{theorem}
+\begin{proof}
+    Show that if $g$ is continuous from $Z$ to
+        $\SingleInitialTopology{S}{Y}{f}$, then
+        $f\circ g$ is continuous from $Z$ to $Y$.
+    \begin{subproof}
+        Assume $g$ is continuous from $Z$ to
+            $\SingleInitialTopology{S}{Y}{f}$.
+        Show that $f$ is continuous from $\SingleInitialTopology{S}{Y}{f}$
+            to $Y$.
+        \begin{subproof}
+            $\carrier[\SingleInitialTopology{S}{Y}{f}]=S$ by
+                \obv{single_initial_topology_carrier}.
+            Hence $f\in\funs{\carrier[\SingleInitialTopology{S}{Y}{f}]}
+                {\carrier[Y]}$.
+            For every $U\in\opens[Y]$ we have
+                $\preimg{f}{U}\in
+                    \opens[\SingleInitialTopology{S}{Y}{f}]$ by
+                \auto{single_initial_topology_opens_iff}.
+            Follows by \obv{continuous_map}.
+        \end{subproof}
+        Follows by \obv{continuous_composition}.
+    \end{subproof}
+    Show that if $f\circ g$ is continuous from $Z$ to $Y$, then
+        $g$ is continuous from $Z$ to $\SingleInitialTopology{S}{Y}{f}$.
+    \begin{subproof}
+        Assume $f\circ g$ is continuous from $Z$ to $Y$.
+        Show that for every $V\in\singleInitialPrebasis{S}{Y}{f}$ we have
+            $\preimg{g}{V}\in\opens[Z]$.
+        \begin{subproof}
+            Fix $V\in\singleInitialPrebasis{S}{Y}{f}$.
+            Take $U\in\opens[Y]$ such that $V=\preimg{f}{U}$ by
+                \obv{single_initial_prebasis}.
+            $\preimg{f\circ g}{U}\in\opens[Z]$ by
+                \obv{continuous_map}.
+            $\preimg{f\circ g}{U}=\preimg{g}{\preimg{f}{U}}$ by
+                \obv{preimage_composition}.
+        \end{subproof}
+        $\singleInitialPrebasis{S}{Y}{f}$ is a family of subsets of $S$ by
+            \obv{single_initial_prebasis_type}.
+        Hence $g$ is continuous from $Z$ to
+            $\GeneratedTopology{S}{\singleInitialPrebasis{S}{Y}{f}}$ by
+            \obv{continuous_to_generated_topology_iff}.
+        $\SingleInitialTopology{S}{Y}{f}
+            =\GeneratedTopology{S}{\singleInitialPrebasis{S}{Y}{f}}$ by
+            \obv{single_initial_topology}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{classification}\label{single_initial_bijection_homeomorphism}
+    Let $Y$ be a topological space.
+    Let $f\in\bijections{S}{\carrier[Y]}$.
+    Then $f$ is a homeomorphism from $\SingleInitialTopology{S}{Y}{f}$ to $Y$.
+\end{classification}
+\begin{proof}
+    Let $X=\SingleInitialTopology{S}{Y}{f}$.
+    $X$ is a topological space and $\carrier[X]=S$ by
+        \auto{single_initial_topology_is_topological_space,single_initial_topology_carrier}.
+    $f\in\funs{S}{\carrier[Y]}$ by \auto{bijections,surj_to_fun}.
+    For every $U\in\opens[Y]$ we have $\preimg{f}{U}\in\opens[X]$ by
+        \auto{single_initial_topology_opens_iff}.
+    $f$ is continuous from $X$ to $Y$ by \obv{continuous_map}.
+    $\converse{f}\in\funs{\carrier[Y]}{S}$ by \obv{bijective_converse_are_funs}.
+    $f\circ\converse{f}=\identity{\carrier[Y]}$ by \obv{bijection_circ_converse}.
+    $f\circ\converse{f}$ is continuous from $Y$ to $Y$ by \auto{identity_continuous}.
+    $\converse{f}$ is continuous from $Y$ to $X$ by
+        \auto{single_initial_topology_universal_property}.
+    Follows by \obv{homeomorphism}.
+\end{proof}
+
+\begin{classification}\label{bijection_transported_topology}
+    Let $X$ be a topological space.
+    Let $h\in\bijections{\carrier[X]}{B}$.
+    Then $h$ is a homeomorphism from $X$ to $\SingleInitialTopology{B}{X}{\converse{h}}$.
+\end{classification}
+\begin{proof}
+    $\converse{h}\in\bijections{B}{\carrier[X]}$ by \obv{bijection_converse_is_bijection}.
+    $\converse{h}$ is a homeomorphism from $\SingleInitialTopology{B}{X}{\converse{h}}$ to $X$ by
+        \obv{single_initial_bijection_homeomorphism}.
+    $h$ is a function and $\converse{\converse{h}}=h$ by
+        \obv{bijection_is_function,converse_converse_eq}.
+    Follows by \auto{homeomorphism_inverse}.
+\end{proof}
+
+\begin{theorem}\label{bijection_transported_topology_opens}
+    Let $X$ be a topological space.
+    Let $h\in\bijections{\carrier[X]}{B}$.
+    Then $V\in\opens[\SingleInitialTopology{B}{X}{\converse{h}}]$ iff
+        there exists $U\in\opens[X]$ such that $V=\img{h}{U}$.
+\end{theorem}
+\begin{proof}
+    $\converse{h}\in\funs{B}{\carrier[X]}$ by \obv{bijective_converse_are_funs}.
+    $h$ is a function and $\converse{\converse{h}}=h$ by
+        \obv{bijection_is_function,converse_converse_eq}.
+    For every $U$ we have $\preimg{\converse{h}}{U}=\img{h}{U}$ by
+        \auto{preim_eq_img_of_converse}.
+    Follows by \auto{single_initial_topology_opens_iff}.
+\end{proof}

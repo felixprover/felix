@@ -1,0 +1,1046 @@
+\import{algebra/group/automorphism-tower-uniqueness.tex}
+\import{algebra/group/direct-limit-centreless.tex}
+\import{recursion/transfinite.tex}
+
+\section{Centreless automorphism-tower segments}
+
+Centrelessness and injectivity must be propagated together.  At a limit,
+injectivity of all earlier bonds makes the restricted diagram an embedding
+system, while centrelessness of its components makes the concrete direct
+limit centreless.  The bounded predicates below package exactly this mutual
+induction invariant.
+
+\begin{definition}\label{centreless_tower_at}
+    $\centrelessTowerAt{T}{\alpha}$ iff
+        $\centrelessGroup{\towerStage{T}{\alpha}}$ and
+        for every $\beta\in\suc{\alpha}$ we have
+            $\groupEmbedding
+                {\towerBond{T}{\beta}{\alpha}}
+                {\towerStage{T}{\beta}}
+                {\towerStage{T}{\alpha}}$.
+\end{definition}
+
+\begin{definition}\label{centreless_tower_below}
+    $\centrelessTowerBelow{T}{\alpha}$ iff
+        for every $\gamma\in\alpha$ we have
+            $\centrelessTowerAt{T}{\gamma}$.
+\end{definition}
+
+\begin{proposition}\label{centreless_tower_at_stage}
+    Suppose $\centrelessTowerAt{T}{\alpha}$.
+    Then $\centrelessGroup{\towerStage{T}{\alpha}}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{centreless_tower_at}.
+\end{proof}
+
+\begin{proposition}\label{centreless_tower_at_bond}
+    Suppose $\centrelessTowerAt{T}{\alpha}$.
+    Let $\beta\in\suc{\alpha}$.
+    Then $\groupEmbedding
+        {\towerBond{T}{\beta}{\alpha}}
+        {\towerStage{T}{\beta}}
+        {\towerStage{T}{\alpha}}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{centreless_tower_at}.
+\end{proof}
+
+\begin{proposition}\label{centreless_tower_below_at}
+    Suppose $\centrelessTowerBelow{T}{\alpha}$.
+    Let $\gamma\in\alpha$.
+    Then $\centrelessTowerAt{T}{\gamma}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{centreless_tower_below}.
+\end{proof}
+
+\begin{theorem}\label{centreless_tower_bounded_induction}
+    Let $\theta$ be an ordinal.
+    Suppose for every $\alpha\in\theta$ such that
+        $\centrelessTowerBelow{T}{\alpha}$ we have
+        $\centrelessTowerAt{T}{\alpha}$.
+    Then $\centrelessTowerBelow{T}{\theta}$.
+\end{theorem}
+\begin{proof}
+    Let $P:\Set\to\Prop=\fun{\alpha:\Set}{
+        \centrelessTowerAt{T}{\alpha}}$.
+    Show that $\forall \alpha:\Set.\ \alpha\in\theta\implies
+        ((\forall \gamma:\Set.\ \gamma\in\alpha\implies
+            \Apply{P}{\gamma})
+        \implies\Apply{P}{\alpha})$.
+    \begin{subproof}
+        Fix $\alpha\in\theta$.
+        Assume $\forall \gamma:\Set.\ \gamma\in\alpha\implies
+            \Apply{P}{\gamma}$.
+        Show that $\centrelessTowerBelow{T}{\alpha}$.
+        \begin{subproof}
+            Show that for every $\gamma\in\alpha$ we have
+                $\centrelessTowerAt{T}{\gamma}$.
+            \begin{subproof}
+                Fix $\gamma\in\alpha$.
+                $\Apply{P}{\gamma}$.
+            \end{subproof}
+            Follows by \obv{centreless_tower_below}.
+        \end{subproof}
+        Hence $\centrelessTowerAt{T}{\alpha}$.
+    \end{subproof}
+    Hence $\forall \alpha:\Set.\ \alpha\in\theta\implies
+        \Apply{P}{\alpha}$ by
+        \obv{bounded_transfinite_induction}.
+    Show that for every $\alpha\in\theta$ we have
+        $\centrelessTowerAt{T}{\alpha}$.
+    \begin{subproof}
+        Fix $\alpha\in\theta$.
+        $\Apply{P}{\alpha}$.
+    \end{subproof}
+    Follows by \obv{centreless_tower_below}.
+\end{proof}
+
+\subsection{Base and successor branches}
+
+\begin{proposition}\label{tower_self_bond_embedding}
+    Suppose $\towerSegmentDiagram{T}{G}{\theta}$.
+    Let $\alpha\in\theta$.
+    Then $\groupEmbedding
+        {\towerBond{T}{\alpha}{\alpha}}
+        {\towerStage{T}{\alpha}}
+        {\towerStage{T}{\alpha}}$.
+\end{proposition}
+\begin{proof}
+    $\towerStage{T}{\alpha}$ is a group by
+        \obv{tower_segment_stage_is_group}.
+    $\towerBond{T}{\alpha}{\alpha}=
+        \identity{\carrier[\towerStage{T}{\alpha}]}$ by
+        \obv{tower_segment_bond_identity}.
+    Follows by \auto{identity_group_embedding}.
+\end{proof}
+
+\begin{proposition}\label{centreless_tower_at_zero}
+    Suppose $\towerSegmentDiagram{T}{G}{\theta}$.
+    Suppose $\centrelessGroup{G}$ and $\emptyset\in\theta$.
+    Then $\centrelessTowerAt{T}{\emptyset}$.
+\end{proposition}
+\begin{proof}
+    $\towerStage{T}{\emptyset}=G$ by
+        \obv{tower_segment_base}.
+    Hence $\centrelessGroup{\towerStage{T}{\emptyset}}$.
+    Show that for every $\beta\in\suc{\emptyset}$ we have
+        $\groupEmbedding
+            {\towerBond{T}{\beta}{\emptyset}}
+            {\towerStage{T}{\beta}}
+            {\towerStage{T}{\emptyset}}$.
+    \begin{subproof}
+        Fix $\beta\in\suc{\emptyset}$.
+        Hence $\beta=\emptyset$ by \auto{suc_iff,emptyset}.
+        Follows by \auto{tower_self_bond_embedding}.
+    \end{subproof}
+    Follows by \obv{centreless_tower_at}.
+\end{proof}
+
+\begin{proposition}\label{centreless_tower_successor_stage}
+    Suppose $\towerSegmentDiagram{T}{G}{\theta}$.
+    Let $\alpha\in\theta$.
+    Suppose $\suc{\alpha}\in\theta$ and
+        $\centrelessTowerAt{T}{\alpha}$.
+    Then $\centrelessGroup{\towerStage{T}{\suc{\alpha}}}$.
+\end{proposition}
+\begin{proof}
+    $\centrelessGroup{\towerStage{T}{\alpha}}$ by
+        \obv{centreless_tower_at_stage}.
+    Hence $\centrelessGroup{
+        \automorphismGroup{\towerStage{T}{\alpha}}}$ by
+        \obv{automorphism_group_centreless}.
+    Follows by \auto{tower_segment_successor}.
+\end{proof}
+
+\begin{proposition}\label{centreless_tower_successor_immediate_embedding}
+    Suppose $\towerSegmentDiagram{T}{G}{\theta}$.
+    Let $\alpha\in\theta$.
+    Suppose $\suc{\alpha}\in\theta$ and
+        $\centrelessTowerAt{T}{\alpha}$.
+    Then $\groupEmbedding
+        {\towerBond{T}{\alpha}{\suc{\alpha}}}
+        {\towerStage{T}{\alpha}}
+        {\towerStage{T}{\suc{\alpha}}}$.
+\end{proposition}
+\begin{proof}
+    $\centrelessGroup{\towerStage{T}{\alpha}}$ by
+        \obv{centreless_tower_at_stage}.
+    Hence $\groupEmbedding
+        {\innerMap{\towerStage{T}{\alpha}}}
+        {\towerStage{T}{\alpha}}
+        {\automorphismGroup{\towerStage{T}{\alpha}}}$ by
+        \obv{centreless_inner_map_embedding}.
+    Follows by \obv{tower_segment_successor}.
+\end{proof}
+
+\begin{proposition}\label{tower_embedding_comparison_from_factorization}
+    Suppose $b=i\circ p$.
+    Suppose $\groupEmbedding{p}{A}{B}$ and
+        $\groupEmbedding{i}{B}{C}$.
+    Then $\groupEmbedding{b}{A}{C}$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{group_embedding_composition}.
+\end{proof}
+
+\begin{proposition}\label{centreless_tower_successor_old_bond_factors}
+    Suppose $\towerSegmentDiagram{T}{G}{\theta}$.
+    Let $\alpha\in\theta$.
+    Suppose $\suc{\alpha}\in\theta$ and
+        $\centrelessTowerAt{T}{\alpha}$.
+    Let $\beta\in\suc{\alpha}$.
+    Then $\towerBond{T}{\beta}{\suc{\alpha}}=
+            \towerBond{T}{\alpha}{\suc{\alpha}}\circ
+                \towerBond{T}{\beta}{\alpha}$ and
+        $\groupEmbedding
+            {\towerBond{T}{\beta}{\alpha}}
+            {\towerStage{T}{\beta}}
+            {\towerStage{T}{\alpha}}$ and
+        $\groupEmbedding
+            {\towerBond{T}{\alpha}{\suc{\alpha}}}
+            {\towerStage{T}{\alpha}}
+            {\towerStage{T}{\suc{\alpha}}}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \obv{tower_successor_bond_composition_law,
+            centreless_tower_at_bond,
+            centreless_tower_successor_immediate_embedding}.
+\end{proof}
+
+\begin{proposition}\label{centreless_tower_successor_factor_bundle_bridge}
+    Suppose $b=i\circ p$ and
+        $\groupEmbedding{p}{A}{B}$ and
+        $\groupEmbedding{i}{B}{C}$.
+    Then $\groupEmbedding{b}{A}{C}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{tower_embedding_comparison_from_factorization}.
+\end{proof}
+
+\begin{proposition}\label{centreless_tower_successor_old_bond_embedding}
+    Suppose $\towerSegmentDiagram{T}{G}{\theta}$.
+    Let $\alpha\in\theta$.
+    Suppose $\suc{\alpha}\in\theta$ and
+        $\centrelessTowerAt{T}{\alpha}$.
+    Let $\beta\in\suc{\alpha}$.
+    Then $\groupEmbedding
+        {\towerBond{T}{\beta}{\suc{\alpha}}}
+        {\towerStage{T}{\beta}}
+        {\towerStage{T}{\suc{\alpha}}}$.
+\end{proposition}
+\begin{proof}
+    $\towerBond{T}{\beta}{\suc{\alpha}}=
+            \towerBond{T}{\alpha}{\suc{\alpha}}\circ
+                \towerBond{T}{\beta}{\alpha}$ and
+        $\groupEmbedding
+            {\towerBond{T}{\beta}{\alpha}}
+            {\towerStage{T}{\beta}}
+            {\towerStage{T}{\alpha}}$ and
+        $\groupEmbedding
+            {\towerBond{T}{\alpha}{\suc{\alpha}}}
+            {\towerStage{T}{\alpha}}
+            {\towerStage{T}{\suc{\alpha}}}$ by
+        \obv{centreless_tower_successor_old_bond_factors}.
+    Follows by
+        \obv{centreless_tower_successor_factor_bundle_bridge}.
+\end{proof}
+
+\begin{proposition}\label{tower_successor_embedding_cases}
+    Suppose $\groupEmbedding
+        {\towerBond{T}{\suc{\alpha}}{\suc{\alpha}}}
+        {\towerStage{T}{\suc{\alpha}}}
+        {\towerStage{T}{\suc{\alpha}}}$.
+    Suppose for every $\beta\in\suc{\alpha}$ we have
+        $\groupEmbedding
+            {\towerBond{T}{\beta}{\suc{\alpha}}}
+            {\towerStage{T}{\beta}}
+            {\towerStage{T}{\suc{\alpha}}}$.
+    Then for every $\beta\in\suc{\suc{\alpha}}$ we have
+        $\groupEmbedding
+            {\towerBond{T}{\beta}{\suc{\alpha}}}
+            {\towerStage{T}{\beta}}
+            {\towerStage{T}{\suc{\alpha}}}$.
+\end{proposition}
+\begin{proof}
+    Fix $\beta\in\suc{\suc{\alpha}}$.
+    Follows by \auto{suc_iff}.
+\end{proof}
+
+\begin{proposition}\label{centreless_tower_successor_bonds}
+    Suppose $\towerSegmentDiagram{T}{G}{\theta}$.
+    Let $\alpha\in\theta$.
+    Suppose $\suc{\alpha}\in\theta$ and
+        $\centrelessTowerAt{T}{\alpha}$.
+    Then for every $\beta\in\suc{\suc{\alpha}}$ we have
+        $\groupEmbedding
+            {\towerBond{T}{\beta}{\suc{\alpha}}}
+            {\towerStage{T}{\beta}}
+            {\towerStage{T}{\suc{\alpha}}}$.
+\end{proposition}
+\begin{proof}
+    $\groupEmbedding
+        {\towerBond{T}{\suc{\alpha}}{\suc{\alpha}}}
+        {\towerStage{T}{\suc{\alpha}}}
+        {\towerStage{T}{\suc{\alpha}}}$ by
+        \obv{tower_self_bond_embedding}.
+    For every $\beta\in\suc{\alpha}$ we have
+        $\groupEmbedding
+            {\towerBond{T}{\beta}{\suc{\alpha}}}
+            {\towerStage{T}{\beta}}
+            {\towerStage{T}{\suc{\alpha}}}$ by
+        \obv{centreless_tower_successor_old_bond_embedding}.
+    Follows by \obv{tower_successor_embedding_cases}.
+\end{proof}
+
+\begin{proposition}\label{centreless_tower_at_successor}
+    Suppose $\towerSegmentDiagram{T}{G}{\theta}$.
+    Let $\alpha\in\theta$.
+    Suppose $\suc{\alpha}\in\theta$ and
+        $\centrelessTowerAt{T}{\alpha}$.
+    Then $\centrelessTowerAt{T}{\suc{\alpha}}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \obv{centreless_tower_successor_stage,
+            centreless_tower_successor_bonds,
+            centreless_tower_at}.
+\end{proof}
+
+\subsection{The limit branch}
+
+\begin{proposition}\label{centreless_tower_below_bond_embedding}
+    Let $\lambda$ be an ordinal.
+    Suppose $\centrelessTowerBelow{T}{\lambda}$.
+    Let $\alpha,\beta\in\lambda$.
+    Suppose $\alpha\subseteq\beta$.
+    Then $\groupEmbedding
+        {\towerBond{T}{\alpha}{\beta}}
+        {\towerStage{T}{\alpha}}
+        {\towerStage{T}{\beta}}$.
+\end{proposition}
+\begin{proof}
+    $\centrelessTowerAt{T}{\beta}$ by
+        \obv{centreless_tower_below_at}.
+    $\alpha$ and $\beta$ are ordinals by
+        \obv{elem_of_ordinal_is_ordinal}.
+    Hence $\alpha\in\beta$ or $\alpha=\beta$ by
+        \obv{ordinal_subseteq_implies_elem_or_eq}.
+    Hence $\alpha\in\suc{\beta}$ by \auto{suc_iff}.
+    Follows by \obv{centreless_tower_at_bond}.
+\end{proof}
+
+\begin{proposition}\label{centreless_tower_below_all_bonds_embedding}
+    Let $\lambda$ be an ordinal.
+    Suppose $\centrelessTowerBelow{T}{\lambda}$.
+    Then for all $\alpha,\beta\in\lambda$ such that
+        $\alpha\subseteq\beta$ we have
+        $\groupEmbedding
+            {\towerBond{T}{\alpha}{\beta}}
+            {\towerStage{T}{\alpha}}
+            {\towerStage{T}{\beta}}$.
+\end{proposition}
+\begin{proof}
+    Fix $\alpha,\beta\in\lambda$.
+    Assume $\alpha\subseteq\beta$.
+    Follows by \obv{centreless_tower_below_bond_embedding}.
+\end{proof}
+
+\begin{theorem}\label{centreless_tower_earlier_system_embedding}
+    Suppose $\towerSegmentDiagram{T}{G}{\theta}$.
+    Let $\lambda\in\theta$.
+    Suppose $\lambda$ is a limit ordinal and
+        $\centrelessTowerBelow{T}{\lambda}$.
+    Then $\embeddingGroupDirectSystem{
+        \towerEarlierSystem{T}{\lambda}}$.
+\end{theorem}
+\begin{proof}
+    $\lambda\neq\emptyset$ by \obv{zero_not_limitordinal}.
+    For all $\alpha,\beta\in\lambda$ such that
+        $\alpha\subseteq\beta$ we have
+        $\groupEmbedding
+            {\towerBond{T}{\alpha}{\beta}}
+            {\towerStage{T}{\alpha}}
+            {\towerStage{T}{\beta}}$ by
+        \obv{centreless_tower_below_all_bonds_embedding}.
+    Follows by \obv{tower_earlier_system_embedding_bridge}.
+\end{proof}
+
+\begin{proposition}\label{centreless_tower_earlier_system_component}
+    Suppose $\towerSegmentDiagram{T}{G}{\theta}$.
+    Let $\lambda\in\theta$.
+    Suppose $\centrelessTowerBelow{T}{\lambda}$.
+    Let $\alpha\in
+        \carrier[\towerEarlierSystem{T}{\lambda}]$.
+    Then $\centrelessGroup{
+        \directSystemGroup{\towerEarlierSystem{T}{\lambda}}{\alpha}}$.
+\end{proposition}
+\begin{proof}
+    $\alpha\in\lambda$ by
+        \obv{tower_earlier_system_index_member}.
+    Hence $\centrelessTowerAt{T}{\alpha}$ by
+        \obv{centreless_tower_below_at}.
+    Hence $\centrelessGroup{\towerStage{T}{\alpha}}$ by
+        \obv{centreless_tower_at_stage}.
+    Follows by
+        \obv{tower_earlier_system_group_under_diagram}.
+\end{proof}
+
+\begin{proposition}\label{centreless_tower_limit_stage}
+    Suppose $\canonicalTowerSegment{T}{G}{\theta}$.
+    Let $\lambda\in\theta$.
+    Suppose $\lambda$ is a limit ordinal and
+        $\centrelessTowerBelow{T}{\lambda}$.
+    Then $\centrelessGroup{\towerStage{T}{\lambda}}$.
+\end{proposition}
+\begin{proof}
+    $\towerSegmentDiagram{T}{G}{\theta}$ by
+        \obv{canonical_tower_segment_diagram}.
+    $\embeddingGroupDirectSystem{
+        \towerEarlierSystem{T}{\lambda}}$ by
+        \obv{centreless_tower_earlier_system_embedding}.
+    For every $\alpha\in
+        \carrier[\towerEarlierSystem{T}{\lambda}]$ we have
+        $\centrelessGroup{
+            \directSystemGroup{
+                \towerEarlierSystem{T}{\lambda}}{\alpha}}$ by
+        \obv{centreless_tower_earlier_system_component}.
+    Hence $\centrelessGroup{
+        \groupDirectLimit{\towerEarlierSystem{T}{\lambda}}}$ by
+        \obv{embedding_direct_limit_centreless}.
+    $\towerStage{T}{\lambda}=
+        \groupDirectLimit{\towerEarlierSystem{T}{\lambda}}$ by
+        \auto{canonical_tower_segment_limit}.
+\end{proof}
+
+\begin{proposition}\label{centreless_tower_limit_old_bond_embedding}
+    Suppose $\canonicalTowerSegment{T}{G}{\theta}$.
+    Let $\lambda\in\theta$.
+    Suppose $\lambda$ is a limit ordinal and
+        $\centrelessTowerBelow{T}{\lambda}$.
+    Let $\beta\in\lambda$.
+    Then $\groupEmbedding
+        {\towerBond{T}{\beta}{\lambda}}
+        {\towerStage{T}{\beta}}
+        {\towerStage{T}{\lambda}}$.
+\end{proposition}
+\begin{proof}
+    $\towerSegmentDiagram{T}{G}{\theta}$ by
+        \obv{canonical_tower_segment_diagram}.
+    $\embeddingGroupDirectSystem{
+        \towerEarlierSystem{T}{\lambda}}$ by
+        \obv{centreless_tower_earlier_system_embedding}.
+    $\beta\in
+        \carrier[\towerEarlierSystem{T}{\lambda}]$ by
+        \obv{tower_earlier_system_carrier}.
+    Hence $\groupEmbedding
+        {\directSystemCanonicalMap{
+            \towerEarlierSystem{T}{\lambda}}{\beta}}
+        {\directSystemGroup{
+            \towerEarlierSystem{T}{\lambda}}{\beta}}
+        {\groupDirectLimit{
+            \towerEarlierSystem{T}{\lambda}}}$ by
+        \obv{embedding_system_canonical_map_embedding}.
+    $\towerBond{T}{\beta}{\lambda}=
+        \directSystemCanonicalMap{
+            \towerEarlierSystem{T}{\lambda}}{\beta}$ by
+        \obv{canonical_tower_segment_limit_bond}.
+    $\directSystemGroup{
+            \towerEarlierSystem{T}{\lambda}}{\beta}=
+        \towerStage{T}{\beta}$ by
+        \obv{tower_earlier_system_group_under_diagram}.
+    $\towerStage{T}{\lambda}=
+        \groupDirectLimit{\towerEarlierSystem{T}{\lambda}}$ by
+        \auto{canonical_tower_segment_limit}.
+\end{proof}
+
+\begin{proposition}\label{tower_limit_embedding_cases}
+    Suppose $\groupEmbedding
+        {\towerBond{T}{\lambda}{\lambda}}
+        {\towerStage{T}{\lambda}}
+        {\towerStage{T}{\lambda}}$.
+    Suppose for every $\beta\in\lambda$ we have
+        $\groupEmbedding
+            {\towerBond{T}{\beta}{\lambda}}
+            {\towerStage{T}{\beta}}
+            {\towerStage{T}{\lambda}}$.
+    Then for every $\beta\in\suc{\lambda}$ we have
+        $\groupEmbedding
+            {\towerBond{T}{\beta}{\lambda}}
+            {\towerStage{T}{\beta}}
+            {\towerStage{T}{\lambda}}$.
+\end{proposition}
+\begin{proof}
+    Fix $\beta\in\suc{\lambda}$.
+    Follows by \auto{suc_iff}.
+\end{proof}
+
+\begin{proposition}\label{centreless_tower_limit_bonds}
+    Suppose $\canonicalTowerSegment{T}{G}{\theta}$.
+    Let $\lambda\in\theta$.
+    Suppose $\lambda$ is a limit ordinal and
+        $\centrelessTowerBelow{T}{\lambda}$.
+    Then for every $\beta\in\suc{\lambda}$ we have
+        $\groupEmbedding
+            {\towerBond{T}{\beta}{\lambda}}
+            {\towerStage{T}{\beta}}
+            {\towerStage{T}{\lambda}}$.
+\end{proposition}
+\begin{proof}
+    $\towerSegmentDiagram{T}{G}{\theta}$ by
+        \obv{canonical_tower_segment_diagram}.
+    $\groupEmbedding
+        {\towerBond{T}{\lambda}{\lambda}}
+        {\towerStage{T}{\lambda}}
+        {\towerStage{T}{\lambda}}$ by
+        \obv{tower_self_bond_embedding}.
+    For every $\beta\in\lambda$ we have
+        $\groupEmbedding
+            {\towerBond{T}{\beta}{\lambda}}
+            {\towerStage{T}{\beta}}
+            {\towerStage{T}{\lambda}}$ by
+        \obv{centreless_tower_limit_old_bond_embedding}.
+    Follows by \obv{tower_limit_embedding_cases}.
+\end{proof}
+
+\begin{proposition}\label{centreless_tower_at_limit}
+    Suppose $\canonicalTowerSegment{T}{G}{\theta}$.
+    Let $\lambda\in\theta$.
+    Suppose $\lambda$ is a limit ordinal and
+        $\centrelessTowerBelow{T}{\lambda}$.
+    Then $\centrelessTowerAt{T}{\lambda}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \obv{centreless_tower_limit_stage,
+            centreless_tower_limit_bonds,
+            centreless_tower_at}.
+\end{proof}
+
+\subsection{Transfinite propagation}
+
+\begin{proposition}\label{canonical_centreless_tower_zero_case}
+    Suppose $\canonicalTowerSegment{T}{G}{\theta}$ and
+        $\centrelessGroup{G}$.
+    Let $\alpha\in\theta$.
+    Suppose $\alpha=\emptyset$.
+    Then $\centrelessTowerAt{T}{\alpha}$.
+\end{proposition}
+\begin{proof}
+    $\towerSegmentDiagram{T}{G}{\theta}$ by
+        \obv{canonical_tower_segment_diagram}.
+    $\emptyset\in\theta$.
+    Follows by \obv{centreless_tower_at_zero}.
+\end{proof}
+
+\begin{proposition}\label{canonical_tower_successor_predecessor_context}
+    Suppose $\canonicalTowerSegment{T}{G}{\theta}$.
+    Let $\alpha\in\theta$.
+    Suppose $\alpha$ is a successor ordinal.
+    Then there exists an ordinal $\delta$ such that
+        $\alpha=\suc{\delta}$ and $\delta\in\theta$.
+\end{proposition}
+\begin{proof}
+    Take an ordinal $\delta$ such that $\alpha=\suc{\delta}$ by
+        \obv{successor_ordinal}.
+    $\delta\in\alpha$ by \obv{suc_intro_self}.
+    $\theta$ is an ordinal by
+        \auto{canonical_tower_segment_diagram,
+            tower_segment_diagram_data}.
+    Hence $\delta\in\theta$ by \obv{ordinal_transitivity}.
+\end{proof}
+
+\begin{proposition}\label{canonical_centreless_tower_successor_from_below}
+    Suppose $\canonicalTowerSegment{T}{G}{\theta}$.
+    Let $\alpha\in\theta$.
+    Suppose $\alpha$ is a successor ordinal and
+        $\centrelessTowerBelow{T}{\alpha}$.
+    Then $\centrelessTowerAt{T}{\alpha}$.
+\end{proposition}
+\begin{proof}
+    Take an ordinal $\delta$ such that
+        $\alpha=\suc{\delta}$ and $\delta\in\theta$ by
+        \obv{canonical_tower_successor_predecessor_context}.
+    $\delta\in\alpha$ by \obv{suc_intro_self}.
+    $\centrelessTowerAt{T}{\delta}$ by
+        \obv{centreless_tower_below_at}.
+    $\towerSegmentDiagram{T}{G}{\theta}$ by
+        \obv{canonical_tower_segment_diagram}.
+    Follows by \obv{centreless_tower_at_successor}.
+\end{proof}
+
+\begin{proposition}\label{centreless_tower_at_from_ordinal_cases}
+    Let $\alpha$ be an ordinal.
+    Suppose $\alpha=\emptyset\implies
+        \centrelessTowerAt{T}{\alpha}$.
+    Suppose if $\alpha$ is a limit ordinal then
+        $\centrelessTowerAt{T}{\alpha}$.
+    Suppose if $\alpha$ is a successor ordinal then
+        $\centrelessTowerAt{T}{\alpha}$.
+    Then $\centrelessTowerAt{T}{\alpha}$.
+\end{proposition}
+\begin{proof}
+    $\alpha=\emptyset$ or $\emptyset\in\alpha$ by
+        \obv{ordinal_empty_or_emptyset_elem}.
+    If $\emptyset\in\alpha$ then
+        $\emptyset\precedes\alpha$.
+    Hence if $\emptyset\in\alpha$ then
+        $\alpha$ is a limit ordinal or
+        $\alpha$ is a successor ordinal by
+        \obv{positive_ordinal_is_limit_or_successor}.
+\end{proof}
+
+\begin{proposition}\label{canonical_centreless_tower_step}
+    Let $\alpha$ be an ordinal.
+    Suppose $\canonicalTowerSegment{T}{G}{\theta}$ and
+        $\centrelessGroup{G}$.
+    Suppose $\alpha\in\theta$ and
+        $\centrelessTowerBelow{T}{\alpha}$.
+    Then $\centrelessTowerAt{T}{\alpha}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \obv{canonical_centreless_tower_zero_case,
+            centreless_tower_at_limit,
+            canonical_centreless_tower_successor_from_below,
+            centreless_tower_at_from_ordinal_cases}.
+\end{proof}
+
+\begin{proposition}\label{canonical_centreless_tower_induction_step}
+    Suppose $\canonicalTowerSegment{T}{G}{\theta}$ and
+        $\centrelessGroup{G}$.
+    Let $\alpha\in\theta$.
+    Suppose for every $\gamma\in\alpha$ we have
+        $\centrelessTowerAt{T}{\gamma}$.
+    Then $\centrelessTowerAt{T}{\alpha}$.
+\end{proposition}
+\begin{proof}
+    $\alpha$ is an ordinal by
+        \auto{canonical_tower_segment_diagram,
+            tower_segment_diagram_data,
+            elem_of_ordinal_is_ordinal}.
+    $\centrelessTowerBelow{T}{\alpha}$ by
+        \obv{centreless_tower_below}.
+    Follows by \obv{canonical_centreless_tower_step}.
+\end{proof}
+
+\begin{theorem}\label{canonical_centreless_tower_below}
+    Suppose $\canonicalTowerSegment{T}{G}{\theta}$ and
+        $\centrelessGroup{G}$.
+    Then $\centrelessTowerBelow{T}{\theta}$.
+\end{theorem}
+\begin{proof}
+    $\theta$ is an ordinal by
+        \auto{canonical_tower_segment_diagram,
+            tower_segment_diagram_data}.
+    Show that for every $\alpha\in\theta$ such that
+        $\centrelessTowerBelow{T}{\alpha}$ we have
+        $\centrelessTowerAt{T}{\alpha}$.
+    \begin{subproof}
+        Fix $\alpha$.
+        Assume $\alpha\in\theta$.
+        Assume $\centrelessTowerBelow{T}{\alpha}$.
+        $\alpha$ is an ordinal by
+            \obv{elem_of_ordinal_is_ordinal}.
+        Follows by \obv{canonical_centreless_tower_step}.
+    \end{subproof}
+    Follows by \obv{centreless_tower_bounded_induction}.
+\end{proof}
+
+\begin{theorem}\label{canonical_centreless_tower_pointwise}
+    Suppose $\canonicalTowerSegment{T}{G}{\theta}$ and
+        $\centrelessGroup{G}$.
+    Then for every $\alpha\in\theta$ we have
+        $\centrelessTowerAt{T}{\alpha}$.
+\end{theorem}
+\begin{proof}
+    $\centrelessTowerBelow{T}{\theta}$ by
+        \obv{canonical_centreless_tower_below}.
+    Follows by \obv{centreless_tower_below_at}.
+\end{proof}
+
+\begin{theorem}\label{canonical_centreless_tower_at}
+    Suppose $\canonicalTowerSegment{T}{G}{\theta}$ and
+        $\centrelessGroup{G}$.
+    Let $\alpha\in\theta$.
+    Then $\centrelessTowerAt{T}{\alpha}$.
+\end{theorem}
+\begin{proof}
+    $\centrelessTowerBelow{T}{\theta}$ by
+        \obv{canonical_centreless_tower_below}.
+    Follows by \obv{centreless_tower_below_at}.
+\end{proof}
+
+\begin{corollary}\label{canonical_tower_stage_centreless}
+    Suppose $\canonicalTowerSegment{T}{G}{\theta}$ and
+        $\centrelessGroup{G}$.
+    Let $\alpha\in\theta$.
+    Then $\centrelessGroup{\towerStage{T}{\alpha}}$.
+\end{corollary}
+\begin{proof}
+    $\centrelessTowerAt{T}{\alpha}$ by
+        \obv{canonical_centreless_tower_at}.
+    Follows by \obv{centreless_tower_at_stage}.
+\end{proof}
+
+\begin{theorem}\label{canonical_tower_bond_embedding}
+    Suppose $\canonicalTowerSegment{T}{G}{\theta}$ and
+        $\centrelessGroup{G}$.
+    Let $\alpha,\beta\in\theta$.
+    Suppose $\alpha\subseteq\beta$.
+    Then $\groupEmbedding
+        {\towerBond{T}{\alpha}{\beta}}
+        {\towerStage{T}{\alpha}}
+        {\towerStage{T}{\beta}}$.
+\end{theorem}
+\begin{proof}
+    $\centrelessTowerAt{T}{\beta}$ by
+        \obv{canonical_centreless_tower_at}.
+    $\theta$ is an ordinal by
+        \auto{canonical_tower_segment_diagram,
+            tower_segment_diagram_data}.
+    $\alpha$ and $\beta$ are ordinals by
+        \obv{elem_of_ordinal_is_ordinal}.
+    Hence $\alpha\in\beta$ or $\alpha=\beta$ by
+        \obv{ordinal_subseteq_implies_elem_or_eq}.
+    Hence $\alpha\in\suc{\beta}$ by \auto{suc_iff}.
+    Follows by \obv{centreless_tower_at_bond}.
+\end{proof}
+
+\subsection{Fixed-ambient segment images}
+
+\begin{definition}\label{segment_image}
+    $\segmentImage{T}{\alpha}{\gamma}=
+        \img{\towerBond{T}{\alpha}{\gamma}}
+            {\carrier[\towerStage{T}{\alpha}]}$.
+\end{definition}
+
+\begin{definition}\label{segment_image_value_op}
+    $\segmentImageValueOp:
+        \Set\to\Set\to\Set\to\Set=
+        \fun{T,\gamma,\alpha:\Set}{
+            \segmentImage{T}{\alpha}{\gamma}}$.
+\end{definition}
+
+\begin{definition}\label{segment_image_family}
+    $\segmentImageFamily{T}{\gamma}=
+        \Apply{\graphOnDomainOp}
+            {\gamma,\Apply{\segmentImageValueOp}{T,\gamma}}$.
+\end{definition}
+
+\begin{proposition}\label{segment_image_family_type}
+    $\segmentImageFamily{T}{\gamma}\in
+        \funs{\gamma}{\ran{\segmentImageFamily{T}{\gamma}}}$.
+\end{proposition}
+\begin{proof}
+    $\Apply{\graphOnDomainOp}
+            {\gamma,\Apply{\segmentImageValueOp}{T,\gamma}}
+        \in\funs{\gamma}{
+            \ran{\Apply{\graphOnDomainOp}
+                {\gamma,\Apply{\segmentImageValueOp}{T,\gamma}}}}$ by
+        \obv{logical_graph_on_domain_function}.
+    Follows by \obv{segment_image_family}.
+\end{proof}
+
+\begin{proposition}\label{segment_image_family_apply}
+    Let $\alpha\in\gamma$.
+    Then $\apply{\segmentImageFamily{T}{\gamma}}{\alpha}=
+        \segmentImage{T}{\alpha}{\gamma}$.
+\end{proposition}
+\begin{proof}
+    $\apply{
+        \Apply{\graphOnDomainOp}
+            {\gamma,\Apply{\segmentImageValueOp}{T,\gamma}}}
+        {\alpha}=
+        \Apply{\segmentImageValueOp}{T,\gamma,\alpha}$
+        by \obv{logical_graph_on_domain_apply}.
+    $\Apply{\segmentImageValueOp}{T,\gamma,\alpha}
+        =\segmentImage{T}{\alpha}{\gamma}$ by
+        \obv{segment_image_value_op}.
+    Follows by \obv{segment_image_family}.
+\end{proof}
+
+\begin{theorem}\label{segment_image_subgroup}
+    Suppose $\towerSegmentDiagram{T}{G}{\theta}$.
+    Let $\alpha,\gamma\in\theta$.
+    Suppose $\alpha\subseteq\gamma$.
+    Then $\subgroup
+        {\segmentImage{T}{\alpha}{\gamma}}
+        {\towerStage{T}{\gamma}}$.
+\end{theorem}
+\begin{proof}
+    $\groupHom
+        {\towerBond{T}{\alpha}{\gamma}}
+        {\towerStage{T}{\alpha}}
+        {\towerStage{T}{\gamma}}$ by
+        \obv{tower_segment_bond_is_hom}.
+    Follows by
+        \auto{segment_image,group_hom_image_subgroup}.
+\end{proof}
+
+\begin{corollary}\label{segment_image_subseteq_stage}
+    Suppose $\towerSegmentDiagram{T}{G}{\theta}$.
+    Let $\alpha,\gamma\in\theta$.
+    Suppose $\alpha\subseteq\gamma$.
+    Then $\segmentImage{T}{\alpha}{\gamma}\subseteq
+        \carrier[\towerStage{T}{\gamma}]$.
+\end{corollary}
+\begin{proof}
+    Follows by
+        \obv{segment_image_subgroup,subgroup_subseteq}.
+\end{proof}
+
+\begin{theorem}\label{segment_image_factorization}
+    Suppose $\towerSegmentDiagram{T}{G}{\theta}$.
+    Let $\alpha,\beta,\gamma\in\theta$.
+    Suppose $\alpha\subseteq\beta$ and
+        $\beta\subseteq\gamma$.
+    Then $\segmentImage{T}{\alpha}{\gamma}=
+        \img{\towerBond{T}{\beta}{\gamma}}
+            {\segmentImage{T}{\alpha}{\beta}}$.
+\end{theorem}
+\begin{proof}
+    $\groupHom
+        {\towerBond{T}{\alpha}{\beta}}
+        {\towerStage{T}{\alpha}}
+        {\towerStage{T}{\beta}}$ and
+        $\groupHom
+        {\towerBond{T}{\beta}{\gamma}}
+        {\towerStage{T}{\beta}}
+        {\towerStage{T}{\gamma}}$ by
+        \obv{tower_segment_bond_is_hom}.
+    Hence
+        $\img{
+            \towerBond{T}{\beta}{\gamma}\circ
+                \towerBond{T}{\alpha}{\beta}}
+            {\carrier[\towerStage{T}{\alpha}]}=
+        \img{\towerBond{T}{\beta}{\gamma}}
+            {\img{\towerBond{T}{\alpha}{\beta}}
+                {\carrier[\towerStage{T}{\alpha}]}}$ by
+        \obv{group_hom_composition_image}.
+    $\towerBond{T}{\alpha}{\gamma}=
+        \towerBond{T}{\beta}{\gamma}\circ
+            \towerBond{T}{\alpha}{\beta}$ by
+        \obv{tower_segment_bond_composition}.
+    Follows by \auto{segment_image}.
+\end{proof}
+
+\begin{theorem}\label{segment_images_nested}
+    Suppose $\towerSegmentDiagram{T}{G}{\theta}$.
+    Let $\alpha,\beta,\gamma\in\theta$.
+    Suppose $\alpha\subseteq\beta$ and
+        $\beta\subseteq\gamma$.
+    Then $\segmentImage{T}{\alpha}{\gamma}\subseteq
+        \segmentImage{T}{\beta}{\gamma}$.
+\end{theorem}
+\begin{proof}
+    $\segmentImage{T}{\alpha}{\beta}\subseteq
+        \carrier[\towerStage{T}{\beta}]$ by
+        \obv{segment_image_subseteq_stage}.
+    Hence
+        $\img{\towerBond{T}{\beta}{\gamma}}
+                {\segmentImage{T}{\alpha}{\beta}}
+            \subseteq
+        \img{\towerBond{T}{\beta}{\gamma}}
+                {\carrier[\towerStage{T}{\beta}]}$ by
+        \obv{img_subseteq}.
+    Follows by
+        \obv{segment_image_factorization,segment_image}.
+\end{proof}
+
+\begin{proposition}\label{segment_image_immediate_successor}
+    Suppose $\towerSegmentDiagram{T}{G}{\theta}$.
+    Let $\alpha\in\theta$.
+    Suppose $\suc{\alpha}\in\theta$.
+    Then $\segmentImage{T}{\alpha}{\suc{\alpha}}=
+        \innerAutomorphismCarrier{\towerStage{T}{\alpha}}$.
+\end{proposition}
+\begin{proof}
+    $\towerBond{T}{\alpha}{\suc{\alpha}}=
+        \innerMap{\towerStage{T}{\alpha}}$ by
+        \auto{tower_segment_successor}.
+    Follows by
+        \obv{segment_image,inner_automorphism_carrier}.
+\end{proof}
+
+\begin{proposition}\label{segment_image_immediate_successor_normal}
+    Suppose $\towerSegmentDiagram{T}{G}{\theta}$.
+    Let $\alpha\in\theta$.
+    Suppose $\suc{\alpha}\in\theta$.
+    Then $\normalSubgroup
+        {\segmentImage{T}{\alpha}{\suc{\alpha}}}
+        {\towerStage{T}{\suc{\alpha}}}$.
+\end{proposition}
+\begin{proof}
+    $\towerStage{T}{\alpha}$ is a group by
+        \obv{tower_segment_stage_is_group}.
+    Hence $\normalSubgroup
+        {\innerAutomorphismCarrier{\towerStage{T}{\alpha}}}
+        {\automorphismGroup{\towerStage{T}{\alpha}}}$ by
+        \obv{inner_automorphism_carrier_normal}.
+    $\towerStage{T}{\suc{\alpha}}=
+        \automorphismGroup{\towerStage{T}{\alpha}}$ by
+        \auto{tower_segment_successor}.
+    Follows by \obv{segment_image_immediate_successor}.
+\end{proof}
+
+\begin{theorem}\label{segment_image_successor_normal_in_later_image}
+    Suppose $\towerSegmentDiagram{T}{G}{\theta}$.
+    Let $\alpha,\gamma\in\theta$.
+    Suppose $\suc{\alpha}\subseteq\gamma$.
+    Then $\normalSubgroup
+        {\segmentImage{T}{\alpha}{\gamma}}
+        {\subgroupStructure
+            {\towerStage{T}{\gamma}}
+            {\segmentImage{T}{\suc{\alpha}}{\gamma}}}$.
+\end{theorem}
+\begin{proof}
+    Hence $\alpha$ and $\gamma$ are ordinals by
+        \obv{elem_of_ordinal_is_ordinal}.
+    Hence $\suc{\alpha}$ is an ordinal by \obv{suc_ordinal}.
+    Hence $\suc{\alpha}\in\gamma$ or $\suc{\alpha}=\gamma$ by
+        \obv{ordinal_subseteq_implies_elem_or_eq}.
+    Hence $\suc{\alpha}\in\theta$ by
+        \obv{ordinal_transitivity}.
+    Let $f=\towerBond{T}{\suc{\alpha}}{\gamma}$.
+    $\groupHom
+        {f}
+        {\towerStage{T}{\suc{\alpha}}}
+        {\towerStage{T}{\gamma}}$ by
+        \auto{tower_segment_bond_is_hom}.
+    $\normalSubgroup
+        {\segmentImage{T}{\alpha}{\suc{\alpha}}}
+        {\towerStage{T}{\suc{\alpha}}}$ by
+        \obv{segment_image_immediate_successor_normal}.
+    Hence $\normalSubgroup
+        {\img{f}{\segmentImage{T}{\alpha}{\suc{\alpha}}}}
+        {\subgroupStructure
+            {\towerStage{T}{\gamma}}
+            {\img{f}{\carrier[
+                \towerStage{T}{\suc{\alpha}}]}}}$ by
+        \obv{group_hom_normal_image_in_induced_image}.
+    $\alpha\subseteq\suc{\alpha}$ by
+        \obv{subseteq_self_suc_intro}.
+    $\segmentImage{T}{\alpha}{\gamma}=
+        \img{f}{\segmentImage{T}{\alpha}{\suc{\alpha}}}$ by
+        \auto{segment_image_factorization}.
+    $\segmentImage{T}{\suc{\alpha}}{\gamma}=
+        \img{f}{\carrier[
+            \towerStage{T}{\suc{\alpha}}]}$ by
+        \obv{segment_image}.
+\end{proof}
+
+\subsection{The fixed-ambient chain at a limit stage}
+
+At a canonical limit stage, the segment images are exactly the canonical
+component images in the concrete direct limit.  The set-coded family is used
+only to state coverage and directedness; the individual image carrier remains
+the primary API.
+
+\begin{proposition}\label{segment_image_at_limit}
+    Suppose $\canonicalTowerSegment{T}{G}{\theta}$.
+    Let $\gamma\in\theta$.
+    Suppose $\gamma$ is a limit ordinal.
+    Let $\alpha\in\gamma$.
+    Then $\segmentImage{T}{\alpha}{\gamma}=
+        \directLimitImage{\towerEarlierSystem{T}{\gamma}}{\alpha}$.
+\end{proposition}
+\begin{proof}
+    $\towerSegmentDiagram{T}{G}{\theta}$ by
+        \obv{canonical_tower_segment_diagram}.
+    $\towerBond{T}{\alpha}{\gamma}=
+        \directSystemCanonicalMap{
+            \towerEarlierSystem{T}{\gamma}}{\alpha}$ by
+        \obv{canonical_tower_segment_limit_bond}.
+    $\directSystemGroup{\towerEarlierSystem{T}{\gamma}}{\alpha}=
+        \towerStage{T}{\alpha}$ by
+        \obv{tower_earlier_system_group_under_diagram}.
+    Follows by \obv{segment_image,direct_limit_image}.
+\end{proof}
+
+\begin{proposition}\label{segment_image_family_at_limit}
+    Suppose $\canonicalTowerSegment{T}{G}{\theta}$.
+    Let $\gamma\in\theta$.
+    Suppose $\gamma$ is a limit ordinal.
+    Then $\segmentImageFamily{T}{\gamma}=
+        \directLimitImageFamily{\towerEarlierSystem{T}{\gamma}}$.
+\end{proposition}
+\begin{proof}
+    Let $F=\segmentImageFamily{T}{\gamma}$.
+    Let $E=\directLimitImageFamily{\towerEarlierSystem{T}{\gamma}}$.
+    $F\in\funs{\gamma}{\ran{F}}$ by
+        \auto{segment_image_family_type}.
+    $\carrier[\towerEarlierSystem{T}{\gamma}]=\gamma$ by
+        \obv{tower_earlier_system_carrier}.
+    Hence $E\in\funs{\gamma}{\ran{E}}$ by
+        \auto{direct_limit_image_family_type}.
+    Show that for every $\alpha\in\gamma$ we have
+        $\apply{F}{\alpha}=\apply{E}{\alpha}$.
+    \begin{subproof}
+        Fix $\alpha\in\gamma$.
+        $\apply{F}{\alpha}=\segmentImage{T}{\alpha}{\gamma}$ by
+            \auto{segment_image_family_apply}.
+        $\apply{E}{\alpha}=
+            \directLimitImage{\towerEarlierSystem{T}{\gamma}}{\alpha}$ by
+            \auto{direct_limit_image_family_apply}.
+        $\segmentImage{T}{\alpha}{\gamma}=
+            \directLimitImage{\towerEarlierSystem{T}{\gamma}}{\alpha}$ by
+            \obv{segment_image_at_limit}.
+    \end{subproof}
+    Follows by \auto{typed_functions_equal_from_agreement}.
+\end{proof}
+
+\begin{theorem}\label{segment_image_family_limit_directed}
+    Suppose $\canonicalTowerSegment{T}{G}{\theta}$.
+    Let $\gamma\in\theta$.
+    Suppose $\gamma$ is a limit ordinal.
+    Then $\ran{\segmentImageFamily{T}{\gamma}}$ is inhabited and
+        for all $A,B\in\ran{\segmentImageFamily{T}{\gamma}}$
+        there exists $C\in\ran{\segmentImageFamily{T}{\gamma}}$ such that
+            $A\subseteq C$ and $B\subseteq C$.
+\end{theorem}
+\begin{proof}
+    $\towerSegmentDiagram{T}{G}{\theta}$ by
+        \obv{canonical_tower_segment_diagram}.
+    $\gamma\neq\emptyset$ by \obv{zero_not_limitordinal}.
+    Hence $\towerEarlierSystem{T}{\gamma}$ is a group direct system by
+        \obv{tower_earlier_system_is_system}.
+    Hence $\ran{\directLimitImageFamily{
+            \towerEarlierSystem{T}{\gamma}}}$ is inhabited and
+        for all $A,B\in\ran{\directLimitImageFamily{
+                \towerEarlierSystem{T}{\gamma}}}$
+        there exists $C\in\ran{\directLimitImageFamily{
+                \towerEarlierSystem{T}{\gamma}}}$ such that
+            $A\subseteq C$ and $B\subseteq C$ by
+        \obv{direct_limit_image_family_directed}.
+    Follows by \auto{segment_image_family_at_limit}.
+\end{proof}
+
+\begin{theorem}\label{segment_images_cover_limit_stage}
+    Suppose $\canonicalTowerSegment{T}{G}{\theta}$.
+    Let $\gamma\in\theta$.
+    Suppose $\gamma$ is a limit ordinal.
+    Then $\ran{\segmentImageFamily{T}{\gamma}}$ is inhabited and
+        $\unions{\ran{\segmentImageFamily{T}{\gamma}}}=
+            \carrier[\towerStage{T}{\gamma}]$.
+\end{theorem}
+\begin{proof}
+    $\ran{\segmentImageFamily{T}{\gamma}}$ is inhabited by
+        \obv{segment_image_family_limit_directed}.
+    $\towerSegmentDiagram{T}{G}{\theta}$ by
+        \obv{canonical_tower_segment_diagram}.
+    $\gamma\neq\emptyset$ by \obv{zero_not_limitordinal}.
+    Hence $\towerEarlierSystem{T}{\gamma}$ is a group direct system by
+        \obv{tower_earlier_system_is_system}.
+    Hence $\unions{\ran{\directLimitImageFamily{
+            \towerEarlierSystem{T}{\gamma}}}}=
+        \carrier[\groupDirectLimit{
+            \towerEarlierSystem{T}{\gamma}}]$ by
+        \obv{direct_limit_images_cover_carrier}.
+    $\towerStage{T}{\gamma}=
+        \groupDirectLimit{\towerEarlierSystem{T}{\gamma}}$ by
+        \auto{canonical_tower_segment_limit}.
+    Follows by \obv{segment_image_family_at_limit}.
+\end{proof}

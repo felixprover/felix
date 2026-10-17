@@ -1,0 +1,639 @@
+\import{topology/tietze/budget.tex}
+
+\section{The bounded Tietze iteration}
+
+\subsection{Acyclic stage objects}
+
+\begin{definition}\label{tietze_residual_from}
+    $\tietzeResidualFrom{A}{f}{s}
+        =\realMapSub{A}{f}{\restrl{s}{A}}$.
+\end{definition}
+
+\begin{definition}\label{tietze_correction_from}
+    Let $X$ be a topological space.
+    $\tietzeCorrectionFrom{X}{h}{A}{f}{r}{n}{s}
+        =\tietzeCorrection{X}{h}{A}
+            {\tietzeResidualFrom{A}{f}{s}}
+            {\tietzeRadius{r}{n}}$.
+\end{definition}
+
+\begin{definition}\label{tietze_step}
+    Let $X$ be a topological space.
+    $\tietzeStep{X}{h}{A}{f}{r}{n}{s}
+        =\realMapAdd{\carrier[X]}{s}
+            {\tietzeCorrectionFrom{X}{h}{A}{f}{r}{n}{s}}$.
+\end{definition}
+
+\begin{definition}\label{tietze_partial_sum_at}
+    Let $X$ be a topological space.
+    $\tietzePartialSumAt{X}{h}{A}{f}{r}{n}
+        =\Apply{\naturalRecOp}
+            {\realZeroMap{\carrier[X]},
+             \fun{k,s:\Set}{\tietzeStep{X}{h}{A}{f}{r}{k}{s}},n}$.
+\end{definition}
+
+\begin{definition}\label{tietze_residual_at}
+    Let $X$ be a topological space.
+    $\tietzeResidualAt{X}{h}{A}{f}{r}{n}
+        =\tietzeResidualFrom{A}{f}
+            {\tietzePartialSumAt{X}{h}{A}{f}{r}{n}}$.
+\end{definition}
+
+\begin{definition}\label{tietze_correction_at}
+    Let $X$ be a topological space.
+    $\tietzeCorrectionAt{X}{h}{A}{f}{r}{n}
+        =\tietzeCorrectionFrom{X}{h}{A}{f}{r}{n}
+            {\tietzePartialSumAt{X}{h}{A}{f}{r}{n}}$.
+\end{definition}
+
+\begin{definition}\label{tietze_partial_sums}
+    Let $X$ be a topological space.
+    $\tietzePartialSums{X}{h}{A}{f}{r}
+        =\Apply{\graphOnDomainOp}{\naturals,
+            \fun{n:\Set}{\tietzePartialSumAt{X}{h}{A}{f}{r}{n}}}$.
+\end{definition}
+
+\subsection{Recursion equations}
+
+\begin{proposition}\label{tietze_partial_sum_zero}
+    Let $X$ be a topological space.
+    Then
+        $\tietzePartialSumAt{X}{h}{A}{f}{r}{\emptyset}
+            =\realZeroMap{\carrier[X]}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \obv{tietze_partial_sum_at,natural_recursion_zero}.
+\end{proof}
+
+\begin{proposition}\label{tietze_partial_sum_successor}
+    Let $X$ be a topological space.
+    Let $n\in\naturals$.
+    Then
+        $\tietzePartialSumAt{X}{h}{A}{f}{r}{\suc{n}}
+            =\realMapAdd{\carrier[X]}
+                {\tietzePartialSumAt{X}{h}{A}{f}{r}{n}}
+                {\tietzeCorrectionAt{X}{h}{A}{f}{r}{n}}$.
+\end{proposition}
+\begin{proof}
+    $\tietzePartialSumAt{X}{h}{A}{f}{r}{\suc{n}}
+        =\tietzeStep{X}{h}{A}{f}{r}{n}
+            {\tietzePartialSumAt{X}{h}{A}{f}{r}{n}}$
+        by
+        \auto{tietze_partial_sum_at,natural_recursion_successor}.
+    Follows by
+        \auto{tietze_step,tietze_correction_at}.
+\end{proof}
+
+\begin{proposition}\label{tietze_residual_at_eq}
+    Let $X$ be a topological space.
+    Then
+        $\tietzeResidualAt{X}{h}{A}{f}{r}{n}
+            =\realMapSub{A}{f}
+                {\restrl{\tietzePartialSumAt{X}{h}{A}{f}{r}{n}}{A}}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{tietze_residual_at,tietze_residual_from}.
+\end{proof}
+
+\begin{proposition}\label{tietze_correction_at_eq}
+    Let $X$ be a topological space.
+    Then
+        $\tietzeCorrectionAt{X}{h}{A}{f}{r}{n}
+            =\tietzeCorrection{X}{h}{A}
+                {\tietzeResidualAt{X}{h}{A}{f}{r}{n}}
+                {\tietzeRadius{r}{n}}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \obv{tietze_correction_at,tietze_correction_from,tietze_residual_at}.
+\end{proof}
+
+\begin{proposition}\label{tietze_partial_sums_apply}
+    Let $X$ be a topological space.
+    Let $n\in\naturals$.
+    Then
+        $\apply{\tietzePartialSums{X}{h}{A}{f}{r}}{n}
+            =\tietzePartialSumAt{X}{h}{A}{f}{r}{n}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{tietze_partial_sums,logical_graph_on_domain_apply}.
+\end{proof}
+
+\subsection{The stage invariant}
+
+\begin{definition}\label{tietze_stage_invariant_def}
+    Let $X$ be a topological space.
+    $\tietzeStageInvariant{X}{h}{A}{f}{r}{n}$ iff
+        $\tietzePartialSumAt{X}{h}{A}{f}{r}{n}
+            \in\funs{\carrier[X]}{\reals}$ and
+        $\tietzePartialSumAt{X}{h}{A}{f}{r}{n}$ is continuous from
+            $X$ to $\RealTopology$ and
+        $\tietzeResidualAt{X}{h}{A}{f}{r}{n}\in\funs{A}{\reals}$ and
+        $\tietzeResidualAt{X}{h}{A}{f}{r}{n}$ is continuous from
+            $\subspaceTopology{X}{A}$ to $\RealTopology$ and
+        $\tietzeResidualAt{X}{h}{A}{f}{r}{n}
+            =\realMapSub{A}{f}
+                {\restrl{\tietzePartialSumAt{X}{h}{A}{f}{r}{n}}{A}}$
+        and
+        (for every $a\in A$ we have
+            $\surrealLe{
+                \abs{\apply{\tietzeResidualAt{X}{h}{A}{f}{r}{n}}{a}}}
+                {\tietzeRadius{r}{n}}$).
+\end{definition}
+
+\begin{theorem}\label{tietze_stage_invariant_zero}
+    Let $X$ be a topological space.
+    Let $h$ be a normal shrinker for $X$.
+    Let $A\in\closeds{X}$.
+    Suppose $f\in\funs{A}{\reals}$ and
+        $f$ is continuous from $\subspaceTopology{X}{A}$ to
+            $\RealTopology$.
+    Let $r\in\reals$.
+    Suppose $\surrealLt{\surrealZero}{r}$ and
+        for every $a\in A$ we have $\surrealLe{\abs{f(a)}}{r}$.
+    Then $\tietzeStageInvariant{X}{h}{A}{f}{r}{\emptyset}$.
+\end{theorem}
+\begin{proof}
+    Let $S=\tietzePartialSumAt{X}{h}{A}{f}{r}{\emptyset}$.
+    Let $E=\tietzeResidualAt{X}{h}{A}{f}{r}{\emptyset}$.
+    $S=\realZeroMap{\carrier[X]}$ by \obv{tietze_partial_sum_zero}.
+    Hence $S\in\funs{\carrier[X]}{\reals}$
+        by \auto{real_zero_map_type}.
+    $S$ is continuous from $X$ to $\RealTopology$
+        by \auto{real_zero_map_continuous}.
+    $A\subseteq\carrier[X]$ by \obv{closeds,pow_iff,subseteq}.
+    $\restrl{S}{A}=\realZeroMap{A}$
+        by \auto{real_zero_map_restrl}.
+    $E=\realMapSub{A}{f}{\restrl{S}{A}}$
+        by \obv{tietze_residual_at_eq}.
+    Hence $E=\realMapSub{A}{f}{\realZeroMap{A}}$.
+    Hence $E=f$ by \obv{real_map_sub_zero_right}.
+    Thus $E\in\funs{A}{\reals}$.
+    $E$ is continuous from $\subspaceTopology{X}{A}$ to
+        $\RealTopology$.
+    $\tietzeRadius{r}{\emptyset}=r$ by \obv{tietze_radius_zero}.
+    Hence for every $a\in A$ we have
+        $\surrealLe{\abs{E(a)}}{\tietzeRadius{r}{\emptyset}}$
+        by \auto.
+    Follows by
+        \auto{tietze_stage_invariant_def,tietze_residual_at_eq}.
+\end{proof}
+
+\begin{theorem}\label{tietze_stage_step}
+    Let $X$ be a topological space.
+    Let $h$ be a normal shrinker for $X$.
+    Let $A\in\closeds{X}$.
+    Suppose $f\in\funs{A}{\reals}$ and
+        $f$ is continuous from $\subspaceTopology{X}{A}$ to
+            $\RealTopology$.
+    Let $r\in\reals$.
+    Suppose $\surrealLt{\surrealZero}{r}$.
+    Let $n\in\naturals$.
+    Suppose $\tietzeStageInvariant{X}{h}{A}{f}{r}{n}$.
+    Let $S=\tietzePartialSumAt{X}{h}{A}{f}{r}{n}$.
+    Let $E=\tietzeResidualAt{X}{h}{A}{f}{r}{n}$.
+    Let $C=\tietzeCorrectionAt{X}{h}{A}{f}{r}{n}$.
+    Let $S'=\tietzePartialSumAt{X}{h}{A}{f}{r}{\suc{n}}$.
+    Let $E'=\tietzeResidualAt{X}{h}{A}{f}{r}{\suc{n}}$.
+    Let $R=\tietzeRadius{r}{n}$.
+    Then $C\in\funs{\carrier[X]}{\reals}$ and
+        $C$ is continuous from $X$ to $\RealTopology$ and
+        (for every $x\in\carrier[X]$ we have
+            $\surrealLe{\abs{C(x)}}
+                {\surrealMul{\realQuarter}{R}}$) and
+        $S'=\realMapAdd{\carrier[X]}{S}{C}$ and
+        (for every $x\in\carrier[X]$ we have
+            $\surrealLe{\metricDistance[\RealMetric](S'(x),S(x))}
+                {\surrealMul{\realQuarter}{R}}$) and
+        $E'=\realMapSub{A}{E}{\restrl{C}{A}}$ and
+        (for every $a\in A$ we have
+            $\surrealLe{\abs{E'(a)}}
+                {\tietzeRadius{r}{\suc{n}}}$) and
+        $\tietzeStageInvariant{X}{h}{A}{f}{r}{\suc{n}}$.
+\end{theorem}
+\begin{proof}
+    $A\subseteq\carrier[X]$ by \obv{closeds,pow_iff,subseteq}.
+    $S\in\funs{\carrier[X]}{\reals}$ and
+        $S$ is continuous from $X$ to $\RealTopology$ and
+        $E\in\funs{A}{\reals}$ and
+        $E$ is continuous from $\subspaceTopology{X}{A}$ to
+            $\RealTopology$ and
+        $E=\realMapSub{A}{f}{\restrl{S}{A}}$ and
+        for every $a\in A$ we have $\surrealLe{\abs{E(a)}}{R}$
+        by \auto{tietze_stage_invariant_def}.
+    $R\in\reals$ and $\surrealLt{\surrealZero}{R}$
+        by \auto{tietze_radius_is_real,tietze_radius_positive}.
+    $C=\tietzeCorrection{X}{h}{A}{E}{R}$
+        by \auto{tietze_correction_at_eq}.
+    Hence $C\in\funs{\carrier[X]}{\reals}$ and
+        $C$ is continuous from $X$ to $\RealTopology$ and
+        (for every $x\in\carrier[X]$ we have
+            $\surrealLe{\surrealNeg{\surrealMul{\realQuarter}{R}}}
+                {C(x)}$ and
+            $\surrealLe{C(x)}{\surrealMul{\realQuarter}{R}}$ and
+            $\surrealLe{\abs{C(x)}}
+                {\surrealMul{\realQuarter}{R}}$) and
+        (for every $a\in A$ we have
+            $\surrealLe{\abs{\surrealAdd{E(a)}{\surrealNeg{C(a)}}}}
+                {\surrealMul{\realThreeQuarters}{R}}$)
+        by \obv{tietze_quarter_correction}.
+    $S'=\realMapAdd{\carrier[X]}{S}{C}$
+        by \auto{tietze_partial_sum_successor}.
+    Hence $S'\in\funs{\carrier[X]}{\reals}$
+        by \auto{real_map_add_type}.
+    $S'$ is continuous from $X$ to $\RealTopology$
+        by \auto{real_map_add_continuous}.
+    Show that for every $x\in\carrier[X]$ we have
+        $\surrealLe{\metricDistance[\RealMetric](S'(x),S(x))}
+            {\surrealMul{\realQuarter}{R}}$.
+    \begin{subproof}
+        Fix $x\in\carrier[X]$.
+        $S(x),C(x),S'(x)\in\reals$ by \obv{funs_type_apply}.
+        $S'(x)=\surrealAdd{S(x)}{C(x)}$
+            by \auto{real_map_add_apply}.
+        $\metricDistance[\RealMetric](S'(x),S(x))
+            =\abs{\surrealAdd{S'(x)}{\surrealNeg{S(x)}}}$
+            by \obv{surreal_real_metric_distance}.
+        $\surrealAdd{S'(x)}{\surrealNeg{S(x)}}=C(x)$
+            by
+            \auto{surreal_add_associative,surreal_add_commutative,surreal_add_inverse_right,surreal_add_zero_left,surreal_add_zero_right,surreal_negation_is_surreal,surreal_real_is_surreal}.
+        Hence $\metricDistance[\RealMetric](S'(x),S(x))=\abs{C(x)}$.
+        Follows by \auto.
+    \end{subproof}
+    Let $S_A=\restrl{S}{A}$.
+    Let $C_A=\restrl{C}{A}$.
+    $S_A,C_A\in\funs{A}{\reals}$
+        by \auto{funs_restrl}.
+    $\restrl{S'}{A}=\realMapAdd{A}{S_A}{C_A}$
+        by \auto{real_map_add_restrl}.
+    $E'=\realMapSub{A}{f}{\restrl{S'}{A}}$
+        by \auto{tietze_residual_at_eq}.
+    Hence $E'=\realMapSub{A}{f}{\realMapAdd{A}{S_A}{C_A}}$.
+    Hence $E'=\realMapSub{A}{\realMapSub{A}{f}{S_A}}{C_A}$
+        by \obv{real_map_sub_add_right}.
+    $E=\realMapSub{A}{f}{S_A}$.
+    Hence $E'=\realMapSub{A}{E}{C_A}$.
+    Thus $E'\in\funs{A}{\reals}$ by \auto{real_map_sub_type}.
+    $\RealTopology$ is a topological space
+        by \obv{real_topology_is_topological_space}.
+    $C_A$ is continuous from $\subspaceTopology{X}{A}$ to
+        $\RealTopology$
+        by \auto{continuous_domain_restriction_on_subset}.
+    $\subspaceTopology{X}{A}$ is a topological space
+        by \obv{subspace_topology_is_topological_space}.
+    $\carrier[\subspaceTopology{X}{A}]=A$
+        by \obv{subspace_topology_carrier_of_subset}.
+    Hence $E'$ is continuous from $\subspaceTopology{X}{A}$ to
+        $\RealTopology$
+        by \auto{real_map_sub_continuous}.
+    $\tietzeRadius{r}{\suc{n}}
+        =\surrealMul{\realThreeQuarters}{R}$
+        by \auto{tietze_radius_successor}.
+    Show that for every $a\in A$ we have
+        $\surrealLe{\abs{E'(a)}}{\tietzeRadius{r}{\suc{n}}}$.
+    \begin{subproof}
+        Fix $a\in A$.
+        $a\in\carrier[X]$ by \obv{subseteq}.
+        $\dom{C}=\carrier[X]$ by \obv{funs}.
+        Hence $A\subseteq\dom{C}$.
+        $C_A=\restrl{C}{A}$.
+        $E'(a)=\surrealAdd{E(a)}{\surrealNeg{C_A(a)}}$
+            by \auto{real_map_sub_apply}.
+        $C_A(a)=C(a)$
+            by \auto{restrl_of_function_apply,funs_is_function}.
+        Hence $E'(a)=\surrealAdd{E(a)}{\surrealNeg{C(a)}}$.
+        Follows by \auto.
+    \end{subproof}
+    $E'=\realMapSub{A}{f}{\restrl{S'}{A}}$
+        by \obv{tietze_residual_at_eq}.
+    Hence $\tietzeStageInvariant{X}{h}{A}{f}{r}{\suc{n}}$
+        by \auto{tietze_stage_invariant_def}.
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{tietze_stage_invariant}
+    Let $X$ be a topological space.
+    Let $h$ be a normal shrinker for $X$.
+    Let $A\in\closeds{X}$.
+    Suppose $f\in\funs{A}{\reals}$ and
+        $f$ is continuous from $\subspaceTopology{X}{A}$ to
+            $\RealTopology$.
+    Let $r\in\reals$.
+    Suppose $\surrealLt{\surrealZero}{r}$ and
+        for every $a\in A$ we have $\surrealLe{\abs{f(a)}}{r}$.
+    Let $n\in\naturals$.
+    Then $\tietzeStageInvariant{X}{h}{A}{f}{r}{n}$.
+\end{theorem}
+\begin{proof}
+    Let $P:\Set\to\Prop=\fun{k:\Set}{
+        \tietzeStageInvariant{X}{h}{A}{f}{r}{k}}$.
+    $\Apply{P}{\emptyset}$ by \obv{tietze_stage_invariant_zero}.
+    Show that for every $k\in\naturals$ such that $\Apply{P}{k}$
+        we have $\Apply{P}{\suc{k}}$.
+    \begin{subproof}
+        Fix $k\in\naturals$.
+        Assume $\Apply{P}{k}$.
+        $\tietzeStageInvariant{X}{h}{A}{f}{r}{k}$.
+        Hence $\tietzeStageInvariant{X}{h}{A}{f}{r}{\suc{k}}$
+            by \auto{tietze_stage_step}.
+    \end{subproof}
+    Let $C=\sep{\naturals}{P}$.
+    $\emptyset\in C$ by \auto{logical_separation_iff,omega_empty}.
+    For every $k\in C$ we have $\suc{k}\in C$
+        by \auto{logical_separation_iff,omega_successor}.
+    Hence $C$ is an inductive set by \obv{inductive_set}.
+    Hence every natural number is an element of $C$
+        by \obv{omega_minimal}.
+    Hence $\Apply{P}{n}$ by \auto{logical_separation_iff}.
+\end{proof}
+
+\begin{corollary}\label{tietze_partial_sum_typed}
+    Let $X$ be a topological space.
+    Let $h$ be a normal shrinker for $X$.
+    Let $A\in\closeds{X}$.
+    Suppose $f\in\funs{A}{\reals}$ and $f$ is continuous from
+        $\subspaceTopology{X}{A}$ to $\RealTopology$.
+    Let $r\in\reals$.
+    Suppose $\surrealLt{\surrealZero}{r}$ and
+        for every $a\in A$ we have $\surrealLe{\abs{f(a)}}{r}$.
+    Let $n\in\naturals$.
+    Then $\tietzePartialSumAt{X}{h}{A}{f}{r}{n}
+        \in\funs{\carrier[X]}{\reals}$.
+\end{corollary}
+\begin{proof}
+    Follows by
+        \auto{tietze_stage_invariant,tietze_stage_invariant_def}.
+\end{proof}
+
+\begin{corollary}\label{tietze_partial_sum_continuous}
+    Let $X$ be a topological space.
+    Let $h$ be a normal shrinker for $X$.
+    Let $A\in\closeds{X}$.
+    Suppose $f\in\funs{A}{\reals}$ and $f$ is continuous from
+        $\subspaceTopology{X}{A}$ to $\RealTopology$.
+    Let $r\in\reals$.
+    Suppose $\surrealLt{\surrealZero}{r}$ and
+        for every $a\in A$ we have $\surrealLe{\abs{f(a)}}{r}$.
+    Let $n\in\naturals$.
+    Then $\tietzePartialSumAt{X}{h}{A}{f}{r}{n}$ is continuous from
+        $X$ to $\RealTopology$.
+\end{corollary}
+\begin{proof}
+    Follows by
+        \auto{tietze_stage_invariant,tietze_stage_invariant_def}.
+\end{proof}
+
+\begin{corollary}\label{tietze_residual_typed}
+    Let $X$ be a topological space.
+    Let $h$ be a normal shrinker for $X$.
+    Let $A\in\closeds{X}$.
+    Suppose $f\in\funs{A}{\reals}$ and $f$ is continuous from
+        $\subspaceTopology{X}{A}$ to $\RealTopology$.
+    Let $r\in\reals$.
+    Suppose $\surrealLt{\surrealZero}{r}$ and
+        for every $a\in A$ we have $\surrealLe{\abs{f(a)}}{r}$.
+    Let $n\in\naturals$.
+    Then $\tietzeResidualAt{X}{h}{A}{f}{r}{n}\in\funs{A}{\reals}$.
+\end{corollary}
+\begin{proof}
+    Follows by
+        \auto{tietze_stage_invariant,tietze_stage_invariant_def}.
+\end{proof}
+
+\begin{corollary}\label{tietze_residual_continuous}
+    Let $X$ be a topological space.
+    Let $h$ be a normal shrinker for $X$.
+    Let $A\in\closeds{X}$.
+    Suppose $f\in\funs{A}{\reals}$ and $f$ is continuous from
+        $\subspaceTopology{X}{A}$ to $\RealTopology$.
+    Let $r\in\reals$.
+    Suppose $\surrealLt{\surrealZero}{r}$ and
+        for every $a\in A$ we have $\surrealLe{\abs{f(a)}}{r}$.
+    Let $n\in\naturals$.
+    Then $\tietzeResidualAt{X}{h}{A}{f}{r}{n}$ is continuous from
+        $\subspaceTopology{X}{A}$ to $\RealTopology$.
+\end{corollary}
+\begin{proof}
+    Follows by
+        \auto{tietze_stage_invariant,tietze_stage_invariant_def}.
+\end{proof}
+
+\begin{corollary}\label{tietze_residual_definition}
+    Let $X$ be a topological space.
+    Then
+        $\tietzeResidualAt{X}{h}{A}{f}{r}{n}
+            =\realMapSub{A}{f}
+                {\restrl{\tietzePartialSumAt{X}{h}{A}{f}{r}{n}}{A}}$.
+\end{corollary}
+\begin{proof}
+    Follows by \obv{tietze_residual_at_eq}.
+\end{proof}
+
+\begin{corollary}\label{tietze_residual_bound}
+    Let $X$ be a topological space.
+    Let $h$ be a normal shrinker for $X$.
+    Let $A\in\closeds{X}$.
+    Suppose $f\in\funs{A}{\reals}$ and $f$ is continuous from
+        $\subspaceTopology{X}{A}$ to $\RealTopology$.
+    Let $r\in\reals$.
+    Suppose $\surrealLt{\surrealZero}{r}$ and
+        for every $b\in A$ we have $\surrealLe{\abs{f(b)}}{r}$.
+    Let $n\in\naturals$ and $a\in A$.
+    Then
+        $\surrealLe{
+            \abs{\apply{\tietzeResidualAt{X}{h}{A}{f}{r}{n}}{a}}}
+            {\tietzeRadius{r}{n}}$.
+\end{corollary}
+\begin{proof}
+    Follows by
+        \auto{tietze_stage_invariant,tietze_stage_invariant_def}.
+\end{proof}
+
+\begin{corollary}\label{tietze_correction_typed}
+    Let $X$ be a topological space.
+    Let $h$ be a normal shrinker for $X$.
+    Let $A\in\closeds{X}$.
+    Suppose $f\in\funs{A}{\reals}$ and $f$ is continuous from
+        $\subspaceTopology{X}{A}$ to $\RealTopology$.
+    Let $r\in\reals$.
+    Suppose $\surrealLt{\surrealZero}{r}$ and
+        for every $a\in A$ we have $\surrealLe{\abs{f(a)}}{r}$.
+    Let $n\in\naturals$.
+    Then $\tietzeCorrectionAt{X}{h}{A}{f}{r}{n}
+        \in\funs{\carrier[X]}{\reals}$.
+\end{corollary}
+\begin{proof}
+    Follows by
+        \auto{tietze_stage_invariant,tietze_stage_step}.
+\end{proof}
+
+\begin{corollary}\label{tietze_correction_continuous}
+    Let $X$ be a topological space.
+    Let $h$ be a normal shrinker for $X$.
+    Let $A\in\closeds{X}$.
+    Suppose $f\in\funs{A}{\reals}$ and $f$ is continuous from
+        $\subspaceTopology{X}{A}$ to $\RealTopology$.
+    Let $r\in\reals$.
+    Suppose $\surrealLt{\surrealZero}{r}$ and
+        for every $a\in A$ we have $\surrealLe{\abs{f(a)}}{r}$.
+    Let $n\in\naturals$.
+    Then $\tietzeCorrectionAt{X}{h}{A}{f}{r}{n}$ is continuous from
+        $X$ to $\RealTopology$.
+\end{corollary}
+\begin{proof}
+    Follows by
+        \auto{tietze_stage_invariant,tietze_stage_step}.
+\end{proof}
+
+\begin{corollary}\label{tietze_correction_bound}
+    Let $X$ be a topological space.
+    Let $h$ be a normal shrinker for $X$.
+    Let $A\in\closeds{X}$.
+    Suppose $f\in\funs{A}{\reals}$ and $f$ is continuous from
+        $\subspaceTopology{X}{A}$ to $\RealTopology$.
+    Let $r\in\reals$.
+    Suppose $\surrealLt{\surrealZero}{r}$ and
+        for every $a\in A$ we have $\surrealLe{\abs{f(a)}}{r}$.
+    Let $n\in\naturals$ and $x\in\carrier[X]$.
+    Then
+        $\surrealLe{\abs{\apply{\tietzeCorrectionAt{X}{h}{A}{f}{r}{n}}{x}}}
+            {\surrealMul{\realQuarter}{\tietzeRadius{r}{n}}}$.
+\end{corollary}
+\begin{proof}
+    Follows by
+        \auto{tietze_stage_invariant,tietze_stage_step}.
+\end{proof}
+
+\begin{corollary}\label{tietze_partial_sum_successor_eq}
+    Let $X$ be a topological space.
+    Let $n\in\naturals$.
+    Then
+        $\tietzePartialSumAt{X}{h}{A}{f}{r}{\suc{n}}
+            =\realMapAdd{\carrier[X]}
+                {\tietzePartialSumAt{X}{h}{A}{f}{r}{n}}
+                {\tietzeCorrectionAt{X}{h}{A}{f}{r}{n}}$.
+\end{corollary}
+\begin{proof}
+    Follows by \obv{tietze_partial_sum_successor}.
+\end{proof}
+
+\begin{corollary}\label{tietze_residual_successor_eq}
+    Let $X$ be a topological space.
+    Let $h$ be a normal shrinker for $X$.
+    Let $A\in\closeds{X}$.
+    Suppose $f\in\funs{A}{\reals}$ and $f$ is continuous from
+        $\subspaceTopology{X}{A}$ to $\RealTopology$.
+    Let $r\in\reals$.
+    Suppose $\surrealLt{\surrealZero}{r}$ and
+        for every $a\in A$ we have $\surrealLe{\abs{f(a)}}{r}$.
+    Let $n\in\naturals$.
+    Then
+        $\tietzeResidualAt{X}{h}{A}{f}{r}{\suc{n}}
+            =\realMapSub{A}
+                {\tietzeResidualAt{X}{h}{A}{f}{r}{n}}
+                {\restrl{\tietzeCorrectionAt{X}{h}{A}{f}{r}{n}}{A}}$.
+\end{corollary}
+\begin{proof}
+    Follows by
+        \auto{tietze_stage_invariant,tietze_stage_step}.
+\end{proof}
+
+\begin{theorem}\label{tietze_partial_sums_typed}
+    Let $X$ be a topological space.
+    Let $h$ be a normal shrinker for $X$.
+    Let $A\in\closeds{X}$.
+    Suppose $f\in\funs{A}{\reals}$ and $f$ is continuous from
+        $\subspaceTopology{X}{A}$ to $\RealTopology$.
+    Let $r\in\reals$.
+    Suppose $\surrealLt{\surrealZero}{r}$ and
+        for every $a\in A$ we have $\surrealLe{\abs{f(a)}}{r}$.
+    Then $\tietzePartialSums{X}{h}{A}{f}{r}
+        \in\funs{\naturals}{\funs{\carrier[X]}{\reals}}$.
+\end{theorem}
+\begin{proof}
+    For every $n\in\naturals$ we have
+        $\tietzePartialSumAt{X}{h}{A}{f}{r}{n}
+            \in\funs{\carrier[X]}{\reals}$
+        by \obv{tietze_partial_sum_typed}.
+    Follows by
+        \auto{tietze_partial_sums,logical_graph_on_domain_type}.
+\end{proof}
+
+\begin{corollary}\label{tietze_partial_sum_increment_bound}
+    Let $X$ be a topological space.
+    Let $h$ be a normal shrinker for $X$.
+    Let $A\in\closeds{X}$.
+    Suppose $f\in\funs{A}{\reals}$ and $f$ is continuous from
+        $\subspaceTopology{X}{A}$ to $\RealTopology$.
+    Let $r\in\reals$.
+    Suppose $\surrealLt{\surrealZero}{r}$ and
+        for every $a\in A$ we have $\surrealLe{\abs{f(a)}}{r}$.
+    Let $n\in\naturals$ and $x\in\carrier[X]$.
+    Then
+        $\surrealLe{
+            \metricDistance[\RealMetric]
+                (\apply{\tietzePartialSumAt{X}{h}{A}{f}{r}{\suc{n}}}{x},
+                 \apply{\tietzePartialSumAt{X}{h}{A}{f}{r}{n}}{x})}
+            {\surrealMul{\realQuarter}{\tietzeRadius{r}{n}}}$.
+\end{corollary}
+\begin{proof}
+    Follows by
+        \auto{tietze_stage_invariant,tietze_stage_step}.
+\end{proof}
+
+\begin{theorem}\label{tietze_partial_sums_remaining_budget}
+    Let $X$ be a topological space.
+    Let $h$ be a normal shrinker for $X$.
+    Let $A\in\closeds{X}$.
+    Suppose $f\in\funs{A}{\reals}$ and $f$ is continuous from
+        $\subspaceTopology{X}{A}$ to $\RealTopology$.
+    Let $r\in\reals$.
+    Suppose $\surrealLt{\surrealZero}{r}$ and
+        for every $a\in A$ we have $\surrealLe{\abs{f(a)}}{r}$.
+    Let $S=\tietzePartialSums{X}{h}{A}{f}{r}$.
+    Let $b=\tietzeBudgetSequence{r}$.
+    Then for every $i\in\naturals$ we have for every
+        $y\in\carrier[X]$ we have
+        $\surrealLe{
+            \surrealAdd{
+                \metricDistance[\RealMetric]
+                    (\apply{\apply{S}{\suc{i}}}{y},
+                     \apply{\apply{S}{i}}{y})}
+                {b(\suc{i})}}
+            {b(i)}$.
+\end{theorem}
+\begin{proof}
+    Fix $i\in\naturals$.
+    Fix $y\in\carrier[X]$.
+    $\surrealLe{\surrealZero}{r}$
+        by
+        \obv{surreal_le,surreal_real_is_surreal,empty_surreal}.
+    $\apply{S}{\suc{i}}
+        =\tietzePartialSumAt{X}{h}{A}{f}{r}{\suc{i}}$ and
+        $\apply{S}{i}=\tietzePartialSumAt{X}{h}{A}{f}{r}{i}$
+        by \auto{tietze_partial_sums_apply,omega_successor}.
+    Let $d=\metricDistance[\RealMetric]
+        (\apply{\apply{S}{\suc{i}}}{y},\apply{\apply{S}{i}}{y})$.
+    Let $q=\surrealMul{\realQuarter}{\tietzeRadius{r}{i}}$.
+    Let $v=\tietzeRadius{r}{\suc{i}}$.
+    Hence $\surrealLe{d}{q}$
+        by \auto{tietze_partial_sum_increment_bound}.
+    $b(i)=\tietzeRadius{r}{i}$ and
+        $b(\suc{i})=\tietzeRadius{r}{\suc{i}}$
+        by \auto{tietze_budget_sequence_apply,omega_successor}.
+    $d,q,v\in\reals$
+        by
+        \auto{tietze_partial_sum_typed,funs_type_apply,omega_successor,metric_distance_type,surreal_real_metric_space,surreal_real_metric_carrier,real_quarter_is_real,tietze_radius_is_real,surreal_real_multiplication_closed}.
+    Hence $\surrealLe{\surrealAdd{d}{v}}{\surrealAdd{q}{v}}$
+        by \obv{surreal_add_le_left,surreal_real_is_surreal}.
+    $\surrealAdd{
+        \surrealMul{\realQuarter}{\tietzeRadius{r}{i}}}
+        {\tietzeRadius{r}{\suc{i}}}=\tietzeRadius{r}{i}$
+        by \obv{tietze_radius_quarter_spending}.
+    Hence $\surrealAdd{q}{v}=\tietzeRadius{r}{i}$ by \auto.
+    Hence $\surrealLe{\surrealAdd{d}{v}}{\tietzeRadius{r}{i}}$
+        by \auto.
+    Follows by \auto.
+\end{proof}

@@ -1,0 +1,286 @@
+\import{surreal/cut.tex}
+
+\section{Sign-option presentations of surreals}
+
+The canonical sign options retain exactly the initial restrictions at which
+the next sign points to the corresponding side of the cut.
+
+\begin{definition}\label{surreal_positive_indices}
+    $\surrealPositiveIndices{x}=
+        \{\alpha\in\birthday{x}\mid
+            \apply{x}{\alpha}=\suc{\emptyset}\}$.
+\end{definition}
+
+\begin{definition}\label{surreal_negative_indices}
+    $\surrealNegativeIndices{x}=
+        \{\alpha\in\birthday{x}\mid
+            \apply{x}{\alpha}=\emptyset\}$.
+\end{definition}
+
+\begin{definition}\label{surreal_sign_left}
+    $\surrealSignLeft{x}=
+        \{\restrl{x}{\alpha}\mid
+            \alpha\in\surrealPositiveIndices{x}\}$.
+\end{definition}
+
+\begin{definition}\label{surreal_sign_right}
+    $\surrealSignRight{x}=
+        \{\restrl{x}{\alpha}\mid
+            \alpha\in\surrealNegativeIndices{x}\}$.
+\end{definition}
+
+\begin{proposition}\label{surreal_sign_left_iff}
+    $l\in\surrealSignLeft{x}$ iff there exists $\alpha\in\birthday{x}$
+        such that $\apply{x}{\alpha}=\suc{\emptyset}$ and
+        $l=\restrl{x}{\alpha}$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{surreal_sign_left,surreal_positive_indices}.
+\end{proof}
+
+\begin{proposition}\label{surreal_sign_right_iff}
+    $r\in\surrealSignRight{x}$ iff there exists $\alpha\in\birthday{x}$
+        such that $\apply{x}{\alpha}=\emptyset$ and
+        $r=\restrl{x}{\alpha}$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{surreal_sign_right,surreal_negative_indices}.
+\end{proof}
+
+\begin{proposition}\label{surreal_sign_left_below}
+    Suppose $\surreal{x}$.
+    Then for every $l\in\surrealSignLeft{x}$ we have
+        $\surrealLt{l}{x}$.
+\end{proposition}
+\begin{proof}
+    Fix $l\in\surrealSignLeft{x}$.
+    Take $\alpha\in\birthday{x}$ such that
+        $\apply{x}{\alpha}=\suc{\emptyset}$ and
+        $l=\restrl{x}{\alpha}$
+        by \obv{surreal_sign_left_iff}.
+    $\surreal{l}$ and $\birthday{l}=\alpha$
+        by \auto{surreal_restriction_birthday}.
+    $\surrealEq{\alpha}{l}{x}$
+        by \auto{surreal_restriction_agrees}.
+    Follows by \obv{surreal_lt,surreal_lt_left_short}.
+\end{proof}
+
+\begin{proposition}\label{surreal_sign_right_above}
+    Suppose $\surreal{x}$.
+    Then for every $r\in\surrealSignRight{x}$ we have
+        $\surrealLt{x}{r}$.
+\end{proposition}
+\begin{proof}
+    Fix $r\in\surrealSignRight{x}$.
+    Take $\alpha\in\birthday{x}$ such that
+        $\apply{x}{\alpha}=\emptyset$ and
+        $r=\restrl{x}{\alpha}$
+        by \obv{surreal_sign_right_iff}.
+    $\surreal{r}$ and $\birthday{r}=\alpha$
+        by \auto{surreal_restriction_birthday}.
+    $\surrealEq{\alpha}{r}{x}$
+        by \auto{surreal_restriction_agrees}.
+    Hence $\surrealEq{\alpha}{x}{r}$
+        by \obv{surreal_eq_initial_symmetric}.
+    Follows by \obv{surreal_lt,surreal_lt_right_short}.
+\end{proof}
+
+\begin{theorem}\label{surreal_sign_cut_pair}
+    Suppose $\surreal{x}$.
+    Then $\surrealCutPair{\surrealSignLeft{x}}{\surrealSignRight{x}}$.
+\end{theorem}
+\begin{proof}
+    For every $l\in\surrealSignLeft{x}$ we have $\surreal{l}$
+        by \auto{surreal_sign_left_iff,surreal_restriction_birthday}.
+    For every $r\in\surrealSignRight{x}$ we have $\surreal{r}$
+        by \auto{surreal_sign_right_iff,surreal_restriction_birthday}.
+    For all $l\in\surrealSignLeft{x}$ we have for all
+        $r\in\surrealSignRight{x}$ we have $\surrealLt{l}{r}$
+        by \obv{surreal_sign_left_below,surreal_sign_right_above,surreal_lt_transitive,surreal_restriction_birthday}.
+    Follows by \obv{surreal_cut_pair}.
+\end{proof}
+
+\begin{lemma}\label{surreal_sign_cut_minimal}
+    Suppose $\surreal{x}$ and $\surreal{w}$.
+    Suppose for every $l\in\surrealSignLeft{x}$ we have
+        $\surrealLt{l}{w}$.
+    Suppose for every $r\in\surrealSignRight{x}$ we have
+        $\surrealLt{w}{r}$.
+    Then $\birthday{x}\subseteq\birthday{w}$ and
+        $\surrealEq{\birthday{x}}{x}{w}$.
+\end{lemma}
+\begin{proof}
+    $\surrealLt{x}{w}$ or $x=w$ or $\surrealLt{w}{x}$
+        by \obv{surreal_lt_trichotomy}.
+    \begin{byCase}
+        \caseOf{$x=w$.}
+            Follows by \obv{subseteq_refl,surreal_eq_initial_reflexive}.
+        \caseOf{$x\neq w$.}
+            \begin{byCase}
+                \caseOf{$\surrealLt{x}{w}$.}
+                    $(\exists\delta:\Set.
+                            \surrealLtCommon{\delta}{x}{w})
+                        \lor\surrealLtLeftShort{x}{w}
+                        \lor\surrealLtRightShort{x}{w}$
+                        by \obv{surreal_lt}.
+                    \begin{byCase}
+                        \caseOf{$\surrealLtLeftShort{x}{w}$.}
+                            $\birthday{x}\in\birthday{w}$ and
+                                $\surrealEq{\birthday{x}}{x}{w}$
+                                by \obv{surreal_lt_left_short}.
+                            $\birthday{x}$ and $\birthday{w}$ are ordinals
+                                by \obv{surreal_birthday_ordinal}.
+                            Follows by \obv{ordinal_elem_implies_subseteq}.
+                        \caseOf{not $\surrealLtLeftShort{x}{w}$.}
+                            \begin{byCase}
+                                \caseOf{$\exists\delta:\Set.
+                                        \surrealLtCommon{\delta}{x}{w}$.}
+                                    Take $\delta$ such that
+                                        $\surrealLtCommon{\delta}{x}{w}$.
+                                    $\delta\in\birthday{x}$ and
+                                        $\delta\in\birthday{w}$ and
+                                        $\surrealEq{\delta}{x}{w}$ and
+                                        $\apply{x}{\delta}=\emptyset$ and
+                                        $\apply{w}{\delta}=\suc{\emptyset}$
+                                        by \obv{surreal_lt_common,inter}.
+                                    Let $r=\restrl{x}{\delta}$.
+                                    $r\in\surrealSignRight{x}$
+                                        by \obv{surreal_sign_right_iff}.
+                                    $\surreal{r}$ and $\birthday{r}=\delta$
+                                        by \auto{surreal_restriction_birthday}.
+                                    $\surrealEq{\delta}{r}{x}$
+                                        by \auto{surreal_restriction_agrees}.
+                                    Hence $\surrealEq{\delta}{r}{w}$
+                                        by \obv{surreal_eq_initial_transitive}.
+                                    Hence $\surrealLt{r}{w}$
+                                        by \auto{surreal_lt,surreal_lt_left_short}.
+                                    $\surrealLt{w}{r}$.
+                                    Contradiction by
+                                        \obv{surreal_lt_asymmetric}.
+                                \caseOf{not $\exists\delta:\Set.
+                                        \surrealLtCommon{\delta}{x}{w}$.}
+                                    Hence $\surrealLtRightShort{x}{w}$.
+                                    Let $\beta=\birthday{w}$.
+                                    $\beta\in\birthday{x}$ and
+                                        $\surrealEq{\beta}{x}{w}$ and
+                                        $\apply{x}{\beta}=\emptyset$
+                                        by \auto{surreal_lt_right_short}.
+                                    Let $r=\restrl{x}{\beta}$.
+                                    $r\in\surrealSignRight{x}$
+                                        by \obv{surreal_sign_right_iff}.
+                                    $\surrealAt{\beta}{r}$
+                                        by \obv{surreal_restriction_at}.
+                                    $\surrealAt{\beta}{w}$
+                                        by \auto{surreal_at_birthday}.
+                                    $\surrealEq{\beta}{r}{x}$
+                                        by \auto{surreal_restriction_agrees}.
+                                    Hence $\surrealEq{\beta}{r}{w}$
+                                        by \obv{surreal_eq_initial_transitive}.
+                                    Hence $r=w$
+                                        by \obv{surreal_eq_birthday_implies_eq}.
+                                    $\surrealLt{w}{r}$.
+                                    Contradiction by
+                                        \obv{surreal_lt_irreflexive}.
+                            \end{byCase}
+                    \end{byCase}
+                \caseOf{not $\surrealLt{x}{w}$.}
+                    Hence $\surrealLt{w}{x}$.
+                    $(\exists\delta:\Set.
+                            \surrealLtCommon{\delta}{w}{x})
+                        \lor\surrealLtLeftShort{w}{x}
+                        \lor\surrealLtRightShort{w}{x}$
+                        by \obv{surreal_lt}.
+                    \begin{byCase}
+                        \caseOf{$\surrealLtRightShort{w}{x}$.}
+                            $\birthday{x}\in\birthday{w}$ and
+                                $\surrealEq{\birthday{x}}{w}{x}$
+                                by \obv{surreal_lt_right_short}.
+                            Hence $\surrealEq{\birthday{x}}{x}{w}$
+                                by \obv{surreal_eq_initial_symmetric}.
+                            $\birthday{x}$ and $\birthday{w}$ are ordinals
+                                by \obv{surreal_birthday_ordinal}.
+                            Follows by \obv{ordinal_elem_implies_subseteq}.
+                        \caseOf{not $\surrealLtRightShort{w}{x}$.}
+                            \begin{byCase}
+                                \caseOf{$\exists\delta:\Set.
+                                        \surrealLtCommon{\delta}{w}{x}$.}
+                                    Take $\delta$ such that
+                                        $\surrealLtCommon{\delta}{w}{x}$.
+                                    $\delta\in\birthday{w}$ and
+                                        $\delta\in\birthday{x}$ and
+                                        $\surrealEq{\delta}{w}{x}$ and
+                                        $\apply{w}{\delta}=\emptyset$ and
+                                        $\apply{x}{\delta}=\suc{\emptyset}$
+                                        by \obv{surreal_lt_common,inter}.
+                                    Let $l=\restrl{x}{\delta}$.
+                                    $l\in\surrealSignLeft{x}$
+                                        by \obv{surreal_sign_left_iff}.
+                                    $\surreal{l}$ and $\birthday{l}=\delta$
+                                        by \auto{surreal_restriction_birthday}.
+                                    $\surrealEq{\delta}{l}{x}$
+                                        by \auto{surreal_restriction_agrees}.
+                                    Hence $\surrealEq{\delta}{w}{l}$
+                                        by \obv{surreal_eq_initial_symmetric,surreal_eq_initial_transitive}.
+                                    Hence $\surrealLt{w}{l}$
+                                        by \auto{surreal_lt,surreal_lt_right_short}.
+                                    $\surrealLt{l}{w}$.
+                                    Contradiction by
+                                        \obv{surreal_lt_asymmetric}.
+                                \caseOf{not $\exists\delta:\Set.
+                                        \surrealLtCommon{\delta}{w}{x}$.}
+                                    Hence $\surrealLtLeftShort{w}{x}$.
+                                    Let $\beta=\birthday{w}$.
+                                    $\beta\in\birthday{x}$ and
+                                        $\surrealEq{\beta}{w}{x}$ and
+                                        $\apply{x}{\beta}=\suc{\emptyset}$
+                                        by \auto{surreal_lt_left_short}.
+                                    Let $l=\restrl{x}{\beta}$.
+                                    $l\in\surrealSignLeft{x}$
+                                        by \obv{surreal_sign_left_iff}.
+                                    $\surrealAt{\beta}{l}$
+                                        by \obv{surreal_restriction_at}.
+                                    $\surrealAt{\beta}{w}$
+                                        by \auto{surreal_at_birthday}.
+                                    $\surrealEq{\beta}{l}{x}$
+                                        by \auto{surreal_restriction_agrees}.
+                                    Hence $\surrealEq{\beta}{l}{w}$
+                                        by \obv{surreal_eq_initial_symmetric,surreal_eq_initial_transitive}.
+                                    Hence $l=w$
+                                        by \obv{surreal_eq_birthday_implies_eq}.
+                                    $\surrealLt{l}{w}$.
+                                    Contradiction by
+                                        \obv{surreal_lt_irreflexive}.
+                            \end{byCase}
+                    \end{byCase}
+            \end{byCase}
+    \end{byCase}
+\end{proof}
+
+\begin{theorem}\label{surreal_sign_cut_equation}
+    Suppose $\surreal{x}$.
+    Then $x=\surrealCut{\surrealSignLeft{x}}{\surrealSignRight{x}}$.
+\end{theorem}
+\begin{proof}
+    Let $L=\surrealSignLeft{x}$.
+    Let $R=\surrealSignRight{x}$.
+    $\surrealCutPair{L}{R}$ by \auto{surreal_sign_cut_pair}.
+    For every $l\in L$ we have $\surrealLt{l}{x}$
+        by \obv{surreal_sign_left_below}.
+    For every $r\in R$ we have $\surrealLt{x}{r}$
+        by \obv{surreal_sign_right_above}.
+    Show that for every $w$ such that $\surreal{w}$ and
+        $(\forall l:\Set.\ l\in L\implies\surrealLt{l}{w})$ and
+        $(\forall r:\Set.\ r\in R\implies\surrealLt{w}{r})$ we have
+        $\birthday{x}\subseteq\birthday{w}$ and
+        $\surrealEq{\birthday{x}}{x}{w}$.
+    \begin{subproof}
+        Follows by \obv{surreal_sign_cut_minimal}.
+    \end{subproof}
+    Hence $\surrealCutCandidate{L}{R}{x}$
+        by \obv{surreal_cut_candidate}.
+    Hence $\surrealCutAdmissible{L}{R}$
+        by \obv{surreal_cut_admissible}.
+    $\surrealCutCandidate{L}{R}{\surrealCut{L}{R}}$
+        by \obv{surreal_cut_specification}.
+    Follows by \obv{surreal_cut_candidate_unique}.
+\end{proof}

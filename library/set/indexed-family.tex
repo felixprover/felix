@@ -1,0 +1,679 @@
+\section{Index-keyed families}
+
+\import{set/choice.tex}
+\import{set/cons.tex}
+
+An indexed family retains an explicit index set, so equal fibres at distinct
+indices remain distinct coordinates.  Its dependent product consists of the
+functions that choose one element from each indexed fibre.
+
+\begin{definition}\label{pairwise_disjoint_on}
+    $\pairwiseDisjointOn{P}{I}$ iff for all $i,j\in I$ such that
+        $i\neq j$ we have $P(i)$ is disjoint from $P(j)$.
+\end{definition}
+
+\begin{abbreviation}\label{pairwise_disjoint_on_phrase}
+    $P$ is pairwise disjoint on $I$ iff $\pairwiseDisjointOn{P}{I}$.
+\end{abbreviation}
+
+\begin{definition}\label{family_remainder}
+    $\familyRemainder{P}{S}=S\setminus\unions{\ran{P}}$.
+\end{definition}
+
+\begin{definition}\label{complete_disjoint_family_at}
+    $\completeDisjointFamilyAt{P}{S}{I}{i_0}
+        =\cons{(i_0,P(i_0)\union\familyRemainder{P}{S})}
+            {\restrl{P}{I\setminus\{i_0\}}}$.
+\end{definition}
+
+\begin{proposition}\label{pairwise_disjoint_on_reindex_injection}
+    Suppose $P$ is a function on $I$.
+    Let $e\in\inj{J}{I}$.
+    Suppose $P$ is pairwise disjoint on $I$.
+    Then $P\circ e$ is pairwise disjoint on $J$.
+\end{proposition}
+\begin{proof}
+    $e\in\funs{J}{I}$ by \obv{inj}.
+    Hence $e$ is a function and $\dom{e}=J$ and $\ran{e}\subseteq I$
+        by \obv{funs_is_function,funs,funs_ran}.
+    $P$ is a function and $\dom{P}=I$.
+    Show that for all $i,j\in J$ such that $i\neq j$
+        we have $(P\circ e)(i)$ is disjoint from $(P\circ e)(j)$.
+    \begin{subproof}
+        Fix $i,j\in J$.
+        Assume $i\neq j$.
+        $e(i),e(j)\in I$ by \obv{funs_type_apply}.
+        $e(i)\neq e(j)$ by \obv{inj,injective_function,funs}.
+        Hence $P(e(i))$ is disjoint from $P(e(j))$
+            by \obv{pairwise_disjoint_on}.
+        $(P\circ e)(i)=P(e(i))$ and $(P\circ e)(j)=P(e(j))$
+            by \obv{circ_apply}.
+    \end{subproof}
+    Follows by \obv{pairwise_disjoint_on}.
+\end{proof}
+
+\begin{proposition}\label{pairwise_disjoint_on_subdomain}
+    Suppose $J\subseteq I$ and $P$ is pairwise disjoint on $I$.
+    Then $P$ is pairwise disjoint on $J$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{pairwise_disjoint_on,subseteq}.
+\end{proof}
+
+\begin{proposition}\label{family_remainder_subseteq}
+    $\familyRemainder{P}{S}\subseteq S$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{family_remainder,setminus,subseteq}.
+\end{proof}
+
+\begin{proposition}\label{family_remainder_disjoint_member}
+    Suppose $P$ is a function on $I$.
+    Let $i\in I$.
+    Then $\familyRemainder{P}{S}$ is disjoint from $P(i)$.
+\end{proposition}
+\begin{proof}
+    $P$ is a function and $\dom{P}=I$.
+    Suppose not.
+    Take $x$ such that $x\in\familyRemainder{P}{S},P(i)$
+        by \auto{disjoint}.
+    $P(i)\in\ran{P}$ by \auto{fun_ran_iff}.
+    Hence $x\in\unions{\ran{P}}$ by \auto{unions_iff}.
+    $x\notin\unions{\ran{P}}$ by \auto{family_remainder,setminus}.
+    Contradiction.
+\end{proof}
+
+\begin{proposition}\label{complete_disjoint_family_at_type}
+    Let $P\in\funs{I}{\pow{S}}$.
+    Let $i_0\in I$.
+    Then $\completeDisjointFamilyAt{P}{S}{I}{i_0}
+        \in\funs{I}{\pow{S}}$.
+\end{proposition}
+\begin{proof}
+    Let $J=I\setminus\{i_0\}$.
+    $J\subseteq I$ by \auto{subseteq,setminus}.
+    Hence $\restrl{P}{J}\in\funs{J}{\pow{S}}$
+        by \obv{funs_restrl}.
+    $i_0\notin J$ by \auto{setminus,singleton_iff}.
+    $P(i_0)\in\pow{S}$ by \obv{funs_type_apply}.
+    Hence $P(i_0)\subseteq S$ by \obv{powerset_elim}.
+    $\familyRemainder{P}{S}\subseteq S$
+        by \obv{family_remainder_subseteq}.
+    Hence $P(i_0)\union\familyRemainder{P}{S}\subseteq S$
+        by \auto{subseteq,union_iff}.
+    Hence $P(i_0)\union\familyRemainder{P}{S}\in\pow{S}$
+        by \obv{powerset_intro}.
+    Hence
+        $\cons{(i_0,P(i_0)\union\familyRemainder{P}{S})}
+            {\restrl{P}{J}}
+        \in\funs{\cons{i_0}{J}}{\pow{S}}$
+        by \obv{extend_function_at_new_point}.
+    $\cons{i_0}{J}=I$ by \auto{cons_remove}.
+    Follows by \auto{complete_disjoint_family_at}.
+\end{proof}
+
+\begin{proposition}\label{complete_disjoint_family_at_selected}
+    Let $P\in\funs{I}{\pow{S}}$.
+    Let $i_0\in I$.
+    Then $(\completeDisjointFamilyAt{P}{S}{I}{i_0})(i_0)
+        =P(i_0)\union\familyRemainder{P}{S}$.
+\end{proposition}
+\begin{proof}
+    Let $Q=\completeDisjointFamilyAt{P}{S}{I}{i_0}$.
+    $Q$ is a function by
+        \auto{complete_disjoint_family_at_type,funs_is_function}.
+    $(i_0,P(i_0)\union\familyRemainder{P}{S})\in Q$
+        by \auto{complete_disjoint_family_at,cons_iff}.
+    Follows by \obv{function_apply_intro}.
+\end{proof}
+
+\begin{proposition}\label{complete_disjoint_family_at_other}
+    Let $P\in\funs{I}{\pow{S}}$.
+    Let $i_0,i\in I$.
+    Suppose $i\neq i_0$.
+    Then $(\completeDisjointFamilyAt{P}{S}{I}{i_0})(i)=P(i)$.
+\end{proposition}
+\begin{proof}
+    Let $J=I\setminus\{i_0\}$.
+    $P$ is a function and $\dom{P}=I$
+        by \obv{funs_is_function,funs}.
+    $i\in J$ by \auto{setminus,singleton_iff}.
+    $(i,P(i))\in P$ by \obv{function_apply_elim}.
+    Hence $(i,P(i))\in\restrl{P}{J}$ by \obv{restrl_iff}.
+    Hence $(i,P(i))\in\completeDisjointFamilyAt{P}{S}{I}{i_0}$
+        by \auto{complete_disjoint_family_at,cons_iff}.
+    $\completeDisjointFamilyAt{P}{S}{I}{i_0}$ is a function
+        by \auto{complete_disjoint_family_at_type,funs_is_function}.
+    Follows by \obv{function_apply_intro}.
+\end{proof}
+
+\begin{proposition}\label{complete_disjoint_family_at_pairwise}
+    Let $P\in\funs{I}{\pow{S}}$.
+    Let $i_0\in I$.
+    Suppose $P$ is pairwise disjoint on $I$.
+    Then $\completeDisjointFamilyAt{P}{S}{I}{i_0}$
+        is pairwise disjoint on $I$.
+\end{proposition}
+\begin{proof}
+    Let $Q=\completeDisjointFamilyAt{P}{S}{I}{i_0}$.
+    $P$ is a function and $\dom{P}=I$
+        by \obv{funs_is_function,funs}.
+    Show that for all $i,j\in I$ such that $i\neq j$
+        we have $Q(i)$ is disjoint from $Q(j)$.
+    \begin{subproof}
+        Fix $i,j\in I$.
+        Assume $i\neq j$.
+        \begin{byCase}
+        \caseOf{$i=i_0$.}
+            $j\neq i_0$.
+            $Q(i)=P(i_0)\union\familyRemainder{P}{S}$
+                by \auto{complete_disjoint_family_at_selected}.
+            $Q(j)=P(j)$
+                by \auto{complete_disjoint_family_at_other}.
+            $P(i_0)$ is disjoint from $P(j)$
+                by \obv{pairwise_disjoint_on}.
+            $\familyRemainder{P}{S}$ is disjoint from $P(j)$
+                by \auto{family_remainder_disjoint_member}.
+            Suppose not.
+            Take $x$ such that $x\in Q(i),Q(j)$ by \auto{disjoint}.
+            Hence $x\in P(i_0)$ or $x\in\familyRemainder{P}{S}$
+                by \auto{union_iff}.
+            Contradiction by \auto{disjoint}.
+        \caseOf{$i\neq i_0$.}
+            \begin{byCase}
+            \caseOf{$j=i_0$.}
+                $Q(i)=P(i)$
+                    by \auto{complete_disjoint_family_at_other}.
+                $Q(j)=P(i_0)\union\familyRemainder{P}{S}$
+                    by \auto{complete_disjoint_family_at_selected}.
+                $P(i)$ is disjoint from $P(i_0)$
+                    by \obv{pairwise_disjoint_on}.
+                $\familyRemainder{P}{S}$ is disjoint from $P(i)$
+                    by \auto{family_remainder_disjoint_member}.
+                Suppose not.
+                Take $x$ such that $x\in Q(i),Q(j)$ by \auto{disjoint}.
+                Hence $x\in P(i_0)$ or
+                    $x\in\familyRemainder{P}{S}$ by \auto{union_iff}.
+                Contradiction by \auto{disjoint}.
+            \caseOf{$j\neq i_0$.}
+                $Q(i)=P(i)$ and $Q(j)=P(j)$
+                    by \auto{complete_disjoint_family_at_other}.
+                Follows by \auto{pairwise_disjoint_on}.
+            \end{byCase}
+        \end{byCase}
+    \end{subproof}
+    Follows by \auto{pairwise_disjoint_on}.
+\end{proof}
+
+\begin{proposition}\label{complete_disjoint_family_at_cover}
+    Let $P\in\funs{I}{\pow{S}}$.
+    Let $i_0\in I$.
+    Then $\unions{\ran{\completeDisjointFamilyAt{P}{S}{I}{i_0}}}=S$.
+\end{proposition}
+\begin{proof}
+    Let $Q=\completeDisjointFamilyAt{P}{S}{I}{i_0}$.
+    $P$ is a function and $\dom{P}=I$
+        by \obv{funs_is_function,funs}.
+    $Q\in\funs{I}{\pow{S}}$ by
+        \auto{complete_disjoint_family_at_type}.
+    Hence $Q$ is a function and $\dom{Q}=I$
+        by \obv{funs_is_function,funs}.
+    Show that $\unions{\ran{Q}}\subseteq S$.
+    \begin{subproof}
+        It suffices to show that every element of $\unions{\ran{Q}}$
+            is an element of $S$ by \obv{subseteq}.
+        Fix $x\in\unions{\ran{Q}}$.
+        Take $B\in\ran{Q}$ such that $x\in B$ by \obv{unions_iff}.
+        Take $i\in\dom{Q}$ such that $Q(i)=B$ by \obv{fun_ran_iff}.
+        $Q(i)\in\pow{S}$ by \obv{funs_type_apply}.
+        Follows by \auto{powerset_elim,subseteq}.
+    \end{subproof}
+    Show that $S\subseteq\unions{\ran{Q}}$.
+    \begin{subproof}
+        It suffices to show that every element of $S$
+            is an element of $\unions{\ran{Q}}$ by \obv{subseteq}.
+        Fix $x\in S$.
+        \begin{byCase}
+        \caseOf{$x\in\unions{\ran{P}}$.}
+            Take $B\in\ran{P}$ such that $x\in B$ by \obv{unions_iff}.
+            Take $i\in\dom{P}$ such that $P(i)=B$
+                by \obv{fun_ran_iff}.
+            $\dom{P}=I$ by \obv{funs}.
+            Hence $i\in I$.
+            \begin{byCase}
+            \caseOf{$i=i_0$.}
+                $Q(i_0)=P(i_0)\union\familyRemainder{P}{S}$
+                    by \auto{complete_disjoint_family_at_selected}.
+                Hence $x\in Q(i_0)$ by \auto{union_iff}.
+                $Q(i_0)\in\ran{Q}$
+                    by \auto{funs,fun_ran_iff}.
+                Follows by \auto{unions_iff}.
+            \caseOf{$i\neq i_0$.}
+                $Q(i)=P(i)$
+                    by \auto{complete_disjoint_family_at_other}.
+                Hence $x\in Q(i)$.
+                $Q(i)\in\ran{Q}$ by \auto{funs,fun_ran_iff}.
+                Follows by \auto{unions_iff}.
+            \end{byCase}
+        \caseOf{$x\notin\unions{\ran{P}}$.}
+            Hence $x\in\familyRemainder{P}{S}$
+                by \obv{family_remainder,setminus}.
+            $Q(i_0)=P(i_0)\union\familyRemainder{P}{S}$
+                by \auto{complete_disjoint_family_at_selected}.
+            Hence $x\in Q(i_0)$ by \auto{union_iff}.
+            $Q(i_0)\in\ran{Q}$ by \auto{funs,fun_ran_iff}.
+            Follows by \auto{unions_iff}.
+        \end{byCase}
+    \end{subproof}
+    Follows by \obv{subseteq_antisymmetric}.
+\end{proof}
+
+\begin{definition}\label{dependent_product}
+    $\dependentProduct{I}{A}
+        =\{f\in\funs{I}{\unions{\ran{A}}}\mid
+            \text{for every $i\in I$ we have $f(i)\in A(i)$}\}$.
+\end{definition}
+
+\begin{definition}\label{indexed_sum}
+    $\indexedSum{I}{A}
+        =\{p\in I\times\unions{\ran{A}}\mid
+            \snd{p}\in A(\fst{p})\}$.
+\end{definition}
+
+\begin{definition}\label{indexed_intersection}
+    $\indexedIntersection{I}{A}{U}
+        =\{x\in U\mid \text{for every $i\in I$ we have $x\in A(i)$}\}$.
+\end{definition}
+
+\begin{proposition}\label{indexed_intersection_iff}
+    $x\in\indexedIntersection{I}{A}{U}$ iff
+        $x\in U$ and for every $i\in I$ we have $x\in A(i)$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{indexed_intersection}.
+\end{proof}
+
+\begin{proposition}\label{indexed_intersection_subseteq}
+    $\indexedIntersection{I}{A}{U}\subseteq U$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{subseteq,indexed_intersection_iff}.
+\end{proof}
+
+\begin{proposition}\label{indexed_intersection_member_subseteq}
+    Suppose $i\in I$.
+    Then $\indexedIntersection{I}{A}{U}\subseteq A(i)$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{subseteq,indexed_intersection_iff}.
+\end{proof}
+
+\begin{proposition}\label{dependent_product_iff}
+    $f\in\dependentProduct{I}{A}$ iff
+        $f\in\funs{I}{\unions{\ran{A}}}$ and
+        for every $i\in I$ we have $f(i)\in A(i)$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{dependent_product}.
+\end{proof}
+
+\begin{theorem}\label{choice_function_iff_dependent_product}
+    $f$ is a choice function for $F$ iff
+        $f\in\dependentProduct{F}{\identity{F}}$.
+\end{theorem}
+\begin{proof}
+    $\ran{\identity{F}}=F$ by \obv{id_ran}.
+    Show that if $f$ is a choice function for $F$, then
+        $f\in\dependentProduct{F}{\identity{F}}$.
+    \begin{subproof}
+        Assume $f$ is a choice function for $F$.
+        Hence $f$ is a function on $F$ and for every $A\in F$ we have
+            $f(A)\in A$ by \obv{choice_function}.
+        Thus $f$ is a function and $F=\dom{f}$.
+        For every $A\in\dom{f}$ we have
+            $f(A)\in\unions{\ran{\identity{F}}}$ by
+            \auto{unions_iff}.
+        Hence $f$ is a function to
+            $\unions{\ran{\identity{F}}}$.
+        Hence $f\in\funs{F}{\unions{\ran{\identity{F}}}}$ by
+            \obv{funs_intro}.
+        For every $A\in F$ we have
+            $f(A)\in(\identity{F})(A)$ by \obv{id_apply}.
+        Follows by \obv{dependent_product_iff}.
+    \end{subproof}
+    Show that if $f\in\dependentProduct{F}{\identity{F}}$, then
+        $f$ is a choice function for $F$.
+    \begin{subproof}
+        Assume $f\in\dependentProduct{F}{\identity{F}}$.
+        Hence $f\in\funs{F}{\unions{\ran{\identity{F}}}}$ and
+            for every $A\in F$ we have
+                $f(A)\in(\identity{F})(A)$ by
+            \obv{dependent_product_iff}.
+        Hence $f$ is a function and $F=\dom{f}$ by
+            \obv{funs_is_function,funs}.
+        Hence $f$ is a function on $F$.
+        For every $A\in F$ we have $f(A)\in A$ by \auto{id_apply}.
+        Follows by \obv{choice_function}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{proposition}\label{empty_dependent_product}
+    $\dependentProduct{\emptyset}{A}=\{\emptyset\}$.
+\end{proposition}
+\begin{proof}
+    Show that every element of $\dependentProduct{\emptyset}{A}$ is an
+        element of $\{\emptyset\}$.
+    \begin{subproof}
+        Fix $f\in\dependentProduct{\emptyset}{A}$.
+        $f\in\funs{\emptyset}{\unions{\ran{A}}}$ by
+            \obv{dependent_product_iff}.
+        Hence $f$ is a function and $\dom{f}=\emptyset$ by
+            \obv{funs_is_function,funs}.
+        Show that every element of $f$ is an element of $\emptyset$.
+        \begin{subproof}
+            Fix $w\in f$.
+            Take $x,y$ such that $w=(x,y)$ by \obv{relation}.
+            Hence $x\in\dom{f}$ by \auto{dom_iff}.
+            Contradiction by \obv{emptyset}.
+        \end{subproof}
+        Hence $f\subseteq\emptyset$ by \obv{subseteq}.
+        Hence $f=\emptyset$ by \obv{subseteq_emptyset_iff}.
+        Follows by \obv{singleton_iff}.
+    \end{subproof}
+
+    $\emptyset$ is a function to $\unions{\ran{A}}$ by
+        \obv{codom_of_emptyset_can_be_anything}.
+    $\dom{\emptyset}=\emptyset$ by \obv{dom_emptyset}.
+    Hence $\emptyset\in\funs{\emptyset}{\unions{\ran{A}}}$ by
+        \obv{funs_intro}.
+    For every $i\in\emptyset$ we have $\apply{\emptyset}{i}\in A(i)$ by
+        \auto{emptyset}.
+    Hence $\emptyset\in\dependentProduct{\emptyset}{A}$ by
+        \obv{dependent_product_iff}.
+    Hence $\{\emptyset\}\subseteq\dependentProduct{\emptyset}{A}$ by
+        \obv{singleton_subset_intro}.
+    Follows by \obv{subseteq_antisymmetric}.
+\end{proof}
+
+\begin{proposition}\label{dependent_product_coordinate}
+    Let $f\in\dependentProduct{I}{A}$.
+    Let $i\in I$.
+    Then $f(i)\in A(i)$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{dependent_product_iff}.
+\end{proof}
+
+\begin{proposition}\label{indexed_family_member_union}
+    Suppose $A$ is a function on $I$.
+    Let $i\in I$.
+    Let $x\in A(i)$.
+    Then $x\in\unions{\ran{A}}$.
+\end{proposition}
+\begin{proof}
+    $A$ is a function and $I=\dom{A}$.
+    Hence $\dom{A}=I$.
+    Hence $A(i)\in\ran{A}$ by \auto{fun_ran_iff}.
+    Follows by \auto{unions_iff}.
+\end{proof}
+
+\begin{proposition}\label{indexed_sum_iff}
+    Suppose $A$ is a function on $I$.
+    $(i,x)\in\indexedSum{I}{A}$ iff $i\in I$ and $x\in A(i)$.
+\end{proposition}
+\begin{proof}
+    Show that if $(i,x)\in\indexedSum{I}{A}$, then
+        $i\in I$ and $x\in A(i)$.
+    \begin{subproof}
+        Assume $(i,x)\in\indexedSum{I}{A}$.
+        Hence $(i,x)\in I\times\unions{\ran{A}}$ and
+            $\snd{(i,x)}\in A(\fst{(i,x)})$ by \obv{indexed_sum}.
+        $\fst{(i,x)}=i$ and $\snd{(i,x)}=x$ by \obv{fst_eq,snd_eq}.
+        Follows by \obv{times_tuple_elim}.
+    \end{subproof}
+    Show that if $i\in I$ and $x\in A(i)$, then
+        $(i,x)\in\indexedSum{I}{A}$.
+    \begin{subproof}
+        Assume $i\in I$ and $x\in A(i)$.
+        Hence $x\in\unions{\ran{A}}$
+            by \obv{indexed_family_member_union}.
+        Hence $(i,x)\in I\times\unions{\ran{A}}$
+            by \obv{times_tuple_intro}.
+        $\fst{(i,x)}=i$ and $\snd{(i,x)}=x$ by \obv{fst_eq,snd_eq}.
+        Follows by \obv{indexed_sum}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{dependent_product_inhabited_iff}
+    Suppose $A$ is a function on $I$.
+    $\dependentProduct{I}{A}$ is inhabited iff
+        for every $i\in I$ we have $A(i)$ is inhabited.
+\end{theorem}
+\begin{proof}
+    Show that if $\dependentProduct{I}{A}$ is inhabited, then
+        for every $i\in I$ we have $A(i)$ is inhabited.
+    \begin{subproof}
+        Assume $\dependentProduct{I}{A}$ is inhabited.
+        Take $f$ such that $f\in\dependentProduct{I}{A}$.
+        For every $i\in I$ we have $f(i)\in A(i)$
+            by \obv{dependent_product_coordinate}.
+        Follows by \auto.
+    \end{subproof}
+    Show that if for every $i\in I$ we have $A(i)$ is inhabited, then
+        $\dependentProduct{I}{A}$ is inhabited.
+    \begin{subproof}
+        Assume for every $i\in I$ we have $A(i)$ is inhabited.
+        Let $f=\{(i,\choice{A(i)})\mid i\in I\}$.
+        $f$ is a relation by \auto{relation}.
+        $f$ is right-unique by \auto{rightunique,pair_eq_iff}.
+        $\dom{f}=I$ by \auto{setext,dom_iff,pair_eq_iff}.
+        For every $i\in I$ we have $\choice{A(i)}\in A(i)$
+            by \obv{choice_in}.
+        Hence for every $i\in I$ we have
+            $\choice{A(i)}\in\unions{\ran{A}}$
+            by \obv{indexed_family_member_union}.
+        For every $i\in I$ we have $f(i)=\choice{A(i)}$
+            by \obv{function_apply_intro}.
+        Hence $f$ is a function to $\unions{\ran{A}}$ by \auto.
+        Hence $f\in\funs{I}{\unions{\ran{A}}}$
+            by \obv{funs_intro}.
+        For every $i\in I$ we have $f(i)\in A(i)$ by \auto.
+        Hence $f\in\dependentProduct{I}{A}$
+            by \obv{dependent_product_iff}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{definition}\label{indexed_sum_injection}
+    $\indexedSumInjection{I}{A}{i}
+        =\{(x,(i,x))\mid x\in A(i)\}$.
+\end{definition}
+
+\begin{proposition}\label{indexed_sum_injection_type}
+    Suppose $A$ is a function on $I$.
+    Let $i\in I$.
+    Then $\indexedSumInjection{I}{A}{i}
+        \in\inj{A(i)}{\indexedSum{I}{A}}$.
+\end{proposition}
+\begin{proof}
+    $\indexedSumInjection{I}{A}{i}$ is a relation by
+        \auto{indexed_sum_injection,relation}.
+    $\indexedSumInjection{I}{A}{i}$ is right-unique by
+        \auto{indexed_sum_injection,rightunique,pair_eq_iff}.
+    $\dom{\indexedSumInjection{I}{A}{i}}=A(i)$ by
+        \auto{indexed_sum_injection,setext,dom_iff,pair_eq_iff}.
+    For every $x\in A(i)$ we have $(i,x)\in\indexedSum{I}{A}$
+        by \auto{indexed_sum_iff}.
+    For every $x\in A(i)$ we have
+        $(\indexedSumInjection{I}{A}{i})(x)=(i,x)$ by
+        \obv{indexed_sum_injection,function_apply_intro}.
+    Hence $\indexedSumInjection{I}{A}{i}
+        \in\funs{A(i)}{\indexedSum{I}{A}}$ by \auto{funs_intro}.
+    Show that $\indexedSumInjection{I}{A}{i}$ is injective.
+    \begin{subproof}
+        Show that for all $x,y$ such that
+            $x\in\dom{\indexedSumInjection{I}{A}{i}}$ and
+            $y\in\dom{\indexedSumInjection{I}{A}{i}}$ and
+            $(\indexedSumInjection{I}{A}{i})(x)
+                =(\indexedSumInjection{I}{A}{i})(y)$
+            we have $x=y$.
+        \begin{subproof}
+            Fix $x,y$.
+            Assume $x,y\in\dom{\indexedSumInjection{I}{A}{i}}$ and
+                $(\indexedSumInjection{I}{A}{i})(x)
+                    =(\indexedSumInjection{I}{A}{i})(y)$.
+            Hence $x,y\in A(i)$.
+            $(\indexedSumInjection{I}{A}{i})(x)=(i,x)$ and
+                $(\indexedSumInjection{I}{A}{i})(y)=(i,y)$ by
+                \obv{function_apply_intro}.
+            Follows by \auto{pair_eq_iff}.
+        \end{subproof}
+        Follows by \auto{injective_function}.
+    \end{subproof}
+    Hence $\indexedSumInjection{I}{A}{i}
+        \in\inj{A(i)}{\indexedSum{I}{A}}$
+        by \auto{inj,injective_function}.
+\end{proof}
+
+\begin{proposition}\label{indexed_sum_injection_apply}
+    Suppose $A$ is a function on $I$.
+    Let $i\in I$ and $x\in A(i)$.
+    Then $(\indexedSumInjection{I}{A}{i})(x)=(i,x)$.
+\end{proposition}
+\begin{proof}
+    $\indexedSumInjection{I}{A}{i}
+        \in\inj{A(i)}{\indexedSum{I}{A}}$ by
+        \obv{indexed_sum_injection_type}.
+    Hence $\indexedSumInjection{I}{A}{i}$ is a function by
+        \auto{inj,funs_is_function}.
+    $(x,(i,x))\in\indexedSumInjection{I}{A}{i}$ by
+        \obv{indexed_sum_injection}.
+    Follows by \obv{function_apply_intro}.
+\end{proof}
+
+\begin{proposition}\label{indexed_sum_injection_preimage_iff}
+    $x\in\preimg{\indexedSumInjection{I}{A}{i}}{U}$ iff
+        $x\in A(i)$ and $(i,x)\in U$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{preimg_iff,indexed_sum_injection,pair_eq_iff}.
+\end{proof}
+
+\begin{proposition}\label{indexed_sum_injection_image}
+    Suppose $U\subseteq A(i)$.
+    Then $\img{\indexedSumInjection{I}{A}{i}}{U}=\{i\}\times U$.
+\end{proposition}
+\begin{proof}
+    Show that every element of
+        $\img{\indexedSumInjection{I}{A}{i}}{U}$ is an element of
+        $\{i\}\times U$.
+    \begin{subproof}
+        Fix $p\in\img{\indexedSumInjection{I}{A}{i}}{U}$.
+        Take $x$ such that $x\in U$ and
+            $(x,p)\in\indexedSumInjection{I}{A}{i}$ by \obv{img_iff}.
+        Hence $x\in A(i)$ and $p=(i,x)$ by
+            \auto{indexed_sum_injection,pair_eq_iff}.
+        $(i,x)\in\{i\}\times U$ by
+            \auto{times_tuple_intro,singleton_iff}.
+    \end{subproof}
+    Hence $\img{\indexedSumInjection{I}{A}{i}}{U}
+        \subseteq\{i\}\times U$ by \obv{subseteq}.
+
+    Show that every element of $\{i\}\times U$ is an element of
+        $\img{\indexedSumInjection{I}{A}{i}}{U}$.
+    \begin{subproof}
+        Fix $p\in\{i\}\times U$.
+        Take $j,x$ such that $p=(j,x)$ by
+            \auto{times_elem_is_tuple}.
+        Hence $(j,x)\in\{i\}\times U$.
+        Hence $j\in\{i\}$ and $x\in U$ by \obv{times_tuple_elim}.
+        Hence $j=i$ by \obv{singleton_iff}.
+        $x\in A(i)$ by \obv{subseteq}.
+        $(x,(i,x))\in\indexedSumInjection{I}{A}{i}$ by
+            \obv{indexed_sum_injection}.
+        Hence $(i,x)\in\img{\indexedSumInjection{I}{A}{i}}{U}$ by
+            \auto{img_iff}.
+    \end{subproof}
+    Hence $\{i\}\times U
+        \subseteq\img{\indexedSumInjection{I}{A}{i}}{U}$ by
+        \obv{subseteq}.
+    Follows by \obv{subseteq_antisymmetric}.
+\end{proof}
+
+\begin{theorem}\label{indexed_sum_fibre_injection}
+    Suppose $A$ is a function on $I$.
+    Let $i\in I$.
+    Then there exists $e\in\inj{A(i)}{\indexedSum{I}{A}}$.
+\end{theorem}
+\begin{proof}
+    $\indexedSumInjection{I}{A}{i}
+        \in\inj{A(i)}{\indexedSum{I}{A}}$ by
+        \obv{indexed_sum_injection_type}.
+\end{proof}
+
+\begin{theorem}\label{indexed_union_injection_into_sum}
+    Suppose $A$ is a function on $I$.
+    Then there exists
+        $e\in\inj{\unions{\ran{A}}}{\indexedSum{I}{A}}$.
+\end{theorem}
+\begin{proof}
+    Let $U=\unions{\ran{A}}$.
+    Let $R=\{p\in U\times I\mid \fst{p}\in A(\snd{p})\}$.
+    $A$ is a function and $I=\dom{A}$.
+    Hence $R$ is a relation by
+        \auto{relation,times_elem_is_tuple}.
+    Show that for every $x\in U$ there exists $i$ such that
+        $x\mathrel{R}i$.
+    \begin{subproof}
+        Fix $x\in U$.
+        Take $S\in\ran{A}$ such that $x\in S$ by \obv{unions_iff}.
+        Take $i\in\dom{A}$ such that $A(i)=S$ by \obv{fun_ran_iff}.
+        Hence $i\in I$.
+        $(x,i)\in U\times I$ by \obv{times_tuple_intro}.
+        $\fst{(x,i)}=x$ and $\snd{(x,i)}=i$ by \obv{fst_eq,snd_eq}.
+        Hence $(x,i)\in R$.
+    \end{subproof}
+    Take $j$ such that $j$ is a function on $U$ and
+        for every $x\in U$ we have $x\mathrel{R}j(x)$
+        by \obv{axiom_of_choice}.
+    Let $e=\{(x,(j(x),x))\mid x\in U\}$.
+    $e$ is a relation by \auto{relation}.
+    $e$ is right-unique by \auto{rightunique,pair_eq_iff}.
+    $\dom{e}=U$ by \auto{setext,dom_iff,pair_eq_iff}.
+    Show that for every $x\in U$ we have
+        $(j(x),x)\in\indexedSum{I}{A}$.
+    \begin{subproof}
+        Fix $x\in U$.
+        $(x,j(x))\in R$.
+        Hence $(x,j(x))\in U\times I$ and
+            $\fst{(x,j(x))}\in A(\snd{(x,j(x))})$.
+        $\fst{(x,j(x))}=x$ and $\snd{(x,j(x))}=j(x)$
+            by \obv{fst_eq,snd_eq}.
+        Hence $j(x)\in I$ and $x\in A(j(x))$
+            by \obv{times_tuple_elim}.
+        Follows by \obv{indexed_sum_iff}.
+    \end{subproof}
+    For every $x\in U$ we have $e(x)=(j(x),x)$
+        by \obv{function_apply_intro}.
+    Hence $e\in\funs{U}{\indexedSum{I}{A}}$ by \auto{funs_intro}.
+    Show that $e$ is injective.
+    \begin{subproof}
+        Show that for all $x,y$ such that $x\in\dom{e}$ and
+            $y\in\dom{e}$ and $e(x)=e(y)$ we have $x=y$.
+        \begin{subproof}
+            Fix $x,y$.
+            Assume $x\in\dom{e}$ and $y\in\dom{e}$ and $e(x)=e(y)$.
+            Hence $x,y\in U$.
+            $e(x)=(j(x),x)$ and $e(y)=(j(y),y)$
+                by \obv{function_apply_intro}.
+            Follows by \auto{pair_eq_iff}.
+        \end{subproof}
+        Follows by \auto{injective_function}.
+    \end{subproof}
+    Hence $e\in\inj{U}{\indexedSum{I}{A}}$
+        by \auto{inj,injective_function}.
+    Follows by \auto.
+\end{proof}

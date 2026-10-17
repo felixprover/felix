@@ -1,0 +1,2654 @@
+\import{algebra/group/direct-system.tex}
+\import{relation/quotient-lift.tex}
+\import{set/indexed-family.tex}
+
+\section{Concrete direct limits of groups}
+
+The construction uses tagged component elements, so no disjointness of
+component carriers is assumed.  Eventual agreement is expressed by existence
+of a common upper index; neither representatives nor upper bounds are selected
+in the public construction.
+
+\begin{definition}\label{direct_system_carrier_value_op}
+    $\directSystemCarrierValueOp:
+        \Set\to\Set\to\Set
+        =\fun{S,i:\Set}{
+                \carrier[\directSystemGroup{S}{i}]}$.
+\end{definition}
+
+\begin{definition}\label{direct_system_carrier_family}
+    $\directSystemCarrierFamily{S}=
+        \Apply{\graphOnDomainOp}
+            {\carrier[S],\Apply{\directSystemCarrierValueOp}{S}}$.
+\end{definition}
+
+\begin{proposition}\label{direct_system_carrier_family_type}
+    $\directSystemCarrierFamily{S}\in
+        \funs{\carrier[S]}{\ran{\directSystemCarrierFamily{S}}}$.
+\end{proposition}
+\begin{proof}
+    $\Apply{\graphOnDomainOp}
+        {\carrier[S],\Apply{\directSystemCarrierValueOp}{S}}
+        \in\funs{\carrier[S]}{
+            \ran{\Apply{\graphOnDomainOp}
+                {\carrier[S],\Apply{\directSystemCarrierValueOp}{S}}}}$ by
+        \obv{logical_graph_on_domain_function}.
+    Follows by \obv{direct_system_carrier_family}.
+\end{proof}
+
+\begin{proposition}\label{direct_system_carrier_family_apply}
+    Let $i\in\carrier[S]$.
+    Then $\apply{\directSystemCarrierFamily{S}}{i}
+        =\carrier[\directSystemGroup{S}{i}]$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{direct_system_carrier_family,direct_system_carrier_value_op,logical_graph_on_domain_apply}.
+\end{proof}
+
+\begin{definition}\label{direct_system_tagged_carrier}
+    $\directSystemTaggedCarrier{S}=
+        \indexedSum{\carrier[S]}{\directSystemCarrierFamily{S}}$.
+\end{definition}
+
+\begin{proposition}\label{direct_system_tagged_carrier_iff}
+    $(i,x)\in\directSystemTaggedCarrier{S}$ iff
+        $i\in\carrier[S]$ and
+        $x\in\carrier[\directSystemGroup{S}{i}]$.
+\end{proposition}
+\begin{proof}
+    $\directSystemCarrierFamily{S}$ is a function on $\carrier[S]$ by
+        \auto{direct_system_carrier_family_type,funs_elim}.
+    Follows by \auto{direct_system_tagged_carrier,indexed_sum_iff,direct_system_carrier_family_apply}.
+\end{proof}
+
+\begin{proposition}\label{direct_system_tagged_carrier_projections}
+    Suppose $p\in\directSystemTaggedCarrier{S}$.
+    Then $\fst{p}\in\carrier[S]$ and
+        $\snd{p}\in\carrier[\directSystemGroup{S}{\fst{p}}]$.
+\end{proposition}
+\begin{proof}
+    $p\in\carrier[S]\times\unions{\ran{\directSystemCarrierFamily{S}}}$
+        and $\snd{p}\in
+            \apply{\directSystemCarrierFamily{S}}{\fst{p}}$ by
+        \auto{direct_system_tagged_carrier,indexed_sum}.
+    Hence $\fst{p}\in\carrier[S]$ by \obv{fst_type}.
+    $\apply{\directSystemCarrierFamily{S}}{\fst{p}}
+        =\carrier[\directSystemGroup{S}{\fst{p}}]$ by
+        \obv{direct_system_carrier_family_apply}.
+\end{proof}
+
+\begin{definition}\label{direct_system_move}
+    $\directSystemMove{S}{p}{k}=
+        \apply{\directSystemBond{S}{\fst{p}}{k}}{\snd{p}}$.
+\end{definition}
+
+\begin{proposition}\label{direct_system_move_type}
+    Let $S$ be a group direct system.
+    Let $p\in\directSystemTaggedCarrier{S}$.
+    Let $k\in\carrier[S]$.
+    Suppose $\fst{p}\mathrel{\leq[S]}k$.
+    Then $\directSystemMove{S}{p}{k}\in
+        \carrier[\directSystemGroup{S}{k}]$.
+\end{proposition}
+\begin{proof}
+    $p\in\carrier[S]\times\unions{\ran{\directSystemCarrierFamily{S}}}$ by
+        \auto{direct_system_tagged_carrier,indexed_sum}.
+    Take $i,x$ such that $p=(i,x)$ by \auto{times_elem_is_tuple}.
+    $\fst{p}=i$ and $\snd{p}=x$ by
+        \auto{fst_eq,snd_eq}.
+    $i\in\carrier[S]$ and
+        $x\in\carrier[\directSystemGroup{S}{i}]$ by
+        \auto{direct_system_tagged_carrier_iff}.
+    $\groupHom
+        {\directSystemBond{S}{i}{k}}
+        {\directSystemGroup{S}{i}}
+        {\directSystemGroup{S}{k}}$ by
+        \obv{direct_system_bond_hom}.
+    Hence $\apply{\directSystemBond{S}{i}{k}}{x}\in
+        \carrier[\directSystemGroup{S}{k}]$ by
+        \obv{group_hom_apply_type}.
+    Follows by \auto{direct_system_move}.
+\end{proof}
+
+\begin{proposition}\label{direct_system_move_identity}
+    Let $S$ be a group direct system.
+    Let $p\in\directSystemTaggedCarrier{S}$.
+    Then $\directSystemMove{S}{p}{\fst{p}}=\snd{p}$.
+\end{proposition}
+\begin{proof}
+    $p\in\carrier[S]\times\unions{\ran{\directSystemCarrierFamily{S}}}$ by
+        \auto{direct_system_tagged_carrier,indexed_sum}.
+    Take $i,x$ such that $p=(i,x)$ by \auto{times_elem_is_tuple}.
+    $\fst{p}=i$ and $\snd{p}=x$ by
+        \auto{fst_eq,snd_eq}.
+    $i\in\carrier[S]$ and
+        $x\in\carrier[\directSystemGroup{S}{i}]$ by
+        \auto{direct_system_tagged_carrier_iff}.
+    $\directSystemBond{S}{i}{i}
+        =\identity{\carrier[\directSystemGroup{S}{i}]}$ by
+        \obv{direct_system_bond_identity}.
+    Hence $\apply{\directSystemBond{S}{i}{i}}{x}=x$ by
+        \auto{id_apply}.
+    Follows by \obv{direct_system_move}.
+\end{proof}
+
+\begin{proposition}\label{direct_system_move_composition}
+    Let $S$ be a group direct system.
+    Let $p\in\directSystemTaggedCarrier{S}$.
+    Let $j,k\in\carrier[S]$.
+    Suppose $\fst{p}\mathrel{\leq[S]}j$ and
+        $j\mathrel{\leq[S]}k$.
+    Then $\directSystemMove{S}{p}{k}
+        =\apply{\directSystemBond{S}{j}{k}}
+            {\directSystemMove{S}{p}{j}}$.
+\end{proposition}
+\begin{proof}
+    $\fst{p}\in\carrier[S]$ and $\snd{p}\in
+        \carrier[\directSystemGroup{S}{\fst{p}}]$ by
+        \auto{direct_system_tagged_carrier,indexed_sum,fst_type,direct_system_carrier_family_apply}.
+    $\directSystemBond{S}{\fst{p}}{k}
+        =\directSystemBond{S}{j}{k}\circ
+            \directSystemBond{S}{\fst{p}}{j}$ by
+        \obv{direct_system_bond_composition}.
+    $\groupHom
+        {\directSystemBond{S}{\fst{p}}{j}}
+        {\directSystemGroup{S}{\fst{p}}}
+        {\directSystemGroup{S}{j}}$ by
+        \obv{direct_system_bond_hom}.
+    $\groupHom
+        {\directSystemBond{S}{j}{k}}
+        {\directSystemGroup{S}{j}}
+        {\directSystemGroup{S}{k}}$ by
+        \obv{direct_system_bond_hom}.
+    $\directSystemBond{S}{\fst{p}}{j}\in
+        \funs{\carrier[\directSystemGroup{S}{\fst{p}}]}
+            {\carrier[\directSystemGroup{S}{j}]}$ and
+        $\directSystemBond{S}{j}{k}\in
+        \funs{\carrier[\directSystemGroup{S}{j}]}
+            {\carrier[\directSystemGroup{S}{k}]}$ by
+        \obv{direct_system_bond_hom,group_hom_type}.
+    Hence $\directSystemBond{S}{\fst{p}}{j}$ and
+        $\directSystemBond{S}{j}{k}$ are functions by
+        \obv{funs_is_function}.
+    $\ran{\directSystemBond{S}{\fst{p}}{j}}\subseteq
+        \carrier[\directSystemGroup{S}{j}]$ and
+        $\dom{\directSystemBond{S}{j}{k}}=
+        \carrier[\directSystemGroup{S}{j}]$ by
+        \obv{direct_system_bond_hom,group_hom_type,funs,funs_ran}.
+    Hence $\directSystemBond{S}{j}{k}$ is composable with
+        $\directSystemBond{S}{\fst{p}}{j}$.
+    $\snd{p}\in\dom{\directSystemBond{S}{\fst{p}}{j}}$ by
+        \auto{direct_system_tagged_carrier,indexed_sum,fst_type,direct_system_carrier_family_apply,direct_system_bond_hom,group_hom_type,funs}.
+    $\directSystemBond{S}{\fst{p}}{j}$ and
+        $\directSystemBond{S}{j}{k}$ are functions and
+        $\directSystemBond{S}{j}{k}$ is composable with
+        $\directSystemBond{S}{\fst{p}}{j}$ and
+        $\snd{p}\in\dom{\directSystemBond{S}{\fst{p}}{j}}$.
+    Hence $\apply{
+            \directSystemBond{S}{j}{k}\circ
+            \directSystemBond{S}{\fst{p}}{j}}
+            {\snd{p}}
+        =\apply{\directSystemBond{S}{j}{k}}
+            {\apply{\directSystemBond{S}{\fst{p}}{j}}{\snd{p}}}$ by
+        \obv{circ_apply}.
+    Hence $\apply{\directSystemBond{S}{\fst{p}}{k}}{\snd{p}}
+        =\apply{\directSystemBond{S}{j}{k}}
+            {\apply{\directSystemBond{S}{\fst{p}}{j}}{\snd{p}}}$ by
+        \obv{direct_system_bond_composition}.
+    Follows by \auto{direct_system_move}.
+\end{proof}
+
+\begin{definition}\label{direct_system_eventual_relation}
+    $\directSystemEventualRelation{S}=
+        \{(p,q)\mid
+            p\in\directSystemTaggedCarrier{S},
+            q\in\directSystemTaggedCarrier{S}\mid
+            \text{there exists $k\in\carrier[S]$ such that
+                $\fst{p}\mathrel{\leq[S]}k$ and
+                $\fst{q}\mathrel{\leq[S]}k$ and
+                $\directSystemMove{S}{p}{k}
+                    =\directSystemMove{S}{q}{k}$}\}$.
+\end{definition}
+
+\begin{proposition}\label{direct_system_eventual_relation_iff}
+    $p\mathrel{\directSystemEventualRelation{S}}q$ iff
+        $p,q\in\directSystemTaggedCarrier{S}$ and
+        there exists $k\in\carrier[S]$ such that
+            $\fst{p}\mathrel{\leq[S]}k$ and
+            $\fst{q}\mathrel{\leq[S]}k$ and
+            $\directSystemMove{S}{p}{k}
+                =\directSystemMove{S}{q}{k}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{direct_system_eventual_relation,times_tuple_elim,pair_eq_iff}.
+\end{proof}
+
+\begin{lemma}\label{direct_system_agreement_persists}
+    Let $S$ be a group direct system.
+    Let $p,q\in\directSystemTaggedCarrier{S}$.
+    Let $k,m\in\carrier[S]$.
+    Suppose $\fst{p}\mathrel{\leq[S]}k$ and
+        $\fst{q}\mathrel{\leq[S]}k$ and
+        $k\mathrel{\leq[S]}m$.
+    Suppose $\directSystemMove{S}{p}{k}
+        =\directSystemMove{S}{q}{k}$.
+    Then $\directSystemMove{S}{p}{m}
+        =\directSystemMove{S}{q}{m}$.
+\end{lemma}
+\begin{proof}
+    $\directSystemMove{S}{p}{m}
+        =\apply{\directSystemBond{S}{k}{m}}
+            {\directSystemMove{S}{p}{k}}$ by
+        \obv{direct_system_move_composition}.
+    $\directSystemMove{S}{q}{m}
+        =\apply{\directSystemBond{S}{k}{m}}
+            {\directSystemMove{S}{q}{k}}$ by
+        \obv{direct_system_move_composition}.
+\end{proof}
+
+\begin{proposition}\label{direct_system_eventual_relation_type}
+    $\directSystemEventualRelation{S}$ is a binary relation on
+        $\directSystemTaggedCarrier{S}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{direct_system_eventual_relation,subseteq,times_tuple_intro}.
+\end{proof}
+
+\begin{proposition}\label{direct_system_eventual_reflexive}
+    Let $S$ be a group direct system.
+    Then $\directSystemEventualRelation{S}$ is reflexive on
+        $\directSystemTaggedCarrier{S}$.
+\end{proposition}
+\begin{proof}
+    Show that for every $p\in\directSystemTaggedCarrier{S}$ we have
+        $p\mathrel{\directSystemEventualRelation{S}}p$.
+    \begin{subproof}
+        Fix $p\in\directSystemTaggedCarrier{S}$.
+        $\fst{p}\in\carrier[S]$ by
+            \auto{direct_system_tagged_carrier_projections}.
+        $S$ is a directed quasiordered set by
+            \obv{group_direct_system_is_directed}.
+        Hence $\fst{p}\mathrel{\leq[S]}\fst{p}$ by
+            \obv{directed_order_reflexive}.
+        $\directSystemMove{S}{p}{\fst{p}}=\snd{p}$ by
+            \obv{direct_system_move_identity}.
+        Follows by
+            \obv{direct_system_eventual_relation_iff}.
+    \end{subproof}
+    Follows by \obv{reflexive_on}.
+\end{proof}
+
+\begin{proposition}\label{direct_system_eventual_symmetric}
+    Let $S$ be a group direct system.
+    Then $\directSystemEventualRelation{S}$ is symmetric.
+\end{proposition}
+\begin{proof}
+    Show that for all $p,q$ such that
+        $p\mathrel{\directSystemEventualRelation{S}}q$ we have
+        $q\mathrel{\directSystemEventualRelation{S}}p$.
+    \begin{subproof}
+        Fix $p,q$.
+        Assume $p\mathrel{\directSystemEventualRelation{S}}q$.
+        Take $k\in\carrier[S]$ such that
+            $\fst{p}\mathrel{\leq[S]}k$ and
+            $\fst{q}\mathrel{\leq[S]}k$ and
+            $\directSystemMove{S}{p}{k}
+                =\directSystemMove{S}{q}{k}$ by
+            \auto{direct_system_eventual_relation_iff}.
+        $p,q\in\directSystemTaggedCarrier{S}$ by
+            \auto{direct_system_eventual_relation_iff}.
+        $\directSystemMove{S}{q}{k}
+            =\directSystemMove{S}{p}{k}$.
+        Follows by
+            \auto{direct_system_eventual_relation_iff}.
+    \end{subproof}
+    Follows by \auto{symmetric}.
+\end{proof}
+
+\begin{proposition}\label{direct_system_eventual_transitive}
+    Let $S$ be a group direct system.
+    Then $\directSystemEventualRelation{S}$ is transitive.
+\end{proposition}
+\begin{proof}
+    Show that for all $p,q,r$ such that
+        $p\mathrel{\directSystemEventualRelation{S}}q$ and
+        $q\mathrel{\directSystemEventualRelation{S}}r$ we have
+        $p\mathrel{\directSystemEventualRelation{S}}r$.
+    \begin{subproof}
+        Fix $p,q,r$.
+        Assume $p\mathrel{\directSystemEventualRelation{S}}q$ and
+            $q\mathrel{\directSystemEventualRelation{S}}r$.
+        Take $k\in\carrier[S]$ such that
+            $\fst{p}\mathrel{\leq[S]}k$ and
+            $\fst{q}\mathrel{\leq[S]}k$ and
+            $\directSystemMove{S}{p}{k}
+                =\directSystemMove{S}{q}{k}$ by
+            \auto{direct_system_eventual_relation_iff}.
+        Take $l\in\carrier[S]$ such that
+            $\fst{q}\mathrel{\leq[S]}l$ and
+            $\fst{r}\mathrel{\leq[S]}l$ and
+            $\directSystemMove{S}{q}{l}
+                =\directSystemMove{S}{r}{l}$ by
+            \auto{direct_system_eventual_relation_iff}.
+        $p,q,r\in\directSystemTaggedCarrier{S}$ by
+            \auto{direct_system_eventual_relation_iff}.
+        Hence $\fst{p},\fst{q},\fst{r}\in\carrier[S]$ by
+            \auto{direct_system_tagged_carrier_projections}.
+        $S$ is a directed quasiordered set by
+            \obv{group_direct_system_is_directed}.
+        Take $m\in\carrier[S]$ such that
+            $k\mathrel{\leq[S]}m$ and $l\mathrel{\leq[S]}m$ by
+            \obv{directed_common_upper_bound}.
+        $\fst{p}\mathrel{\leq[S]}m$ by
+            \obv{direct_system_eventual_relation_iff,direct_system_tagged_carrier_projections,group_direct_system_is_directed,directed_order_transitive}.
+        $\fst{r}\mathrel{\leq[S]}m$ by
+            \obv{direct_system_eventual_relation_iff,direct_system_tagged_carrier_projections,group_direct_system_is_directed,directed_order_transitive}.
+        $\directSystemMove{S}{p}{m}
+            =\directSystemMove{S}{q}{m}$ by
+            \obv{direct_system_agreement_persists}.
+        $\directSystemMove{S}{q}{m}
+            =\directSystemMove{S}{r}{m}$ by
+            \obv{direct_system_agreement_persists}.
+        Hence $\directSystemMove{S}{p}{m}
+            =\directSystemMove{S}{r}{m}$.
+        Follows by
+            \auto{direct_system_eventual_relation_iff}.
+    \end{subproof}
+    Follows by \obv{transitive}.
+\end{proof}
+
+\begin{theorem}\label{direct_system_eventual_is_equivalence}
+    Let $S$ be a group direct system.
+    Then $\directSystemEventualRelation{S}$ is an equivalence on
+        $\directSystemTaggedCarrier{S}$.
+\end{theorem}
+\begin{proof}
+    $\directSystemEventualRelation{S}$ is a binary relation on
+        $\directSystemTaggedCarrier{S}$ by
+        \obv{direct_system_eventual_relation_type}.
+    $\directSystemEventualRelation{S}$ is reflexive on
+        $\directSystemTaggedCarrier{S}$ by
+        \obv{direct_system_eventual_reflexive}.
+    $\directSystemEventualRelation{S}$ is transitive by
+        \obv{direct_system_eventual_transitive}.
+    $\directSystemEventualRelation{S}$ is symmetric by
+        \obv{direct_system_eventual_symmetric}.
+\end{proof}
+
+\subsection{The quotient carrier}
+
+\begin{definition}\label{group_direct_limit_carrier}
+    $\directLimitCarrier{S}=
+        \quotient{\directSystemTaggedCarrier{S}}
+            {\directSystemEventualRelation{S}}$.
+\end{definition}
+
+\begin{definition}\label{direct_system_class}
+    $\directSystemClass{S}{p}=
+        \equivalenceClass{\directSystemEventualRelation{S}}{p}$.
+\end{definition}
+
+\begin{definition}\label{group_direct_limit_projection}
+    $\directLimitProjection{S}=
+        \quotientProjection
+            {\directSystemTaggedCarrier{S}}
+            {\directSystemEventualRelation{S}}$.
+\end{definition}
+
+\begin{proposition}\label{direct_system_class_type}
+    Let $S$ be a group direct system.
+    Let $p\in\directSystemTaggedCarrier{S}$.
+    Then $\directSystemClass{S}{p}\in\directLimitCarrier{S}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \obv{group_direct_limit_carrier,direct_system_class,quotient}.
+\end{proof}
+
+\begin{proposition}\label{direct_system_class_equality_iff}
+    Let $S$ be a group direct system.
+    Let $p,q\in\directSystemTaggedCarrier{S}$.
+    Then $\directSystemClass{S}{p}=\directSystemClass{S}{q}$ iff
+        $p\mathrel{\directSystemEventualRelation{S}}q$.
+\end{proposition}
+\begin{proof}
+    $\directSystemEventualRelation{S}$ is an equivalence on
+        $\directSystemTaggedCarrier{S}$ by
+        \obv{direct_system_eventual_is_equivalence}.
+    Follows by
+        \auto{direct_system_class,equiv_iff_equivclasses_eq}.
+\end{proof}
+
+\begin{proposition}\label{direct_limit_carrier_representation}
+    Let $S$ be a group direct system.
+    Let $C\in\directLimitCarrier{S}$.
+    Then there exists $p\in\directSystemTaggedCarrier{S}$ such that
+        $C=\directSystemClass{S}{p}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{group_direct_limit_carrier,direct_system_class,quotient}.
+\end{proof}
+
+\begin{proposition}\label{direct_limit_carrier_coordinates}
+    Let $S$ be a group direct system.
+    Let $C\in\directLimitCarrier{S}$.
+    Then there exist $i,x$ such that $i\in\carrier[S]$ and
+        $x\in\carrier[\directSystemGroup{S}{i}]$ and
+        $C=\directSystemClass{S}{(i,x)}$.
+\end{proposition}
+\begin{proof}
+    Take $p\in\directSystemTaggedCarrier{S}$ such that
+        $C=\directSystemClass{S}{p}$ by
+        \obv{direct_limit_carrier_representation}.
+    $p\in\carrier[S]\times\unions{\ran{\directSystemCarrierFamily{S}}}$ by
+        \auto{direct_system_tagged_carrier,indexed_sum}.
+    Take $i,x$ such that $p=(i,x)$ by
+        \auto{times_elem_is_tuple}.
+    $i\in\carrier[S]$ and
+        $x\in\carrier[\directSystemGroup{S}{i}]$ by
+        \auto{direct_system_tagged_carrier_iff}.
+    Follows by \auto.
+\end{proof}
+
+\begin{proposition}\label{direct_limit_projection_type}
+    Let $S$ be a group direct system.
+    Then $\directLimitProjection{S}\in
+        \funs{\directSystemTaggedCarrier{S}}{\directLimitCarrier{S}}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{group_direct_limit_projection,group_direct_limit_carrier,direct_system_eventual_is_equivalence,quotient_projection_type}.
+\end{proof}
+
+\begin{proposition}\label{direct_limit_projection_apply}
+    Let $S$ be a group direct system.
+    Let $p\in\directSystemTaggedCarrier{S}$.
+    Then $\apply{\directLimitProjection{S}}{p}
+        =\directSystemClass{S}{p}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{group_direct_limit_projection,direct_system_class,direct_system_eventual_is_equivalence,quotient_projection_apply}.
+\end{proof}
+
+\subsection{Representative-free quotient operations}
+
+\begin{definition}\label{direct_system_product_tag}
+    $\directSystemProductTag{S}{p}{q}{k}=
+        (k,\mul[\directSystemGroup{S}{k}]
+            (\directSystemMove{S}{p}{k},
+             \directSystemMove{S}{q}{k}))$.
+\end{definition}
+
+\begin{proposition}\label{direct_system_product_tag_type}
+    Let $S$ be a group direct system.
+    Let $p,q\in\directSystemTaggedCarrier{S}$.
+    Let $k\in\carrier[S]$.
+    Suppose $\fst{p}\mathrel{\leq[S]}k$ and
+        $\fst{q}\mathrel{\leq[S]}k$.
+    Then $\directSystemProductTag{S}{p}{q}{k}\in
+        \directSystemTaggedCarrier{S}$.
+\end{proposition}
+\begin{proof}
+    $\directSystemMove{S}{p}{k},\directSystemMove{S}{q}{k}\in
+        \carrier[\directSystemGroup{S}{k}]$ by
+        \obv{direct_system_move_type}.
+    $\directSystemGroup{S}{k}$ is a group by
+        \obv{direct_system_group_is_group}.
+    Hence $\mul[\directSystemGroup{S}{k}]
+        (\directSystemMove{S}{p}{k},\directSystemMove{S}{q}{k})\in
+        \carrier[\directSystemGroup{S}{k}]$ by
+        \obv{group_is_monoid,monoid_is_magma,magma_welldef}.
+    Follows by
+        \auto{direct_system_product_tag,direct_system_tagged_carrier_iff}.
+\end{proof}
+
+\begin{proposition}\label{direct_system_product_tag_first}
+    $\fst{\directSystemProductTag{S}{p}{q}{k}}=k$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{direct_system_product_tag,fst_eq}.
+\end{proof}
+
+\begin{proposition}\label{direct_system_product_tag_second}
+    $\snd{\directSystemProductTag{S}{p}{q}{k}}=
+        \mul[\directSystemGroup{S}{k}]
+            (\directSystemMove{S}{p}{k},
+             \directSystemMove{S}{q}{k})$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{direct_system_product_tag,snd_eq}.
+\end{proof}
+
+\begin{lemma}\label{direct_system_product_tag_moves}
+    Let $S$ be a group direct system.
+    Let $p,q\in\directSystemTaggedCarrier{S}$.
+    Let $k,m\in\carrier[S]$.
+    Suppose $\fst{p}\mathrel{\leq[S]}k$ and
+        $\fst{q}\mathrel{\leq[S]}k$ and
+        $k\mathrel{\leq[S]}m$.
+    Then
+        $\directSystemMove{S}
+            {\directSystemProductTag{S}{p}{q}{k}}{m}
+        =\mul[\directSystemGroup{S}{m}]
+            (\directSystemMove{S}{p}{m},
+             \directSystemMove{S}{q}{m})$.
+\end{lemma}
+\begin{proof}
+    $\directSystemMove{S}{p}{k},\directSystemMove{S}{q}{k}\in
+        \carrier[\directSystemGroup{S}{k}]$ by
+        \obv{direct_system_move_type}.
+    $\groupHom
+        {\directSystemBond{S}{k}{m}}
+        {\directSystemGroup{S}{k}}
+        {\directSystemGroup{S}{m}}$ by
+        \obv{direct_system_bond_hom}.
+    Hence
+        $\apply{\directSystemBond{S}{k}{m}}
+            {\mul[\directSystemGroup{S}{k}]
+                (\directSystemMove{S}{p}{k},
+                 \directSystemMove{S}{q}{k})}
+        =\mul[\directSystemGroup{S}{m}]
+            (\apply{\directSystemBond{S}{k}{m}}
+                {\directSystemMove{S}{p}{k}},
+             \apply{\directSystemBond{S}{k}{m}}
+                {\directSystemMove{S}{q}{k}})$ by
+        \obv{group_hom_mul}.
+    $\directSystemMove{S}{p}{m}
+        =\apply{\directSystemBond{S}{k}{m}}
+            {\directSystemMove{S}{p}{k}}$ and
+        $\directSystemMove{S}{q}{m}
+        =\apply{\directSystemBond{S}{k}{m}}
+            {\directSystemMove{S}{q}{k}}$ by
+        \obv{direct_system_move_composition}.
+    Follows by
+        \auto{direct_system_move,direct_system_product_tag_first,direct_system_product_tag_second}.
+\end{proof}
+
+\begin{lemma}\label{direct_system_product_class_upper_independent}
+    Let $S$ be a group direct system.
+    Let $p,q\in\directSystemTaggedCarrier{S}$.
+    Let $k,l\in\carrier[S]$.
+    Suppose $\fst{p}\mathrel{\leq[S]}k$ and
+        $\fst{q}\mathrel{\leq[S]}k$.
+    Suppose $\fst{p}\mathrel{\leq[S]}l$ and
+        $\fst{q}\mathrel{\leq[S]}l$.
+    Then
+        $\directSystemClass{S}{\directSystemProductTag{S}{p}{q}{k}}
+        =\directSystemClass{S}{\directSystemProductTag{S}{p}{q}{l}}$.
+\end{lemma}
+\begin{proof}
+    $S$ is a directed quasiordered set by
+        \obv{group_direct_system_is_directed}.
+    Take $m\in\carrier[S]$ such that
+        $k\mathrel{\leq[S]}m$ and $l\mathrel{\leq[S]}m$ by
+        \obv{directed_common_upper_bound}.
+    $\directSystemProductTag{S}{p}{q}{k},
+        \directSystemProductTag{S}{p}{q}{l}\in
+        \directSystemTaggedCarrier{S}$ by
+        \obv{direct_system_product_tag_type}.
+    $\fst{\directSystemProductTag{S}{p}{q}{k}}=k$ and
+        $\fst{\directSystemProductTag{S}{p}{q}{l}}=l$ by
+        \obv{direct_system_product_tag_first}.
+    $\directSystemMove{S}
+        {\directSystemProductTag{S}{p}{q}{k}}{m}
+        =\mul[\directSystemGroup{S}{m}]
+            (\directSystemMove{S}{p}{m},
+             \directSystemMove{S}{q}{m})$ by
+        \obv{direct_system_product_tag_moves}.
+    $\directSystemMove{S}
+        {\directSystemProductTag{S}{p}{q}{l}}{m}
+        =\mul[\directSystemGroup{S}{m}]
+            (\directSystemMove{S}{p}{m},
+             \directSystemMove{S}{q}{m})$ by
+        \obv{direct_system_product_tag_moves}.
+    Hence $\directSystemProductTag{S}{p}{q}{k}
+        \mathrel{\directSystemEventualRelation{S}}
+        \directSystemProductTag{S}{p}{q}{l}$ by
+        \auto{direct_system_eventual_relation_iff,direct_system_product_tag_first}.
+    Follows by
+        \obv{direct_system_class_equality_iff}.
+\end{proof}
+
+\begin{definition}\label{direct_system_product_relation}
+    $\directSystemProductRelation{S}=
+        \{(w,C)\mid
+            w\in\directSystemTaggedCarrier{S}\times
+                \directSystemTaggedCarrier{S},
+            C\in\directLimitCarrier{S}\mid
+            \text{there exists $k\in\carrier[S]$ such that
+                $\fst{\fst{w}}\mathrel{\leq[S]}k$ and
+                $\fst{\snd{w}}\mathrel{\leq[S]}k$ and
+                $C=\directSystemClass{S}
+                    {\directSystemProductTag{S}
+                        {\fst{w}}{\snd{w}}{k}}$}\}$.
+\end{definition}
+
+\begin{proposition}\label{direct_system_product_relation_iff}
+    $(w,C)\in\directSystemProductRelation{S}$ iff
+        $w\in\directSystemTaggedCarrier{S}\times
+            \directSystemTaggedCarrier{S}$ and
+        $C\in\directLimitCarrier{S}$ and
+        there exists $k\in\carrier[S]$ such that
+            $\fst{\fst{w}}\mathrel{\leq[S]}k$ and
+            $\fst{\snd{w}}\mathrel{\leq[S]}k$ and
+            $C=\directSystemClass{S}
+                {\directSystemProductTag{S}{\fst{w}}{\snd{w}}{k}}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{direct_system_product_relation,pair_eq_iff}.
+\end{proof}
+
+\begin{lemma}\label{direct_system_product_relation_total}
+    Let $S$ be a group direct system.
+    Let $w\in\directSystemTaggedCarrier{S}\times
+        \directSystemTaggedCarrier{S}$.
+    Then there exists $C\in\directLimitCarrier{S}$ such that
+        $(w,C)\in\directSystemProductRelation{S}$.
+\end{lemma}
+\begin{proof}
+    $\fst{w},\snd{w}\in\directSystemTaggedCarrier{S}$ by
+        \obv{times_proj_elim}.
+    Hence $\fst{\fst{w}},\fst{\snd{w}}\in\carrier[S]$ by
+        \auto{direct_system_tagged_carrier_projections}.
+    $S$ is a directed quasiordered set by
+        \obv{group_direct_system_is_directed}.
+    Take $k\in\carrier[S]$ such that
+        $\fst{\fst{w}}\mathrel{\leq[S]}k$ and
+        $\fst{\snd{w}}\mathrel{\leq[S]}k$ by
+        \obv{directed_common_upper_bound}.
+    $\directSystemProductTag{S}{\fst{w}}{\snd{w}}{k}\in
+        \directSystemTaggedCarrier{S}$ by
+        \obv{direct_system_product_tag_type}.
+    Hence $\directSystemClass{S}
+        {\directSystemProductTag{S}{\fst{w}}{\snd{w}}{k}}\in
+        \directLimitCarrier{S}$ by
+        \obv{direct_system_class_type}.
+    $(w,\directSystemClass{S}
+        {\directSystemProductTag{S}{\fst{w}}{\snd{w}}{k}})
+        \in\directSystemProductRelation{S}$ by
+        \auto{direct_system_product_relation_iff}.
+\end{proof}
+
+\begin{lemma}\label{direct_system_product_relation_right_unique}
+    Let $S$ be a group direct system.
+    Then $\directSystemProductRelation{S}$ is right-unique.
+\end{lemma}
+\begin{proof}
+    Show that for all $w,C,D$ such that
+        $(w,C),(w,D)\in\directSystemProductRelation{S}$ we have
+        $C=D$.
+    \begin{subproof}
+        Fix $w,C,D$.
+        Assume $(w,C),(w,D)\in\directSystemProductRelation{S}$.
+        $w\in\directSystemTaggedCarrier{S}\times
+            \directSystemTaggedCarrier{S}$ by
+            \auto{direct_system_product_relation_iff}.
+        Hence $\fst{w},\snd{w}\in
+            \directSystemTaggedCarrier{S}$ by
+            \obv{times_proj_elim}.
+        Take $k\in\carrier[S]$ such that
+            $\fst{\fst{w}}\mathrel{\leq[S]}k$ and
+            $\fst{\snd{w}}\mathrel{\leq[S]}k$ and
+            $C=\directSystemClass{S}
+                {\directSystemProductTag{S}{\fst{w}}{\snd{w}}{k}}$ by
+            \auto{direct_system_product_relation_iff}.
+        Take $l\in\carrier[S]$ such that
+            $\fst{\fst{w}}\mathrel{\leq[S]}l$ and
+            $\fst{\snd{w}}\mathrel{\leq[S]}l$ and
+            $D=\directSystemClass{S}
+                {\directSystemProductTag{S}{\fst{w}}{\snd{w}}{l}}$ by
+            \auto{direct_system_product_relation_iff}.
+        $\directSystemClass{S}
+                {\directSystemProductTag{S}{\fst{w}}{\snd{w}}{k}}
+            =\directSystemClass{S}
+                {\directSystemProductTag{S}{\fst{w}}{\snd{w}}{l}}$ by
+            \obv{direct_system_product_class_upper_independent}.
+    \end{subproof}
+    Follows by \obv{rightunique}.
+\end{proof}
+
+\begin{theorem}\label{direct_system_product_relation_type}
+    Let $S$ be a group direct system.
+    Then $\directSystemProductRelation{S}\in
+        \funs{
+            \directSystemTaggedCarrier{S}\times
+            \directSystemTaggedCarrier{S}}
+            {\directLimitCarrier{S}}$.
+\end{theorem}
+\begin{proof}
+    Let $R=\directSystemProductRelation{S}$.
+    Let $A=\directSystemTaggedCarrier{S}\times
+        \directSystemTaggedCarrier{S}$.
+    Let $Q=\directLimitCarrier{S}$.
+    Show that $R$ is a relation.
+    \begin{subproof}
+        Show that for every $z\in R$ there exist $w,C$ such that
+            $z=(w,C)$.
+        \begin{subproof}
+            Fix $z\in R$.
+            Take $w,C$ such that $z=(w,C)$ by
+                \auto{direct_system_product_relation}.
+            Follows by \auto.
+        \end{subproof}
+        Follows by \obv{relation}.
+    \end{subproof}
+    $R$ is right-unique by
+        \obv{direct_system_product_relation_right_unique}.
+    Show that $\dom{R}=A$.
+    \begin{subproof}
+        For every $w\in\dom{R}$ we have $w\in A$ by
+            \auto{dom_iff,direct_system_product_relation_iff}.
+        Show that for every $w\in A$ we have $w\in\dom{R}$.
+        \begin{subproof}
+            Fix $w\in A$.
+            Take $C\in Q$ such that $(w,C)\in R$ by
+                \auto{direct_system_product_relation_total}.
+            Follows by \auto{dom_iff}.
+        \end{subproof}
+        Follows by set extensionality.
+    \end{subproof}
+    Show that $R$ is a function to $Q$.
+    \begin{subproof}
+        Show that for every $w\in\dom{R}$ we have
+            $\apply{R}{w}\in Q$.
+        \begin{subproof}
+            Fix $w\in\dom{R}$.
+            $(w,\apply{R}{w})\in R$ by
+                \obv{function_apply_elim}.
+            Follows by
+                \auto{direct_system_product_relation_iff}.
+        \end{subproof}
+    \end{subproof}
+    Follows by \auto{funs_intro}.
+\end{proof}
+
+\begin{proposition}\label{direct_system_product_relation_apply}
+    Let $S$ be a group direct system.
+    Let $p,q\in\directSystemTaggedCarrier{S}$.
+    Let $k\in\carrier[S]$.
+    Suppose $\fst{p}\mathrel{\leq[S]}k$ and
+        $\fst{q}\mathrel{\leq[S]}k$.
+    Then
+        $\apply{\directSystemProductRelation{S}}{(p,q)}
+        =\directSystemClass{S}{\directSystemProductTag{S}{p}{q}{k}}$.
+\end{proposition}
+\begin{proof}
+    $\directSystemProductRelation{S}$ is a function by
+        \auto{direct_system_product_relation_type,funs_is_function}.
+    $\directSystemProductTag{S}{p}{q}{k}\in
+        \directSystemTaggedCarrier{S}$ by
+        \obv{direct_system_product_tag_type}.
+    Hence $\directSystemClass{S}{\directSystemProductTag{S}{p}{q}{k}}
+        \in\directLimitCarrier{S}$ by
+        \obv{direct_system_class_type}.
+    $(p,q)\in\directSystemTaggedCarrier{S}\times
+        \directSystemTaggedCarrier{S}$ by
+        \obv{times_tuple_intro}.
+    Hence
+        $((p,q),\directSystemClass{S}
+            {\directSystemProductTag{S}{p}{q}{k}})
+        \in\directSystemProductRelation{S}$ by
+        \auto{direct_system_product_relation_iff}.
+    Follows by \obv{function_apply_intro}.
+\end{proof}
+
+\begin{lemma}\label{direct_system_product_class_representative_independent}
+    Let $S$ be a group direct system.
+    Let $p,p',q,q'\in\directSystemTaggedCarrier{S}$.
+    Suppose $p\mathrel{\directSystemEventualRelation{S}}p'$ and
+        $q\mathrel{\directSystemEventualRelation{S}}q'$.
+    Let $k,l\in\carrier[S]$.
+    Suppose $\fst{p}\mathrel{\leq[S]}k$ and
+        $\fst{q}\mathrel{\leq[S]}k$.
+    Suppose $\fst{p'}\mathrel{\leq[S]}l$ and
+        $\fst{q'}\mathrel{\leq[S]}l$.
+    Then
+        $\directSystemClass{S}{\directSystemProductTag{S}{p}{q}{k}}
+        =\directSystemClass{S}{\directSystemProductTag{S}{p'}{q'}{l}}$.
+\end{lemma}
+\begin{proof}
+    Take $a\in\carrier[S]$ such that
+        $\fst{p}\mathrel{\leq[S]}a$ and
+        $\fst{p'}\mathrel{\leq[S]}a$ and
+        $\directSystemMove{S}{p}{a}
+            =\directSystemMove{S}{p'}{a}$ by
+        \auto{direct_system_eventual_relation_iff}.
+    Take $b\in\carrier[S]$ such that
+        $\fst{q}\mathrel{\leq[S]}b$ and
+        $\fst{q'}\mathrel{\leq[S]}b$ and
+        $\directSystemMove{S}{q}{b}
+            =\directSystemMove{S}{q'}{b}$ by
+        \auto{direct_system_eventual_relation_iff}.
+    $S$ is a directed quasiordered set by
+        \obv{group_direct_system_is_directed}.
+    Take $n\in\carrier[S]$ such that
+        $k\mathrel{\leq[S]}n$ and $l\mathrel{\leq[S]}n$ by
+        \obv{directed_common_upper_bound}.
+    Take $c\in\carrier[S]$ such that
+        $a\mathrel{\leq[S]}c$ and $b\mathrel{\leq[S]}c$ by
+        \obv{directed_common_upper_bound}.
+    Take $m\in\carrier[S]$ such that
+        $n\mathrel{\leq[S]}m$ and $c\mathrel{\leq[S]}m$ by
+        \obv{directed_common_upper_bound}.
+    $k\mathrel{\leq[S]}m$ and $l\mathrel{\leq[S]}m$ and
+        $a\mathrel{\leq[S]}m$ and $b\mathrel{\leq[S]}m$ by
+        \obv{group_direct_system_is_directed,directed_order_transitive}.
+    $\directSystemMove{S}{p}{m}
+        =\directSystemMove{S}{p'}{m}$ by
+        \obv{direct_system_agreement_persists}.
+    $\directSystemMove{S}{q}{m}
+        =\directSystemMove{S}{q'}{m}$ by
+        \obv{direct_system_agreement_persists}.
+    $\directSystemMove{S}
+        {\directSystemProductTag{S}{p}{q}{k}}{m}
+        =\mul[\directSystemGroup{S}{m}]
+            (\directSystemMove{S}{p}{m},
+             \directSystemMove{S}{q}{m})$ by
+        \obv{direct_system_product_tag_moves}.
+    $\directSystemMove{S}
+        {\directSystemProductTag{S}{p'}{q'}{l}}{m}
+        =\mul[\directSystemGroup{S}{m}]
+            (\directSystemMove{S}{p'}{m},
+             \directSystemMove{S}{q'}{m})$ by
+        \obv{direct_system_product_tag_moves}.
+    Hence $\directSystemMove{S}
+        {\directSystemProductTag{S}{p}{q}{k}}{m}
+        =\directSystemMove{S}
+            {\directSystemProductTag{S}{p'}{q'}{l}}{m}$.
+    $\directSystemProductTag{S}{p}{q}{k},
+        \directSystemProductTag{S}{p'}{q'}{l}\in
+        \directSystemTaggedCarrier{S}$ by
+        \obv{direct_system_product_tag_type}.
+    Hence $\directSystemProductTag{S}{p}{q}{k}
+        \mathrel{\directSystemEventualRelation{S}}
+        \directSystemProductTag{S}{p'}{q'}{l}$ by
+        \auto{direct_system_eventual_relation_iff,direct_system_product_tag_first}.
+    Follows by \obv{direct_system_class_equality_iff}.
+\end{proof}
+
+\begin{lemma}\label{direct_system_product_relation_respects_equivalence}
+    Let $S$ be a group direct system.
+    Let $p,p',q,q'\in\directSystemTaggedCarrier{S}$.
+    Suppose $p\mathrel{\directSystemEventualRelation{S}}p'$ and
+        $q\mathrel{\directSystemEventualRelation{S}}q'$.
+    Then $\apply{\directSystemProductRelation{S}}{(p,q)}
+        =\apply{\directSystemProductRelation{S}}{(p',q')}$.
+\end{lemma}
+\begin{proof}
+    $\fst{p},\fst{p'},\fst{q},\fst{q'}\in\carrier[S]$ by
+        \auto{direct_system_tagged_carrier_projections}.
+    $S$ is a directed quasiordered set by
+        \obv{group_direct_system_is_directed}.
+    Take $k\in\carrier[S]$ such that
+        $\fst{p}\mathrel{\leq[S]}k$ and
+        $\fst{q}\mathrel{\leq[S]}k$ by
+        \obv{directed_common_upper_bound}.
+    Take $l\in\carrier[S]$ such that
+        $\fst{p'}\mathrel{\leq[S]}l$ and
+        $\fst{q'}\mathrel{\leq[S]}l$ by
+        \obv{directed_common_upper_bound}.
+    $\apply{\directSystemProductRelation{S}}{(p,q)}
+        =\directSystemClass{S}
+            {\directSystemProductTag{S}{p}{q}{k}}$ by
+        \obv{direct_system_product_relation_apply}.
+    $\apply{\directSystemProductRelation{S}}{(p',q')}
+        =\directSystemClass{S}
+            {\directSystemProductTag{S}{p'}{q'}{l}}$ by
+        \obv{direct_system_product_relation_apply}.
+    $\directSystemClass{S}{\directSystemProductTag{S}{p}{q}{k}}
+        =\directSystemClass{S}
+            {\directSystemProductTag{S}{p'}{q'}{l}}$ by
+        \obv{direct_system_product_class_representative_independent}.
+\end{proof}
+
+\begin{theorem}\label{direct_system_product_relation_compatible}
+    Let $S$ be a group direct system.
+    Then $\quotientBinaryCompatible
+        {\directSystemProductRelation{S}}
+        {\directSystemTaggedCarrier{S}}
+        {\directSystemEventualRelation{S}}
+        {\directSystemTaggedCarrier{S}}
+        {\directSystemEventualRelation{S}}$.
+\end{theorem}
+\begin{proof}
+    Follows by
+        \obv{quotient_binary_compatible,direct_system_product_relation_respects_equivalence}.
+\end{proof}
+
+\begin{definition}\label{group_direct_limit_multiplication}
+    $\directLimitMultiplication{S}=
+        \quotientBinaryDescent
+            {\directSystemProductRelation{S}}
+            {\directSystemTaggedCarrier{S}}
+            {\directSystemEventualRelation{S}}
+            {\directSystemTaggedCarrier{S}}
+            {\directSystemEventualRelation{S}}$.
+\end{definition}
+
+\begin{theorem}\label{direct_limit_multiplication_type}
+    Let $S$ be a group direct system.
+    Then $\directLimitMultiplication{S}\in
+        \funs{\directLimitCarrier{S}\times\directLimitCarrier{S}}
+            {\directLimitCarrier{S}}$.
+\end{theorem}
+\begin{proof}
+    Follows by
+        \auto{group_direct_limit_multiplication,group_direct_limit_carrier,direct_system_eventual_is_equivalence,direct_system_product_relation_type,direct_system_product_relation_compatible,quotient_binary_descent_type}.
+\end{proof}
+
+\begin{proposition}\label{direct_limit_multiplication_apply}
+    Let $S$ be a group direct system.
+    Let $p,q\in\directSystemTaggedCarrier{S}$.
+    Let $k\in\carrier[S]$.
+    Suppose $\fst{p}\mathrel{\leq[S]}k$ and
+        $\fst{q}\mathrel{\leq[S]}k$.
+    Then
+        $\apply{\directLimitMultiplication{S}}
+            {(\directSystemClass{S}{p},\directSystemClass{S}{q})}
+        =\directSystemClass{S}{\directSystemProductTag{S}{p}{q}{k}}$.
+\end{proposition}
+\begin{proof}
+    $\apply{\directLimitMultiplication{S}}
+        {(\directSystemClass{S}{p},\directSystemClass{S}{q})}
+        =\apply{\directSystemProductRelation{S}}{(p,q)}$ by
+        \auto{group_direct_limit_multiplication,group_direct_limit_carrier,direct_system_class,direct_system_eventual_is_equivalence,direct_system_product_relation_type,direct_system_product_relation_compatible,quotient_binary_descent_apply}.
+    Follows by
+        \obv{direct_system_product_relation_apply}.
+\end{proof}
+
+\begin{definition}\label{direct_system_inverse_tag}
+    $\directSystemInverseTag{S}{p}=
+        (\fst{p},
+         \groupInv[\directSystemGroup{S}{\fst{p}}](\snd{p}))$.
+\end{definition}
+
+\begin{proposition}\label{direct_system_inverse_tag_type}
+    Let $S$ be a group direct system.
+    Let $p\in\directSystemTaggedCarrier{S}$.
+    Then $\directSystemInverseTag{S}{p}\in
+        \directSystemTaggedCarrier{S}$.
+\end{proposition}
+\begin{proof}
+    $\fst{p}\in\carrier[S]$ and
+        $\snd{p}\in\carrier[\directSystemGroup{S}{\fst{p}}]$ by
+        \obv{direct_system_tagged_carrier_projections}.
+    $\directSystemGroup{S}{\fst{p}}$ is a group by
+        \obv{direct_system_group_is_group}.
+    Hence $\groupInv[\directSystemGroup{S}{\fst{p}}](\snd{p})\in
+        \carrier[\directSystemGroup{S}{\fst{p}}]$ by
+        \obv{group_inverse_type}.
+    Follows by
+        \auto{direct_system_inverse_tag,direct_system_tagged_carrier_iff}.
+\end{proof}
+
+\begin{proposition}\label{direct_system_inverse_tag_first}
+    $\fst{\directSystemInverseTag{S}{p}}=\fst{p}$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{direct_system_inverse_tag,fst_eq}.
+\end{proof}
+
+\begin{proposition}\label{direct_system_inverse_tag_second}
+    $\snd{\directSystemInverseTag{S}{p}}=
+        \groupInv[\directSystemGroup{S}{\fst{p}}](\snd{p})$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{direct_system_inverse_tag,snd_eq}.
+\end{proof}
+
+\begin{lemma}\label{direct_system_inverse_tag_moves}
+    Let $S$ be a group direct system.
+    Let $p\in\directSystemTaggedCarrier{S}$.
+    Let $k\in\carrier[S]$.
+    Suppose $\fst{p}\mathrel{\leq[S]}k$.
+    Then
+        $\directSystemMove{S}{\directSystemInverseTag{S}{p}}{k}
+        =\groupInv[\directSystemGroup{S}{k}]
+            (\directSystemMove{S}{p}{k})$.
+\end{lemma}
+\begin{proof}
+    $\fst{p}\in\carrier[S]$ and
+        $\snd{p}\in\carrier[\directSystemGroup{S}{\fst{p}}]$ by
+        \obv{direct_system_tagged_carrier_projections}.
+    $\groupHom
+        {\directSystemBond{S}{\fst{p}}{k}}
+        {\directSystemGroup{S}{\fst{p}}}
+        {\directSystemGroup{S}{k}}$ by
+        \obv{direct_system_bond_hom}.
+    Hence
+        $\apply{\directSystemBond{S}{\fst{p}}{k}}
+            {\groupInv[\directSystemGroup{S}{\fst{p}}](\snd{p})}
+        =\groupInv[\directSystemGroup{S}{k}]
+            (\apply{\directSystemBond{S}{\fst{p}}{k}}{\snd{p}})$ by
+        \obv{group_hom_inverse}.
+    Follows by
+        \auto{direct_system_move,direct_system_inverse_tag_first,direct_system_inverse_tag_second}.
+\end{proof}
+
+\begin{lemma}\label{direct_system_inverse_class_respects_equivalence}
+    Let $S$ be a group direct system.
+    Let $p,q\in\directSystemTaggedCarrier{S}$.
+    Suppose $p\mathrel{\directSystemEventualRelation{S}}q$.
+    Then
+        $\directSystemClass{S}{\directSystemInverseTag{S}{p}}
+        =\directSystemClass{S}{\directSystemInverseTag{S}{q}}$.
+\end{lemma}
+\begin{proof}
+    Take $k\in\carrier[S]$ such that
+        $\fst{p}\mathrel{\leq[S]}k$ and
+        $\fst{q}\mathrel{\leq[S]}k$ and
+        $\directSystemMove{S}{p}{k}
+            =\directSystemMove{S}{q}{k}$ by
+        \auto{direct_system_eventual_relation_iff}.
+    $\directSystemInverseTag{S}{p},
+        \directSystemInverseTag{S}{q}\in
+        \directSystemTaggedCarrier{S}$ by
+        \obv{direct_system_inverse_tag_type}.
+    $\directSystemMove{S}{\directSystemInverseTag{S}{p}}{k}
+        =\groupInv[\directSystemGroup{S}{k}]
+            (\directSystemMove{S}{p}{k})$ by
+        \obv{direct_system_inverse_tag_moves}.
+    $\directSystemMove{S}{\directSystemInverseTag{S}{q}}{k}
+        =\groupInv[\directSystemGroup{S}{k}]
+            (\directSystemMove{S}{q}{k})$ by
+        \obv{direct_system_inverse_tag_moves}.
+    Hence $\directSystemMove{S}{\directSystemInverseTag{S}{p}}{k}
+        =\directSystemMove{S}{\directSystemInverseTag{S}{q}}{k}$.
+    Hence $\directSystemInverseTag{S}{p}
+        \mathrel{\directSystemEventualRelation{S}}
+        \directSystemInverseTag{S}{q}$ by
+        \auto{direct_system_eventual_relation_iff,direct_system_inverse_tag_first}.
+    Follows by \obv{direct_system_class_equality_iff}.
+\end{proof}
+
+\begin{definition}\label{direct_system_inverse_relation}
+    $\directSystemInverseRelation{S}=
+        \{(p,\directSystemClass{S}{\directSystemInverseTag{S}{p}})
+            \mid p\in\directSystemTaggedCarrier{S}\}$.
+\end{definition}
+
+\begin{proposition}\label{direct_system_inverse_relation_iff}
+    $(p,C)\in\directSystemInverseRelation{S}$ iff
+        $p\in\directSystemTaggedCarrier{S}$ and
+        $C=\directSystemClass{S}{\directSystemInverseTag{S}{p}}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{direct_system_inverse_relation,pair_eq_iff}.
+\end{proof}
+
+\begin{theorem}\label{direct_system_inverse_relation_type}
+    Let $S$ be a group direct system.
+    Then $\directSystemInverseRelation{S}\in
+        \funs{\directSystemTaggedCarrier{S}}{\directLimitCarrier{S}}$.
+\end{theorem}
+\begin{proof}
+    Let $R=\directSystemInverseRelation{S}$.
+    Let $A=\directSystemTaggedCarrier{S}$.
+    Let $Q=\directLimitCarrier{S}$.
+    Show that $R$ is a relation.
+    \begin{subproof}
+        Show that for every $z\in R$ there exist $p,C$ such that
+            $z=(p,C)$.
+        \begin{subproof}
+            Fix $z\in R$.
+            Take $p\in A$ such that
+                $z=(p,\directSystemClass{S}
+                    {\directSystemInverseTag{S}{p}})$ by
+                \auto{direct_system_inverse_relation}.
+            Follows by \auto.
+        \end{subproof}
+        Follows by \obv{relation}.
+    \end{subproof}
+    Show that $R$ is right-unique.
+    \begin{subproof}
+        Show that for all $p,C,D$ such that $(p,C),(p,D)\in R$
+            we have $C=D$.
+        \begin{subproof}
+            Fix $p,C,D$.
+            Assume $(p,C),(p,D)\in R$.
+            $C=\directSystemClass{S}{\directSystemInverseTag{S}{p}}$ and
+                $D=\directSystemClass{S}{\directSystemInverseTag{S}{p}}$ by
+                \auto{direct_system_inverse_relation_iff}.
+        \end{subproof}
+        Follows by \obv{rightunique}.
+    \end{subproof}
+    Show that $\dom{R}=A$.
+    \begin{subproof}
+        For every $p\in\dom{R}$ we have $p\in A$ by
+            \auto{dom_iff,direct_system_inverse_relation_iff}.
+        For every $p\in A$ we have $p\in\dom{R}$ by
+            \auto{dom_iff,direct_system_inverse_relation_iff}.
+        Follows by \obv{setext}.
+    \end{subproof}
+    Show that $R$ is a function to $Q$.
+    \begin{subproof}
+        Show that for every $p\in\dom{R}$ we have
+            $\apply{R}{p}\in Q$.
+        \begin{subproof}
+            Fix $p\in\dom{R}$.
+            $(p,\apply{R}{p})\in R$ by
+                \obv{function_apply_elim}.
+            Hence $p\in A$ and
+                $\apply{R}{p}=\directSystemClass{S}
+                    {\directSystemInverseTag{S}{p}}$ by
+                \auto{direct_system_inverse_relation_iff}.
+            $\directSystemInverseTag{S}{p}\in A$ by
+                \obv{direct_system_inverse_tag_type}.
+            Follows by \auto{direct_system_class_type}.
+        \end{subproof}
+    \end{subproof}
+    Follows by \auto{funs_intro}.
+\end{proof}
+
+\begin{proposition}\label{direct_system_inverse_relation_apply}
+    Let $S$ be a group direct system.
+    Let $p\in\directSystemTaggedCarrier{S}$.
+    Then $\apply{\directSystemInverseRelation{S}}{p}
+        =\directSystemClass{S}{\directSystemInverseTag{S}{p}}$.
+\end{proposition}
+\begin{proof}
+    $\directSystemInverseRelation{S}$ is a function by
+        \auto{direct_system_inverse_relation_type,funs_is_function}.
+    $(p,\directSystemClass{S}{\directSystemInverseTag{S}{p}})
+        \in\directSystemInverseRelation{S}$ by
+        \obv{direct_system_inverse_relation_iff}.
+    Follows by \obv{function_apply_intro}.
+\end{proof}
+
+\begin{lemma}\label{direct_system_inverse_relation_respects_equivalence}
+    Let $S$ be a group direct system.
+    Let $p,q\in\directSystemTaggedCarrier{S}$.
+    Suppose $p\mathrel{\directSystemEventualRelation{S}}q$.
+    Then $\apply{\directSystemInverseRelation{S}}{p}
+        =\apply{\directSystemInverseRelation{S}}{q}$.
+\end{lemma}
+\begin{proof}
+    $\apply{\directSystemInverseRelation{S}}{p}
+        =\directSystemClass{S}{\directSystemInverseTag{S}{p}}$ and
+        $\apply{\directSystemInverseRelation{S}}{q}
+        =\directSystemClass{S}{\directSystemInverseTag{S}{q}}$ by
+        \obv{direct_system_inverse_relation_apply}.
+    Follows by
+        \obv{direct_system_inverse_class_respects_equivalence}.
+\end{proof}
+
+\begin{theorem}\label{direct_system_inverse_relation_compatible}
+    Let $S$ be a group direct system.
+    Then $\quotientCompatible
+        {\directSystemInverseRelation{S}}
+        {\directSystemTaggedCarrier{S}}
+        {\directSystemEventualRelation{S}}$.
+\end{theorem}
+\begin{proof}
+    Follows by
+        \obv{quotient_compatible,direct_system_inverse_relation_respects_equivalence}.
+\end{proof}
+
+\begin{definition}\label{group_direct_limit_inverse}
+    $\directLimitInverse{S}=
+        \quotientDescent
+            {\directSystemInverseRelation{S}}
+            {\directSystemTaggedCarrier{S}}
+            {\directSystemEventualRelation{S}}$.
+\end{definition}
+
+\begin{theorem}\label{direct_limit_inverse_type}
+    Let $S$ be a group direct system.
+    Then $\directLimitInverse{S}\in
+        \funs{\directLimitCarrier{S}}{\directLimitCarrier{S}}$.
+\end{theorem}
+\begin{proof}
+    Follows by
+        \auto{group_direct_limit_inverse,group_direct_limit_carrier,direct_system_eventual_is_equivalence,direct_system_inverse_relation_type,direct_system_inverse_relation_compatible,quotient_descent_type}.
+\end{proof}
+
+\begin{proposition}\label{direct_limit_inverse_apply}
+    Let $S$ be a group direct system.
+    Let $p\in\directSystemTaggedCarrier{S}$.
+    Then $\apply{\directLimitInverse{S}}{\directSystemClass{S}{p}}
+        =\directSystemClass{S}{\directSystemInverseTag{S}{p}}$.
+\end{proposition}
+\begin{proof}
+    $\apply{\directLimitInverse{S}}{\directSystemClass{S}{p}}
+        =\apply{\directSystemInverseRelation{S}}{p}$ by
+        \auto{group_direct_limit_inverse,group_direct_limit_carrier,direct_system_class,direct_system_eventual_is_equivalence,direct_system_inverse_relation_type,direct_system_inverse_relation_compatible,quotient_descent_apply}.
+    Follows by
+        \obv{direct_system_inverse_relation_apply}.
+\end{proof}
+
+\begin{definition}\label{direct_system_neutral_tag}
+    $\directSystemNeutralTag{S}{i}=
+        (i,\neutral[\directSystemGroup{S}{i}])$.
+\end{definition}
+
+\begin{proposition}\label{direct_system_neutral_tag_type}
+    Let $S$ be a group direct system.
+    Let $i\in\carrier[S]$.
+    Then $\directSystemNeutralTag{S}{i}\in
+        \directSystemTaggedCarrier{S}$.
+\end{proposition}
+\begin{proof}
+    $\directSystemGroup{S}{i}$ is a group by
+        \obv{direct_system_group_is_group}.
+    Hence $\neutral[\directSystemGroup{S}{i}]\in
+        \carrier[\directSystemGroup{S}{i}]$ by
+        \obv{group_is_monoid,monoid_is_unital_magma,unitalmagma_type}.
+    Follows by
+        \auto{direct_system_neutral_tag,direct_system_tagged_carrier_iff}.
+\end{proof}
+
+\begin{proposition}\label{direct_system_neutral_tag_first}
+    $\fst{\directSystemNeutralTag{S}{i}}=i$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{direct_system_neutral_tag,fst_eq}.
+\end{proof}
+
+\begin{lemma}\label{direct_system_neutral_tag_moves}
+    Let $S$ be a group direct system.
+    Let $i,k\in\carrier[S]$.
+    Suppose $i\mathrel{\leq[S]}k$.
+    Then $\directSystemMove{S}{\directSystemNeutralTag{S}{i}}{k}
+        =\neutral[\directSystemGroup{S}{k}]$.
+\end{lemma}
+\begin{proof}
+    $\groupHom
+        {\directSystemBond{S}{i}{k}}
+        {\directSystemGroup{S}{i}}
+        {\directSystemGroup{S}{k}}$ by
+        \obv{direct_system_bond_hom}.
+    Hence $\apply{\directSystemBond{S}{i}{k}}
+        {\neutral[\directSystemGroup{S}{i}]}
+        =\neutral[\directSystemGroup{S}{k}]$ by
+        \obv{group_hom_neutral}.
+    Follows by
+        \auto{direct_system_move,direct_system_neutral_tag,direct_system_neutral_tag_first,snd_eq}.
+\end{proof}
+
+\begin{lemma}\label{direct_system_neutral_class_independent}
+    Let $S$ be a group direct system.
+    Let $i,j\in\carrier[S]$.
+    Then $\directSystemClass{S}{\directSystemNeutralTag{S}{i}}
+        =\directSystemClass{S}{\directSystemNeutralTag{S}{j}}$.
+\end{lemma}
+\begin{proof}
+    $S$ is a directed quasiordered set by
+        \obv{group_direct_system_is_directed}.
+    Take $k\in\carrier[S]$ such that
+        $i\mathrel{\leq[S]}k$ and $j\mathrel{\leq[S]}k$ by
+        \obv{directed_common_upper_bound}.
+    $\directSystemNeutralTag{S}{i},\directSystemNeutralTag{S}{j}\in
+        \directSystemTaggedCarrier{S}$ by
+        \obv{direct_system_neutral_tag_type}.
+    $\directSystemMove{S}{\directSystemNeutralTag{S}{i}}{k}
+        =\neutral[\directSystemGroup{S}{k}]$ and
+        $\directSystemMove{S}{\directSystemNeutralTag{S}{j}}{k}
+        =\neutral[\directSystemGroup{S}{k}]$ by
+        \obv{direct_system_neutral_tag_moves}.
+    Hence $\directSystemNeutralTag{S}{i}
+        \mathrel{\directSystemEventualRelation{S}}
+        \directSystemNeutralTag{S}{j}$ by
+        \auto{direct_system_eventual_relation_iff,direct_system_neutral_tag_first}.
+    Follows by \obv{direct_system_class_equality_iff}.
+\end{proof}
+
+\begin{definition}\label{direct_system_neutral_classes}
+    $\directSystemNeutralClasses{S}=
+        \{\directSystemClass{S}{\directSystemNeutralTag{S}{i}}
+            \mid i\in\carrier[S]\}$.
+\end{definition}
+
+\begin{definition}\label{group_direct_limit_neutral}
+    $\directLimitNeutral{S}=\unions{\directSystemNeutralClasses{S}}$.
+\end{definition}
+
+\begin{lemma}\label{direct_system_neutral_classes_singleton}
+    Let $S$ be a group direct system.
+    Let $i\in\carrier[S]$.
+    Then $\directSystemNeutralClasses{S}=
+        \{\directSystemClass{S}{\directSystemNeutralTag{S}{i}}\}$.
+\end{lemma}
+\begin{proof}
+    Show that for every $C\in\directSystemNeutralClasses{S}$ we have
+        $C\in\{\directSystemClass{S}{\directSystemNeutralTag{S}{i}}\}$.
+    \begin{subproof}
+        Fix $C\in\directSystemNeutralClasses{S}$.
+        Take $j\in\carrier[S]$ such that
+            $C=\directSystemClass{S}{\directSystemNeutralTag{S}{j}}$ by
+            \obv{direct_system_neutral_classes}.
+        $\directSystemClass{S}{\directSystemNeutralTag{S}{j}}
+            =\directSystemClass{S}{\directSystemNeutralTag{S}{i}}$ by
+            \obv{direct_system_neutral_class_independent}.
+        Follows by \auto{singleton_iff}.
+    \end{subproof}
+    Show that for every
+        $C\in\{\directSystemClass{S}{\directSystemNeutralTag{S}{i}}\}$
+        we have $C\in\directSystemNeutralClasses{S}$.
+    \begin{subproof}
+        Fix $C\in
+            \{\directSystemClass{S}{\directSystemNeutralTag{S}{i}}\}$.
+        $C=\directSystemClass{S}{\directSystemNeutralTag{S}{i}}$ by
+            \obv{singleton_iff}.
+        Follows by \obv{direct_system_neutral_classes}.
+    \end{subproof}
+    Follows by \obv{setext}.
+\end{proof}
+
+\begin{proposition}\label{direct_limit_neutral_is_stage_class}
+    Let $S$ be a group direct system.
+    Let $i\in\carrier[S]$.
+    Then $\directLimitNeutral{S}=
+        \directSystemClass{S}{\directSystemNeutralTag{S}{i}}$.
+\end{proposition}
+\begin{proof}
+    $\directSystemNeutralClasses{S}=
+        \{\directSystemClass{S}{\directSystemNeutralTag{S}{i}}\}$ by
+        \obv{direct_system_neutral_classes_singleton}.
+    $\unions{\{\directSystemClass{S}{\directSystemNeutralTag{S}{i}}\}}
+        =\directSystemClass{S}{\directSystemNeutralTag{S}{i}}$ by
+        \auto{setext,unions_iff,singleton_iff}.
+    Follows by \obv{group_direct_limit_neutral}.
+\end{proof}
+
+\begin{proposition}\label{direct_limit_neutral_type}
+    Let $S$ be a group direct system.
+    Then $\directLimitNeutral{S}\in\directLimitCarrier{S}$.
+\end{proposition}
+\begin{proof}
+    $S$ is a directed quasiordered set by
+        \obv{group_direct_system_is_directed}.
+    Take $i$ such that $i\in\carrier[S]$ by
+        \obv{directed_quasiordered_set_carrier_inhabited}.
+    $\directSystemNeutralTag{S}{i}\in\directSystemTaggedCarrier{S}$ by
+        \obv{direct_system_neutral_tag_type}.
+    $\directLimitNeutral{S}=
+        \directSystemClass{S}{\directSystemNeutralTag{S}{i}}$ by
+        \obv{direct_limit_neutral_is_stage_class}.
+    Follows by \obv{direct_system_class_type}.
+\end{proof}
+
+\begin{definition}\label{direct_system_moved_tag}
+    $\directSystemMovedTag{S}{p}{k}=
+        (k,\directSystemMove{S}{p}{k})$.
+\end{definition}
+
+\begin{proposition}\label{direct_system_moved_tag_type}
+    Let $S$ be a group direct system.
+    Let $p\in\directSystemTaggedCarrier{S}$.
+    Let $k\in\carrier[S]$.
+    Suppose $\fst{p}\mathrel{\leq[S]}k$.
+    Then $\directSystemMovedTag{S}{p}{k}\in
+        \directSystemTaggedCarrier{S}$.
+\end{proposition}
+\begin{proof}
+    $\directSystemMove{S}{p}{k}\in
+        \carrier[\directSystemGroup{S}{k}]$ by
+        \obv{direct_system_move_type}.
+    Follows by
+        \auto{direct_system_moved_tag,direct_system_tagged_carrier_iff}.
+\end{proof}
+
+\begin{proposition}\label{direct_system_moved_tag_first}
+    $\fst{\directSystemMovedTag{S}{p}{k}}=k$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{direct_system_moved_tag,fst_eq}.
+\end{proof}
+
+\begin{lemma}\label{direct_system_class_move}
+    Let $S$ be a group direct system.
+    Let $p\in\directSystemTaggedCarrier{S}$.
+    Let $k\in\carrier[S]$.
+    Suppose $\fst{p}\mathrel{\leq[S]}k$.
+    Then $\directSystemClass{S}{p}=
+        \directSystemClass{S}{\directSystemMovedTag{S}{p}{k}}$.
+\end{lemma}
+\begin{proof}
+    $\directSystemMovedTag{S}{p}{k}\in
+        \directSystemTaggedCarrier{S}$ by
+        \obv{direct_system_moved_tag_type}.
+    $S$ is a directed quasiordered set by
+        \obv{group_direct_system_is_directed}.
+    Hence $k\mathrel{\leq[S]}k$ by
+        \obv{directed_order_reflexive}.
+    $\directSystemMove{S}{\directSystemMovedTag{S}{p}{k}}{k}
+        =\directSystemMove{S}{p}{k}$ by
+        \auto{direct_system_move_identity,direct_system_moved_tag_first,direct_system_moved_tag,snd_eq}.
+    Hence $p\mathrel{\directSystemEventualRelation{S}}
+        \directSystemMovedTag{S}{p}{k}$ by
+        \obv{group_direct_system_is_directed,directed_order_reflexive,direct_system_moved_tag_type,direct_system_eventual_relation_iff,direct_system_moved_tag_first}.
+    Follows by \obv{direct_system_class_equality_iff}.
+\end{proof}
+
+\begin{proposition}\label{direct_limit_multiplication_same_stage}
+    Let $S$ be a group direct system.
+    Let $i\in\carrier[S]$.
+    Let $x,y\in\carrier[\directSystemGroup{S}{i}]$.
+    Then
+        $\apply{\directLimitMultiplication{S}}
+            {(\directSystemClass{S}{(i,x)},
+              \directSystemClass{S}{(i,y)})}
+        =\directSystemClass{S}
+            {(i,\mul[\directSystemGroup{S}{i}](x,y))}$.
+\end{proposition}
+\begin{proof}
+    $(i,x),(i,y)\in\directSystemTaggedCarrier{S}$ by
+        \auto{direct_system_tagged_carrier_iff}.
+    $S$ is a directed quasiordered set by
+        \obv{group_direct_system_is_directed}.
+    Hence $i\mathrel{\leq[S]}i$ by
+        \obv{directed_order_reflexive}.
+    $\directSystemMove{S}{(i,x)}{i}=x$ and
+        $\directSystemMove{S}{(i,y)}{i}=y$ by
+        \auto{direct_system_move_identity,fst_eq,snd_eq}.
+    $\directSystemProductTag{S}{(i,x)}{(i,y)}{i}
+        =(i,\mul[\directSystemGroup{S}{i}](x,y))$ by
+        \obv{direct_system_product_tag}.
+    Follows by
+        \auto{direct_limit_multiplication_apply}.
+\end{proof}
+
+\begin{proposition}\label{direct_limit_inverse_same_stage}
+    Let $S$ be a group direct system.
+    Let $i\in\carrier[S]$.
+    Let $x\in\carrier[\directSystemGroup{S}{i}]$.
+    Then
+        $\apply{\directLimitInverse{S}}{\directSystemClass{S}{(i,x)}}
+        =\directSystemClass{S}
+            {(i,\groupInv[\directSystemGroup{S}{i}](x))}$.
+\end{proposition}
+\begin{proof}
+    $(i,x)\in\directSystemTaggedCarrier{S}$ by
+        \auto{direct_system_tagged_carrier_iff}.
+    $\directSystemInverseTag{S}{(i,x)}
+        =(i,\groupInv[\directSystemGroup{S}{i}](x))$ by
+        \obv{direct_system_inverse_tag,fst_eq,snd_eq}.
+    Follows by \auto{direct_limit_inverse_apply}.
+\end{proof}
+
+\subsection{The exact limit group}
+
+\begin{definition}\label{group_direct_limit}
+    $\groupDirectLimit{S}=
+        \structure[group]{
+            \carrier=\directLimitCarrier{S},
+            \mul=\directLimitMultiplication{S},
+            \neutral=\directLimitNeutral{S},
+            \groupInv=\directLimitInverse{S}
+        }$.
+\end{definition}
+
+\begin{proposition}\label{group_direct_limit_structure_carrier}
+    $\carrier[\groupDirectLimit{S}]=\directLimitCarrier{S}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{group_direct_limit,groupaggregateprojection_carrier}.
+\end{proof}
+
+\begin{proposition}\label{group_direct_limit_structure_mul}
+    $\mul[\groupDirectLimit{S}]=\directLimitMultiplication{S}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{group_direct_limit,groupaggregateprojection_mul}.
+\end{proof}
+
+\begin{proposition}\label{group_direct_limit_structure_neutral}
+    $\neutral[\groupDirectLimit{S}]=\directLimitNeutral{S}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{group_direct_limit,groupaggregateprojection_neutral}.
+\end{proof}
+
+\begin{proposition}\label{group_direct_limit_structure_inverse}
+    $\groupInv[\groupDirectLimit{S}]=\directLimitInverse{S}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{group_direct_limit,groupaggregateprojection_groupInv}.
+\end{proof}
+
+\begin{theorem}\label{group_direct_limit_is_exact_group}
+    Let $S$ be a group direct system.
+    Then $\groupDirectLimit{S}$ is an exact group.
+\end{theorem}
+\begin{proof}
+    Let $K=\groupDirectLimit{S}$.
+    Let $Q=\directLimitCarrier{S}$.
+    $\carrier[K]=Q$ by
+        \auto{group_direct_limit_structure_carrier}.
+    $\mul[K]=\directLimitMultiplication{S}$ by
+        \auto{group_direct_limit_structure_mul}.
+    $\neutral[K]=\directLimitNeutral{S}$ by
+        \auto{group_direct_limit_structure_neutral}.
+    $\groupInv[K]=\directLimitInverse{S}$ by
+        \auto{group_direct_limit_structure_inverse}.
+    $\mul[K]\in\funs{\carrier[K]\times\carrier[K]}{\carrier[K]}$ by
+        \auto{direct_limit_multiplication_type}.
+    $\neutral[K]\in\carrier[K]$ by
+        \auto{direct_limit_neutral_type}.
+    $\groupInv[K]\in\funs{\carrier[K]}{\carrier[K]}$ by
+        \auto{direct_limit_inverse_type}.
+    Show that for every $U\in\carrier[K]$ we have
+        $\mul[K](U,\neutral[K])=U$.
+    \begin{subproof}
+        Fix $U\in\carrier[K]$.
+        Take $i,x$ such that $i\in\carrier[S]$ and
+            $x\in\carrier[\directSystemGroup{S}{i}]$ and
+            $U=\directSystemClass{S}{(i,x)}$ by
+            \obv{direct_limit_carrier_coordinates}.
+        $\neutral[K]=\directSystemClass{S}
+            {(i,\neutral[\directSystemGroup{S}{i}])}$ by
+            \auto{group_direct_limit_structure_neutral,direct_limit_neutral_is_stage_class,direct_system_neutral_tag}.
+        $\directSystemGroup{S}{i}$ is a group by
+            \obv{direct_system_group_is_group}.
+        Hence $\neutral[\directSystemGroup{S}{i}]\in
+            \carrier[\directSystemGroup{S}{i}]$ by
+            \obv{group_is_monoid,monoid_is_unital_magma,unitalmagma_type}.
+        $\apply{\directLimitMultiplication{S}}
+            {(\directSystemClass{S}{(i,x)},
+              \directSystemClass{S}
+                {(i,\neutral[\directSystemGroup{S}{i}])})}=
+            \directSystemClass{S}
+                {(i,\mul[\directSystemGroup{S}{i}]
+                    (x,\neutral[\directSystemGroup{S}{i}]))}$ by
+            \obv{direct_limit_multiplication_same_stage}.
+        Hence $\mul[\directSystemGroup{S}{i}]
+            (x,\neutral[\directSystemGroup{S}{i}])=x$ by
+            \obv{group_is_monoid,monoid_is_unital_magma,unitalmagma_right}.
+        Follows by
+            \obv{group_direct_limit_structure_mul}.
+    \end{subproof}
+    Show that for every $U\in\carrier[K]$ we have
+        $\mul[K](\neutral[K],U)=U$.
+    \begin{subproof}
+        Fix $U\in\carrier[K]$.
+        Take $i,x$ such that $i\in\carrier[S]$ and
+            $x\in\carrier[\directSystemGroup{S}{i}]$ and
+            $U=\directSystemClass{S}{(i,x)}$ by
+            \obv{direct_limit_carrier_coordinates}.
+        $\neutral[K]=\directSystemClass{S}
+            {(i,\neutral[\directSystemGroup{S}{i}])}$ by
+            \auto{group_direct_limit_structure_neutral,direct_limit_neutral_is_stage_class,direct_system_neutral_tag}.
+        $\directSystemGroup{S}{i}$ is a group by
+            \obv{direct_system_group_is_group}.
+        Hence $\neutral[\directSystemGroup{S}{i}]\in
+            \carrier[\directSystemGroup{S}{i}]$ by
+            \obv{group_is_monoid,monoid_is_unital_magma,unitalmagma_type}.
+        $\apply{\directLimitMultiplication{S}}
+            {(\directSystemClass{S}
+                {(i,\neutral[\directSystemGroup{S}{i}])},
+              \directSystemClass{S}{(i,x)})}=
+            \directSystemClass{S}
+                {(i,\mul[\directSystemGroup{S}{i}]
+                    (\neutral[\directSystemGroup{S}{i}],x))}$ by
+            \obv{direct_limit_multiplication_same_stage}.
+        Hence $\mul[\directSystemGroup{S}{i}]
+            (\neutral[\directSystemGroup{S}{i}],x)=x$ by
+            \obv{group_is_monoid,monoid_is_unital_magma,unitalmagma_left}.
+        Follows by
+            \obv{group_direct_limit_structure_mul}.
+    \end{subproof}
+    Hence $K$ is a unital magma by
+        \auto{unitalmagma,group_direct_limit,groupaggregateexact,groupaggregateprojection_carrier,groupaggregateprojection_mul,groupaggregateprojection_neutral}.
+    Show that for all $U,V,W\in\carrier[K]$ we have
+        $\mul[K](U,\mul[K](V,W))=
+        \mul[K](\mul[K](U,V),W)$.
+    \begin{subproof}
+        Fix $U,V,W\in\carrier[K]$.
+        Take $i,x$ such that $i\in\carrier[S]$ and
+            $x\in\carrier[\directSystemGroup{S}{i}]$ and
+            $U=\directSystemClass{S}{(i,x)}$ by
+            \obv{direct_limit_carrier_coordinates}.
+        Take $j,y$ such that $j\in\carrier[S]$ and
+            $y\in\carrier[\directSystemGroup{S}{j}]$ and
+            $V=\directSystemClass{S}{(j,y)}$ by
+            \obv{direct_limit_carrier_coordinates}.
+        Take $l,z$ such that $l\in\carrier[S]$ and
+            $z\in\carrier[\directSystemGroup{S}{l}]$ and
+            $W=\directSystemClass{S}{(l,z)}$ by
+            \obv{direct_limit_carrier_coordinates}.
+        $S$ is a directed quasiordered set by
+            \obv{group_direct_system_is_directed}.
+        Take $n\in\carrier[S]$ such that
+            $i\mathrel{\leq[S]}n$ and $j\mathrel{\leq[S]}n$ by
+            \obv{directed_common_upper_bound}.
+        Take $k\in\carrier[S]$ such that
+            $n\mathrel{\leq[S]}k$ and $l\mathrel{\leq[S]}k$ by
+            \obv{directed_common_upper_bound}.
+        $i\mathrel{\leq[S]}k$ and $j\mathrel{\leq[S]}k$ by
+            \obv{group_direct_system_is_directed,directed_order_transitive}.
+        Let $a=\directSystemMove{S}{(i,x)}{k}$.
+        Let $b=\directSystemMove{S}{(j,y)}{k}$.
+        Let $c=\directSystemMove{S}{(l,z)}{k}$.
+        $(i,x),(j,y),(l,z)\in\directSystemTaggedCarrier{S}$ by
+            \auto{direct_system_tagged_carrier_iff}.
+        $a,b,c\in\carrier[\directSystemGroup{S}{k}]$ by
+            \auto{direct_system_move_type}.
+        $U=\directSystemClass{S}{(k,a)}$ and
+            $V=\directSystemClass{S}{(k,b)}$ and
+            $W=\directSystemClass{S}{(k,c)}$ by
+            \auto{direct_system_class_move,direct_system_moved_tag}.
+        $\directSystemGroup{S}{k}$ is a group by
+            \obv{direct_system_group_is_group}.
+        Hence $\mul[\directSystemGroup{S}{k}](a,b),
+            \mul[\directSystemGroup{S}{k}](b,c)\in
+            \carrier[\directSystemGroup{S}{k}]$ by
+            \obv{group_is_monoid,monoid_is_magma,magma_welldef}.
+        $\mul[K](V,W)=\directSystemClass{S}
+            {(k,\mul[\directSystemGroup{S}{k}](b,c))}$ and
+            $\mul[K](U,V)=\directSystemClass{S}
+            {(k,\mul[\directSystemGroup{S}{k}](a,b))}$ by
+            \auto{group_direct_limit_structure_mul,direct_limit_multiplication_same_stage}.
+        Hence $\mul[K](U,\mul[K](V,W))=
+            \directSystemClass{S}
+                {(k,\mul[\directSystemGroup{S}{k}]
+                    (a,\mul[\directSystemGroup{S}{k}](b,c)))}$ by
+            \auto{group_direct_limit_structure_mul,direct_limit_multiplication_same_stage}.
+        $\mul[K](\mul[K](U,V),W)=
+            \directSystemClass{S}
+                {(k,\mul[\directSystemGroup{S}{k}]
+                    (\mul[\directSystemGroup{S}{k}](a,b),c))}$ by
+            \auto{group_direct_limit_structure_mul,direct_limit_multiplication_same_stage}.
+        $\mul[\directSystemGroup{S}{k}]
+            (a,\mul[\directSystemGroup{S}{k}](b,c))
+            =\mul[\directSystemGroup{S}{k}]
+                (\mul[\directSystemGroup{S}{k}](a,b),c)$ by
+            \obv{group_is_monoid,monoid_assoc}.
+    \end{subproof}
+    Show that for every $U\in\carrier[K]$ we have
+        $\mul[K](U,\groupInv[K](U))=\neutral[K]$.
+    \begin{subproof}
+        Fix $U\in\carrier[K]$.
+        Take $i,x$ such that $i\in\carrier[S]$ and
+            $x\in\carrier[\directSystemGroup{S}{i}]$ and
+            $U=\directSystemClass{S}{(i,x)}$ by
+            \obv{direct_limit_carrier_coordinates}.
+        $\groupInv[\directSystemGroup{S}{i}](x)\in
+            \carrier[\directSystemGroup{S}{i}]$ by
+            \obv{direct_system_group_is_group,group_inverse_type}.
+        $\groupInv[K](U)=\directSystemClass{S}
+            {(i,\groupInv[\directSystemGroup{S}{i}](x))}$ by
+            \auto{group_direct_limit_structure_inverse,direct_limit_inverse_same_stage}.
+        Hence $\mul[K](U,\groupInv[K](U))=
+            \directSystemClass{S}
+                {(i,\mul[\directSystemGroup{S}{i}]
+                    (x,\groupInv[\directSystemGroup{S}{i}](x)))}$ by
+            \auto{group_direct_limit_structure_mul,direct_limit_multiplication_same_stage}.
+        $\mul[\directSystemGroup{S}{i}]
+            (x,\groupInv[\directSystemGroup{S}{i}](x))
+            =\neutral[\directSystemGroup{S}{i}]$ by
+            \obv{direct_system_group_is_group,group_inverse_right}.
+        $\neutral[K]=\directSystemClass{S}
+            {(i,\neutral[\directSystemGroup{S}{i}])}$ by
+            \auto{group_direct_limit_structure_neutral,direct_limit_neutral_is_stage_class,direct_system_neutral_tag}.
+    \end{subproof}
+    Show that for every $U\in\carrier[K]$ we have
+        $\mul[K](\groupInv[K](U),U)=\neutral[K]$.
+    \begin{subproof}
+        Fix $U\in\carrier[K]$.
+        Take $i,x$ such that $i\in\carrier[S]$ and
+            $x\in\carrier[\directSystemGroup{S}{i}]$ and
+            $U=\directSystemClass{S}{(i,x)}$ by
+            \obv{direct_limit_carrier_coordinates}.
+        $\groupInv[\directSystemGroup{S}{i}](x)\in
+            \carrier[\directSystemGroup{S}{i}]$ by
+            \obv{direct_system_group_is_group,group_inverse_type}.
+        $\groupInv[K](U)=\directSystemClass{S}
+            {(i,\groupInv[\directSystemGroup{S}{i}](x))}$ by
+            \auto{group_direct_limit_structure_inverse,direct_limit_inverse_same_stage}.
+        Hence $\mul[K](\groupInv[K](U),U)=
+            \directSystemClass{S}
+                {(i,\mul[\directSystemGroup{S}{i}]
+                    (\groupInv[\directSystemGroup{S}{i}](x),x))}$ by
+            \auto{group_direct_limit_structure_mul,direct_limit_multiplication_same_stage}.
+        $\mul[\directSystemGroup{S}{i}]
+            (\groupInv[\directSystemGroup{S}{i}](x),x)
+            =\neutral[\directSystemGroup{S}{i}]$ by
+            \obv{direct_system_group_is_group,group_inverse_left}.
+        $\neutral[K]=\directSystemClass{S}
+            {(i,\neutral[\directSystemGroup{S}{i}])}$ by
+            \auto{group_direct_limit_structure_neutral,direct_limit_neutral_is_stage_class,direct_system_neutral_tag}.
+    \end{subproof}
+    Hence $K$ is a group by
+        \auto{group,group_direct_limit,groupaggregateexact,groupaggregateprojection_carrier,groupaggregateprojection_mul,groupaggregateprojection_neutral,groupaggregateprojection_groupInv}.
+    Follows by \auto{group_direct_limit,groupaggregateexact}.
+\end{proof}
+
+\begin{corollary}\label{group_direct_limit_is_group}
+    Let $S$ be a group direct system.
+    Then $\groupDirectLimit{S}$ is a group.
+\end{corollary}
+\begin{proof}
+    Follows by \obv{group_direct_limit_is_exact_group}.
+\end{proof}
+
+\subsection{The canonical cocone}
+
+\begin{definition}\label{direct_system_canonical_map}
+    $\directSystemCanonicalMap{S}{i}=
+        \{(x,\directSystemClass{S}{(i,x)})
+            \mid x\in\carrier[\directSystemGroup{S}{i}]\}$.
+\end{definition}
+
+\begin{proposition}\label{direct_system_canonical_map_iff}
+    $(x,C)\in\directSystemCanonicalMap{S}{i}$ iff
+        $x\in\carrier[\directSystemGroup{S}{i}]$ and
+        $C=\directSystemClass{S}{(i,x)}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{direct_system_canonical_map,pair_eq_iff}.
+\end{proof}
+
+\begin{theorem}\label{direct_system_canonical_map_type}
+    Let $S$ be a group direct system.
+    Let $i\in\carrier[S]$.
+    Then $\directSystemCanonicalMap{S}{i}\in
+        \funs{\carrier[\directSystemGroup{S}{i}]}
+            {\directLimitCarrier{S}}$.
+\end{theorem}
+\begin{proof}
+    Let $f=\directSystemCanonicalMap{S}{i}$.
+    Let $A=\carrier[\directSystemGroup{S}{i}]$.
+    Let $Q=\directLimitCarrier{S}$.
+    Show that $f$ is a relation.
+    \begin{subproof}
+        Show that for every $z\in f$ there exist $x,C$ such that
+            $z=(x,C)$.
+        \begin{subproof}
+            Fix $z\in f$.
+            Take $x\in A$ such that
+                $z=(x,\directSystemClass{S}{(i,x)})$ by
+                \auto{direct_system_canonical_map}.
+            Follows by \auto.
+        \end{subproof}
+        Follows by \obv{relation}.
+    \end{subproof}
+    Show that $f$ is right-unique.
+    \begin{subproof}
+        Show that for all $x,C,D$ such that $(x,C),(x,D)\in f$
+            we have $C=D$.
+        \begin{subproof}
+            Fix $x,C,D$.
+            Assume $(x,C),(x,D)\in f$.
+            $C=\directSystemClass{S}{(i,x)}$ and
+                $D=\directSystemClass{S}{(i,x)}$ by
+                \auto{direct_system_canonical_map_iff}.
+        \end{subproof}
+        Follows by \obv{rightunique}.
+    \end{subproof}
+    Show that $\dom{f}=A$.
+    \begin{subproof}
+        For every $x\in\dom{f}$ we have $x\in A$ by
+            \auto{dom_iff,direct_system_canonical_map_iff}.
+        For every $x\in A$ we have $x\in\dom{f}$ by
+            \auto{dom_iff,direct_system_canonical_map_iff}.
+        Follows by \obv{setext}.
+    \end{subproof}
+    Show that $f$ is a function to $Q$.
+    \begin{subproof}
+        Show that for every $x\in\dom{f}$ we have
+            $\apply{f}{x}\in Q$.
+        \begin{subproof}
+            Fix $x\in\dom{f}$.
+            $(x,\apply{f}{x})\in f$ by
+                \obv{function_apply_elim}.
+            Hence $x\in A$ and
+                $\apply{f}{x}=\directSystemClass{S}{(i,x)}$ by
+                \auto{direct_system_canonical_map_iff}.
+            $(i,x)\in\directSystemTaggedCarrier{S}$ by
+                \auto{direct_system_tagged_carrier_iff}.
+            Follows by \obv{direct_system_class_type}.
+        \end{subproof}
+    \end{subproof}
+    Follows by \auto{funs_intro}.
+\end{proof}
+
+\begin{proposition}\label{direct_system_canonical_map_apply}
+    Let $S$ be a group direct system.
+    Let $i\in\carrier[S]$.
+    Let $x\in\carrier[\directSystemGroup{S}{i}]$.
+    Then $\apply{\directSystemCanonicalMap{S}{i}}{x}
+        =\directSystemClass{S}{(i,x)}$.
+\end{proposition}
+\begin{proof}
+    $\directSystemCanonicalMap{S}{i}$ is a function by
+        \auto{direct_system_canonical_map_type,funs_is_function}.
+    $(x,\directSystemClass{S}{(i,x)})\in
+        \directSystemCanonicalMap{S}{i}$ by
+        \obv{direct_system_canonical_map_iff}.
+    Follows by \obv{function_apply_intro}.
+\end{proof}
+
+\begin{theorem}\label{direct_system_canonical_map_hom}
+    Let $S$ be a group direct system.
+    Let $i\in\carrier[S]$.
+    Then $\groupHom
+        {\directSystemCanonicalMap{S}{i}}
+        {\directSystemGroup{S}{i}}
+        {\groupDirectLimit{S}}$.
+\end{theorem}
+\begin{proof}
+    $\directSystemGroup{S}{i}$ is a group by
+        \obv{direct_system_group_is_group}.
+    $\groupDirectLimit{S}$ is a group by
+        \obv{group_direct_limit_is_group}.
+    $\carrier[\groupDirectLimit{S}]=\directLimitCarrier{S}$ by
+        \obv{group_direct_limit_structure_carrier}.
+    Hence $\directSystemCanonicalMap{S}{i}\in
+        \funs{\carrier[\directSystemGroup{S}{i}]}
+            {\carrier[\groupDirectLimit{S}]}$ by
+        \auto{direct_system_canonical_map_type}.
+    Show that for all $x,y\in\carrier[\directSystemGroup{S}{i}]$
+        we have
+        $\apply{\directSystemCanonicalMap{S}{i}}
+            {\mul[\directSystemGroup{S}{i}](x,y)}
+        =\mul[\groupDirectLimit{S}]
+            (\apply{\directSystemCanonicalMap{S}{i}}{x},
+             \apply{\directSystemCanonicalMap{S}{i}}{y})$.
+    \begin{subproof}
+        Fix $x,y\in\carrier[\directSystemGroup{S}{i}]$.
+        $\mul[\directSystemGroup{S}{i}](x,y)\in
+            \carrier[\directSystemGroup{S}{i}]$ by
+            \obv{direct_system_group_is_group,group_is_monoid,monoid_is_magma,magma_welldef}.
+        Hence $\apply{\directSystemCanonicalMap{S}{i}}
+            {\mul[\directSystemGroup{S}{i}](x,y)}
+            =\directSystemClass{S}
+                {(i,\mul[\directSystemGroup{S}{i}](x,y))}$ by
+            \obv{direct_system_canonical_map_apply}.
+        $\mul[\groupDirectLimit{S}]
+            (\directSystemClass{S}{(i,x)},
+             \directSystemClass{S}{(i,y)})
+            =\directSystemClass{S}
+                {(i,\mul[\directSystemGroup{S}{i}](x,y))}$ by
+            \auto{group_direct_limit_structure_mul,direct_limit_multiplication_same_stage}.
+        $\apply{\directSystemCanonicalMap{S}{i}}{x}
+            =\directSystemClass{S}{(i,x)}$ and
+            $\apply{\directSystemCanonicalMap{S}{i}}{y}
+            =\directSystemClass{S}{(i,y)}$ by
+            \obv{direct_system_canonical_map_apply}.
+    \end{subproof}
+    Follows by \obv{group_hom}.
+\end{proof}
+
+\begin{definition}\label{direct_limit_canonical_family}
+    $\directLimitCanonicalFamily{S}=
+        \{(i,\directSystemCanonicalMap{S}{i})
+            \mid i\in\carrier[S]\}$.
+\end{definition}
+
+\begin{proposition}\label{direct_limit_canonical_family_iff}
+    $(i,f)\in\directLimitCanonicalFamily{S}$ iff
+        $i\in\carrier[S]$ and
+        $f=\directSystemCanonicalMap{S}{i}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{direct_limit_canonical_family,pair_eq_iff}.
+\end{proof}
+
+\begin{proposition}\label{direct_limit_canonical_family_type}
+    $\directLimitCanonicalFamily{S}\in
+        \funs{\carrier[S]}{\ran{\directLimitCanonicalFamily{S}}}$.
+\end{proposition}
+\begin{proof}
+    Let $F=\directLimitCanonicalFamily{S}$.
+    Show that $F$ is a relation.
+    \begin{subproof}
+        Show that for every $z\in F$ there exist $i,f$ such that
+            $z=(i,f)$.
+        \begin{subproof}
+            Fix $z\in F$.
+            Take $i\in\carrier[S]$ such that
+                $z=(i,\directSystemCanonicalMap{S}{i})$ by
+                \obv{direct_limit_canonical_family}.
+            Follows by \auto.
+        \end{subproof}
+        Follows by \obv{relation}.
+    \end{subproof}
+    Show that $F$ is right-unique.
+    \begin{subproof}
+        Show that for all $i,f,g$ such that $(i,f),(i,g)\in F$
+            we have $f=g$.
+        \begin{subproof}
+            Fix $i,f,g$.
+            Assume $(i,f),(i,g)\in F$.
+            $f=\directSystemCanonicalMap{S}{i}$ and
+                $g=\directSystemCanonicalMap{S}{i}$ by
+                \auto{direct_limit_canonical_family_iff}.
+        \end{subproof}
+        Follows by \obv{rightunique}.
+    \end{subproof}
+    $\dom{F}=\carrier[S]$ by
+        \auto{setext,dom_iff,direct_limit_canonical_family_iff}.
+    Show that $F$ is a function to $\ran{F}$.
+    \begin{subproof}
+        Show that for every $i\in\dom{F}$ we have
+            $\apply{F}{i}\in\ran{F}$.
+        \begin{subproof}
+            Fix $i\in\dom{F}$.
+            Follows by \auto{fun_ran_iff}.
+        \end{subproof}
+    \end{subproof}
+    Follows by \auto{funs_intro}.
+\end{proof}
+
+\begin{proposition}\label{direct_limit_canonical_family_apply}
+    Let $i\in\carrier[S]$.
+    Then $\apply{\directLimitCanonicalFamily{S}}{i}
+        =\directSystemCanonicalMap{S}{i}$.
+\end{proposition}
+\begin{proof}
+    $\directLimitCanonicalFamily{S}$ is a function by
+        \auto{direct_limit_canonical_family_type,funs_is_function}.
+    $(i,\directSystemCanonicalMap{S}{i})\in
+        \directLimitCanonicalFamily{S}$ by
+        \obv{direct_limit_canonical_family_iff}.
+    Follows by \obv{function_apply_intro}.
+\end{proof}
+
+\begin{lemma}\label{direct_system_class_bond}
+    Let $S$ be a group direct system.
+    Let $i,j\in\carrier[S]$.
+    Suppose $i\mathrel{\leq[S]}j$.
+    Let $x\in\carrier[\directSystemGroup{S}{i}]$.
+    Then $\directSystemClass{S}{(i,x)}=
+        \directSystemClass{S}
+            {(j,\apply{\directSystemBond{S}{i}{j}}{x})}$.
+\end{lemma}
+\begin{proof}
+    $(i,x)\in\directSystemTaggedCarrier{S}$ by
+        \auto{direct_system_tagged_carrier_iff}.
+    $\directSystemMove{S}{(i,x)}{j}
+        =\apply{\directSystemBond{S}{i}{j}}{x}$ by
+        \obv{direct_system_move,fst_eq,snd_eq}.
+    $\directSystemClass{S}{(i,x)}=
+        \directSystemClass{S}{\directSystemMovedTag{S}{(i,x)}{j}}$ by
+        \auto{direct_system_class_move}.
+    Follows by \auto{direct_system_moved_tag}.
+\end{proof}
+
+\begin{theorem}\label{direct_system_canonical_map_compatibility}
+    Let $S$ be a group direct system.
+    Let $i,j\in\carrier[S]$.
+    Suppose $i\mathrel{\leq[S]}j$.
+    Then
+        $\directSystemCanonicalMap{S}{j}\circ
+            \directSystemBond{S}{i}{j}
+        =\directSystemCanonicalMap{S}{i}$.
+\end{theorem}
+\begin{proof}
+    Let $f=\directSystemBond{S}{i}{j}$.
+    Let $g=\directSystemCanonicalMap{S}{j}$.
+    Let $h=\directSystemCanonicalMap{S}{i}$.
+    Let $A=\carrier[\directSystemGroup{S}{i}]$.
+    Let $B=\carrier[\directSystemGroup{S}{j}]$.
+    Let $Q=\directLimitCarrier{S}$.
+    $f\in\funs{A}{B}$ by
+        \auto{direct_system_bond_hom,group_hom_type}.
+    $g\in\funs{B}{Q}$ and $h\in\funs{A}{Q}$ by
+        \auto{direct_system_canonical_map_type}.
+    Hence $g\circ f\in\funs{A}{Q}$ by
+        \obv{funs_circ}.
+    $g$ is composable with $f$ by
+        \auto{funs,funs_ran,subseteq}.
+    $g\circ f$ and $h$ are functions and
+        $\dom{g\circ f}=A=\dom{h}$ by
+        \auto{funs_elim,funs_is_function}.
+    Show that for every $x\in\dom{g\circ f}$ we have
+        $\apply{g\circ f}{x}=\apply{h}{x}$.
+    \begin{subproof}
+        Fix $x\in\dom{g\circ f}$.
+        Hence $x\in A$.
+        $\apply{f}{x}\in B$ by \obv{funs_type_apply}.
+        $\apply{g\circ f}{x}=\apply{g}{\apply{f}{x}}$ by
+            \auto{funs_is_function,funs_elim,circ_apply}.
+        $\apply{g}{\apply{f}{x}}=
+            \directSystemClass{S}{(j,\apply{f}{x})}$ by
+            \auto{direct_system_canonical_map_apply}.
+        $\apply{h}{x}=\directSystemClass{S}{(i,x)}$ by
+            \auto{direct_system_canonical_map_apply}.
+        $\directSystemClass{S}{(i,x)}=
+            \directSystemClass{S}{(j,\apply{f}{x})}$ by
+            \auto{direct_system_class_bond}.
+    \end{subproof}
+    Follows by \auto{funext_on_domain}.
+\end{proof}
+
+\begin{theorem}\label{group_direct_limit_canonical_cocone}
+    Let $S$ be a group direct system.
+    Then $\groupCocone
+        {S}{\groupDirectLimit{S}}{\directLimitCanonicalFamily{S}}$.
+\end{theorem}
+\begin{proof}
+    $\groupDirectLimit{S}$ is a group by
+        \obv{group_direct_limit_is_group}.
+    $\directLimitCanonicalFamily{S}\in
+        \funs{\carrier[S]}{\ran{\directLimitCanonicalFamily{S}}}$ by
+        \obv{direct_limit_canonical_family_type}.
+    For every $i\in\carrier[S]$ we have
+        $\groupHom
+            {\apply{\directLimitCanonicalFamily{S}}{i}}
+            {\directSystemGroup{S}{i}}
+            {\groupDirectLimit{S}}$ by
+        \auto{direct_limit_canonical_family_apply,direct_system_canonical_map_hom}.
+    For all $i,j\in\carrier[S]$ such that
+        $i\mathrel{\leq[S]}j$ we have
+        $\apply{\directLimitCanonicalFamily{S}}{j}\circ
+            \directSystemBond{S}{i}{j}
+        =\apply{\directLimitCanonicalFamily{S}}{i}$ by
+        \auto{direct_limit_canonical_family_apply,direct_system_canonical_map_compatibility}.
+    Follows by \obv{group_cocone}.
+\end{proof}
+
+\subsection{The universal mediator}
+
+\begin{definition}\label{direct_system_cocone_tag_map}
+    $\directSystemCoconeTagMap{S}{H}{\kappa}=
+        \{(p,\apply{\apply{\kappa}{\fst{p}}}{\snd{p}})
+            \mid p\in\directSystemTaggedCarrier{S}\}$.
+\end{definition}
+
+\begin{proposition}\label{direct_system_cocone_tag_map_iff}
+    $(p,y)\in\directSystemCoconeTagMap{S}{H}{\kappa}$ iff
+        $p\in\directSystemTaggedCarrier{S}$ and
+        $y=\apply{\apply{\kappa}{\fst{p}}}{\snd{p}}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{direct_system_cocone_tag_map,pair_eq_iff}.
+\end{proof}
+
+\begin{theorem}\label{direct_system_cocone_tag_map_type}
+    Suppose $\groupCocone{S}{H}{\kappa}$.
+    Then $\directSystemCoconeTagMap{S}{H}{\kappa}\in
+        \funs{\directSystemTaggedCarrier{S}}{\carrier[H]}$.
+\end{theorem}
+\begin{proof}
+    Let $f=\directSystemCoconeTagMap{S}{H}{\kappa}$.
+    Let $A=\directSystemTaggedCarrier{S}$.
+    Show that $f$ is a relation.
+    \begin{subproof}
+        Show that for every $z\in f$ there exist $p,y$ such that
+            $z=(p,y)$.
+        \begin{subproof}
+            Fix $z\in f$.
+            Take $p\in A$ such that
+                $z=(p,\apply{\apply{\kappa}{\fst{p}}}{\snd{p}})$ by
+                \auto{direct_system_cocone_tag_map}.
+            Follows by \auto.
+        \end{subproof}
+        Follows by \obv{relation}.
+    \end{subproof}
+    Show that $f$ is right-unique.
+    \begin{subproof}
+        Show that for all $p,y,z$ such that $(p,y),(p,z)\in f$
+            we have $y=z$.
+        \begin{subproof}
+            Fix $p,y,z$.
+            Assume $(p,y),(p,z)\in f$.
+            $y=\apply{\apply{\kappa}{\fst{p}}}{\snd{p}}$ and
+                $z=\apply{\apply{\kappa}{\fst{p}}}{\snd{p}}$ by
+                \auto{direct_system_cocone_tag_map_iff}.
+        \end{subproof}
+        Follows by \obv{rightunique}.
+    \end{subproof}
+    Show that $\dom{f}=A$.
+    \begin{subproof}
+        For every $p\in\dom{f}$ we have $p\in A$ by
+            \auto{dom_iff,direct_system_cocone_tag_map_iff}.
+        For every $p\in A$ we have $p\in\dom{f}$ by
+            \auto{dom_iff,direct_system_cocone_tag_map_iff}.
+        Follows by \obv{setext}.
+    \end{subproof}
+    Show that $f$ is a function to $\carrier[H]$.
+    \begin{subproof}
+        Show that for every $p\in\dom{f}$ we have
+            $\apply{f}{p}\in\carrier[H]$.
+        \begin{subproof}
+            Fix $p\in\dom{f}$.
+            $(p,\apply{f}{p})\in f$ by
+                \obv{function_apply_elim}.
+            Hence $p\in A$ and
+                $\apply{f}{p}=\apply{\apply{\kappa}{\fst{p}}}{\snd{p}}$ by
+                \auto{direct_system_cocone_tag_map_iff}.
+            $\fst{p}\in\carrier[S]$ and
+                $\snd{p}\in\carrier[\directSystemGroup{S}{\fst{p}}]$ by
+                \obv{direct_system_tagged_carrier_projections}.
+            $\groupHom
+                {\apply{\kappa}{\fst{p}}}
+                {\directSystemGroup{S}{\fst{p}}}{H}$ by
+                \obv{group_cocone_leg_hom}.
+            Follows by \auto{group_hom_apply_type}.
+        \end{subproof}
+    \end{subproof}
+    Follows by \auto{funs_intro}.
+\end{proof}
+
+\begin{proposition}\label{direct_system_cocone_tag_map_apply}
+    Suppose $\groupCocone{S}{H}{\kappa}$.
+    Let $p\in\directSystemTaggedCarrier{S}$.
+    Then $\apply{\directSystemCoconeTagMap{S}{H}{\kappa}}{p}
+        =\apply{\apply{\kappa}{\fst{p}}}{\snd{p}}$.
+\end{proposition}
+\begin{proof}
+    $\directSystemCoconeTagMap{S}{H}{\kappa}$ is a function by
+        \auto{direct_system_cocone_tag_map_type,funs_is_function}.
+    $(p,\apply{\apply{\kappa}{\fst{p}}}{\snd{p}})
+        \in\directSystemCoconeTagMap{S}{H}{\kappa}$ by
+        \obv{direct_system_cocone_tag_map_iff}.
+    Follows by \obv{function_apply_intro}.
+\end{proof}
+
+\begin{lemma}\label{group_cocone_value_after_move}
+    Suppose $\groupCocone{S}{H}{\kappa}$.
+    Let $p\in\directSystemTaggedCarrier{S}$.
+    Let $k\in\carrier[S]$.
+    Suppose $\fst{p}\mathrel{\leq[S]}k$.
+    Then
+        $\apply{\apply{\kappa}{\fst{p}}}{\snd{p}}
+        =\apply{\apply{\kappa}{k}}{\directSystemMove{S}{p}{k}}$.
+\end{lemma}
+\begin{proof}
+    Let $i=\fst{p}$.
+    Let $x=\snd{p}$.
+    Let $f=\directSystemBond{S}{i}{k}$.
+    Let $g=\apply{\kappa}{k}$.
+    Let $h=\apply{\kappa}{i}$.
+    $i\in\carrier[S]$ and
+        $x\in\carrier[\directSystemGroup{S}{i}]$ by
+        \auto{direct_system_tagged_carrier_projections}.
+    $\groupHom{f}{\directSystemGroup{S}{i}}
+        {\directSystemGroup{S}{k}}$ by
+        \auto{direct_system_bond_hom,group_cocone_system}.
+    $\groupHom{g}{\directSystemGroup{S}{k}}{H}$ and
+        $\groupHom{h}{\directSystemGroup{S}{i}}{H}$ by
+        \auto{group_cocone_leg_hom}.
+    $g\circ f=h$ by
+        \auto{group_cocone_compatibility}.
+    $f\in\funs{\carrier[\directSystemGroup{S}{i}]}
+        {\carrier[\directSystemGroup{S}{k}]}$ and
+        $g\in\funs{\carrier[\directSystemGroup{S}{k}]}{\carrier[H]}$ by
+        \obv{group_hom_type}.
+    Hence $f$ and $g$ are functions and $x\in\dom{f}$ and
+        $g$ is composable with $f$ by
+        \auto{funs_elim,funs_is_function,funs_ran,subseteq}.
+    Hence $\apply{g\circ f}{x}=\apply{g}{\apply{f}{x}}$ by
+        \obv{circ_apply}.
+    Follows by \auto{direct_system_move}.
+\end{proof}
+
+\begin{lemma}\label{direct_system_cocone_tag_map_respects_equivalence}
+    Suppose $\groupCocone{S}{H}{\kappa}$.
+    Let $p,q\in\directSystemTaggedCarrier{S}$.
+    Suppose $p\mathrel{\directSystemEventualRelation{S}}q$.
+    Then
+        $\apply{\directSystemCoconeTagMap{S}{H}{\kappa}}{p}
+        =\apply{\directSystemCoconeTagMap{S}{H}{\kappa}}{q}$.
+\end{lemma}
+\begin{proof}
+    Take $k\in\carrier[S]$ such that
+        $\fst{p}\mathrel{\leq[S]}k$ and
+        $\fst{q}\mathrel{\leq[S]}k$ and
+        $\directSystemMove{S}{p}{k}
+            =\directSystemMove{S}{q}{k}$ by
+        \auto{direct_system_eventual_relation_iff}.
+    $\apply{\directSystemCoconeTagMap{S}{H}{\kappa}}{p}
+        =\apply{\apply{\kappa}{k}}{\directSystemMove{S}{p}{k}}$ by
+        \auto{direct_system_cocone_tag_map_apply,group_cocone_value_after_move}.
+    $\apply{\directSystemCoconeTagMap{S}{H}{\kappa}}{q}
+        =\apply{\apply{\kappa}{k}}{\directSystemMove{S}{q}{k}}$ by
+        \auto{direct_system_cocone_tag_map_apply,group_cocone_value_after_move}.
+\end{proof}
+
+\begin{theorem}\label{direct_system_cocone_tag_map_compatible}
+    Suppose $\groupCocone{S}{H}{\kappa}$.
+    Then $\quotientCompatible
+        {\directSystemCoconeTagMap{S}{H}{\kappa}}
+        {\directSystemTaggedCarrier{S}}
+        {\directSystemEventualRelation{S}}$.
+\end{theorem}
+\begin{proof}
+    Follows by
+        \obv{quotient_compatible,direct_system_cocone_tag_map_respects_equivalence}.
+\end{proof}
+
+\begin{definition}\label{group_direct_limit_mediator}
+    $\directLimitMediator{S}{H}{\kappa}=
+        \quotientDescent
+            {\directSystemCoconeTagMap{S}{H}{\kappa}}
+            {\directSystemTaggedCarrier{S}}
+            {\directSystemEventualRelation{S}}$.
+\end{definition}
+
+\begin{theorem}\label{direct_limit_mediator_type}
+    Suppose $\groupCocone{S}{H}{\kappa}$.
+    Then $\directLimitMediator{S}{H}{\kappa}\in
+        \funs{\directLimitCarrier{S}}{\carrier[H]}$.
+\end{theorem}
+\begin{proof}
+    $S$ is a group direct system by
+        \obv{group_cocone_system}.
+    Follows by
+        \auto{group_direct_limit_mediator,group_direct_limit_carrier,direct_system_eventual_is_equivalence,direct_system_cocone_tag_map_type,direct_system_cocone_tag_map_compatible,quotient_descent_type}.
+\end{proof}
+
+\begin{proposition}\label{direct_limit_mediator_apply}
+    Suppose $\groupCocone{S}{H}{\kappa}$.
+    Let $i\in\carrier[S]$.
+    Let $x\in\carrier[\directSystemGroup{S}{i}]$.
+    Then
+        $\apply{\directLimitMediator{S}{H}{\kappa}}
+            {\directSystemClass{S}{(i,x)}}
+        =\apply{\apply{\kappa}{i}}{x}$.
+\end{proposition}
+\begin{proof}
+    $S$ is a group direct system by
+        \obv{group_cocone_system}.
+    $(i,x)\in\directSystemTaggedCarrier{S}$ by
+        \auto{direct_system_tagged_carrier_iff}.
+    $\apply{\directLimitMediator{S}{H}{\kappa}}
+        {\directSystemClass{S}{(i,x)}}
+        =\apply{\directSystemCoconeTagMap{S}{H}{\kappa}}{(i,x)}$ by
+        \auto{group_direct_limit_mediator,group_direct_limit_carrier,direct_system_class,direct_system_eventual_is_equivalence,direct_system_cocone_tag_map_type,direct_system_cocone_tag_map_compatible,quotient_descent_apply}.
+    Follows by
+        \auto{direct_system_cocone_tag_map_apply,fst_eq,snd_eq}.
+\end{proof}
+
+\begin{theorem}\label{direct_limit_mediator_hom}
+    Suppose $\groupCocone{S}{H}{\kappa}$.
+    Then $\groupHom
+        {\directLimitMediator{S}{H}{\kappa}}
+        {\groupDirectLimit{S}}{H}$.
+\end{theorem}
+\begin{proof}
+    Let $u=\directLimitMediator{S}{H}{\kappa}$.
+    Let $L=\groupDirectLimit{S}$.
+    $S$ is a group direct system by
+        \obv{group_cocone_system}.
+    $H$ is a group by \obv{group_cocone_target}.
+    $L$ is a group by \obv{group_direct_limit_is_group}.
+    $\carrier[L]=\directLimitCarrier{S}$ by
+        \auto{group_direct_limit_structure_carrier}.
+    Hence $u\in\funs{\carrier[L]}{\carrier[H]}$ by
+        \auto{direct_limit_mediator_type}.
+    Show that for all $U,V\in\carrier[L]$ we have
+        $\apply{u}{\mul[L](U,V)}=
+        \mul[H](\apply{u}{U},\apply{u}{V})$.
+    \begin{subproof}
+        Fix $U,V\in\carrier[L]$.
+        Take $i,x$ such that $i\in\carrier[S]$ and
+            $x\in\carrier[\directSystemGroup{S}{i}]$ and
+            $U=\directSystemClass{S}{(i,x)}$ by
+            \obv{direct_limit_carrier_coordinates}.
+        Take $j,y$ such that $j\in\carrier[S]$ and
+            $y\in\carrier[\directSystemGroup{S}{j}]$ and
+            $V=\directSystemClass{S}{(j,y)}$ by
+            \obv{direct_limit_carrier_coordinates}.
+        $S$ is a directed quasiordered set by
+            \obv{group_direct_system_is_directed}.
+        Take $k\in\carrier[S]$ such that
+            $i\mathrel{\leq[S]}k$ and $j\mathrel{\leq[S]}k$ by
+            \obv{directed_common_upper_bound}.
+        Let $a=\directSystemMove{S}{(i,x)}{k}$.
+        Let $b=\directSystemMove{S}{(j,y)}{k}$.
+        $(i,x),(j,y)\in\directSystemTaggedCarrier{S}$ by
+            \auto{direct_system_tagged_carrier_iff}.
+        $a,b\in\carrier[\directSystemGroup{S}{k}]$ by
+            \auto{direct_system_move_type}.
+        $U=\directSystemClass{S}{(k,a)}$ and
+            $V=\directSystemClass{S}{(k,b)}$ by
+            \auto{direct_system_class_move,direct_system_moved_tag}.
+        $\directSystemGroup{S}{k}$ is a group by
+            \obv{direct_system_group_is_group}.
+        Hence $\mul[\directSystemGroup{S}{k}](a,b)\in
+            \carrier[\directSystemGroup{S}{k}]$ by
+            \obv{group_is_monoid,monoid_is_magma,magma_welldef}.
+        $\mul[L](U,V)=\directSystemClass{S}
+            {(k,\mul[\directSystemGroup{S}{k}](a,b))}$ by
+            \auto{group_direct_limit_structure_mul,direct_limit_multiplication_same_stage}.
+        Hence $\apply{u}{\mul[L](U,V)}=
+            \apply{\apply{\kappa}{k}}
+                {\mul[\directSystemGroup{S}{k}](a,b)}$ by
+            \auto{direct_limit_mediator_apply}.
+        $\apply{u}{U}=\apply{\apply{\kappa}{k}}{a}$ and
+            $\apply{u}{V}=\apply{\apply{\kappa}{k}}{b}$ by
+            \auto{direct_limit_mediator_apply}.
+        $\groupHom{\apply{\kappa}{k}}
+            {\directSystemGroup{S}{k}}{H}$ by
+            \obv{group_cocone_leg_hom}.
+        Hence $\apply{\apply{\kappa}{k}}
+                {\mul[\directSystemGroup{S}{k}](a,b)}
+            =\mul[H]
+                (\apply{\apply{\kappa}{k}}{a},
+                 \apply{\apply{\kappa}{k}}{b})$ by
+            \obv{group_hom_mul}.
+    \end{subproof}
+    Follows by \auto{group_hom}.
+\end{proof}
+
+\begin{theorem}\label{direct_limit_mediator_factorization}
+    Suppose $\groupCocone{S}{H}{\kappa}$.
+    Let $i\in\carrier[S]$.
+    Then
+        $\directLimitMediator{S}{H}{\kappa}\circ
+            \directSystemCanonicalMap{S}{i}
+        =\apply{\kappa}{i}$.
+\end{theorem}
+\begin{proof}
+    Let $u=\directLimitMediator{S}{H}{\kappa}$.
+    Let $f=\directSystemCanonicalMap{S}{i}$.
+    Let $h=\apply{\kappa}{i}$.
+    Let $A=\carrier[\directSystemGroup{S}{i}]$.
+    Let $L=\groupDirectLimit{S}$.
+    $S$ is a group direct system by
+        \obv{group_cocone_system}.
+    $\groupHom{f}{\directSystemGroup{S}{i}}{L}$ by
+        \auto{direct_system_canonical_map_hom}.
+    $\groupHom{u}{L}{H}$ by
+        \auto{direct_limit_mediator_hom}.
+    $\groupHom{h}{\directSystemGroup{S}{i}}{H}$ by
+        \auto{group_cocone_leg_hom}.
+    Hence $f\in\funs{A}{\carrier[L]}$ and
+        $u\in\funs{\carrier[L]}{\carrier[H]}$ and
+        $h\in\funs{A}{\carrier[H]}$ by
+        \obv{group_hom_type}.
+    Hence $u\circ f\in\funs{A}{\carrier[H]}$ by
+        \obv{funs_circ}.
+    $u$ is composable with $f$ by
+        \auto{funs,funs_ran,subseteq}.
+    $u\circ f$ and $h$ are functions and
+        $\dom{u\circ f}=A=\dom{h}$ by
+        \auto{funs_elim,funs_is_function}.
+    Show that for every $x\in\dom{u\circ f}$ we have
+        $\apply{u\circ f}{x}=\apply{h}{x}$.
+    \begin{subproof}
+        Fix $x\in\dom{u\circ f}$.
+        Hence $x\in A$.
+        $\apply{u\circ f}{x}=\apply{u}{\apply{f}{x}}$ by
+            \auto{funs_is_function,funs_elim,circ_apply}.
+        $\apply{f}{x}=\directSystemClass{S}{(i,x)}$ by
+            \auto{direct_system_canonical_map_apply}.
+        $\apply{u}{\directSystemClass{S}{(i,x)}}=\apply{h}{x}$ by
+            \auto{direct_limit_mediator_apply}.
+    \end{subproof}
+    Follows by \auto{funext_on_domain}.
+\end{proof}
+
+\begin{theorem}\label{direct_limit_mediator_is_mediator}
+    Suppose $\groupCocone{S}{H}{\kappa}$.
+    Then $\groupCoconeMediator
+        {S}{\groupDirectLimit{S}}{\directLimitCanonicalFamily{S}}
+        {H}{\kappa}{\directLimitMediator{S}{H}{\kappa}}$.
+\end{theorem}
+\begin{proof}
+    $\groupHom
+        {\directLimitMediator{S}{H}{\kappa}}
+        {\groupDirectLimit{S}}{H}$ by
+        \obv{direct_limit_mediator_hom}.
+    For every $i\in\carrier[S]$ we have
+        $\directLimitMediator{S}{H}{\kappa}\circ
+            \apply{\directLimitCanonicalFamily{S}}{i}
+        =\apply{\kappa}{i}$ by
+        \auto{direct_limit_canonical_family_apply,direct_limit_mediator_factorization}.
+    Follows by \obv{group_cocone_mediator}.
+\end{proof}
+
+\begin{lemma}\label{canonical_cocone_mediator_apply}
+    Suppose $\groupCocone{S}{H}{\kappa}$.
+    Suppose $\groupCoconeMediator
+        {S}{\groupDirectLimit{S}}{\directLimitCanonicalFamily{S}}
+        {H}{\kappa}{v}$.
+    Let $i\in\carrier[S]$.
+    Let $x\in\carrier[\directSystemGroup{S}{i}]$.
+    Then $\apply{v}{\directSystemClass{S}{(i,x)}}
+        =\apply{\apply{\kappa}{i}}{x}$.
+\end{lemma}
+\begin{proof}
+    Let $f=\apply{\directLimitCanonicalFamily{S}}{i}$.
+    $S$ is a group direct system by
+        \obv{group_cocone_system}.
+    $\groupHom{v}{\groupDirectLimit{S}}{H}$ by
+        \obv{group_cocone_mediator_hom}.
+    $f=\directSystemCanonicalMap{S}{i}$ by
+        \obv{direct_limit_canonical_family_apply}.
+    $\groupHom{f}{\directSystemGroup{S}{i}}
+        {\groupDirectLimit{S}}$ by
+        \auto{direct_system_canonical_map_hom}.
+    $v\circ f=\apply{\kappa}{i}$ by
+        \auto{group_cocone_mediator_compatibility}.
+    $f\in\funs{\carrier[\directSystemGroup{S}{i}]}
+        {\carrier[\groupDirectLimit{S}]}$ and
+        $v\in\funs{\carrier[\groupDirectLimit{S}]}{\carrier[H]}$ by
+        \obv{group_hom_type}.
+    Hence $f$ and $v$ are functions and
+        $x\in\dom{f}$ and $v$ is composable with $f$ by
+        \auto{funs_elim,funs_is_function,funs_ran,subseteq}.
+    Hence $\apply{v\circ f}{x}=\apply{v}{\apply{f}{x}}$ by
+        \obv{circ_apply}.
+    $\apply{f}{x}=\directSystemClass{S}{(i,x)}$ by
+        \auto{direct_system_canonical_map_apply}.
+\end{proof}
+
+\begin{theorem}\label{direct_limit_mediator_unique}
+    Suppose $\groupCocone{S}{H}{\kappa}$.
+    Suppose $\groupCoconeMediator
+        {S}{\groupDirectLimit{S}}{\directLimitCanonicalFamily{S}}
+        {H}{\kappa}{v}$.
+    Then $v=\directLimitMediator{S}{H}{\kappa}$.
+\end{theorem}
+\begin{proof}
+    Let $u=\directLimitMediator{S}{H}{\kappa}$.
+    Let $L=\groupDirectLimit{S}$.
+    $S$ is a group direct system by
+        \obv{group_cocone_system}.
+    $\groupHom{v}{L}{H}$ by
+        \auto{group_cocone_mediator_hom}.
+    $\groupHom{u}{L}{H}$ by
+        \auto{direct_limit_mediator_hom}.
+    Hence $v$ and $u$ are functions and
+        $\dom{v}=\carrier[L]=\dom{u}$ by
+        \auto{group_hom_type,funs_elim,funs_is_function}.
+    Show that for every $C\in\dom{v}$ we have
+        $\apply{v}{C}=\apply{u}{C}$.
+    \begin{subproof}
+        Fix $C\in\dom{v}$.
+        Hence $C\in\carrier[L]=\directLimitCarrier{S}$ by
+            \auto{group_direct_limit_structure_carrier}.
+        Take $i,x$ such that $i\in\carrier[S]$ and
+            $x\in\carrier[\directSystemGroup{S}{i}]$ and
+            $C=\directSystemClass{S}{(i,x)}$ by
+            \obv{direct_limit_carrier_coordinates}.
+        $\apply{v}{C}=\apply{\apply{\kappa}{i}}{x}$ by
+            \auto{canonical_cocone_mediator_apply}.
+        $\apply{u}{C}=\apply{\apply{\kappa}{i}}{x}$ by
+            \auto{direct_limit_mediator_apply}.
+    \end{subproof}
+    Follows by \auto{funext_on_domain}.
+\end{proof}
+
+\begin{theorem}\label{group_direct_limit_is_direct_limit_cocone}
+    Let $S$ be a group direct system.
+    Then $\directLimitCocone
+        {S}{\groupDirectLimit{S}}{\directLimitCanonicalFamily{S}}$.
+\end{theorem}
+\begin{proof}
+    $\groupCocone
+        {S}{\groupDirectLimit{S}}{\directLimitCanonicalFamily{S}}$ by
+        \obv{group_direct_limit_canonical_cocone}.
+    Show that for all $H,\kappa$ such that
+        $\groupCocone{S}{H}{\kappa}$ there exists $u$ such that
+        $\groupCoconeMediator
+            {S}{\groupDirectLimit{S}}{\directLimitCanonicalFamily{S}}
+            {H}{\kappa}{u}$ and
+        for every $v$ such that
+            $\groupCoconeMediator
+                {S}{\groupDirectLimit{S}}{\directLimitCanonicalFamily{S}}
+                {H}{\kappa}{v}$
+        we have $v=u$.
+    \begin{subproof}
+        Fix $H,\kappa$.
+        Assume $\groupCocone{S}{H}{\kappa}$.
+        Let $u=\directLimitMediator{S}{H}{\kappa}$.
+        $\groupCoconeMediator
+            {S}{\groupDirectLimit{S}}{\directLimitCanonicalFamily{S}}
+            {H}{\kappa}{u}$ by
+            \obv{direct_limit_mediator_is_mediator}.
+        For every $v$ such that
+            $\groupCoconeMediator
+                {S}{\groupDirectLimit{S}}{\directLimitCanonicalFamily{S}}
+                {H}{\kappa}{v}$
+        we have $v=u$ by
+            \obv{direct_limit_mediator_unique}.
+        Follows by \auto.
+    \end{subproof}
+    Follows by \obv{group_direct_limit_cocone}.
+\end{proof}
+
+\begin{lemma}\label{direct_limit_mediator_composite_identity}
+    Suppose $\directLimitCocone{S}{L}{\iota}$ and
+        $\directLimitCocone{S}{M}{\kappa}$.
+    Suppose $\groupCoconeMediator{S}{L}{\iota}{M}{\kappa}{u}$ and
+        $\groupCoconeMediator{S}{M}{\kappa}{L}{\iota}{v}$.
+    Then $v\circ u=\identity{\carrier[L]}$.
+\end{lemma}
+\begin{proof}
+    $\groupCocone{S}{L}{\iota}$ and
+        $\groupCocone{S}{M}{\kappa}$ by
+        \obv{direct_limit_cocone_is_cocone}.
+    $\groupHom{u}{L}{M}$ and $\groupHom{v}{M}{L}$ by
+        \obv{group_cocone_mediator_hom}.
+    Hence $\groupHom{v\circ u}{L}{L}$ by
+        \obv{group_hom_composition}.
+    Show that for every $i\in\carrier[S]$ we have
+        $(v\circ u)\circ\apply{\iota}{i}=\apply{\iota}{i}$.
+    \begin{subproof}
+        Fix $i\in\carrier[S]$.
+        $u\circ\apply{\iota}{i}=\apply{\kappa}{i}$ and
+            $v\circ\apply{\kappa}{i}=\apply{\iota}{i}$ by
+            \obv{group_cocone_mediator_compatibility}.
+        $(v\circ u)\circ\apply{\iota}{i}
+            =v\circ(u\circ\apply{\iota}{i})$ by
+            \obv{circ_assoc}.
+    \end{subproof}
+    Hence $\groupCoconeMediator
+        {S}{L}{\iota}{L}{\iota}{v\circ u}$ by
+        \obv{group_cocone_mediator}.
+    $\groupHom{\identity{\carrier[L]}}{L}{L}$ by
+        \obv{identity_group_hom}.
+    Show that for every $i\in\carrier[S]$ we have
+        $\identity{\carrier[L]}\circ\apply{\iota}{i}
+            =\apply{\iota}{i}$.
+    \begin{subproof}
+        Fix $i\in\carrier[S]$.
+        $\groupHom{\apply{\iota}{i}}
+            {\directSystemGroup{S}{i}}{L}$ by
+            \obv{group_cocone_leg_hom}.
+        Hence $\apply{\iota}{i}\in
+            \funs{\carrier[\directSystemGroup{S}{i}]}{\carrier[L]}$ by
+            \obv{group_hom_type}.
+        Follows by \obv{funs_identity_circ_left}.
+    \end{subproof}
+    Hence $\groupCoconeMediator
+        {S}{L}{\iota}{L}{\iota}{\identity{\carrier[L]}}$ by
+        \obv{group_cocone_mediator}.
+    Follows by \obv{direct_limit_cocone_mediator_unique}.
+\end{proof}
+
+\begin{theorem}\label{direct_limit_cocone_comparison}
+    Suppose $\directLimitCocone{S}{L}{\iota}$ and
+        $\directLimitCocone{S}{M}{\kappa}$.
+    Then there exists $u$ such that
+        $\groupCoconeIsomorphism{S}{L}{\iota}{M}{\kappa}{u}$ and
+        for every $w$ such that
+            $\groupCoconeIsomorphism{S}{L}{\iota}{M}{\kappa}{w}$
+        we have $w=u$.
+\end{theorem}
+\begin{proof}
+    $\groupCocone{S}{L}{\iota}$ and
+        $\groupCocone{S}{M}{\kappa}$ by
+        \obv{direct_limit_cocone_is_cocone}.
+    Take $u$ such that
+        $\groupCoconeMediator{S}{L}{\iota}{M}{\kappa}{u}$ and
+        for every $w$ such that
+            $\groupCoconeMediator{S}{L}{\iota}{M}{\kappa}{w}$
+        we have $w=u$ by
+        \obv{direct_limit_cocone_universal}.
+    Take $v$ such that
+        $\groupCoconeMediator{S}{M}{\kappa}{L}{\iota}{v}$ and
+        for every $w$ such that
+            $\groupCoconeMediator{S}{M}{\kappa}{L}{\iota}{w}$
+        we have $w=v$ by
+        \obv{direct_limit_cocone_universal}.
+    $\groupHom{u}{L}{M}$ and $\groupHom{v}{M}{L}$ by
+        \obv{group_cocone_mediator_hom}.
+    Hence $u\in\funs{\carrier[L]}{\carrier[M]}$ and
+        $v\in\funs{\carrier[M]}{\carrier[L]}$ by
+        \obv{group_hom_type}.
+    Hence $u$ and $v$ are functions and
+        $\dom{u}=\carrier[L]$ and $\dom{v}=\carrier[M]$ by
+        \obv{funs_elim,funs_is_function}.
+    $v\circ u=\identity{\carrier[L]}$ and
+        $u\circ v=\identity{\carrier[M]}$ by
+        \obv{direct_limit_mediator_composite_identity}.
+    Show that for every $x\in\carrier[L]$ we have
+        $\apply{v}{\apply{u}{x}}=x$.
+    \begin{subproof}
+        Fix $x\in\carrier[L]$.
+        Hence $x\in\dom{u}$.
+        $v$ is composable with $u$ by
+            \obv{funs_ran,subseteq,funs_elim}.
+        $\apply{v\circ u}{x}=\apply{v}{\apply{u}{x}}$ by
+            \obv{funs_is_function,circ_apply}.
+        $\apply{\identity{\carrier[L]}}{x}=x$ by
+            \obv{id_apply}.
+    \end{subproof}
+    Hence $v$ is a left inverse of $u$ by
+        \obv{leftinverse_from_to_iff}.
+    Hence $u$ is injective by
+        \obv{leftinverse_implies_injection}.
+    Show that for every $y\in\carrier[M]$ we have
+        $\apply{u}{\apply{v}{y}}=y$.
+    \begin{subproof}
+        Fix $y\in\carrier[M]$.
+        Hence $y\in\dom{v}$.
+        $u$ is composable with $v$ by
+            \obv{funs_ran,subseteq,funs_elim}.
+        $\apply{u\circ v}{y}=\apply{u}{\apply{v}{y}}$ by
+            \obv{funs_is_function,circ_apply}.
+        $\apply{\identity{\carrier[M]}}{y}=y$ by
+            \obv{id_apply}.
+    \end{subproof}
+    Hence $v$ is a right inverse of $u$ by
+        \obv{rightinverse_from_to_iff}.
+    Hence $u\in\surj{\carrier[L]}{\carrier[M]}$ by
+        \obv{rightinverse_implies_surjection}.
+    Hence $u\in\bijections{\carrier[L]}{\carrier[M]}$ by
+        \obv{bijections}.
+    Hence $\groupIsomorphism{u}{L}{M}$ by
+        \obv{group_isomorphism}.
+    For every $i\in\carrier[S]$ we have
+        $u\circ\apply{\iota}{i}=\apply{\kappa}{i}$ by
+        \obv{group_cocone_mediator_compatibility}.
+    Hence $\groupCoconeIsomorphism{S}{L}{\iota}{M}{\kappa}{u}$ by
+        \obv{group_cocone_isomorphism}.
+    Show that for every $w$ such that
+        $\groupCoconeIsomorphism{S}{L}{\iota}{M}{\kappa}{w}$
+    we have $w=u$.
+    \begin{subproof}
+        Fix $w$.
+        Assume $\groupCoconeIsomorphism{S}{L}{\iota}{M}{\kappa}{w}$.
+        Hence $\groupCoconeMediator{S}{L}{\iota}{M}{\kappa}{w}$ by
+            \obv{group_cocone_isomorphism_is_mediator}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}

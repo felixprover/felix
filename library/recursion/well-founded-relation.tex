@@ -1,0 +1,294 @@
+\import{recursion/well-founded-unbounded.tex}
+
+\section{Relation-form codomain-free recursion}
+
+The logical-function recursor is the most direct interface in the current
+provider.  This chapter presents the same theorem through a functional
+class relation.  For each concrete definable step, the statement represents
+the ordinary first-order ZF recursion schema.  The generic checked interface
+still uses higher-order predicates and typed logical selection; that provider
+authority must not be confused with an additional mathematical Choice
+principle for a concrete instance.
+
+\begin{definition}\label{unbounded_recursive_relation_step_op}
+    $\unboundedRecursiveRelationStepOp:
+        \Set\to\Set\to
+        (\Set\to\Set\to\Set\to\Prop)\to\Prop
+        =\fun{A,R:\Set}{
+                \fun{S:\Set\to\Set\to\Set\to\Prop}{
+                    \forall x:\Set.\ x\in A\implies
+                    (\forall p:\Set.
+                        \Apply{\unboundedRecursiveHistoryOp}
+                            {A,R,x,p}
+                        \implies
+                        (\exists y:\Set.
+                            \Apply{S}{x,p,y}\land
+                            (\forall z:\Set.
+                                \Apply{S}{x,p,z}
+                                \implies z=y)))}}$.
+\end{definition}
+
+\begin{proposition}\label{unbounded_recursive_relation_step_iff}
+    $\forall A,R:\Set.
+     \forall S:\Set\to\Set\to\Set\to\Prop.
+        \Apply{\unboundedRecursiveRelationStepOp}
+            {A,R,S}
+        \iff
+        (\forall x:\Set.\ x\in A\implies
+            (\forall p:\Set.
+                \Apply{\unboundedRecursiveHistoryOp}
+                    {A,R,x,p}
+                \implies
+                (\exists y:\Set.
+                    \Apply{S}{x,p,y}\land
+                    (\forall z:\Set.
+                        \Apply{S}{x,p,z}
+                        \implies z=y))))$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{unbounded_recursive_relation_step_op}.
+\end{proof}
+
+\begin{definition}\label{unbounded_recursive_relation_value_op}
+    $\unboundedRecursiveRelationValueOp:
+        (\Set\to\Set\to\Set\to\Prop)\to
+        \Set\to\Set\to\Set
+        =\fun{S:\Set\to\Set\to\Set\to\Prop}{
+            \fun{x,p:\Set}{
+                    \Select[\Set]{
+                        \fun{y:\Set}{
+                            \Apply{S}{x,p,y}}}}}$.
+\end{definition}
+
+\begin{proposition}\label{unbounded_recursive_relation_value_specification}
+    $\forall A,R:\Set.
+     \forall S:\Set\to\Set\to\Set\to\Prop.
+     \forall x,p:\Set.
+        (\Apply{\unboundedRecursiveRelationStepOp}
+            {A,R,S}\land
+         x\in A\land
+         \Apply{\unboundedRecursiveHistoryOp}
+            {A,R,x,p})
+        \implies
+        \Apply{S}{x,p,
+            \Apply{\unboundedRecursiveRelationValueOp}
+            {S,x,p}}$.
+\end{proposition}
+\begin{proof}
+    Fix $A,R,S,x,p$.
+    Assume $\Apply{\unboundedRecursiveRelationStepOp}
+        {A,R,S}\land x\in A\land
+        \Apply{\unboundedRecursiveHistoryOp}
+            {A,R,x,p}$.
+    $\Apply{\unboundedRecursiveRelationStepOp}
+        {A,R,S}$.
+    $x\in A$.
+    $\Apply{\unboundedRecursiveHistoryOp}
+        {A,R,x,p}$.
+    Hence $\exists y:\Set.
+        \Apply{S}{x,p,y}\land
+        (\forall z:\Set.
+            \Apply{S}{x,p,z}\implies z=y)$ by
+        \obv{unbounded_recursive_relation_step_iff}.
+    Hence $\exists y:\Set.
+        \Apply{S}{x,p,y}$.
+    Follows by \auto{unbounded_recursive_relation_value_op}.
+\end{proof}
+
+\begin{proposition}\label{unbounded_recursive_relation_value_unique}
+    $\forall A,R:\Set.
+     \forall S:\Set\to\Set\to\Set\to\Prop.
+     \forall x,p,y:\Set.
+        (\Apply{\unboundedRecursiveRelationStepOp}
+            {A,R,S}\land
+         x\in A\land
+         \Apply{\unboundedRecursiveHistoryOp}
+            {A,R,x,p}\land
+         \Apply{S}{x,p,y})
+        \implies
+        y=\Apply{\unboundedRecursiveRelationValueOp}
+        {S,x,p}$.
+\end{proposition}
+\begin{proof}
+    Fix $A,R,S,x,p,y$.
+    Assume $\Apply{\unboundedRecursiveRelationStepOp}
+        {A,R,S}\land x\in A\land
+        \Apply{\unboundedRecursiveHistoryOp}
+            {A,R,x,p}\land
+        \Apply{S}{x,p,y}$.
+    $\Apply{\unboundedRecursiveRelationStepOp}
+        {A,R,S}$.
+    $x\in A$.
+    $\Apply{\unboundedRecursiveHistoryOp}
+        {A,R,x,p}$.
+    $\Apply{S}{x,p,y}$.
+    $\Apply{S}{x,p,
+        \Apply{\unboundedRecursiveRelationValueOp}
+        {S,x,p}}$ by
+        \obv{unbounded_recursive_relation_value_specification}.
+    Follows by \auto{unbounded_recursive_relation_step_iff}.
+\end{proof}
+
+\begin{definition}\label{unbounded_relational_well_founded_recursion_op}
+    $\unboundedRelationalWellFoundedRecursionOp:
+        \Set\to\Set\to
+        (\Set\to\Set\to\Set\to\Prop)\to\Set
+        =\fun{A,R:\Set}{
+                \fun{S:\Set\to\Set\to\Set\to\Prop}{
+                    \Apply{\unboundedWellFoundedRecursionOp}
+                        {A,R,\Apply{\unboundedRecursiveRelationValueOp}{S}}}}$.
+\end{definition}
+
+As for the logical-function interface, this is a total term whose
+mathematical laws are guarded.  It names the unique recursively defined graph;
+it does not select a representative history or make the class of all possible
+histories into a set.
+
+\begin{theorem}\label{unbounded_relational_well_founded_recursion_function}
+    Suppose $R$ is a binary relation on $A$ and $R$ is well-founded on $A$.
+    Then $\forall S:\Set\to\Set\to\Set\to\Prop.
+        \Apply{\recursiveSetFunctionOp}{
+            \Apply{\unboundedRelationalWellFoundedRecursionOp}
+                {A,R,S}}$.
+\end{theorem}
+\begin{proof}
+    Fix $S$.
+    Follows by \auto{unbounded_relational_well_founded_recursion_op,unbounded_well_founded_recursion_function}.
+\end{proof}
+
+\begin{theorem}\label{unbounded_relational_well_founded_recursion_domain}
+    Suppose $R$ is a binary relation on $A$ and $R$ is well-founded on $A$.
+    Then $\forall S:\Set\to\Set\to\Set\to\Prop.
+        \dom{
+            \Apply{\unboundedRelationalWellFoundedRecursionOp}
+                {A,R,S}}
+        =A$.
+\end{theorem}
+\begin{proof}
+    Fix $S$.
+    Follows by \auto{unbounded_relational_well_founded_recursion_op,unbounded_well_founded_recursion_domain}.
+\end{proof}
+
+\begin{theorem}\label{unbounded_relational_well_founded_recursion_selected_equation}
+    Suppose $R$ is a binary relation on $A$ and $R$ is well-founded on $A$.
+    Then $\forall S:\Set\to\Set\to\Set\to\Prop.\ \forall x:\Set.
+        x\in A\implies
+        \apply{
+            \Apply{\unboundedRelationalWellFoundedRecursionOp}
+                {A,R,S}}
+            {x}
+        =\Apply{\unboundedRecursiveRelationValueOp}
+            {S,x,\restrl{
+                \Apply{\unboundedRelationalWellFoundedRecursionOp}
+                    {A,R,S}}
+                {\downward{R}{x}}}$.
+\end{theorem}
+\begin{proof}
+    Fix $S$.
+    Fix $x\in A$.
+    Follows by \auto{unbounded_relational_well_founded_recursion_op,unbounded_well_founded_recursion_equation}.
+\end{proof}
+
+\begin{theorem}\label{unbounded_relational_well_founded_recursion_specification}
+    Suppose $R$ is a binary relation on $A$ and $R$ is well-founded on $A$.
+    Then $\forall S:\Set\to\Set\to\Set\to\Prop.
+        \Apply{\unboundedRecursiveRelationStepOp}
+            {A,R,S}
+        \implies
+        (\forall x:\Set.\ x\in A\implies
+            \Apply{S}
+                {x,\restrl{
+                        \Apply{\unboundedRelationalWellFoundedRecursionOp}
+                            {A,R,S}}
+                        {\downward{R}{x}},\apply{
+                    \Apply{\unboundedRelationalWellFoundedRecursionOp}
+                        {A,R,S}}
+                    {x}})$.
+\end{theorem}
+\begin{proof}
+    Fix $S$.
+    Assume $\Apply{\unboundedRecursiveRelationStepOp}
+        {A,R,S}$.
+    Let $f=\Apply{\unboundedRelationalWellFoundedRecursionOp}
+        {A,R,S}$.
+    Show that $\forall x:\Set.\ x\in A\implies
+        \Apply{S}{x,
+            \restrl{f}{\downward{R}{x}},\apply{f}{x}}$.
+    \begin{subproof}
+        Fix $x\in A$.
+        $\Apply{\recursiveSetFunctionOp}{f}$ by
+            \obv{unbounded_relational_well_founded_recursion_function}.
+        Hence $\recursiveSetFunction{f}$ by
+            \obv{recursive_set_function_op}.
+        $\dom{f}=A$ by
+            \auto{unbounded_relational_well_founded_recursion_domain}.
+        Hence $\Apply{\unboundedRecursiveHistoryOp}
+            {A,R,x,\restrl{f}{\downward{R}{x}}}$ by
+            \obv{restriction_is_unbounded_recursive_history}.
+        $\apply{f}{x}=\Apply{\unboundedRecursiveRelationValueOp}
+            {S,x,\restrl{f}{\downward{R}{x}}}$ by
+            \auto{unbounded_relational_well_founded_recursion_selected_equation}.
+        $\Apply{S}{x,
+            \restrl{f}{\downward{R}{x}},
+                \Apply{\unboundedRecursiveRelationValueOp}
+                {S,x,\restrl{f}{\downward{R}{x}}}}$ by
+            \obv{unbounded_recursive_relation_value_specification}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{unbounded_relational_well_founded_recursion_characterization}
+    Suppose $R$ is a binary relation on $A$ and $R$ is well-founded on $A$.
+    Then $\forall S:\Set\to\Set\to\Set\to\Prop.\ \forall f:\Set.
+        (\Apply{\unboundedRecursiveRelationStepOp}
+            {A,R,S}\land
+         \Apply{\recursiveSetFunctionOp}{f}\land
+         \dom{f}=A\land
+         (\forall x:\Set.\ x\in A\implies
+            \Apply{S}{x,
+                \restrl{f}{\downward{R}{x}},\apply{f}{x}}))
+        \implies
+        f=\Apply{\unboundedRelationalWellFoundedRecursionOp}
+            {A,R,S}$.
+\end{theorem}
+\begin{proof}
+    Fix $S$.
+    Fix $f$.
+    Assume $\Apply{\unboundedRecursiveRelationStepOp}
+        {A,R,S}\land
+        \Apply{\recursiveSetFunctionOp}{f}\land
+        \dom{f}=A\land
+        (\forall x:\Set.\ x\in A\implies
+            \Apply{S}{x,
+                \restrl{f}{\downward{R}{x}},\apply{f}{x}})$.
+    $\Apply{\unboundedRecursiveRelationStepOp}
+        {A,R,S}$.
+    $\Apply{\recursiveSetFunctionOp}{f}$.
+    Hence $\recursiveSetFunction{f}$ by
+        \obv{recursive_set_function_op}.
+    $\dom{f}=A$.
+    $\forall x:\Set.\ x\in A\implies
+        \Apply{S}{x,
+            \restrl{f}{\downward{R}{x}},\apply{f}{x}}$.
+    Show that for every $x\in A$ we have
+        $\apply{f}{x}=\Apply{\unboundedRecursiveRelationValueOp}
+            {S,x,\restrl{f}{\downward{R}{x}}}$.
+    \begin{subproof}
+        Fix $x\in A$.
+        $\Apply{\unboundedRecursiveHistoryOp}
+            {A,R,x,\restrl{f}{\downward{R}{x}}}$ by
+            \obv{restriction_is_unbounded_recursive_history}.
+        $\Apply{S}{x,
+            \restrl{f}{\downward{R}{x}},\apply{f}{x}}$.
+        Follows by \obv{unbounded_recursive_relation_value_unique}.
+    \end{subproof}
+    $\recursiveSetFunction{f}$ by
+        \obv{recursive_set_function}.
+    Hence $\Apply{\recursiveSetFunctionOp}{f}$ by
+        \obv{recursive_set_function_op}.
+    Hence $f=\Apply{\unboundedWellFoundedRecursionOp}
+        {A,R,\Apply{\unboundedRecursiveRelationValueOp}{S}}$ by
+        \obv{unbounded_well_founded_recursion_characterization}.
+    Follows by
+        \obv{unbounded_relational_well_founded_recursion_op}.
+\end{proof}

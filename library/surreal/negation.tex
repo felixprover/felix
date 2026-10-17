@@ -1,0 +1,665 @@
+\import{surreal/cut.tex}
+
+\section{Surreal negation}
+
+Negation acts pointwise on a sign sequence.  The two signs are exchanged by
+an ordinary set-coded function, so negation itself is composition of
+set-coded functions and preserves birthdays by construction.
+
+\begin{definition}\label{surreal_sign_flip}
+    $\surrealSignFlip=
+        \{(\emptyset,\suc{\emptyset}),
+          (\suc{\emptyset},\emptyset)\}$.
+\end{definition}
+
+\begin{proposition}\label{surreal_sign_flip_is_relation}
+    $\surrealSignFlip$ is a relation.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{surreal_sign_flip,relation,cons_iff,emptyset}.
+\end{proof}
+
+\begin{proposition}\label{surreal_sign_flip_rightunique}
+    $\surrealSignFlip$ is right-unique.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{surreal_sign_flip,rightunique,cons_iff,emptyset,pair_eq_iff,suc_neq_emptyset}.
+\end{proof}
+
+\begin{proposition}\label{surreal_sign_flip_is_function}
+    $\surrealSignFlip$ is a function.
+\end{proposition}
+\begin{proof}
+    $\surrealSignFlip$ is a relation
+        by \obv{surreal_sign_flip_is_relation}.
+    $\surrealSignFlip$ is right-unique
+        by \obv{surreal_sign_flip_rightunique}.
+\end{proof}
+
+\begin{proposition}\label{surreal_sign_flip_domain}
+    $\dom{\surrealSignFlip}=\surrealSigns$.
+\end{proposition}
+\begin{proof}
+    Show that for every $s\in\dom{\surrealSignFlip}$ we have
+        $s\in\surrealSigns$.
+    \begin{subproof}
+        Fix $s\in\dom{\surrealSignFlip}$.
+        Take $t$ such that $(s,t)\in\surrealSignFlip$
+            by \obv{dom_iff}.
+        $s=\emptyset$ or $s=\suc{\emptyset}$
+            by \auto{surreal_sign_flip,cons_iff,emptyset,pair_eq_iff}.
+        Follows by \auto{surreal_signs,suc_iff}.
+    \end{subproof}
+    Show that for every $s\in\surrealSigns$ we have
+        $s\in\dom{\surrealSignFlip}$.
+    \begin{subproof}
+        Fix $s\in\surrealSigns$.
+        $s=\emptyset$ or $s=\suc{\emptyset}$
+            by \auto{surreal_signs,suc_iff,emptyset}.
+        Follows by \auto{dom_iff,surreal_sign_flip,cons_iff}.
+    \end{subproof}
+    Follows by \obv{setext}.
+\end{proof}
+
+\begin{proposition}\label{surreal_sign_flip_range}
+    $\ran{\surrealSignFlip}\subseteq\surrealSigns$.
+\end{proposition}
+\begin{proof}
+    Show that for every $t\in\ran{\surrealSignFlip}$ we have
+        $t\in\surrealSigns$.
+    \begin{subproof}
+        Fix $t\in\ran{\surrealSignFlip}$.
+        Take $s$ such that $(s,t)\in\surrealSignFlip$
+            by \obv{ran_iff}.
+        $t=\emptyset$ or $t=\suc{\emptyset}$
+            by \auto{surreal_sign_flip,cons_iff,emptyset,pair_eq_iff}.
+        Follows by \auto{surreal_signs,suc_iff}.
+    \end{subproof}
+    Follows by \obv{subseteq}.
+\end{proof}
+
+\begin{proposition}\label{surreal_sign_flip_type}
+    $\surrealSignFlip\in\funs{\surrealSigns}{\surrealSigns}$.
+\end{proposition}
+\begin{proof}
+    $\surrealSignFlip$ is a function
+        by \obv{surreal_sign_flip_is_function}.
+    Show that for every $s\in\dom{\surrealSignFlip}$ we have
+        $\apply{\surrealSignFlip}{s}\in\surrealSigns$.
+    \begin{subproof}
+        Fix $s\in\dom{\surrealSignFlip}$.
+        $(s,\apply{\surrealSignFlip}{s})\in\surrealSignFlip$
+            by \obv{function_apply_elim}.
+        Hence $\apply{\surrealSignFlip}{s}\in\ran{\surrealSignFlip}$
+            by \obv{ran_intro}.
+        Follows by \obv{surreal_sign_flip_range,subseteq}.
+    \end{subproof}
+    Hence $\surrealSignFlip$ is a function to $\surrealSigns$.
+    Follows by \obv{funs_intro,surreal_sign_flip_domain}.
+\end{proof}
+
+\begin{proposition}\label{surreal_sign_flip_zero}
+    $\apply{\surrealSignFlip}{\emptyset}=\suc{\emptyset}$.
+\end{proposition}
+\begin{proof}
+    $(\emptyset,\suc{\emptyset})\in\surrealSignFlip$
+        by \auto{surreal_sign_flip,cons_iff}.
+    $\surrealSignFlip$ is a function
+        by \obv{surreal_sign_flip_is_function}.
+    Follows by \obv{function_apply_intro}.
+\end{proof}
+
+\begin{proposition}\label{surreal_sign_flip_one}
+    $\apply{\surrealSignFlip}{\suc{\emptyset}}=\emptyset$.
+\end{proposition}
+\begin{proof}
+    $(\suc{\emptyset},\emptyset)\in\surrealSignFlip$
+        by \auto{surreal_sign_flip,cons_iff}.
+    $\surrealSignFlip$ is a function
+        by \obv{surreal_sign_flip_is_function}.
+    Follows by \obv{function_apply_intro}.
+\end{proof}
+
+\begin{proposition}\label{surreal_sign_flip_involutive}
+    Let $s\in\surrealSigns$.
+    Then $\apply{\surrealSignFlip}{\apply{\surrealSignFlip}{s}}=s$.
+\end{proposition}
+\begin{proof}
+    $s=\emptyset$ or $s=\suc{\emptyset}$
+        by \auto{surreal_signs,suc_iff,emptyset}.
+    Follows by \obv{surreal_sign_flip_zero,surreal_sign_flip_one}.
+\end{proof}
+
+\begin{proposition}\label{surreal_sign_flip_injective}
+    Let $s,t\in\surrealSigns$.
+    Suppose $\apply{\surrealSignFlip}{s}=
+        \apply{\surrealSignFlip}{t}$.
+    Then $s=t$.
+\end{proposition}
+\begin{proof}
+    $\apply{\surrealSignFlip}{\apply{\surrealSignFlip}{s}}
+        =\apply{\surrealSignFlip}{\apply{\surrealSignFlip}{t}}$.
+    Follows by \obv{surreal_sign_flip_involutive}.
+\end{proof}
+
+\begin{definition}\label{surreal_negation}
+    $\surrealNeg{x}=\surrealSignFlip\circ x$.
+\end{definition}
+
+\begin{proposition}\label{surreal_negation_at}
+    Suppose $\surrealAt{\alpha}{x}$.
+    Then $\surrealAt{\alpha}{\surrealNeg{x}}$.
+\end{proposition}
+\begin{proof}
+    $x\in\funs{\alpha}{\surrealSigns}$
+        by \obv{surreal_at}.
+    $\surrealNeg{x}\in\funs{\alpha}{\surrealSigns}$
+        by \auto{surreal_negation,surreal_sign_flip_type,funs_circ}.
+    Follows by \obv{surreal_at}.
+\end{proof}
+
+\begin{corollary}\label{surreal_negation_is_surreal}
+    Suppose $\surreal{x}$.
+    Then $\surreal{\surrealNeg{x}}$.
+\end{corollary}
+\begin{proof}
+    Follows by \auto{surreal_at_birthday,surreal_negation_at,surreal_at_implies_surreal}.
+\end{proof}
+
+\begin{corollary}\label{surreal_negation_birthday}
+    Suppose $\surreal{x}$.
+    Then $\birthday{\surrealNeg{x}}=\birthday{x}$.
+\end{corollary}
+\begin{proof}
+    Follows by \obv{surreal_at_birthday,surreal_negation_at,surreal_at_implies_surreal}.
+\end{proof}
+
+\begin{proposition}\label{surreal_negation_value}
+    Suppose $\surreal{x}$ and $\delta\in\birthday{x}$.
+    Then $\apply{\surrealNeg{x}}{\delta}=
+        \apply{\surrealSignFlip}{x(\delta)}$.
+\end{proposition}
+\begin{proof}
+    $x\in\funs{\birthday{x}}{\surrealSigns}$
+        by \auto{surreal_at_birthday,surreal_at}.
+    $\ran{x}\subseteq\surrealSigns$
+        by \obv{funs_ran}.
+    Hence $\ran{x}\subseteq\dom{\surrealSignFlip}$
+        by \obv{surreal_sign_flip_domain}.
+    $\surrealSignFlip$ is composable with $x$.
+    $x$ and $\surrealSignFlip$ are functions
+        by \obv{funs_is_function,surreal_sign_flip_type}.
+    $\dom{x}=\birthday{x}$ by \obv{funs_elim}.
+    Follows by \auto{surreal_negation,circ_apply}.
+\end{proof}
+
+\begin{theorem}\label{surreal_negation_involutive}
+    Suppose $\surreal{x}$.
+    Then $\surrealNeg{\surrealNeg{x}}=x$.
+\end{theorem}
+\begin{proof}
+    $\surreal{\surrealNeg{x}}$
+        by \obv{surreal_negation_is_surreal}.
+    $\surreal{\surrealNeg{\surrealNeg{x}}}$
+        by \obv{surreal_negation_is_surreal}.
+    $\birthday{\surrealNeg{\surrealNeg{x}}}=\birthday{x}$
+        by \auto{surreal_negation_birthday}.
+    $\surrealNeg{\surrealNeg{x}}$ and $x$ are functions
+        by \auto{surreal_at_birthday,surreal_at,funs_is_function}.
+    $\dom{\surrealNeg{\surrealNeg{x}}}=\dom{x}$
+        by \obv{surreal_birthday}.
+    Show that for every $\delta\in\birthday{x}$ we have
+        $\apply{\surrealNeg{\surrealNeg{x}}}{\delta}=x(\delta)$.
+    \begin{subproof}
+        Fix $\delta\in\birthday{x}$.
+        $\delta\in\birthday{\surrealNeg{x}}$
+            by \obv{surreal_negation_birthday}.
+        $x(\delta)\in\surrealSigns$
+            by \auto{surreal_at_birthday,surreal_at,funs_type_apply}.
+        Follows by \auto{surreal_negation_value,surreal_sign_flip_involutive}.
+    \end{subproof}
+    $\surrealNeg{\surrealNeg{x}}\subseteq x$ and
+        $x\subseteq\surrealNeg{\surrealNeg{x}}$
+        by \auto{fun_subseteq,subseteq,surreal_birthday}.
+    Follows by \obv{subseteq_antisymmetric}.
+\end{proof}
+
+\begin{proposition}\label{surreal_negation_empty}
+    $\surrealNeg{\emptyset}=\emptyset$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{surreal_negation,circ,dom_emptyset,times,emptyset,setext}.
+\end{proof}
+
+\subsection{Order reversal}
+
+\begin{proposition}\label{surreal_negation_eq_initial}
+    Suppose $\surreal{x}$ and $\surreal{y}$.
+    Suppose $\alpha\subseteq\birthday{x}\inter\birthday{y}$.
+    Then $\surrealEq{\alpha}{\surrealNeg{x}}{\surrealNeg{y}}$ iff
+        $\surrealEq{\alpha}{x}{y}$.
+\end{proposition}
+\begin{proof}
+    Show that if $\surrealEq{\alpha}{\surrealNeg{x}}{\surrealNeg{y}}$, then
+        for every $\delta\in\alpha$ we have $x(\delta)=y(\delta)$.
+    \begin{subproof}
+        Assume $\surrealEq{\alpha}{\surrealNeg{x}}{\surrealNeg{y}}$.
+        Fix $\delta\in\alpha$.
+        $\delta\in\birthday{x}$ and $\delta\in\birthday{y}$
+            by \auto{inter,subseteq}.
+        $x(\delta),y(\delta)\in\surrealSigns$
+            by \auto{surreal_at_birthday,surreal_at,funs_type_apply}.
+        $\apply{\surrealSignFlip}{x(\delta)}
+            =\apply{\surrealSignFlip}{y(\delta)}$
+            by \auto{surreal_eq_initial,surreal_negation_value}.
+        Follows by \obv{surreal_sign_flip_injective}.
+    \end{subproof}
+    Show that if $\surrealEq{\alpha}{x}{y}$, then for every $\delta\in\alpha$
+        we have
+        $\apply{\surrealNeg{x}}{\delta}
+            =\apply{\surrealNeg{y}}{\delta}$.
+    \begin{subproof}
+        Assume $\surrealEq{\alpha}{x}{y}$.
+        Fix $\delta\in\alpha$.
+        $\delta\in\birthday{x}$ and $\delta\in\birthday{y}$
+            by \auto{inter,subseteq}.
+        $x(\delta)=y(\delta)$ by \obv{surreal_eq_initial}.
+        Follows by \auto{surreal_negation_value}.
+    \end{subproof}
+    Follows by \auto{surreal_eq_initial}.
+\end{proof}
+
+\begin{lemma}\label{surreal_negation_lt_common}
+    Suppose $\surreal{x}$ and $\surreal{y}$.
+    Suppose $\surrealLtCommon{\delta}{x}{y}$.
+    Then $\surrealLtCommon{\delta}{\surrealNeg{y}}{\surrealNeg{x}}$.
+\end{lemma}
+\begin{proof}
+    $\delta\in\birthday{x}\inter\birthday{y}$
+        by \obv{surreal_lt_common}.
+    $\birthday{\surrealNeg{x}}=\birthday{x}$ and
+        $\birthday{\surrealNeg{y}}=\birthday{y}$
+        by \obv{surreal_negation_birthday}.
+    $\delta\in\birthday{\surrealNeg{y}}\inter
+        \birthday{\surrealNeg{x}}$
+        by \obv{inter}.
+    $\delta\subseteq\birthday{x}$ and
+        $\delta\subseteq\birthday{y}$
+        by \obv{inter,surreal_birthday_ordinal,elem_of_ordinal_is_ordinal,ordinal_elem_implies_subseteq}.
+    Hence $\delta\subseteq\birthday{x}\inter\birthday{y}$
+        by \obv{subseteq,inter_intro}.
+    Hence $\delta\subseteq\birthday{y}\inter\birthday{x}$
+        by \obv{inter_comm}.
+    $\surrealEq{\delta}{y}{x}$
+        by \obv{surreal_eq_initial_symmetric,surreal_lt_common}.
+    $\surrealEq{\delta}{\surrealNeg{y}}{\surrealNeg{x}}$
+        by \obv{surreal_negation_eq_initial}.
+        $\apply{\surrealNeg{y}}{\delta}=\emptyset$ and
+        $\apply{\surrealNeg{x}}{\delta}=\suc{\emptyset}$
+        by \auto{inter,surreal_lt_common,surreal_negation_value,surreal_sign_flip_zero,surreal_sign_flip_one}.
+    Follows by \obv{surreal_lt_common}.
+\end{proof}
+
+\begin{lemma}\label{surreal_negation_lt_left_short}
+    Suppose $\surreal{x}$ and $\surreal{y}$.
+    Suppose $\surrealLtLeftShort{x}{y}$.
+    Then $\surrealLtRightShort{\surrealNeg{y}}{\surrealNeg{x}}$.
+\end{lemma}
+\begin{proof}
+    $\birthday{x}\in\birthday{y}$
+        by \obv{surreal_lt_left_short}.
+    $\birthday{\surrealNeg{x}}=\birthday{x}$ and
+        $\birthday{\surrealNeg{y}}=\birthday{y}$
+        by \obv{surreal_negation_birthday}.
+    $\birthday{x}\subseteq\birthday{x}\inter\birthday{y}$
+        by \auto{surreal_birthday_ordinal,ordinal_elem_implies_subseteq,subseteq,inter_intro}.
+    Hence $\birthday{x}\subseteq\birthday{y}\inter\birthday{x}$
+        by \obv{inter_comm}.
+    $\surrealEq{\birthday{x}}{y}{x}$
+        by \obv{surreal_eq_initial_symmetric,surreal_lt_left_short}.
+    $\surrealEq{\birthday{x}}{\surrealNeg{y}}{\surrealNeg{x}}$
+        by \obv{surreal_negation_eq_initial}.
+    $\apply{\surrealNeg{y}}{\birthday{x}}=\emptyset$
+        by \auto{surreal_lt_left_short,surreal_negation_value,surreal_sign_flip_one}.
+    Follows by \obv{surreal_lt_right_short}.
+\end{proof}
+
+\begin{lemma}\label{surreal_negation_lt_right_short}
+    Suppose $\surreal{x}$ and $\surreal{y}$.
+    Suppose $\surrealLtRightShort{x}{y}$.
+    Then $\surrealLtLeftShort{\surrealNeg{y}}{\surrealNeg{x}}$.
+\end{lemma}
+\begin{proof}
+    $\birthday{y}\in\birthday{x}$
+        by \obv{surreal_lt_right_short}.
+    $\birthday{\surrealNeg{x}}=\birthday{x}$ and
+        $\birthday{\surrealNeg{y}}=\birthday{y}$
+        by \obv{surreal_negation_birthday}.
+    $\birthday{y}\subseteq\birthday{x}\inter\birthday{y}$
+        by \auto{surreal_birthday_ordinal,ordinal_elem_implies_subseteq,subseteq,inter_intro}.
+    Hence $\birthday{y}\subseteq\birthday{y}\inter\birthday{x}$
+        by \obv{inter_comm}.
+    $\surrealEq{\birthday{y}}{y}{x}$
+        by \obv{surreal_eq_initial_symmetric,surreal_lt_right_short}.
+    $\surrealEq{\birthday{y}}{\surrealNeg{y}}{\surrealNeg{x}}$
+        by \obv{surreal_negation_eq_initial}.
+    $\apply{\surrealNeg{x}}{\birthday{y}}=\suc{\emptyset}$
+        by \auto{surreal_lt_right_short,surreal_negation_value,surreal_sign_flip_zero}.
+    Follows by \obv{surreal_lt_left_short}.
+\end{proof}
+
+\begin{theorem}\label{surreal_negation_lt_reverses}
+    Suppose $\surreal{x}$ and $\surreal{y}$.
+    Suppose $\surrealLt{x}{y}$.
+    Then $\surrealLt{\surrealNeg{y}}{\surrealNeg{x}}$.
+\end{theorem}
+\begin{proof}
+    Follows by \auto{surreal_lt,surreal_negation_lt_common,surreal_negation_lt_left_short,surreal_negation_lt_right_short}.
+\end{proof}
+
+\begin{corollary}\label{surreal_negation_le_reverses}
+    Suppose $\surreal{x}$ and $\surreal{y}$.
+    Suppose $\surrealLe{x}{y}$.
+    Then $\surrealLe{\surrealNeg{y}}{\surrealNeg{x}}$.
+\end{corollary}
+\begin{proof}
+    Follows by \auto{surreal_le,surreal_negation_lt_reverses}.
+\end{proof}
+
+\begin{corollary}\label{surreal_negation_lt_iff}
+    Suppose $\surreal{x}$ and $\surreal{y}$.
+    Then $\surrealLt{\surrealNeg{x}}{\surrealNeg{y}}$ iff
+        $\surrealLt{y}{x}$.
+\end{corollary}
+\begin{proof}
+    $\surreal{\surrealNeg{x}}$ and $\surreal{\surrealNeg{y}}$
+        by \obv{surreal_negation_is_surreal}.
+    Follows by \auto{surreal_negation_lt_reverses,surreal_negation_involutive}.
+\end{proof}
+
+\begin{proposition}\label{surreal_negation_stage}
+    Let $\alpha$ be an ordinal.
+    Let $x\in\surrealStage{\alpha}$.
+    Then $\surrealNeg{x}\in\surrealStage{\alpha}$.
+\end{proposition}
+\begin{proof}
+    $\surreal{x}$ and $\birthday{x}\in\alpha$
+        by \auto{surreal_stage_characterization}.
+    $\surreal{\surrealNeg{x}}$
+        by \obv{surreal_negation_is_surreal}.
+    $\birthday{\surrealNeg{x}}=\birthday{x}$
+        by \obv{surreal_negation_birthday}.
+    Follows by \auto{surreal_stage_characterization}.
+\end{proof}
+
+\begin{corollary}\label{surreal_negation_lt_left}
+    Suppose $\surreal{x}$ and $\surreal{y}$.
+    Suppose $\surrealLt{\surrealNeg{x}}{y}$.
+    Then $\surrealLt{\surrealNeg{y}}{x}$.
+\end{corollary}
+\begin{proof}
+    $\surreal{\surrealNeg{x}}$
+        by \obv{surreal_negation_is_surreal}.
+    $\surrealLt{\surrealNeg{y}}{\surrealNeg{\surrealNeg{x}}}$
+        by \obv{surreal_negation_lt_reverses}.
+    Follows by \obv{surreal_negation_involutive}.
+\end{proof}
+
+\begin{corollary}\label{surreal_negation_lt_right}
+    Suppose $\surreal{x}$ and $\surreal{y}$.
+    Suppose $\surrealLt{x}{\surrealNeg{y}}$.
+    Then $\surrealLt{y}{\surrealNeg{x}}$.
+\end{corollary}
+\begin{proof}
+    $\surreal{\surrealNeg{y}}$
+        by \obv{surreal_negation_is_surreal}.
+    $\surrealLt{\surrealNeg{\surrealNeg{y}}}{\surrealNeg{x}}$
+        by \obv{surreal_negation_lt_reverses}.
+    Follows by \obv{surreal_negation_involutive}.
+\end{proof}
+
+\subsection{Options and cuts}
+
+\begin{definition}\label{surreal_negation_set}
+    $\surrealNegSet{A}=\{\surrealNeg{x}\mid x\in A\}$.
+\end{definition}
+
+\begin{proposition}\label{surreal_negation_set_iff}
+    $y\in\surrealNegSet{A}$ iff there exists $x\in A$ such that
+        $y=\surrealNeg{x}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{surreal_negation_set}.
+\end{proof}
+
+\begin{proposition}\label{surreal_negation_set_surreal}
+    Suppose for every $a\in A$ we have $\surreal{a}$.
+    Then for every $y\in\surrealNegSet{A}$ we have $\surreal{y}$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{surreal_negation_set_iff,surreal_negation_is_surreal}.
+\end{proof}
+
+\begin{proposition}\label{surreal_negation_set_involutive}
+    Suppose for every $a\in A$ we have $\surreal{a}$.
+    Then $\surrealNegSet{\surrealNegSet{A}}=A$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{setext,surreal_negation_set_iff,surreal_negation_involutive}.
+\end{proof}
+
+\begin{proposition}\label{surreal_negation_cut_pair}
+    Suppose $\surrealCutPair{L}{R}$.
+    Then $\surrealCutPair{\surrealNegSet{R}}{\surrealNegSet{L}}$.
+\end{proposition}
+\begin{proof}
+    For every $x\in\surrealNegSet{L}$ we have $\surreal{x}$
+        by \obv{surreal_cut_pair,surreal_negation_set_surreal}.
+    For every $y\in\surrealNegSet{R}$ we have $\surreal{y}$
+        by \obv{surreal_cut_pair,surreal_negation_set_surreal}.
+    Show that for all $x,y$ such that
+        $x\in\surrealNegSet{R}$ and $y\in\surrealNegSet{L}$
+        we have $\surrealLt{x}{y}$.
+    \begin{subproof}
+        Fix $x,y$.
+        Assume $x\in\surrealNegSet{R}$ and
+            $y\in\surrealNegSet{L}$.
+        Take $r\in R$ such that $x=\surrealNeg{r}$
+            by \obv{surreal_negation_set_iff}.
+        Take $l\in L$ such that $y=\surrealNeg{l}$
+            by \obv{surreal_negation_set_iff}.
+        $\surreal{l}$ and $\surreal{r}$ and $\surrealLt{l}{r}$
+            by \obv{surreal_cut_pair}.
+        Follows by \auto{surreal_negation_lt_reverses}.
+    \end{subproof}
+    Follows by \obv{surreal_cut_pair}.
+\end{proof}
+
+\begin{theorem}\label{surreal_negation_cut_candidate}
+    Suppose $\surrealCutPair{L}{R}$.
+    Let $v=\surrealCut{L}{R}$.
+    Then $\surrealCutCandidate
+        {\surrealNegSet{R}}{\surrealNegSet{L}}{\surrealNeg{v}}$.
+\end{theorem}
+\begin{proof}
+    $\surrealCutCandidate{L}{R}{v}$
+        by \obv{surreal_cut_pair_specification}.
+    $\surrealCutPair{\surrealNegSet{R}}{\surrealNegSet{L}}$
+        by \obv{surreal_negation_cut_pair}.
+    $\surreal{v}$ by \obv{surreal_cut_pair_is_surreal}.
+    $\surreal{\surrealNeg{v}}$
+        by \obv{surreal_negation_is_surreal}.
+    Show that for every $a\in\surrealNegSet{R}$ we have
+        $\surrealLt{a}{\surrealNeg{v}}$.
+    \begin{subproof}
+        Fix $a\in\surrealNegSet{R}$.
+        Take $r\in R$ such that $a=\surrealNeg{r}$
+            by \obv{surreal_negation_set_iff}.
+        $\surreal{r}$ by \obv{surreal_cut_pair}.
+        $\surrealLt{v}{r}$ by \obv{surreal_cut_pair_right}.
+        Follows by \auto{surreal_negation_lt_reverses}.
+    \end{subproof}
+    Show that for every $b\in\surrealNegSet{L}$ we have
+        $\surrealLt{\surrealNeg{v}}{b}$.
+    \begin{subproof}
+        Fix $b\in\surrealNegSet{L}$.
+        Take $l\in L$ such that $b=\surrealNeg{l}$
+            by \obv{surreal_negation_set_iff}.
+        $\surreal{l}$ by \obv{surreal_cut_pair}.
+        $\surrealLt{l}{v}$ by \obv{surreal_cut_pair_left}.
+        Follows by \obv{surreal_negation_lt_reverses}.
+    \end{subproof}
+    Show that for every $w$ such that
+        $\surreal{w}$ and
+        (for every $a\in\surrealNegSet{R}$ we have $\surrealLt{a}{w}$) and
+        (for every $b\in\surrealNegSet{L}$ we have $\surrealLt{w}{b}$)
+        we have $\birthday{\surrealNeg{v}}\subseteq\birthday{w}$ and
+            $\surrealEq{\birthday{\surrealNeg{v}}}{\surrealNeg{v}}{w}$.
+    \begin{subproof}
+        Fix $w$.
+        Assume $\surreal{w}$ and
+            (for every $a\in\surrealNegSet{R}$ we have $\surrealLt{a}{w}$) and
+            (for every $b\in\surrealNegSet{L}$ we have $\surrealLt{w}{b}$).
+        $\surreal{\surrealNeg{w}}$
+            by \obv{surreal_negation_is_surreal}.
+        Show that for every $l\in L$ we have
+            $\surrealLt{l}{\surrealNeg{w}}$.
+        \begin{subproof}
+            Fix $l\in L$.
+            $\surreal{l}$ by \obv{surreal_cut_pair}.
+            $\surrealNeg{l}\in\surrealNegSet{L}$
+                by \obv{surreal_negation_set_iff}.
+            $\surrealLt{w}{\surrealNeg{l}}$.
+            $\surrealLt{\surrealNeg{\surrealNeg{l}}}{\surrealNeg{w}}$
+                by \obv{surreal_negation_lt_reverses,surreal_negation_is_surreal}.
+            Follows by \obv{surreal_negation_involutive}.
+        \end{subproof}
+        Show that for every $r\in R$ we have
+            $\surrealLt{\surrealNeg{w}}{r}$.
+        \begin{subproof}
+            Fix $r\in R$.
+            $\surreal{r}$ by \obv{surreal_cut_pair}.
+            $\surrealNeg{r}\in\surrealNegSet{R}$
+                by \obv{surreal_negation_set_iff}.
+            $\surrealLt{\surrealNeg{r}}{w}$.
+            $\surrealLt{\surrealNeg{w}}{\surrealNeg{\surrealNeg{r}}}$
+                by \obv{surreal_negation_lt_reverses,surreal_negation_is_surreal}.
+            Follows by \obv{surreal_negation_involutive}.
+        \end{subproof}
+        $\birthday{v}\subseteq\birthday{\surrealNeg{w}}$ and
+            $\surrealEq{\birthday{v}}{v}{\surrealNeg{w}}$
+            by \obv{surreal_cut_pair_simplest}.
+        $\birthday{\surrealNeg{v}}=\birthday{v}$ and
+            $\birthday{\surrealNeg{w}}=\birthday{w}$
+            by \obv{surreal_negation_birthday}.
+        $\birthday{v}\subseteq
+            \birthday{v}\inter\birthday{\surrealNeg{w}}$
+            by \obv{subseteq,inter_intro}.
+        $\surrealEq{\birthday{v}}
+            {\surrealNeg{v}}{\surrealNeg{\surrealNeg{w}}}$
+            by \obv{surreal_negation_eq_initial}.
+        $\surrealNeg{\surrealNeg{w}}=w$
+            by \obv{surreal_negation_involutive}.
+    \end{subproof}
+    Follows by \obv{surreal_cut_candidate}.
+\end{proof}
+
+\begin{theorem}\label{surreal_negation_general_cut_equation}
+    Suppose $\surrealCutPair{L}{R}$.
+    Then $\surrealNeg{\surrealCut{L}{R}}=
+        \surrealCut{\surrealNegSet{R}}{\surrealNegSet{L}}$.
+\end{theorem}
+\begin{proof}
+    $\surrealCutCandidate
+        {\surrealNegSet{R}}{\surrealNegSet{L}}
+        {\surrealNeg{\surrealCut{L}{R}}}$
+        by \obv{surreal_negation_cut_candidate}.
+    $\surrealCutPair{\surrealNegSet{R}}{\surrealNegSet{L}}$
+        by \obv{surreal_negation_cut_pair}.
+    $\surrealCutCandidate
+        {\surrealNegSet{R}}{\surrealNegSet{L}}
+        {\surrealCut{\surrealNegSet{R}}{\surrealNegSet{L}}}$
+        by \obv{surreal_cut_pair_specification}.
+    Follows by \obv{surreal_cut_candidate_unique}.
+\end{proof}
+
+\begin{theorem}\label{surreal_left_negation}
+    Suppose $\surreal{x}$.
+    Then $\surrealLeft{\surrealNeg{x}}=
+        \surrealNegSet{\surrealRight{x}}$.
+\end{theorem}
+\begin{proof}
+    Show that for every $p\in\surrealLeft{\surrealNeg{x}}$ we have
+        $p\in\surrealNegSet{\surrealRight{x}}$.
+    \begin{subproof}
+        Fix $p\in\surrealLeft{\surrealNeg{x}}$.
+        $\surreal{p}$ and
+            $\birthday{p}\in\birthday{\surrealNeg{x}}$ and
+            $\surrealLt{p}{\surrealNeg{x}}$
+            by \obv{surreal_left_elim,surreal_negation_is_surreal}.
+        $\surreal{\surrealNeg{x}}$
+            by \obv{surreal_negation_is_surreal}.
+        $\surrealLt{x}{\surrealNeg{p}}$
+            by \auto{surreal_negation_lt_reverses,surreal_negation_involutive}.
+        $\birthday{\surrealNeg{p}}\in\birthday{x}$
+            by \obv{surreal_negation_birthday}.
+        Hence $\surrealNeg{p}\in\surrealRight{x}$
+            by \obv{surreal_right_intro,surreal_negation_is_surreal}.
+        $p=\surrealNeg{\surrealNeg{p}}$
+            by \obv{surreal_negation_involutive}.
+        Follows by \obv{surreal_negation_set_iff}.
+    \end{subproof}
+    Show that for every $p\in\surrealNegSet{\surrealRight{x}}$ we have
+        $p\in\surrealLeft{\surrealNeg{x}}$.
+    \begin{subproof}
+        Fix $p\in\surrealNegSet{\surrealRight{x}}$.
+        Take $r\in\surrealRight{x}$ such that $p=\surrealNeg{r}$
+            by \obv{surreal_negation_set_iff}.
+        $\surreal{r}$ and $\birthday{r}\in\birthday{x}$ and
+            $\surrealLt{x}{r}$
+            by \obv{surreal_right_elim}.
+        $\surreal{p}$ by \obv{surreal_negation_is_surreal}.
+        $\birthday{p}\in\birthday{\surrealNeg{x}}$
+            by \auto{surreal_negation_birthday}.
+        $\surrealLt{p}{\surrealNeg{x}}$
+            by \auto{surreal_negation_lt_reverses}.
+        Follows by \obv{surreal_left_intro,surreal_negation_is_surreal}.
+    \end{subproof}
+    Follows by \obv{setext}.
+\end{proof}
+
+\begin{theorem}\label{surreal_right_negation}
+    Suppose $\surreal{x}$.
+    Then $\surrealRight{\surrealNeg{x}}=
+        \surrealNegSet{\surrealLeft{x}}$.
+\end{theorem}
+\begin{proof}
+    $\surreal{\surrealNeg{x}}$
+        by \obv{surreal_negation_is_surreal}.
+    $\surrealLeft{\surrealNeg{\surrealNeg{x}}}
+        =\surrealNegSet{\surrealRight{\surrealNeg{x}}}$
+        by \obv{surreal_left_negation}.
+    For every $r\in\surrealRight{\surrealNeg{x}}$ we have $\surreal{r}$
+        by \auto{surreal_right_elim,surreal_negation_is_surreal}.
+    $\surrealNegSet{\surrealNegSet{\surrealRight{\surrealNeg{x}}}}
+        =\surrealRight{\surrealNeg{x}}$
+        by \obv{surreal_negation_set_involutive}.
+    Follows by \obv{surreal_negation_involutive}.
+\end{proof}
+
+\begin{theorem}\label{surreal_negation_cut_equation}
+    Suppose $\surreal{x}$.
+    Then $\surrealNeg{x}=
+        \surrealCut{\surrealNegSet{\surrealRight{x}}}
+            {\surrealNegSet{\surrealLeft{x}}}$.
+\end{theorem}
+\begin{proof}
+    $\surreal{\surrealNeg{x}}$
+        by \obv{surreal_negation_is_surreal}.
+    $\surrealNeg{x}=\surrealCut
+        {\surrealLeft{\surrealNeg{x}}}
+        {\surrealRight{\surrealNeg{x}}}$
+        by \obv{surreal_eta}.
+    Follows by \obv{surreal_left_negation,surreal_right_negation}.
+\end{proof}

@@ -1,0 +1,597 @@
+\import{test/algebra-spike/03-submodule-equivalence.tex}
+\import{test/algebra-spike/04-linear-map-equivalence.tex}
+\import{test/algebra-spike/07-ring-subobjects-quotients.tex}
+\import{test/algebra-spike/08-opposite-right-module.tex}
+\import{test/algebra-spike/12-closure-hull.tex}
+\import{test/algebra-spike/13-free-module.tex}
+\import{algebra/magma.tex}
+\import{algebra/monoid.tex}
+\import{nat/multiplication.tex}
+
+\section{Algebra vocabulary contract}
+
+This fixture declares every proposed phrase exactly once.  The definitions are
+test-only, but their surfaces and guarded bodies are the maintained
+implementation contract.
+
+\subsection{Magma and monoid maps}
+
+\begin{definition}\label{spike_phrase_magma_hom}
+    $f$ is a magma homomorphism from $A$ to $B$ iff
+        $A$ is a magma and $B$ is a magma and
+        $f\in\funs{\carrier[A]}{\carrier[B]}$ and
+        for all $x,y\in\carrier[A]$ we have
+            $f(\mul[A](x,y))=\mul[B](f(x),f(y))$.
+\end{definition}
+
+\begin{definition}\label{spike_phrase_magma_embedding}
+    $f$ is a magma embedding from $A$ to $B$ iff
+        $f$ is a magma homomorphism from $A$ to $B$ and
+        $f$ is injective.
+\end{definition}
+
+\begin{definition}\label{spike_phrase_magma_surjection}
+    $f$ is a magma surjection from $A$ to $B$ iff
+        $f$ is a magma homomorphism from $A$ to $B$ and
+        $f\in\surj{\carrier[A]}{\carrier[B]}$.
+\end{definition}
+
+\begin{definition}\label{spike_phrase_magma_isomorphism}
+    $f$ is a magma isomorphism from $A$ to $B$ iff
+        $f$ is a magma homomorphism from $A$ to $B$ and
+        $f\in\bijections{\carrier[A]}{\carrier[B]}$.
+\end{definition}
+
+\begin{definition}\label{spike_phrase_monoid_hom}
+    $f$ is a monoid homomorphism from $M$ to $N$ iff
+        $M$ is a monoid and $N$ is a monoid and
+        $f$ is a magma homomorphism from $M$ to $N$ and
+        $f(\neutral[M])=\neutral[N]$.
+\end{definition}
+
+\begin{definition}\label{spike_phrase_monoid_embedding}
+    $f$ is a monoid embedding from $M$ to $N$ iff
+        $f$ is a monoid homomorphism from $M$ to $N$ and
+        $f$ is injective.
+\end{definition}
+
+\begin{definition}\label{spike_phrase_monoid_surjection}
+    $f$ is a monoid surjection from $M$ to $N$ iff
+        $f$ is a monoid homomorphism from $M$ to $N$ and
+        $f\in\surj{\carrier[M]}{\carrier[N]}$.
+\end{definition}
+
+\begin{definition}\label{spike_phrase_monoid_isomorphism}
+    $f$ is a monoid isomorphism from $M$ to $N$ iff
+        $f$ is a monoid homomorphism from $M$ to $N$ and
+        $f\in\bijections{\carrier[M]}{\carrier[N]}$.
+\end{definition}
+
+\begin{definition}\label{spike_phrase_monoid_unit}
+    $u$ is a unit of $M$ iff
+        $M$ is a monoid and $u\in\carrier[M]$ and
+        there exists $v\in\carrier[M]$ such that
+            $\mul[M](u,v)=\neutral[M]$ and
+            $\mul[M](v,u)=\neutral[M]$.
+\end{definition}
+
+\begin{proposition}\label{spike_phrase_monoid_unit_guard}
+    Suppose $u$ is a unit of $M$.
+    Then $M$ is a monoid.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{spike_phrase_monoid_unit}.
+\end{proof}
+
+\subsection{Closure systems and natural arithmetic}
+
+\begin{definition}\label{spike_phrase_natural_one}
+    $\naturalOne=\suc{\emptyset}$.
+\end{definition}
+
+\begin{definition}\label{spike_phrase_closure_system}
+    $C$ is a closure system on $X$ iff
+        $\prototypeClosureSystem{C}{X}$.
+\end{definition}
+
+\begin{theorem}\label{spike_phrase_closure_system_equivalence}
+    $C$ is a closure system on $X$ iff
+        $\prototypeClosureSystem{C}{X}$.
+\end{theorem}
+\begin{proof}
+    Follows by \auto{spike_phrase_closure_system}.
+\end{proof}
+
+\begin{definition}\label{spike_phrase_natural_divisibility}
+    $m$ divides $n$ as natural numbers iff
+        $m$ is a natural number and $n$ is a natural number and
+        there exists a natural number $k$ such that
+            $n=\naturalMul{m}{k}$.
+\end{definition}
+
+\begin{definition}\label{spike_phrase_natural_gcd}
+    $\naturalGcd{m}{n}=
+        \unions{\{d\in\suc{m\union n}\mid
+            \text{$m$ and $n$ are natural numbers and
+                $d$ divides $m$ as natural numbers and
+                $d$ divides $n$ as natural numbers}\}}$.
+\end{definition}
+
+\begin{definition}\label{spike_phrase_coprime_naturals}
+    $m$ is coprime to $n$ as natural numbers iff
+        $m$ is a natural number and $n$ is a natural number and
+        $\naturalGcd{m}{n}=\naturalOne$.
+\end{definition}
+
+\begin{definition}\label{spike_phrase_prime_natural}
+    $p$ is a prime natural number iff
+        $p$ is a natural number and $\naturalOne\in p$ and
+        for every natural number $d$ such that
+            $d$ divides $p$ as natural numbers we have
+            $d=\naturalOne$ or $d=p$.
+\end{definition}
+
+\begin{proposition}\label{spike_phrase_divisibility_guards}
+    Suppose $m$ divides $n$ as natural numbers.
+    Then $m$ is a natural number and $n$ is a natural number.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{spike_phrase_natural_divisibility}.
+\end{proof}
+
+\begin{proposition}\label{spike_phrase_coprime_guards}
+    Suppose $m$ is coprime to $n$ as natural numbers.
+    Then $m$ is a natural number and $n$ is a natural number.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{spike_phrase_coprime_naturals}.
+\end{proof}
+
+\begin{proposition}\label{spike_phrase_prime_guard}
+    Suppose $p$ is a prime natural number.
+    Then $p$ is a natural number.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{spike_phrase_prime_natural}.
+\end{proof}
+
+\subsection{Ring maps and subrings}
+
+\begin{definition}\label{spike_phrase_ring_hom}
+    $f$ is a ring homomorphism from $R$ to $S$ iff
+        $R$ is a ring and $S$ is a ring and
+        $\groupHom{f}{\AdditiveGroup{R}}{\AdditiveGroup{S}}$ and
+        $f$ is a monoid homomorphism from
+            $\MultiplicativeMonoid{R}$ to $\MultiplicativeMonoid{S}$.
+\end{definition}
+
+\begin{definition}\label{spike_phrase_ring_embedding}
+    $f$ is a ring embedding from $R$ to $S$ iff
+        $f$ is a ring homomorphism from $R$ to $S$ and
+        $f$ is injective.
+\end{definition}
+
+\begin{definition}\label{spike_phrase_ring_surjection}
+    $f$ is a ring surjection from $R$ to $S$ iff
+        $f$ is a ring homomorphism from $R$ to $S$ and
+        $f\in\surj{\carrier[R]}{\carrier[S]}$.
+\end{definition}
+
+\begin{definition}\label{spike_phrase_ring_isomorphism}
+    $f$ is a ring isomorphism from $R$ to $S$ iff
+        $f$ is a ring homomorphism from $R$ to $S$ and
+        $f\in\bijections{\carrier[R]}{\carrier[S]}$.
+\end{definition}
+
+\begin{definition}\label{spike_phrase_subring}
+    $A$ is a subring of $R$ iff $\prototypeSubring{A}{R}$.
+\end{definition}
+
+\begin{theorem}\label{spike_phrase_subring_equivalence}
+    $A$ is a subring of $R$ iff $\prototypeSubring{A}{R}$.
+\end{theorem}
+\begin{proof}
+    Follows by \auto{spike_phrase_subring}.
+\end{proof}
+
+\begin{proposition}\label{spike_phrase_subring_guard}
+    Suppose $A$ is a subring of $R$.
+    Then $R$ is a ring.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{spike_phrase_subring,spike_subring_ring_guard}.
+\end{proof}
+
+\subsection{Module maps, right modules, and ideals}
+
+\begin{definition}\label{spike_phrase_module_embedding}
+    $f$ is a module embedding from $M$ to $N$ over $R$ iff
+        $f$ is a linear map from $M$ to $N$ over $R$ and
+        $f$ is injective.
+\end{definition}
+
+\begin{definition}\label{spike_phrase_module_surjection}
+    $f$ is a module surjection from $M$ to $N$ over $R$ iff
+        $f$ is a linear map from $M$ to $N$ over $R$ and
+        $f\in\surj{\carrier[M]}{\carrier[N]}$.
+\end{definition}
+
+\begin{definition}\label{spike_phrase_module_isomorphism}
+    $f$ is a module isomorphism from $M$ to $N$ over $R$ iff
+        $f$ is a linear map from $M$ to $N$ over $R$ and
+        $f\in\bijections{\carrier[M]}{\carrier[N]}$.
+\end{definition}
+
+\begin{definition}\label{spike_phrase_right_module}
+    $M$ is a right module over $R$ iff
+        $\prototypeRightModule{M}{R}$.
+\end{definition}
+
+\begin{theorem}\label{spike_phrase_right_module_equivalence}
+    $M$ is a right module over $R$ iff
+        $\prototypeRightModule{M}{R}$.
+\end{theorem}
+\begin{proof}
+    Follows by \auto{spike_phrase_right_module}.
+\end{proof}
+
+\begin{proposition}\label{spike_phrase_right_module_guard}
+    Suppose $M$ is a right module over $R$.
+    Then $R$ is a ring.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{spike_phrase_right_module,spike_right_module_ring_guard}.
+\end{proof}
+
+\begin{definition}\label{spike_phrase_left_ideal}
+    $I$ is a left ideal of $R$ iff
+        $R$ is a ring and
+        $\prototypeSubmodule{R}{I}{\LeftRegularModule{R}}$.
+\end{definition}
+
+\begin{definition}\label{spike_phrase_right_ideal}
+    $I$ is a right ideal of $R$ iff
+        $R$ is a ring and
+        $\prototypeSubmodule{\OppositeRing{R}}{I}{
+            \RightRegularModule{R}}$.
+\end{definition}
+
+\begin{definition}\label{spike_phrase_two_sided_ideal}
+    $I$ is a two-sided ideal of $R$ iff
+        $R$ is a ring and
+        $I$ is a left ideal of $R$ and
+        $I$ is a right ideal of $R$.
+\end{definition}
+
+\begin{definition}\label{spike_phrase_ideal}
+    $I$ is an ideal of $R$ iff
+        $R$ is a commutative ring and $I$ is a left ideal of $R$.
+\end{definition}
+
+\begin{proposition}\label{spike_phrase_left_ideal_guard}
+    Suppose $I$ is a left ideal of $R$.
+    Then $R$ is a ring.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{spike_phrase_left_ideal}.
+\end{proof}
+
+\begin{proposition}\label{spike_phrase_right_ideal_guard}
+    Suppose $I$ is a right ideal of $R$.
+    Then $R$ is a ring.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{spike_phrase_right_ideal}.
+\end{proof}
+
+\begin{proposition}\label{spike_phrase_two_sided_ideal_guard}
+    Suppose $I$ is a two-sided ideal of $R$.
+    Then $R$ is a ring.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{spike_phrase_two_sided_ideal}.
+\end{proof}
+
+\begin{proposition}\label{spike_phrase_ideal_guard}
+    Suppose $I$ is an ideal of $R$.
+    Then $R$ is a commutative ring.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{spike_phrase_ideal}.
+\end{proof}
+
+\subsection{Indexed spanning, independence, and bases}
+
+\begin{definition}\label{spike_linear_combination_map}
+    $\spikeLinearCombinationMap{R}{I}{M}{v}
+        =\freeModuleLift{R}{I}{M}{v}$.
+\end{definition}
+
+\begin{definition}\label{spike_phrase_indexed_module_spanning}
+    $v$ spans $M$ over $R$ indexed by $I$ iff
+        $R$ is a ring and $M$ is a left module over $R$ and
+        $v\in\funs{I}{\carrier[M]}$ and
+        $\spikeLinearCombinationMap{R}{I}{M}{v}\in
+            \surj{\carrier[\FreeModule{R}{I}]}{\carrier[M]}$.
+\end{definition}
+
+\begin{definition}\label{spike_phrase_indexed_module_linear_independence}
+    $v$ is linearly independent in $M$ over $R$ indexed by $I$ iff
+        $R$ is a ring and $M$ is a left module over $R$ and
+        $v\in\funs{I}{\carrier[M]}$ and
+        $\spikeLinearCombinationMap{R}{I}{M}{v}\in
+            \inj{\carrier[\FreeModule{R}{I}]}{\carrier[M]}$.
+\end{definition}
+
+\begin{definition}\label{spike_phrase_indexed_module_basis}
+    $v$ forms a basis of $M$ over $R$ indexed by $I$ iff
+        $R$ is a ring and $M$ is a left module over $R$ and
+        $v\in\funs{I}{\carrier[M]}$ and
+        $\spikeLinearCombinationMap{R}{I}{M}{v}$ is a module isomorphism
+            from $\FreeModule{R}{I}$ to $M$ over $R$.
+\end{definition}
+
+\begin{proposition}\label{spike_phrase_spanning_guards}
+    Suppose $v$ spans $M$ over $R$ indexed by $I$.
+    Then $R$ is a ring and $M$ is a left module over $R$ and
+        $v\in\funs{I}{\carrier[M]}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{spike_phrase_indexed_module_spanning}.
+\end{proof}
+
+\begin{proposition}\label{spike_phrase_linear_independence_guards}
+    Suppose $v$ is linearly independent in $M$ over $R$ indexed by $I$.
+    Then $R$ is a ring and $M$ is a left module over $R$ and
+        $v\in\funs{I}{\carrier[M]}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{spike_phrase_indexed_module_linear_independence}.
+\end{proof}
+
+\begin{proposition}\label{spike_phrase_basis_guards}
+    Suppose $v$ forms a basis of $M$ over $R$ indexed by $I$.
+    Then $R$ is a ring and $M$ is a left module over $R$ and
+        $v\in\funs{I}{\carrier[M]}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{spike_phrase_indexed_module_basis}.
+\end{proof}
+
+\subsection{Complete phrase and agreement fixtures}
+
+Each proposition below is logically trivial.  Its purpose is to exercise the
+full declaration surface in a complete header, a conjunction, and a negated
+occurrence without weakening the semantic fixture to a parse-only test.
+
+\begin{proposition}\label{spike_use_magma_hom}
+    Let $f$ be a magma homomorphism from $A$ to $B$.
+    Then $f$ is a magma homomorphism from $A$ to $B$ and it is not the case
+        that $f$ is not a magma homomorphism from $A$ to $B$.
+\end{proposition}
+\begin{proof} Follows by \auto. \end{proof}
+
+\begin{proposition}\label{spike_use_magma_embedding}
+    Let $f$ be a magma embedding from $A$ to $B$.
+    Then $f$ is a magma embedding from $A$ to $B$ and it is not the case
+        that $f$ is not a magma embedding from $A$ to $B$.
+\end{proposition}
+\begin{proof} Follows by \auto. \end{proof}
+
+\begin{proposition}\label{spike_use_magma_surjection}
+    Let $f$ be a magma surjection from $A$ to $B$.
+    Then $f$ is a magma surjection from $A$ to $B$ and it is not the case
+        that $f$ is not a magma surjection from $A$ to $B$.
+\end{proposition}
+\begin{proof} Follows by \auto. \end{proof}
+
+\begin{proposition}\label{spike_use_magma_isomorphism}
+    Let $f$ be a magma isomorphism from $A$ to $B$.
+    Then $f$ is a magma isomorphism from $A$ to $B$ and it is not the case
+        that $f$ is not a magma isomorphism from $A$ to $B$.
+\end{proposition}
+\begin{proof} Follows by \auto. \end{proof}
+
+\begin{proposition}\label{spike_use_monoid_hom}
+    Let $f$ be a monoid homomorphism from $M$ to $N$.
+    Then $f$ is a monoid homomorphism from $M$ to $N$ and it is not the case
+        that $f$ is not a monoid homomorphism from $M$ to $N$.
+\end{proposition}
+\begin{proof} Follows by \auto. \end{proof}
+
+\begin{proposition}\label{spike_use_monoid_embedding}
+    Let $f$ be a monoid embedding from $M$ to $N$.
+    Then $f$ is a monoid embedding from $M$ to $N$ and it is not the case
+        that $f$ is not a monoid embedding from $M$ to $N$.
+\end{proposition}
+\begin{proof} Follows by \auto. \end{proof}
+
+\begin{proposition}\label{spike_use_monoid_surjection}
+    Let $f$ be a monoid surjection from $M$ to $N$.
+    Then $f$ is a monoid surjection from $M$ to $N$ and it is not the case
+        that $f$ is not a monoid surjection from $M$ to $N$.
+\end{proposition}
+\begin{proof} Follows by \auto. \end{proof}
+
+\begin{proposition}\label{spike_use_monoid_isomorphism}
+    Let $f$ be a monoid isomorphism from $M$ to $N$.
+    Then $f$ is a monoid isomorphism from $M$ to $N$ and it is not the case
+        that $f$ is not a monoid isomorphism from $M$ to $N$.
+\end{proposition}
+\begin{proof} Follows by \auto. \end{proof}
+
+\begin{proposition}\label{spike_use_monoid_unit}
+    Let $u$ be a unit of $M$.
+    Then $u$ is a unit of $M$ and it is not the case that
+        $u$ is not a unit of $M$.
+\end{proposition}
+\begin{proof} Follows by \auto. \end{proof}
+
+\begin{proposition}\label{spike_use_closure_system}
+    Let $C$ be a closure system on $X$.
+    Then $C$ is a closure system on $X$ and it is not the case that
+        $C$ is not a closure system on $X$.
+\end{proposition}
+\begin{proof} Follows by \auto. \end{proof}
+
+\begin{proposition}\label{spike_use_natural_divisibility}
+    Let $m$ be a set that divides $n$ as natural numbers.
+    Then $m$ divides $n$ as natural numbers and it is not the case that
+        $m$ does not divide $n$ as natural numbers.
+\end{proposition}
+\begin{proof} Follows by \auto. \end{proof}
+
+\begin{proposition}\label{spike_use_coprime_naturals}
+    Let $m$ be a set that is coprime to $n$ as natural numbers.
+    Then $m$ is coprime to $n$ as natural numbers and it is not the case that
+        $m$ is not coprime to $n$ as natural numbers.
+\end{proposition}
+\begin{proof} Follows by \auto. \end{proof}
+
+\begin{proposition}\label{spike_use_prime_natural}
+    Let $p$ be a prime natural number.
+    Then $p$ is a prime natural number and it is not the case that
+        $p$ is not a prime natural number.
+\end{proposition}
+\begin{proof} Follows by \auto. \end{proof}
+
+\begin{proposition}\label{spike_use_ring_hom}
+    Let $f$ be a ring homomorphism from $R$ to $S$.
+    Then $f$ is a ring homomorphism from $R$ to $S$ and it is not the case
+        that $f$ is not a ring homomorphism from $R$ to $S$.
+\end{proposition}
+\begin{proof} Follows by \auto. \end{proof}
+
+\begin{proposition}\label{spike_use_ring_embedding}
+    Let $f$ be a ring embedding from $R$ to $S$.
+    Then $f$ is a ring embedding from $R$ to $S$ and it is not the case
+        that $f$ is not a ring embedding from $R$ to $S$.
+\end{proposition}
+\begin{proof} Follows by \auto. \end{proof}
+
+\begin{proposition}\label{spike_use_ring_surjection}
+    Let $f$ be a ring surjection from $R$ to $S$.
+    Then $f$ is a ring surjection from $R$ to $S$ and it is not the case
+        that $f$ is not a ring surjection from $R$ to $S$.
+\end{proposition}
+\begin{proof} Follows by \auto. \end{proof}
+
+\begin{proposition}\label{spike_use_ring_isomorphism}
+    Let $f$ be a ring isomorphism from $R$ to $S$.
+    Then $f$ is a ring isomorphism from $R$ to $S$ and it is not the case
+        that $f$ is not a ring isomorphism from $R$ to $S$.
+\end{proposition}
+\begin{proof} Follows by \auto. \end{proof}
+
+\begin{proposition}\label{spike_use_subring}
+    Let $A$ be a subring of $R$.
+    Then $A$ is a subring of $R$ and it is not the case that
+        $A$ is not a subring of $R$.
+\end{proposition}
+\begin{proof} Follows by \auto. \end{proof}
+
+\begin{proposition}\label{spike_use_module_embedding}
+    Let $f$ be a module embedding from $M$ to $N$ over $R$.
+    Then $f$ is a module embedding from $M$ to $N$ over $R$ and
+        it is not the case that
+            $f$ is not a module embedding from $M$ to $N$ over $R$.
+\end{proposition}
+\begin{proof} Follows by \auto. \end{proof}
+
+\begin{proposition}\label{spike_use_module_surjection}
+    Let $f$ be a module surjection from $M$ to $N$ over $R$.
+    Then $f$ is a module surjection from $M$ to $N$ over $R$ and
+        it is not the case that
+            $f$ is not a module surjection from $M$ to $N$ over $R$.
+\end{proposition}
+\begin{proof} Follows by \auto. \end{proof}
+
+\begin{proposition}\label{spike_use_module_isomorphism}
+    Let $f$ be a module isomorphism from $M$ to $N$ over $R$.
+    Then $f$ is a module isomorphism from $M$ to $N$ over $R$ and
+        it is not the case that
+            $f$ is not a module isomorphism from $M$ to $N$ over $R$.
+\end{proposition}
+\begin{proof} Follows by \auto. \end{proof}
+
+\begin{proposition}\label{spike_use_right_module}
+    Let $M$ be a right module over $R$.
+    Then $M$ is a right module over $R$ and it is not the case that
+        $M$ is not a right module over $R$.
+\end{proposition}
+\begin{proof} Follows by \auto. \end{proof}
+
+\begin{proposition}\label{spike_use_left_ideal}
+    Let $I$ be a left ideal of $R$.
+    Then $I$ is a left ideal of $R$ and it is not the case that
+        $I$ is not a left ideal of $R$.
+\end{proposition}
+\begin{proof} Follows by \auto. \end{proof}
+
+\begin{proposition}\label{spike_use_right_ideal}
+    Let $I$ be a right ideal of $R$.
+    Then $I$ is a right ideal of $R$ and it is not the case that
+        $I$ is not a right ideal of $R$.
+\end{proposition}
+\begin{proof} Follows by \auto. \end{proof}
+
+\begin{proposition}\label{spike_use_two_sided_ideal}
+    Let $I$ be a two-sided ideal of $R$.
+    Then $I$ is a two-sided ideal of $R$ and it is not the case that
+        $I$ is not a two-sided ideal of $R$.
+\end{proposition}
+\begin{proof} Follows by \auto. \end{proof}
+
+\begin{proposition}\label{spike_use_ideal}
+    Let $I$ be an ideal of $R$.
+    Then $I$ is an ideal of $R$ and it is not the case that
+        $I$ is not an ideal of $R$.
+\end{proposition}
+\begin{proof} Follows by \auto. \end{proof}
+
+\begin{proposition}\label{spike_use_indexed_spanning}
+    Let $v$ be a set that spans $M$ over $R$ indexed by $I$.
+    Then $v$ spans $M$ over $R$ indexed by $I$ and it is not the case that
+        $v$ does not span $M$ over $R$ indexed by $I$.
+\end{proposition}
+\begin{proof} Follows by \auto. \end{proof}
+
+\begin{proposition}\label{spike_use_indexed_linear_independence}
+    Let $v$ be a set that is linearly independent in $M$ over $R$
+        indexed by $I$.
+    Then $v$ is linearly independent in $M$ over $R$ indexed by $I$ and
+        it is not the case that
+            $v$ is not linearly independent in $M$ over $R$ indexed by $I$.
+\end{proposition}
+\begin{proof} Follows by \auto. \end{proof}
+
+\begin{proposition}\label{spike_use_indexed_basis}
+    Let $v$ be a set that forms a basis of $M$ over $R$ indexed by $I$.
+    Then $v$ forms a basis of $M$ over $R$ indexed by $I$ and
+        it is not the case that
+            $v$ does not form a basis of $M$ over $R$ indexed by $I$.
+\end{proposition}
+\begin{proof} Follows by \auto. \end{proof}
+
+\begin{proposition}\label{spike_use_plural_divisibility}
+    Suppose $m$, $n$ divide $p$ as natural numbers.
+    Then $m$ divides $p$ as natural numbers and
+        $n$ divides $p$ as natural numbers.
+\end{proposition}
+\begin{proof} Follows by \auto. \end{proof}
+
+\begin{proposition}\label{spike_use_plural_spanning}
+    Suppose $v$, $w$ span $M$ over $R$ indexed by $I$.
+    Then $v$ spans $M$ over $R$ indexed by $I$ and
+        $w$ spans $M$ over $R$ indexed by $I$.
+\end{proposition}
+\begin{proof} Follows by \auto. \end{proof}
+
+\begin{proposition}\label{spike_use_plural_basis}
+    Suppose $v$, $w$ form a basis of $M$ over $R$ indexed by $I$.
+    Then $v$ forms a basis of $M$ over $R$ indexed by $I$ and
+        $w$ forms a basis of $M$ over $R$ indexed by $I$.
+\end{proposition}
+\begin{proof} Follows by \auto. \end{proof}

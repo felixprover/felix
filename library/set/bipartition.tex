@@ -1,0 +1,82 @@
+% The theory of splitting sets into two (inhabited, disjoint) partitions.
+
+% See also "bisections" here: https://isarmathlib.org/Partitions_ZF.html
+
+\import{set.tex}
+\import{set/cons.tex}
+\import{set/powerset.tex}
+
+\section{Bipartitions}
+
+\begin{abbreviation}\label{bipartitions}
+    $C$ is partitioned by $A$ and $B$ iff $A,B\neq\emptyset$ and $A$ is disjoint from $B$ and $A\union B = C$.
+\end{abbreviation}
+
+\begin{definition}\label{bipartitions_of_a_set}
+    $\bipartitions{X} = \{ p\in\pow{X}\times\pow{X}\mid \text{$X$ is partitioned by $\fst{p}$ and $\snd{p}$}\}$.
+\end{definition}
+
+\begin{abbreviation}\label{is_a_bipartition_of}
+    $P$ is a bipartition of $X$ iff $P\in\bipartitions{X}$.
+\end{abbreviation}
+
+\begin{proposition}\label{bipartition_intro}
+    Suppose $C$ is partitioned by $A$ and $B$.
+    Then $(A, B)$ is a bipartition of $C$.
+\end{proposition}
+\begin{proof}
+    $(A,B)\in\pow{C}\times\pow{C}$ by
+        \auto{powerset_intro,times_tuple_intro,subseteq,union_iff}.
+    $C$ is partitioned by $\fst{(A,B)}$ and $\snd{(A,B)}$
+        by \auto{fst_eq,snd_eq}.
+    Thus $(A, B)$ is a bipartition of $C$ by \obv{bipartitions_of_a_set}.
+\end{proof}
+
+\begin{proposition}\label{bipartition_elim}
+    Suppose $(A, B)$ is a bipartition of $C$.
+    Then $C$ is partitioned by $A$ and $B$.
+\end{proposition}
+\begin{proof}
+    $\fst{(A, B)} = A$ by \obv{fst_eq}.
+    $\snd{(A, B)} = B$ by \obv{snd_eq}.
+    Follows by \obv{bipartitions_of_a_set}.
+\end{proof}
+
+\begin{proposition}\label{bipartitions_emptyset}
+    $\bipartitions{\emptyset}$ is empty.
+\end{proposition}
+\begin{proof}
+    We have for all $p\in\bipartitions{\emptyset}$
+        we have $p\in\emptyset$
+        by \auto{bipartitions_of_a_set,powerset_elim,subseteq_emptyset_iff,times_proj_elim}.
+    Follows by \obv{emptyset}.
+\end{proof}
+
+\begin{proposition}\label{union_eq_cons_implies_union_remove_eq}
+    Suppose $d\notin C$.
+    Suppose $A\union B = \cons{d}{C}$.
+    Suppose $A, B\neq \{d\}$.
+    Then $\remove{d}{A}\union \remove{d}{B} = C$.
+\end{proposition}
+\begin{proof}
+    We have for all $x\in \remove{d}{A}\union \remove{d}{B}$
+        we have $x\in C$ by \auto{cons_iff,setminus,union_iff}.
+    We have for all $x\in C$
+        we have $x\in \remove{d}{A}\union \remove{d}{B}$
+        by \auto{cons_iff,setminus,union_iff}.
+    Follows by set extensionality.
+\end{proof}
+
+\begin{proposition}\label{bipartitions_cons}
+    Suppose $d\notin C$.
+    Suppose $\cons{d}{C}$ is partitioned by $A$ and $B$.
+    Suppose $A, B\neq \{d\}$.
+    Then $C$ is partitioned by $\remove{d}{A}$ and $\remove{d}{B}$.
+\end{proposition}
+\begin{proof}
+    $\remove{d}{A},\remove{d}{B}\neq\emptyset$ by
+        \auto{setminus,singleton_iff,setext}.
+    $\remove{d}{A}$ is disjoint from $\remove{d}{B}$
+        by \auto{disjoint,setminus}.
+    $\remove{d}{A}\union \remove{d}{B} = C$ by \obv{union_eq_cons_implies_union_remove_eq}.
+\end{proof}

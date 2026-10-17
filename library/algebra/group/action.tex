@@ -1,0 +1,143 @@
+\import{algebra/action.tex}
+\import{algebra/group/subgroup.tex}
+
+\section{Group actions and stabilizers}
+
+\begin{definition}\label{group_action}
+    $\groupAction{p}{G}{X}$ iff
+        $G$ is a group and $\monoidAction{p}{G}{X}$.
+\end{definition}
+
+\begin{proposition}\label{group_action_group}
+    Suppose $\groupAction{p}{G}{X}$.
+    Then $G$ is a group.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{group_action}.
+\end{proof}
+
+\begin{proposition}\label{group_action_is_monoid_action}
+    Suppose $\groupAction{p}{G}{X}$.
+    Then $\monoidAction{p}{G}{X}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{group_action}.
+\end{proof}
+
+\begin{proposition}\label{group_action_type}
+    Suppose $\groupAction{p}{G}{X}$.
+    Then $p\in\funs{\carrier[G]\times X}{X}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \obv{group_action_is_monoid_action,monoid_action_type}.
+\end{proof}
+
+\begin{proposition}\label{group_action_apply_type}
+    Suppose $\groupAction{p}{G}{X}$.
+    Let $a\in\carrier[G]$.
+    Let $x\in X$.
+    Then $\actionApply{p}{a}{x}\in X$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \obv{group_action_is_monoid_action,monoid_action_apply_type}.
+\end{proof}
+
+\begin{proposition}\label{group_action_neutral}
+    Suppose $\groupAction{p}{G}{X}$.
+    Let $x\in X$.
+    Then $\actionApply{p}{\neutral[G]}{x}=x$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \obv{group_action_is_monoid_action,monoid_action_neutral}.
+\end{proof}
+
+\begin{proposition}\label{group_action_mul}
+    Suppose $\groupAction{p}{G}{X}$.
+    Let $a,b\in\carrier[G]$.
+    Let $x\in X$.
+    Then
+        $\actionApply{p}{\mul[G](a,b)}{x}=
+            \actionApply{p}{a}{\actionApply{p}{b}{x}}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \obv{group_action_is_monoid_action,monoid_action_mul}.
+\end{proof}
+
+\begin{definition}\label{action_stabilizer}
+    $\actionStabilizer{p}{G}{X}{x}=
+        \{a\in\carrier[G]\mid
+            \text{$x\in X$ and $\actionApply{p}{a}{x}=x$}\}$.
+\end{definition}
+
+\begin{proposition}\label{action_stabilizer_iff}
+    Suppose $x\in X$.
+    Then $a\in\actionStabilizer{p}{G}{X}{x}$ iff
+        $a\in\carrier[G]$ and $\actionApply{p}{a}{x}=x$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{action_stabilizer}.
+\end{proof}
+
+\begin{theorem}\label{action_stabilizer_subgroup}
+    Suppose $\groupAction{p}{G}{X}$ and $x\in X$.
+    Then $\subgroup{\actionStabilizer{p}{G}{X}{x}}{G}$.
+\end{theorem}
+\begin{proof}
+    Let $S=\actionStabilizer{p}{G}{X}{x}$.
+    $G$ is a group by \obv{group_action_group}.
+    $S\subseteq\carrier[G]$ by
+        \auto{action_stabilizer,subseteq}.
+    $\neutral[G]\in\carrier[G]$ by
+        \obv{group_is_monoid,monoid_is_unital_magma,unitalmagma_type}.
+    $\actionApply{p}{\neutral[G]}{x}=x$ by
+        \obv{group_action_neutral}.
+    Hence $\neutral[G]\in S$ by
+        \obv{action_stabilizer_iff}.
+    Show that for all $a,b\in S$ we have $\mul[G](a,b)\in S$.
+    \begin{subproof}
+        Fix $a,b\in S$.
+        Hence $a,b\in\carrier[G]$ and
+            $\actionApply{p}{a}{x}=x$ and
+            $\actionApply{p}{b}{x}=x$ by
+            \auto{action_stabilizer_iff}.
+        $\mul[G](a,b)\in\carrier[G]$ by
+            \obv{group_is_monoid,monoid_is_magma,magma_welldef}.
+        $\actionApply{p}{\mul[G](a,b)}{x}=
+            \actionApply{p}{a}{\actionApply{p}{b}{x}}$ by
+            \obv{group_action_mul}.
+        Hence $\actionApply{p}{\mul[G](a,b)}{x}=x$.
+        Follows by \obv{action_stabilizer_iff}.
+    \end{subproof}
+    Show that for every $a\in S$ we have $\groupInv[G](a)\in S$.
+    \begin{subproof}
+        Fix $a\in S$.
+        Hence $a\in\carrier[G]$ and
+            $\actionApply{p}{a}{x}=x$ by
+            \obv{action_stabilizer_iff}.
+        $\groupInv[G](a)\in\carrier[G]$ by
+            \obv{group_inverse_type}.
+        $\mul[G](\groupInv[G](a),a)=\neutral[G]$ by
+            \obv{group_inverse_left}.
+        $\actionApply{p}{\mul[G](\groupInv[G](a),a)}{x}=
+            \actionApply{p}{\groupInv[G](a)}{
+                \actionApply{p}{a}{x}}$ by
+            \obv{group_action_mul}.
+        $\actionApply{p}{\neutral[G]}{x}=x$ by
+            \obv{group_action_neutral}.
+        Hence $\actionApply{p}{\groupInv[G](a)}{x}=x$.
+        Follows by \obv{action_stabilizer_iff}.
+    \end{subproof}
+    Follows by \obv{subgroup}.
+\end{proof}
+
+\begin{proposition}\label{action_stabilizer_off_carrier}
+    Suppose $x\notin X$.
+    Then $\actionStabilizer{p}{G}{X}{x}=\emptyset$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{action_stabilizer,setext}.
+\end{proof}

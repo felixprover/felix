@@ -1,0 +1,390 @@
+\import{relation/transitive-closure.tex}
+\import{set/regularity.tex}
+\import{set/inductive-definition.tex}
+
+\section{Accessibility and well-founded relations}
+
+\begin{definition}\label{progressive_on}
+    $B$ is progressive for $R$ on $A$ iff for every $x\in A$ we have
+        if for every $y\in A$ such that $y\mathrel{R}x$ we have $y\in B$,
+        then $x\in B$.
+\end{definition}
+
+\begin{definition}\label{progressive_subsets}
+    $\progressiveSubsets{A}{R} =
+        \{B\in\pow{A}\mid
+            \text{$B$ is progressive for $R$ on $A$}\}$.
+\end{definition}
+
+\begin{definition}\label{accessible_part}
+    $\accessiblePart{A}{R}=\inters{\progressiveSubsets{A}{R}}$.
+\end{definition}
+
+\begin{lemma}\label{carrier_is_progressive}
+    $A$ is progressive for $R$ on $A$.
+\end{lemma}
+\begin{proof}
+    Follows by \obv{progressive_on}.
+\end{proof}
+
+\begin{lemma}\label{progressive_subsets_inhabited}
+    $\progressiveSubsets{A}{R}$ is inhabited.
+\end{lemma}
+\begin{proof}
+    $A\in\pow{A}$ by \obv{powerset_intro,subseteq_refl}.
+    Thus $A\in\progressiveSubsets{A}{R}$
+        by \obv{progressive_subsets,carrier_is_progressive}.
+\end{proof}
+
+\begin{proposition}\label{accessible_part_subseteq}
+    $\accessiblePart{A}{R}\subseteq A$.
+\end{proposition}
+\begin{proof}
+    $A\in\progressiveSubsets{A}{R}$
+        by \obv{progressive_subsets,powerset_intro,subseteq_refl,carrier_is_progressive}.
+    Follows by \auto{accessible_part,inters_subseteq_elem}.
+\end{proof}
+
+\begin{proposition}\label{accessible_part_least}
+    Suppose $B\subseteq A$.
+    Suppose $B$ is progressive for $R$ on $A$.
+    Then $\accessiblePart{A}{R}\subseteq B$.
+\end{proposition}
+\begin{proof}
+    $B\in\pow{A}$ by \obv{powerset_intro}.
+    Hence $B\in\progressiveSubsets{A}{R}$ by \obv{progressive_subsets}.
+    Follows by \auto{accessible_part,inters_subseteq_elem}.
+\end{proof}
+
+\begin{proposition}\label{accessible_part_intro}
+    Let $x\in A$.
+    Suppose for every $y\in A$ such that $y\mathrel{R}x$
+        we have $y\in\accessiblePart{A}{R}$.
+    Then $x\in\accessiblePart{A}{R}$.
+\end{proposition}
+\begin{proof}
+    $\progressiveSubsets{A}{R}$ is inhabited
+        by \obv{progressive_subsets_inhabited}.
+    Show that for every $B\in\progressiveSubsets{A}{R}$ we have $x\in B$.
+    \begin{subproof}
+        Fix $B\in\progressiveSubsets{A}{R}$.
+        $B$ is progressive for $R$ on $A$ by \obv{progressive_subsets}.
+        For every $y\in A$ such that $y\mathrel{R}x$ we have $y\in B$
+            by \auto{accessible_part,inters_destr}.
+        Follows by \obv{progressive_on}.
+    \end{subproof}
+    Follows by \obv{accessible_part,inters_intro}.
+\end{proof}
+
+\begin{proposition}\label{accessible_part_is_progressive}
+    $\accessiblePart{A}{R}$ is progressive for $R$ on $A$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{progressive_on,accessible_part_intro}.
+\end{proof}
+
+\begin{proposition}\label{accessible_induction_set}
+    Let $a\in\accessiblePart{A}{R}$.
+    Suppose $B$ is progressive for $R$ on $A$.
+    Then $a\in B$.
+\end{proposition}
+\begin{proof}
+    Let $C=A\inter B$.
+    $C\subseteq A$ by \auto{inter_lower_left}.
+    Show that $C$ is progressive for $R$ on $A$.
+    \begin{subproof}
+        Show that for every $x\in A$ we have
+            if for every $y\in A$ such that $y\mathrel{R}x$ we have $y\in C$,
+            then $x\in C$.
+        \begin{subproof}
+            Fix $x\in A$.
+            Suppose for every $y\in A$ such that $y\mathrel{R}x$ we have $y\in C$.
+            For every $y\in A$ such that $y\mathrel{R}x$ we have $y\in B$
+                by \auto{inter}.
+            Thus $x\in B$ by \obv{progressive_on}.
+            Hence $x\in C$ by \obv{inter_intro}.
+        \end{subproof}
+        Follows by \obv{progressive_on}.
+    \end{subproof}
+    Thus $\accessiblePart{A}{R}\subseteq C$
+        by \obv{accessible_part_least}.
+    Hence $a\in C$ by \obv{subseteq}.
+    Follows by \auto{inter}.
+\end{proof}
+
+\begin{definition}\label{well_founded_on}
+    $\wellFoundedOn{A}{R}$ iff $R$ is a relation and
+        for every inhabited subset $X$ of $A$
+            there exists $m\in X$ such that for every $y\in X$
+                we have $y\not\mathrel{R}m$.
+\end{definition}
+
+\begin{abbreviation}\label{well_founded_on_phrase}
+    $R$ is well-founded on $A$ iff $\wellFoundedOn{A}{R}$.
+\end{abbreviation}
+
+\begin{definition}\label{well_founded}
+    $\wellFounded{R}$ iff $\wellFoundedOn{\fld{R}}{R}$.
+\end{definition}
+
+\begin{abbreviation}\label{well_founded_phrase}
+    $R$ is well-founded iff $\wellFounded{R}$.
+\end{abbreviation}
+
+\begin{classification}\label{well_founded_is_relation}
+    Suppose $R$ is well-founded.
+    Then $R$ is a relation.
+\end{classification}
+\begin{proof}
+    Follows by \auto{well_founded,well_founded_on}.
+\end{proof}
+
+\begin{proposition}\label{well_founded_on_implies_accessible}
+    Suppose $R$ is well-founded on $A$.
+    Then $A\subseteq\accessiblePart{A}{R}$.
+\end{proposition}
+\begin{proof}
+    Suppose not.
+    Let $D=A\setminus\accessiblePart{A}{R}$.
+    $D\neq\emptyset$ by \obv{setminus_eq_emptyset_iff_subseteq}.
+    $D$ is inhabited by \obv{nonempty_inhabited}.
+    $D\subseteq A$ by \auto{setminus_subseteq}.
+    Take $m\in D$ such that for every $y\in D$ we have $y\not\mathrel{R}m$
+        by \obv{well_founded_on}.
+    $m\in A$ and $m\notin\accessiblePart{A}{R}$ by \obv{setminus}.
+    For every $y\in A$ such that $y\mathrel{R}m$
+        we have $y\in\accessiblePart{A}{R}$ by \auto{setminus}.
+    Thus $m\in\accessiblePart{A}{R}$ by \obv{accessible_part_intro}.
+    Contradiction.
+\end{proof}
+
+\begin{proposition}\label{accessible_implies_well_founded_on}
+    Let $R$ be a relation.
+    Suppose $A\subseteq\accessiblePart{A}{R}$.
+    Then $R$ is well-founded on $A$.
+\end{proposition}
+\begin{proof}
+    Show that for every $X$ such that $X\subseteq A$ and $X$ is inhabited
+        there exists $m\in X$ such that for every $y\in X$
+            we have $y\not\mathrel{R}m$.
+    \begin{subproof}
+        Fix $X$.
+        Assume $X\subseteq A$ and $X$ is inhabited.
+        Suppose not.
+        Then for every $x\in X$ there exists $y\in X$ such that $y\mathrel{R}x$
+            by \auto.
+        Let $B=A\setminus X$.
+        Show that $B$ is progressive for $R$ on $A$.
+        \begin{subproof}
+            Show that for every $x\in A$ we have
+                if for every $y\in A$ such that $y\mathrel{R}x$ we have $y\in B$,
+                then $x\in B$.
+            \begin{subproof}
+                Fix $x\in A$.
+                Suppose for every $y\in A$ such that $y\mathrel{R}x$ we have $y\in B$.
+                Suppose not.
+                Then $x\in X$ by \auto{setminus}.
+                Take $y\in X$ such that $y\mathrel{R}x$.
+                Then $y\in A$ by \obv{subseteq}.
+                Hence $y\in B$.
+                $y\notin B$ by \auto{setminus}.
+                Contradiction.
+            \end{subproof}
+            Follows by \obv{progressive_on}.
+        \end{subproof}
+        Take $a$ such that $a\in X$.
+        Then $a\in A$ by \obv{subseteq}.
+        Hence $a\in\accessiblePart{A}{R}$ by \obv{subseteq}.
+        Thus $a\in B$ by \obv{accessible_induction_set}.
+        $a\notin B$ by \auto{setminus}.
+        Contradiction.
+    \end{subproof}
+    Follows by \obv{well_founded_on}.
+\end{proof}
+
+\begin{proposition}\label{well_founded_on_iff_accessible}
+    $R$ is well-founded on $A$ iff
+        $R$ is a relation and $A=\accessiblePart{A}{R}$.
+\end{proposition}
+\begin{proof}
+    $\accessiblePart{A}{R}\subseteq A$ by \obv{accessible_part_subseteq}.
+    Follows by
+        \auto{well_founded_on,well_founded_on_implies_accessible,
+            accessible_implies_well_founded_on,subseteq_antisymmetric}.
+\end{proof}
+
+\begin{theorem}\label{well_founded_induction_set}
+    Suppose $R$ is well-founded on $A$.
+    Suppose $B$ is progressive for $R$ on $A$.
+    Then $A\subseteq B$.
+\end{theorem}
+\begin{proof}
+    $A\subseteq\accessiblePart{A}{R}$
+        by \obv{well_founded_on_implies_accessible}.
+    For every $a\in A$ we have $a\in B$
+        by \obv{accessible_induction_set,subseteq}.
+    Follows by \obv{subseteq}.
+\end{proof}
+
+\begin{theorem}\label{well_founded_induction}
+    $\forall A:\Set.\ \forall R:\Set.\ \forall P:\Set\to\Prop.
+        \wellFoundedOn{A}{R}\implies
+        (\forall x:\Set.\ x\in A\implies
+            ((\forall y:\Set.\ (y\in A\land y\mathrel{R}x)
+                \implies\Apply{P}{y})
+            \implies\Apply{P}{x}))\implies
+        (\forall a:\Set.\ a\in A\implies\Apply{P}{a})$.
+\end{theorem}
+\begin{proof}
+    Fix $A,R,P$.
+    Assume $\wellFoundedOn{A}{R}$.
+    Assume $\forall x:\Set.\ x\in A\implies
+        ((\forall y:\Set.\ (y\in A\land y\mathrel{R}x)\implies\Apply{P}{y})
+        \implies\Apply{P}{x})$.
+    Fix $a\in A$.
+    Suppose not.
+    Let $C=\sep{A}{\fun{x:\Set}{\Apply{P}{x}\implies\bot}}$.
+    $a\in C$ by \obv{logical_separation_iff}.
+    Hence $C$ is inhabited.
+    $C\subseteq A$ by \obv{subseteq,logical_separation_subseteq}.
+    Take $m\in C$ such that for every $y\in C$ we have $y\not\mathrel{R}m$
+        by \obv{well_founded_on}.
+    $\forall y:\Set.\ (y\in A\land y\mathrel{R}m)\implies\Apply{P}{y}$
+        by \auto{logical_separation_iff}.
+    Thus $\Apply{P}{m}$ by \obv{logical_separation_iff}.
+    $\Apply{P}{m}\implies\bot$ by \obv{logical_separation_iff}.
+\end{proof}
+
+\begin{theorem}\label{well_founded_on_from_induction}
+    Let $R$ be a relation.
+    Suppose $\forall P:\Set\to\Prop.
+        (\forall x:\Set.\ x\in A\implies
+            ((\forall y:\Set.\ (y\in A\land y\mathrel{R}x)
+                \implies\Apply{P}{y})\implies\Apply{P}{x}))
+        \implies(\forall x:\Set.\ x\in A\implies\Apply{P}{x})$.
+    Then $R$ is well-founded on $A$.
+\end{theorem}
+\begin{proof}
+    Let $P:\Set\to\Prop=\fun{x:\Set}{x\in\accessiblePart{A}{R}}$.
+    $\forall x:\Set.\ x\in A\implies
+        ((\forall y:\Set.\ (y\in A\land y\mathrel{R}x)
+            \implies\Apply{P}{y})\implies\Apply{P}{x})$
+        by \auto{accessible_part_intro}.
+    Hence $\forall x:\Set.\ x\in A\implies\Apply{P}{x}$ by \auto.
+    Hence for every $x\in A$ we have $x\in\accessiblePart{A}{R}$ by \auto.
+    $A\subseteq\accessiblePart{A}{R}$ by \obv{subseteq}.
+    Follows by \obv{accessible_implies_well_founded_on}.
+\end{proof}
+
+\begin{proposition}\label{well_founded_on_subset_carrier}
+    Suppose $R$ is well-founded on $A$.
+    Suppose $B\subseteq A$.
+    Then $R$ is well-founded on $B$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{well_founded_on,subseteq_transitive}.
+\end{proof}
+
+\begin{proposition}\label{well_founded_iff_well_founded_on_ambient}
+    Let $R$ be a relation.
+    Suppose $\fld{R}\subseteq X$.
+    Then $R$ is well-founded iff $R$ is well-founded on $X$.
+\end{proposition}
+\begin{proof}
+    Show that if $R$ is well-founded, then $R$ is well-founded on $X$.
+    \begin{subproof}
+        Assume $R$ is well-founded.
+        Show that for every $Y$ such that $Y\subseteq X$ and $Y$ is inhabited
+            there exists $m\in Y$ such that for every $y\in Y$ we have
+                $y\not\mathrel{R}m$.
+        \begin{subproof}
+            Fix $Y$.
+            Assume $Y\subseteq X$ and $Y$ is inhabited.
+            Show that if $Y\inter\fld{R}$ is inhabited, then there exists
+                $m\in Y$ such that for every $y\in Y$ we have
+                    $y\not\mathrel{R}m$.
+            \begin{subproof}
+                Assume $Y\inter\fld{R}$ is inhabited.
+                $Y\inter\fld{R}\subseteq\fld{R}$
+                    by \obv{inter_lower_right}.
+                Take $m\in Y\inter\fld{R}$ such that for every
+                    $y\in Y\inter\fld{R}$ we have $y\not\mathrel{R}m$
+                    by \auto{well_founded,well_founded_on}.
+                $m\in Y$ by \obv{inter}.
+                Show that for every $y\in Y$ we have $y\not\mathrel{R}m$.
+                \begin{subproof}
+                    Fix $y\in Y$.
+                    Suppose $y\mathrel{R}m$.
+                    Then $y\in\fld{R}$ by \obv{fld_intro_left}.
+                    Hence $y\in Y\inter\fld{R}$ by \obv{inter_intro}.
+                    Contradiction.
+                \end{subproof}
+            \end{subproof}
+            Show that if $Y\inter\fld{R}$ is not inhabited, then there exists
+                $m\in Y$ such that for every $y\in Y$ we have
+                    $y\not\mathrel{R}m$.
+            \begin{subproof}
+                Assume $Y\inter\fld{R}$ is not inhabited.
+                Take $m$ such that $m\in Y$.
+                Show that for every $y\in Y$ we have $y\not\mathrel{R}m$.
+                \begin{subproof}
+                    Fix $y\in Y$.
+                    Suppose $y\mathrel{R}m$.
+                    Then $m\in\fld{R}$ by \obv{fld_intro_right}.
+                    Hence $m\in Y\inter\fld{R}$ by \obv{inter_intro}.
+                    Thus $Y\inter\fld{R}$ is inhabited.
+                    Contradiction.
+                \end{subproof}
+            \end{subproof}
+        \end{subproof}
+        Follows by \obv{well_founded_on}.
+    \end{subproof}
+    Show that if $R$ is well-founded on $X$, then $R$ is well-founded.
+    \begin{subproof}
+        Assume $R$ is well-founded on $X$.
+        Hence $R$ is well-founded on $\fld{R}$
+            by \obv{well_founded_on_subset_carrier}.
+        Follows by \obv{well_founded}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{proposition}\label{well_founded_on_subset_relation}
+    Suppose $R$ is well-founded on $A$.
+    Suppose $S\subseteq R$.
+    Then $S$ is well-founded on $A$.
+\end{proposition}
+\begin{proof}
+    $S$ is a relation by \auto{well_founded_on,relation,subseteq}.
+    Follows by \auto{well_founded_on,subseteq}.
+\end{proof}
+
+\begin{proposition}\label{well_founded_on_irreflexive}
+    Suppose $R$ is well-founded on $A$.
+    Let $a\in A$.
+    Then $a\not\mathrel{R}a$.
+\end{proposition}
+\begin{proof}
+    $\{a\}$ is an inhabited subset of $A$
+        by \obv{singleton_inhabited,singleton_subset_intro}.
+    Follows by \auto{well_founded_on,singleton_iff}.
+\end{proof}
+
+\begin{proposition}\label{membership_is_well_founded_on}
+    $\memrel{A}$ is well-founded on $A$.
+\end{proposition}
+\begin{proof}
+    $\memrel{A}$ is a relation by \obv{memrel_is_relation}.
+    Show that for every $X$ such that $X\subseteq A$ and $X$ is inhabited
+        there exists $m\in X$ such that for every $y\in X$
+            we have $y\not\mathrel{\memrel{A}}m$.
+    \begin{subproof}
+        Fix $X$.
+        Assume $X\subseteq A$ and $X$ is inhabited.
+        Take $m$ such that $m$ is an \in-minimal element of $X$
+            by \obv{regularity}.
+        For every $y\in X$ we have $y\not\mathrel{\memrel{A}}m$
+            by \auto{disjoint,memrel}.
+    \end{subproof}
+    Follows by \obv{well_founded_on}.
+\end{proof}

@@ -1,0 +1,137 @@
+\section{Relative complements of families}
+
+\import{set/finite.tex}
+
+For a family of subsets of a fixed ambient set, taking relative complements
+turns unions into empty intersections.  This elementary set-theoretic bridge
+is recorded here for later use in the open-cover characterization of
+compactness.
+
+\begin{definition}\label{relative_complement_family}
+    $\relativeComplements{S}{F}=\{S\setminus A\mid A\in F\}$.
+\end{definition}
+
+\begin{proposition}\label{relative_complement_family_finite}
+    Suppose $F$ is finite.
+    Then $\relativeComplements{S}{F}$ is finite.
+\end{proposition}
+\begin{proof}
+    Let $C=\{G\in\pow{F}\mid
+        \text{$\relativeComplements{S}{G}$ is finite}\}$.
+    $\relativeComplements{S}{\emptyset}=\emptyset$
+        by \auto{relative_complement_family,emptyset,setext}.
+    Hence $\emptyset\in C$
+        by \obv{powerset_bottom,emptyset_is_finite}.
+    Show that for every $G,A$ such that $G\in C$ and $A\in F$ we have
+        $\cons{A}{G}\in C$.
+    \begin{subproof}
+        Fix $G,A$.
+        Assume $G\in C$ and $A\in F$.
+        $G\subseteq F$ by \obv{pow_iff,subseteq}.
+        Hence $\cons{A}{G}\subseteq F$
+            by \obv{cons_subseteq_intro}.
+        Thus $\cons{A}{G}\in\pow{F}$ by \obv{pow_iff,subseteq}.
+        $\relativeComplements{S}{\cons{A}{G}}
+            =\cons{S\setminus A}{\relativeComplements{S}{G}}$
+            by \auto{relative_complement_family,cons_iff,setext}.
+        $\relativeComplements{S}{G}$ is finite.
+        Hence $\relativeComplements{S}{\cons{A}{G}}$ is finite
+            by \auto{finite_cons}.
+    \end{subproof}
+    Hence $F\in C$ by \obv{finite_induction}.
+\end{proof}
+
+\begin{proposition}\label{relative_complement_family_involutive}
+    Suppose $F\subseteq\pow{S}$.
+    Then $\relativeComplements{S}{\relativeComplements{S}{F}}=F$.
+\end{proposition}
+\begin{proof}
+    Show that $\relativeComplements{S}{\relativeComplements{S}{F}}
+        \subseteq F$.
+    \begin{subproof}
+        It suffices to show that every element of
+            $\relativeComplements{S}{\relativeComplements{S}{F}}$
+            is an element of $F$ by \obv{subseteq}.
+        Fix $B\in\relativeComplements{S}{\relativeComplements{S}{F}}$.
+        Take $D\in\relativeComplements{S}{F}$ such that
+            $B=S\setminus D$ by \obv{relative_complement_family}.
+        Take $A\in F$ such that $D=S\setminus A$
+            by \obv{relative_complement_family}.
+        $A\subseteq S$ by \obv{subseteq,pow_iff}.
+        Hence $S\setminus(S\setminus A)=A$
+            by \obv{double_relative_complement}.
+        Thus $B=A$.
+    \end{subproof}
+    Show that $F\subseteq
+        \relativeComplements{S}{\relativeComplements{S}{F}}$.
+    \begin{subproof}
+        It suffices to show that every element of $F$ is an element of
+            $\relativeComplements{S}{\relativeComplements{S}{F}}$
+            by \obv{subseteq}.
+        Fix $A\in F$.
+        $A\subseteq S$ by \obv{subseteq,pow_iff}.
+        $S\setminus A\in\relativeComplements{S}{F}$
+            by \obv{relative_complement_family}.
+        $S\setminus(S\setminus A)=A$
+            by \obv{double_relative_complement}.
+        Follows by \obv{relative_complement_family}.
+    \end{subproof}
+    Follows by \obv{subseteq_antisymmetric}.
+\end{proof}
+
+\begin{proposition}\label{relative_complement_union_iff_intersection_empty}
+    Suppose $F$ is inhabited and $F\subseteq\pow{S}$.
+    Then $\unions{\relativeComplements{S}{F}}=S$ iff
+        $\inters{F}=\emptyset$.
+\end{proposition}
+\begin{proof}
+    $\unions{\relativeComplements{S}{F}}\subseteq S$
+        by \auto{relative_complement_family,setminus_subseteq,unions_iff,subseteq}.
+    $\inters{F}\subseteq S$
+        by \auto{inters_iff_forall,subseteq,pow_iff}.
+    Show that if $\unions{\relativeComplements{S}{F}}=S$, then
+        $\inters{F}=\emptyset$.
+    \begin{subproof}
+        Assume $\unions{\relativeComplements{S}{F}}=S$.
+        Show that $\inters{F}\subseteq\emptyset$.
+        \begin{subproof}
+            It suffices to show that every element of $\inters{F}$
+                is an element of $\emptyset$ by \obv{subseteq}.
+            Fix $x\in\inters{F}$.
+            $x\in S$ by \obv{subseteq}.
+            Hence $x\in\unions{\relativeComplements{S}{F}}$.
+            Take $D\in\relativeComplements{S}{F}$ such that $x\in D$
+                by \obv{unions_iff}.
+            Take $A\in F$ such that $D=S\setminus A$
+                by \obv{relative_complement_family}.
+            $x\in A$ by \obv{inters_destr}.
+            $x\notin A$ by \auto{setminus}.
+            Contradiction.
+        \end{subproof}
+        Follows by \obv{subseteq_emptyset_iff}.
+    \end{subproof}
+    Show that if $\inters{F}=\emptyset$, then
+        $S\subseteq\unions{\relativeComplements{S}{F}}$.
+    \begin{subproof}
+        Assume $\inters{F}=\emptyset$.
+        It suffices to show that every element of $S$ is an element of
+            $\unions{\relativeComplements{S}{F}}$ by \obv{subseteq}.
+        Fix $x\in S$.
+        Suppose not.
+        Show that for every $A\in F$ we have $x\in A$.
+        \begin{subproof}
+            Fix $A\in F$.
+            Suppose not.
+            $x\in S\setminus A$ by \obv{setminus}.
+            $S\setminus A\in\relativeComplements{S}{F}$
+                by \obv{relative_complement_family}.
+            Hence $x\in\unions{\relativeComplements{S}{F}}$
+                by \auto{unions_iff}.
+            Contradiction.
+        \end{subproof}
+        Hence $x\in\inters{F}$ by \auto{inters_iff_forall}.
+        Thus $x\in\emptyset$.
+        Contradiction by \obv{emptyset}.
+    \end{subproof}
+    Follows by \auto{subseteq_antisymmetric}.
+\end{proof}

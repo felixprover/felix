@@ -1,0 +1,2245 @@
+\import{surreal/reciprocal.tex}
+
+\section{Nonnegative square roots}
+
+The construction first produces finite Newton-style lower and upper
+approximations.  Their unions form a Conway cut, which defines the
+nonnegative square-root operation by surreal recursion.
+
+\subsection{Finite square-root approximations}
+
+\begin{definition}\label{surreal_sqrt_nonnegative_left}
+    $\surrealSqrtNonnegativeLeft{x}=
+        \{u\in\surrealLeft{x}\mid
+            \surrealLe{\surrealZero}{u}\}$.
+\end{definition}
+
+\begin{definition}\label{surreal_sqrt_update}
+    $\surrealSqrtUpdate{x}{y}{z}=
+        \surrealDiv{
+            \surrealAdd{x}{\surrealMul{y}{z}}}{
+            \surrealAdd{y}{z}}$.
+\end{definition}
+
+\begin{definition}\label{surreal_sqrt_update_set}
+    $\surrealSqrtUpdateSetOp:\Set\to\Set\to\Set\to\Set
+        =\fun{Y,Z,x:\Set}{
+                    \{\surrealSqrtUpdate{x}{\fst{p}}{\snd{p}}
+                        \mid p\in Y\times Z
+                        \mid \surrealLt{\surrealZero}{
+                            \surrealAdd{\fst{p}}{\snd{p}}}\}}$.
+\end{definition}
+
+\begin{proposition}\label{surreal_sqrt_update_set_iff}
+    $\forall Y,Z,x,q:\Set.
+        q\in\Apply{\surrealSqrtUpdateSetOp}{Y,Z,x}
+        \iff
+        (\exists y,z:\Set.
+            y\in Y\land z\in Z\land
+            \surrealLt{\surrealZero}{\surrealAdd{y}{z}}\land
+            q=\surrealSqrtUpdate{x}{y}{z})$.
+\end{proposition}
+\begin{proof}
+    Fix $Y,Z,x,q$.
+    Show that if
+        $q\in\Apply{\surrealSqrtUpdateSetOp}{Y,Z,x}$, then
+        there exist $y,z$ such that
+            $y\in Y$ and $z\in Z$ and
+            $\surrealLt{\surrealZero}{\surrealAdd{y}{z}}$ and
+            $q=\surrealSqrtUpdate{x}{y}{z}$.
+    \begin{subproof}
+        Assume
+            $q\in\Apply{\surrealSqrtUpdateSetOp}{Y,Z,x}$.
+        Take $p\in Y\times Z$ such that
+            $\surrealLt{\surrealZero}{
+                \surrealAdd{\fst{p}}{\snd{p}}}$ and
+            $q=\surrealSqrtUpdate{x}{\fst{p}}{\snd{p}}$ by
+            \auto{surreal_sqrt_update_set}.
+        Take $y,z$ such that $y\in Y$ and $z\in Z$ and
+            $p=(y,z)$ by \obv{times_elem_is_tuple}.
+        $\fst{p}=y$ and $\snd{p}=z$ by \auto{fst_eq,snd_eq}.
+        Follows by \auto.
+    \end{subproof}
+    Show that if there exist $y,z$ such that
+        $y\in Y$ and $z\in Z$ and
+        $\surrealLt{\surrealZero}{\surrealAdd{y}{z}}$ and
+        $q=\surrealSqrtUpdate{x}{y}{z}$, then
+        $q\in\Apply{\surrealSqrtUpdateSetOp}{Y,Z,x}$.
+    \begin{subproof}
+        Assume that there exist $y,z$ such that
+            $y\in Y$ and $z\in Z$ and
+            $\surrealLt{\surrealZero}{\surrealAdd{y}{z}}$ and
+            $q=\surrealSqrtUpdate{x}{y}{z}$.
+        Take $y,z$ such that
+            $y\in Y$ and $z\in Z$ and
+            $\surrealLt{\surrealZero}{\surrealAdd{y}{z}}$ and
+            $q=\surrealSqrtUpdate{x}{y}{z}$.
+        $(y,z)\in Y\times Z$ by \obv{times_tuple_intro}.
+        $\fst{(y,z)}=y$ and $\snd{(y,z)}=z$ by
+            \obv{fst_eq,snd_eq}.
+        Follows by \auto{surreal_sqrt_update_set}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{proposition}\label{surreal_sqrt_update_is_surreal}
+    Suppose $\surreal{x}$ and $\surreal{y}$ and $\surreal{z}$.
+    Then $\surreal{\surrealSqrtUpdate{x}{y}{z}}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{surreal_sqrt_update,surreal_add_is_surreal,surreal_mul_is_surreal,surreal_division_is_surreal}.
+\end{proof}
+
+\begin{proposition}\label{surreal_sqrt_update_nonnegative}
+    Suppose $\surreal{x}$ and $\surreal{y}$ and $\surreal{z}$.
+    Suppose $\surrealLe{\surrealZero}{x}$ and
+        $\surrealLe{\surrealZero}{y}$ and
+        $\surrealLe{\surrealZero}{z}$ and
+        $\surrealLt{\surrealZero}{\surrealAdd{y}{z}}$.
+    Then $\surrealLe{\surrealZero}{\surrealSqrtUpdate{x}{y}{z}}$.
+\end{proposition}
+\begin{proof}
+    $\surreal{\surrealMul{y}{z}}$ and
+        $\surrealLe{\surrealZero}{\surrealMul{y}{z}}$
+        by \obv{surreal_mul_is_surreal,surreal_mul_nonneg_nonneg}.
+    $\surreal{\surrealAdd{x}{\surrealMul{y}{z}}}$ and
+        $\surrealLe{\surrealZero}{
+            \surrealAdd{x}{\surrealMul{y}{z}}}$
+        by \auto{surreal_add_is_surreal,surreal_add_le_both,surreal_add_zero_left,empty_surreal}.
+    $\surreal{\surrealAdd{y}{z}}$
+        by \obv{surreal_add_is_surreal}.
+    Follows by
+        \auto{surreal_sqrt_update,surreal_division_nonnegative}.
+\end{proof}
+
+\begin{lemma}\label{surreal_mul_positive_right_negative_elim}
+    Suppose $\surreal{a}$ and $\surreal{d}$.
+    Suppose $\surrealLt{\surrealZero}{d}$ and
+        $\surrealLt{\surrealMul{a}{d}}{\surrealZero}$.
+    Then $\surrealLt{a}{\surrealZero}$.
+\end{lemma}
+\begin{proof}
+    $\surrealLt{a}{\surrealZero}$ or $a=\surrealZero$ or
+        $\surrealLt{\surrealZero}{a}$
+        by \obv{surreal_lt_trichotomy,empty_surreal}.
+    \begin{byCase}
+        \caseOf{$\surrealLt{a}{\surrealZero}$.}
+            Follows.
+        \caseOf{not $\surrealLt{a}{\surrealZero}$.}
+            \begin{byCase}
+                \caseOf{$a=\surrealZero$.}
+                    $\surrealMul{a}{d}=\surrealZero$
+                        by \auto{surreal_mul_zero_left}.
+                    Hence $\surrealLt{\surrealZero}{\surrealZero}$.
+                    Contradiction by
+                        \obv{surreal_lt_irreflexive,empty_surreal}.
+                \caseOf{$a\neq\surrealZero$.}
+                    $\surrealLt{\surrealZero}{a}$.
+                    $\surrealLt{\surrealZero}{\surrealMul{a}{d}}$
+                        by \obv{surreal_mul_pos_pos}.
+                    Contradiction by
+                        \obv{surreal_lt_asymmetric,empty_surreal,surreal_mul_is_surreal}.
+            \end{byCase}
+    \end{byCase}
+\end{proof}
+
+\begin{lemma}\label{surreal_mul_positive_right_positive_elim}
+    Suppose $\surreal{a}$ and $\surreal{d}$.
+    Suppose $\surrealLt{\surrealZero}{d}$ and
+        $\surrealLt{\surrealZero}{\surrealMul{a}{d}}$.
+    Then $\surrealLt{\surrealZero}{a}$.
+\end{lemma}
+\begin{proof}
+    $\surrealLt{a}{\surrealZero}$ or $a=\surrealZero$ or
+        $\surrealLt{\surrealZero}{a}$
+        by \obv{surreal_lt_trichotomy,empty_surreal}.
+    \begin{byCase}
+        \caseOf{$\surrealLt{\surrealZero}{a}$.}
+            Follows.
+        \caseOf{not $\surrealLt{\surrealZero}{a}$.}
+            \begin{byCase}
+                \caseOf{$a=\surrealZero$.}
+                    $\surrealMul{a}{d}=\surrealZero$
+                        by \auto{surreal_mul_zero_left}.
+                    Hence $\surrealLt{\surrealZero}{\surrealZero}$.
+                    Contradiction by
+                        \obv{surreal_lt_irreflexive,empty_surreal}.
+                \caseOf{$a\neq\surrealZero$.}
+                    $\surrealLt{a}{\surrealZero}$.
+                    $\surrealLt{\surrealMul{a}{d}}{\surrealZero}$
+                        by \obv{surreal_mul_neg_pos}.
+                    Contradiction by
+                        \obv{surreal_lt_asymmetric,empty_surreal,surreal_mul_is_surreal}.
+            \end{byCase}
+    \end{byCase}
+\end{proof}
+
+\begin{lemma}\label{surreal_sqrt_update_difference_identity}
+    Suppose $\surreal{x}$ and $\surreal{y}$ and $\surreal{z}$.
+    Suppose $\surrealLt{\surrealZero}{\surrealAdd{y}{z}}$.
+    Let $m=\surrealSqrtUpdate{x}{y}{z}$.
+    Let $d=\surrealAdd{y}{z}$.
+    Then
+        $\surrealMul{
+            \surrealAdd{\surrealMul{m}{m}}{
+                \surrealNeg{x}}}{\surrealMul{d}{d}}
+        =\surrealMul{
+            \surrealAdd{x}{\surrealNeg{\surrealMul{y}{y}}}}{
+            \surrealAdd{x}{\surrealNeg{\surrealMul{z}{z}}}}$.
+\end{lemma}
+\begin{proof}
+    $\surreal{d}$ by \obv{surreal_add_is_surreal}.
+    $d\neq\surrealZero$
+        by \obv{surreal_lt_irreflexive,empty_surreal}.
+    $\surreal{\surrealAdd{x}{\surrealMul{y}{z}}}$
+        by \obv{surreal_mul_is_surreal,surreal_add_is_surreal}.
+    Hence $\surreal{m}$
+        by \obv{surreal_sqrt_update_is_surreal}.
+    $\surrealMul{m}{d}=\surrealAdd{x}{\surrealMul{y}{z}}$
+        by
+        \auto{surreal_sqrt_update,surreal_division_cancel_right}.
+    Let $p=\surrealMul{y}{z}$.
+    $\surreal{p}$ by \obv{surreal_mul_is_surreal}.
+    Let $A=\surrealMul{x}{x}$.
+    Let $B=\surrealMul{x}{p}$.
+    Let $C=\surrealMul{p}{p}$.
+    Let $E=\surrealMul{x}{\surrealMul{y}{y}}$.
+    Let $F=\surrealMul{x}{\surrealMul{z}{z}}$.
+    $\surreal{A}$ and $\surreal{B}$ and $\surreal{C}$ and
+        $\surreal{E}$ and $\surreal{F}$
+        by \obv{surreal_mul_is_surreal}.
+    Let $S=\surrealAdd{\surrealAdd{A}{C}}{
+        \surrealAdd{\surrealNeg{E}}{\surrealNeg{F}}}$.
+    Let $T=\surrealAdd{B}{B}$.
+    Let $U=\surrealAdd{A}{C}$.
+    Let $V=\surrealAdd{E}{F}$.
+    $\surreal{T}$ and $\surreal{U}$ and $\surreal{V}$
+        by \obv{surreal_add_is_surreal}.
+    $\surrealMul{\surrealMul{m}{m}}{\surrealMul{d}{d}}
+        =\surrealMul{\surrealMul{m}{d}}{\surrealMul{m}{d}}$
+        by \obv{surreal_mul_four_rearrange}.
+    Hence
+        $\surrealMul{\surrealMul{m}{m}}{\surrealMul{d}{d}}
+        =\surrealMul{\surrealAdd{x}{p}}{\surrealAdd{x}{p}}$.
+    $\surrealMul{\surrealAdd{x}{p}}{\surrealAdd{x}{p}}
+        =\surrealAdd{
+            \surrealAdd{\surrealMul{x}{x}}{\surrealMul{x}{p}}}{
+            \surrealAdd{\surrealMul{x}{p}}{\surrealMul{p}{p}}}$
+        by
+        \auto{surreal_mul_foil,surreal_mul_commutative,surreal_mul_is_surreal}.
+    $\surrealMul{d}{d}
+        =\surrealAdd{
+            \surrealAdd{\surrealMul{y}{y}}{p}}{
+            \surrealAdd{p}{\surrealMul{z}{z}}}$
+        by
+        \auto{surreal_mul_foil,surreal_mul_commutative,surreal_mul_is_surreal}.
+    Hence $\surrealMul{x}{\surrealMul{d}{d}}
+        =\surrealMul{x}{
+            \surrealAdd{
+                \surrealAdd{\surrealMul{y}{y}}{p}}{
+                \surrealAdd{p}{\surrealMul{z}{z}}}}$.
+    Hence $\surrealMul{x}{\surrealMul{d}{d}}
+        =\surrealAdd{
+            \surrealAdd{\surrealMul{x}{\surrealMul{y}{y}}}{
+                \surrealMul{x}{p}}}{
+            \surrealAdd{\surrealMul{x}{p}}{
+                \surrealMul{x}{\surrealMul{z}{z}}}}$
+        by
+        \auto{surreal_mul_distributive_left,surreal_add_is_surreal,surreal_mul_is_surreal}.
+    Hence
+        $\surrealMul{
+            \surrealAdd{\surrealMul{m}{m}}{\surrealNeg{x}}}{
+            \surrealMul{d}{d}}
+        =\surrealAdd{
+            \surrealMul{\surrealMul{m}{m}}{\surrealMul{d}{d}}}{
+            \surrealNeg{\surrealMul{x}{\surrealMul{d}{d}}}}$
+        by
+        \obv{surreal_mul_subtract_left,surreal_mul_neg_left,surreal_mul_is_surreal}.
+    Hence
+        $\surrealMul{
+            \surrealAdd{\surrealMul{m}{m}}{\surrealNeg{x}}}{
+            \surrealMul{d}{d}}
+        =\surrealAdd{
+            \surrealAdd{\surrealAdd{A}{B}}{\surrealAdd{B}{C}}}{
+            \surrealNeg{
+                \surrealAdd{\surrealAdd{E}{B}}{
+                    \surrealAdd{B}{F}}}}$.
+    $\surrealAdd{\surrealAdd{A}{B}}{\surrealAdd{B}{C}}
+        =\surrealAdd{U}{T}$
+        by
+        \auto{surreal_add_associative,surreal_add_commutative,surreal_add_is_surreal}.
+    $\surrealAdd{\surrealAdd{E}{B}}{\surrealAdd{B}{F}}
+        =\surrealAdd{V}{T}$
+        by
+        \auto{surreal_add_associative,surreal_add_commutative,surreal_add_is_surreal}.
+    $S=\surrealAdd{U}{\surrealNeg{V}}$
+        by
+        \auto{surreal_negation_additive,surreal_add_associative,surreal_add_commutative,surreal_add_is_surreal,surreal_negation_is_surreal}.
+    $\surrealAdd{\surrealAdd{U}{T}}{
+        \surrealNeg{\surrealAdd{V}{T}}}
+        =\surrealAdd{U}{\surrealNeg{V}}$
+        by
+        \auto{surreal_negation_additive,surreal_add_associative,surreal_add_commutative,surreal_add_inverse_left,surreal_add_inverse_right,surreal_add_zero_left,surreal_add_zero_right,surreal_add_is_surreal,surreal_negation_is_surreal}.
+    Hence
+        $\surrealAdd{
+            \surrealAdd{\surrealAdd{A}{B}}{\surrealAdd{B}{C}}}{
+            \surrealNeg{
+                \surrealAdd{\surrealAdd{E}{B}}{
+                    \surrealAdd{B}{F}}}}=S$.
+    Hence
+        $\surrealMul{
+            \surrealAdd{\surrealMul{m}{m}}{\surrealNeg{x}}}{
+            \surrealMul{d}{d}}=S$.
+    $\surrealMul{x}{\surrealNeg{\surrealMul{z}{z}}}
+        =\surrealNeg{F}$
+        by \auto{surreal_mul_neg_right,surreal_mul_is_surreal}.
+    $\surrealMul{\surrealNeg{\surrealMul{y}{y}}}{x}
+        =\surrealNeg{E}$
+        by
+        \auto{surreal_mul_neg_left,surreal_mul_commutative,surreal_mul_is_surreal}.
+    $\surrealMul{\surrealNeg{\surrealMul{y}{y}}}{
+        \surrealNeg{\surrealMul{z}{z}}}=C$
+        by
+        \auto{surreal_mul_both_negated,surreal_mul_four_rearrange,surreal_mul_is_surreal}.
+    Hence $\surrealMul{
+        \surrealAdd{x}{\surrealNeg{\surrealMul{y}{y}}}}{
+        \surrealAdd{x}{\surrealNeg{\surrealMul{z}{z}}}}
+        =\surrealAdd{\surrealAdd{A}{\surrealNeg{F}}}{
+            \surrealAdd{\surrealNeg{E}}{C}}$
+        by
+        \auto{surreal_mul_foil,surreal_mul_is_surreal,surreal_negation_is_surreal}.
+    $\surrealAdd{\surrealAdd{A}{\surrealNeg{F}}}{
+        \surrealAdd{\surrealNeg{E}}{C}}=S$
+        by
+        \auto{surreal_add_associative,surreal_add_commutative,surreal_add_is_surreal,surreal_negation_is_surreal}.
+    Hence $\surrealMul{
+        \surrealAdd{x}{\surrealNeg{\surrealMul{y}{y}}}}{
+        \surrealAdd{x}{\surrealNeg{\surrealMul{z}{z}}}}=S$.
+\end{proof}
+
+\begin{theorem}\label{surreal_sqrt_update_lower_upper}
+    Suppose $\surreal{x}$ and $\surreal{y}$ and $\surreal{z}$.
+    Suppose $\surrealLe{\surrealZero}{x}$ and
+        $\surrealLe{\surrealZero}{y}$ and
+        $\surrealLe{\surrealZero}{z}$.
+    Suppose
+        $\surrealLt{\surrealMul{y}{y}}{x}$ and
+        $\surrealLt{x}{\surrealMul{z}{z}}$ and
+        $\surrealLt{\surrealZero}{\surrealAdd{y}{z}}$.
+    Let $m=\surrealSqrtUpdate{x}{y}{z}$.
+    Then $\surreal{m}$ and
+        $\surrealLe{\surrealZero}{m}$ and
+        $\surrealLt{\surrealMul{m}{m}}{x}$.
+\end{theorem}
+\begin{proof}
+    Let $d=\surrealAdd{y}{z}$.
+    $\surreal{d}$ by \obv{surreal_add_is_surreal}.
+    $\surreal{m}$ and $\surrealLe{\surrealZero}{m}$
+        by
+        \obv{surreal_sqrt_update_is_surreal,surreal_sqrt_update_nonnegative}.
+    Let $D=\surrealMul{d}{d}$.
+    $\surreal{D}$ and $\surrealLt{\surrealZero}{D}$
+        by \obv{surreal_mul_is_surreal,surreal_mul_pos_pos}.
+    Let $a=\surrealAdd{\surrealMul{m}{m}}{\surrealNeg{x}}$.
+    Let $b=\surrealAdd{x}{\surrealNeg{\surrealMul{y}{y}}}$.
+    Let $c=\surrealAdd{x}{\surrealNeg{\surrealMul{z}{z}}}$.
+    $\surreal{a}$ and $\surreal{b}$ and $\surreal{c}$
+        by
+        \obv{surreal_mul_is_surreal,surreal_negation_is_surreal,surreal_add_is_surreal}.
+    $\surrealLt{\surrealZero}{b}$ and
+        $\surrealLt{c}{\surrealZero}$
+        by
+        \auto{surreal_subtraction_positive,surreal_subtraction_negative,surreal_mul_is_surreal}.
+    Hence $\surrealLt{\surrealMul{b}{c}}{\surrealZero}$
+        by \obv{surreal_mul_pos_neg}.
+    $\surrealMul{a}{D}=\surrealMul{b}{c}$
+        by \auto{surreal_sqrt_update_difference_identity}.
+    Hence $\surrealLt{\surrealMul{a}{D}}{\surrealZero}$.
+    Hence $\surrealLt{a}{\surrealZero}$
+        by \obv{surreal_mul_positive_right_negative_elim}.
+    Hence $\surrealLt{\surrealMul{m}{m}}{x}$
+        by
+        \auto{surreal_subtraction_negative_elim,surreal_mul_is_surreal}.
+\end{proof}
+
+\begin{theorem}\label{surreal_sqrt_update_lower_lower}
+    Suppose $\surreal{x}$ and $\surreal{y}$ and $\surreal{z}$.
+    Suppose $\surrealLe{\surrealZero}{x}$ and
+        $\surrealLe{\surrealZero}{y}$ and
+        $\surrealLe{\surrealZero}{z}$.
+    Suppose
+        $\surrealLt{\surrealMul{y}{y}}{x}$ and
+        $\surrealLt{\surrealMul{z}{z}}{x}$ and
+        $\surrealLt{\surrealZero}{\surrealAdd{y}{z}}$.
+    Let $m=\surrealSqrtUpdate{x}{y}{z}$.
+    Then $\surreal{m}$ and
+        $\surrealLe{\surrealZero}{m}$ and
+        $\surrealLt{x}{\surrealMul{m}{m}}$.
+\end{theorem}
+\begin{proof}
+    Let $d=\surrealAdd{y}{z}$.
+    $\surreal{d}$ by \obv{surreal_add_is_surreal}.
+    $\surreal{m}$ and $\surrealLe{\surrealZero}{m}$
+        by
+        \obv{surreal_sqrt_update_is_surreal,surreal_sqrt_update_nonnegative}.
+    Let $D=\surrealMul{d}{d}$.
+    $\surreal{D}$ and $\surrealLt{\surrealZero}{D}$
+        by \obv{surreal_mul_is_surreal,surreal_mul_pos_pos}.
+    Let $a=\surrealAdd{\surrealMul{m}{m}}{\surrealNeg{x}}$.
+    Let $b=\surrealAdd{x}{\surrealNeg{\surrealMul{y}{y}}}$.
+    Let $c=\surrealAdd{x}{\surrealNeg{\surrealMul{z}{z}}}$.
+    $\surreal{a}$ and $\surreal{b}$ and $\surreal{c}$
+        by
+        \obv{surreal_mul_is_surreal,surreal_negation_is_surreal,surreal_add_is_surreal}.
+    $\surrealLt{\surrealZero}{b}$ and
+        $\surrealLt{\surrealZero}{c}$
+        by
+        \obv{surreal_subtraction_positive,surreal_mul_is_surreal}.
+    Hence $\surrealLt{\surrealZero}{\surrealMul{b}{c}}$
+        by \obv{surreal_mul_pos_pos}.
+    $\surrealMul{a}{D}=\surrealMul{b}{c}$
+        by \auto{surreal_sqrt_update_difference_identity}.
+    Hence $\surrealLt{\surrealZero}{\surrealMul{a}{D}}$.
+    Hence $\surrealLt{\surrealZero}{a}$
+        by \obv{surreal_mul_positive_right_positive_elim}.
+    Hence $\surrealLt{x}{\surrealMul{m}{m}}$
+        by
+        \obv{surreal_subtraction_positive_elim,surreal_mul_is_surreal}.
+\end{proof}
+
+\begin{theorem}\label{surreal_sqrt_update_upper_upper}
+    Suppose $\surreal{x}$ and $\surreal{y}$ and $\surreal{z}$.
+    Suppose $\surrealLe{\surrealZero}{x}$ and
+        $\surrealLe{\surrealZero}{y}$ and
+        $\surrealLe{\surrealZero}{z}$.
+    Suppose
+        $\surrealLt{x}{\surrealMul{y}{y}}$ and
+        $\surrealLt{x}{\surrealMul{z}{z}}$ and
+        $\surrealLt{\surrealZero}{\surrealAdd{y}{z}}$.
+    Let $m=\surrealSqrtUpdate{x}{y}{z}$.
+    Then $\surreal{m}$ and
+        $\surrealLe{\surrealZero}{m}$ and
+        $\surrealLt{x}{\surrealMul{m}{m}}$.
+\end{theorem}
+\begin{proof}
+    Let $d=\surrealAdd{y}{z}$.
+    $\surreal{d}$ by \obv{surreal_add_is_surreal}.
+    $\surreal{m}$ and $\surrealLe{\surrealZero}{m}$
+        by
+        \obv{surreal_sqrt_update_is_surreal,surreal_sqrt_update_nonnegative}.
+    Let $D=\surrealMul{d}{d}$.
+    $\surreal{D}$ and $\surrealLt{\surrealZero}{D}$
+        by \obv{surreal_mul_is_surreal,surreal_mul_pos_pos}.
+    Let $a=\surrealAdd{\surrealMul{m}{m}}{\surrealNeg{x}}$.
+    Let $b=\surrealAdd{x}{\surrealNeg{\surrealMul{y}{y}}}$.
+    Let $c=\surrealAdd{x}{\surrealNeg{\surrealMul{z}{z}}}$.
+    $\surreal{a}$ and $\surreal{b}$ and $\surreal{c}$
+        by
+        \obv{surreal_mul_is_surreal,surreal_negation_is_surreal,surreal_add_is_surreal}.
+    $\surrealLt{b}{\surrealZero}$ and
+        $\surrealLt{c}{\surrealZero}$
+        by
+        \auto{surreal_subtraction_negative,surreal_mul_is_surreal}.
+    Hence $\surrealLt{\surrealZero}{\surrealMul{b}{c}}$
+        by \obv{surreal_mul_neg_neg}.
+    $\surrealMul{a}{D}=\surrealMul{b}{c}$
+        by \auto{surreal_sqrt_update_difference_identity}.
+    Hence $\surrealLt{\surrealZero}{\surrealMul{a}{D}}$.
+    Hence $\surrealLt{\surrealZero}{a}$
+        by \obv{surreal_mul_positive_right_positive_elim}.
+    Hence $\surrealLt{x}{\surrealMul{m}{m}}$
+        by
+        \obv{surreal_subtraction_positive_elim,surreal_mul_is_surreal}.
+\end{proof}
+
+\begin{definition}\label{surreal_sqrt_approximation_step}
+    $\surrealSqrtApproxStepOp:\Set\to\Set\to\Set\to\Set
+        =\fun{x,n,p:\Set}{
+                    (\fst{p}
+                        \union
+                        \Apply{\surrealSqrtUpdateSetOp}{\fst{p},\snd{p},x},
+                     \snd{p}
+                        \union
+                        \Apply{\surrealSqrtUpdateSetOp}{\fst{p},\fst{p},x}
+                        \union
+                        \Apply{\surrealSqrtUpdateSetOp}{\snd{p},\snd{p},x})}$.
+\end{definition}
+
+\begin{definition}\label{surreal_sqrt_approximation}
+    $\surrealSqrtApproxOp:
+        \Set\to(\Set\to\Set)\to\Set\to\Set
+        =\fun{x:\Set}{
+            \fun{g:\Set\to\Set}{
+                \fun{n:\Set}{
+                    \Apply{\naturalRecOp}{
+                                (\{\Apply{g}{w}
+                                    \mid w\in\surrealSqrtNonnegativeLeft{x}\},
+                                 \{\Apply{g}{z}
+                                    \mid z\in\surrealRight{x}\}),
+                            \Apply{\surrealSqrtApproxStepOp}{x},n}}}}$.
+\end{definition}
+
+\begin{definition}\label{surreal_sqrt_lower_approximation}
+    $\surrealSqrtLowerApproxOp:
+        \Set\to(\Set\to\Set)\to\Set\to\Set
+        =\fun{x:\Set}{
+            \fun{g:\Set\to\Set}{
+                \fun{n:\Set}{
+                    \fst{\Apply{\surrealSqrtApproxOp}{x,g,n}}}}}$.
+\end{definition}
+
+\begin{definition}\label{surreal_sqrt_upper_approximation}
+    $\surrealSqrtUpperApproxOp:
+        \Set\to(\Set\to\Set)\to\Set\to\Set
+        =\fun{x:\Set}{
+            \fun{g:\Set\to\Set}{
+                \fun{n:\Set}{
+                    \snd{\Apply{\surrealSqrtApproxOp}{x,g,n}}}}}$.
+\end{definition}
+
+\begin{proposition}\label{surreal_sqrt_approximation_zero}
+    $\forall x:\Set.\ \forall g:\Set\to\Set.
+        \Apply{\surrealSqrtApproxOp}{x,g,
+            \emptyset}
+        =(\{\Apply{g}{w}
+                \mid w\in\surrealSqrtNonnegativeLeft{x}\},
+          \{\Apply{g}{z}\mid z\in\surrealRight{x}\})$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \obv{surreal_sqrt_approximation,natural_recursion_zero}.
+\end{proof}
+
+\begin{proposition}\label{surreal_sqrt_approximation_successor}
+    $\forall x,n:\Set.\ \forall g:\Set\to\Set.
+        n\in\naturals\implies
+        \Apply{\surrealSqrtApproxOp}{x,g,\suc{n}}
+        =\Apply{\surrealSqrtApproxStepOp}{x,n,
+                \Apply{\surrealSqrtApproxOp}{x,g,n}}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{surreal_sqrt_approximation,natural_recursion_successor}.
+\end{proof}
+
+\begin{proposition}\label{surreal_sqrt_lower_approximation_successor}
+    $\forall x,n:\Set.\ \forall g:\Set\to\Set.
+        n\in\naturals\implies
+        \Apply{\surrealSqrtLowerApproxOp}{x,g,\suc{n}}
+        =\Apply{\surrealSqrtLowerApproxOp}{x,g,n}
+          \union
+          \Apply{\surrealSqrtUpdateSetOp}{
+            \Apply{\surrealSqrtLowerApproxOp}{x,g,n},
+            \Apply{\surrealSqrtUpperApproxOp}{x,g,n},x}$.
+\end{proposition}
+\begin{proof}
+    Fix $x,n,g$.
+    Assume $n\in\naturals$.
+    Follows by
+        \auto{surreal_sqrt_lower_approximation,surreal_sqrt_upper_approximation,surreal_sqrt_approximation_successor,surreal_sqrt_approximation_step,fst_eq,snd_eq}.
+\end{proof}
+
+\begin{proposition}\label{surreal_sqrt_upper_approximation_successor}
+    $\forall x,n:\Set.\ \forall g:\Set\to\Set.
+        n\in\naturals\implies
+        \Apply{\surrealSqrtUpperApproxOp}{x,g,\suc{n}}
+        =\Apply{\surrealSqrtUpperApproxOp}{x,g,n}
+          \union
+          \Apply{\surrealSqrtUpdateSetOp}{
+            \Apply{\surrealSqrtLowerApproxOp}{x,g,n},
+            \Apply{\surrealSqrtLowerApproxOp}{x,g,n},x}
+          \union
+          \Apply{\surrealSqrtUpdateSetOp}{
+            \Apply{\surrealSqrtUpperApproxOp}{x,g,n},
+            \Apply{\surrealSqrtUpperApproxOp}{x,g,n},x}$.
+\end{proposition}
+\begin{proof}
+    Fix $x,n,g$.
+    Assume $n\in\naturals$.
+    Follows by
+        \auto{surreal_sqrt_lower_approximation,surreal_sqrt_upper_approximation,surreal_sqrt_approximation_successor,surreal_sqrt_approximation_step,fst_eq,snd_eq}.
+\end{proof}
+
+\begin{theorem}\label{surreal_sqrt_approximation_monotone_add}
+    $\forall x,m,n:\Set.\ \forall g:\Set\to\Set.
+        (m\in\naturals\land n\in\naturals)
+        \implies
+        (\Apply{\surrealSqrtLowerApproxOp}{x,g,m}
+            \subseteq
+         \Apply{\surrealSqrtLowerApproxOp}{x,g,m+n}
+         \land
+         \Apply{\surrealSqrtUpperApproxOp}{x,g,m}
+            \subseteq
+         \Apply{\surrealSqrtUpperApproxOp}{x,g,m+n})$.
+\end{theorem}
+\begin{proof}
+    Fix $x,m,n,g$.
+    Assume $m\in\naturals$ and $n\in\naturals$.
+    Let $P:\Set\to\Prop=\fun{k:\Set}{
+        (\Apply{\surrealSqrtLowerApproxOp}{x,g,m}
+            \subseteq
+         \Apply{\surrealSqrtLowerApproxOp}{x,g,m+k})
+        \land
+        (\Apply{\surrealSqrtUpperApproxOp}{x,g,m}
+            \subseteq
+         \Apply{\surrealSqrtUpperApproxOp}{x,g,m+k})}$.
+    $\Apply{P}{\emptyset}$
+        by \obv{num_addition_zero_right,subseteq_refl}.
+    Show that $\forall k:\Set.\ k\in\naturals\implies
+        (\Apply{P}{k}\implies\Apply{P}{\suc{k}})$.
+    \begin{subproof}
+        Fix $k$.
+        Assume $k\in\naturals$.
+        Assume $\Apply{P}{k}$.
+        $m+k\in\naturals$
+            by \obv{num_addition_on_naturals}.
+        $m+\suc{k}=\suc{m+k}$
+            by \obv{num_addition_successor_right}.
+        $\Apply{\surrealSqrtLowerApproxOp}{x,g,m+k}
+            \subseteq
+         \Apply{\surrealSqrtLowerApproxOp}{x,g,\suc{m+k}}$
+            by
+            \auto{surreal_sqrt_lower_approximation_successor,subseteq,union_iff}.
+        $\Apply{\surrealSqrtUpperApproxOp}{x,g,m+k}
+            \subseteq
+         \Apply{\surrealSqrtUpperApproxOp}{x,g,\suc{m+k}}$
+            by
+            \auto{surreal_sqrt_upper_approximation_successor,subseteq,union_iff}.
+        Follows by \obv{subseteq_transitive}.
+    \end{subproof}
+    Let $C=\sep{\naturals}{P}$.
+    $\emptyset\in C$ by
+        \auto{logical_separation_iff,omega_empty}.
+    For every $k\in C$ we have $\suc{k}\in C$
+        by \auto{logical_separation_iff,omega_successor}.
+    Hence $C$ is an inductive set by \obv{inductive_set}.
+    Hence every natural number is an element of $C$
+        by \obv{omega_minimal}.
+    Hence $n\in C$.
+    Hence $\Apply{P}{n}$ by \auto{logical_separation_iff}.
+\end{proof}
+
+\begin{lemma}\label{surreal_sqrt_approximation_zero_invariant}
+    $\forall x:\Set.\ \forall g:\Set\to\Set.
+        (\surreal{x}\land
+         \surrealLe{\surrealZero}{x}\land
+         (\forall u:\Set.
+            (\surreal{u}\land\birthday{u}\in\birthday{x}\land
+                \surrealLe{\surrealZero}{u})
+            \implies
+            (\surreal{\Apply{g}{u}}\land
+             \surrealLe{\surrealZero}{\Apply{g}{u}}\land
+             \surrealMul{\Apply{g}{u}}{\Apply{g}{u}}=u)))
+        \implies
+        ((\forall y:\Set.
+            y\in\Apply{\surrealSqrtLowerApproxOp}{x,g,\emptyset}
+            \implies
+            (\surreal{y}\land
+             \surrealLe{\surrealZero}{y}\land
+             \surrealLt{\surrealMul{y}{y}}{x}))
+         \land
+         (\forall y:\Set.
+            y\in\Apply{\surrealSqrtUpperApproxOp}{x,g,\emptyset}
+            \implies
+            (\surreal{y}\land
+             \surrealLe{\surrealZero}{y}\land
+             \surrealLt{x}{\surrealMul{y}{y}})))$.
+\end{lemma}
+\begin{proof}
+    Follows by
+        \auto{surreal_sqrt_nonnegative_left,surreal_sqrt_lower_approximation,surreal_sqrt_upper_approximation,surreal_sqrt_approximation_zero,surreal_left_elim,surreal_right_elim,surreal_le,surreal_le_transitive,logical_separation_iff,fst_eq,snd_eq,empty_surreal}.
+\end{proof}
+
+\begin{theorem}\label{surreal_sqrt_approximation_invariant}
+    $\forall x,n:\Set.\ \forall g:\Set\to\Set.
+        (\surreal{x}\land
+         \surrealLe{\surrealZero}{x}\land
+         n\in\naturals\land
+         (\forall u:\Set.
+            (\surreal{u}\land\birthday{u}\in\birthday{x}\land
+                \surrealLe{\surrealZero}{u})
+            \implies
+            (\surreal{\Apply{g}{u}}\land
+             \surrealLe{\surrealZero}{\Apply{g}{u}}\land
+             \surrealMul{\Apply{g}{u}}{\Apply{g}{u}}=u)))
+        \implies
+        ((\forall y:\Set.
+            y\in\Apply{\surrealSqrtLowerApproxOp}{x,g,n}
+            \implies
+            (\surreal{y}\land
+             \surrealLe{\surrealZero}{y}\land
+             \surrealLt{\surrealMul{y}{y}}{x}))
+         \land
+         (\forall y:\Set.
+            y\in\Apply{\surrealSqrtUpperApproxOp}{x,g,n}
+            \implies
+            (\surreal{y}\land
+             \surrealLe{\surrealZero}{y}\land
+             \surrealLt{x}{\surrealMul{y}{y}})))$.
+\end{theorem}
+\begin{proof}
+    Fix $x,n,g$.
+    Assume $\surreal{x}$ and $\surrealLe{\surrealZero}{x}$ and
+        $n\in\naturals$.
+    Assume $\forall u:\Set.
+        (\surreal{u}\land\birthday{u}\in\birthday{x}\land
+            \surrealLe{\surrealZero}{u})
+        \implies
+        (\surreal{\Apply{g}{u}}\land
+         \surrealLe{\surrealZero}{\Apply{g}{u}}\land
+         \surrealMul{\Apply{g}{u}}{\Apply{g}{u}}=u)$.
+    Let $P:\Set\to\Prop=\fun{k:\Set}{
+        (\forall y:\Set.
+            y\in\Apply{\surrealSqrtLowerApproxOp}{x,g,k}
+            \implies
+            (\surreal{y}\land
+             \surrealLe{\surrealZero}{y}\land
+             \surrealLt{\surrealMul{y}{y}}{x}))
+        \land
+        (\forall y:\Set.
+            y\in\Apply{\surrealSqrtUpperApproxOp}{x,g,k}
+            \implies
+            (\surreal{y}\land
+             \surrealLe{\surrealZero}{y}\land
+             \surrealLt{x}{\surrealMul{y}{y}}))}$.
+
+    $\Apply{P}{\emptyset}$
+        by \obv{surreal_sqrt_approximation_zero_invariant}.
+
+    Show that $\forall k:\Set.\ k\in\naturals\implies
+        (\Apply{P}{k}\implies\Apply{P}{\suc{k}})$.
+    \begin{subproof}
+        Fix $k$.
+        Assume $k\in\naturals$.
+        Assume $\Apply{P}{k}$.
+        Let $L=\Apply{\surrealSqrtLowerApproxOp}{x,g,k}$.
+        Let $R=\Apply{\surrealSqrtUpperApproxOp}{x,g,k}$.
+        $\forall y:\Set.\ y\in L\implies
+            (\surreal{y}\land
+             \surrealLe{\surrealZero}{y}\land
+             \surrealLt{\surrealMul{y}{y}}{x})$
+            by \auto.
+        $\forall y:\Set.\ y\in R\implies
+            (\surreal{y}\land
+             \surrealLe{\surrealZero}{y}\land
+             \surrealLt{x}{\surrealMul{y}{y}})$
+            by \auto.
+
+        Show that for every
+            $q\in\Apply{\surrealSqrtUpdateSetOp}{L,R,x}$ we have
+            $\surreal{q}$ and $\surrealLe{\surrealZero}{q}$ and
+                $\surrealLt{\surrealMul{q}{q}}{x}$.
+        \begin{subproof}
+            Fix $q\in\Apply{\surrealSqrtUpdateSetOp}{L,R,x}$.
+            Take $y,z$ such that $y\in L$ and $z\in R$ and
+                $\surrealLt{\surrealZero}{\surrealAdd{y}{z}}$ and
+                $q=\surrealSqrtUpdate{x}{y}{z}$
+                by \auto{surreal_sqrt_update_set_iff}.
+            $\surreal{y}$ and $\surrealLe{\surrealZero}{y}$ and
+                $\surrealLt{\surrealMul{y}{y}}{x}$.
+            $\surreal{z}$ and $\surrealLe{\surrealZero}{z}$ and
+                $\surrealLt{x}{\surrealMul{z}{z}}$.
+            $\surreal{\surrealSqrtUpdate{x}{y}{z}}$ and
+                $\surrealLe{\surrealZero}{\surrealSqrtUpdate{x}{y}{z}}$ and
+                $\surrealLt{
+                    \surrealMul{\surrealSqrtUpdate{x}{y}{z}}{
+                        \surrealSqrtUpdate{x}{y}{z}}}{x}$
+                by \auto{surreal_sqrt_update_lower_upper}.
+            Follows by \auto.
+        \end{subproof}
+
+        Show that for every
+            $q\in\Apply{\surrealSqrtUpdateSetOp}{L,L,x}$ we have
+            $\surreal{q}$ and $\surrealLe{\surrealZero}{q}$ and
+                $\surrealLt{x}{\surrealMul{q}{q}}$.
+        \begin{subproof}
+            Fix $q\in\Apply{\surrealSqrtUpdateSetOp}{L,L,x}$.
+            Take $y,z$ such that $y\in L$ and $z\in L$ and
+                $\surrealLt{\surrealZero}{\surrealAdd{y}{z}}$ and
+                $q=\surrealSqrtUpdate{x}{y}{z}$
+                by \auto{surreal_sqrt_update_set_iff}.
+            $\surreal{y}$ and $\surrealLe{\surrealZero}{y}$ and
+                $\surrealLt{\surrealMul{y}{y}}{x}$.
+            $\surreal{z}$ and $\surrealLe{\surrealZero}{z}$ and
+                $\surrealLt{\surrealMul{z}{z}}{x}$.
+            $\surreal{\surrealSqrtUpdate{x}{y}{z}}$ and
+                $\surrealLe{\surrealZero}{\surrealSqrtUpdate{x}{y}{z}}$ and
+                $\surrealLt{x}{
+                    \surrealMul{\surrealSqrtUpdate{x}{y}{z}}{
+                        \surrealSqrtUpdate{x}{y}{z}}}$
+                by \auto{surreal_sqrt_update_lower_lower}.
+            Follows by \auto.
+        \end{subproof}
+
+        Show that for every
+            $q\in\Apply{\surrealSqrtUpdateSetOp}{R,R,x}$ we have
+            $\surreal{q}$ and $\surrealLe{\surrealZero}{q}$ and
+                $\surrealLt{x}{\surrealMul{q}{q}}$.
+        \begin{subproof}
+            Fix $q\in\Apply{\surrealSqrtUpdateSetOp}{R,R,x}$.
+            Take $y,z$ such that $y\in R$ and $z\in R$ and
+                $\surrealLt{\surrealZero}{\surrealAdd{y}{z}}$ and
+                $q=\surrealSqrtUpdate{x}{y}{z}$
+                by \auto{surreal_sqrt_update_set_iff}.
+            $\surreal{y}$ and $\surrealLe{\surrealZero}{y}$ and
+                $\surrealLt{x}{\surrealMul{y}{y}}$.
+            $\surreal{z}$ and $\surrealLe{\surrealZero}{z}$ and
+                $\surrealLt{x}{\surrealMul{z}{z}}$.
+            $\surreal{\surrealSqrtUpdate{x}{y}{z}}$ and
+                $\surrealLe{\surrealZero}{\surrealSqrtUpdate{x}{y}{z}}$ and
+                $\surrealLt{x}{
+                    \surrealMul{\surrealSqrtUpdate{x}{y}{z}}{
+                        \surrealSqrtUpdate{x}{y}{z}}}$
+                by \auto{surreal_sqrt_update_upper_upper}.
+            Follows by \auto.
+        \end{subproof}
+
+        Follows by
+            \auto{surreal_sqrt_lower_approximation_successor,surreal_sqrt_upper_approximation_successor,union_iff}.
+    \end{subproof}
+
+    Let $C=\sep{\naturals}{P}$.
+    $\emptyset\in C$ by
+        \auto{logical_separation_iff,omega_empty}.
+    For every $k\in C$ we have $\suc{k}\in C$
+        by \auto{logical_separation_iff,omega_successor}.
+    Hence $C$ is an inductive set by \obv{inductive_set}.
+    Hence every natural number is an element of $C$
+        by \obv{omega_minimal}.
+    Hence $n\in C$.
+    Hence $\Apply{P}{n}$ by \auto{logical_separation_iff}.
+    Follows by \auto.
+\end{proof}
+
+\subsection{Recursive option families}
+
+\begin{definition}\label{surreal_sqrt_lower_options}
+    $\surrealSqrtLowerOptionsOp:
+        \Set\to(\Set\to\Set)\to\Set
+        =\fun{x:\Set}{
+            \fun{g:\Set\to\Set}{
+                \unions{\{\Apply{\surrealSqrtLowerApproxOp}{x,g,n}
+                    \mid n\in\naturals\}}}}$.
+\end{definition}
+
+\begin{definition}\label{surreal_sqrt_upper_options}
+    $\surrealSqrtUpperOptionsOp:
+        \Set\to(\Set\to\Set)\to\Set
+        =\fun{x:\Set}{
+            \fun{g:\Set\to\Set}{
+                \unions{\{\Apply{\surrealSqrtUpperApproxOp}{x,g,n}
+                    \mid n\in\naturals\}}}}$.
+\end{definition}
+
+\begin{proposition}\label{surreal_sqrt_lower_options_iff}
+    $\forall x,q:\Set.\ \forall g:\Set\to\Set.
+        q\in\Apply{\surrealSqrtLowerOptionsOp}{x,g}
+        \iff
+        (\exists n:\Set.\ n\in\naturals\land
+            q\in\Apply{\surrealSqrtLowerApproxOp}{x,g,n})$.
+\end{proposition}
+\begin{proof}
+    Fix $x,q,g$.
+    Follows by \auto{surreal_sqrt_lower_options,unions_iff}.
+\end{proof}
+
+\begin{proposition}\label{surreal_sqrt_upper_options_iff}
+    $\forall x,q:\Set.\ \forall g:\Set\to\Set.
+        q\in\Apply{\surrealSqrtUpperOptionsOp}{x,g}
+        \iff
+        (\exists n:\Set.\ n\in\naturals\land
+            q\in\Apply{\surrealSqrtUpperApproxOp}{x,g,n})$.
+\end{proposition}
+\begin{proof}
+    Fix $x,q,g$.
+    Follows by \auto{surreal_sqrt_upper_options,unions_iff}.
+\end{proof}
+
+\begin{proposition}\label{surreal_sqrt_recursive_left_option}
+    $\forall x,u:\Set.\ \forall g:\Set\to\Set.
+        u\in\surrealSqrtNonnegativeLeft{x}
+        \implies
+        \Apply{g}{u}
+            \in\Apply{\surrealSqrtLowerOptionsOp}{x,g}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{surreal_sqrt_lower_options_iff,surreal_sqrt_lower_approximation,surreal_sqrt_approximation_zero,fst_eq,omega_empty}.
+\end{proof}
+
+\begin{proposition}\label{surreal_sqrt_recursive_right_option}
+    $\forall x,u:\Set.\ \forall g:\Set\to\Set.
+        u\in\surrealRight{x}
+        \implies
+        \Apply{g}{u}
+            \in\Apply{\surrealSqrtUpperOptionsOp}{x,g}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{surreal_sqrt_upper_options_iff,surreal_sqrt_upper_approximation,surreal_sqrt_approximation_zero,snd_eq,omega_empty}.
+\end{proof}
+
+\begin{theorem}\label{surreal_sqrt_lower_options_update}
+    $\forall x,y,z:\Set.\ \forall g:\Set\to\Set.
+        (y\in\Apply{\surrealSqrtLowerOptionsOp}{x,g}\land
+         z\in\Apply{\surrealSqrtUpperOptionsOp}{x,g}\land
+         \surrealLt{\surrealZero}{\surrealAdd{y}{z}})
+        \implies
+        \surrealSqrtUpdate{x}{y}{z}
+            \in\Apply{\surrealSqrtLowerOptionsOp}{x,g}$.
+\end{theorem}
+\begin{proof}
+    Fix $x,y,z,g$.
+    Assume $y\in\Apply{\surrealSqrtLowerOptionsOp}{x,g}$ and
+        $z\in\Apply{\surrealSqrtUpperOptionsOp}{x,g}$ and
+        $\surrealLt{\surrealZero}{\surrealAdd{y}{z}}$.
+    Take $m,n$ such that
+        $m\in\naturals$ and
+        $y\in\Apply{\surrealSqrtLowerApproxOp}{x,g,m}$ and
+        $n\in\naturals$ and
+        $z\in\Apply{\surrealSqrtUpperApproxOp}{x,g,n}$
+        by
+        \auto{surreal_sqrt_lower_options_iff,surreal_sqrt_upper_options_iff}.
+    Let $k=m+n$.
+    $k\in\naturals$ and
+        $y\in\Apply{\surrealSqrtLowerApproxOp}{x,g,k}$ and
+        $z\in\Apply{\surrealSqrtUpperApproxOp}{x,g,k}$
+        by
+        \auto{surreal_sqrt_approximation_monotone_add,natural_addition_commutative,num_addition_on_naturals,subseteq}.
+    Hence $\surrealSqrtUpdate{x}{y}{z}
+        \in\Apply{\surrealSqrtLowerApproxOp}{x,g,\suc{k}}$
+        by
+        \auto{surreal_sqrt_lower_approximation_successor,surreal_sqrt_update_set_iff,union_iff}.
+    Follows by
+        \auto{surreal_sqrt_lower_options_iff,omega_successor}.
+\end{proof}
+
+\begin{theorem}\label{surreal_sqrt_upper_options_update_lower}
+    $\forall x,y,z:\Set.\ \forall g:\Set\to\Set.
+        (y\in\Apply{\surrealSqrtLowerOptionsOp}{x,g}\land
+         z\in\Apply{\surrealSqrtLowerOptionsOp}{x,g}\land
+         \surrealLt{\surrealZero}{\surrealAdd{y}{z}})
+        \implies
+        \surrealSqrtUpdate{x}{y}{z}
+            \in\Apply{\surrealSqrtUpperOptionsOp}{x,g}$.
+\end{theorem}
+\begin{proof}
+    Fix $x,y,z,g$.
+    Assume $y\in\Apply{\surrealSqrtLowerOptionsOp}{x,g}$ and
+        $z\in\Apply{\surrealSqrtLowerOptionsOp}{x,g}$ and
+        $\surrealLt{\surrealZero}{\surrealAdd{y}{z}}$.
+    Take $m,n$ such that
+        $m\in\naturals$ and
+        $y\in\Apply{\surrealSqrtLowerApproxOp}{x,g,m}$ and
+        $n\in\naturals$ and
+        $z\in\Apply{\surrealSqrtLowerApproxOp}{x,g,n}$
+        by \auto{surreal_sqrt_lower_options_iff}.
+    Let $k=m+n$.
+    $k\in\naturals$ and
+        $y\in\Apply{\surrealSqrtLowerApproxOp}{x,g,k}$ and
+        $z\in\Apply{\surrealSqrtLowerApproxOp}{x,g,k}$
+        by
+        \auto{surreal_sqrt_approximation_monotone_add,natural_addition_commutative,num_addition_on_naturals,subseteq}.
+    Hence $\surrealSqrtUpdate{x}{y}{z}
+        \in\Apply{\surrealSqrtUpperApproxOp}{x,g,\suc{k}}$
+        by
+        \auto{surreal_sqrt_upper_approximation_successor,surreal_sqrt_update_set_iff,union_iff}.
+    Follows by
+        \auto{surreal_sqrt_upper_options_iff,omega_successor}.
+\end{proof}
+
+\begin{theorem}\label{surreal_sqrt_upper_options_update_upper}
+    $\forall x,y,z:\Set.\ \forall g:\Set\to\Set.
+        (y\in\Apply{\surrealSqrtUpperOptionsOp}{x,g}\land
+         z\in\Apply{\surrealSqrtUpperOptionsOp}{x,g}\land
+         \surrealLt{\surrealZero}{\surrealAdd{y}{z}})
+        \implies
+        \surrealSqrtUpdate{x}{y}{z}
+            \in\Apply{\surrealSqrtUpperOptionsOp}{x,g}$.
+\end{theorem}
+\begin{proof}
+    Fix $x,y,z,g$.
+    Assume $y\in\Apply{\surrealSqrtUpperOptionsOp}{x,g}$ and
+        $z\in\Apply{\surrealSqrtUpperOptionsOp}{x,g}$ and
+        $\surrealLt{\surrealZero}{\surrealAdd{y}{z}}$.
+    Take $m,n$ such that
+        $m\in\naturals$ and
+        $y\in\Apply{\surrealSqrtUpperApproxOp}{x,g,m}$ and
+        $n\in\naturals$ and
+        $z\in\Apply{\surrealSqrtUpperApproxOp}{x,g,n}$
+        by \auto{surreal_sqrt_upper_options_iff}.
+    Let $k=m+n$.
+    $k\in\naturals$ and
+        $y\in\Apply{\surrealSqrtUpperApproxOp}{x,g,k}$ and
+        $z\in\Apply{\surrealSqrtUpperApproxOp}{x,g,k}$
+        by
+        \auto{surreal_sqrt_approximation_monotone_add,natural_addition_commutative,num_addition_on_naturals,subseteq}.
+    Hence $\surrealSqrtUpdate{x}{y}{z}
+        \in\Apply{\surrealSqrtUpperApproxOp}{x,g,\suc{k}}$
+        by
+        \auto{surreal_sqrt_upper_approximation_successor,surreal_sqrt_update_set_iff,union_iff}.
+    Follows by
+        \auto{surreal_sqrt_upper_options_iff,omega_successor}.
+\end{proof}
+
+\begin{lemma}\label{surreal_sqrt_add_cross_cancel_le}
+    Suppose $\surreal{a}$ and $\surreal{b}$ and
+        $\surreal{c}$ and $\surreal{d}$ and
+        $\surreal{u}$ and $\surreal{v}$.
+    Suppose $\surrealLe{\surrealAdd{a}{u}}{
+        \surrealAdd{c}{v}}$.
+    Suppose $\surrealLe{\surrealAdd{b}{v}}{
+        \surrealAdd{d}{u}}$.
+    Then $\surrealLe{\surrealAdd{a}{b}}{\surrealAdd{c}{d}}$.
+\end{lemma}
+\begin{proof}
+    $\surrealLe{
+        \surrealAdd{\surrealAdd{a}{u}}{\surrealAdd{b}{v}}}{
+        \surrealAdd{\surrealAdd{c}{v}}{\surrealAdd{d}{u}}}$
+        by \obv{surreal_add_le_both,surreal_add_is_surreal}.
+    Hence $\surrealLe{
+        \surrealAdd{\surrealAdd{a}{b}}{\surrealAdd{u}{v}}}{
+        \surrealAdd{\surrealAdd{c}{d}}{\surrealAdd{u}{v}}}$
+        by
+        \auto{surreal_add_associative,surreal_add_commutative,surreal_add_is_surreal}.
+    Follows by
+        \auto{surreal_add_le_cancel_right,surreal_add_is_surreal}.
+\end{proof}
+
+\begin{lemma}\label{surreal_sqrt_refine_mixed_interpolation}
+    Suppose $\surreal{x}$ and $\surreal{y}$ and
+        $\surreal{u}$ and $\surreal{v}$ and
+        $\surreal{l}$ and $\surreal{r}$.
+    Suppose $\surrealLe{u}{l}$ and $\surrealLe{l}{y}$ and
+        $\surrealLe{y}{r}$ and $\surrealLe{r}{v}$.
+    Suppose
+        $\surrealLe{
+            \surrealAdd{\surrealMul{u}{y}}{\surrealMul{y}{v}}}{
+            \surrealAdd{x}{\surrealMul{u}{v}}}$.
+    Then
+        $\surrealLe{
+            \surrealAdd{\surrealMul{l}{y}}{\surrealMul{y}{r}}}{
+            \surrealAdd{x}{\surrealMul{l}{r}}}$.
+\end{lemma}
+\begin{proof}
+    $\surrealLe{y}{v}$
+        by \obv{surreal_le_transitive}.
+    $\surrealLe{
+        \surrealAdd{\surrealMul{u}{v}}{\surrealMul{l}{y}}}{
+        \surrealAdd{\surrealMul{l}{v}}{\surrealMul{u}{y}}}$
+        by \obv{surreal_mul_cross_le}.
+    Hence
+        $\surrealLe{
+            \surrealAdd{\surrealMul{l}{y}}{\surrealMul{y}{v}}}{
+            \surrealAdd{x}{\surrealMul{l}{v}}}$
+        by \auto{surreal_sqrt_add_cross_cancel_le,surreal_add_commutative,surreal_mul_is_surreal,surreal_add_is_surreal}.
+    $\surrealLe{
+        \surrealAdd{\surrealMul{l}{v}}{\surrealMul{y}{r}}}{
+        \surrealAdd{\surrealMul{y}{v}}{\surrealMul{l}{r}}}$
+        by \obv{surreal_mul_cross_le}.
+    Follows by
+        \auto{surreal_sqrt_add_cross_cancel_le,surreal_add_commutative,surreal_mul_is_surreal,surreal_add_is_surreal}.
+\end{proof}
+
+\begin{lemma}\label{surreal_sqrt_refine_lower_interpolation}
+    Suppose $\surreal{x}$ and $\surreal{y}$ and
+        $\surreal{u}$ and $\surreal{v}$ and
+        $\surreal{l}$ and $\surreal{r}$.
+    Suppose $\surrealLe{u}{l}$ and $\surrealLe{v}{r}$ and
+        $\surrealLe{l}{y}$ and $\surrealLe{r}{y}$.
+    Suppose
+        $\surrealLe{
+            \surrealAdd{x}{\surrealMul{u}{v}}}{
+            \surrealAdd{\surrealMul{u}{y}}{\surrealMul{y}{v}}}$.
+    Then
+        $\surrealLe{
+            \surrealAdd{x}{\surrealMul{l}{r}}}{
+            \surrealAdd{\surrealMul{l}{y}}{\surrealMul{y}{r}}}$.
+\end{lemma}
+\begin{proof}
+    $\surrealLe{v}{y}$
+        by \obv{surreal_le_transitive}.
+    $\surrealLe{
+        \surrealAdd{\surrealMul{u}{y}}{\surrealMul{l}{v}}}{
+        \surrealAdd{\surrealMul{l}{y}}{\surrealMul{u}{v}}}$
+        by \obv{surreal_mul_cross_le}.
+    Hence
+        $\surrealLe{
+            \surrealAdd{x}{\surrealMul{l}{v}}}{
+            \surrealAdd{\surrealMul{l}{y}}{\surrealMul{y}{v}}}$
+        by \auto{surreal_sqrt_add_cross_cancel_le,surreal_add_commutative,surreal_mul_is_surreal,surreal_add_is_surreal}.
+    $\surrealLe{
+        \surrealAdd{\surrealMul{l}{r}}{\surrealMul{y}{v}}}{
+        \surrealAdd{\surrealMul{y}{r}}{\surrealMul{l}{v}}}$
+        by \obv{surreal_mul_cross_le}.
+    Follows by
+        \auto{surreal_sqrt_add_cross_cancel_le,surreal_add_commutative,surreal_mul_is_surreal,surreal_add_is_surreal}.
+\end{proof}
+
+\begin{lemma}\label{surreal_sqrt_refine_upper_interpolation}
+    Suppose $\surreal{x}$ and $\surreal{y}$ and
+        $\surreal{u}$ and $\surreal{v}$ and
+        $\surreal{l}$ and $\surreal{r}$.
+    Suppose $\surrealLe{l}{u}$ and $\surrealLe{r}{v}$ and
+        $\surrealLe{y}{l}$ and $\surrealLe{y}{r}$.
+    Suppose
+        $\surrealLe{
+            \surrealAdd{x}{\surrealMul{u}{v}}}{
+            \surrealAdd{\surrealMul{u}{y}}{\surrealMul{y}{v}}}$.
+    Then
+        $\surrealLe{
+            \surrealAdd{x}{\surrealMul{l}{r}}}{
+            \surrealAdd{\surrealMul{l}{y}}{\surrealMul{y}{r}}}$.
+\end{lemma}
+\begin{proof}
+    $\surrealLe{y}{v}$
+        by \obv{surreal_le_transitive}.
+    $\surrealLe{
+        \surrealAdd{\surrealMul{l}{v}}{\surrealMul{u}{y}}}{
+        \surrealAdd{\surrealMul{u}{v}}{\surrealMul{l}{y}}}$
+        by \obv{surreal_mul_cross_le}.
+    Hence
+        $\surrealLe{
+            \surrealAdd{x}{\surrealMul{l}{v}}}{
+            \surrealAdd{\surrealMul{l}{y}}{\surrealMul{y}{v}}}$
+        by \auto{surreal_sqrt_add_cross_cancel_le,surreal_add_commutative,surreal_mul_is_surreal,surreal_add_is_surreal}.
+    $\surrealLe{
+        \surrealAdd{\surrealMul{y}{v}}{\surrealMul{l}{r}}}{
+        \surrealAdd{\surrealMul{l}{v}}{\surrealMul{y}{r}}}$
+        by \obv{surreal_mul_cross_le}.
+    Follows by
+        \auto{surreal_sqrt_add_cross_cancel_le,surreal_add_commutative,surreal_mul_is_surreal,surreal_add_is_surreal}.
+\end{proof}
+
+\begin{lemma}\label{surreal_sqrt_upper_bound_positive}
+    Suppose $\surreal{x}$ and $\surreal{r}$.
+    Suppose $\surrealLe{\surrealZero}{x}$ and
+        $\surrealLe{\surrealZero}{r}$ and
+        $\surrealLt{x}{\surrealMul{r}{r}}$.
+    Then $\surrealLt{\surrealZero}{r}$.
+\end{lemma}
+\begin{proof}
+    \begin{byCase}
+        \caseOf{$r=\surrealZero$.}
+            $\surrealMul{r}{r}=\surrealZero$
+                by \auto{surreal_mul_zero_left}.
+            Hence $\surrealLt{x}{\surrealZero}$.
+            Hence $\surrealLt{x}{x}$
+                by \auto{surreal_lt_le_transitive,empty_surreal}.
+            Contradiction by \obv{surreal_lt_irreflexive}.
+        \caseOf{$r\neq\surrealZero$.}
+            Follows by \auto{surreal_le}.
+    \end{byCase}
+\end{proof}
+
+\begin{lemma}\label{surreal_sqrt_mixed_update_contradiction}
+    Suppose $\surreal{x}$ and $\surreal{y}$ and
+        $\surreal{l}$ and $\surreal{r}$.
+    Suppose $\surrealLt{\surrealZero}{\surrealAdd{l}{r}}$.
+    Suppose
+        $\surrealLe{
+            \surrealAdd{\surrealMul{l}{y}}{\surrealMul{y}{r}}}{
+            \surrealAdd{x}{\surrealMul{l}{r}}}$.
+    Suppose $\surrealLt{\surrealSqrtUpdate{x}{l}{r}}{y}$.
+    Then $\bot$.
+\end{lemma}
+\begin{proof}
+    Let $d=\surrealAdd{l}{r}$.
+    Let $m=\surrealSqrtUpdate{x}{l}{r}$.
+    $\surreal{d}$ and $\surreal{m}$
+        by
+        \obv{surreal_add_is_surreal,surreal_sqrt_update_is_surreal}.
+    $d\neq\surrealZero$
+        by \obv{surreal_lt_irreflexive,empty_surreal}.
+    $\surrealMul{m}{d}=\surrealAdd{x}{\surrealMul{l}{r}}$
+        by
+        \auto{surreal_sqrt_update,surreal_division_cancel_right,surreal_mul_is_surreal,surreal_add_is_surreal}.
+    $\surrealMul{y}{d}
+        =\surrealAdd{\surrealMul{l}{y}}{\surrealMul{y}{r}}$
+        by
+        \auto{surreal_mul_distributive_left,surreal_mul_commutative,surreal_mul_is_surreal}.
+    $\surrealLt{\surrealMul{m}{d}}{\surrealMul{y}{d}}$
+        by \auto{surreal_pos_mul_lt_right}.
+    Hence $\surrealLt{
+        \surrealAdd{x}{\surrealMul{l}{r}}}{
+        \surrealAdd{\surrealMul{l}{y}}{\surrealMul{y}{r}}}$.
+    Hence $\surrealLt{
+        \surrealAdd{x}{\surrealMul{l}{r}}}{
+        \surrealAdd{x}{\surrealMul{l}{r}}}$
+        by
+        \auto{surreal_lt_le_transitive,surreal_add_is_surreal,surreal_mul_is_surreal}.
+    Contradiction by
+        \obv{surreal_lt_irreflexive,surreal_add_is_surreal,surreal_mul_is_surreal}.
+\end{proof}
+
+\begin{lemma}\label{surreal_sqrt_same_update_contradiction}
+    Suppose $\surreal{x}$ and $\surreal{y}$ and
+        $\surreal{l}$ and $\surreal{r}$.
+    Suppose $\surrealLt{\surrealZero}{\surrealAdd{l}{r}}$.
+    Suppose
+        $\surrealLe{
+            \surrealAdd{x}{\surrealMul{l}{r}}}{
+            \surrealAdd{\surrealMul{l}{y}}{\surrealMul{y}{r}}}$.
+    Suppose $\surrealLt{y}{\surrealSqrtUpdate{x}{l}{r}}$.
+    Then $\bot$.
+\end{lemma}
+\begin{proof}
+    Let $d=\surrealAdd{l}{r}$.
+    Let $m=\surrealSqrtUpdate{x}{l}{r}$.
+    $\surreal{d}$ and $\surreal{m}$
+        by
+        \obv{surreal_add_is_surreal,surreal_sqrt_update_is_surreal}.
+    $d\neq\surrealZero$
+        by \obv{surreal_lt_irreflexive,empty_surreal}.
+    $\surrealMul{m}{d}=\surrealAdd{x}{\surrealMul{l}{r}}$
+        by
+        \auto{surreal_sqrt_update,surreal_division_cancel_right,surreal_mul_is_surreal,surreal_add_is_surreal}.
+    $\surrealMul{y}{d}
+        =\surrealAdd{\surrealMul{l}{y}}{\surrealMul{y}{r}}$
+        by
+        \auto{surreal_mul_distributive_left,surreal_mul_commutative,surreal_mul_is_surreal}.
+    $\surrealLt{\surrealMul{y}{d}}{\surrealMul{m}{d}}$
+        by \auto{surreal_pos_mul_lt_right}.
+    Hence $\surrealLt{
+        \surrealAdd{\surrealMul{l}{y}}{\surrealMul{y}{r}}}{
+        \surrealAdd{x}{\surrealMul{l}{r}}}$.
+    Hence $\surrealLt{
+        \surrealAdd{x}{\surrealMul{l}{r}}}{
+        \surrealAdd{x}{\surrealMul{l}{r}}}$
+        by
+        \auto{surreal_le_lt_transitive,surreal_add_is_surreal,surreal_mul_is_surreal}.
+    Contradiction by
+        \obv{surreal_lt_irreflexive,surreal_add_is_surreal,surreal_mul_is_surreal}.
+\end{proof}
+
+\begin{lemma}\label{surreal_sqrt_lower_pair_sum_positive}
+    Suppose $\surreal{x}$ and $\surreal{y}$ and
+        $\surreal{l}$ and $\surreal{r}$.
+    Suppose $\surrealLe{\surrealZero}{x}$ and
+        $\surrealLe{\surrealZero}{l}$ and
+        $\surrealLe{\surrealZero}{r}$.
+    Suppose $\surrealLt{\surrealMul{l}{l}}{x}$.
+    Suppose
+        $\surrealLe{
+            \surrealAdd{x}{\surrealMul{l}{r}}}{
+            \surrealAdd{\surrealMul{l}{y}}{\surrealMul{y}{r}}}$.
+    Then $\surrealLt{\surrealZero}{\surrealAdd{l}{r}}$.
+\end{lemma}
+\begin{proof}
+    Let $d=\surrealAdd{l}{r}$.
+    $\surreal{d}$ by \obv{surreal_add_is_surreal}.
+    $\surrealLe{\surrealZero}{d}$
+        by
+        \auto{surreal_add_le_both,surreal_add_zero_left,empty_surreal}.
+    \begin{byCase}
+        \caseOf{$d=\surrealZero$.}
+            $\surrealLe{l}{d}$
+                by
+                \auto{surreal_add_le_right,surreal_add_zero_right,empty_surreal}.
+            $\surrealLe{r}{d}$
+                by
+                \auto{surreal_add_le_left,surreal_add_zero_left,empty_surreal}.
+            Hence $l=\surrealZero$ and $r=\surrealZero$
+                by
+                \auto{surreal_le_antisymmetric,empty_surreal}.
+            Hence $\surrealLt{\surrealZero}{x}$ and
+                $\surrealLe{x}{\surrealZero}$
+                by
+                \auto{surreal_mul_zero_left,surreal_mul_zero_right,surreal_add_zero_left,surreal_add_zero_right,empty_surreal}.
+            Hence $\surrealLt{\surrealZero}{\surrealZero}$
+                by \obv{surreal_lt_le_transitive,empty_surreal}.
+            Contradiction by
+                \obv{surreal_lt_irreflexive,empty_surreal}.
+        \caseOf{$d\neq\surrealZero$.}
+            Follows by \auto{surreal_le}.
+    \end{byCase}
+\end{proof}
+
+\subsection{The square-root cut}
+
+\begin{theorem}\label{surreal_sqrt_options_invariant}
+    $\forall x:\Set.\ \forall g:\Set\to\Set.
+        (\surreal{x}\land
+         \surrealLe{\surrealZero}{x}\land
+         (\forall u:\Set.
+            (\surreal{u}\land\birthday{u}\in\birthday{x}\land
+                \surrealLe{\surrealZero}{u})
+            \implies
+            (\surreal{\Apply{g}{u}}\land
+             \surrealLe{\surrealZero}{\Apply{g}{u}}\land
+             \surrealMul{\Apply{g}{u}}{\Apply{g}{u}}=u)))
+        \implies
+        ((\forall y:\Set.
+            y\in\Apply{\surrealSqrtLowerOptionsOp}{x,g}
+            \implies
+            (\surreal{y}\land
+             \surrealLe{\surrealZero}{y}\land
+             \surrealLt{\surrealMul{y}{y}}{x}))
+         \land
+         (\forall y:\Set.
+            y\in\Apply{\surrealSqrtUpperOptionsOp}{x,g}
+            \implies
+            (\surreal{y}\land
+             \surrealLe{\surrealZero}{y}\land
+             \surrealLt{x}{\surrealMul{y}{y}})))$.
+\end{theorem}
+\begin{proof}
+    Follows by
+        \auto{surreal_sqrt_lower_options_iff,surreal_sqrt_upper_options_iff,surreal_sqrt_approximation_invariant}.
+\end{proof}
+
+\begin{theorem}\label{surreal_sqrt_options_cut_pair}
+    $\forall x:\Set.\ \forall g:\Set\to\Set.
+        (\surreal{x}\land
+         \surrealLe{\surrealZero}{x}\land
+         (\forall u:\Set.
+            (\surreal{u}\land\birthday{u}\in\birthday{x}\land
+                \surrealLe{\surrealZero}{u})
+            \implies
+            (\surreal{\Apply{g}{u}}\land
+             \surrealLe{\surrealZero}{\Apply{g}{u}}\land
+             \surrealMul{\Apply{g}{u}}{\Apply{g}{u}}=u)))
+        \implies
+        \surrealCutPair{
+            \Apply{\surrealSqrtLowerOptionsOp}{x,g}}{
+            \Apply{\surrealSqrtUpperOptionsOp}{x,g}}$.
+\end{theorem}
+\begin{proof}
+    Fix $x,g$.
+    Assume $\surreal{x}$ and
+        $\surrealLe{\surrealZero}{x}$.
+    Assume $\forall u:\Set.
+        (\surreal{u}\land\birthday{u}\in\birthday{x}\land
+            \surrealLe{\surrealZero}{u})
+        \implies
+        (\surreal{\Apply{g}{u}}\land
+         \surrealLe{\surrealZero}{\Apply{g}{u}}\land
+         \surrealMul{\Apply{g}{u}}{\Apply{g}{u}}=u)$.
+    Let $L=\Apply{\surrealSqrtLowerOptionsOp}{x,g}$.
+    Let $R=\Apply{\surrealSqrtUpperOptionsOp}{x,g}$.
+    $\forall y:\Set.\ y\in L\implies
+        (\surreal{y}\land
+         \surrealLe{\surrealZero}{y}\land
+         \surrealLt{\surrealMul{y}{y}}{x})$
+        by \auto{surreal_sqrt_options_invariant}.
+    $\forall y:\Set.\ y\in R\implies
+        (\surreal{y}\land
+         \surrealLe{\surrealZero}{y}\land
+         \surrealLt{x}{\surrealMul{y}{y}})$
+        by \auto{surreal_sqrt_options_invariant}.
+    Show that $\forall l:\Set.\ l\in L\implies
+        (\forall r:\Set.\ r\in R\implies\surrealLt{l}{r})$.
+    \begin{subproof}
+        Fix $l$.
+        Assume $l\in L$.
+        Fix $r$.
+        Assume $r\in R$.
+        $\surreal{l}$ and $\surrealLe{\surrealZero}{l}$ and
+            $\surrealLt{\surrealMul{l}{l}}{x}$.
+        $\surreal{r}$ and $\surrealLe{\surrealZero}{r}$ and
+            $\surrealLt{x}{\surrealMul{r}{r}}$.
+        $\surrealLt{l}{r}$ or $l=r$ or $\surrealLt{r}{l}$
+            by \obv{surreal_lt_trichotomy}.
+        \begin{byCase}
+            \caseOf{$\surrealLt{l}{r}$.}
+                Follows.
+            \caseOf{not $\surrealLt{l}{r}$.}
+                \begin{byCase}
+                    \caseOf{$l=r$.}
+                        $\surrealLt{\surrealMul{l}{l}}{
+                            \surrealMul{l}{l}}$
+                            by
+                            \auto{surreal_lt_transitive,surreal_mul_is_surreal}.
+                        Contradiction by
+                            \obv{surreal_lt_irreflexive,surreal_mul_is_surreal}.
+                    \caseOf{$l\neq r$.}
+                        Hence $\surrealLt{r}{l}$.
+                        $\surrealLt{\surrealMul{r}{r}}{
+                            \surrealMul{l}{l}}$
+                            by
+                            \obv{surreal_square_strict_monotone_nonnegative}.
+                        Hence $\surrealLt{x}{
+                            \surrealMul{l}{l}}$
+                            by
+                            \auto{surreal_lt_transitive,surreal_mul_is_surreal}.
+                        Hence $\surrealLt{x}{x}$
+                            by
+                            \auto{surreal_lt_transitive,surreal_mul_is_surreal}.
+                        Contradiction by
+                            \obv{surreal_lt_irreflexive}.
+                \end{byCase}
+        \end{byCase}
+    \end{subproof}
+    Follows by \auto{surreal_cut_pair}.
+\end{proof}
+
+\begin{theorem}\label{surreal_sqrt_cut_nonnegative}
+    $\forall x:\Set.\ \forall g:\Set\to\Set.
+        (\surreal{x}\land
+         \surrealLe{\surrealZero}{x}\land
+         (\forall u:\Set.
+            (\surreal{u}\land\birthday{u}\in\birthday{x}\land
+                \surrealLe{\surrealZero}{u})
+            \implies
+            (\surreal{\Apply{g}{u}}\land
+             \surrealLe{\surrealZero}{\Apply{g}{u}}\land
+             \surrealMul{\Apply{g}{u}}{\Apply{g}{u}}=u)))
+        \implies
+        \surrealLe{\surrealZero}{
+            \surrealCut{
+                \Apply{\surrealSqrtLowerOptionsOp}{x,g}}{
+                \Apply{\surrealSqrtUpperOptionsOp}{x,g}}}$.
+\end{theorem}
+\begin{proof}
+    Fix $x,g$.
+    Assume $\surreal{x}$ and
+        $\surrealLe{\surrealZero}{x}$.
+    Assume $\forall u:\Set.
+        (\surreal{u}\land\birthday{u}\in\birthday{x}\land
+            \surrealLe{\surrealZero}{u})
+        \implies
+        (\surreal{\Apply{g}{u}}\land
+         \surrealLe{\surrealZero}{\Apply{g}{u}}\land
+         \surrealMul{\Apply{g}{u}}{\Apply{g}{u}}=u)$.
+    Let $L=\Apply{\surrealSqrtLowerOptionsOp}{x,g}$.
+    Let $R=\Apply{\surrealSqrtUpperOptionsOp}{x,g}$.
+    $\surrealCutPair{L}{R}$
+        by \auto{surreal_sqrt_options_cut_pair}.
+    $\forall r:\Set.\ r\in R\implies
+        (\surreal{r}\land
+         \surrealLe{\surrealZero}{r}\land
+         \surrealLt{x}{\surrealMul{r}{r}})$
+        by \auto{surreal_sqrt_options_invariant}.
+    Show that for every $r\in R$ we have
+        $\surrealLt{\surrealZero}{r}$.
+    \begin{subproof}
+        Fix $r\in R$.
+        $\surreal{r}$ and $\surrealLe{\surrealZero}{r}$ and
+            $\surrealLt{x}{\surrealMul{r}{r}}$.
+        \begin{byCase}
+            \caseOf{$r=\surrealZero$.}
+                $\surrealMul{r}{r}=\surrealZero$
+                    by \auto{surreal_mul_zero_left}.
+                Hence $\surrealLt{x}{\surrealZero}$.
+                Hence $\surrealLt{x}{x}$
+                    by
+                    \auto{surreal_lt_le_transitive,empty_surreal}.
+                Contradiction by \obv{surreal_lt_irreflexive}.
+            \caseOf{$r\neq\surrealZero$.}
+                Follows by \auto{surreal_le}.
+        \end{byCase}
+    \end{subproof}
+    $\surrealCutPair{\emptyset}{\emptyset}$
+        by \auto{surreal_cut_pair,emptyset}.
+    For every $l\in\emptyset$ we have
+        $\surrealLt{l}{\surrealCut{L}{R}}$
+        by \auto{emptyset}.
+    For every $r\in R$ we have
+        $\surrealLt{\surrealCut{\emptyset}{\emptyset}}{r}$
+        by \auto{empty_surreal_cut}.
+    Hence $\surrealLe{
+        \surrealCut{\emptyset}{\emptyset}}{\surrealCut{L}{R}}$
+        by \obv{surreal_cut_le}.
+    Follows by \auto{empty_surreal_cut}.
+\end{proof}
+
+\begin{theorem}\label{surreal_sqrt_cut_not_below}
+    $\forall x:\Set.\ \forall g:\Set\to\Set.
+        (\surreal{x}\land
+         \surrealLe{\surrealZero}{x}\land
+         (\forall u:\Set.
+            (\surreal{u}\land\birthday{u}\in\birthday{x}\land
+                \surrealLe{\surrealZero}{u})
+            \implies
+            (\surreal{\Apply{g}{u}}\land
+             \surrealLe{\surrealZero}{\Apply{g}{u}}\land
+             \surrealMul{\Apply{g}{u}}{\Apply{g}{u}}=u)))
+        \implies
+        \lnot\surrealLt{
+            \surrealMul{
+                \surrealCut{
+                    \Apply{\surrealSqrtLowerOptionsOp}{x,g}}{
+                    \Apply{\surrealSqrtUpperOptionsOp}{x,g}}}{
+                \surrealCut{
+                    \Apply{\surrealSqrtLowerOptionsOp}{x,g}}{
+                    \Apply{\surrealSqrtUpperOptionsOp}{x,g}}}}{x}$.
+\end{theorem}
+\begin{proof}
+    Fix $x,g$.
+    Assume $\surreal{x}$ and
+        $\surrealLe{\surrealZero}{x}$.
+    Assume $\forall u:\Set.
+        (\surreal{u}\land\birthday{u}\in\birthday{x}\land
+            \surrealLe{\surrealZero}{u})
+        \implies
+        (\surreal{\Apply{g}{u}}\land
+         \surrealLe{\surrealZero}{\Apply{g}{u}}\land
+         \surrealMul{\Apply{g}{u}}{\Apply{g}{u}}=u)$.
+    Let $L=\Apply{\surrealSqrtLowerOptionsOp}{x,g}$.
+    Let $R=\Apply{\surrealSqrtUpperOptionsOp}{x,g}$.
+    Let $y=\surrealCut{L}{R}$.
+    $\surrealCutPair{L}{R}$
+        by \auto{surreal_sqrt_options_cut_pair}.
+    $\surreal{y}$ by \obv{surreal_cut_pair_is_surreal}.
+    $\surrealLe{\surrealZero}{y}$
+        by \auto{surreal_sqrt_cut_nonnegative}.
+    $\forall l:\Set.\ l\in L\implies
+        (\surreal{l}\land
+         \surrealLe{\surrealZero}{l}\land
+         \surrealLt{\surrealMul{l}{l}}{x})$
+        by \auto{surreal_sqrt_options_invariant}.
+    $\forall r:\Set.\ r\in R\implies
+        (\surreal{r}\land
+         \surrealLe{\surrealZero}{r}\land
+         \surrealLt{x}{\surrealMul{r}{r}})$
+        by \auto{surreal_sqrt_options_invariant}.
+    Show that not $\surrealLt{\surrealMul{y}{y}}{x}$.
+    \begin{subproof}
+    Suppose $\surrealLt{\surrealMul{y}{y}}{x}$.
+    $\surreal{\surrealMul{y}{y}}$
+        by \obv{surreal_mul_is_surreal}.
+    $(\exists q:\Set.\ \surreal{q}\land
+        \birthday{q}\in\birthday{\surrealMul{y}{y}}
+            \inter\birthday{x}\land
+        \surrealLt{\surrealMul{y}{y}}{q}\land
+        \surrealLt{q}{x})
+      \lor \surrealMul{y}{y}\in\surrealLeft{x}
+      \lor x\in\surrealRight{\surrealMul{y}{y}}$
+        by \obv{surreal_lt_elimination}.
+    \begin{byCase}
+        \caseOf{$\exists q:\Set.\ \surreal{q}\land
+            \birthday{q}\in\birthday{\surrealMul{y}{y}}
+                \inter\birthday{x}\land
+            \surrealLt{\surrealMul{y}{y}}{q}\land
+            \surrealLt{q}{x}$.}
+            Take $q$ such that $\surreal{q}$ and
+                $\birthday{q}\in\birthday{\surrealMul{y}{y}}
+                    \inter\birthday{x}$ and
+                $\surrealLt{\surrealMul{y}{y}}{q}$ and
+                $\surrealLt{q}{x}$.
+            $\birthday{q}\in\birthday{x}$ by \obv{inter_elim_right}.
+            $\surrealLe{\surrealZero}{\surrealMul{y}{y}}$
+                by \obv{surreal_square_nonnegative}.
+            $\surrealLt{\surrealZero}{q}$
+                by
+                \auto{surreal_le_lt_transitive,empty_surreal,surreal_mul_is_surreal}.
+            Hence $\surrealLe{\surrealZero}{q}$
+                by \obv{surreal_le}.
+            Let $s=\Apply{g}{q}$.
+            $\surreal{s}$ and $\surrealLe{\surrealZero}{s}$ and
+                $\surrealMul{s}{s}=q$ by \auto.
+            $q\in\surrealLeft{x}$
+                by \obv{surreal_left_intro}.
+            Hence $q\in\surrealSqrtNonnegativeLeft{x}$
+                by
+                \obv{surreal_sqrt_nonnegative_left,logical_separation_iff}.
+            Hence $s\in L$
+                by \auto{surreal_sqrt_recursive_left_option}.
+            Hence $\surrealLt{s}{y}$
+                by \auto{surreal_cut_pair_left}.
+            Hence $\surrealLt{\surrealMul{s}{s}}{
+                \surrealMul{y}{y}}$
+                by
+                \obv{surreal_square_strict_monotone_nonnegative}.
+            Hence $\surrealLt{q}{q}$
+                by
+                \auto{surreal_lt_transitive,surreal_mul_is_surreal}.
+            Contradiction by \obv{surreal_lt_irreflexive}.
+        \caseOf{not $\exists q:\Set.\ \surreal{q}\land
+            \birthday{q}\in\birthday{\surrealMul{y}{y}}
+                \inter\birthday{x}\land
+            \surrealLt{\surrealMul{y}{y}}{q}\land
+            \surrealLt{q}{x}$.}
+            \begin{byCase}
+                \caseOf{$\surrealMul{y}{y}\in\surrealLeft{x}$.}
+                    Let $q=\surrealMul{y}{y}$.
+                    $\surreal{q}$ and $\birthday{q}\in\birthday{x}$
+                        by \auto{surreal_left_elim}.
+                    $\surrealLe{\surrealZero}{q}$
+                        by \auto{surreal_square_nonnegative}.
+                    Let $s=\Apply{g}{q}$.
+                    $\surreal{s}$ and
+                        $\surrealLe{\surrealZero}{s}$ and
+                        $\surrealMul{s}{s}=q$ by \auto.
+                    Hence $s=y$
+                        by
+                        \obv{surreal_nonnegative_square_unique}.
+                    $q\in\surrealSqrtNonnegativeLeft{x}$
+                        by
+                        \auto{surreal_sqrt_nonnegative_left,logical_separation_iff}.
+                    Hence $s\in L$
+                        by \auto{surreal_sqrt_recursive_left_option}.
+                    Hence $\surrealLt{s}{y}$
+                        by \auto{surreal_cut_pair_left}.
+                    Hence $\surrealLt{y}{y}$ by \auto.
+                    Contradiction by \obv{surreal_lt_irreflexive}.
+                \caseOf{$\surrealMul{y}{y}\notin\surrealLeft{x}$.}
+                    Hence $x\in\surrealRight{\surrealMul{y}{y}}$.
+                    Take $u,v$ such that
+                        (($u\in\surrealLeft{y}$ and
+                            $v\in\surrealRight{y}$) or
+                         ($u\in\surrealRight{y}$ and
+                            $v\in\surrealLeft{y}$)) and
+                        $\surrealLe{
+                            \surrealAdd{\surrealMul{u}{y}}{
+                                \surrealMul{y}{v}}}{
+                            \surrealAdd{x}{\surrealMul{u}{v}}}$
+                        by \auto{surreal_mul_right_interpolation}.
+                    $\surreal{u}$ and $\surreal{v}$
+                        by
+                        \auto{surreal_left_elim,surreal_right_elim}.
+                    \begin{byCase}
+                        \caseOf{$u\in\surrealLeft{y}$ and
+                            $v\in\surrealRight{y}$.}
+                            Take $l\in L$ such that
+                                $\surrealLe{u}{l}$
+                                by \auto{surreal_cut_left_interpolation}.
+                            Take $r\in R$ such that
+                                $\surrealLe{r}{v}$
+                                by \auto{surreal_cut_right_interpolation}.
+                            $\surreal{l}$ and
+                                $\surrealLe{\surrealZero}{l}$ and
+                                $\surrealLt{\surrealMul{l}{l}}{x}$
+                                by \auto.
+                            $\surreal{r}$ and
+                                $\surrealLe{\surrealZero}{r}$ and
+                                $\surrealLt{x}{\surrealMul{r}{r}}$
+                                by \auto.
+                            $\surrealLt{l}{y}$ and
+                                $\surrealLt{y}{r}$
+                                by
+                                \auto{surreal_cut_pair_left,surreal_cut_pair_right}.
+                            Hence $\surrealLe{l}{y}$ and
+                                $\surrealLe{y}{r}$
+                                by \obv{surreal_le}.
+                            $\surrealLe{
+                                \surrealAdd{\surrealMul{l}{y}}{
+                                    \surrealMul{y}{r}}}{
+                                \surrealAdd{x}{\surrealMul{l}{r}}}$
+                                by
+                                \auto{surreal_sqrt_refine_mixed_interpolation}.
+                            $\surrealLt{\surrealZero}{r}$
+                                by
+                                \obv{surreal_sqrt_upper_bound_positive}.
+                            $\surrealLt{\surrealZero}{
+                                \surrealAdd{l}{r}}$
+                                by
+                                \auto{surreal_add_le_lt,surreal_add_zero_left,empty_surreal}.
+                            $\surrealSqrtUpdate{x}{l}{r}\in L$
+                                by
+                                \obv{surreal_sqrt_lower_options_update}.
+                            Hence $\surrealLt{
+                                \surrealSqrtUpdate{x}{l}{r}}{y}$
+                                by \auto{surreal_cut_pair_left}.
+                            Contradiction by
+                                \auto{surreal_sqrt_mixed_update_contradiction}.
+                        \caseOf{$\lnot(u\in\surrealLeft{y}\land
+                            v\in\surrealRight{y})$.}
+                            Hence $u\in\surrealRight{y}$ and
+                                $v\in\surrealLeft{y}$.
+                            Take $l\in L$ such that
+                                $\surrealLe{v}{l}$
+                                by \auto{surreal_cut_left_interpolation}.
+                            Take $r\in R$ such that
+                                $\surrealLe{r}{u}$
+                                by \auto{surreal_cut_right_interpolation}.
+                            $\surreal{l}$ and
+                                $\surrealLe{\surrealZero}{l}$ and
+                                $\surrealLt{\surrealMul{l}{l}}{x}$
+                                by \auto.
+                            $\surreal{r}$ and
+                                $\surrealLe{\surrealZero}{r}$ and
+                                $\surrealLt{x}{\surrealMul{r}{r}}$
+                                by \auto.
+                            $\surrealLt{l}{y}$ and
+                                $\surrealLt{y}{r}$
+                                by
+                                \auto{surreal_cut_pair_left,surreal_cut_pair_right}.
+                            Hence $\surrealLe{l}{y}$ and
+                                $\surrealLe{y}{r}$
+                                by \obv{surreal_le}.
+                            $\surrealLe{
+                                \surrealAdd{\surrealMul{v}{y}}{
+                                    \surrealMul{y}{u}}}{
+                                \surrealAdd{x}{\surrealMul{v}{u}}}$
+                                by
+                                \auto{surreal_mul_commutative,surreal_add_commutative,surreal_mul_is_surreal}.
+                            Hence $\surrealLe{
+                                \surrealAdd{\surrealMul{l}{y}}{
+                                    \surrealMul{y}{r}}}{
+                                \surrealAdd{x}{\surrealMul{l}{r}}}$
+                                by
+                                \auto{surreal_sqrt_refine_mixed_interpolation}.
+                            $\surrealLt{\surrealZero}{r}$
+                                by
+                                \obv{surreal_sqrt_upper_bound_positive}.
+                            $\surrealLt{\surrealZero}{
+                                \surrealAdd{l}{r}}$
+                                by
+                                \auto{surreal_add_le_lt,surreal_add_zero_left,empty_surreal}.
+                            $\surrealSqrtUpdate{x}{l}{r}\in L$
+                                by
+                                \obv{surreal_sqrt_lower_options_update}.
+                            Hence $\surrealLt{
+                                \surrealSqrtUpdate{x}{l}{r}}{y}$
+                                by \auto{surreal_cut_pair_left}.
+                            Contradiction by
+                                \auto{surreal_sqrt_mixed_update_contradiction}.
+                    \end{byCase}
+            \end{byCase}
+    \end{byCase}
+    \end{subproof}
+\end{proof}
+
+\begin{theorem}\label{surreal_sqrt_cut_not_above}
+    $\forall x:\Set.\ \forall g:\Set\to\Set.
+        (\surreal{x}\land
+         \surrealLe{\surrealZero}{x}\land
+         (\forall u:\Set.
+            (\surreal{u}\land\birthday{u}\in\birthday{x}\land
+                \surrealLe{\surrealZero}{u})
+            \implies
+            (\surreal{\Apply{g}{u}}\land
+             \surrealLe{\surrealZero}{\Apply{g}{u}}\land
+             \surrealMul{\Apply{g}{u}}{\Apply{g}{u}}=u)))
+        \implies
+        \lnot\surrealLt{x}{
+            \surrealMul{
+                \surrealCut{
+                    \Apply{\surrealSqrtLowerOptionsOp}{x,g}}{
+                    \Apply{\surrealSqrtUpperOptionsOp}{x,g}}}{
+                \surrealCut{
+                    \Apply{\surrealSqrtLowerOptionsOp}{x,g}}{
+                    \Apply{\surrealSqrtUpperOptionsOp}{x,g}}}}$.
+\end{theorem}
+\begin{proof}
+    Fix $x,g$.
+    Assume $\surreal{x}$ and
+        $\surrealLe{\surrealZero}{x}$.
+    Assume $\forall u:\Set.
+        (\surreal{u}\land\birthday{u}\in\birthday{x}\land
+            \surrealLe{\surrealZero}{u})
+        \implies
+        (\surreal{\Apply{g}{u}}\land
+         \surrealLe{\surrealZero}{\Apply{g}{u}}\land
+         \surrealMul{\Apply{g}{u}}{\Apply{g}{u}}=u)$.
+    Let $L=\Apply{\surrealSqrtLowerOptionsOp}{x,g}$.
+    Let $R=\Apply{\surrealSqrtUpperOptionsOp}{x,g}$.
+    Let $y=\surrealCut{L}{R}$.
+    $\surrealCutPair{L}{R}$
+        by \auto{surreal_sqrt_options_cut_pair}.
+    $\surreal{y}$ by \obv{surreal_cut_pair_is_surreal}.
+    $\surrealLe{\surrealZero}{y}$
+        by \auto{surreal_sqrt_cut_nonnegative}.
+    $\forall l:\Set.\ l\in L\implies
+        (\surreal{l}\land
+         \surrealLe{\surrealZero}{l}\land
+         \surrealLt{\surrealMul{l}{l}}{x})$
+        by \auto{surreal_sqrt_options_invariant}.
+    $\forall r:\Set.\ r\in R\implies
+        (\surreal{r}\land
+         \surrealLe{\surrealZero}{r}\land
+         \surrealLt{x}{\surrealMul{r}{r}})$
+        by \auto{surreal_sqrt_options_invariant}.
+    Show that not $\surrealLt{x}{\surrealMul{y}{y}}$.
+    \begin{subproof}
+    Suppose $\surrealLt{x}{\surrealMul{y}{y}}$.
+    $\surreal{\surrealMul{y}{y}}$
+        by \obv{surreal_mul_is_surreal}.
+    $(\exists q:\Set.\ \surreal{q}\land
+        \birthday{q}\in\birthday{x}
+            \inter\birthday{\surrealMul{y}{y}}\land
+        \surrealLt{x}{q}\land
+        \surrealLt{q}{\surrealMul{y}{y}})
+      \lor x\in\surrealLeft{\surrealMul{y}{y}}
+      \lor \surrealMul{y}{y}\in\surrealRight{x}$
+        by \obv{surreal_lt_elimination}.
+    \begin{byCase}
+        \caseOf{$\exists q:\Set.\ \surreal{q}\land
+            \birthday{q}\in\birthday{x}
+                \inter\birthday{\surrealMul{y}{y}}\land
+            \surrealLt{x}{q}\land
+            \surrealLt{q}{\surrealMul{y}{y}}$.}
+            Take $q$ such that $\surreal{q}$ and
+                $\birthday{q}\in\birthday{x}
+                    \inter\birthday{\surrealMul{y}{y}}$ and
+                $\surrealLt{x}{q}$ and
+                $\surrealLt{q}{\surrealMul{y}{y}}$.
+            $\birthday{q}\in\birthday{x}$ by \obv{inter_elim_left}.
+            $\surrealLt{\surrealZero}{q}$
+                by
+                \obv{surreal_le_lt_transitive,empty_surreal}.
+            Hence $\surrealLe{\surrealZero}{q}$
+                by \obv{surreal_le}.
+            Let $s=\Apply{g}{q}$.
+            $\surreal{s}$ and $\surrealLe{\surrealZero}{s}$ and
+                $\surrealMul{s}{s}=q$ by \auto.
+            $q\in\surrealRight{x}$
+                by \obv{surreal_right_intro}.
+            Hence $s\in R$
+                by \auto{surreal_sqrt_recursive_right_option}.
+            Hence $\surrealLt{y}{s}$
+                by \auto{surreal_cut_pair_right}.
+            Hence $\surrealLt{\surrealMul{y}{y}}{
+                \surrealMul{s}{s}}$
+                by
+                \obv{surreal_square_strict_monotone_nonnegative}.
+            Hence $\surrealLt{q}{q}$
+                by
+                \auto{surreal_lt_transitive,surreal_mul_is_surreal}.
+            Contradiction by \obv{surreal_lt_irreflexive}.
+        \caseOf{not $\exists q:\Set.\ \surreal{q}\land
+            \birthday{q}\in\birthday{x}
+                \inter\birthday{\surrealMul{y}{y}}\land
+            \surrealLt{x}{q}\land
+            \surrealLt{q}{\surrealMul{y}{y}}$.}
+            \begin{byCase}
+                \caseOf{$x\in\surrealLeft{\surrealMul{y}{y}}$.}
+                    Take $u,v$ such that
+                        (($u\in\surrealLeft{y}$ and
+                            $v\in\surrealLeft{y}$) or
+                         ($u\in\surrealRight{y}$ and
+                            $v\in\surrealRight{y}$)) and
+                        $\surrealLe{
+                            \surrealAdd{x}{\surrealMul{u}{v}}}{
+                            \surrealAdd{\surrealMul{u}{y}}{
+                                \surrealMul{y}{v}}}$
+                        by \auto{surreal_mul_left_interpolation}.
+                    $\surreal{u}$ and $\surreal{v}$
+                        by
+                        \auto{surreal_left_elim,surreal_right_elim}.
+                    \begin{byCase}
+                        \caseOf{$u\in\surrealLeft{y}$ and
+                            $v\in\surrealLeft{y}$.}
+                            Take $l\in L$ such that
+                                $\surrealLe{u}{l}$
+                                by \auto{surreal_cut_left_interpolation}.
+                            Take $r\in L$ such that
+                                $\surrealLe{v}{r}$
+                                by \auto{surreal_cut_left_interpolation}.
+                            $\surreal{l}$ and
+                                $\surrealLe{\surrealZero}{l}$ and
+                                $\surrealLt{\surrealMul{l}{l}}{x}$
+                                by \auto.
+                            $\surreal{r}$ and
+                                $\surrealLe{\surrealZero}{r}$ and
+                                $\surrealLt{\surrealMul{r}{r}}{x}$
+                                by \auto.
+                            $\surrealLt{l}{y}$ and
+                                $\surrealLt{r}{y}$
+                                by \obv{surreal_cut_pair_left}.
+                            Hence $\surrealLe{l}{y}$ and
+                                $\surrealLe{r}{y}$
+                                by \obv{surreal_le}.
+                            $\surrealLe{
+                                \surrealAdd{x}{\surrealMul{l}{r}}}{
+                                \surrealAdd{\surrealMul{l}{y}}{
+                                    \surrealMul{y}{r}}}$
+                                by
+                                \auto{surreal_sqrt_refine_lower_interpolation}.
+                            $\surrealLt{\surrealZero}{
+                                \surrealAdd{l}{r}}$
+                                by
+                                \auto{surreal_sqrt_lower_pair_sum_positive}.
+                            $\surrealSqrtUpdate{x}{l}{r}\in R$
+                                by
+                                \obv{surreal_sqrt_upper_options_update_lower}.
+                            Hence $\surrealLt{y}{
+                                \surrealSqrtUpdate{x}{l}{r}}$
+                                by \auto{surreal_cut_pair_right}.
+                            Contradiction by
+                                \auto{surreal_sqrt_same_update_contradiction}.
+                        \caseOf{$\lnot(u\in\surrealLeft{y}\land
+                            v\in\surrealLeft{y})$.}
+                            Hence $u\in\surrealRight{y}$ and
+                                $v\in\surrealRight{y}$.
+                            Take $l\in R$ such that
+                                $\surrealLe{l}{u}$
+                                by \auto{surreal_cut_right_interpolation}.
+                            Take $r\in R$ such that
+                                $\surrealLe{r}{v}$
+                                by \auto{surreal_cut_right_interpolation}.
+                            $\surreal{l}$ and
+                                $\surrealLe{\surrealZero}{l}$ and
+                                $\surrealLt{x}{\surrealMul{l}{l}}$
+                                by \auto.
+                            $\surreal{r}$ and
+                                $\surrealLe{\surrealZero}{r}$ and
+                                $\surrealLt{x}{\surrealMul{r}{r}}$
+                                by \auto.
+                            $\surrealLt{y}{l}$ and
+                                $\surrealLt{y}{r}$
+                                by \auto{surreal_cut_pair_right}.
+                            Hence $\surrealLe{y}{l}$ and
+                                $\surrealLe{y}{r}$
+                                by \obv{surreal_le}.
+                            $\surrealLe{
+                                \surrealAdd{x}{\surrealMul{l}{r}}}{
+                                \surrealAdd{\surrealMul{l}{y}}{
+                                    \surrealMul{y}{r}}}$
+                                by
+                                \auto{surreal_sqrt_refine_upper_interpolation}.
+                            $\surrealLt{\surrealZero}{l}$
+                                by
+                                \obv{surreal_sqrt_upper_bound_positive}.
+                            $\surrealLt{\surrealZero}{
+                                \surrealAdd{l}{r}}$
+                                by
+                                \auto{surreal_add_lt_le,surreal_add_zero_left,empty_surreal}.
+                            $\surrealSqrtUpdate{x}{l}{r}\in R$
+                                by
+                                \obv{surreal_sqrt_upper_options_update_upper}.
+                            Hence $\surrealLt{y}{
+                                \surrealSqrtUpdate{x}{l}{r}}$
+                                by \auto{surreal_cut_pair_right}.
+                            Contradiction by
+                                \auto{surreal_sqrt_same_update_contradiction}.
+                    \end{byCase}
+                \caseOf{$x\notin\surrealLeft{\surrealMul{y}{y}}$.}
+                    Hence $\surrealMul{y}{y}\in\surrealRight{x}$.
+                    Let $q=\surrealMul{y}{y}$.
+                    $\surreal{q}$ and $\birthday{q}\in\birthday{x}$
+                        by \auto{surreal_right_elim}.
+                    $\surrealLe{\surrealZero}{q}$
+                        by \auto{surreal_square_nonnegative}.
+                    Let $s=\Apply{g}{q}$.
+                    $\surreal{s}$ and
+                        $\surrealLe{\surrealZero}{s}$ and
+                        $\surrealMul{s}{s}=q$ by \auto.
+                    Hence $s=y$
+                        by
+                        \obv{surreal_nonnegative_square_unique}.
+                    $s\in R$
+                        by \auto{surreal_sqrt_recursive_right_option}.
+                    Hence $\surrealLt{y}{s}$
+                        by \auto{surreal_cut_pair_right}.
+                    Hence $\surrealLt{y}{y}$ by \auto.
+                    Contradiction by \obv{surreal_lt_irreflexive}.
+            \end{byCase}
+    \end{byCase}
+    \end{subproof}
+\end{proof}
+
+\begin{theorem}\label{surreal_sqrt_approximation_extensionality}
+    $\forall x,n:\Set.\ \forall g,h:\Set\to\Set.
+        (\surreal{x}\land n\in\naturals\land
+         (\forall u:\Set.
+            (\surreal{u}\land\birthday{u}\in\birthday{x})
+            \implies\Apply{g}{u}=\Apply{h}{u}))
+        \implies
+        \Apply{\surrealSqrtApproxOp}{x,g,n}
+        =\Apply{\surrealSqrtApproxOp}{x,h,n}$.
+\end{theorem}
+\begin{proof}
+    Fix $x,n,g,h$.
+    Assume $\surreal{x}$ and $n\in\naturals$.
+    Assume $\forall u:\Set.
+        (\surreal{u}\land\birthday{u}\in\birthday{x})
+        \implies\Apply{g}{u}=\Apply{h}{u}$.
+    Let $P:\Set\to\Prop=\fun{k:\Set}{
+        \Apply{\surrealSqrtApproxOp}{x,g,k}
+        =\Apply{\surrealSqrtApproxOp}{x,h,k}}$.
+
+    Show that $\Apply{P}{\emptyset}$.
+    \begin{subproof}
+        Show that for every $u\in\surrealSqrtNonnegativeLeft{x}$
+            we have $\Apply{g}{u}=\Apply{h}{u}$.
+        \begin{subproof}
+            Fix $u\in\surrealSqrtNonnegativeLeft{x}$.
+            Hence $u\in\surrealLeft{x}$
+                by \obv{surreal_sqrt_nonnegative_left}.
+            Hence $\surreal{u}$ and
+                $\birthday{u}\in\birthday{x}$
+                by \auto{surreal_left_elim}.
+        \end{subproof}
+        Hence
+            $\{\Apply{g}{u}
+                \mid u\in\surrealSqrtNonnegativeLeft{x}\}
+            =\{\Apply{h}{u}
+                \mid u\in\surrealSqrtNonnegativeLeft{x}\}$
+            by \obv{logical_replacement_extensionality}.
+        Show that for every $u\in\surrealRight{x}$
+            we have $\Apply{g}{u}=\Apply{h}{u}$.
+        \begin{subproof}
+            Fix $u\in\surrealRight{x}$.
+            Hence $\surreal{u}$ and
+                $\birthday{u}\in\birthday{x}$
+                by \auto{surreal_right_elim}.
+        \end{subproof}
+        Hence
+            $\{\Apply{g}{u}\mid u\in\surrealRight{x}\}
+            =\{\Apply{h}{u}\mid u\in\surrealRight{x}\}$
+            by \obv{logical_replacement_extensionality}.
+        Follows by \auto{surreal_sqrt_approximation_zero}.
+    \end{subproof}
+
+    Show that $\forall k:\Set.\ k\in\naturals\implies
+        (\Apply{P}{k}\implies\Apply{P}{\suc{k}})$.
+    \begin{subproof}
+        Fix $k$.
+        Assume $k\in\naturals$.
+        Assume $\Apply{P}{k}$.
+        Follows by
+            \auto{surreal_sqrt_approximation_successor}.
+    \end{subproof}
+
+    Let $C=\sep{\naturals}{P}$.
+    $\emptyset\in C$ by
+        \auto{logical_separation_iff,omega_empty}.
+    For every $k\in C$ we have $\suc{k}\in C$
+        by \auto{logical_separation_iff,omega_successor}.
+    Hence $C$ is an inductive set by \obv{inductive_set}.
+    Hence every natural number is an element of $C$
+        by \obv{omega_minimal}.
+    Hence $n\in C$.
+    Hence $\Apply{P}{n}$ by \auto{logical_separation_iff}.
+\end{proof}
+
+\subsection{The nonnegative square-root operation}
+
+\begin{definition}\label{surreal_nonnegative_sqrt_step}
+    $\surrealNonnegativeSqrtStepOp:
+        \Set\to(\Set\to\Set)\to\Set
+        =\fun{x:\Set}{
+            \fun{g:\Set\to\Set}{
+                \surrealCut
+                    {\Apply{\surrealSqrtLowerOptionsOp}{x,g}}
+                    {\Apply{\surrealSqrtUpperOptionsOp}{x,g}}}}$.
+\end{definition}
+
+\begin{proposition}\label{surreal_nonnegative_sqrt_step_functional}
+    $\Apply{\surrealRecFunctionalOp}{
+        \surrealNonnegativeSqrtStepOp}$.
+\end{proposition}
+\begin{proof}
+    Show that $\forall x:\Set.\ \surreal{x}\implies
+        (\forall g,h:\Set\to\Set.
+            (\forall u:\Set.
+                (\surreal{u}\land\birthday{u}\in\birthday{x})
+                \implies\Apply{g}{u}=\Apply{h}{u})
+            \implies
+            \Apply{\surrealNonnegativeSqrtStepOp}{x,g}
+            =\Apply{\surrealNonnegativeSqrtStepOp}{x,h})$.
+    \begin{subproof}
+        Fix $x$.
+        Assume $\surreal{x}$.
+        Fix $g,h$.
+        Assume $\forall u:\Set.
+            (\surreal{u}\land\birthday{u}\in\birthday{x})
+            \implies\Apply{g}{u}=\Apply{h}{u}$.
+        Show that for every $n\in\naturals$ we have
+            $\Apply{\surrealSqrtLowerApproxOp}{x,g,n}
+            =\Apply{\surrealSqrtLowerApproxOp}{x,h,n}$.
+        \begin{subproof}
+            Fix $n\in\naturals$.
+            $\Apply{\surrealSqrtApproxOp}{x,g,n}
+            =\Apply{\surrealSqrtApproxOp}{x,h,n}$
+                by \obv{surreal_sqrt_approximation_extensionality}.
+            Follows by \auto{surreal_sqrt_lower_approximation}.
+        \end{subproof}
+        Hence
+            $\{\Apply{\surrealSqrtLowerApproxOp}{x,g,n}
+                \mid n\in\naturals\}
+            =\{\Apply{\surrealSqrtLowerApproxOp}{x,h,n}
+                \mid n\in\naturals\}$
+            by \obv{logical_replacement_extensionality}.
+        Hence
+            $\Apply{\surrealSqrtLowerOptionsOp}{x,g}
+            =\Apply{\surrealSqrtLowerOptionsOp}{x,h}$
+            by \auto{surreal_sqrt_lower_options}.
+
+        Show that for every $n\in\naturals$ we have
+            $\Apply{\surrealSqrtUpperApproxOp}{x,g,n}
+            =\Apply{\surrealSqrtUpperApproxOp}{x,h,n}$.
+        \begin{subproof}
+            Fix $n\in\naturals$.
+            $\Apply{\surrealSqrtApproxOp}{x,g,n}
+            =\Apply{\surrealSqrtApproxOp}{x,h,n}$
+                by \obv{surreal_sqrt_approximation_extensionality}.
+            Follows by \auto{surreal_sqrt_upper_approximation}.
+        \end{subproof}
+        Hence
+            $\{\Apply{\surrealSqrtUpperApproxOp}{x,g,n}
+                \mid n\in\naturals\}
+            =\{\Apply{\surrealSqrtUpperApproxOp}{x,h,n}
+                \mid n\in\naturals\}$
+            by \obv{logical_replacement_extensionality}.
+        Hence
+            $\Apply{\surrealSqrtUpperOptionsOp}{x,g}
+            =\Apply{\surrealSqrtUpperOptionsOp}{x,h}$
+            by \auto{surreal_sqrt_upper_options}.
+        Follows by \auto{surreal_nonnegative_sqrt_step}.
+    \end{subproof}
+    Follows by \obv{surreal_recursion_functional}.
+\end{proof}
+
+\begin{definition}\label{surreal_nonnegative_sqrt_typed}
+    $\surrealNonnegativeSqrtOp:\Set\to\Set
+        =\Apply{\surrealRecOp}{\surrealNonnegativeSqrtStepOp}$.
+\end{definition}
+
+\begin{definition}\label{surreal_nonnegative_sqrt}
+    $\surrealNonnegativeSqrt{x}
+        =\Apply{\surrealNonnegativeSqrtOp}{x}$.
+\end{definition}
+
+\begin{proposition}\label{surreal_nonnegative_sqrt_equation}
+    Suppose $\surreal{x}$.
+    Then
+        $\surrealNonnegativeSqrt{x}
+        =\surrealCut
+            {\Apply{\surrealSqrtLowerOptionsOp}{x,
+                \surrealNonnegativeSqrtOp}}
+            {\Apply{\surrealSqrtUpperOptionsOp}{x,
+                \surrealNonnegativeSqrtOp}}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{surreal_nonnegative_sqrt,surreal_nonnegative_sqrt_typed,surreal_nonnegative_sqrt_step,surreal_nonnegative_sqrt_step_functional,surreal_recursion_equation_functional}.
+\end{proof}
+
+\begin{theorem}\label{surreal_nonnegative_sqrt_properties}
+    Suppose $\surreal{x}$ and
+        $\surrealLe{\surrealZero}{x}$.
+    Then $\surreal{\surrealNonnegativeSqrt{x}}$ and
+        $\surrealLe{\surrealZero}{\surrealNonnegativeSqrt{x}}$ and
+        $\surrealMul{\surrealNonnegativeSqrt{x}}{
+            \surrealNonnegativeSqrt{x}}=x$.
+\end{theorem}
+\begin{proof}
+    Let $P:\Set\to\Prop=\fun{a:\Set}{
+        \surrealLe{\surrealZero}{a}\implies
+        (\surreal{\surrealNonnegativeSqrt{a}}\land
+         \surrealLe{\surrealZero}{\surrealNonnegativeSqrt{a}}\land
+         \surrealMul{\surrealNonnegativeSqrt{a}}{
+            \surrealNonnegativeSqrt{a}}=a)}$.
+    Show that $\forall a:\Set.\ \surreal{a}\implies
+        ((\forall u:\Set.
+            (\surreal{u}\land\birthday{u}\in\birthday{a})
+            \implies\Apply{P}{u})
+         \implies\Apply{P}{a})$.
+    \begin{subproof}
+        Fix $a$.
+        Assume $\surreal{a}$.
+        Assume $\forall u:\Set.
+            (\surreal{u}\land\birthday{u}\in\birthday{a})
+            \implies\Apply{P}{u}$.
+        Show that if $\surrealLe{\surrealZero}{a}$ then
+            $\surreal{\surrealNonnegativeSqrt{a}}$ and
+            $\surrealLe{\surrealZero}{\surrealNonnegativeSqrt{a}}$ and
+            $\surrealMul{\surrealNonnegativeSqrt{a}}{
+                \surrealNonnegativeSqrt{a}}=a$.
+        \begin{subproof}
+            Suppose $\surrealLe{\surrealZero}{a}$.
+            Let $g:\Set\to\Set=\surrealNonnegativeSqrtOp$.
+            Let $L=\Apply{\surrealSqrtLowerOptionsOp}{a,g}$.
+            Let $R=\Apply{\surrealSqrtUpperOptionsOp}{a,g}$.
+            Let $y=\surrealNonnegativeSqrt{a}$.
+            Show that $\forall u:\Set.
+                (\surreal{u}\land\birthday{u}\in\birthday{a}\land
+                    \surrealLe{\surrealZero}{u})
+                \implies
+                (\surreal{\Apply{g}{u}}\land
+                 \surrealLe{\surrealZero}{\Apply{g}{u}}\land
+                 \surrealMul{\Apply{g}{u}}{\Apply{g}{u}}=u)$.
+            \begin{subproof}
+                Fix $u$.
+                Assume $\surreal{u}$ and
+                    $\birthday{u}\in\birthday{a}$ and
+                    $\surrealLe{\surrealZero}{u}$.
+                $\Apply{P}{u}$.
+                Follows by
+                    \auto{surreal_nonnegative_sqrt_typed,surreal_nonnegative_sqrt}.
+            \end{subproof}
+            $\surrealCutPair{L}{R}$
+                by \auto{surreal_sqrt_options_cut_pair}.
+            $y=\surrealCut{L}{R}$
+                by \auto{surreal_nonnegative_sqrt_equation}.
+            Hence $\surreal{y}$
+                by \obv{surreal_cut_pair_is_surreal}.
+            $\surrealLe{\surrealZero}{y}$
+                by \auto{surreal_sqrt_cut_nonnegative}.
+            not $\surrealLt{\surrealMul{y}{y}}{a}$
+                by \auto{surreal_sqrt_cut_not_below}.
+            not $\surrealLt{a}{\surrealMul{y}{y}}$
+                by \auto{surreal_sqrt_cut_not_above}.
+            $\surrealMul{y}{y}=a$
+                by
+                \auto{surreal_lt_trichotomy,surreal_mul_is_surreal}.
+            \begin{align*}
+                \surrealMul{\surrealNonnegativeSqrt{a}}{
+                    \surrealNonnegativeSqrt{a}}
+                    &= \surrealMul{y}{y} \\
+                    &= a
+            \end{align*}
+        \end{subproof}
+    \end{subproof}
+    $\forall a:\Set.\ \surreal{a}\implies\Apply{P}{a}$
+        by \auto{surreal_induction}.
+    Hence $\Apply{P}{x}$.
+\end{proof}
+
+\begin{corollary}\label{surreal_nonnegative_sqrt_is_surreal}
+    Suppose $\surreal{x}$ and
+        $\surrealLe{\surrealZero}{x}$.
+    Then $\surreal{\surrealNonnegativeSqrt{x}}$.
+\end{corollary}
+\begin{proof}
+    Follows by \auto{surreal_nonnegative_sqrt_properties}.
+\end{proof}
+
+\begin{corollary}\label{surreal_nonnegative_sqrt_nonnegative}
+    Suppose $\surreal{x}$ and
+        $\surrealLe{\surrealZero}{x}$.
+    Then $\surrealLe{\surrealZero}{\surrealNonnegativeSqrt{x}}$.
+\end{corollary}
+\begin{proof}
+    Follows by \auto{surreal_nonnegative_sqrt_properties}.
+\end{proof}
+
+\begin{corollary}\label{surreal_nonnegative_sqrt_square}
+    Suppose $\surreal{x}$ and
+        $\surrealLe{\surrealZero}{x}$.
+    Then $\surrealMul{\surrealNonnegativeSqrt{x}}{
+        \surrealNonnegativeSqrt{x}}=x$.
+\end{corollary}
+\begin{proof}
+    Follows by \obv{surreal_nonnegative_sqrt_properties}.
+\end{proof}
+
+\begin{proposition}\label{surreal_nonnegative_sqrt_zero}
+    $\surrealNonnegativeSqrt{\surrealZero}=\surrealZero$.
+\end{proposition}
+\begin{proof}
+    $\surreal{\surrealNonnegativeSqrt{\surrealZero}}$ and
+        $\surrealLe{\surrealZero}{
+            \surrealNonnegativeSqrt{\surrealZero}}$ and
+        $\surrealMul{\surrealNonnegativeSqrt{\surrealZero}}{
+            \surrealNonnegativeSqrt{\surrealZero}}=\surrealZero$
+        by
+        \obv{surreal_nonnegative_sqrt_properties,empty_surreal,surreal_le_reflexive}.
+    $\surrealMul{\surrealZero}{\surrealZero}=\surrealZero$
+        by \obv{surreal_mul_zero_left,empty_surreal}.
+    Follows by
+        \obv{surreal_nonnegative_square_unique,empty_surreal,surreal_le_reflexive}.
+\end{proof}
+
+\begin{proposition}\label{surreal_nonnegative_sqrt_one}
+    $\surrealNonnegativeSqrt{\surrealOne}=\surrealOne$.
+\end{proposition}
+\begin{proof}
+    $\surrealLe{\surrealZero}{\surrealOne}$
+        by \obv{surreal_zero_lt_one,surreal_le}.
+    $\surreal{\surrealNonnegativeSqrt{\surrealOne}}$ and
+        $\surrealLe{\surrealZero}{
+            \surrealNonnegativeSqrt{\surrealOne}}$ and
+        $\surrealMul{\surrealNonnegativeSqrt{\surrealOne}}{
+            \surrealNonnegativeSqrt{\surrealOne}}=\surrealOne$
+        by
+        \obv{surreal_nonnegative_sqrt_properties,surreal_one_is_surreal}.
+    $\surrealMul{\surrealOne}{\surrealOne}=\surrealOne$
+        by \obv{surreal_mul_one_left,surreal_one_is_surreal}.
+    Follows by
+        \obv{surreal_nonnegative_square_unique,surreal_one_is_surreal}.
+\end{proof}

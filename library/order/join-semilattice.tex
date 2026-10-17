@@ -1,0 +1,261 @@
+\section{Join semilattices}
+
+\import{order/order.tex}
+\import{function.tex}
+
+\begin{struct}\label{join_semilattice}
+    A join semilattice $X$ is an ordered set
+    equipped with
+    \begin{enumerate}
+        \item\label{join_graph}
+            a join operation
+            $\join[X]:\carrier[X]\times\carrier[X]\to\carrier[X]$;
+    \end{enumerate}
+    such that
+    \begin{enumerate}
+        \item\label{join_ub}
+            for all $x,y\in\carrier[X]$ we have
+                $x\mathrel{\leq[X]}\join[X](x,y)$ and
+                $y\mathrel{\leq[X]}\join[X](x,y)$.
+        \item\label{join_lub}
+            for all $a,x,y\in\carrier[X]$ such that
+                $x\mathrel{\leq[X]}a$ and $y\mathrel{\leq[X]}a$ we have
+                $\join[X](x,y)\mathrel{\leq[X]}a$.
+    \end{enumerate}
+\end{struct}
+
+\begin{proposition}\label{join_type}
+    Let $X$ be a join semilattice.
+    Let $x,y\in\carrier[X]$.
+    Then $\join[X](x,y)\in\carrier[X]$.
+\end{proposition}
+\begin{proof}
+    $(x,y)\in\carrier[X]\times\carrier[X]$ by
+        \obv{times_tuple_intro}.
+    Follows by \obv{join_graph,funs_type_apply}.
+\end{proof}
+
+\begin{proposition}\label{join_idempotent}
+    Let $X$ be a join semilattice.
+    Let $x\in\carrier[X]$.
+    Then $\join[X](x,x)=x$.
+\end{proposition}
+\begin{proof}
+    $\join[X](x,x)\in\carrier[X]$ by \obv{join_type}.
+    $x\mathrel{\leq[X]}\join[X](x,x)$ by \obv{join_ub}.
+    $x\mathrel{\leq[X]}x$ by
+        \auto{join_semilattice,ordered_set_order_reflexive,reflexive_on}.
+    Hence $\join[X](x,x)\mathrel{\leq[X]}x$ by \obv{join_lub}.
+    Follows by
+        \auto{join_semilattice,ordered_set_order_antisymmetric,antisymmetric}.
+\end{proof}
+
+\begin{theorem}\label{join_commutative}
+    Let $X$ be a join semilattice.
+    Let $x,y\in\carrier[X]$.
+    Then $\join[X](x,y)=\join[X](y,x)$.
+\end{theorem}
+\begin{proof}
+    $\join[X](x,y),\join[X](y,x)\in\carrier[X]$ by
+        \obv{join_type}.
+    $x\mathrel{\leq[X]}\join[X](x,y)$ and
+        $y\mathrel{\leq[X]}\join[X](x,y)$ and
+        $y\mathrel{\leq[X]}\join[X](y,x)$ and
+        $x\mathrel{\leq[X]}\join[X](y,x)$ by \obv{join_ub}.
+    Hence $\join[X](x,y)\mathrel{\leq[X]}\join[X](y,x)$ and
+        $\join[X](y,x)\mathrel{\leq[X]}\join[X](x,y)$ by
+        \obv{join_lub}.
+    Follows by
+        \auto{join_semilattice,ordered_set_order_antisymmetric,antisymmetric}.
+\end{proof}
+
+\begin{theorem}\label{join_associative}
+    Let $X$ be a join semilattice.
+    Let $x,y,z\in\carrier[X]$.
+    Then
+        $\join[X](x,\join[X](y,z))
+            =\join[X](\join[X](x,y),z)$.
+\end{theorem}
+\begin{proof}
+    Let $l=\join[X](x,\join[X](y,z))$.
+    Let $r=\join[X](\join[X](x,y),z)$.
+    $\join[X](x,y),\join[X](y,z),l,r\in\carrier[X]$ by
+        \auto{join_type}.
+    $x\mathrel{\leq[X]}l$ and
+        $\join[X](y,z)\mathrel{\leq[X]}l$ and
+        $y\mathrel{\leq[X]}\join[X](y,z)$ and
+        $z\mathrel{\leq[X]}\join[X](y,z)$ by \auto{join_ub}.
+    \begin{align*}
+        y
+            &\mathrel{\leq[X]} \join[X](y,z)
+                \explanation{by assumption}
+                \\
+            &\mathrel{\leq[X]} l
+                \explanation{by assumption}
+    \end{align*}
+    \begin{align*}
+        z
+            &\mathrel{\leq[X]} \join[X](y,z)
+                \explanation{by assumption}
+                \\
+            &\mathrel{\leq[X]} l
+                \explanation{by assumption}
+    \end{align*}
+    Hence $\join[X](x,y)\mathrel{\leq[X]}l$ by \obv{join_lub}.
+    Hence $r\mathrel{\leq[X]}l$ by \auto{join_lub}.
+
+    $\join[X](x,y)\mathrel{\leq[X]}r$ and
+        $z\mathrel{\leq[X]}r$ and
+        $x\mathrel{\leq[X]}\join[X](x,y)$ and
+        $y\mathrel{\leq[X]}\join[X](x,y)$ by \auto{join_ub}.
+    Hence $x\mathrel{\leq[X]}r$ and $y\mathrel{\leq[X]}r$ by
+        \auto{join_semilattice,ordered_set_order_transitive,transitive}.
+    Hence $\join[X](y,z)\mathrel{\leq[X]}r$ by \obv{join_lub}.
+    Hence $l\mathrel{\leq[X]}r$ by \auto{join_lub}.
+    Follows by
+        \auto{join_semilattice,ordered_set_order_antisymmetric,antisymmetric}.
+\end{proof}
+
+\begin{proposition}\label{join_upper_left}
+    Let $X$ be a join semilattice.
+    Let $x,y\in\carrier[X]$.
+    Then $x\mathrel{\leq[X]}\join[X](x,y)$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{join_ub}.
+\end{proof}
+
+\begin{proposition}\label{join_upper_right}
+    Let $X$ be a join semilattice.
+    Let $x,y\in\carrier[X]$.
+    Then $y\mathrel{\leq[X]}\join[X](x,y)$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{join_ub}.
+\end{proof}
+
+\begin{proposition}\label{join_leq_iff}
+    Let $X$ be a join semilattice.
+    Let $x,y,a\in\carrier[X]$.
+    Then $\join[X](x,y)\mathrel{\leq[X]}a$ iff
+        $x\mathrel{\leq[X]}a$ and $y\mathrel{\leq[X]}a$.
+\end{proposition}
+\begin{proof}
+    Show that if $\join[X](x,y)\mathrel{\leq[X]}a$, then
+        $x\mathrel{\leq[X]}a$ and $y\mathrel{\leq[X]}a$.
+    \begin{subproof}
+        Assume $\join[X](x,y)\mathrel{\leq[X]}a$.
+        $x\mathrel{\leq[X]}\join[X](x,y)$ and
+            $y\mathrel{\leq[X]}\join[X](x,y)$ by \obv{join_ub}.
+        Follows by
+            \auto{join_semilattice,ordered_set_order_transitive,transitive}.
+    \end{subproof}
+    Show that if $x\mathrel{\leq[X]}a$ and $y\mathrel{\leq[X]}a$,
+        then $\join[X](x,y)\mathrel{\leq[X]}a$.
+    \begin{subproof}
+        Assume $x\mathrel{\leq[X]}a$ and $y\mathrel{\leq[X]}a$.
+        Follows by \obv{join_lub}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{proposition}\label{leq_iff_join_eq_right}
+    Let $X$ be a join semilattice.
+    Let $x,y\in\carrier[X]$.
+    Then $x\mathrel{\leq[X]}y$ iff $\join[X](x,y)=y$.
+\end{proposition}
+\begin{proof}
+    $\join[X](x,y)\in\carrier[X]$ by \obv{join_type}.
+    Show that if $x\mathrel{\leq[X]}y$, then $\join[X](x,y)=y$.
+    \begin{subproof}
+        Assume $x\mathrel{\leq[X]}y$.
+        $y\mathrel{\leq[X]}y$ by
+            \auto{join_semilattice,
+                ordered_set_order_reflexive,reflexive_on}.
+        Hence $\join[X](x,y)\mathrel{\leq[X]}y$ by \obv{join_lub}.
+        $y\mathrel{\leq[X]}\join[X](x,y)$ by \obv{join_upper_right}.
+        Follows by
+            \auto{join_semilattice,
+                ordered_set_order_antisymmetric,antisymmetric}.
+    \end{subproof}
+    Show that if $\join[X](x,y)=y$, then $x\mathrel{\leq[X]}y$.
+    \begin{subproof}
+        Assume $\join[X](x,y)=y$.
+        $x\mathrel{\leq[X]}\join[X](x,y)$ by \obv{join_upper_left}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{proposition}\label{leq_iff_join_eq_left}
+    Let $X$ be a join semilattice.
+    Let $x,y\in\carrier[X]$.
+    Then $x\mathrel{\leq[X]}y$ iff $\join[X](y,x)=y$.
+\end{proposition}
+\begin{proof}
+    $\join[X](y,x)=\join[X](x,y)$ by \obv{join_commutative}.
+    Follows by \auto{leq_iff_join_eq_right}.
+\end{proof}
+
+\begin{proposition}\label{join_eq_right_of_leq}
+    Let $X$ be a join semilattice.
+    Let $x,y\in\carrier[X]$.
+    Suppose $x\mathrel{\leq[X]}y$.
+    Then $\join[X](x,y)=y$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{leq_iff_join_eq_right}.
+\end{proof}
+
+\begin{proposition}\label{join_eq_left_of_leq}
+    Let $X$ be a join semilattice.
+    Let $x,y\in\carrier[X]$.
+    Suppose $x\mathrel{\leq[X]}y$.
+    Then $\join[X](y,x)=y$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{leq_iff_join_eq_left}.
+\end{proof}
+
+\begin{proposition}\label{join_monotone}
+    Let $X$ be a join semilattice.
+    Let $x_1,x_2,y_1,y_2\in\carrier[X]$.
+    Suppose $x_1\mathrel{\leq[X]}x_2$ and
+        $y_1\mathrel{\leq[X]}y_2$.
+    Then $\join[X](x_1,y_1)\mathrel{\leq[X]}\join[X](x_2,y_2)$.
+\end{proposition}
+\begin{proof}
+    $\join[X](x_1,y_1),\join[X](x_2,y_2)\in\carrier[X]$ by
+        \obv{join_type}.
+    $x_2\mathrel{\leq[X]}\join[X](x_2,y_2)$ and
+        $y_2\mathrel{\leq[X]}\join[X](x_2,y_2)$ by \obv{join_ub}.
+    Hence $x_1\mathrel{\leq[X]}\join[X](x_2,y_2)$ and
+        $y_1\mathrel{\leq[X]}\join[X](x_2,y_2)$ by
+        \auto{join_semilattice,ordered_set_order_transitive,transitive}.
+    Follows by \obv{join_lub}.
+\end{proof}
+
+\begin{proposition}\label{join_monotone_left}
+    Let $X$ be a join semilattice.
+    Let $x_1,x_2,y\in\carrier[X]$.
+    Suppose $x_1\mathrel{\leq[X]}x_2$.
+    Then $\join[X](x_1,y)\mathrel{\leq[X]}\join[X](x_2,y)$.
+\end{proposition}
+\begin{proof}
+    $y\mathrel{\leq[X]}y$ by
+        \auto{join_semilattice,
+            ordered_set_order_reflexive,reflexive_on}.
+    Follows by \obv{join_monotone}.
+\end{proof}
+
+\begin{proposition}\label{join_monotone_right}
+    Let $X$ be a join semilattice.
+    Let $x,y_1,y_2\in\carrier[X]$.
+    Suppose $y_1\mathrel{\leq[X]}y_2$.
+    Then $\join[X](x,y_1)\mathrel{\leq[X]}\join[X](x,y_2)$.
+\end{proposition}
+\begin{proof}
+    $x\mathrel{\leq[X]}x$ by
+        \auto{join_semilattice,
+            ordered_set_order_reflexive,reflexive_on}.
+    Follows by \obv{join_monotone}.
+\end{proof}

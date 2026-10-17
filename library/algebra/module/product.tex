@@ -1,0 +1,938 @@
+\import{algebra/module/linear-map.tex}
+\import{algebra/group/product.tex}
+\import{set/dependent-operation.tex}
+
+\section{Products of modules}
+
+The product of a family of modules has the ordinary product of their
+additive groups as its additive reduct.  Scalar multiplication is defined
+coordinatewise on that same dependent product.
+
+\begin{definition}\label{module_additive_group_op}
+    $\moduleAdditiveGroupOp:\Set\to\Set\to\Set
+        =\fun{M,i:\Set}{\ModuleAdditiveGroup{M(i)}}$.
+\end{definition}
+
+\begin{definition}\label{module_additive_group_family}
+    $\moduleAdditiveGroupFamily{I}{M}
+        =\Apply{\graphOnDomainOp}{
+            I,\Apply{\moduleAdditiveGroupOp}{M}}$.
+\end{definition}
+
+\begin{proposition}\label{module_additive_group_family_type}
+    Suppose $M$ is a function on $I$.
+    Then $\moduleAdditiveGroupFamily{I}{M}$ is a function on $I$.
+\end{proposition}
+\begin{proof}
+    $\moduleAdditiveGroupFamily{I}{M}\in
+        \funs{I}{\ran{\moduleAdditiveGroupFamily{I}{M}}}$ by
+        \auto{module_additive_group_family,
+            logical_graph_on_domain_function}.
+    Follows by \obv{funs_is_function,funs}.
+\end{proof}
+
+\begin{proposition}\label{module_additive_group_family_apply}
+    Suppose $M$ is a function on $I$ and $i\in I$.
+    Then
+        $\apply{\moduleAdditiveGroupFamily{I}{M}}{i}
+            =\ModuleAdditiveGroup{M(i)}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{module_additive_group_family,module_additive_group_op,
+            logical_graph_on_domain_apply}.
+\end{proof}
+
+\begin{proposition}\label{module_product_carrier_coordinate}
+    Suppose $M$ is a function on $I$ and $i\in I$.
+    Let $A=\moduleAdditiveGroupFamily{I}{M}$.
+    Then
+        $\apply{\productMonoidCarrierFamily{I}{A}}{i}
+            =\carrier[M(i)]$.
+\end{proposition}
+\begin{proof}
+    $A$ is a function on $I$ by
+        \auto{module_additive_group_family_type}.
+    $A(i)=\ModuleAdditiveGroup{M(i)}$ by
+        \auto{module_additive_group_family_apply}.
+    $\apply{\productMonoidCarrierFamily{I}{A}}{i}=\carrier[A(i)]$ by
+        \obv{product_monoid_carrier_family_apply}.
+    Follows by \auto{module_additive_group_fields}.
+\end{proof}
+
+\begin{definition}\label{module_scalar_coordinate_op}
+    $\moduleScalarCoordinateOp:
+        \Set\to\Set\to\Set\to\Set\to\Set
+        =\fun{M,a,x,i:\Set}{\scalarMul[M(i)](a,x(i))}$.
+\end{definition}
+
+\begin{definition}\label{pointwise_module_scalar_op}
+    $\pointwiseModuleScalarOp:
+        \Set\to\Set\to\Set\to\Set\to\Set
+        =\fun{I,M,a,x:\Set}{
+            \Apply{\graphOnDomainOp}{
+                I,\Apply{\moduleScalarCoordinateOp}{M,a,x}}}$.
+\end{definition}
+
+\begin{proposition}\label{pointwise_module_scalar_coordinate}
+    Let $i\in I$.
+    Then
+        $\apply{\Apply{\pointwiseModuleScalarOp}{I,M,a,x}}{i}
+            =\scalarMul[M(i)](a,x(i))$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{pointwise_module_scalar_op,module_scalar_coordinate_op,
+            logical_graph_on_domain_apply}.
+\end{proof}
+
+\begin{proposition}\label{pointwise_module_scalar_type}
+    Let $R$ be a ring.
+    Suppose $M$ is a function on $I$.
+    Suppose for every $i\in I$ we have $M(i)$ is a left module over $R$.
+    Let $A=\moduleAdditiveGroupFamily{I}{M}$.
+    Let $C=\productMonoidCarrierFamily{I}{A}$.
+    Let $a\in\carrier[R]$ and $x\in\dependentProduct{I}{C}$.
+    Then
+        $\Apply{\pointwiseModuleScalarOp}{I,M,a,x}
+            \in\dependentProduct{I}{C}$.
+\end{proposition}
+\begin{proof}
+    Let $u=\Apply{\pointwiseModuleScalarOp}{I,M,a,x}$.
+    $A$ is a function on $I$ by
+        \auto{module_additive_group_family_type}.
+    $C$ is a function on $I$ by
+        \auto{product_monoid_carrier_family_type}.
+    $u\in\funs{I}{\ran{u}}$ by
+        \auto{pointwise_module_scalar_op,
+            logical_graph_on_domain_function}.
+    Hence $u$ is a function and $\dom{u}=I$ by
+        \obv{funs_is_function,funs}.
+    Show that for every $i\in I$ we have $u(i)\in C(i)$.
+    \begin{subproof}
+        Fix $i\in I$.
+        $x(i)\in C(i)$ by \obv{dependent_product_coordinate}.
+        $C(i)=\carrier[M(i)]$ by
+            \auto{module_product_carrier_coordinate}.
+        $u(i)=\scalarMul[M(i)](a,x(i))$ by
+            \auto{pointwise_module_scalar_coordinate}.
+        Follows by \auto{module_scalar_type}.
+    \end{subproof}
+    Show that $u\in\funs{I}{\unions{\ran{C}}}$.
+    \begin{subproof}
+        Show that for every $i\in\dom{u}$ we have
+            $u(i)\in\unions{\ran{C}}$.
+        \begin{subproof}
+            Fix $i\in\dom{u}$.
+            Hence $i\in I$.
+            $u(i)\in C(i)$.
+            Follows by \obv{indexed_family_member_union}.
+        \end{subproof}
+        Hence $u$ is a function to $\unions{\ran{C}}$.
+        Follows by \obv{funs_intro}.
+    \end{subproof}
+    Follows by \auto{dependent_product_iff}.
+\end{proof}
+
+\begin{definition}\label{product_module_additive_group}
+    $\productModuleAdditiveGroup{I}{M}
+        =\ProductGroup{I}{\moduleAdditiveGroupFamily{I}{M}}$.
+\end{definition}
+
+\begin{definition}\label{product_module_scalar_graph}
+    $\productModuleScalarGraph{R}{I}{M}
+        =\Apply{\heteroBinaryGraphOnOp}{
+            \carrier[R],
+            \carrier[\productModuleAdditiveGroup{I}{M}],
+            \Apply{\pointwiseModuleScalarOp}{I,M}}$.
+\end{definition}
+
+\begin{definition}\label{product_module}
+    $\ProductModule{R}{I}{M}=
+        \structure[left module over R]{
+            \carrier=\carrier[\productModuleAdditiveGroup{I}{M}],
+            \mul=\mul[\productModuleAdditiveGroup{I}{M}],
+            \neutral=\neutral[\productModuleAdditiveGroup{I}{M}],
+            \groupInv=\groupInv[\productModuleAdditiveGroup{I}{M}],
+            \scalarMul=\productModuleScalarGraph{R}{I}{M}
+        }$.
+\end{definition}
+
+\begin{proposition}\label{product_module_fields}
+    Let $A=\moduleAdditiveGroupFamily{I}{M}$.
+    Let $Q=\ProductGroup{I}{A}$.
+    Let $P=\ProductModule{R}{I}{M}$.
+    Then $\carrier[P]=\carrier[Q]$ and
+        $\mul[P]=\mul[Q]$ and
+        $\neutral[P]=\neutral[Q]$ and
+        $\groupInv[P]=\groupInv[Q]$ and
+        $\scalarMul[P]=\Apply{\heteroBinaryGraphOnOp}{
+            \carrier[R],\carrier[Q],
+            \Apply{\pointwiseModuleScalarOp}{I,M}}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{product_module,product_module_additive_group,
+            product_module_scalar_graph,
+            left_moduleaggregateprojection_carrier,
+            left_moduleaggregateprojection_mul,
+            left_moduleaggregateprojection_neutral,
+            left_moduleaggregateprojection_groupInv,
+            left_moduleaggregateprojection_scalarMul}.
+\end{proof}
+
+\begin{proposition}\label{product_module_scalar_type}
+    Let $R$ be a ring.
+    Suppose $M$ is a function on $I$.
+    Suppose for every $i\in I$ we have $M(i)$ is a left module over $R$.
+    Let $P=\ProductModule{R}{I}{M}$.
+    Then
+        $\scalarMul[P]\in
+            \funs{\carrier[R]\times\carrier[P]}{\carrier[P]}$.
+\end{proposition}
+\begin{proof}
+    Let $A=\moduleAdditiveGroupFamily{I}{M}$.
+    Let $Q=\ProductGroup{I}{A}$.
+    Let $C=\productMonoidCarrierFamily{I}{A}$.
+    $A$ is a function on $I$ by
+        \auto{module_additive_group_family_type}.
+    $\carrier[Q]=\dependentProduct{I}{C}$ by
+        \auto{product_group_fields,product_monoid_fields}.
+    $\carrier[P]=\carrier[Q]$ by \auto{product_module_fields}.
+    For all $a,x$ such that $a\in\carrier[R]$ and
+        $x\in\carrier[Q]$ we have
+        $\Apply{\pointwiseModuleScalarOp}{I,M,a,x}
+            \in\carrier[Q]$ by
+        \auto{pointwise_module_scalar_type}.
+    Follows by
+        \auto{product_module_fields,
+            logical_heterogeneous_binary_graph_on_type}.
+\end{proof}
+
+\begin{proposition}\label{product_module_scalar_coordinate}
+    Let $R$ be a ring.
+    Suppose $M$ is a function on $I$.
+    Suppose for every $j\in I$ we have $M(j)$ is a left module over $R$.
+    Let $P=\ProductModule{R}{I}{M}$.
+    Let $a\in\carrier[R]$ and $x\in\carrier[P]$.
+    Let $i\in I$.
+    Then
+        $\apply{\scalarMul[P](a,x)}{i}
+            =\scalarMul[M(i)](a,x(i))$.
+\end{proposition}
+\begin{proof}
+    Let $A=\moduleAdditiveGroupFamily{I}{M}$.
+    Let $Q=\ProductGroup{I}{A}$.
+    $\carrier[P]=\carrier[Q]$ and
+        $\scalarMul[P]=\Apply{\heteroBinaryGraphOnOp}{
+            \carrier[R],\carrier[Q],
+            \Apply{\pointwiseModuleScalarOp}{I,M}}$ by
+        \auto{product_module_fields}.
+    Hence $x\in\carrier[Q]$.
+    $\scalarMul[P](a,x)
+        =\Apply{\pointwiseModuleScalarOp}{I,M,a,x}$ by
+        \auto{logical_heterogeneous_binary_graph_on_apply}.
+    Follows by \auto{pointwise_module_scalar_coordinate}.
+\end{proof}
+
+\begin{proposition}\label{product_module_add_coordinate}
+    Let $R$ be a ring.
+    Suppose $M$ is a function on $I$.
+    Suppose for every $j\in I$ we have $M(j)$ is a left module over $R$.
+    Let $P=\ProductModule{R}{I}{M}$.
+    Let $x,y\in\carrier[P]$.
+    Let $i\in I$.
+    Then $\apply{\mul[P](x,y)}{i}=\mul[M(i)](x(i),y(i))$.
+\end{proposition}
+\begin{proof}
+    Let $A=\moduleAdditiveGroupFamily{I}{M}$.
+    Let $Q=\ProductGroup{I}{A}$.
+    $A$ is a function on $I$ by
+        \auto{module_additive_group_family_type}.
+    Show that for every $j\in I$ we have $A(j)$ is a group.
+    \begin{subproof}
+        Fix $j\in I$.
+        $A(j)=\ModuleAdditiveGroup{M(j)}$ by
+            \auto{module_additive_group_family_apply}.
+        Follows by
+            \auto{module_additive_group_is_exact_commutative_group,
+                commutative_group_is_group}.
+    \end{subproof}
+    $\carrier[P]=\carrier[Q]$ and $\mul[P]=\mul[Q]$ by
+        \auto{product_module_fields}.
+    Hence $x,y\in\carrier[Q]$.
+    $\apply{\mul[Q](x,y)}{i}=\mul[A(i)](x(i),y(i))$ by
+        \obv{product_group_mul_coordinate}.
+    $A(i)=\ModuleAdditiveGroup{M(i)}$ by
+        \auto{module_additive_group_family_apply}.
+    $\mul[A(i)]=\mul[M(i)]$ by
+        \auto{module_additive_group_fields}.
+\end{proof}
+
+\begin{theorem}\label{product_module_is_exact}
+    Let $R$ be a ring.
+    Suppose $M$ is a function on $I$.
+    Suppose for every $i\in I$ we have $M(i)$ is a left module over $R$.
+    Then $\ProductModule{R}{I}{M}$ is an exact left module over $R$.
+\end{theorem}
+\begin{proof}
+    Let $A=\moduleAdditiveGroupFamily{I}{M}$.
+    Let $Q=\ProductGroup{I}{A}$.
+    Let $C=\productMonoidCarrierFamily{I}{A}$.
+    Let $P=\ProductModule{R}{I}{M}$.
+    $A$ is a function on $I$ by
+        \auto{module_additive_group_family_type}.
+    Show that for every $i\in I$ we have $A(i)$ is a commutative group.
+    \begin{subproof}
+        Fix $i\in I$.
+        $A(i)=\ModuleAdditiveGroup{M(i)}$ by
+            \auto{module_additive_group_family_apply}.
+        Follows by \auto{module_additive_group_is_exact_commutative_group}.
+    \end{subproof}
+    Hence for every $i\in I$ we have $A(i)$ is a group by
+        \obv{commutative_group_is_group}.
+    Hence $Q$ is an exact group and $Q$ is a commutative group by
+        \auto{product_group_is_exact,product_group_is_commutative}.
+    $\carrier[P]=\carrier[Q]$ and $\mul[P]=\mul[Q]$ and
+        $\neutral[P]=\neutral[Q]$ and
+        $\groupInv[P]=\groupInv[Q]$ by
+        \auto{product_module_fields}.
+    $\scalarMul[P]\in
+        \funs{\carrier[R]\times\carrier[P]}{\carrier[P]}$ by
+        \obv{product_module_scalar_type}.
+    $\carrier[P]=\dependentProduct{I}{C}$ by
+        \auto{product_module_fields,product_group_fields,
+            product_monoid_fields}.
+    $C$ is a function on $I$ by
+        \auto{product_monoid_carrier_family_type}.
+
+    Show that for all $a,x,y$ such that $a\in\carrier[R]$ and
+        $x,y\in\carrier[P]$ we have
+        $\scalarMul[P](a,\mul[P](x,y))
+            =\mul[P](\scalarMul[P](a,x),\scalarMul[P](a,y))$.
+    \begin{subproof}
+        Fix $a,x,y$.
+        Assume $a\in\carrier[R]$ and $x,y\in\carrier[P]$.
+        $\mul[P](x,y),\scalarMul[P](a,x),\scalarMul[P](a,y)
+            \in\carrier[P]$ by
+            \auto{group_is_monoid,monoid_is_magma,magma_welldef,
+                product_module_scalar_type,funs_type_apply,
+                times_tuple_intro}.
+        Hence
+            $\scalarMul[P](a,\mul[P](x,y)),
+                \mul[P](\scalarMul[P](a,x),\scalarMul[P](a,y))
+            \in\dependentProduct{I}{C}$ by
+            \auto{product_module_scalar_type,funs_type_apply,
+                times_tuple_intro,group_is_monoid,monoid_is_magma,
+                magma_welldef}.
+        Show that for every $i\in I$ we have
+            $\apply{\scalarMul[P](a,\mul[P](x,y))}{i}
+                =\apply{\mul[P](
+                    \scalarMul[P](a,x),\scalarMul[P](a,y))}{i}$.
+        \begin{subproof}
+            Fix $i\in I$.
+            $x(i),y(i)\in C(i)$ by
+                \auto{dependent_product_coordinate}.
+            $C(i)=\carrier[M(i)]$ by
+                \auto{module_product_carrier_coordinate}.
+            Follows by
+                \auto{product_module_scalar_coordinate,
+                    product_module_add_coordinate,
+                    module_scalar_vector_distributive}.
+        \end{subproof}
+        Follows by \auto{dependent_product_extensionality}.
+    \end{subproof}
+
+    Show that for all $a,b,x$ such that $a,b\in\carrier[R]$ and
+        $x\in\carrier[P]$ we have
+        $\scalarMul[P](\ringAdd[R](a,b),x)
+            =\mul[P](\scalarMul[P](a,x),\scalarMul[P](b,x))$.
+    \begin{subproof}
+        Fix $a,b,x$.
+        Assume $a,b\in\carrier[R]$ and $x\in\carrier[P]$.
+        $\ringAdd[R](a,b)\in\carrier[R]$ by \obv{ring_add_type}.
+        $\scalarMul[P](a,x),\scalarMul[P](b,x)\in\carrier[P]$ by
+            \obv{product_module_scalar_type,funs_type_apply,
+                times_tuple_intro}.
+        Hence
+            $\scalarMul[P](\ringAdd[R](a,b),x),
+                \mul[P](\scalarMul[P](a,x),\scalarMul[P](b,x))
+            \in\dependentProduct{I}{C}$ by
+            \auto{product_module_scalar_type,funs_type_apply,
+                times_tuple_intro,group_is_monoid,monoid_is_magma,
+                magma_welldef}.
+        Show that for every $i\in I$ we have
+            $\apply{\scalarMul[P](\ringAdd[R](a,b),x)}{i}
+                =\apply{\mul[P](
+                    \scalarMul[P](a,x),\scalarMul[P](b,x))}{i}$.
+        \begin{subproof}
+            Fix $i\in I$.
+            $x(i)\in C(i)$ by \auto{dependent_product_coordinate}.
+            $C(i)=\carrier[M(i)]$ by
+                \auto{module_product_carrier_coordinate}.
+            Follows by
+                \auto{product_module_scalar_coordinate,
+                    product_module_add_coordinate,
+                    module_scalar_add_distributive}.
+        \end{subproof}
+        Follows by \auto{dependent_product_extensionality}.
+    \end{subproof}
+
+    Show that for all $a,b,x$ such that $a,b\in\carrier[R]$ and
+        $x\in\carrier[P]$ we have
+        $\scalarMul[P](a,\scalarMul[P](b,x))
+            =\scalarMul[P](\ringMul[R](a,b),x)$.
+    \begin{subproof}
+        Fix $a,b,x$.
+        Assume $a,b\in\carrier[R]$ and $x\in\carrier[P]$.
+        $\ringMul[R](a,b)\in\carrier[R]$ by \obv{ring_mul_type}.
+        $\scalarMul[P](b,x)\in\carrier[P]$ by
+            \obv{product_module_scalar_type,funs_type_apply,
+                times_tuple_intro}.
+        Hence
+            $\scalarMul[P](a,\scalarMul[P](b,x)),
+                \scalarMul[P](\ringMul[R](a,b),x)
+            \in\dependentProduct{I}{C}$ by
+            \auto{product_module_scalar_type,funs_type_apply,
+                times_tuple_intro}.
+        Show that for every $i\in I$ we have
+            $\apply{\scalarMul[P](a,\scalarMul[P](b,x))}{i}
+                =\apply{\scalarMul[P](\ringMul[R](a,b),x)}{i}$.
+        \begin{subproof}
+            Fix $i\in I$.
+            $x(i)\in C(i)$ by \auto{dependent_product_coordinate}.
+            $C(i)=\carrier[M(i)]$ by
+                \auto{module_product_carrier_coordinate}.
+            Follows by
+                \auto{product_module_scalar_coordinate,
+                    module_scalar_associative}.
+        \end{subproof}
+        Follows by \auto{dependent_product_extensionality}.
+    \end{subproof}
+
+    Show that for every $x\in\carrier[P]$ we have
+        $\scalarMul[P](\ringOne[R],x)=x$.
+    \begin{subproof}
+        Fix $x\in\carrier[P]$.
+        $\ringOne[R]\in\carrier[R]$ by \obv{ring_one_type}.
+        $\scalarMul[P](\ringOne[R],x)\in\carrier[P]$ by
+            \obv{product_module_scalar_type,funs_type_apply,
+                times_tuple_intro}.
+        Show that for every $i\in I$ we have
+            $\apply{\scalarMul[P](\ringOne[R],x)}{i}=x(i)$.
+        \begin{subproof}
+            Fix $i\in I$.
+            $x(i)\in C(i)$ by \auto{dependent_product_coordinate}.
+            $C(i)=\carrier[M(i)]$ by
+                \auto{module_product_carrier_coordinate}.
+            Follows by
+                \auto{product_module_scalar_coordinate,module_scalar_one}.
+        \end{subproof}
+        Follows by \auto{dependent_product_extensionality}.
+    \end{subproof}
+    $P$ is a left module over $R$ by
+        \auto{product_module,left_moduleaggregateexact,left_module,
+            commutative_group}.
+    Follows by \auto{product_module,left_moduleaggregateexact}.
+\end{proof}
+
+\begin{theorem}\label{product_module_additive_group_exact}
+    Let $R$ be a ring.
+    Suppose $M$ is a function on $I$.
+    Suppose for every $i\in I$ we have $M(i)$ is a left module over $R$.
+    Then
+        $\ModuleAdditiveGroup{\ProductModule{R}{I}{M}}
+            =\ProductGroup{I}{\moduleAdditiveGroupFamily{I}{M}}$.
+\end{theorem}
+\begin{proof}
+    Let $P=\ProductModule{R}{I}{M}$ and
+        $Q=\ProductGroup{I}{\moduleAdditiveGroupFamily{I}{M}}$.
+    $P$ is an exact left module over $R$ by
+        \auto{product_module_is_exact}.
+    Hence $\ModuleAdditiveGroup{P}$ is an exact commutative group by
+        \obv{module_additive_group_is_exact_commutative_group}.
+    Hence $\ModuleAdditiveGroup{P}$ is an exact group by
+        \obv{commutative_group_is_group}.
+    $\moduleAdditiveGroupFamily{I}{M}$ is a function on $I$ by
+        \obv{module_additive_group_family_type}.
+    For every $i\in I$ we have
+        $\apply{\moduleAdditiveGroupFamily{I}{M}}{i}$ is a group by
+        \auto{module_additive_group_family_apply,
+            module_additive_group_is_exact_commutative_group,
+            commutative_group_is_group}.
+    Hence $Q$ is an exact group by \auto{product_group_is_exact}.
+    $\carrier[\ModuleAdditiveGroup{P}]=\carrier[Q]$ and
+        $\mul[\ModuleAdditiveGroup{P}]=\mul[Q]$ and
+        $\neutral[\ModuleAdditiveGroup{P}]=\neutral[Q]$ and
+        $\groupInv[\ModuleAdditiveGroup{P}]=\groupInv[Q]$ by
+        \auto{module_additive_group_fields,product_module_fields}.
+    Follows by \auto{exact_group_extensionality}.
+\end{proof}
+
+\begin{definition}\label{binary_product_module}
+    $\BinaryProductModule{R}{M}{N}
+        =\ProductModule{R}{\suc{\suc{\emptyset}}}{
+            \binaryFamily{M}{N}}$.
+\end{definition}
+
+\begin{proposition}\label{binary_product_module_is_exact}
+    Let $M,N$ be left modules over $R$.
+    Then $\BinaryProductModule{R}{M}{N}$
+        is an exact left module over $R$.
+\end{proposition}
+\begin{proof}
+    Let $I=\suc{\suc{\emptyset}}$ and $A=\binaryFamily{M}{N}$.
+    $R$ is a ring by \obv{module_scalar_ring}.
+    $A$ is a function on $I$ by
+        \auto{binary_family_type,funs_is_function,funs}.
+    Show that for every $i\in I$ we have
+        $A(i)$ is a left module over $R$.
+    \begin{subproof}
+        Fix $i\in I$.
+        $i=\emptyset$ or $i=\suc{\emptyset}$ by
+            \auto{suc_elim,emptyset}.
+        Follows by \auto{binary_family_left,binary_family_right}.
+    \end{subproof}
+    Follows by \auto{binary_product_module,product_module_is_exact}.
+\end{proof}
+
+\begin{proposition}\label{empty_product_module_is_exact}
+    Let $R$ be a ring.
+    Then $\ProductModule{R}{\emptyset}{\emptyset}$
+        is an exact left module over $R$.
+\end{proposition}
+\begin{proof}
+    $\emptyset$ is a function on $\emptyset$ by
+        \obv{emptyset_is_function_on_emptyset}.
+    For every $i\in\emptyset$ we have
+        $\apply{\emptyset}{i}$ is a left module over $R$ by
+        \auto{emptyset}.
+    Follows by \obv{product_module_is_exact}.
+\end{proof}
+
+\begin{proposition}\label{singleton_product_module_is_exact}
+    Let $N$ be a left module over $R$.
+    Then $\ProductModule{R}{\{i\}}{\{i\}\times\{N\}}$
+        is an exact left module over $R$.
+\end{proposition}
+\begin{proof}
+    $R$ is a ring by \obv{module_scalar_ring}.
+    Let $M=\{i\}\times\{N\}$.
+    $M\in\funs{\{i\}}{\{N\}}$ by \auto{constant_graph_type}.
+    Hence $M$ is a function on $\{i\}$ by
+        \obv{funs_is_function,funs}.
+    For every $j\in\{i\}$ we have $M(j)=N$ by
+        \auto{constant_graph_application}.
+    Hence for every $j\in\{i\}$ we have
+        $M(j)$ is a left module over $R$ by \auto.
+    Follows by \auto{product_module_is_exact}.
+\end{proof}
+
+\subsection{Projections and the product universal property}
+
+\begin{theorem}\label{product_module_projection_linear}
+    Let $R$ be a ring.
+    Suppose $M$ is a function on $I$.
+    Suppose for every $j\in I$ we have $M(j)$ is a left module over $R$.
+    Let $A=\moduleAdditiveGroupFamily{I}{M}$ and
+        $C=\productMonoidCarrierFamily{I}{A}$.
+    Let $i\in I$.
+    Then $\dependentProjection{I}{C}{i}$ is a linear map from
+        $\ProductModule{R}{I}{M}$ to $M(i)$ over $R$.
+\end{theorem}
+\begin{proof}
+    Let $P=\ProductModule{R}{I}{M}$ and
+        $p=\dependentProjection{I}{C}{i}$.
+    $P$ is an exact left module over $R$ by
+        \auto{product_module_is_exact}.
+    $A$ is a function on $I$ by
+        \auto{module_additive_group_family_type}.
+    For every $j\in I$ we have $A(j)$ is a group by
+        \auto{module_additive_group_family_apply,
+            module_additive_group_is_exact_commutative_group,
+            commutative_group_is_group}.
+    $\groupHom{p}{\ProductGroup{I}{A}}{A(i)}$ by
+        \auto{product_group_projection_hom}.
+    $\ModuleAdditiveGroup{P}=\ProductGroup{I}{A}$ and
+        $A(i)=\ModuleAdditiveGroup{M(i)}$ by
+        \auto{product_module_additive_group_exact,
+            module_additive_group_family_apply}.
+    Hence $\groupHom{p}{\ModuleAdditiveGroup{P}}{
+        \ModuleAdditiveGroup{M(i)}}$ by \auto.
+    Show that for all $a,x$ such that $a\in\carrier[R]$ and
+        $x\in\carrier[P]$ we have
+        $p(\scalarMul[P](a,x))=\scalarMul[M(i)](a,p(x))$.
+    \begin{subproof}
+        Fix $a,x$.
+        Assume $a\in\carrier[R]$ and $x\in\carrier[P]$.
+        $C$ is a function on $I$ by
+            \auto{product_monoid_carrier_family_type}.
+        $\carrier[P]=\dependentProduct{I}{C}$ by
+            \auto{product_module_fields,product_group_fields,
+                product_monoid_fields}.
+        $\scalarMul[P](a,x)\in\carrier[P]$ by
+            \auto{product_module_scalar_type,funs_type_apply,
+                times_tuple_intro}.
+        $p(\scalarMul[P](a,x))
+            =\apply{\scalarMul[P](a,x)}{i}$ and $p(x)=x(i)$ by
+            \auto{dependent_projection_apply}.
+        Follows by \auto{product_module_scalar_coordinate}.
+    \end{subproof}
+    Follows by \auto{linear_map}.
+\end{proof}
+
+\begin{theorem}\label{product_module_mediator_linear}
+    Let $R$ be a ring.
+    Let $N$ be a left module over $R$.
+    Suppose $M$ is a function on $I$.
+    Suppose for every $j\in I$ we have $M(j)$ is a left module over $R$.
+    Suppose $f$ is a function on $I$ and for every $i\in I$ we have
+        $f(i)$ is a linear map from $N$ to $M(i)$ over $R$.
+    Let $A=\moduleAdditiveGroupFamily{I}{M}$ and
+        $C=\productMonoidCarrierFamily{I}{A}$.
+    Then $\dependentMediator{\carrier[N]}{I}{C}{f}$ is a linear map
+        from $N$ to $\ProductModule{R}{I}{M}$ over $R$.
+\end{theorem}
+\begin{proof}
+    Let $P=\ProductModule{R}{I}{M}$ and
+        $h=\dependentMediator{\carrier[N]}{I}{C}{f}$.
+    $P$ is an exact left module over $R$ by
+        \auto{product_module_is_exact}.
+    $A$ is a function on $I$ by
+        \auto{module_additive_group_family_type}.
+    For every $i\in I$ we have $A(i)$ is a group by
+        \auto{module_additive_group_family_apply,
+            module_additive_group_is_exact_commutative_group,
+            commutative_group_is_group}.
+    $\ModuleAdditiveGroup{N}$ is a group by
+        \obv{module_additive_group_is_group}.
+    Show that for every $i\in I$ we have
+        $\groupHom{f(i)}{\ModuleAdditiveGroup{N}}{A(i)}$.
+    \begin{subproof}
+        Fix $i\in I$.
+        $A(i)=\ModuleAdditiveGroup{M(i)}$ by
+            \auto{module_additive_group_family_apply}.
+        Follows by \auto{linear_map_is_additive_group_hom}.
+    \end{subproof}
+    $\groupHom{\dependentMediator{\carrier[\ModuleAdditiveGroup{N}]}{
+        I}{C}{f}}{\ModuleAdditiveGroup{N}}{\ProductGroup{I}{A}}$ by
+        \obv{product_group_mediator_hom}.
+    $\carrier[\ModuleAdditiveGroup{N}]=\carrier[N]$ by
+        \auto{module_additive_group_fields}.
+    Hence $\groupHom{h}{\ModuleAdditiveGroup{N}}{
+        \ProductGroup{I}{A}}$.
+    $\ModuleAdditiveGroup{P}=\ProductGroup{I}{A}$ by
+        \auto{product_module_additive_group_exact}.
+    Hence $\groupHom{h}{\ModuleAdditiveGroup{N}}{
+        \ModuleAdditiveGroup{P}}$.
+    $C$ is a function on $I$ by
+        \auto{product_monoid_carrier_family_type}.
+    For every $i\in I$ we have
+        $f(i)\in\funs{\carrier[N]}{C(i)}$ by
+        \auto{linear_map_type,module_product_carrier_coordinate}.
+    $\carrier[P]=\dependentProduct{I}{C}$ by
+        \auto{product_module_fields,product_group_fields,
+            product_monoid_fields}.
+    Show that for all $a,x$ such that $a\in\carrier[R]$ and
+        $x\in\carrier[N]$ we have
+        $h(\scalarMul[N](a,x))=\scalarMul[P](a,h(x))$.
+    \begin{subproof}
+        Fix $a,x$.
+        Assume $a\in\carrier[R]$ and $x\in\carrier[N]$.
+        $\scalarMul[N](a,x)\in\carrier[N]$ by
+            \obv{module_scalar_type}.
+        Hence $h(\scalarMul[N](a,x)),h(x)\in\carrier[P]$ by
+            \auto{group_hom_apply_type,module_additive_group_fields}.
+        Hence $\scalarMul[P](a,h(x))\in\carrier[P]$ by
+            \auto{product_module_scalar_type,funs_type_apply,
+                times_tuple_intro}.
+        Show that for every $i\in I$ we have
+            $\apply{h(\scalarMul[N](a,x))}{i}
+                =\apply{\scalarMul[P](a,h(x))}{i}$.
+        \begin{subproof}
+            Fix $i\in I$.
+            $\apply{h(\scalarMul[N](a,x))}{i}
+                =\apply{f(i)}{\scalarMul[N](a,x)}$ and
+                $\apply{h(x)}{i}=\apply{f(i)}{x}$ by
+                \auto{dependent_mediator_coordinate}.
+            $\apply{f(i)}{\scalarMul[N](a,x)}
+                =\scalarMul[M(i)](a,\apply{f(i)}{x})$ by
+                \auto{linear_map_scalar}.
+            Follows by \auto{product_module_scalar_coordinate}.
+        \end{subproof}
+        Follows by \auto{dependent_product_extensionality}.
+    \end{subproof}
+    Follows by \auto{linear_map}.
+\end{proof}
+
+\begin{theorem}\label{product_module_mediator_factorization}
+    Let $R$ be a ring.
+    Let $N$ be a left module over $R$.
+    Suppose $M$ is a function on $I$.
+    Suppose for every $j\in I$ we have $M(j)$ is a left module over $R$.
+    Suppose $f$ is a function on $I$ and for every $j\in I$ we have
+        $f(j)$ is a linear map from $N$ to $M(j)$ over $R$.
+    Let $A=\moduleAdditiveGroupFamily{I}{M}$ and
+        $C=\productMonoidCarrierFamily{I}{A}$.
+    Let $i\in I$.
+    Then
+        $\dependentProjection{I}{C}{i}\circ
+            \dependentMediator{\carrier[N]}{I}{C}{f}=f(i)$.
+\end{theorem}
+\begin{proof}
+    For every $j\in I$ we have
+        $\groupHom{f(j)}{\ModuleAdditiveGroup{N}}{
+            \ModuleAdditiveGroup{M(j)}}$ by
+        \auto{linear_map_is_additive_group_hom}.
+    $A$ is a function on $I$ by
+        \auto{module_additive_group_family_type}.
+    For every $j\in I$ we have $A(j)$ is a group by
+        \auto{module_additive_group_family_apply,
+            module_additive_group_is_exact_commutative_group,
+            commutative_group_is_group}.
+    $\ModuleAdditiveGroup{N}$ is a group by
+        \obv{module_additive_group_is_group}.
+    Show that for every $j\in I$ we have
+        $\groupHom{f(j)}{\ModuleAdditiveGroup{N}}{A(j)}$.
+    \begin{subproof}
+        Fix $j\in I$.
+        $A(j)=\ModuleAdditiveGroup{M(j)}$ by
+            \auto{module_additive_group_family_apply}.
+    \end{subproof}
+    $\dependentProjection{I}{C}{i}\circ
+        \dependentMediator{\carrier[\ModuleAdditiveGroup{N}]}{I}{C}{f}
+        =f(i)$ by \obv{product_group_mediator_factorization}.
+    $\carrier[\ModuleAdditiveGroup{N}]=\carrier[N]$ by
+        \auto{module_additive_group_fields}.
+\end{proof}
+
+\begin{theorem}\label{product_module_mediator_unique}
+    Let $R$ be a ring.
+    Let $N$ be a left module over $R$.
+    Suppose $M$ is a function on $I$.
+    Suppose for every $j\in I$ we have $M(j)$ is a left module over $R$.
+    Suppose $f$ is a function on $I$ and for every $j\in I$ we have
+        $f(j)$ is a linear map from $N$ to $M(j)$ over $R$.
+    Let $A=\moduleAdditiveGroupFamily{I}{M}$ and
+        $C=\productMonoidCarrierFamily{I}{A}$.
+    Suppose $h$ is a linear map from $N$ to
+        $\ProductModule{R}{I}{M}$ over $R$.
+    Suppose for every $i\in I$ we have
+        $\dependentProjection{I}{C}{i}\circ h=f(i)$.
+    Then $h=\dependentMediator{\carrier[N]}{I}{C}{f}$.
+\end{theorem}
+\begin{proof}
+    $A$ is a function on $I$ by
+        \auto{module_additive_group_family_type}.
+    For every $j\in I$ we have $A(j)$ is a group by
+        \auto{module_additive_group_family_apply,
+            module_additive_group_is_exact_commutative_group,
+            commutative_group_is_group}.
+    $\ModuleAdditiveGroup{N}$ is a group by
+        \obv{module_additive_group_is_group}.
+    Show that for every $j\in I$ we have
+        $\groupHom{f(j)}{\ModuleAdditiveGroup{N}}{A(j)}$.
+    \begin{subproof}
+        Fix $j\in I$.
+        $A(j)=\ModuleAdditiveGroup{M(j)}$ by
+            \auto{module_additive_group_family_apply}.
+        Follows by \auto{linear_map_is_additive_group_hom}.
+    \end{subproof}
+    $\groupHom{h}{\ModuleAdditiveGroup{N}}{
+        \ModuleAdditiveGroup{\ProductModule{R}{I}{M}}}$ by
+        \obv{linear_map_is_additive_group_hom}.
+    $\ModuleAdditiveGroup{\ProductModule{R}{I}{M}}
+        =\ProductGroup{I}{A}$ by
+        \auto{product_module_additive_group_exact}.
+    Hence $\groupHom{h}{\ModuleAdditiveGroup{N}}{
+        \ProductGroup{I}{A}}$.
+    $h=\dependentMediator{\carrier[\ModuleAdditiveGroup{N}]}{I}{C}{f}$
+        by \obv{product_group_mediator_unique}.
+    $\carrier[\ModuleAdditiveGroup{N}]=\carrier[N]$ by
+        \auto{module_additive_group_fields}.
+\end{proof}
+
+\subsection{Reindexing products}
+
+\begin{theorem}\label{module_additive_group_family_reindex}
+    Suppose $M$ is a function on $I$.
+    Let $e\in\funs{J}{I}$.
+    Then
+        $\moduleAdditiveGroupFamily{I}{M}\circ e
+            =\moduleAdditiveGroupFamily{J}{M\circ e}$.
+\end{theorem}
+\begin{proof}
+    Let $A=\moduleAdditiveGroupFamily{I}{M}$ and
+        $B=\moduleAdditiveGroupFamily{J}{M\circ e}$.
+    $M\in\funs{I}{\ran{M}}$ by
+        \auto{function_exact_type_to_range}.
+    $M$ is composable with $e$ by \obv{funs_ran,funs}.
+    Hence $M\circ e$ is a function on $J$ by
+        \auto{funs_circ,funs_is_function,funs}.
+    $e$ is a function and $\dom{e}=J$ by
+        \obv{funs_is_function,funs}.
+    $A$ is a function on $I$ and $B$ is a function on $J$ by
+        \auto{module_additive_group_family_type}.
+    Hence $A\circ e$ is a function on $J$ by
+        \auto{function_exact_type_to_range,funs_circ,
+            funs_is_function,funs_ran,funs}.
+    Show that for every $j\in J$ we have $(A\circ e)(j)=B(j)$.
+    \begin{subproof}
+        Fix $j\in J$.
+        Hence $j\in\dom{e}$.
+        $e(j)\in I$ by \obv{funs_type_apply}.
+        $(A\circ e)(j)=A(e(j))$ and
+            $(M\circ e)(j)=M(e(j))$ by
+            \auto{circ_apply,funs_is_function,funs}.
+        $A(e(j))=\ModuleAdditiveGroup{M(e(j))}$ and
+            $B(j)=\ModuleAdditiveGroup{(M\circ e)(j)}$ by
+            \auto{module_additive_group_family_apply}.
+    \end{subproof}
+    Follows by \auto{funext_on_domain}.
+\end{proof}
+
+\begin{theorem}\label{product_module_reindex_linear}
+    Let $R$ be a ring.
+    Suppose $M$ is a function on $I$.
+    Suppose for every $i\in I$ we have $M(i)$ is a left module over $R$.
+    Let $e\in\funs{J}{I}$.
+    Let $A=\moduleAdditiveGroupFamily{I}{M}$ and
+        $C=\productMonoidCarrierFamily{I}{A}$.
+    Then $\dependentReindex{I}{J}{C}{e}$ is a linear map from
+        $\ProductModule{R}{I}{M}$ to
+        $\ProductModule{R}{J}{M\circ e}$ over $R$.
+\end{theorem}
+\begin{proof}
+    Let $P=\ProductModule{R}{I}{M}$ and
+        $Q=\ProductModule{R}{J}{M\circ e}$.
+    Let $r=\dependentReindex{I}{J}{C}{e}$.
+    $M\in\funs{I}{\ran{M}}$ by
+        \auto{function_exact_type_to_range}.
+    $M$ is composable with $e$ by \obv{funs_ran,funs}.
+    Hence $M\circ e$ is a function on $J$ by
+        \auto{funs_circ,funs_is_function,funs}.
+    Show that for every $j\in J$ we have
+        $(M\circ e)(j)$ is a left module over $R$.
+    \begin{subproof}
+        Fix $j\in J$.
+        $e$ is a function and $j\in\dom{e}$ by
+            \auto{funs_is_function,funs}.
+        $e(j)\in I$ by \obv{funs_type_apply}.
+        $(M\circ e)(j)=M(e(j))$ by
+            \obv{circ_apply,funs_is_function}.
+        Follows by \auto.
+    \end{subproof}
+    $P$ is an exact left module over $R$ and
+        $Q$ is an exact left module over $R$ by
+        \auto{product_module_is_exact}.
+    $A$ is a function on $I$ by
+        \auto{module_additive_group_family_type}.
+    For every $i\in I$ we have $A(i)$ is a group by
+        \auto{module_additive_group_family_type,
+            module_additive_group_family_apply,
+            module_additive_group_is_exact_commutative_group,
+            commutative_group_is_group}.
+    $\groupHom{r}{\ProductGroup{I}{A}}{
+        \ProductGroup{J}{A\circ e}}$ by
+        \auto{product_group_reindex_hom}.
+    $A\circ e=\moduleAdditiveGroupFamily{J}{M\circ e}$ by
+        \auto{module_additive_group_family_reindex}.
+    $\ModuleAdditiveGroup{P}=\ProductGroup{I}{A}$ and
+        $\ModuleAdditiveGroup{Q}
+            =\ProductGroup{J}{\moduleAdditiveGroupFamily{J}{M\circ e}}$
+        by \auto{product_module_additive_group_exact}.
+    Hence $\groupHom{r}{\ModuleAdditiveGroup{P}}{
+        \ModuleAdditiveGroup{Q}}$.
+    Let $B=\moduleAdditiveGroupFamily{J}{M\circ e}$ and
+        $D=\productMonoidCarrierFamily{J}{B}$.
+    $C$ is a function on $I$ by
+        \auto{product_monoid_carrier_family_type}.
+    $B$ is a function on $J$ and $D$ is a function on $J$ by
+        \auto{module_additive_group_family_type,
+            product_monoid_carrier_family_type}.
+    $\carrier[P]=\dependentProduct{I}{C}$ and
+        $\carrier[Q]=\dependentProduct{J}{D}$ by
+        \auto{product_module_fields,product_group_fields,
+            product_monoid_fields}.
+    Show that for all $a,x$ such that $a\in\carrier[R]$ and
+        $x\in\carrier[P]$ we have
+        $r(\scalarMul[P](a,x))=\scalarMul[Q](a,r(x))$.
+    \begin{subproof}
+        Fix $a,x$.
+        Assume $a\in\carrier[R]$ and $x\in\carrier[P]$.
+        $\scalarMul[P](a,x)\in\carrier[P]$ by
+            \obv{module_scalar_type}.
+        Hence $x,\scalarMul[P](a,x)\in\dependentProduct{I}{C}$ by
+            \auto.
+        Hence $x,\scalarMul[P](a,x)\in
+            \funs{I}{\unions{\ran{C}}}$ by
+            \auto{dependent_product_iff}.
+        Hence $x$ and $\scalarMul[P](a,x)$ are composable with $e$ by
+            \auto{funs_is_function,funs_ran,funs}.
+        Hence $r(\scalarMul[P](a,x)),r(x)\in\carrier[Q]$ by
+            \auto{group_hom_apply_type,module_additive_group_fields}.
+        Hence $\scalarMul[Q](a,r(x))\in\carrier[Q]$ by
+            \obv{module_scalar_type}.
+        Show that for every $j\in J$ we have
+            $\apply{r(\scalarMul[P](a,x))}{j}
+                =\apply{\scalarMul[Q](a,r(x))}{j}$.
+        \begin{subproof}
+            Fix $j\in J$.
+            $e$ is a function and $j\in\dom{e}$ by
+                \auto{funs_is_function,funs}.
+            $e(j)\in I$ by \obv{funs_type_apply}.
+            $r(\scalarMul[P](a,x))=\scalarMul[P](a,x)\circ e$ and
+                $r(x)=x\circ e$ by
+                \auto{dependent_reindex_apply}.
+            Hence
+                $\apply{r(\scalarMul[P](a,x))}{j}
+                    =\apply{\scalarMul[P](a,x)}{e(j)}$ and
+                $\apply{r(x)}{j}=x(e(j))$ by
+                \auto{circ_apply,funs_is_function}.
+            $(M\circ e)(j)=M(e(j))$ by
+                \obv{circ_apply,funs_is_function}.
+            Follows by \auto{product_module_scalar_coordinate}.
+        \end{subproof}
+        Follows by \auto{dependent_product_extensionality}.
+    \end{subproof}
+    Follows by \auto{linear_map}.
+\end{proof}
+
+\begin{theorem}\label{bijective_product_module_reindex_isomorphism}
+    Let $R$ be a ring.
+    Suppose $M$ is a function on $I$.
+    Suppose for every $i\in I$ we have $M(i)$ is a left module over $R$.
+    Let $e\in\bijections{J}{I}$.
+    Let $A=\moduleAdditiveGroupFamily{I}{M}$ and
+        $C=\productMonoidCarrierFamily{I}{A}$.
+    Then $\dependentReindex{I}{J}{C}{e}$ is a module isomorphism from
+        $\ProductModule{R}{I}{M}$ to
+        $\ProductModule{R}{J}{M\circ e}$ over $R$.
+\end{theorem}
+\begin{proof}
+    Let $r=\dependentReindex{I}{J}{C}{e}$.
+    $e\in\funs{J}{I}$ by \obv{bijections_to_funs}.
+    $A$ is a function on $I$ by
+        \auto{module_additive_group_family_type}.
+    For every $i\in I$ we have $A(i)$ is a group by
+        \auto{module_additive_group_family_apply,
+            module_additive_group_is_exact_commutative_group,
+            commutative_group_is_group}.
+    Hence $r$ is a linear map from $\ProductModule{R}{I}{M}$ to
+        $\ProductModule{R}{J}{M\circ e}$ over $R$ by
+        \auto{product_module_reindex_linear}.
+    $\groupIsomorphism{r}{\ProductGroup{I}{A}}{
+        \ProductGroup{J}{A\circ e}}$ by
+        \auto{bijective_product_group_reindex_isomorphism}.
+    $A\circ e=\moduleAdditiveGroupFamily{J}{M\circ e}$ by
+        \auto{module_additive_group_family_reindex}.
+    $\carrier[\ProductModule{R}{I}{M}]=\carrier[\ProductGroup{I}{A}]$
+        by \auto{product_module_fields}.
+    $\carrier[\ProductModule{R}{J}{M\circ e}]
+        =\carrier[\ProductGroup{J}{\moduleAdditiveGroupFamily{J}{M\circ e}}]$
+        by \auto{product_module_fields}.
+    Hence $r\in\bijections{\carrier[\ProductModule{R}{I}{M}]}{
+        \carrier[\ProductModule{R}{J}{M\circ e}]}$ by
+        \auto{group_isomorphism_is_bijection}.
+    Follows by \auto{module_isomorphism}.
+\end{proof}

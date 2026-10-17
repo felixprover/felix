@@ -1,0 +1,581 @@
+\import{surreal/real-metric-sequences.tex}
+\import{surreal/real-completeness.tex}
+
+\section{Sequential completeness of the metric real line}
+
+For a Cauchy sequence, the witnesses at each dyadic scale form an inhabited
+set of natural numbers.  We take its least member, rather than choosing one,
+so the construction below is canonical.
+
+\begin{definition}\label{real_cauchy_witness_set}
+    $\realCauchyWitnessSet{s}{n}
+        =\{N\in\naturals\mid
+            \forall m,k:\Set.
+                (m\in\naturals\land k\in\naturals\land
+                 N\subseteq m\land N\subseteq k)
+                \implies
+                \surrealLt{\metricDistance[\RealMetric](s(m),s(k))}
+                    {\surrealEpsilon{\suc{n}}}\}$.
+\end{definition}
+
+\begin{proposition}\label{real_cauchy_witness_set_iff}
+    $N\in\realCauchyWitnessSet{s}{n}$ iff
+        $N\in\naturals$ and for all $m,k\in\naturals$ such that
+            $N\subseteq m$ and $N\subseteq k$ we have
+            $\surrealLt{\metricDistance[\RealMetric](s(m),s(k))}
+                {\surrealEpsilon{\suc{n}}}$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{real_cauchy_witness_set}.
+\end{proof}
+
+\begin{proposition}\label{real_cauchy_witness_set_subset_naturals}
+    $\realCauchyWitnessSet{s}{n}\subseteq\naturals$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{real_cauchy_witness_set_iff,subseteq}.
+\end{proof}
+
+\begin{proposition}\label{real_cauchy_witness_set_inhabited}
+    Suppose $\metricCauchy{\RealMetric}{s}$.
+    Let $n\in\naturals$.
+    Then $\realCauchyWitnessSet{s}{n}$ is inhabited.
+\end{proposition}
+\begin{proof}
+    $\suc{n}\in\naturals$ by \obv{omega_successor}.
+    $\surrealEpsilon{\suc{n}}\in\reals$ and
+        $\surrealLt{\surrealZero}{\surrealEpsilon{\suc{n}}}$
+        by \obv{surreal_epsilon_is_real,surreal_epsilon_positive}.
+    Take $N\in\naturals$ such that for all $m,k\in\naturals$ such that
+        $N\subseteq m$ and $N\subseteq k$ we have
+        $\surrealLt{\metricDistance[\RealMetric](s(m),s(k))}
+            {\surrealEpsilon{\suc{n}}}$
+        by \obv{metric_cauchy_sequence}.
+    $N\in\realCauchyWitnessSet{s}{n}$
+        by \obv{real_cauchy_witness_set_iff}.
+\end{proof}
+
+\begin{definition}\label{real_cauchy_index}
+    $\realCauchyIndex{s}{n}=\inters{\realCauchyWitnessSet{s}{n}}$.
+\end{definition}
+
+\begin{proposition}\label{real_cauchy_index_is_natural}
+    Suppose $\metricCauchy{\RealMetric}{s}$.
+    Let $n\in\naturals$.
+    Then $\realCauchyIndex{s}{n}\in\naturals$.
+\end{proposition}
+\begin{proof}
+    $\realCauchyWitnessSet{s}{n}$ is inhabited
+        by \obv{real_cauchy_witness_set_inhabited}.
+    Every element of $\realCauchyWitnessSet{s}{n}$ is an ordinal
+        by
+        \obv{real_cauchy_witness_set_subset_naturals,subseteq,natural_number_is_ordinal}.
+    $\inters{\realCauchyWitnessSet{s}{n}}
+        \in\realCauchyWitnessSet{s}{n}$
+        by \obv{inters_of_ordinals_elem}.
+    Follows by
+        \obv{real_cauchy_index,real_cauchy_witness_set_subset_naturals,subseteq}.
+\end{proof}
+
+\begin{proposition}\label{real_cauchy_index_is_witness}
+    Suppose $\metricCauchy{\RealMetric}{s}$.
+    Let $n\in\naturals$.
+    Then $\realCauchyIndex{s}{n}\in\realCauchyWitnessSet{s}{n}$.
+\end{proposition}
+\begin{proof}
+    $\realCauchyWitnessSet{s}{n}$ is inhabited
+        by \obv{real_cauchy_witness_set_inhabited}.
+    Every element of $\realCauchyWitnessSet{s}{n}$ is an ordinal
+        by
+        \obv{real_cauchy_witness_set_subset_naturals,subseteq,natural_number_is_ordinal}.
+    Follows by \auto{real_cauchy_index,inters_of_ordinals_elem}.
+\end{proof}
+
+\begin{proposition}\label{real_cauchy_index_least}
+    Suppose $\metricCauchy{\RealMetric}{s}$.
+    Let $n\in\naturals$ and $N\in\realCauchyWitnessSet{s}{n}$.
+    Then $\realCauchyIndex{s}{n}\subseteq N$.
+\end{proposition}
+\begin{proof}
+    $\realCauchyWitnessSet{s}{n}$ is inhabited
+        by \obv{real_cauchy_witness_set_inhabited}.
+    Every element of $\realCauchyWitnessSet{s}{n}$ is an ordinal
+        by
+        \obv{real_cauchy_witness_set_subset_naturals,subseteq,natural_number_is_ordinal}.
+    Follows by
+        \auto{real_cauchy_index,inters_of_ordinals_subseteq}.
+\end{proof}
+
+\begin{proposition}\label{real_cauchy_witness_sets_antitone}
+    Suppose $\metricCauchy{\RealMetric}{s}$.
+    Let $n\in\naturals$.
+    Then $\realCauchyWitnessSet{s}{\suc{n}}
+        \subseteq\realCauchyWitnessSet{s}{n}$.
+\end{proposition}
+\begin{proof}
+    Show that every element of
+        $\realCauchyWitnessSet{s}{\suc{n}}$ is an element of
+        $\realCauchyWitnessSet{s}{n}$.
+    \begin{subproof}
+        Fix $N\in\realCauchyWitnessSet{s}{\suc{n}}$.
+        $\suc{n}\in\suc{\suc{n}}$ by \auto{suc_iff}.
+        Hence
+            $\surrealLt{\surrealEpsilon{\suc{\suc{n}}}}
+                {\surrealEpsilon{\suc{n}}}$
+            by \obv{surreal_epsilon_decreasing,omega_successor}.
+        $N\in\naturals$ by \obv{real_cauchy_witness_set_iff}.
+        Show that for all $m,k\in\naturals$ such that
+            $N\subseteq m$ and $N\subseteq k$ we have
+            $\surrealLt{\metricDistance[\RealMetric](s(m),s(k))}
+                {\surrealEpsilon{\suc{n}}}$.
+        \begin{subproof}
+            Fix $m,k\in\naturals$.
+            Assume $N\subseteq m$ and $N\subseteq k$.
+            $\surrealLt{\metricDistance[\RealMetric](s(m),s(k))}
+                {\surrealEpsilon{\suc{\suc{n}}}}$
+                by \obv{real_cauchy_witness_set_iff}.
+            $s(m),s(k)\in\carrier[\RealMetric]$
+                by \obv{metric_cauchy_sequence,funs_type_apply}.
+            $\metricDistance[\RealMetric](s(m),s(k))\in\reals$
+                by \obv{metric_distance_type,surreal_real_metric_space}.
+            $\surreal{\metricDistance[\RealMetric](s(m),s(k))}$ and
+                $\surreal{\surrealEpsilon{\suc{\suc{n}}}}$ and
+                $\surreal{\surrealEpsilon{\suc{n}}}$
+                by
+                \auto{surreal_real_is_surreal,surreal_epsilon_is_surreal,omega_successor,natural_number_is_ordinal}.
+            Follows by \obv{surreal_lt_transitive}.
+        \end{subproof}
+        Follows by \obv{real_cauchy_witness_set_iff}.
+    \end{subproof}
+    Follows by \obv{subseteq}.
+\end{proof}
+
+\begin{proposition}\label{real_cauchy_index_monotone}
+    Suppose $\metricCauchy{\RealMetric}{s}$.
+    Let $n\in\naturals$.
+    Then $\realCauchyIndex{s}{n}\subseteq
+        \realCauchyIndex{s}{\suc{n}}$.
+\end{proposition}
+\begin{proof}
+    $\suc{n}\in\naturals$ by \obv{omega_successor}.
+    $\realCauchyIndex{s}{\suc{n}}
+        \in\realCauchyWitnessSet{s}{\suc{n}}$
+        by \obv{real_cauchy_index_is_witness}.
+    Hence $\realCauchyIndex{s}{\suc{n}}
+        \in\realCauchyWitnessSet{s}{n}$
+        by \auto{real_cauchy_witness_sets_antitone,subseteq}.
+    Follows by \obv{real_cauchy_index_least}.
+\end{proof}
+
+\begin{definition}\label{real_cauchy_centre}
+    $\realCauchyCentre{s}{n}=s(\realCauchyIndex{s}{n})$.
+\end{definition}
+
+\begin{proposition}\label{real_cauchy_centre_is_real}
+    Suppose $\metricCauchy{\RealMetric}{s}$.
+    Let $n\in\naturals$.
+    Then $\realCauchyCentre{s}{n}\in\reals$.
+\end{proposition}
+\begin{proof}
+    $s\in\funs{\naturals}{\carrier[\RealMetric]}$
+        by \obv{metric_cauchy_sequence}.
+    $\realCauchyIndex{s}{n}\in\naturals$
+        by \obv{real_cauchy_index_is_natural}.
+    Follows by
+        \auto{real_cauchy_centre,funs_type_apply,surreal_real_metric_carrier}.
+\end{proof}
+
+\begin{proposition}\label{real_cauchy_centre_successor_distance}
+    Suppose $\metricCauchy{\RealMetric}{s}$.
+    Let $n\in\naturals$.
+    Then
+        $\surrealLt{
+            \metricDistance[\RealMetric]
+                (\realCauchyCentre{s}{n},
+                 \realCauchyCentre{s}{\suc{n}})}
+            {\surrealEpsilon{\suc{n}}}$.
+\end{proposition}
+\begin{proof}
+    $\suc{n}\in\naturals$ by \obv{omega_successor}.
+    $\realCauchyIndex{s}{n}\in\realCauchyWitnessSet{s}{n}$
+        by \obv{real_cauchy_index_is_witness}.
+    $\realCauchyIndex{s}{n},\realCauchyIndex{s}{\suc{n}}\in\naturals$
+        by \obv{real_cauchy_index_is_natural}.
+    $\realCauchyIndex{s}{n}\subseteq\realCauchyIndex{s}{n}$
+        by \obv{subseteq_refl}.
+    $\realCauchyIndex{s}{n}\subseteq
+        \realCauchyIndex{s}{\suc{n}}$
+        by \obv{real_cauchy_index_monotone}.
+    Hence
+        $\surrealLt{
+            \metricDistance[\RealMetric]
+                (s(\realCauchyIndex{s}{n}),
+                 s(\realCauchyIndex{s}{\suc{n}}))}
+            {\surrealEpsilon{\suc{n}}}$
+        by \obv{real_cauchy_witness_set_iff}.
+    Follows by \obv{real_cauchy_centre}.
+\end{proof}
+
+\begin{definition}\label{real_cauchy_lower_endpoint}
+    $\realCauchyLowerEndpoint{s}{n}
+        =\surrealAdd{\realCauchyCentre{s}{n}}
+            {\surrealNeg{\surrealEpsilon{n}}}$.
+\end{definition}
+
+\begin{definition}\label{real_cauchy_upper_endpoint}
+    $\realCauchyUpperEndpoint{s}{n}
+        =\surrealAdd{\realCauchyCentre{s}{n}}{\surrealEpsilon{n}}$.
+\end{definition}
+
+\begin{proposition}\label{real_cauchy_endpoints_are_real}
+    Suppose $\metricCauchy{\RealMetric}{s}$.
+    Let $n\in\naturals$.
+    Then $\realCauchyLowerEndpoint{s}{n}\in\reals$ and
+        $\realCauchyUpperEndpoint{s}{n}\in\reals$.
+\end{proposition}
+\begin{proof}
+    $\realCauchyCentre{s}{n}\in\reals$
+        by \obv{real_cauchy_centre_is_real}.
+    $\surrealEpsilon{n}\in\reals$
+        by \obv{surreal_epsilon_is_real}.
+    $\surrealNeg{\surrealEpsilon{n}}\in\reals$
+        by \obv{surreal_real_negation_closed}.
+    Follows by
+        \auto{real_cauchy_lower_endpoint,real_cauchy_upper_endpoint,surreal_real_addition_closed}.
+\end{proof}
+
+\begin{lemma}\label{real_metric_dyadic_interval_contracts}
+    Let $x,y,h\in\reals$.
+    Suppose $\surrealLt{
+        \metricDistance[\RealMetric](x,y)}{h}$.
+    Then
+        $\surrealLt{
+            \surrealAdd{x}{\surrealNeg{\surrealAdd{h}{h}}}}
+            {\surrealAdd{y}{\surrealNeg{h}}}$ and
+        $\surrealLt{\surrealAdd{y}{h}}
+            {\surrealAdd{x}{\surrealAdd{h}{h}}}$.
+\end{lemma}
+\begin{proof}
+    $\metricDistance[\RealMetric](x,y)
+        =\abs{\surrealAdd{x}{\surrealNeg{y}}}$
+        by \obv{surreal_real_metric_distance}.
+    Hence
+        $\surrealLt{\abs{\surrealAdd{x}{\surrealNeg{y}}}}{h}$.
+    Hence $\surrealLt{x}{\surrealAdd{y}{h}}$ and
+        $\surrealLt{y}{\surrealAdd{x}{h}}$
+        by \obv{surreal_abs_difference_lt_iff,surreal_real_is_surreal}.
+    Hence
+        $\surrealLt{
+            \surrealAdd{x}{\surrealNeg{\surrealAdd{h}{h}}}}
+            {\surrealAdd{\surrealAdd{y}{h}}
+                {\surrealNeg{\surrealAdd{h}{h}}}}$
+        by
+        \obv{surreal_add_lt_left,surreal_negation_is_surreal,surreal_add_is_surreal,surreal_real_is_surreal}.
+    Hence
+        $\surrealLt{
+            \surrealAdd{x}{\surrealNeg{\surrealAdd{h}{h}}}}
+            {\surrealAdd{y}{\surrealNeg{h}}}$
+        by
+        \auto{surreal_negation_additive,surreal_add_associative,surreal_add_commutative,surreal_add_inverse_right,surreal_add_zero_right,surreal_negation_is_surreal,surreal_add_is_surreal,surreal_real_is_surreal}.
+    $\surrealLt{\surrealAdd{y}{h}}
+        {\surrealAdd{\surrealAdd{x}{h}}{h}}$
+        by
+        \obv{surreal_add_lt_left,surreal_add_is_surreal,surreal_real_is_surreal}.
+    Hence $\surrealLt{\surrealAdd{y}{h}}
+        {\surrealAdd{x}{\surrealAdd{h}{h}}}$
+        by
+        \obv{surreal_add_associative,surreal_real_is_surreal}.
+\end{proof}
+
+\begin{proposition}\label{real_cauchy_intervals_ordered}
+    Suppose $\metricCauchy{\RealMetric}{s}$.
+    Let $n\in\naturals$.
+    Then
+        $\surrealLe{\realCauchyLowerEndpoint{s}{n}}
+            {\realCauchyUpperEndpoint{s}{n}}$.
+\end{proposition}
+\begin{proof}
+    $\realCauchyCentre{s}{n}\in\reals$
+        by \obv{real_cauchy_centre_is_real}.
+    $\surrealEpsilon{n}\in\reals$ and
+        $\surrealLt{\surrealZero}{\surrealEpsilon{n}}$
+        by \obv{surreal_epsilon_is_real,surreal_epsilon_positive}.
+    $\surrealLt{\surrealNeg{\surrealEpsilon{n}}}{\surrealZero}$
+        by
+        \auto{surreal_negation_lt_reverses,surreal_negation_empty,empty_surreal,surreal_epsilon_is_surreal}.
+    $\surreal{\surrealNeg{\surrealEpsilon{n}}}$ and
+        $\surreal{\surrealZero}$ and
+        $\surreal{\surrealEpsilon{n}}$
+        by
+        \auto{surreal_negation_is_surreal,surreal_epsilon_is_surreal,empty_surreal}.
+    Hence
+        $\surrealLt{\surrealNeg{\surrealEpsilon{n}}}
+            {\surrealEpsilon{n}}$
+        by \obv{surreal_lt_transitive}.
+    Hence
+        $\surrealLe{\surrealNeg{\surrealEpsilon{n}}}
+            {\surrealEpsilon{n}}$
+        by \obv{surreal_le,surreal_epsilon_is_surreal,surreal_negation_is_surreal}.
+    Follows by
+        \auto{real_cauchy_lower_endpoint,real_cauchy_upper_endpoint,surreal_add_le_right,surreal_real_is_surreal}.
+\end{proof}
+
+\begin{proposition}\label{real_cauchy_intervals_nested}
+    Suppose $\metricCauchy{\RealMetric}{s}$.
+    Let $n\in\naturals$.
+    Then
+        $\surrealLe{\realCauchyLowerEndpoint{s}{n}}
+            {\realCauchyLowerEndpoint{s}{\suc{n}}}$ and
+        $\surrealLe{\realCauchyUpperEndpoint{s}{\suc{n}}}
+            {\realCauchyUpperEndpoint{s}{n}}$.
+\end{proposition}
+\begin{proof}
+    $\suc{n}\in\naturals$ by \obv{omega_successor}.
+    Let $x=\realCauchyCentre{s}{n}$.
+    Let $y=\realCauchyCentre{s}{\suc{n}}$.
+    Let $h=\surrealEpsilon{\suc{n}}$.
+    $x,y,h\in\reals$
+        by \auto{real_cauchy_centre_is_real,surreal_epsilon_is_real}.
+    $\surrealLt{\metricDistance[\RealMetric](x,y)}{h}$
+        by \auto{real_cauchy_centre_successor_distance}.
+    Hence
+        $\surrealLt{
+            \surrealAdd{x}{\surrealNeg{\surrealAdd{h}{h}}}}
+            {\surrealAdd{y}{\surrealNeg{h}}}$ and
+        $\surrealLt{\surrealAdd{y}{h}}
+            {\surrealAdd{x}{\surrealAdd{h}{h}}}$
+        by \obv{real_metric_dyadic_interval_contracts}.
+    $\surrealAdd{h}{h}=\surrealEpsilon{n}$
+        by \auto{surreal_epsilon_halving,natural_number_is_ordinal}.
+    Hence
+        $\surrealLt{\realCauchyLowerEndpoint{s}{n}}
+            {\realCauchyLowerEndpoint{s}{\suc{n}}}$ and
+        $\surrealLt{\realCauchyUpperEndpoint{s}{\suc{n}}}
+            {\realCauchyUpperEndpoint{s}{n}}$
+        by
+        \auto{real_cauchy_lower_endpoint,real_cauchy_upper_endpoint}.
+    Follows by
+        \obv{surreal_le,real_cauchy_endpoints_are_real,surreal_real_is_surreal}.
+\end{proof}
+
+\begin{theorem}\label{real_cauchy_nested_point_exists}
+    Suppose $\metricCauchy{\RealMetric}{s}$.
+    Then there exists $x\in\reals$ such that for every $n\in\naturals$
+        we have
+            $\surrealLe{\realCauchyLowerEndpoint{s}{n}}{x}$ and
+            $\surrealLe{x}{\realCauchyUpperEndpoint{s}{n}}$.
+\end{theorem}
+\begin{proof}
+    Let $a:\Set\to\Set
+        =\fun{n:\Set}{\realCauchyLowerEndpoint{s}{n}}$.
+    Let $b:\Set\to\Set
+        =\fun{n:\Set}{\realCauchyUpperEndpoint{s}{n}}$.
+    For every $n\in\naturals$ we have
+        $\Apply{a}{n},\Apply{b}{n}\in\reals$ and
+        $\surrealLe{\Apply{a}{n}}{\Apply{b}{n}}$
+        by
+        \auto{real_cauchy_endpoints_are_real,real_cauchy_intervals_ordered}.
+    For every $n\in\naturals$ we have
+        $\surrealLe{\Apply{a}{n}}{\Apply{a}{\suc{n}}}$ and
+        $\surrealLe{\Apply{b}{\suc{n}}}{\Apply{b}{n}}$
+        by \auto{real_cauchy_intervals_nested}.
+    Take $x\in\reals$ such that for every $n\in\naturals$ we have
+        $\surrealLe{\Apply{a}{n}}{x}$ and
+        $\surrealLe{x}{\Apply{b}{n}}$
+        by \obv{surreal_real_nested_interval_sequences}.
+    Follows by \auto.
+\end{proof}
+
+\begin{proposition}\label{real_cauchy_nested_point_bound}
+    Suppose $\metricCauchy{\RealMetric}{s}$ and $x\in\reals$.
+    Let $n\in\naturals$.
+    Suppose $\surrealLe{\realCauchyLowerEndpoint{s}{n}}{x}$ and
+        $\surrealLe{x}{\realCauchyUpperEndpoint{s}{n}}$.
+    Then
+        $\surrealLe{
+            \metricDistance[\RealMetric]
+                (x,\realCauchyCentre{s}{n})}
+            {\surrealEpsilon{n}}$.
+\end{proposition}
+\begin{proof}
+    Let $c=\realCauchyCentre{s}{n}$ and $e=\surrealEpsilon{n}$.
+    $c,e\in\reals$
+        by \auto{real_cauchy_centre_is_real,surreal_epsilon_is_real}.
+    $\surrealLe{x}{\surrealAdd{c}{e}}$
+        by \auto{real_cauchy_upper_endpoint}.
+    $\surrealLe{\surrealAdd{c}{\surrealNeg{e}}}{x}$
+        by \auto{real_cauchy_lower_endpoint}.
+    Hence
+        $\surrealLe{
+            \surrealAdd{\surrealAdd{c}{\surrealNeg{e}}}{e}}
+            {\surrealAdd{x}{e}}$
+        by
+        \obv{surreal_add_le_left,surreal_add_is_surreal,surreal_negation_is_surreal,surreal_real_is_surreal}.
+    Hence $\surrealLe{c}{\surrealAdd{x}{e}}$
+        by
+        \auto{surreal_add_associative,surreal_add_inverse_left,surreal_add_zero_right,surreal_negation_is_surreal,surreal_real_is_surreal}.
+    Hence
+        $\surrealLe{\abs{\surrealAdd{x}{\surrealNeg{c}}}}{e}$
+        by \auto{surreal_abs_difference_le_iff,surreal_real_is_surreal}.
+    Follows by \auto{surreal_real_metric_distance}.
+\end{proof}
+
+\begin{theorem}\label{real_cauchy_converges_to_nested_point}
+    Suppose $\metricCauchy{\RealMetric}{s}$ and $x\in\reals$.
+    Suppose for every $n\in\naturals$ we have
+        $\surrealLe{\realCauchyLowerEndpoint{s}{n}}{x}$ and
+        $\surrealLe{x}{\realCauchyUpperEndpoint{s}{n}}$.
+    Then $\metricConverges{\RealMetric}{s}{x}$.
+\end{theorem}
+\begin{proof}
+    $\RealMetric$ is a metric space
+        by \obv{surreal_real_metric_space}.
+    $s\in\funs{\naturals}{\carrier[\RealMetric]}$
+        by \obv{metric_cauchy_sequence}.
+    $x\in\carrier[\RealMetric]$
+        by \obv{surreal_real_metric_carrier}.
+    Show that for every $e\in\reals$ such that
+        $\surrealLt{\surrealZero}{e}$ there exists $N\in\naturals$
+        such that for every $k\in\naturals$ such that $N\subseteq k$
+            we have $s(k)\in\metricBall{\RealMetric}{x}{e}$.
+    \begin{subproof}
+        Fix $e\in\reals$.
+        Assume $\surrealLt{\surrealZero}{e}$.
+        Take a natural number $j$ such that
+            $\surrealLt{
+                \surrealMul{\surrealEpsilon{j}}{\surrealOne}}{e}$
+            by
+            \obv{positive_real_scaled_epsilon_below,surreal_one_is_real,surreal_zero_lt_one}.
+        $\surrealMul{\surrealEpsilon{j}}{\surrealOne}
+            =\surrealEpsilon{j}$
+            by \auto{surreal_mul_one_right,surreal_epsilon_is_surreal}.
+        Hence $\surrealLt{\surrealEpsilon{j}}{e}$.
+        Let $n=\suc{j}$.
+        Let $h=\surrealEpsilon{\suc{n}}$.
+        $n,\suc{n}\in\naturals$ by \auto{omega_successor}.
+        $h,\surrealEpsilon{n}\in\reals$
+            by \auto{surreal_epsilon_is_real}.
+        $\surrealAdd{h}{h}=\surrealEpsilon{n}$
+            by \auto{surreal_epsilon_halving,natural_number_is_ordinal}.
+        $\surrealLt{
+            \surrealAdd{\surrealAdd{h}{h}}{h}}
+            {\surrealEpsilon{j}}$
+            by \obv{surreal_epsilon_triple_bound}.
+        Let $N=\realCauchyIndex{s}{n}$.
+        $N\in\naturals$ by \auto{real_cauchy_index_is_natural}.
+        $N\in\realCauchyWitnessSet{s}{n}$
+            by \auto{real_cauchy_index_is_witness}.
+        Show that for every $k\in\naturals$ such that $N\subseteq k$
+            we have $s(k)\in\metricBall{\RealMetric}{x}{e}$.
+        \begin{subproof}
+            Fix $k\in\naturals$.
+            Assume $N\subseteq k$.
+            $N\subseteq N$ by \obv{subseteq_refl}.
+            Hence
+                $\surrealLt{
+                    \metricDistance[\RealMetric](s(k),s(N))}{h}$
+                by \auto{real_cauchy_witness_set_iff}.
+            $s(N)=\realCauchyCentre{s}{n}$
+                by \obv{real_cauchy_centre}.
+            Hence
+                $\surrealLt{
+                    \metricDistance[\RealMetric]
+                        (s(k),\realCauchyCentre{s}{n})}{h}$.
+            $\surrealLe{
+                \metricDistance[\RealMetric]
+                    (x,\realCauchyCentre{s}{n})}
+                {\surrealEpsilon{n}}$
+                by \auto{real_cauchy_nested_point_bound}.
+            $s(k),\realCauchyCentre{s}{n},x
+                \in\carrier[\RealMetric]$
+                by
+                \obv{funs_type_apply,real_cauchy_centre_is_real,surreal_real_metric_carrier}.
+            $\metricDistance[\RealMetric]
+                (\realCauchyCentre{s}{n},x)
+                =\metricDistance[\RealMetric]
+                    (x,\realCauchyCentre{s}{n})$
+                by \obv{metric_distance_symmetric}.
+            Hence
+                $\surrealLe{
+                    \metricDistance[\RealMetric]
+                        (\realCauchyCentre{s}{n},x)}
+                    {\surrealEpsilon{n}}$.
+            Hence
+                $\surrealLt{
+                    \surrealAdd{
+                        \metricDistance[\RealMetric]
+                            (s(k),\realCauchyCentre{s}{n})}
+                        {\metricDistance[\RealMetric]
+                            (\realCauchyCentre{s}{n},x)}}
+                    {\surrealAdd{h}{\surrealEpsilon{n}}}$
+                by
+                \obv{surreal_add_lt_le,metric_distance_type,surreal_real_is_surreal}.
+            $\surrealLe{\metricDistance[\RealMetric](s(k),x)}
+                {\surrealAdd{
+                    \metricDistance[\RealMetric]
+                        (s(k),\realCauchyCentre{s}{n})}
+                    {\metricDistance[\RealMetric]
+                        (\realCauchyCentre{s}{n},x)}}$
+                by \obv{metric_triangle}.
+            Hence
+                $\surrealLt{\metricDistance[\RealMetric](s(k),x)}
+                    {\surrealAdd{h}{\surrealEpsilon{n}}}$
+                by
+                \auto{surreal_le_lt_transitive,metric_distance_type,surreal_real_is_surreal,surreal_real_addition_closed}.
+            $\surrealAdd{h}{\surrealEpsilon{n}}
+                =\surrealAdd{\surrealAdd{h}{h}}{h}$
+                by
+                \auto{surreal_add_associative,surreal_add_commutative,surreal_epsilon_is_surreal}.
+            Hence
+                $\surrealLt{\metricDistance[\RealMetric](s(k),x)}
+                    {\surrealAdd{\surrealAdd{h}{h}}{h}}$
+                by \auto.
+            Hence
+                $\surrealLt{\metricDistance[\RealMetric](s(k),x)}
+                    {\surrealEpsilon{j}}$
+                by
+                \auto{surreal_lt_transitive,metric_distance_type,surreal_real_is_surreal,surreal_add_is_surreal,surreal_epsilon_is_surreal}.
+            Hence $\surrealLt{\metricDistance[\RealMetric](s(k),x)}{e}$
+                by
+                \auto{surreal_lt_transitive,metric_distance_type,surreal_real_is_surreal,surreal_epsilon_is_surreal}.
+            $\metricDistance[\RealMetric](x,s(k))
+                =\metricDistance[\RealMetric](s(k),x)$
+                by \obv{metric_distance_symmetric}.
+            Follows by \auto{metric_ball_iff}.
+        \end{subproof}
+        Follows by \auto.
+    \end{subproof}
+    Follows by \obv{metric_convergence}.
+\end{proof}
+
+\begin{theorem}\label{surreal_real_metric_sequentially_complete}
+    $\RealMetric$ is sequentially complete metric.
+\end{theorem}
+\begin{proof}
+    $\RealMetric$ is a metric space
+        by \obv{surreal_real_metric_space}.
+    Show that for every $s$ such that $\metricCauchy{\RealMetric}{s}$
+        there exists $x\in\carrier[\RealMetric]$ such that
+            $\metricConverges{\RealMetric}{s}{x}$.
+    \begin{subproof}
+        Fix $s$.
+        Assume $\metricCauchy{\RealMetric}{s}$.
+        Take $x\in\reals$ such that for every $n\in\naturals$ we have
+            $\surrealLe{\realCauchyLowerEndpoint{s}{n}}{x}$ and
+            $\surrealLe{x}{\realCauchyUpperEndpoint{s}{n}}$
+            by \obv{real_cauchy_nested_point_exists}.
+        $x\in\carrier[\RealMetric]$
+            by \obv{surreal_real_metric_carrier}.
+        $\metricConverges{\RealMetric}{s}{x}$
+            by \obv{real_cauchy_converges_to_nested_point}.
+        Follows by \auto.
+    \end{subproof}
+    Follows by \obv{sequentially_complete_metric_space}.
+\end{proof}
+
+\begin{corollary}\label{surreal_real_metric_complete}
+    $\RealMetric$ is complete metric.
+\end{corollary}
+\begin{proof}
+    Follows by \obv{surreal_real_metric_sequentially_complete}.
+\end{proof}

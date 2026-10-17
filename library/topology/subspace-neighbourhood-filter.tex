@@ -1,0 +1,173 @@
+\section{Neighbourhood filters of subspaces}
+
+\import{topology/subspace.tex}
+\import{topology/neighbourhood-within.tex}
+
+The neighbourhood filter in a subspace is the pullback of the ambient
+neighbourhood filter along the inclusion.  Pushing it forward to the ambient
+carrier recovers the corresponding neighbourhood-within filter.
+
+\begin{proposition}\label{subspace_inclusion_is_subset_inclusion}
+    $\subspaceInclusion{X}{A}
+        =\subsetInclusion{\carrier[X]}{A\inter\carrier[X]}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{subspace_inclusion,subset_inclusion}.
+\end{proof}
+
+\begin{theorem}\label{subspace_neighbourhood_filter_is_trace}
+    Let $X$ be a topological space and
+        $x\in A\inter\carrier[X]$.
+    Then
+        $\neighbourhoods{x}{\subspaceTopology{X}{A}}
+            =\filterTrace{\carrier[X]}{\neighbourhoods{x}{X}}{
+                A\inter\carrier[X]}$.
+\end{theorem}
+\begin{proof}
+    $\carrier[\subspaceTopology{X}{A}]=A\inter\carrier[X]$ by
+        \obv{subspace_topology_carrier}.
+    Hence $x\in\carrier[\subspaceTopology{X}{A}]$.
+    $\opens[\subspaceTopology{X}{A}]=\subspaceOpens{X}{A}$ by
+        \obv{subspace_topology_opens}.
+    $x\in\carrier[X]$ by \obv{inter}.
+    $\neighbourhoods{x}{X}$ is a filter on $\carrier[X]$ by
+        \obv{neighbourhoods_is_filter}.
+    $A\inter\carrier[X]\subseteq\carrier[X]$ by
+        \obv{inter_lower_right}.
+
+    Show that
+        $\neighbourhoods{x}{\subspaceTopology{X}{A}}
+            \subseteq\filterTrace{\carrier[X]}{\neighbourhoods{x}{X}}{
+                A\inter\carrier[X]}$.
+    \begin{subproof}
+        It suffices to show that every element of
+            $\neighbourhoods{x}{\subspaceTopology{X}{A}}$ is an element of
+            $\filterTrace{\carrier[X]}{\neighbourhoods{x}{X}}{
+                A\inter\carrier[X]}$ by \obv{subseteq}.
+        Fix $N\in\neighbourhoods{x}{\subspaceTopology{X}{A}}$.
+        $N\in\pow{\carrier[\subspaceTopology{X}{A}]}$ and there exists
+            $V\in\opens[\subspaceTopology{X}{A}]$ such that
+            $x\in V\subseteq N$ by \obv{neighbourhoods}.
+        Hence $N\subseteq\carrier[\subspaceTopology{X}{A}]$ by
+            \obv{powerset_elim}.
+        Hence $N\subseteq A\inter\carrier[X]$.
+        Take $V\in\opens[\subspaceTopology{X}{A}]$ such that
+            $x\in V\subseteq N$.
+        Hence $V\in\subspaceOpens{X}{A}$.
+        Take $U\in\opens[X]$ such that
+            $V=U\inter(A\inter\carrier[X])$ by
+            \obv{subspace_opens_iff}.
+        $x\in U$ by \auto{inter}.
+        Hence $U\in\neighbourhoods{x}{X}$ by
+            \obv{open_set_containing_point_is_neighbourhood}.
+        $(A\inter\carrier[X])\inter U=V$ by
+            \obv{inter_comm}.
+        Hence $(A\inter\carrier[X])\inter U\subseteq N$.
+        Follows by \auto{filter_trace_iff}.
+    \end{subproof}
+
+    Show that
+        $\filterTrace{\carrier[X]}{\neighbourhoods{x}{X}}{
+                A\inter\carrier[X]}
+            \subseteq\neighbourhoods{x}{\subspaceTopology{X}{A}}$.
+    \begin{subproof}
+        It suffices to show that every element of
+            $\filterTrace{\carrier[X]}{\neighbourhoods{x}{X}}{
+                A\inter\carrier[X]}$ is an element of
+            $\neighbourhoods{x}{\subspaceTopology{X}{A}}$ by
+            \obv{subseteq}.
+        Fix $N\in\filterTrace{\carrier[X]}{\neighbourhoods{x}{X}}{
+            A\inter\carrier[X]}$.
+        $N\in\filterTrace{\carrier[X]}{\neighbourhoods{x}{X}}{
+            A\inter\carrier[X]}$ iff
+            $N\subseteq A\inter\carrier[X]$ and there exists
+            $B\in\neighbourhoods{x}{X}$ such that
+            $(A\inter\carrier[X])\inter B\subseteq N$ by
+            \obv{filter_trace_iff}.
+        Hence $N\subseteq A\inter\carrier[X]$ and there exists
+            $B\in\neighbourhoods{x}{X}$ such that
+            $(A\inter\carrier[X])\inter B\subseteq N$.
+        Hence $N\subseteq\carrier[\subspaceTopology{X}{A}]$.
+        Thus $N\in\pow{\carrier[\subspaceTopology{X}{A}]}$ by
+            \obv{powerset_intro}.
+        Take $B\in\neighbourhoods{x}{X}$ such that
+            $(A\inter\carrier[X])\inter B\subseteq N$.
+        Take $U\in\opens[X]$ such that $x\in U\subseteq B$ by
+            \obv{neighbourhoods}.
+        Let $V=U\inter(A\inter\carrier[X])$.
+        Hence $V\in\subspaceOpens{X}{A}$ by
+            \auto{subspace_opens_iff}.
+        Thus $V\in\opens[\subspaceTopology{X}{A}]$.
+        $x\in V$ by \obv{inter}.
+        $V\subseteq(A\inter\carrier[X])\inter B$ by
+            \auto{inter,subseteq}.
+        Hence $V\subseteq N$ by \obv{subseteq_transitive}.
+        Follows by \obv{neighbourhoods}.
+    \end{subproof}
+    Follows by \obv{subseteq_antisymmetric}.
+\end{proof}
+
+\begin{theorem}\label{subspace_neighbourhood_filter_is_pullback}
+    Let $X$ be a topological space and
+        $x\in A\inter\carrier[X]$.
+    Then
+        $\neighbourhoods{x}{\subspaceTopology{X}{A}}
+            =\filterPullback{A\inter\carrier[X]}{\carrier[X]}{
+                \subspaceInclusion{X}{A}}{\neighbourhoods{x}{X}}$.
+\end{theorem}
+\begin{proof}
+    $\neighbourhoods{x}{\subspaceTopology{X}{A}}
+        =\filterTrace{\carrier[X]}{\neighbourhoods{x}{X}}{
+            A\inter\carrier[X]}$ by
+        \obv{subspace_neighbourhood_filter_is_trace}.
+    $\filterTrace{\carrier[X]}{\neighbourhoods{x}{X}}{
+        A\inter\carrier[X]}
+        =\filterPullback{A\inter\carrier[X]}{\carrier[X]}{
+            \subsetInclusion{\carrier[X]}{A\inter\carrier[X]}}{
+            \neighbourhoods{x}{X}}$ by \obv{filter_trace}.
+    $\subspaceInclusion{X}{A}
+        =\subsetInclusion{\carrier[X]}{A\inter\carrier[X]}$ by
+        \obv{subspace_inclusion_is_subset_inclusion}.
+\end{proof}
+
+\begin{theorem}\label{subspace_neighbourhood_pushforward_is_within}
+    Let $X$ be a topological space and
+        $x\in A\inter\carrier[X]$.
+    Then
+        $\filterPushforward{A\inter\carrier[X]}{\carrier[X]}{
+            \subspaceInclusion{X}{A}}{
+            \neighbourhoods{x}{\subspaceTopology{X}{A}}}
+        =\neighbourhoodsWithin{x}{A}{X}$.
+\end{theorem}
+\begin{proof}
+    $x\in\carrier[X]$ by \obv{inter}.
+    $\neighbourhoods{x}{X}$ is a filter on $\carrier[X]$ by
+        \obv{neighbourhoods_is_filter}.
+    $A\inter\carrier[X]\subseteq\carrier[X]$ by
+        \obv{inter_lower_right}.
+    $\neighbourhoods{x}{\subspaceTopology{X}{A}}
+        =\filterTrace{\carrier[X]}{\neighbourhoods{x}{X}}{
+            A\inter\carrier[X]}$ by
+        \obv{subspace_neighbourhood_filter_is_trace}.
+    $\subspaceInclusion{X}{A}
+        =\subsetInclusion{\carrier[X]}{A\inter\carrier[X]}$ by
+        \obv{subspace_inclusion_is_subset_inclusion}.
+    Hence
+        $\filterPushforward{A\inter\carrier[X]}{\carrier[X]}{
+            \subspaceInclusion{X}{A}}{
+            \neighbourhoods{x}{\subspaceTopology{X}{A}}}
+        =\filterPushforward{A\inter\carrier[X]}{\carrier[X]}{
+            \subsetInclusion{\carrier[X]}{A\inter\carrier[X]}}{
+            \filterTrace{\carrier[X]}{\neighbourhoods{x}{X}}{
+                A\inter\carrier[X]}}$.
+    $\filterPushforward{A\inter\carrier[X]}{\carrier[X]}{
+        \subsetInclusion{\carrier[X]}{A\inter\carrier[X]}}{
+        \filterTrace{\carrier[X]}{\neighbourhoods{x}{X}}{
+            A\inter\carrier[X]}}
+        =\filterWithin{\carrier[X]}{\neighbourhoods{x}{X}}{
+            A\inter\carrier[X]}$ by
+        \obv{filter_trace_pushforward_eq_within}.
+    $\neighbourhoodsWithin{x}{A}{X}
+        =\filterWithin{\carrier[X]}{\neighbourhoods{x}{X}}{
+            A\inter\carrier[X]}$ by \obv{neighbourhoods_within}.
+\end{proof}

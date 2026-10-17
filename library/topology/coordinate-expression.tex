@@ -1,0 +1,296 @@
+\section{Maps expressed in coordinates}
+
+\import{topology/partial-homeomorphism.tex}
+
+Coordinate expressions use the actual graph of the map on the chosen source
+neighborhood. The target chart is restricted to that image as a graph; the
+image need not be open.
+
+\begin{definition}\label{coordinate_expression}
+    $\CoordExpr{d}{f}{c}{U}
+        =(\restrl{d}{\img{f}{U}})\circ((\restrl{f}{U})\circ\converse{\restrl{c}{U}})$.
+\end{definition}
+
+\begin{theorem}\label{coordinate_expression_normalization}
+    Let $c,f,d$ be relations.
+    Then $\CoordExpr{d}{f}{c}{U}=d\circ((\restrl{f}{U})\circ\converse{\restrl{c}{U}})$.
+\end{theorem}
+\begin{proof}
+    $\restrl{f}{U}$ is a relation by \auto{relation,restrl_subseteq,subseteq}.
+    $\ran{\restrl{f}{U}}=\img{f}{U}$ by \obv{restriction_range}.
+    $(\restrl{d}{\img{f}{U}})\circ(\restrl{f}{U})=d\circ(\restrl{f}{U})$ by
+        \auto{composition_restrict_intermediate_range}.
+    Follows by \auto{coordinate_expression,circ_assoc}.
+\end{proof}
+
+\begin{theorem}\label{coordinate_expression_agreement}
+    Let $c,d,f,g$ be relations.
+    Suppose $\restrl{f}{U}=\restrl{g}{U}$.
+    Then $\CoordExpr{d}{f}{c}{U}=\CoordExpr{d}{g}{c}{U}$.
+\end{theorem}
+\begin{proof}
+    Follows by \auto{coordinate_expression_normalization}.
+\end{proof}
+
+\begin{theorem}\label{coordinate_expression_restrict_map}
+    Let $c,d,f$ be relations.
+    Suppose $V\subseteq W$.
+    Then $\CoordExpr{d}{\restrl{f}{W}}{c}{V}=\CoordExpr{d}{f}{c}{V}$.
+\end{theorem}
+\begin{proof}
+    $\restrl{f}{W}$ is a relation by \auto{relation,restrl_subseteq,subseteq}.
+    $\restrl{\restrl{f}{W}}{V}=\restrl{f}{W\inter V}$ by \obv{restriction_intersection}.
+    $W\inter V=V$ by \obv{inter_absorb_supseteq_left}.
+    Follows by \auto{coordinate_expression_agreement}.
+\end{proof}
+
+\begin{theorem}\label{coordinate_expression_pair_iff}
+    Let $c,f,d$ be relations.
+    Then $(u,v)\in\CoordExpr{d}{f}{c}{U}$ iff
+        there exists $x\in U$ such that there exists $y$ such that
+            $(x,u)\in c$ and $(x,y)\in f$ and $(y,v)\in d$.
+\end{theorem}
+\begin{proof}
+    $\CoordExpr{d}{f}{c}{U}=d\circ((\restrl{f}{U})\circ\converse{\restrl{c}{U}})$ by
+        \obv{coordinate_expression_normalization}.
+    Follows by \auto{circ_iff,restrl_iff,converse_iff}.
+\end{proof}
+
+\begin{theorem}\label{coordinate_expression_restriction}
+    Let $c$ be an injection.
+    Let $f,d$ be relations.
+    Suppose $W\subseteq U$.
+    Then $\CoordExpr{d}{f}{c}{W}=\restrl{\CoordExpr{d}{f}{c}{U}}{\img{c}{W}}$.
+\end{theorem}
+\begin{proof}
+    $\CoordExpr{d}{f}{c}{W}$ and $\CoordExpr{d}{f}{c}{U}$ are relations by
+        \auto{coordinate_expression,circ_is_relation}.
+    For all $u,v$ we have $(u,v)\in\CoordExpr{d}{f}{c}{W}$ iff
+        $(u,v)\in\restrl{\CoordExpr{d}{f}{c}{U}}{\img{c}{W}}$ by
+        \auto{coordinate_expression_pair_iff,restrl_iff,img_iff,injective,subseteq}.
+    Follows by \obv{relext}.
+\end{proof}
+
+\begin{theorem}\label{coordinate_expression_type}
+    Let $c$ be an injection.
+    Let $f,d$ be functions.
+    Suppose $U\subseteq\dom{c}$ and $U\subseteq\dom{f}$ and
+        $\img{f}{U}\subseteq\dom{d}$.
+    Then $\CoordExpr{d}{f}{c}{U}\in\funs{\img{c}{U}}{\img{d}{\img{f}{U}}}$.
+\end{theorem}
+\begin{proof}
+    $c\in\bijections{\dom{c}}{\ran{c}}$ by
+        \obv{injective_function_bijection_to_range}.
+    $\restrl{c}{U}\in\bijections{U}{\img{c}{U}}$ by
+        \obv{bijection_restriction_to_image}.
+    $\converse{\restrl{c}{U}}\in\funs{\img{c}{U}}{U}$ by
+        \obv{bijective_converse_are_funs}.
+    $\restrl{f}{U}\in\funs{U}{\img{f}{U}}$ and
+        $\restrl{d}{\img{f}{U}}\in\funs{\img{f}{U}}{\img{d}{\img{f}{U}}}$ by
+        \obv{restriction_exact_type_to_image}.
+    $(\restrl{f}{U})\circ\converse{\restrl{c}{U}}
+        \in\funs{\img{c}{U}}{\img{f}{U}}$ by \obv{funs_circ}.
+    Follows by \auto{coordinate_expression,funs_circ}.
+\end{proof}
+
+\begin{theorem}\label{coordinate_expression_domain}
+    Let $c$ be an injection.
+    Let $f,d$ be functions.
+    Suppose $U\subseteq\dom{c}$ and $U\subseteq\dom{f}$ and
+        $\img{f}{U}\subseteq\dom{d}$.
+    Then $\dom{\CoordExpr{d}{f}{c}{U}}=\img{c}{U}$.
+\end{theorem}
+\begin{proof}
+    Follows by \auto{coordinate_expression_type,funs}.
+\end{proof}
+
+\begin{theorem}\label{coordinate_expression_reconstruction}
+    Let $c,d$ be injections.
+    Let $f$ be a function.
+    Suppose $U\subseteq\dom{c}$ and $U\subseteq\dom{f}$ and
+        $\img{f}{U}\subseteq\dom{d}$.
+    Then $\converse{d}\circ(\CoordExpr{d}{f}{c}{U}\circ\restrl{c}{U})=\restrl{f}{U}$.
+\end{theorem}
+\begin{proof}
+    $c\in\bijections{\dom{c}}{\ran{c}}$ and
+        $d\in\bijections{\dom{d}}{\ran{d}}$ by
+        \obv{injective_function_bijection_to_range}.
+    Let $a=\restrl{c}{U}$ and $b=\restrl{f}{U}$.
+    $a\in\bijections{U}{\img{c}{U}}$ by \auto{bijection_restriction_to_image}.
+    $b\in\funs{U}{\img{f}{U}}$ by \auto{restriction_exact_type_to_image}.
+    $b\in\funs{U}{\dom{d}}$ by \obv{funs_weaken_codom}.
+    $\converse{a}\circ a=\identity{U}$ and
+        $\converse{d}\circ d=\identity{\dom{d}}$ by \obv{bijection_converse_circ}.
+    $b\circ\identity{U}=b$ and $\identity{\dom{d}}\circ b=b$ by
+        \obv{funs_circ_identity_right,funs_identity_circ_left}.
+    $\CoordExpr{d}{f}{c}{U}=d\circ(b\circ\converse{a})$ by
+        \auto{coordinate_expression_normalization}.
+    $\converse{d}\circ(\CoordExpr{d}{f}{c}{U}\circ a)
+        =((\converse{d}\circ d)\circ b)\circ(\converse{a}\circ a)$ by \auto{circ_assoc}.
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{coordinate_expression_change_charts}
+    Let $a,b$ be relations.
+    Let $c,d$ be injections.
+    Let $f$ be a function.
+    Suppose $U\subseteq\dom{c}$ and $U\subseteq\dom{f}$ and
+        $\img{f}{U}\subseteq\dom{d}$.
+    Then $\CoordExpr{b}{f}{a}{U}=(b\circ\converse{d})\circ
+        (\CoordExpr{d}{f}{c}{U}\circ((\restrl{c}{U})\circ\converse{\restrl{a}{U}}))$.
+\end{theorem}
+\begin{proof}
+    $\converse{d}\circ(\CoordExpr{d}{f}{c}{U}\circ\restrl{c}{U})=\restrl{f}{U}$ by
+        \obv{coordinate_expression_reconstruction}.
+    $(b\circ\converse{d})\circ
+        (\CoordExpr{d}{f}{c}{U}\circ((\restrl{c}{U})\circ\converse{\restrl{a}{U}}))
+        =b\circ((\restrl{f}{U})\circ\converse{\restrl{a}{U}})$ by \auto{circ_assoc}.
+    $f$ is a relation.
+    Follows by \auto{coordinate_expression_normalization}.
+\end{proof}
+
+\begin{theorem}\label{coordinate_expression_composition}
+    Let $c,e,f,g$ be relations.
+    Let $d$ be an injection.
+    Suppose $\img{f}{U}\subseteq V$ and $V\subseteq\dom{d}$.
+    Then $\CoordExpr{e}{g\circ f}{c}{U}
+        =\CoordExpr{e}{g}{d}{V}\circ\CoordExpr{d}{f}{c}{U}$.
+\end{theorem}
+\begin{proof}
+    $g\circ f$ is a relation by \obv{circ_is_relation}.
+    $\CoordExpr{e}{g\circ f}{c}{U}$ is a relation by
+        \auto{coordinate_expression,circ_is_relation}.
+    $\CoordExpr{e}{g}{d}{V}\circ\CoordExpr{d}{f}{c}{U}$ is a relation by
+        \obv{circ_is_relation}.
+    Show that for all $u,v$ we have $(u,v)\in\CoordExpr{e}{g\circ f}{c}{U}$ iff
+        $(u,v)\in\CoordExpr{e}{g}{d}{V}\circ\CoordExpr{d}{f}{c}{U}$.
+    \begin{subproof}
+        Fix $u,v$.
+        Show that if $(u,v)\in\CoordExpr{e}{g\circ f}{c}{U}$, then
+            $(u,v)\in\CoordExpr{e}{g}{d}{V}\circ\CoordExpr{d}{f}{c}{U}$.
+        \begin{subproof}
+            Assume $(u,v)\in\CoordExpr{e}{g\circ f}{c}{U}$.
+            Take $x,z$ such that $x\in U$ and $(x,u)\in c$ and
+                $(x,z)\in g\circ f$ and $(z,v)\in e$ by \auto{coordinate_expression_pair_iff}.
+            Take $y$ such that $(x,y)\in f$ and $(y,z)\in g$ by \auto{circ_iff}.
+            $y\in V$ and $y\in\dom{d}$ by \auto{img_iff,subseteq}.
+            Take $w$ such that $(y,w)\in d$ by \auto{dom_iff}.
+            $(u,w)\in\CoordExpr{d}{f}{c}{U}$ and
+                $(w,v)\in\CoordExpr{e}{g}{d}{V}$ by \auto{coordinate_expression_pair_iff}.
+            Follows by \auto{circ_iff}.
+        \end{subproof}
+        Show that if $(u,v)\in\CoordExpr{e}{g}{d}{V}\circ\CoordExpr{d}{f}{c}{U}$, then
+            $(u,v)\in\CoordExpr{e}{g\circ f}{c}{U}$.
+        \begin{subproof}
+            Assume $(u,v)\in\CoordExpr{e}{g}{d}{V}\circ\CoordExpr{d}{f}{c}{U}$.
+            Take $w$ such that $(u,w)\in\CoordExpr{d}{f}{c}{U}$ and
+                $(w,v)\in\CoordExpr{e}{g}{d}{V}$ by \auto{circ_iff}.
+            Take $x,y$ such that $x\in U$ and $(x,u)\in c$ and
+                $(x,y)\in f$ and $(y,w)\in d$ by \auto{coordinate_expression_pair_iff}.
+            Take $z,t$ such that $z\in V$ and $(z,w)\in d$ and
+                $(z,t)\in g$ and $(t,v)\in e$ by \auto{coordinate_expression_pair_iff}.
+            $y=z$ by \obv{injective}.
+            $(x,t)\in g\circ f$ by \auto{circ_iff}.
+            Follows by \auto{coordinate_expression_pair_iff}.
+        \end{subproof}
+        Follows by \auto.
+    \end{subproof}
+    Follows by \obv{relext}.
+\end{proof}
+
+\begin{theorem}\label{continuous_from_coordinate_expression}
+    Suppose $c$ is an open partial homeomorphism from $X$ to $E$ and
+        $d$ is an open partial homeomorphism from $Y$ to $F$.
+    Let $f$ be a function.
+    Suppose $U\in\opens[X]$ and $U\subseteq\dom{c}$ and $U\subseteq\dom{f}$ and
+        $\img{f}{U}\subseteq\dom{d}$.
+    Suppose $\CoordExpr{d}{f}{c}{U}$ is a continuous partial map from $E$ to $F$.
+    Then $\restrl{f}{U}$ is a continuous partial map from $X$ to $Y$.
+\end{theorem}
+\begin{proof}
+    $\restrl{c}{U}$ is an open partial homeomorphism from $X$ to $E$ and
+        $\converse{d}$ is an open partial homeomorphism from $F$ to $Y$ by
+        \obv{open_partial_homeomorphism_restriction,open_partial_homeomorphism_converse}.
+    $\restrl{c}{U}$ is a continuous partial map from $X$ to $E$ and
+        $\converse{d}$ is a continuous partial map from $F$ to $Y$ by
+        \obv{open_partial_homeomorphism_is_continuous_partial_map}.
+    $\CoordExpr{d}{f}{c}{U}\circ\restrl{c}{U}$ is a continuous partial map from $X$ to $F$
+        by \obv{continuous_partial_map_composition}.
+    $\converse{d}\circ(\CoordExpr{d}{f}{c}{U}\circ\restrl{c}{U})$
+        is a continuous partial map from $X$ to $Y$ by
+        \obv{continuous_partial_map_composition}.
+    $c$ is an injection and $d$ is an injection by
+        \auto{open_partial_homeomorphism_bijection,bijections,bijection_is_function}.
+    $\converse{d}\circ(\CoordExpr{d}{f}{c}{U}\circ\restrl{c}{U})=\restrl{f}{U}$ by
+        \obv{coordinate_expression_reconstruction}.
+\end{proof}
+
+\begin{theorem}\label{coordinate_expression_open_domain}
+    Suppose $c$ is an open partial homeomorphism from $X$ to $E$.
+    Let $f,d$ be functions.
+    Suppose $U\in\opens[X]$ and $U\subseteq\dom{c}$ and $U\subseteq\dom{f}$ and
+        $\img{f}{U}\subseteq\dom{d}$.
+    Then $\dom{\CoordExpr{d}{f}{c}{U}}\in\opens[E]$.
+\end{theorem}
+\begin{proof}
+    $c$ is an injection by
+        \auto{open_partial_homeomorphism_bijection,bijections,bijection_is_function}.
+    $\dom{\CoordExpr{d}{f}{c}{U}}=\img{c}{U}$ by \obv{coordinate_expression_domain}.
+    $\img{c}{U}\in\opens[E]$ by \obv{open_partial_homeomorphism_image_open}.
+\end{proof}
+
+\subsection{Empty and identity maps}
+
+\begin{theorem}\label{coordinate_expression_empty}
+    Let $c,f,d$ be relations.
+    Then $\CoordExpr{d}{f}{c}{\emptyset}=\emptyset$.
+\end{theorem}
+\begin{proof}
+    $\CoordExpr{d}{f}{c}{\emptyset}$ is a relation by
+        \auto{coordinate_expression,circ_is_relation}.
+    Follows by \auto{coordinate_expression_pair_iff,relation,setext}.
+\end{proof}
+
+\begin{theorem}\label{coordinate_expression_identity}
+    Let $c$ be a function.
+    Then $\CoordExpr{c}{\identity{U}}{c}{U}=\identity{\img{c}{U}}$.
+\end{theorem}
+\begin{proof}
+    $\identity{U}$ and $\identity{\img{c}{U}}$ are relations by \obv{id_is_relation}.
+    $\CoordExpr{c}{\identity{U}}{c}{U}$ is a relation by
+        \auto{coordinate_expression,circ_is_relation}.
+    For all $u,v$ we have $(u,v)\in\CoordExpr{c}{\identity{U}}{c}{U}$ iff
+        $(u,v)\in\identity{\img{c}{U}}$ by
+        \auto{coordinate_expression_pair_iff,id_iff,img_iff,function_rightunique}.
+    Follows by \obv{relext}.
+\end{proof}
+
+\begin{theorem}\label{coordinate_expression_partial_identity}
+    Let $c$ be a function.
+    Suppose $U\subseteq V$.
+    Then $\CoordExpr{c}{\identity{V}}{c}{U}=\identity{\img{c}{U}}$.
+\end{theorem}
+\begin{proof}
+    $\identity{V}$ and $\identity{U}$ are relations by \obv{id_is_relation}.
+    $\restrl{\identity{V}}{U}=\identity{U}$ by
+        \auto{identity_restriction,inter_absorb_supseteq_left}.
+    $\restrl{\identity{U}}{U}=\identity{U}$ by \auto{identity_restriction,inter_idempotent}.
+    $\CoordExpr{c}{\identity{V}}{c}{U}=\CoordExpr{c}{\identity{U}}{c}{U}$ by
+        \obv{coordinate_expression_agreement}.
+    $\CoordExpr{c}{\identity{U}}{c}{U}=\identity{\img{c}{U}}$ by
+        \obv{coordinate_expression_identity}.
+\end{proof}
+
+\begin{theorem}\label{coordinate_expression_factorization}
+    Let $c$ be a function and $f,d$ be relations.
+    Suppose $d\circ f=c$.
+    Then $\CoordExpr{d}{f}{c}{U}=\identity{\img{c}{U}}$.
+\end{theorem}
+\begin{proof}
+    $\CoordExpr{d}{f}{c}{U}$ is a relation by \auto{coordinate_expression,circ_is_relation}.
+    $\identity{\img{c}{U}}$ is a relation by \obv{id_is_relation}.
+    For all $u,v$ we have $(u,v)\in\CoordExpr{d}{f}{c}{U}$ iff
+        $(u,v)\in\identity{\img{c}{U}}$ by
+        \auto{coordinate_expression_pair_iff,circ_iff,img_iff,id_iff,function_rightunique}.
+    Follows by \obv{relext}.
+\end{proof}

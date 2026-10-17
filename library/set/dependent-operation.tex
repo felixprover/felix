@@ -1,0 +1,840 @@
+\import{set/indexed-family.tex}
+\import{set/logical-graph.tex}
+\import{set/suc.tex}
+
+\section{Operations on dependent products}
+
+The constructions in this section turn coordinatewise logical operations into
+ordinary set-coded graphs.  Keeping this graphification in the set layer lets
+algebraic products share one implementation of their operations, projections,
+mediators, and reindexing maps.
+
+\subsection{The canonical two-coordinate family}
+
+The binary wrappers used throughout the algebra library are indexed by the
+von Neumann ordinal $\suc{\suc{\emptyset}}$.  Thus they remain literal indexed
+products rather than acquiring a second pair-based implementation.
+
+\begin{definition}\label{binary_family}
+    $\binaryFamily{A}{B}
+        =\{(\emptyset,A),(\suc{\emptyset},B)\}$.
+\end{definition}
+
+\begin{proposition}\label{binary_family_type}
+    $\binaryFamily{A}{B}\in
+        \funs{\suc{\suc{\emptyset}}}{\{A,B\}}$.
+\end{proposition}
+\begin{proof}
+    Let $f=\binaryFamily{A}{B}$.
+    $f$ is a relation by
+        \auto{binary_family,relation,cons_iff,singleton_iff}.
+    Show that $f$ is right-unique.
+    \begin{subproof}
+        Show that for all $i,x,y$ such that $(i,x),(i,y)\in f$
+            we have $x=y$.
+        \begin{subproof}
+            Fix $i,x,y$.
+            Assume $(i,x),(i,y)\in f$.
+            Follows by
+                \auto{binary_family,cons_iff,singleton_iff,
+                    pair_eq_iff,suc_neq_emptyset}.
+        \end{subproof}
+        Follows by \obv{rightunique}.
+    \end{subproof}
+    Show that $\dom{f}=\cons{\emptyset}{\{\suc{\emptyset}\}}$.
+    \begin{subproof}
+        Show that for every $i$ we have
+            $i\in\dom{f}$ iff
+                $i\in\cons{\emptyset}{\{\suc{\emptyset}\}}$.
+        \begin{subproof}
+            Fix $i$.
+            If $i\in\dom{f}$, then
+                $i\in\cons{\emptyset}{\{\suc{\emptyset}\}}$ by
+                \auto{dom_iff,binary_family,cons_iff,
+                    singleton_iff,pair_eq_iff}.
+            If $i\in\cons{\emptyset}{\{\suc{\emptyset}\}}$, then
+                $i\in\dom{f}$ by
+                \auto{dom_iff,binary_family,cons_iff,
+                    singleton_iff,pair_eq_iff}.
+            Follows by \auto.
+        \end{subproof}
+        Follows by \obv{setext}.
+    \end{subproof}
+    $\cons{\emptyset}{\{\suc{\emptyset}\}}
+        =\suc{\suc{\emptyset}}$ by
+        \auto{setext,cons_iff,singleton_iff,suc_iff,emptyset}.
+    Hence $\dom{f}=\suc{\suc{\emptyset}}$.
+    Show that for every $i\in\dom{f}$ we have $f(i)\in\{A,B\}$.
+    \begin{subproof}
+        Fix $i\in\dom{f}$.
+        Take $x$ such that $(i,x)\in f$ by \obv{dom_iff}.
+        $f(i)=x$ by \obv{function_apply_intro}.
+        Follows by
+            \auto{binary_family,cons_iff,singleton_iff,pair_eq_iff}.
+    \end{subproof}
+    Hence $f$ is a function to $\{A,B\}$.
+    Follows by \auto{funs_intro}.
+\end{proof}
+
+\begin{proposition}\label{binary_family_left}
+    $(\binaryFamily{A}{B})(\emptyset)=A$.
+\end{proposition}
+\begin{proof}
+    $\binaryFamily{A}{B}$ is a function by
+        \auto{binary_family_type,funs_is_function}.
+    $(\emptyset,A)\in\binaryFamily{A}{B}$ by
+        \auto{binary_family,cons_iff}.
+    Follows by \obv{function_apply_intro}.
+\end{proof}
+
+\begin{proposition}\label{binary_family_right}
+    $(\binaryFamily{A}{B})(\suc{\emptyset})=B$.
+\end{proposition}
+\begin{proof}
+    $\binaryFamily{A}{B}$ is a function by
+        \auto{binary_family_type,funs_is_function}.
+    $(\suc{\emptyset},B)\in\binaryFamily{A}{B}$ by
+        \auto{binary_family,cons_iff,singleton_iff}.
+    Follows by \obv{function_apply_intro}.
+\end{proof}
+
+\subsection{Coordinatewise unary operations}
+
+\begin{definition}\label{dependent_unary_coordinate_op}
+    $\dependentUnaryCoordinateOp:\Set\to\Set\to\Set\to\Set
+        =\fun{u,x,i:\Set}{\apply{u(i)}{x(i)}}$.
+\end{definition}
+
+\begin{definition}\label{dependent_unary_section_op}
+    $\dependentUnarySectionOp:\Set\to\Set\to\Set\to\Set
+        =\fun{I,u,x:\Set}{
+            \Apply{\graphOnDomainOp}{
+                I,\Apply{\dependentUnaryCoordinateOp}{u,x}}}$.
+\end{definition}
+
+\begin{proposition}\label{dependent_unary_section_coordinate}
+    Let $i\in I$.
+    Then
+        $\apply{\Apply{\dependentUnarySectionOp}{I,u,x}}{i}
+            =\apply{u(i)}{x(i)}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{dependent_unary_section_op,
+            dependent_unary_coordinate_op,
+            logical_graph_on_domain_apply}.
+\end{proof}
+
+\begin{proposition}\label{dependent_unary_section_type}
+    Suppose $A$ is a function on $I$.
+    Suppose $B$ is a function on $I$.
+    Suppose $u$ is a function on $I$.
+    Suppose for every $i\in I$ we have $u(i)\in\funs{A(i)}{B(i)}$.
+    Let $x\in\dependentProduct{I}{A}$.
+    Then
+        $\Apply{\dependentUnarySectionOp}{I,u,x}
+            \in\dependentProduct{I}{B}$.
+\end{proposition}
+\begin{proof}
+    Let $y=\Apply{\dependentUnarySectionOp}{I,u,x}$.
+    $y\in\funs{I}{\ran{y}}$ by
+        \auto{dependent_unary_section_op,
+            logical_graph_on_domain_function}.
+    Hence $y$ is a function and $\dom{y}=I$ by
+        \obv{funs_is_function,funs}.
+    Show that for every $i\in I$ we have $y(i)\in B(i)$.
+    \begin{subproof}
+        Fix $i\in I$.
+        $x(i)\in A(i)$ by \obv{dependent_product_coordinate}.
+        $y(i)=\apply{u(i)}{x(i)}$ by
+            \auto{dependent_unary_section_coordinate}.
+        Follows by \auto{funs_type_apply}.
+    \end{subproof}
+    Show that $y\in\funs{I}{\unions{\ran{B}}}$.
+    \begin{subproof}
+        Show that for every $i\in\dom{y}$ we have
+            $y(i)\in\unions{\ran{B}}$.
+        \begin{subproof}
+            Fix $i\in\dom{y}$.
+            Hence $i\in I$.
+            $y(i)\in B(i)$.
+            Follows by \obv{indexed_family_member_union}.
+        \end{subproof}
+        Follows by \obv{funs_intro}.
+    \end{subproof}
+    Follows by \auto{dependent_product_iff}.
+\end{proof}
+
+\begin{definition}\label{dependent_unary_operation}
+    $\dependentUnaryOperation{I}{A}{B}{u}
+        =\Apply{\graphOnOp}{
+            \dependentProduct{I}{A},\dependentProduct{I}{B},
+            \Apply{\dependentUnarySectionOp}{I,u}}$.
+\end{definition}
+
+\begin{proposition}\label{dependent_unary_operation_type}
+    Suppose $A$ is a function on $I$.
+    Suppose $B$ is a function on $I$.
+    Suppose $u$ is a function on $I$.
+    Suppose for every $i\in I$ we have $u(i)\in\funs{A(i)}{B(i)}$.
+    Then
+        $\dependentUnaryOperation{I}{A}{B}{u}
+            \in\funs{\dependentProduct{I}{A}}{
+                \dependentProduct{I}{B}}$.
+\end{proposition}
+\begin{proof}
+    For every $x\in\dependentProduct{I}{A}$ we have
+        $\Apply{\dependentUnarySectionOp}{I,u,x}
+            \in\dependentProduct{I}{B}$ by
+        \obv{dependent_unary_section_type}.
+    Follows by
+        \auto{dependent_unary_operation,logical_graph_on_function}.
+\end{proof}
+
+\begin{proposition}\label{dependent_unary_operation_coordinate}
+    Suppose $A$ is a function on $I$.
+    Suppose $B$ is a function on $I$.
+    Suppose $u$ is a function on $I$.
+    Suppose for every $j\in I$ we have $u(j)\in\funs{A(j)}{B(j)}$.
+    Let $x\in\dependentProduct{I}{A}$ and $i\in I$.
+    Then
+        $\apply{\apply{\dependentUnaryOperation{I}{A}{B}{u}}{x}}{i}
+            =\apply{u(i)}{x(i)}$.
+\end{proposition}
+\begin{proof}
+    $\apply{\dependentUnaryOperation{I}{A}{B}{u}}{x}
+        =\Apply{\dependentUnarySectionOp}{I,u,x}$ by
+        \auto{dependent_unary_operation,logical_graph_on_apply}.
+    Follows by \auto{dependent_unary_section_coordinate}.
+\end{proof}
+
+\subsection{Coordinatewise binary operations}
+
+\begin{definition}\label{dependent_binary_coordinate_op}
+    $\dependentBinaryCoordinateOp:
+        \Set\to\Set\to\Set\to\Set\to\Set
+        =\fun{b,x,y,i:\Set}{\apply{b(i)}{(x(i),y(i))}}$.
+\end{definition}
+
+\begin{definition}\label{dependent_binary_section_op}
+    $\dependentBinarySectionOp:
+        \Set\to\Set\to\Set\to\Set\to\Set
+        =\fun{I,b,x,y:\Set}{
+            \Apply{\graphOnDomainOp}{
+                I,\Apply{\dependentBinaryCoordinateOp}{b,x,y}}}$.
+\end{definition}
+
+\begin{proposition}\label{dependent_binary_section_coordinate}
+    Let $i\in I$.
+    Then
+        $\apply{\Apply{\dependentBinarySectionOp}{I,b,x,y}}{i}
+            =\apply{b(i)}{(x(i),y(i))}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{dependent_binary_section_op,
+            dependent_binary_coordinate_op,
+            logical_graph_on_domain_apply}.
+\end{proof}
+
+\begin{proposition}\label{dependent_binary_section_type}
+    Suppose $A$ is a function on $I$.
+    Suppose $B$ is a function on $I$.
+    Suppose $C$ is a function on $I$.
+    Suppose $b$ is a function on $I$.
+    Suppose for every $i\in I$ we have
+        $b(i)\in\funs{A(i)\times B(i)}{C(i)}$.
+    Let $x\in\dependentProduct{I}{A}$ and
+        $y\in\dependentProduct{I}{B}$.
+    Then
+        $\Apply{\dependentBinarySectionOp}{I,b,x,y}
+            \in\dependentProduct{I}{C}$.
+\end{proposition}
+\begin{proof}
+    Let $z=\Apply{\dependentBinarySectionOp}{I,b,x,y}$.
+    $z\in\funs{I}{\ran{z}}$ by
+        \auto{dependent_binary_section_op,
+            logical_graph_on_domain_function}.
+    Hence $z$ is a function and $\dom{z}=I$ by
+        \obv{funs_is_function,funs}.
+    Show that for every $i\in I$ we have $z(i)\in C(i)$.
+    \begin{subproof}
+        Fix $i\in I$.
+        $x(i)\in A(i)$ and $y(i)\in B(i)$ by
+            \obv{dependent_product_coordinate}.
+        Hence $(x(i),y(i))\in A(i)\times B(i)$ by
+            \obv{times_tuple_intro}.
+        $z(i)=\apply{b(i)}{(x(i),y(i))}$ by
+            \auto{dependent_binary_section_coordinate}.
+        Follows by \auto{funs_type_apply}.
+    \end{subproof}
+    Show that $z\in\funs{I}{\unions{\ran{C}}}$.
+    \begin{subproof}
+        Show that for every $i\in\dom{z}$ we have
+            $z(i)\in\unions{\ran{C}}$.
+        \begin{subproof}
+            Fix $i\in\dom{z}$.
+            Hence $i\in I$.
+            $z(i)\in C(i)$.
+            Follows by \obv{indexed_family_member_union}.
+        \end{subproof}
+        Follows by \obv{funs_intro}.
+    \end{subproof}
+    Follows by \auto{dependent_product_iff}.
+\end{proof}
+
+\begin{definition}\label{dependent_binary_pair_op}
+    $\dependentBinaryPairOp:\Set\to\Set\to\Set\to\Set
+        =\fun{I,b,p:\Set}{
+            \Apply{\dependentBinarySectionOp}{I,b,\fst{p},\snd{p}}}$.
+\end{definition}
+
+\begin{definition}\label{dependent_binary_operation}
+    $\dependentBinaryOperation{I}{A}{B}{C}{b}
+        =\Apply{\graphOnOp}{
+            \dependentProduct{I}{A}\times\dependentProduct{I}{B},
+            \dependentProduct{I}{C},
+            \Apply{\dependentBinaryPairOp}{I,b}}$.
+\end{definition}
+
+\begin{proposition}\label{dependent_binary_operation_type}
+    Suppose $A$ is a function on $I$.
+    Suppose $B$ is a function on $I$.
+    Suppose $C$ is a function on $I$.
+    Suppose $b$ is a function on $I$.
+    Suppose for every $i\in I$ we have
+        $b(i)\in\funs{A(i)\times B(i)}{C(i)}$.
+    Then
+        $\dependentBinaryOperation{I}{A}{B}{C}{b}
+            \in\funs{
+                \dependentProduct{I}{A}\times\dependentProduct{I}{B}}{
+                \dependentProduct{I}{C}}$.
+\end{proposition}
+\begin{proof}
+    Show that for every
+        $p\in\dependentProduct{I}{A}\times\dependentProduct{I}{B}$
+        we have
+        $\Apply{\dependentBinaryPairOp}{I,b,p}
+            \in\dependentProduct{I}{C}$.
+    \begin{subproof}
+        Fix $p\in\dependentProduct{I}{A}\times
+            \dependentProduct{I}{B}$.
+        $\fst{p}\in\dependentProduct{I}{A}$ and
+            $\snd{p}\in\dependentProduct{I}{B}$ by
+            \obv{fst_type,snd_type}.
+        Follows by
+            \auto{dependent_binary_pair_op,
+                dependent_binary_section_type}.
+    \end{subproof}
+    Follows by
+        \auto{dependent_binary_operation,logical_graph_on_function}.
+\end{proof}
+
+\begin{proposition}\label{dependent_binary_operation_coordinate}
+    Suppose $A$ is a function on $I$.
+    Suppose $B$ is a function on $I$.
+    Suppose $C$ is a function on $I$.
+    Suppose $b$ is a function on $I$.
+    Suppose for every $j\in I$ we have
+        $b(j)\in\funs{A(j)\times B(j)}{C(j)}$.
+    Let $x\in\dependentProduct{I}{A}$ and
+        $y\in\dependentProduct{I}{B}$.
+    Let $i\in I$.
+    Then
+        $\apply{\apply{
+            \dependentBinaryOperation{I}{A}{B}{C}{b}}{(x,y)}}{i}
+        =\apply{b(i)}{(x(i),y(i))}$.
+\end{proposition}
+\begin{proof}
+    $(x,y)\in\dependentProduct{I}{A}\times
+        \dependentProduct{I}{B}$ by \obv{times_tuple_intro}.
+    $\apply{\dependentBinaryOperation{I}{A}{B}{C}{b}}{(x,y)}
+        =\Apply{\dependentBinaryPairOp}{I,b,(x,y)}$ by
+        \auto{dependent_binary_operation,logical_graph_on_apply}.
+    $\Apply{\dependentBinaryPairOp}{I,b,(x,y)}
+        =\Apply{\dependentBinarySectionOp}{I,b,x,y}$ by
+        \obv{dependent_binary_pair_op,fst_eq,snd_eq}.
+    Follows by \auto{dependent_binary_section_coordinate}.
+\end{proof}
+
+\subsection{Extensionality, projections, and mediators}
+
+\begin{proposition}\label{dependent_product_extensionality}
+    Let $A$ be a function on $I$ and $x,y\in\dependentProduct{I}{A}$.
+    Suppose for every $i\in I$ we have $x(i)=y(i)$.
+    Then $x=y$.
+\end{proposition}
+\begin{proof}
+    $x,y\in\funs{I}{\unions{\ran{A}}}$ by
+        \obv{dependent_product_iff}.
+    Follows by \obv{typed_functions_equal_from_agreement}.
+\end{proof}
+
+\begin{definition}\label{dependent_projection_value_op}
+    $\dependentProjectionValueOp:\Set\to\Set\to\Set
+        =\fun{i,x:\Set}{x(i)}$.
+\end{definition}
+
+\begin{definition}\label{dependent_projection}
+    $\dependentProjection{I}{A}{i}
+        =\Apply{\graphOnOp}{
+            \dependentProduct{I}{A},A(i),
+            \Apply{\dependentProjectionValueOp}{i}}$.
+\end{definition}
+
+\begin{proposition}\label{dependent_projection_type}
+    Suppose $A$ is a function on $I$ and $i\in I$.
+    Then
+        $\dependentProjection{I}{A}{i}\in
+            \funs{\dependentProduct{I}{A}}{A(i)}$.
+\end{proposition}
+\begin{proof}
+    For every $x\in\dependentProduct{I}{A}$ we have $x(i)\in A(i)$ by
+        \obv{dependent_product_coordinate}.
+    Follows by
+        \auto{dependent_projection,dependent_projection_value_op,
+            logical_graph_on_function}.
+\end{proof}
+
+\begin{proposition}\label{dependent_projection_apply}
+    Suppose $A$ is a function on $I$ and $i\in I$.
+    Let $x\in\dependentProduct{I}{A}$.
+    Then $\apply{\dependentProjection{I}{A}{i}}{x}=x(i)$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{dependent_projection,dependent_projection_value_op,
+            logical_graph_on_apply}.
+\end{proof}
+
+\begin{definition}\label{dependent_mediator_coordinate_op}
+    $\dependentMediatorCoordinateOp:
+        \Set\to\Set\to\Set\to\Set
+        =\fun{f,x,i:\Set}{\apply{f(i)}{x}}$.
+\end{definition}
+
+\begin{definition}\label{dependent_mediator_section_op}
+    $\dependentMediatorSectionOp:
+        \Set\to\Set\to\Set\to\Set
+        =\fun{I,f,x:\Set}{
+            \Apply{\graphOnDomainOp}{
+                I,\Apply{\dependentMediatorCoordinateOp}{f,x}}}$.
+\end{definition}
+
+\begin{proposition}\label{dependent_mediator_section_coordinate}
+    Let $i\in I$.
+    Then
+        $\apply{\Apply{\dependentMediatorSectionOp}{I,f,x}}{i}
+            =\apply{f(i)}{x}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{dependent_mediator_section_op,
+            dependent_mediator_coordinate_op,
+            logical_graph_on_domain_apply}.
+\end{proof}
+
+\begin{proposition}\label{dependent_mediator_section_type}
+    Suppose $A$ is a function on $I$.
+    Suppose $f$ is a function on $I$.
+    Suppose for every $i\in I$ we have $f(i)\in\funs{X}{A(i)}$.
+    Let $x\in X$.
+    Then
+        $\Apply{\dependentMediatorSectionOp}{I,f,x}
+            \in\dependentProduct{I}{A}$.
+\end{proposition}
+\begin{proof}
+    Let $u=\Apply{\dependentMediatorSectionOp}{I,f,x}$.
+    $u\in\funs{I}{\ran{u}}$ by
+        \auto{dependent_mediator_section_op,
+            logical_graph_on_domain_function}.
+    Hence $u$ is a function and $\dom{u}=I$ by
+        \obv{funs_is_function,funs}.
+    Show that for every $i\in I$ we have $u(i)\in A(i)$.
+    \begin{subproof}
+        Fix $i\in I$.
+        $u(i)=\apply{f(i)}{x}$ by
+            \auto{dependent_mediator_section_coordinate}.
+        Follows by \auto{funs_type_apply}.
+    \end{subproof}
+    Show that $u\in\funs{I}{\unions{\ran{A}}}$.
+    \begin{subproof}
+        Show that for every $i\in\dom{u}$ we have
+            $u(i)\in\unions{\ran{A}}$.
+        \begin{subproof}
+            Fix $i\in\dom{u}$.
+            Hence $i\in I$.
+            $u(i)\in A(i)$.
+            Follows by \obv{indexed_family_member_union}.
+        \end{subproof}
+        Follows by \obv{funs_intro}.
+    \end{subproof}
+    Follows by \auto{dependent_product_iff}.
+\end{proof}
+
+\begin{definition}\label{dependent_mediator}
+    $\dependentMediator{X}{I}{A}{f}
+        =\Apply{\graphOnOp}{
+            X,\dependentProduct{I}{A},
+            \Apply{\dependentMediatorSectionOp}{I,f}}$.
+\end{definition}
+
+\begin{proposition}\label{dependent_mediator_type}
+    Suppose $A$ is a function on $I$.
+    Suppose $f$ is a function on $I$.
+    Suppose for every $i\in I$ we have $f(i)\in\funs{X}{A(i)}$.
+    Then
+        $\dependentMediator{X}{I}{A}{f}\in
+            \funs{X}{\dependentProduct{I}{A}}$.
+\end{proposition}
+\begin{proof}
+    For every $x\in X$ we have
+        $\Apply{\dependentMediatorSectionOp}{I,f,x}
+            \in\dependentProduct{I}{A}$ by
+        \obv{dependent_mediator_section_type}.
+    Follows by
+        \auto{dependent_mediator,logical_graph_on_function}.
+\end{proof}
+
+\begin{proposition}\label{dependent_mediator_apply}
+    Suppose $A$ is a function on $I$.
+    Suppose $f$ is a function on $I$.
+    Suppose for every $i\in I$ we have $f(i)\in\funs{X}{A(i)}$.
+    Let $x\in X$.
+    Then
+        $\apply{\dependentMediator{X}{I}{A}{f}}{x}
+            =\Apply{\dependentMediatorSectionOp}{I,f,x}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{dependent_mediator,logical_graph_on_apply}.
+\end{proof}
+
+\begin{proposition}\label{dependent_mediator_coordinate}
+    Suppose $A$ is a function on $I$.
+    Suppose $f$ is a function on $I$.
+    Suppose for every $j\in I$ we have $f(j)\in\funs{X}{A(j)}$.
+    Let $x\in X$ and $i\in I$.
+    Then
+        $\apply{\apply{\dependentMediator{X}{I}{A}{f}}{x}}{i}
+            =\apply{f(i)}{x}$.
+\end{proposition}
+\begin{proof}
+    $\apply{\dependentMediator{X}{I}{A}{f}}{x}
+        =\Apply{\dependentMediatorSectionOp}{I,f,x}$ by
+        \obv{dependent_mediator_apply}.
+    Follows by \auto{dependent_mediator_section_coordinate}.
+\end{proof}
+
+\subsection{Contravariant reindexing}
+
+Precomposition reindexes every dependent product.  No finiteness hypothesis is
+needed here; such a hypothesis enters only when this graph is restricted to a
+finite-support subspace.
+
+\begin{proposition}\label{dependent_precomposition_type}
+    Suppose $A$ is a function on $I$.
+    Let $e\in\funs{J}{I}$ and $f\in\dependentProduct{I}{A}$.
+    Then $f\circ e\in\dependentProduct{J}{A\circ e}$.
+\end{proposition}
+\begin{proof}
+    $A$ is a function and $\dom{A}=I$.
+    $e$ is a function and $\dom{e}=J$ and $\ran{e}\subseteq I$ by
+        \obv{funs_is_function,funs,funs_ran}.
+    $A$ is composable with $e$.
+    Hence $A\circ e$ is a function by \obv{function_circ}.
+    Show that $\dom{A\circ e}=J$.
+    \begin{subproof}
+        Show that for every $j$ we have
+            $j\in\dom{A\circ e}$ iff $j\in J$.
+        \begin{subproof}
+            Fix $j$.
+            Follows by
+                \auto{dom_iff,circ_iff,funs_type_apply,
+                    function_apply_elim}.
+        \end{subproof}
+        Follows by \obv{setext}.
+    \end{subproof}
+    $f\in\funs{I}{\unions{\ran{A}}}$ by
+        \obv{dependent_product_iff}.
+    Hence $f$ is a function and $\dom{f}=I$ by
+        \obv{funs_is_function,funs}.
+    $f$ is composable with $e$.
+    Hence $f\circ e$ is a function and $\dom{f\circ e}=J$ by
+        \auto{funs_circ,funs_is_function,funs}.
+    Show that for every $j\in J$ we have
+        $(f\circ e)(j)\in(A\circ e)(j)$.
+    \begin{subproof}
+        Fix $j\in J$.
+        Hence $j\in\dom{e}$.
+        $e(j)\in I$ by \obv{funs_type_apply}.
+        $f(e(j))\in A(e(j))$ by
+            \obv{dependent_product_coordinate}.
+        $(f\circ e)(j)=f(e(j))$ by
+            \obv{circ_apply,funs_is_function}.
+        $(A\circ e)(j)=A(e(j))$ by
+            \obv{circ_apply,funs_is_function}.
+    \end{subproof}
+    Show that $f\circ e\in\funs{J}{\unions{\ran{A\circ e}}}$.
+    \begin{subproof}
+        Show that for every $j\in\dom{f\circ e}$ we have
+            $(f\circ e)(j)\in\unions{\ran{A\circ e}}$.
+        \begin{subproof}
+            Fix $j\in\dom{f\circ e}$.
+            Hence $j\in J$.
+            $(f\circ e)(j)\in(A\circ e)(j)$.
+            Follows by \obv{indexed_family_member_union}.
+        \end{subproof}
+        Hence $f\circ e$ is a function to
+            $\unions{\ran{A\circ e}}$.
+        Follows by \obv{funs_intro}.
+    \end{subproof}
+    Follows by \obv{dependent_product_iff}.
+\end{proof}
+
+\begin{definition}\label{dependent_precomposition_op}
+    $\dependentPrecompositionOp:\Set\to\Set\to\Set
+        =\fun{e,x:\Set}{x\circ e}$.
+\end{definition}
+
+\begin{definition}\label{dependent_reindex}
+    $\dependentReindex{I}{J}{A}{e}
+        =\Apply{\graphOnOp}{
+            \dependentProduct{I}{A},
+            \dependentProduct{J}{A\circ e},
+            \Apply{\dependentPrecompositionOp}{e}}$.
+\end{definition}
+
+\begin{proposition}\label{dependent_reindex_type}
+    Suppose $A$ is a function on $I$.
+    Let $e\in\funs{J}{I}$.
+    Then
+        $\dependentReindex{I}{J}{A}{e}\in
+            \funs{\dependentProduct{I}{A}}{
+                \dependentProduct{J}{A\circ e}}$.
+\end{proposition}
+\begin{proof}
+    For every $x\in\dependentProduct{I}{A}$ we have
+        $x\circ e\in\dependentProduct{J}{A\circ e}$ by
+        \obv{dependent_precomposition_type}.
+    Follows by
+        \auto{dependent_reindex,dependent_precomposition_op,
+            logical_graph_on_function}.
+\end{proof}
+
+\begin{proposition}\label{dependent_reindex_apply}
+    Suppose $A$ is a function on $I$.
+    Let $e\in\funs{J}{I}$ and $x\in\dependentProduct{I}{A}$.
+    Then $\apply{\dependentReindex{I}{J}{A}{e}}{x}=x\circ e$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{dependent_reindex,dependent_precomposition_op,
+            logical_graph_on_apply}.
+\end{proof}
+
+\begin{theorem}\label{bijective_reindex_round_trip}
+    Suppose $e\in\bijections{J}{I}$ and $f\in\funs{I}{B}$.
+    Then $(f\circ e)\circ\converse{e}=f$.
+\end{theorem}
+\begin{proof}
+    $e\circ\converse{e}=\identity{I}$ by
+        \obv{bijection_circ_converse}.
+    $(f\circ e)\circ\converse{e}
+        =f\circ(e\circ\converse{e})$ by \obv{circ_assoc}.
+    $f\circ\identity{I}=f$ by \obv{funs_circ_identity_right}.
+\end{proof}
+
+\begin{theorem}\label{bijective_reverse_reindex_round_trip}
+    Suppose $e\in\bijections{J}{I}$ and $f\in\funs{J}{B}$.
+    Then $(f\circ\converse{e})\circ e=f$.
+\end{theorem}
+\begin{proof}
+    $\converse{e}\circ e=\identity{J}$ by
+        \obv{bijection_converse_circ}.
+    $(f\circ\converse{e})\circ e
+        =f\circ(\converse{e}\circ e)$ by \obv{circ_assoc}.
+    $f\circ\identity{J}=f$ by \obv{funs_circ_identity_right}.
+\end{proof}
+
+\begin{theorem}\label{dependent_reindex_bijection}
+    Suppose $A$ is a function on $I$.
+    Let $e\in\bijections{J}{I}$.
+    Then
+        $\dependentReindex{I}{J}{A}{e}\in
+            \bijections{\dependentProduct{I}{A}}{
+                \dependentProduct{J}{A\circ e}}$.
+\end{theorem}
+\begin{proof}
+    Let $S=\dependentProduct{I}{A}$.
+    Let $T=\dependentProduct{J}{A\circ e}$.
+    Let $r=\dependentReindex{I}{J}{A}{e}$.
+    $e\in\funs{J}{I}$ by \obv{bijections_to_funs}.
+    Hence $r\in\funs{S}{T}$ by \auto{dependent_reindex_type}.
+    Hence $r$ is a function and $\dom{r}=S$ by
+        \obv{funs_is_function,funs}.
+    Show that $r$ is injective.
+    \begin{subproof}
+        Show that for all $x,y$ such that $x,y\in\dom{r}$ and
+            $r(x)=r(y)$ we have $x=y$.
+        \begin{subproof}
+            Fix $x,y$.
+            Assume $x,y\in\dom{r}$ and $r(x)=r(y)$.
+            Hence $x,y\in S$.
+            Hence $x,y\in\funs{I}{\unions{\ran{A}}}$ by
+                \auto{dependent_product_iff}.
+            $r(x)=x\circ e$ and $r(y)=y\circ e$ by
+                \auto{dependent_reindex_apply}.
+            Hence $x\circ e=y\circ e$.
+            $(x\circ e)\circ\converse{e}=x$ and
+                $(y\circ e)\circ\converse{e}=y$ by
+                \obv{bijective_reindex_round_trip}.
+        \end{subproof}
+        Follows by \auto{injective_function}.
+    \end{subproof}
+    Show that $r\in\surj{S}{T}$.
+    \begin{subproof}
+        Show that for every $q\in T$ there exists $x\in S$ such that
+            $r(x)=q$.
+        \begin{subproof}
+            Fix $q\in T$.
+            Let $x=q\circ\converse{e}$.
+            $\converse{e}\in\bijections{I}{J}$ by
+                \obv{bijection_converse_is_bijection}.
+            Hence $\converse{e}\in\funs{I}{J}$ by
+                \obv{bijections_to_funs}.
+            $A\circ e$ is a function on $J$ by
+                \auto{funs_circ,funs_is_function,funs,
+                    function_exact_type_to_range}.
+            Hence $x\in\dependentProduct{I}{(A\circ e)\circ
+                \converse{e}}$ by
+                \auto{dependent_precomposition_type}.
+            $A\in\funs{I}{\ran{A}}$ by
+                \auto{function_exact_type_to_range}.
+            Hence $(A\circ e)\circ\converse{e}=A$ by
+                \obv{bijective_reindex_round_trip}.
+            Hence $x\in S$.
+            $r(x)=x\circ e$ by \auto{dependent_reindex_apply}.
+            $q\in\funs{J}{\unions{\ran{A\circ e}}}$ by
+                \auto{dependent_product_iff}.
+            $x\circ e=(q\circ\converse{e})\circ e=q$ by
+                \obv{bijective_reverse_reindex_round_trip}.
+        \end{subproof}
+        Follows by \obv{surj}.
+    \end{subproof}
+    Follows by \obv{bijections}.
+\end{proof}
+
+\section{Mediators from indexed sums}
+
+The dual construction evaluates the map belonging to the tag of an element
+of an indexed sum.
+
+\begin{definition}\label{indexed_sum_mediator_value_op}
+    $\indexedSumMediatorValueOp:\Set\to\Set\to\Set
+        =\fun{f,p:\Set}{\apply{f(\fst{p})}{\snd{p}}}$.
+\end{definition}
+
+\begin{definition}\label{indexed_sum_mediator}
+    $\indexedSumMediator{I}{A}{B}{f}
+        =\Apply{\graphOnOp}{
+            \indexedSum{I}{A},B,
+            \Apply{\indexedSumMediatorValueOp}{f}}$.
+\end{definition}
+
+\begin{proposition}\label{indexed_sum_mediator_type}
+    Suppose $A$ is a function on $I$.
+    Suppose $f$ is a function on $I$.
+    Suppose for every $i\in I$ we have $f(i)\in\funs{A(i)}{B}$.
+    Then $\indexedSumMediator{I}{A}{B}{f}
+        \in\funs{\indexedSum{I}{A}}{B}$.
+\end{proposition}
+\begin{proof}
+    Show that for every $p\in\indexedSum{I}{A}$ we have
+        $\Apply{\indexedSumMediatorValueOp}{f,p}\in B$.
+    \begin{subproof}
+        Fix $p\in\indexedSum{I}{A}$.
+        $p\in I\times\unions{\ran{A}}$ and
+            $\snd{p}\in A(\fst{p})$ by \obv{indexed_sum}.
+        Hence $\fst{p}\in I$ by \obv{fst_type}.
+        Hence $f(\fst{p})\in\funs{A(\fst{p})}{B}$.
+        Hence $\apply{f(\fst{p})}{\snd{p}}\in B$ by
+            \obv{funs_type_apply}.
+        $\Apply{\indexedSumMediatorValueOp}{f,p}
+            =\apply{f(\fst{p})}{\snd{p}}$ by
+            \obv{indexed_sum_mediator_value_op}.
+    \end{subproof}
+    Follows by
+        \auto{indexed_sum_mediator,logical_graph_on_function}.
+\end{proof}
+
+\begin{proposition}\label{indexed_sum_mediator_apply}
+    Suppose $A$ is a function on $I$.
+    Suppose $f$ is a function on $I$.
+    Suppose for every $j\in I$ we have $f(j)\in\funs{A(j)}{B}$.
+    Let $i\in I$ and $x\in A(i)$.
+    Then $\apply{\indexedSumMediator{I}{A}{B}{f}}{(i,x)}
+        =\apply{f(i)}{x}$.
+\end{proposition}
+\begin{proof}
+    $(i,x)\in\indexedSum{I}{A}$ by \auto{indexed_sum_iff}.
+    Hence $\apply{\indexedSumMediator{I}{A}{B}{f}}{(i,x)}
+        =\Apply{\indexedSumMediatorValueOp}{f,(i,x)}$ by
+        \auto{indexed_sum_mediator,logical_graph_on_apply}.
+    $\Apply{\indexedSumMediatorValueOp}{f,(i,x)}
+        =\apply{f(\fst{(i,x)})}{\snd{(i,x)}}$ by
+        \obv{indexed_sum_mediator_value_op}.
+    $\fst{(i,x)}=i$ and $\snd{(i,x)}=x$ by \obv{fst_eq,snd_eq}.
+\end{proof}
+
+\begin{theorem}\label{indexed_sum_mediator_injection}
+    Suppose $A$ is a function on $I$.
+    Suppose $f$ is a function on $I$.
+    Suppose for every $j\in I$ we have $f(j)\in\funs{A(j)}{B}$.
+    Let $i\in I$.
+    Then $\indexedSumMediator{I}{A}{B}{f}\circ
+        \indexedSumInjection{I}{A}{i}=f(i)$.
+\end{theorem}
+\begin{proof}
+    $f(i)\in\funs{A(i)}{B}$.
+    $\indexedSumMediator{I}{A}{B}{f}
+        \in\funs{\indexedSum{I}{A}}{B}$ by
+        \obv{indexed_sum_mediator_type}.
+    $\indexedSumInjection{I}{A}{i}
+        \in\inj{A(i)}{\indexedSum{I}{A}}$ by
+        \obv{indexed_sum_injection_type}.
+    Hence $\indexedSumInjection{I}{A}{i}
+        \in\funs{A(i)}{\indexedSum{I}{A}}$ by \obv{inj}.
+    Hence $\indexedSumMediator{I}{A}{B}{f}\circ
+        \indexedSumInjection{I}{A}{i}\in\funs{A(i)}{B}$ by
+        \obv{funs_circ}.
+    Show that for every $x\in A(i)$ we have
+        $(\indexedSumMediator{I}{A}{B}{f}\circ
+            \indexedSumInjection{I}{A}{i})(x)=\apply{f(i)}{x}$.
+    \begin{subproof}
+        Fix $x\in A(i)$.
+        $\indexedSumMediator{I}{A}{B}{f}$ is a function and
+            $\indexedSumInjection{I}{A}{i}$ is a function by
+            \obv{funs_is_function}.
+        $\indexedSumMediator{I}{A}{B}{f}$ is composable with
+            $\indexedSumInjection{I}{A}{i}$ by
+            \auto{funs_ran,funs}.
+        $x\in\dom{\indexedSumInjection{I}{A}{i}}$ by \auto{funs}.
+        $(\indexedSumInjection{I}{A}{i})(x)=(i,x)$ by
+            \obv{indexed_sum_injection_apply}.
+        \begin{align*}
+            (\indexedSumMediator{I}{A}{B}{f}\circ
+                \indexedSumInjection{I}{A}{i})(x)
+                &= \apply{\indexedSumMediator{I}{A}{B}{f}}{
+                    (\indexedSumInjection{I}{A}{i})(x)}
+                    \explanation{by \obv{circ_apply}}
+                \\
+                &= \apply{\indexedSumMediator{I}{A}{B}{f}}{(i,x)}
+                \\
+                &= \apply{f(i)}{x}
+                    \explanation{by \obv{indexed_sum_mediator_apply}}
+        \end{align*}
+        Follows by assumption.
+    \end{subproof}
+    Follows by \obv{typed_functions_equal_from_agreement}.
+\end{proof}

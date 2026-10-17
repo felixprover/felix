@@ -1,0 +1,498 @@
+\import{surreal/cut.tex}
+\import{recursion/transfinite.tex}
+
+\section{Surreal induction and recursion}
+
+The induction principle ranges over the proper class only through its
+predicate.  Its induction hypotheses are bounded by the set-sized stage at
+the current birthday.
+
+\begin{theorem}\label{surreal_birthday_induction_bounded}
+    For every ordinal $\alpha$ we have
+    $\forall P:\Set\to\Prop.
+        (\forall x:\Set.\ \surreal{x}\implies
+            ((\forall w:\Set.\ (\surreal{w}\land
+                    \birthday{w}\in\birthday{x})
+                \implies\Apply{P}{w})
+             \implies\Apply{P}{x}))
+        \implies
+        (\forall x:\Set.\ (\surreal{x}\land\birthday{x}=\alpha)
+            \implies\Apply{P}{x})$.
+\end{theorem}
+\begin{proof}[Proof by transfinite induction]
+    Fix $P$.
+    Assume $\forall x:\Set.\ \surreal{x}\implies
+        ((\forall w:\Set.\ (\surreal{w}\land\birthday{w}\in\birthday{x})
+            \implies\Apply{P}{w})
+         \implies\Apply{P}{x})$.
+    Fix $x$.
+    Assume $\surreal{x}\land\birthday{x}=\alpha$.
+    Show that $\forall w:\Set.\ (\surreal{w}\land\birthday{w}\in\birthday{x})
+        \implies\Apply{P}{w}$.
+    \begin{subproof}
+        Fix $w$.
+        Assume $\surreal{w}\land\birthday{w}\in\birthday{x}$.
+        $\birthday{w}\in\alpha$.
+        $\birthday{w}$ is an ordinal
+            by \obv{surreal_birthday_ordinal}.
+    \end{subproof}
+\end{proof}
+
+\begin{theorem}\label{surreal_induction}
+    $\forall P:\Set\to\Prop.
+        (\forall x:\Set.\ \surreal{x}\implies
+            ((\forall w:\Set.\ (\surreal{w}\land
+                    \birthday{w}\in\birthday{x})
+                \implies\Apply{P}{w})
+             \implies\Apply{P}{x}))
+        \implies
+        (\forall x:\Set.\ \surreal{x}\implies\Apply{P}{x})$.
+\end{theorem}
+\begin{proof}
+    Fix $P$.
+    Assume $\forall x:\Set.\ \surreal{x}\implies
+        ((\forall w:\Set.\ (\surreal{w}\land\birthday{w}\in\birthday{x})
+            \implies\Apply{P}{w})
+         \implies\Apply{P}{x})$.
+    Fix $x$.
+    Assume $\surreal{x}$.
+    $\birthday{x}$ is an ordinal
+        by \obv{surreal_birthday_ordinal}.
+    Follows by \obv{surreal_birthday_induction_bounded}.
+\end{proof}
+
+\begin{theorem}\label{surreal_binary_induction}
+    $\forall P:\Set\to\Set\to\Prop.
+        (\forall x,y:\Set.\ (\surreal{x}\land\surreal{y})\implies
+            (((\forall u:\Set.
+                    (\surreal{u}\land\birthday{u}\in\birthday{x})
+                    \implies
+                    (\forall v:\Set.\ \surreal{v}\implies
+                        \Apply{P}{u,v}))
+              \land
+              (\forall v:\Set.
+                    (\surreal{v}\land\birthday{v}\in\birthday{y})
+                    \implies\Apply{P}{x,v}))
+             \implies\Apply{P}{x,y}))
+        \implies
+        (\forall x,y:\Set.\ (\surreal{x}\land\surreal{y})
+            \implies\Apply{P}{x,y})$.
+\end{theorem}
+\begin{proof}
+    Fix $P$.
+    Assume $\forall x,y:\Set.\ (\surreal{x}\land\surreal{y})\implies
+        (((\forall u:\Set.
+                (\surreal{u}\land\birthday{u}\in\birthday{x})
+                \implies
+                (\forall v:\Set.\ \surreal{v}\implies
+                    \Apply{P}{u,v}))
+          \land
+          (\forall v:\Set.
+                (\surreal{v}\land\birthday{v}\in\birthday{y})
+                \implies\Apply{P}{x,v}))
+         \implies\Apply{P}{x,y})$.
+    Let $Q:\Set\to\Prop=\fun{x:\Set}{
+        \forall y:\Set.\ \surreal{y}\implies
+            \Apply{P}{x,y}}$.
+    Show that $\forall x:\Set.\ \surreal{x}\implies
+        ((\forall u:\Set.
+            (\surreal{u}\land\birthday{u}\in\birthday{x})
+            \implies\Apply{Q}{u})
+         \implies\Apply{Q}{x})$.
+    \begin{subproof}
+        Fix $x$.
+        Assume $\surreal{x}$.
+        Assume $\forall u:\Set.
+            (\surreal{u}\land\birthday{u}\in\birthday{x})
+            \implies\Apply{Q}{u}$.
+        Let $R:\Set\to\Prop=\Apply{P}{x}$.
+        Show that $\forall y:\Set.\ \surreal{y}\implies
+            ((\forall v:\Set.
+                (\surreal{v}\land\birthday{v}\in\birthday{y})
+                \implies\Apply{R}{v})
+             \implies\Apply{R}{y})$.
+        \begin{subproof}
+            Fix $y$.
+            Assume $\surreal{y}$.
+            Assume $\forall v:\Set.
+                (\surreal{v}\land\birthday{v}\in\birthday{y})
+                \implies\Apply{R}{v}$.
+            Show that $\forall u:\Set.
+                (\surreal{u}\land\birthday{u}\in\birthday{x})
+                \implies
+                (\forall v:\Set.\ \surreal{v}\implies
+                    \Apply{P}{u,v})$.
+            \begin{subproof}
+                Follows by \auto.
+            \end{subproof}
+            Follows by \auto.
+        \end{subproof}
+        Follows by \auto{surreal_induction}.
+    \end{subproof}
+    Follows by \auto{surreal_induction}.
+\end{proof}
+
+\begin{theorem}\label{surreal_ternary_induction}
+    $\forall P:\Set\to\Set\to\Set\to\Prop.
+        (\forall x,y,z:\Set.
+            (\surreal{x}\land\surreal{y}\land\surreal{z})\implies
+            (((\forall a:\Set.
+                    (\surreal{a}\land\birthday{a}\in\birthday{x})
+                    \implies
+                    (\forall b,c:\Set.
+                        (\surreal{b}\land\surreal{c})\implies
+                        \Apply{P}{a,b,c}))
+              \land
+              (\forall b:\Set.
+                    (\surreal{b}\land\birthday{b}\in\birthday{y})
+                    \implies
+                    (\forall c:\Set.\ \surreal{c}\implies
+                        \Apply{P}{x,b,c}))
+              \land
+              (\forall c:\Set.
+                    (\surreal{c}\land\birthday{c}\in\birthday{z})
+                    \implies\Apply{P}{x,y,c}))
+             \implies\Apply{P}{x,y,z}))
+        \implies
+        (\forall x,y,z:\Set.
+            (\surreal{x}\land\surreal{y}\land\surreal{z})
+            \implies\Apply{P}{x,y,z})$.
+\end{theorem}
+\begin{proof}
+    Fix $P$.
+    Assume $\forall x,y,z:\Set.
+        (\surreal{x}\land\surreal{y}\land\surreal{z})\implies
+        (((\forall a:\Set.
+                (\surreal{a}\land\birthday{a}\in\birthday{x})
+                \implies
+                (\forall b,c:\Set.
+                    (\surreal{b}\land\surreal{c})\implies
+                    \Apply{P}{a,b,c}))
+          \land
+          (\forall b:\Set.
+                (\surreal{b}\land\birthday{b}\in\birthday{y})
+                \implies
+                (\forall c:\Set.\ \surreal{c}\implies
+                    \Apply{P}{x,b,c}))
+          \land
+          (\forall c:\Set.
+                (\surreal{c}\land\birthday{c}\in\birthday{z})
+                \implies\Apply{P}{x,y,c}))
+         \implies\Apply{P}{x,y,z})$.
+    Let $Q:\Set\to\Prop=\fun{x:\Set}{
+        \forall y,z:\Set.\ (\surreal{y}\land\surreal{z})\implies
+            \Apply{P}{x,y,z}}$.
+    Show that $\forall x:\Set.\ \surreal{x}\implies
+        ((\forall a:\Set.
+            (\surreal{a}\land\birthday{a}\in\birthday{x})
+            \implies\Apply{Q}{a})
+         \implies\Apply{Q}{x})$.
+    \begin{subproof}
+        Fix $x$.
+        Assume $\surreal{x}$.
+        Assume $\forall a:\Set.
+            (\surreal{a}\land\birthday{a}\in\birthday{x})
+            \implies\Apply{Q}{a}$.
+        Let $R:\Set\to\Prop=\fun{y:\Set}{
+            \forall z:\Set.\ \surreal{z}\implies
+                \Apply{P}{x,y,z}}$.
+        Show that $\forall y:\Set.\ \surreal{y}\implies
+            ((\forall b:\Set.
+                (\surreal{b}\land\birthday{b}\in\birthday{y})
+                \implies\Apply{R}{b})
+             \implies\Apply{R}{y})$.
+        \begin{subproof}
+            Fix $y$.
+            Assume $\surreal{y}$.
+            Assume $\forall b:\Set.
+                (\surreal{b}\land\birthday{b}\in\birthday{y})
+                \implies\Apply{R}{b}$.
+            Let $S:\Set\to\Prop=
+                \Apply{P}{x,y}$.
+            Show that $\forall z:\Set.\ \surreal{z}\implies
+                ((\forall c:\Set.
+                    (\surreal{c}\land\birthday{c}\in\birthday{z})
+                    \implies\Apply{S}{c})
+                 \implies\Apply{S}{z})$.
+            \begin{subproof}
+                Fix $z$.
+                Assume $\surreal{z}$.
+                Assume $\forall c:\Set.
+                    (\surreal{c}\land\birthday{c}\in\birthday{z})
+                    \implies\Apply{S}{c}$.
+                Show that $\forall a:\Set.
+                    (\surreal{a}\land\birthday{a}\in\birthday{x})
+                    \implies
+                    (\forall b,c:\Set.
+                        (\surreal{b}\land\surreal{c})\implies
+                        \Apply{P}{a,b,c})$.
+                \begin{subproof}
+                    Follows by \auto.
+                \end{subproof}
+                Show that $\forall b:\Set.
+                    (\surreal{b}\land\birthday{b}\in\birthday{y})
+                    \implies
+                    (\forall c:\Set.\ \surreal{c}\implies
+                        \Apply{P}{x,b,c})$.
+                \begin{subproof}
+                    Follows by \auto.
+                \end{subproof}
+                $\Apply{P}{x,y,z}$
+                    by \auto.
+            \end{subproof}
+            Follows by \auto{surreal_induction}.
+        \end{subproof}
+        Follows by \auto{surreal_induction}.
+    \end{subproof}
+    Follows by \auto{surreal_induction}.
+\end{proof}
+
+\subsection{Recursion on a bounded surreal stage}
+
+The predecessor relation on a stage compares birthdays.  It is a set-sized
+relation, and regularity applied to the replacement set of birthdays proves
+well-foundedness directly.
+
+\begin{definition}\label{surreal_earlier}
+    $\surrealEarlier{\alpha}=
+        \{(w,z)\mid
+            w\in\surrealStage{\alpha},
+            z\in\surrealStage{\alpha}\mid
+            \birthday{w}\in\birthday{z}\}$.
+\end{definition}
+
+\begin{definition}\label{surreal_predecessors}
+    $\surrealPredecessors{\alpha}{z}=
+        \{w\in\surrealStage{\alpha}\mid
+            \birthday{w}\in\birthday{z}\}$.
+\end{definition}
+
+\begin{proposition}\label{surreal_earlier_is_binary_relation}
+    $\surrealEarlier{\alpha}$ is a binary relation on
+        $\surrealStage{\alpha}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{surreal_earlier,subseteq,times}.
+\end{proof}
+
+\begin{proposition}\label{surreal_earlier_downward}
+    Let $z\in\surrealStage{\alpha}$.
+    Then $\downward{\surrealEarlier{\alpha}}{z}=
+        \surrealPredecessors{\alpha}{z}$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{setext,downward_closure_iff,surreal_earlier,surreal_predecessors,pair_eq_iff}.
+\end{proof}
+
+\begin{theorem}\label{surreal_earlier_well_founded}
+    Let $\alpha$ be an ordinal.
+    Then $\surrealEarlier{\alpha}$ is well-founded on
+        $\surrealStage{\alpha}$.
+\end{theorem}
+\begin{proof}
+    $\surrealEarlier{\alpha}$ is a relation by
+        \auto{surreal_earlier_is_binary_relation,relation,subseteq,
+            times_elem_is_tuple}.
+    Show that for every inhabited subset $X$ of
+        $\surrealStage{\alpha}$ there exists $m\in X$ such that
+        for every $y\in X$ we have
+            $y\not\mathrel{\surrealEarlier{\alpha}}m$.
+    \begin{subproof}
+        Fix $X$.
+        Assume $X\subseteq\surrealStage{\alpha}$ and $X$ is inhabited.
+        Let $D=\{\birthday{x}\mid x\in X\}$.
+        Take $x$ such that $x\in X$.
+        Hence $\birthday{x}\in D$.
+        Thus $D$ is inhabited.
+        Take $\delta$ such that $\delta$ is an \in-minimal element of $D$
+            by \obv{regularity}.
+        $\delta\in D$ and $\delta\notmeets D$.
+        Take $m\in X$ such that $\birthday{m}=\delta$ by \auto.
+        Show that for every $y\in X$ we have
+            $y\not\mathrel{\surrealEarlier{\alpha}}m$.
+        \begin{subproof}
+            Fix $y\in X$.
+            Suppose $y\mathrel{\surrealEarlier{\alpha}}m$.
+            Hence $\birthday{y}\in\delta$
+                by \auto{surreal_earlier}.
+            $\birthday{y}\in D$.
+            Thus $\birthday{y}\in\delta\inter D$
+                by \obv{inter_intro}.
+            Contradiction by \auto{disjoint,emptyset}.
+        \end{subproof}
+        Follows by \auto.
+    \end{subproof}
+    Follows by \obv{well_founded_on}.
+\end{proof}
+
+\begin{definition}\label{surreal_stage_recursion}
+    $\surrealStageRec{\alpha}{B}{H}=
+        \wfrec{\surrealStage{\alpha}}{B}{\surrealEarlier{\alpha}}{H}$.
+\end{definition}
+
+\begin{theorem}\label{surreal_stage_recursion_type}
+    Let $\alpha$ be an ordinal.
+    Let $H\in\funs{
+        \surrealStage{\alpha}\times
+            \pow{\surrealStage{\alpha}\times B}}{B}$.
+    Then $\surrealStageRec{\alpha}{B}{H}\in
+        \funs{\surrealStage{\alpha}}{B}$.
+\end{theorem}
+\begin{proof}
+    $\surrealEarlier{\alpha}$ is well-founded on
+        $\surrealStage{\alpha}$
+        by \obv{surreal_earlier_well_founded}.
+    Follows by \auto{surreal_stage_recursion,wfrec_type,surreal_earlier_is_binary_relation}.
+\end{proof}
+
+\begin{theorem}\label{surreal_stage_recursion_equation}
+    Let $\alpha$ be an ordinal.
+    Let $H\in\funs{
+        \surrealStage{\alpha}\times
+            \pow{\surrealStage{\alpha}\times B}}{B}$.
+    Let $z\in\surrealStage{\alpha}$.
+    Then
+        $\apply{\surrealStageRec{\alpha}{B}{H}}{z}=
+            H((z,\restrl{\surrealStageRec{\alpha}{B}{H}}
+                {\surrealPredecessors{\alpha}{z}}))$.
+\end{theorem}
+\begin{proof}
+    $\surrealEarlier{\alpha}$ is well-founded on
+        $\surrealStage{\alpha}$
+        by \obv{surreal_earlier_well_founded}.
+    $\downward{\surrealEarlier{\alpha}}{z}=
+        \surrealPredecessors{\alpha}{z}$
+        by \obv{surreal_earlier_downward}.
+    Follows by \auto{surreal_stage_recursion,wfrec_equation,surreal_earlier_is_binary_relation}.
+\end{proof}
+
+\begin{theorem}\label{surreal_stage_recursion_unique}
+    Let $\alpha$ be an ordinal.
+    Let $H\in\funs{
+        \surrealStage{\alpha}\times
+            \pow{\surrealStage{\alpha}\times B}}{B}$.
+    Let $f\in\funs{\surrealStage{\alpha}}{B}$.
+    Suppose for every $z\in\surrealStage{\alpha}$ we have
+        $f(z)=H((z,\restrl{f}{\surrealPredecessors{\alpha}{z}}))$.
+    Then $f=\surrealStageRec{\alpha}{B}{H}$.
+\end{theorem}
+\begin{proof}
+    Show that $f\in\recursiveFunctions
+        {\surrealStage{\alpha}}{B}{\surrealEarlier{\alpha}}{H}$.
+    \begin{subproof}
+        For every $z\in\surrealStage{\alpha}$ we have
+            $\downward{\surrealEarlier{\alpha}}{z}=
+                \surrealPredecessors{\alpha}{z}$
+            by \obv{surreal_earlier_downward}.
+        Follows by \auto{recursive_functions}.
+    \end{subproof}
+    $\surrealEarlier{\alpha}$ is well-founded on
+        $\surrealStage{\alpha}$
+        by \obv{surreal_earlier_well_founded}.
+    Hence $f=\wfrec{\surrealStage{\alpha}}{B}
+        {\surrealEarlier{\alpha}}{H}$
+        by \obv{wfrec_unique,surreal_earlier_is_binary_relation}.
+    Follows by \obv{surreal_stage_recursion}.
+\end{proof}
+
+\subsection{Class-function recursion interface}
+
+An admissible step may inspect a prospective class function, but its value at
+$x$ must depend only on surreal arguments born before $x$.  This is the
+class-level analogue of the restriction condition on the set-coded
+well-founded recursor.
+
+The bounded stage theorems above are the unconditional construction result.
+The interface below serves only to globalize separately constructed stage
+solutions: it neither collects all surreals into a set nor asserts that an
+arbitrary step has a proper-class solution.  Admissibility here means exactly
+that such a logical class function has been supplied; selection, uniqueness,
+and the recursion equation then follow.
+
+\begin{definition}\label{surreal_recursion_functional}
+    $\surrealRecFunctionalOp :
+        (\Set\to(\Set\to\Set)\to\Set)\to\Prop
+        =\fun{F:\Set\to(\Set\to\Set)\to\Set}{
+            \forall x:\Set.\ \surreal{x}\implies
+            (\forall g,h:\Set\to\Set.\ (\forall w:\Set.\ (\surreal{w}\land
+                        \birthday{w}\in\birthday{x})
+                    \implies
+                    \Apply{g}{w}=\Apply{h}{w})
+                \implies
+                \Apply{F}{x,g}=
+                    \Apply{F}{x,h})}$.
+\end{definition}
+
+\begin{definition}\label{surreal_recursion_solution}
+    $\surrealRecSolutionOp :
+        (\Set\to(\Set\to\Set)\to\Set)\to
+        (\Set\to\Set)\to\Prop
+        =\fun{F:\Set\to(\Set\to\Set)\to\Set}{
+            \fun{g:\Set\to\Set}{
+                \forall x:\Set.\ \surreal{x}\implies
+                    \Apply{g}{x}=\Apply{F}{x,g}}}$.
+\end{definition}
+
+\begin{theorem}\label{surreal_recursion_solution_unique}
+    $\forall F:\Set\to(\Set\to\Set)\to\Set.\ \forall g,h:\Set\to\Set.\ \Apply{\surrealRecFunctionalOp}{F}\land
+        \Apply{\surrealRecSolutionOp}{F,g}\land
+        \Apply{\surrealRecSolutionOp}{F,h}
+        \implies
+        (\forall x:\Set.\ \surreal{x}\implies
+            \Apply{g}{x}=\Apply{h}{x})$.
+\end{theorem}
+\begin{proof}
+    Fix $F,g,h$.
+    Assume $\Apply{\surrealRecFunctionalOp}{F}\land
+        \Apply{\surrealRecSolutionOp}{F,g}\land
+        \Apply{\surrealRecSolutionOp}{F,h}$.
+    Show that $\forall x:\Set.\ \surreal{x}\implies
+        ((\forall w:\Set.\ (\surreal{w}\land
+            \birthday{w}\in\birthday{x})
+            \implies\Apply{g}{w}=\Apply{h}{w})
+        \implies\Apply{g}{x}=\Apply{h}{x})$.
+    \begin{subproof}
+        Fix $x$.
+        Assume $\surreal{x}$.
+        Assume $\forall w:\Set.\ (\surreal{w}\land\birthday{w}\in\birthday{x})
+            \implies\Apply{g}{w}=\Apply{h}{w}$.
+        $\Apply{F}{x,g}=\Apply{F}{x,h}$
+            by \obv{surreal_recursion_functional}.
+        $\Apply{g}{x}=\Apply{F}{x,g}$ and
+            $\Apply{h}{x}=\Apply{F}{x,h}$
+            by \obv{surreal_recursion_solution}.
+    \end{subproof}
+    Follows by \auto{surreal_induction}.
+\end{proof}
+
+\begin{definition}\label{surreal_recursion_admissible}
+    $\surrealRecAdmissibleOp :
+        (\Set\to(\Set\to\Set)\to\Set)\to\Prop
+        =\fun{F:\Set\to(\Set\to\Set)\to\Set}{
+            \exists g:\Set\to\Set.\ \Apply{\surrealRecSolutionOp}{F,g}}$.
+\end{definition}
+
+\begin{definition}\label{surreal_recursion}
+    $\surrealRecOp :
+        (\Set\to(\Set\to\Set)\to\Set)\to
+        (\Set\to\Set)
+        =\fun{F:\Set\to(\Set\to\Set)\to\Set}{
+            \Select[\Set\to\Set]{
+                \Apply{\surrealRecSolutionOp}{F}}}$.
+\end{definition}
+
+\begin{theorem}\label{surreal_recursion_equation}
+    $\forall F:\Set\to(\Set\to\Set)\to\Set.\ \Apply{\surrealRecAdmissibleOp}{F}\implies
+        (\forall x:\Set.\ \surreal{x}\implies
+            \Apply{\surrealRecOp}{F,x}=
+                \Apply{F}{x,\Apply{\surrealRecOp}{F}})$.
+\end{theorem}
+\begin{proof}
+    Fix $F$.
+    Assume $\Apply{\surrealRecAdmissibleOp}{F}$.
+    $\Apply{\surrealRecSolutionOp}
+        {F,\Apply{\surrealRecOp}{F}}$
+        by \auto{surreal_recursion_admissible,surreal_recursion}.
+    Follows by \obv{surreal_recursion_solution}.
+\end{proof}

@@ -1,0 +1,184 @@
+\section{Compactness and continuous images}
+
+\import{topology/compactness-filter.tex}
+\import{topology/subspace-continuity.tex}
+\import{topology/continuity-at.tex}
+\import{topology/local-compactness.tex}
+
+Continuous maps carry cluster points to cluster points of pushforward
+filters.  This is the filter-theoretic core of preservation of compactness.
+
+\begin{theorem}\label{continuous_map_preserves_filter_cluster_points}
+    Let $X,Y$ be topological spaces.
+    Let $F$ be a filter on $\carrier[X]$.
+    Suppose $f$ is continuous from $X$ to $Y$.
+    Suppose $\filterClusters{F}{x}{X}$.
+    Then
+        $\filterClusters{
+            \filterPushforward{\carrier[X]}{\carrier[Y]}{f}{F}
+        }{f(x)}{Y}$.
+\end{theorem}
+\begin{proof}
+    $f\in\funs{\carrier[X]}{\carrier[Y]}$ by
+        \obv{continuous_map}.
+    $\filterPushforward{\carrier[X]}{\carrier[Y]}{f}{F}$ is a filter on
+        $\carrier[Y]$ by
+        \obv{filter_pushforward_is_filter}.
+    $x\in\carrier[X]$ by \obv{filter_cluster_point}.
+    Hence $f(x)\in\carrier[Y]$ by \obv{funs_type_apply}.
+    $f$ is continuous at $x$ from $X$ to $Y$ by
+        \auto{continuous_iff_continuous_at_every_point}.
+    Hence $f$ tends from $\neighbourhoods{x}{X}$ on $\carrier[X]$ to
+        $\neighbourhoods{f(x)}{Y}$ on $\carrier[Y]$ by
+        \obv{continuous_at}.
+    $\neighbourhoods{x}{X}$ is a filter on $\carrier[X]$ and
+        $\neighbourhoods{f(x)}{Y}$ is a filter on $\carrier[Y]$ by
+        \obv{neighbourhoods_is_filter}.
+    Hence for every $N\in\neighbourhoods{f(x)}{Y}$ we have
+        $\preimg{f}{N}\in\neighbourhoods{x}{X}$ by
+        \obv{filter_tendsto_iff_preimage}.
+
+    Show that for every $A,N$ such that
+        $A\in\filterPushforward{\carrier[X]}{\carrier[Y]}{f}{F}$ and
+        $N\in\neighbourhoods{f(x)}{Y}$ we have
+        $A\inter N$ is inhabited.
+    \begin{subproof}
+        Fix $A,N$.
+        Assume
+            $A\in\filterPushforward{\carrier[X]}{\carrier[Y]}{f}{F}$ and
+            $N\in\neighbourhoods{f(x)}{Y}$.
+        $\preimg{f}{A}\in F$ by \obv{filter_pushforward_iff}.
+        $\preimg{f}{N}\in\neighbourhoods{x}{X}$.
+        Hence $\preimg{f}{A}\inter\preimg{f}{N}$ is inhabited by
+            \obv{filter_cluster_point}.
+        Take $z$ such that
+            $z\in\preimg{f}{A}\inter\preimg{f}{N}$.
+        Hence $z\in\preimg{f}{A}$ and $z\in\preimg{f}{N}$ by
+            \obv{inter}.
+        Take $a\in A$ such that $(z,a)\in f$ by \obv{preimg_iff}.
+        Take $n\in N$ such that $(z,n)\in f$ by \obv{preimg_iff}.
+        $f$ is a function by \obv{funs_is_function}.
+        Hence $a=n$ by \obv{function_rightunique}.
+        Hence $a\in N$.
+        Thus $a\in A\inter N$ by \obv{inter_intro}.
+    \end{subproof}
+    Follows by \obv{filter_cluster_point}.
+\end{proof}
+
+\begin{theorem}\label{continuous_surjective_image_is_compact}
+    Let $X,Y$ be topological spaces.
+    Suppose $X$ is compact.
+    Suppose $f$ is continuous from $X$ to $Y$ and
+        $f\in\surj{\carrier[X]}{\carrier[Y]}$.
+    Then $Y$ is compact.
+\end{theorem}
+\begin{proof}
+    $f\in\funs{\carrier[X]}{\carrier[Y]}$ by
+        \obv{continuous_map}.
+    Show that for every $G$ such that
+        $G$ is a proper filter on $\carrier[Y]$ there exists
+        $y\in\carrier[Y]$ such that $\filterClusters{G}{y}{Y}$.
+    \begin{subproof}
+        Fix $G$.
+        Assume $G$ is a proper filter on $\carrier[Y]$.
+        Hence $G$ is a filter on $\carrier[Y]$ by
+            \obv{proper_filter_is_filter}.
+        Let $H=\filterPullback{\carrier[X]}{\carrier[Y]}{f}{G}$.
+        $\filterPullback{\carrier[X]}{\carrier[Y]}{f}{G}$ is a proper
+            filter on $\carrier[X]$ by
+            \obv{surjective_filter_pullback_preserves_properness}.
+        Hence $H$ is a proper filter on $\carrier[X]$.
+        Hence $H$ is a filter on $\carrier[X]$ by
+            \obv{proper_filter_is_filter}.
+        Take $x\in\carrier[X]$ such that
+            $\filterClusters{H}{x}{X}$ by
+            \auto{compact_iff_every_proper_filter_has_cluster_point}.
+
+        $\filterPushforward{\carrier[X]}{\carrier[Y]}{f}{H}$ is a filter
+            on $\carrier[Y]$ by
+            \obv{filter_pushforward_is_filter}.
+        $\filterClusters{
+            \filterPushforward{\carrier[X]}{\carrier[Y]}{f}{H}
+        }{f(x)}{Y}$ by
+            \obv{continuous_map_preserves_filter_cluster_points}.
+
+        Show that $G\subseteq
+            \filterPushforward{\carrier[X]}{\carrier[Y]}{f}{H}$.
+        \begin{subproof}
+            It suffices to show that every element of $G$ is an element of
+                $\filterPushforward{\carrier[X]}{\carrier[Y]}{f}{H}$ by
+                \obv{subseteq}.
+            Fix $B\in G$.
+            $B\subseteq\carrier[Y]$ by \obv{filter}.
+            $\preimg{f}{B}\subseteq\carrier[X]$ by
+                \auto{preimg_subseteq_dom,funs}.
+            $\preimg{f}{B}\in
+                \filterPullback{\carrier[X]}{\carrier[Y]}{f}{G}$ by
+                \auto{filter_pullback_iff,subseteq_refl}.
+            Hence $\preimg{f}{B}\in H$.
+            Follows by \auto{filter_pushforward_iff}.
+        \end{subproof}
+        Hence $\filterPushforward{\carrier[X]}{\carrier[Y]}{f}{H}$
+            refines $G$ on $\carrier[Y]$ by \obv{filter_refines}.
+        Hence $\filterClusters{G}{f(x)}{Y}$ by
+            \obv{filter_cluster_point_under_coarsening}.
+        $f(x)\in\carrier[Y]$ by \obv{funs_type_apply}.
+    \end{subproof}
+    Follows by \obv{compact_iff_every_proper_filter_has_cluster_point}.
+\end{proof}
+
+\begin{theorem}\label{continuous_range_subspace_is_compact}
+    Let $X,Y$ be topological spaces.
+    Suppose $X$ is compact and $f$ is continuous from $X$ to $Y$.
+    Then $\subspaceTopology{Y}{\ran{f}}$ is compact.
+\end{theorem}
+\begin{proof}
+    Let $Z=\subspaceTopology{Y}{\ran{f}}$.
+    $f\in\funs{\carrier[X]}{\carrier[Y]}$ by
+        \obv{continuous_map}.
+    Hence $\ran{f}\subseteq\carrier[Y]$ by \obv{funs_ran}.
+    $\carrier[\subspaceTopology{Y}{\ran{f}}]=\ran{f}$ by
+        \obv{subspace_topology_carrier_of_subset}.
+    Hence $\carrier[Z]=\ran{f}$.
+    Thus $\ran{f}\subseteq\carrier[Z]$ by \obv{subseteq_refl}.
+    Hence $f$ is continuous from $X$ to $Z$ by
+        \obv{continuous_codomain_corestriction}.
+    Hence $f\in\funs{\carrier[X]}{\carrier[Z]}$ by
+        \obv{continuous_map}.
+    Thus $f\in\surj{\carrier[X]}{\carrier[Z]}$ by
+        \auto{funs_surj_iff}.
+    $Z$ is compact by \obv{continuous_surjective_image_is_compact}.
+    Hence $\subspaceTopology{Y}{\ran{f}}$ is compact.
+\end{proof}
+
+\begin{corollary}\label{continuous_image_is_compact}
+    Let $X,Y$ be topological spaces.
+    Suppose $X$ is compact and $f$ is continuous from $X$ to $Y$.
+    Then $\ran{f}$ is compact in $Y$.
+\end{corollary}
+\begin{proof}
+    $f\in\funs{\carrier[X]}{\carrier[Y]}$ by
+        \obv{continuous_map}.
+    Hence $\ran{f}\subseteq\carrier[Y]$ by \obv{funs_ran}.
+    $\subspaceTopology{Y}{\ran{f}}$ is compact by
+        \obv{continuous_range_subspace_is_compact}.
+    Follows by \obv{compact_in}.
+\end{proof}
+
+\begin{theorem}\label{continuous_image_of_compact_subset}
+    Let $X,Y$ be topological spaces.
+    Suppose $f$ is continuous from $X$ to $Y$ and $K$ is compact in $X$.
+    Then $\img{f}{K}$ is compact in $Y$.
+\end{theorem}
+\begin{proof}
+    $K\subseteq\carrier[X]$ and $\subspaceTopology{X}{K}$ is compact by
+        \obv{compact_in}.
+    $\subspaceTopology{X}{K}$ is a topological space by
+        \obv{subspace_topology_is_topological_space}.
+    $\restrl{f}{K}$ is continuous from $\subspaceTopology{X}{K}$ to $Y$ by
+        \obv{continuous_domain_restriction_on_subset}.
+    Hence $\ran{\restrl{f}{K}}$ is compact in $Y$ by
+        \obv{continuous_image_is_compact}.
+    $\dom{f}=\carrier[X]$ by \auto{continuous_map,funs}.
+    Hence $\ran{\restrl{f}{K}}=\img{f}{K}$ by \obv{restrl_ran}.
+\end{proof}

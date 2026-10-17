@@ -1,0 +1,752 @@
+\section{Lattice morphisms}
+
+\import{order/lattice.tex}
+\import{order/morphism.tex}
+
+Lattice morphisms are ordinary set-coded function graphs with explicit source
+and target lattices.  Bounded morphisms additionally preserve the two chosen
+bounds; preservation of binary operations alone does not imply these nullary
+laws for a non-surjective map.
+
+\begin{definition}\label{lattice_hom}
+    $\latticeHom{f}{L}{M}$ iff
+        $L$ is a lattice and $M$ is a lattice and
+        $f\in\funs{\carrier[L]}{\carrier[M]}$ and
+        for all $x,y\in\carrier[L]$ we have
+            $f(\meet[L](x,y))=\meet[M](f(x),f(y))$ and
+            $f(\join[L](x,y))=\join[M](f(x),f(y))$.
+\end{definition}
+
+\begin{proposition}\label{lattice_hom_source_lattice}
+    Suppose $\latticeHom{f}{L}{M}$.
+    Then $L$ is a lattice.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{lattice_hom}.
+\end{proof}
+
+\begin{proposition}\label{lattice_hom_target_lattice}
+    Suppose $\latticeHom{f}{L}{M}$.
+    Then $M$ is a lattice.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{lattice_hom}.
+\end{proof}
+
+\begin{proposition}\label{lattice_hom_type}
+    Suppose $\latticeHom{f}{L}{M}$.
+    Then $f\in\funs{\carrier[L]}{\carrier[M]}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{lattice_hom}.
+\end{proof}
+
+\begin{proposition}\label{lattice_hom_apply_type}
+    Suppose $\latticeHom{f}{L}{M}$.
+    Let $x\in\carrier[L]$.
+    Then $f(x)\in\carrier[M]$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{lattice_hom_type,funs_type_apply}.
+\end{proof}
+
+\begin{proposition}\label{lattice_hom_meet}
+    Suppose $\latticeHom{f}{L}{M}$.
+    Let $x,y\in\carrier[L]$.
+    Then $f(\meet[L](x,y))=\meet[M](f(x),f(y))$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{lattice_hom}.
+\end{proof}
+
+\begin{proposition}\label{lattice_hom_join}
+    Suppose $\latticeHom{f}{L}{M}$.
+    Let $x,y\in\carrier[L]$.
+    Then $f(\join[L](x,y))=\join[M](f(x),f(y))$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{lattice_hom}.
+\end{proof}
+
+\begin{theorem}\label{lattice_hom_order_preserving}
+    Suppose $\latticeHom{f}{L}{M}$.
+    Then
+        $\orderPreserving
+            {f}{\carrier[L]}{\leq[L]}{\carrier[M]}{\leq[M]}$.
+\end{theorem}
+\begin{proof}
+    Hence $L$ is an ordered set and $M$ is an ordered set by
+        \obv{lattice_is_ordered_set}.
+    $\leq[L]$ is a binary relation on $\carrier[L]$ and
+        $\leq[M]$ is a binary relation on $\carrier[M]$ by
+        \obv{quasiorder_type}.
+    $f\in\funs{\carrier[L]}{\carrier[M]}$ by
+        \obv{lattice_hom_type}.
+    Show for all $x,y\in\carrier[L]$ such that
+        $x\mathrel{\leq[L]}y$ we have
+        $f(x)\mathrel{\leq[M]}f(y)$.
+    \begin{subproof}
+        Fix $x,y\in\carrier[L]$.
+        Assume $x\mathrel{\leq[L]}y$.
+        $\join[L](x,y)=y$ by
+            \obv{lattice_is_join_semilattice,leq_iff_join_eq_right}.
+        Hence $\join[M](f(x),f(y))=f(y)$ by
+            \auto{lattice_hom_join}.
+        $f(x),f(y)\in\carrier[M]$ by
+            \obv{lattice_hom_apply_type}.
+        Follows by
+            \obv{lattice_is_join_semilattice,leq_iff_join_eq_right}.
+    \end{subproof}
+    Follows by \obv{order_preserving}.
+\end{proof}
+
+\begin{theorem}\label{injective_lattice_hom_order_reflecting}
+    Suppose $\latticeHom{f}{L}{M}$ and
+        $f\in\inj{\carrier[L]}{\carrier[M]}$.
+    Then
+        $\orderReflecting
+            {f}{\carrier[L]}{\leq[L]}{\carrier[M]}{\leq[M]}$.
+\end{theorem}
+\begin{proof}
+    Hence $L$ is an ordered set and $M$ is an ordered set by
+        \obv{lattice_is_ordered_set}.
+    $\leq[L]$ is a binary relation on $\carrier[L]$ and
+        $\leq[M]$ is a binary relation on $\carrier[M]$ by
+        \obv{quasiorder_type}.
+    $f\in\funs{\carrier[L]}{\carrier[M]}$ by \obv{inj}.
+    Show for all $x,y\in\carrier[L]$ such that
+        $f(x)\mathrel{\leq[M]}f(y)$ we have
+        $x\mathrel{\leq[L]}y$.
+    \begin{subproof}
+        Fix $x,y\in\carrier[L]$.
+        Assume $f(x)\mathrel{\leq[M]}f(y)$.
+        $f(x),f(y)\in\carrier[M]$ by
+            \obv{lattice_hom_apply_type}.
+        $\meet[M](f(x),f(y))=f(x)$ by
+            \obv{lattice_is_meet_semilattice,leq_iff_meet_eq_left}.
+        $f(\meet[L](x,y))=\meet[M](f(x),f(y))$ by
+            \obv{lattice_hom_meet}.
+        Hence $f(\meet[L](x,y))=f(x)$.
+        $\meet[L](x,y)\in\carrier[L]$ by
+            \obv{lattice_is_meet_semilattice,meet_type}.
+        Hence $\meet[L](x,y)=x$ by \obv{inj}.
+        Follows by
+            \obv{lattice_is_meet_semilattice,leq_iff_meet_eq_left}.
+    \end{subproof}
+    Follows by \obv{order_reflecting}.
+\end{proof}
+
+\begin{proposition}\label{injective_lattice_hom_order_iff}
+    Suppose $\latticeHom{f}{L}{M}$ and
+        $f\in\inj{\carrier[L]}{\carrier[M]}$.
+    Let $x,y\in\carrier[L]$.
+    Then $x\mathrel{\leq[L]}y$ iff
+        $f(x)\mathrel{\leq[M]}f(y)$.
+\end{proposition}
+\begin{proof}
+    $\orderPreserving
+        {f}{\carrier[L]}{\leq[L]}{\carrier[M]}{\leq[M]}$ by
+        \obv{lattice_hom_order_preserving}.
+    $\orderReflecting
+        {f}{\carrier[L]}{\leq[L]}{\carrier[M]}{\leq[M]}$ by
+        \obv{injective_lattice_hom_order_reflecting}.
+    Follows by \auto{order_preserving,order_reflecting}.
+\end{proof}
+
+\begin{theorem}\label{injective_lattice_hom_order_embedding}
+    Suppose $\latticeHom{f}{L}{M}$ and
+        $f\in\inj{\carrier[L]}{\carrier[M]}$.
+    Then
+        $\orderEmbedding
+            {f}{\carrier[L]}{\leq[L]}{\carrier[M]}{\leq[M]}$.
+\end{theorem}
+\begin{proof}
+    $\orderPreserving
+        {f}{\carrier[L]}{\leq[L]}{\carrier[M]}{\leq[M]}$ by
+        \obv{lattice_hom_order_preserving}.
+    $\orderReflecting
+        {f}{\carrier[L]}{\leq[L]}{\carrier[M]}{\leq[M]}$ by
+        \obv{injective_lattice_hom_order_reflecting}.
+    Follows by \obv{order_embedding_of_injective_preserving_reflecting}.
+\end{proof}
+
+\begin{proposition}\label{identity_lattice_hom}
+    Let $L$ be a lattice.
+    Then $\latticeHom{\identity{\carrier[L]}}{L}{L}$.
+\end{proposition}
+\begin{proof}
+    $\identity{\carrier[L]}\in
+        \funs{\carrier[L]}{\carrier[L]}$ by \obv{id_elem_funs}.
+    Show for all $x,y\in\carrier[L]$ we have
+        $(\identity{\carrier[L]})(\meet[L](x,y))
+            =\meet[L]
+                ((\identity{\carrier[L]})(x),
+                 (\identity{\carrier[L]})(y))$ and
+        $(\identity{\carrier[L]})(\join[L](x,y))
+            =\join[L]
+                ((\identity{\carrier[L]})(x),
+                 (\identity{\carrier[L]})(y))$.
+    \begin{subproof}
+        Fix $x,y\in\carrier[L]$.
+        $\meet[L](x,y),\join[L](x,y)\in\carrier[L]$ by
+            \obv{lattice_is_meet_semilattice,
+                lattice_is_join_semilattice,meet_type,join_type}.
+        Follows by \obv{id_apply}.
+    \end{subproof}
+    Follows by \obv{lattice_hom}.
+\end{proof}
+
+\begin{theorem}\label{lattice_hom_composition}
+    Suppose $\latticeHom{f}{L}{M}$ and $\latticeHom{g}{M}{N}$.
+    Then $\latticeHom{g\circ f}{L}{N}$.
+\end{theorem}
+\begin{proof}
+    $f\in\funs{\carrier[L]}{\carrier[M]}$ and
+        $g\in\funs{\carrier[M]}{\carrier[N]}$ by
+        \obv{lattice_hom_type}.
+    Hence $g\circ f\in
+        \funs{\carrier[L]}{\carrier[N]}$ by \obv{funs_circ}.
+    Hence $f$ and $g$ are functions by \obv{funs_is_function}.
+    $g$ is composable with $f$ by \auto{funs_ran,funs}.
+    Show for all $x,y\in\carrier[L]$ we have
+        $(g\circ f)(\meet[L](x,y))
+            =\meet[N]((g\circ f)(x),(g\circ f)(y))$ and
+        $(g\circ f)(\join[L](x,y))
+            =\join[N]((g\circ f)(x),(g\circ f)(y))$.
+    \begin{subproof}
+        Fix $x,y\in\carrier[L]$.
+        $\meet[L](x,y),\join[L](x,y)\in\carrier[L]$ by
+            \obv{lattice_is_meet_semilattice,
+                lattice_is_join_semilattice,meet_type,join_type}.
+        $f(x),f(y)\in\carrier[M]$ by
+            \obv{lattice_hom_apply_type}.
+        $(g\circ f)(\meet[L](x,y))
+            =g(f(\meet[L](x,y)))$ by \obv{circ_apply,funs}.
+        Hence $(g\circ f)(\meet[L](x,y))
+            =g(\meet[M](f(x),f(y)))$ by \obv{lattice_hom_meet}.
+        Hence $(g\circ f)(\meet[L](x,y))
+            =\meet[N](g(f(x)),g(f(y)))$ by \obv{lattice_hom_meet}.
+        $(g\circ f)(\join[L](x,y))
+            =g(f(\join[L](x,y)))$ by \auto{circ_apply,funs}.
+        Hence $(g\circ f)(\join[L](x,y))
+            =g(\join[M](f(x),f(y)))$ by \obv{lattice_hom_join}.
+        Hence $(g\circ f)(\join[L](x,y))
+            =\join[N](g(f(x)),g(f(y)))$ by \obv{lattice_hom_join}.
+        $(g\circ f)(x)=g(f(x))$ and $(g\circ f)(y)=g(f(y))$ by
+            \auto{circ_apply,funs}.
+    \end{subproof}
+    Follows by \obv{lattice_hom}.
+\end{proof}
+
+\begin{theorem}\label{lattice_hom_extensionality}
+    Suppose $\latticeHom{f}{L}{M}$ and $\latticeHom{g}{L}{M}$.
+    Suppose for every $x\in\carrier[L]$ we have $f(x)=g(x)$.
+    Then $f=g$.
+\end{theorem}
+\begin{proof}
+    $f,g\in\funs{\carrier[L]}{\carrier[M]}$ by
+        \obv{lattice_hom_type}.
+    Hence $f$ and $g$ are functions and
+        $\dom{f}=\carrier[L]=\dom{g}$ by
+        \obv{funs_elim,funs_is_function}.
+    Show that $f\subseteq g$.
+    \begin{subproof}
+        $\dom{f}\subseteq\dom{g}$ by \obv{subseteq_refl}.
+        For every $x\in\dom{f}$ we have $x\in\carrier[L]$.
+        Hence for every $x\in\dom{f}$ we have $f(x)=g(x)$.
+        Follows by \obv{fun_subseteq}.
+    \end{subproof}
+    Show that $g\subseteq f$.
+    \begin{subproof}
+        $\dom{g}\subseteq\dom{f}$ by \obv{subseteq_refl}.
+        For every $x\in\dom{g}$ we have $x\in\carrier[L]$.
+        Hence for every $x\in\dom{g}$ we have $g(x)=f(x)$.
+        Follows by \obv{fun_subseteq}.
+    \end{subproof}
+    Follows by \obv{subseteq_antisymmetric}.
+\end{proof}
+
+\subsection{Bounded lattice homomorphisms}
+
+\begin{definition}\label{bounded_lattice_hom}
+    $\boundedLatticeHom{f}{L}{M}$ iff
+        $L$ is a bounded lattice and $M$ is a bounded lattice and
+        $\latticeHom{f}{L}{M}$ and
+        $f(\latticeBottom[L])=\latticeBottom[M]$ and
+        $f(\latticeTop[L])=\latticeTop[M]$.
+\end{definition}
+
+\begin{proposition}\label{bounded_lattice_hom_is_lattice_hom}
+    Suppose $\boundedLatticeHom{f}{L}{M}$.
+    Then $\latticeHom{f}{L}{M}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{bounded_lattice_hom}.
+\end{proof}
+
+\begin{proposition}\label{bounded_lattice_hom_type}
+    Suppose $\boundedLatticeHom{f}{L}{M}$.
+    Then $f\in\funs{\carrier[L]}{\carrier[M]}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \obv{bounded_lattice_hom_is_lattice_hom,lattice_hom_type}.
+\end{proof}
+
+\begin{proposition}\label{bounded_lattice_hom_bottom}
+    Suppose $\boundedLatticeHom{f}{L}{M}$.
+    Then $f(\latticeBottom[L])=\latticeBottom[M]$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{bounded_lattice_hom}.
+\end{proof}
+
+\begin{proposition}\label{bounded_lattice_hom_top}
+    Suppose $\boundedLatticeHom{f}{L}{M}$.
+    Then $f(\latticeTop[L])=\latticeTop[M]$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{bounded_lattice_hom}.
+\end{proof}
+
+\begin{proposition}\label{identity_bounded_lattice_hom}
+    Let $L$ be a bounded lattice.
+    Then $\boundedLatticeHom{\identity{\carrier[L]}}{L}{L}$.
+\end{proposition}
+\begin{proof}
+    Hence $\latticeHom{\identity{\carrier[L]}}{L}{L}$ by
+        \obv{identity_lattice_hom}.
+    $\latticeBottom[L],\latticeTop[L]\in\carrier[L]$ by
+        \obv{lattice_bottom_type,lattice_top_type}.
+    Follows by \obv{bounded_lattice_hom,id_apply}.
+\end{proof}
+
+\begin{theorem}\label{bounded_lattice_hom_composition}
+    Suppose $\boundedLatticeHom{f}{L}{M}$ and
+        $\boundedLatticeHom{g}{M}{N}$.
+    Then $\boundedLatticeHom{g\circ f}{L}{N}$.
+\end{theorem}
+\begin{proof}
+    $\latticeHom{f}{L}{M}$ and $\latticeHom{g}{M}{N}$ by
+        \obv{bounded_lattice_hom_is_lattice_hom}.
+    Hence $\latticeHom{g\circ f}{L}{N}$ by
+        \obv{lattice_hom_composition}.
+    $f\in\funs{\carrier[L]}{\carrier[M]}$ and
+        $g\in\funs{\carrier[M]}{\carrier[N]}$ by
+        \obv{bounded_lattice_hom_type}.
+    Hence $f$ and $g$ are functions by \obv{funs_is_function}.
+    $g$ is composable with $f$ by \auto{funs_ran,funs}.
+    $\latticeBottom[L],\latticeTop[L]\in\carrier[L]$ by
+        \obv{lattice_bottom_type,lattice_top_type}.
+    $(g\circ f)(\latticeBottom[L])
+        =g(f(\latticeBottom[L]))$ and
+        $(g\circ f)(\latticeTop[L])
+        =g(f(\latticeTop[L]))$ by \obv{circ_apply,funs}.
+    Follows by
+        \auto{bounded_lattice_hom,bounded_lattice_hom_bottom,
+            bounded_lattice_hom_top}.
+\end{proof}
+
+\subsection{Lattice isomorphisms}
+
+\begin{definition}\label{lattice_isomorphism}
+    $\latticeIsomorphism{f}{L}{M}$ iff
+        $\latticeHom{f}{L}{M}$ and
+        $f\in\bijections{\carrier[L]}{\carrier[M]}$.
+\end{definition}
+
+\begin{definition}\label{bounded_lattice_isomorphism}
+    $\boundedLatticeIsomorphism{f}{L}{M}$ iff
+        $\boundedLatticeHom{f}{L}{M}$ and
+        $f\in\bijections{\carrier[L]}{\carrier[M]}$.
+\end{definition}
+
+\begin{proposition}\label{lattice_isomorphism_is_hom}
+    Suppose $\latticeIsomorphism{f}{L}{M}$.
+    Then $\latticeHom{f}{L}{M}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{lattice_isomorphism}.
+\end{proof}
+
+\begin{proposition}\label{lattice_isomorphism_is_bijection}
+    Suppose $\latticeIsomorphism{f}{L}{M}$.
+    Then $f\in\bijections{\carrier[L]}{\carrier[M]}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{lattice_isomorphism}.
+\end{proof}
+
+\begin{proposition}\label{bounded_lattice_isomorphism_is_hom}
+    Suppose $\boundedLatticeIsomorphism{f}{L}{M}$.
+    Then $\boundedLatticeHom{f}{L}{M}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{bounded_lattice_isomorphism}.
+\end{proof}
+
+\begin{proposition}\label{bounded_lattice_isomorphism_is_bijection}
+    Suppose $\boundedLatticeIsomorphism{f}{L}{M}$.
+    Then $f\in\bijections{\carrier[L]}{\carrier[M]}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{bounded_lattice_isomorphism}.
+\end{proof}
+
+\begin{proposition}\label{identity_lattice_isomorphism}
+    Let $L$ be a lattice.
+    Then $\latticeIsomorphism{\identity{\carrier[L]}}{L}{L}$.
+\end{proposition}
+\begin{proof}
+    $\latticeHom{\identity{\carrier[L]}}{L}{L}$ by
+        \obv{identity_lattice_hom}.
+    $\identity{\carrier[L]}\in
+        \bijections{\carrier[L]}{\carrier[L]}$ by
+        \obv{id_elem_bijections}.
+    Follows by \obv{lattice_isomorphism}.
+\end{proof}
+
+\begin{proposition}\label{identity_bounded_lattice_isomorphism}
+    Let $L$ be a bounded lattice.
+    Then $\boundedLatticeIsomorphism
+        {\identity{\carrier[L]}}{L}{L}$.
+\end{proposition}
+\begin{proof}
+    $\boundedLatticeHom{\identity{\carrier[L]}}{L}{L}$ by
+        \obv{identity_bounded_lattice_hom}.
+    $\identity{\carrier[L]}\in
+        \bijections{\carrier[L]}{\carrier[L]}$ by
+        \obv{id_elem_bijections}.
+    Follows by \obv{bounded_lattice_isomorphism}.
+\end{proof}
+
+\begin{theorem}\label{lattice_isomorphism_composition}
+    Suppose $\latticeIsomorphism{f}{L}{M}$ and
+        $\latticeIsomorphism{g}{M}{N}$.
+    Then $\latticeIsomorphism{g\circ f}{L}{N}$.
+\end{theorem}
+\begin{proof}
+    $\latticeHom{f}{L}{M}$ and $\latticeHom{g}{M}{N}$ by
+        \obv{lattice_isomorphism_is_hom}.
+    Hence $\latticeHom{g\circ f}{L}{N}$ by
+        \obv{lattice_hom_composition}.
+    $f\in\bijections{\carrier[L]}{\carrier[M]}$ and
+        $g\in\bijections{\carrier[M]}{\carrier[N]}$ by
+        \obv{lattice_isomorphism_is_bijection}.
+    Hence $g\circ f\in\bijections{\carrier[L]}{\carrier[N]}$ by
+        \obv{bijection_circ}.
+    Follows by \obv{lattice_isomorphism}.
+\end{proof}
+
+\begin{theorem}\label{bounded_lattice_isomorphism_composition}
+    Suppose $\boundedLatticeIsomorphism{f}{L}{M}$ and
+        $\boundedLatticeIsomorphism{g}{M}{N}$.
+    Then $\boundedLatticeIsomorphism{g\circ f}{L}{N}$.
+\end{theorem}
+\begin{proof}
+    $\boundedLatticeHom{f}{L}{M}$ and
+        $\boundedLatticeHom{g}{M}{N}$ by
+        \obv{bounded_lattice_isomorphism_is_hom}.
+    Hence $\boundedLatticeHom{g\circ f}{L}{N}$ by
+        \obv{bounded_lattice_hom_composition}.
+    $f\in\bijections{\carrier[L]}{\carrier[M]}$ and
+        $g\in\bijections{\carrier[M]}{\carrier[N]}$ by
+        \obv{bounded_lattice_isomorphism_is_bijection}.
+    Hence $g\circ f\in\bijections{\carrier[L]}{\carrier[N]}$ by
+        \obv{bijection_circ}.
+    Follows by \obv{bounded_lattice_isomorphism}.
+\end{proof}
+
+\subsection{Comparison with order isomorphisms}
+
+\begin{theorem}\label{lattice_isomorphism_implies_order_isomorphism}
+    Suppose $\latticeIsomorphism{f}{L}{M}$.
+    Then
+        $\orderIsomorphism
+            {f}{\carrier[L]}{\leq[L]}{\carrier[M]}{\leq[M]}$.
+\end{theorem}
+\begin{proof}
+    $\latticeHom{f}{L}{M}$ by
+        \obv{lattice_isomorphism_is_hom}.
+    Hence $L$ is a quasiordered set and $M$ is a quasiordered set by
+        \obv{lattice_is_ordered_set,orderedset}.
+    $\leq[L]$ is a binary relation on $\carrier[L]$ and
+        $\leq[M]$ is a binary relation on $\carrier[M]$ by
+        \obv{quasiorder_type}.
+    $f\in\bijections{\carrier[L]}{\carrier[M]}$ by
+        \obv{lattice_isomorphism_is_bijection}.
+    Hence $f\in\funs{\carrier[L]}{\carrier[M]}$ and
+        $f$ is a function and $f$ is injective and
+        $\dom{f}=\carrier[L]$ by
+        \obv{bijections_to_funs,bijections,bijection_is_function,
+            bijections_dom}.
+    Hence $f\in\inj{\carrier[L]}{\carrier[M]}$ by
+        \auto{inj,injective_function}.
+    For all $x,y\in\carrier[L]$ we have
+        $x\mathrel{\leq[L]}y$ iff
+            $f(x)\mathrel{\leq[M]}f(y)$ by
+        \obv{injective_lattice_hom_order_iff}.
+    Follows by \obv{order_isomorphism}.
+\end{proof}
+
+\begin{theorem}\label{order_isomorphism_between_lattices_is_lattice_isomorphism}
+    Let $L,M$ be lattices.
+    Suppose
+        $\orderIsomorphism
+            {f}{\carrier[L]}{\leq[L]}{\carrier[M]}{\leq[M]}$.
+    Then $\latticeIsomorphism{f}{L}{M}$.
+\end{theorem}
+\begin{proof}
+    $f\in\bijections{\carrier[L]}{\carrier[M]}$ by
+        \obv{order_isomorphism_type}.
+    Hence $f\in\funs{\carrier[L]}{\carrier[M]}$ and
+        $\ran{f}=\carrier[M]$ by
+        \auto{bijections_to_funs,bijections,ran_of_surj}.
+    Hence $f$ is a function and $\dom{f}=\carrier[L]$ by
+        \obv{funs_is_function,funs}.
+    Hence $\leq[L]$ is antisymmetric and $\leq[M]$ is antisymmetric by
+        \obv{ordered_set_order_antisymmetric}.
+    Show for all $x,y\in\carrier[L]$ we have
+        $f(\meet[L](x,y))=\meet[M](f(x),f(y))$ and
+        $f(\join[L](x,y))=\join[M](f(x),f(y))$.
+    \begin{subproof}
+        Fix $x,y\in\carrier[L]$.
+        Let $a=\meet[L](x,y)$.
+        Let $b=\join[L](x,y)$.
+        $a,b\in\carrier[L]$ by
+            \auto{lattice_is_meet_semilattice,
+                lattice_is_join_semilattice,meet_type,join_type}.
+        $f(x),f(y),f(a),f(b)\in\carrier[M]$ by
+            \obv{funs_type_apply}.
+        Let $u=\meet[M](f(x),f(y))$.
+        Let $v=\join[M](f(x),f(y))$.
+        $u,v\in\carrier[M]$ by
+            \auto{lattice_is_meet_semilattice,
+                lattice_is_join_semilattice,meet_type,join_type}.
+
+        $a\mathrel{\leq[L]}x$ and $a\mathrel{\leq[L]}y$ by
+            \auto{lattice_is_meet_semilattice,meet_lb}.
+        Hence $f(a)\mathrel{\leq[M]}f(x)$ and
+            $f(a)\mathrel{\leq[M]}f(y)$ by
+            \auto{order_isomorphism}.
+        Hence $f(a)\mathrel{\leq[M]}u$ by
+            \auto{lattice_is_meet_semilattice,meet_glb}.
+        $u\in\ran{f}$.
+        Take $w\in\dom{f}$ such that $f(w)=u$ by
+            \obv{fun_ran_iff}.
+        Hence $w\in\carrier[L]$.
+        $u\mathrel{\leq[M]}f(x)$ and
+            $u\mathrel{\leq[M]}f(y)$ by
+            \auto{lattice_is_meet_semilattice,meet_lb}.
+        Hence $w\mathrel{\leq[L]}x$ and
+            $w\mathrel{\leq[L]}y$ by
+            \auto{order_isomorphism}.
+        Hence $w\mathrel{\leq[L]}a$ by
+            \auto{lattice_is_meet_semilattice,meet_glb}.
+        Hence $u\mathrel{\leq[M]}f(a)$ by
+            \auto{order_isomorphism}.
+        Thus $f(a)=u$ by \obv{antisymmetric}.
+
+        $x\mathrel{\leq[L]}b$ and $y\mathrel{\leq[L]}b$ by
+            \auto{lattice_is_join_semilattice,join_ub}.
+        Hence $f(x)\mathrel{\leq[M]}f(b)$ and
+            $f(y)\mathrel{\leq[M]}f(b)$ by
+            \auto{order_isomorphism}.
+        Hence $v\mathrel{\leq[M]}f(b)$ by
+            \auto{lattice_is_join_semilattice,join_lub}.
+        $v\in\ran{f}$.
+        Take $q\in\dom{f}$ such that $f(q)=v$ by
+            \obv{fun_ran_iff}.
+        Hence $q\in\carrier[L]$.
+        $f(x)\mathrel{\leq[M]}v$ and
+            $f(y)\mathrel{\leq[M]}v$ by
+            \auto{lattice_is_join_semilattice,join_ub}.
+        Hence $x\mathrel{\leq[L]}q$ and
+            $y\mathrel{\leq[L]}q$ by
+            \auto{order_isomorphism}.
+        Hence $b\mathrel{\leq[L]}q$ by
+            \auto{lattice_is_join_semilattice,join_lub}.
+        Hence $f(b)\mathrel{\leq[M]}v$ by
+            \auto{order_isomorphism}.
+        Thus $f(b)=v$ by \obv{antisymmetric}.
+    \end{subproof}
+    Hence $\latticeHom{f}{L}{M}$ by \obv{lattice_hom}.
+    Follows by \obv{lattice_isomorphism}.
+\end{proof}
+
+\begin{theorem}\label{order_isomorphism_between_bounded_lattices_is_bounded_lattice_isomorphism}
+    Let $L,M$ be bounded lattices.
+    Suppose
+        $\orderIsomorphism
+            {f}{\carrier[L]}{\leq[L]}{\carrier[M]}{\leq[M]}$.
+    Then $\boundedLatticeIsomorphism{f}{L}{M}$.
+\end{theorem}
+\begin{proof}
+    Hence $\latticeIsomorphism{f}{L}{M}$ by
+        \obv{order_isomorphism_between_lattices_is_lattice_isomorphism}.
+    Hence $\latticeHom{f}{L}{M}$ by
+        \obv{lattice_isomorphism_is_hom}.
+    $f\in\bijections{\carrier[L]}{\carrier[M]}$ by
+        \obv{order_isomorphism_type}.
+    Hence $f\in\funs{\carrier[L]}{\carrier[M]}$ and
+        $\ran{f}=\carrier[M]$ by
+        \auto{bijections_to_funs,bijections,ran_of_surj}.
+    Hence $f$ is a function and $\dom{f}=\carrier[L]$ by
+        \obv{funs_is_function,funs}.
+    $\latticeBottom[L],\latticeTop[L]\in\carrier[L]$ by
+        \obv{lattice_bottom_type,lattice_top_type}.
+    Hence $f(\latticeBottom[L]),f(\latticeTop[L])\in\carrier[M]$ by
+        \obv{lattice_hom_apply_type}.
+    Show for all $y\in\carrier[M]$ we have
+        $f(\latticeBottom[L])\mathrel{\leq[M]}y$.
+    \begin{subproof}
+        Fix $y\in\carrier[M]$.
+        Hence $y\in\ran{f}$.
+        Take $x\in\dom{f}$ such that $f(x)=y$ by
+            \obv{fun_ran_iff}.
+        Hence $x\in\carrier[L]$.
+        $\latticeBottom[L]\mathrel{\leq[L]}x$ by
+            \obv{lattice_bottom_leq}.
+        Follows by \auto{order_isomorphism}.
+    \end{subproof}
+    Hence $f(\latticeBottom[L])=\latticeBottom[M]$ by
+        \obv{lattice_bottom_unique}.
+    Show for all $y\in\carrier[M]$ we have
+        $y\mathrel{\leq[M]}f(\latticeTop[L])$.
+    \begin{subproof}
+        Fix $y\in\carrier[M]$.
+        Hence $y\in\ran{f}$.
+        Take $x\in\dom{f}$ such that $f(x)=y$ by
+            \obv{fun_ran_iff}.
+        Hence $x\in\carrier[L]$.
+        $x\mathrel{\leq[L]}\latticeTop[L]$ by
+            \obv{lattice_leq_top}.
+        Follows by \auto{order_isomorphism}.
+    \end{subproof}
+    Hence $f(\latticeTop[L])=\latticeTop[M]$ by
+        \obv{lattice_top_unique}.
+    Hence $\boundedLatticeHom{f}{L}{M}$ by
+        \obv{bounded_lattice_hom}.
+    Follows by \obv{bounded_lattice_isomorphism}.
+\end{proof}
+
+\begin{theorem}\label{lattice_isomorphism_converse}
+    Suppose $\latticeIsomorphism{f}{L}{M}$.
+    Then $\latticeIsomorphism{\converse{f}}{M}{L}$.
+\end{theorem}
+\begin{proof}
+    $L$ is a lattice and $M$ is a lattice by
+        \obv{lattice_isomorphism_is_hom,lattice_hom_source_lattice,
+            lattice_hom_target_lattice}.
+    $\orderIsomorphism
+        {f}{\carrier[L]}{\leq[L]}{\carrier[M]}{\leq[M]}$ by
+        \obv{lattice_isomorphism_implies_order_isomorphism}.
+    Hence $\orderIsomorphism
+        {\converse{f}}{\carrier[M]}{\leq[M]}{\carrier[L]}{\leq[L]}$ by
+        \obv{order_isomorphism_inverse}.
+    Follows by
+        \obv{order_isomorphism_between_lattices_is_lattice_isomorphism}.
+\end{proof}
+
+\begin{theorem}\label{bounded_lattice_isomorphism_converse}
+    Suppose $\boundedLatticeIsomorphism{f}{L}{M}$.
+    Then $\boundedLatticeIsomorphism{\converse{f}}{M}{L}$.
+\end{theorem}
+\begin{proof}
+    $\boundedLatticeHom{f}{L}{M}$ by
+        \obv{bounded_lattice_isomorphism_is_hom}.
+    Hence $\latticeHom{f}{L}{M}$ by
+        \obv{bounded_lattice_hom_is_lattice_hom}.
+    $f\in\bijections{\carrier[L]}{\carrier[M]}$ by
+        \obv{bounded_lattice_isomorphism_is_bijection}.
+    Hence $\latticeIsomorphism{f}{L}{M}$ by
+        \obv{lattice_isomorphism}.
+    Hence $\orderIsomorphism
+        {f}{\carrier[L]}{\leq[L]}{\carrier[M]}{\leq[M]}$ by
+        \obv{lattice_isomorphism_implies_order_isomorphism}.
+    Hence $\orderIsomorphism
+        {\converse{f}}{\carrier[M]}{\leq[M]}{\carrier[L]}{\leq[L]}$ by
+        \obv{order_isomorphism_inverse}.
+    Follows by
+        \obv{order_isomorphism_between_bounded_lattices_is_bounded_lattice_isomorphism}.
+\end{proof}
+
+\begin{theorem}\label{lattice_isomorphism_transfers_distributivity}
+    Suppose $\latticeIsomorphism{f}{L}{M}$.
+    Suppose $L$ is a distributive lattice.
+    Then $M$ is a distributive lattice.
+\end{theorem}
+\begin{proof}
+    $M$ is a lattice by
+        \obv{lattice_isomorphism_is_hom,lattice_hom_target_lattice}.
+    Let $g=\converse{f}$.
+    $\latticeIsomorphism{g}{M}{L}$ by
+        \auto{lattice_isomorphism_converse}.
+    Hence $\latticeHom{g}{M}{L}$ by
+        \obv{lattice_isomorphism_is_hom}.
+    $g\in\bijections{\carrier[M]}{\carrier[L]}$ by
+        \obv{lattice_isomorphism_is_bijection}.
+    Hence $g$ is a function and $g$ is injective and
+        $\dom{g}=\carrier[M]$ by
+        \obv{bijections,bijection_is_function,bijections_dom}.
+    Show for all $x,y,z\in\carrier[M]$ we have
+        $\meet[M](x,\join[M](y,z))
+            =\join[M](\meet[M](x,y),\meet[M](x,z))$.
+    \begin{subproof}
+        Fix $x,y,z\in\carrier[M]$.
+        $g(x),g(y),g(z)\in\carrier[L]$ by
+            \obv{lattice_hom_apply_type}.
+        $\join[M](y,z),\meet[M](x,y),\meet[M](x,z),
+            \meet[M](x,\join[M](y,z)),
+            \join[M](\meet[M](x,y),\meet[M](x,z))
+            \in\carrier[M]$ by
+            \obv{lattice_is_meet_semilattice,
+                lattice_is_join_semilattice,meet_type,join_type}.
+        $g(\meet[M](x,\join[M](y,z)))
+            =\meet[L](g(x),g(\join[M](y,z)))$ by
+            \obv{lattice_hom_meet}.
+        $g(\join[M](y,z))=\join[L](g(y),g(z))$ by
+            \obv{lattice_hom_join}.
+        Hence $g(\meet[M](x,\join[M](y,z)))
+            =\meet[L](g(x),\join[L](g(y),g(z)))$.
+        Hence $g(\meet[M](x,\join[M](y,z)))
+            =\join[L](\meet[L](g(x),g(y)),\meet[L](g(x),g(z)))$ by
+            \obv{meet_distributes_over_join}.
+        $g(\meet[M](x,y))=\meet[L](g(x),g(y))$ and
+            $g(\meet[M](x,z))=\meet[L](g(x),g(z))$ by
+            \obv{lattice_hom_meet}.
+        $g(\join[M](\meet[M](x,y),\meet[M](x,z)))
+            =\join[L]
+                (g(\meet[M](x,y)),g(\meet[M](x,z)))$ by
+            \obv{lattice_hom_join}.
+        Hence $g(\meet[M](x,\join[M](y,z)))
+            =g(\join[M](\meet[M](x,y),\meet[M](x,z)))$.
+        Follows by \auto{injective_function}.
+    \end{subproof}
+    Follows by \obv{distributive_lattice}.
+\end{proof}
+
+\begin{theorem}\label{lattice_isomorphism_distributive_iff}
+    Suppose $\latticeIsomorphism{f}{L}{M}$.
+    Then $L$ is a distributive lattice iff
+        $M$ is a distributive lattice.
+\end{theorem}
+\begin{proof}
+    Show that if $L$ is a distributive lattice, then
+        $M$ is a distributive lattice.
+    \begin{subproof}
+        Assume $L$ is a distributive lattice.
+        Follows by
+            \obv{lattice_isomorphism_transfers_distributivity}.
+    \end{subproof}
+    Show that if $M$ is a distributive lattice, then
+        $L$ is a distributive lattice.
+    \begin{subproof}
+        Assume $M$ is a distributive lattice.
+        $\latticeIsomorphism{\converse{f}}{M}{L}$ by
+            \obv{lattice_isomorphism_converse}.
+        Follows by
+            \obv{lattice_isomorphism_transfers_distributivity}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}

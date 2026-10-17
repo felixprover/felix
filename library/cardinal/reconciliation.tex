@@ -1,0 +1,940 @@
+\import{cardinal/exponentiation.tex}
+\import{nat/multiplication.tex}
+\import{set/finite.tex}
+\import{set/partition.tex}
+
+\section{Finite and countable cardinality}
+
+The cardinal representative agrees with the von Neumann numeral on finite
+sets and with $\naturals$ on countably infinite sets.
+
+\begin{proposition}\label{successor_remove_element_equinum}
+    Suppose $y\in\suc{n}$.
+    Then $\suc{n}\setminus\{y\}\approx n$.
+\end{proposition}
+\begin{proof}
+    \begin{byCase}
+        \caseOf{$y=n$.}
+            $\suc{n}\setminus\{n\}=n$
+                by \auto{setext,setminus,singleton_iff,suc_iff,in_irrefl}.
+            Follows by \obv{equinum_refl}.
+        \caseOf{$y\neq n$.}
+            Hence $y\in n$ by \auto{suc_iff}.
+            Let $A=n\setminus\{y\}$.
+            $A\inter\{n\}=\emptyset$
+                by
+                \auto{setext,inter,setminus,singleton_iff,emptyset,in_irrefl}.
+            $A\inter\{y\}=\emptyset$
+                by \auto{setext,inter,setminus,singleton_iff,emptyset}.
+            $A\approx A$ by \obv{equinum_refl}.
+            $\{n\}\approx\{y\}$ by \obv{singletons_equinum}.
+            Hence $A\union\{n\}\approx A\union\{y\}$
+                by \obv{disjoint_union_equinum_congruent}.
+            $A\union\{n\}=\suc{n}\setminus\{y\}$
+                by
+                \auto{setext,union_iff,setminus,singleton_iff,suc_iff,in_irrefl}.
+            $A\union\{y\}=n$
+                by
+                \auto{setext,union_iff,setminus,singleton_iff}.
+    \end{byCase}
+\end{proof}
+
+\begin{theorem}\label{natural_equinumerous_unique}
+    Let $m,n$ be natural numbers.
+    Suppose $m\approx n$.
+    Then $m=n$.
+\end{theorem}
+\begin{proof}
+    Let $C=\{k\in\naturals\mid
+        \text{for every $j\in\naturals$ such that $j\approx k$
+            we have $j=k$}\}$.
+
+    Show that $\emptyset\in C$.
+    \begin{subproof}
+        $\emptyset\in\naturals$ by \obv{omega_empty}.
+        Show that for every $j\in\naturals$ such that
+            $j\approx\emptyset$ we have $j=\emptyset$.
+        \begin{subproof}
+            Fix $j$.
+            Assume $j\in\naturals$ and $j\approx\emptyset$.
+            Take $f$ such that $f\in\bijections{j}{\emptyset}$
+                by \obv{equinum}.
+            Suppose not.
+            Hence $j$ is inhabited by \obv{nonempty_inhabited}.
+            Take $x$ such that $x\in j$.
+            $f(x)\in\emptyset$
+                by \auto{bijections_to_funs,funs_type_apply}.
+            Contradiction by \obv{emptyset}.
+        \end{subproof}
+    \end{subproof}
+
+    Show that for every $k\in C$ we have $\suc{k}\in C$.
+    \begin{subproof}
+        Fix $k\in C$.
+        $\suc{k}$ is a natural number by \obv{omega_successor}.
+        Show that for every $j\in\naturals$ such that
+            $j\approx\suc{k}$ we have $j=\suc{k}$.
+        \begin{subproof}
+            Fix $j$.
+            Assume $j\in\naturals$ and $j\approx\suc{k}$.
+            Take $f$ such that $f\in\bijections{j}{\suc{k}}$
+                by \obv{equinum}.
+            Show that $j\neq\emptyset$.
+            \begin{subproof}
+                Suppose not.
+                $\ran{f}=\suc{k}$ by \auto{bijections,ran_of_surj}.
+                Hence $k\in\ran{f}$ by \obv{suc_intro_self}.
+                Take $x$ such that $(x,k)\in f$ by \obv{ran_iff}.
+                $x\in\dom{f}$ by \obv{dom_intro}.
+                $\dom{f}=j$ by \obv{bijections_dom}.
+                Hence $x\in\emptyset$.
+                Contradiction by \obv{emptyset}.
+            \end{subproof}
+            Take a natural number $l$ such that $j=\suc{l}$
+                by \obv{natural_zero_or_successor}.
+            Hence $f\in\bijections{\suc{l}}{\suc{k}}$.
+            Let $z=f(l)$.
+            $l\in\suc{l}$ by \obv{suc_intro_self}.
+            Hence $z\in\suc{k}$
+                by \auto{bijections_to_funs,funs_type_apply}.
+            $\restrl{f}{l}\in
+                \bijections{l}{\suc{k}\setminus\{z\}}$
+                by \auto{bijection_remove_successor}.
+            Hence $l\approx\suc{k}\setminus\{z\}$ by \obv{equinum}.
+            $\suc{k}\setminus\{z\}\approx k$
+                by \obv{successor_remove_element_equinum}.
+            Hence $l\approx k$ by \obv{equinum_tran}.
+            Thus $l=k$.
+        \end{subproof}
+    \end{subproof}
+
+    Hence $C$ is an inductive set by \obv{inductive_set}.
+    Hence every natural number is an element of $C$
+        by \obv{omega_minimal}.
+    Thus $n\in C$.
+\end{proof}
+
+\subsection{Finite-cardinality witnesses}
+
+The following counting lemmas use explicit finite bijections only.  In
+particular, they do not pass through canonical cardinals or choose a family of
+representatives.
+
+\begin{proposition}\label{finite_cardinality_bijection}
+    Suppose $X$ has finite cardinality $n$ and
+        $f\in\bijections{X}{Y}$.
+    Then $Y$ has finite cardinality $n$.
+\end{proposition}
+\begin{proof}
+    Take $g$ such that $g\in\bijections{n}{X}$ by
+        \obv{finite_cardinality}.
+    $f\circ g\in\bijections{n}{Y}$ by \obv{bijection_circ}.
+    Follows by \obv{finite_cardinality}.
+\end{proof}
+
+\begin{theorem}\label{finite_cardinality_unique}
+    Suppose $X$ has finite cardinality $m$ and
+        $X$ has finite cardinality $n$.
+    Then $m=n$.
+\end{theorem}
+\begin{proof}
+    $m,n\in\naturals$ by \obv{finite_cardinality}.
+    Take $f$ such that $f\in\bijections{m}{X}$ by
+        \obv{finite_cardinality}.
+    Take $g$ such that $g\in\bijections{n}{X}$ by
+        \obv{finite_cardinality}.
+    $\converse{g}\in\bijections{X}{n}$ by
+        \obv{bijection_converse_is_bijection}.
+    Hence $\converse{g}\circ f\in\bijections{m}{n}$ by
+        \obv{bijection_circ}.
+    Hence $m\approx n$ by \obv{equinum}.
+    Follows by \obv{natural_equinumerous_unique}.
+\end{proof}
+
+\begin{proposition}\label{finite_cardinality_zero_iff_emptyset}
+    $X$ has finite cardinality $\emptyset$ iff $X=\emptyset$.
+\end{proposition}
+\begin{proof}
+    Show that if $X$ has finite cardinality $\emptyset$, then
+        $X=\emptyset$.
+    \begin{subproof}
+        Assume $X$ has finite cardinality $\emptyset$.
+        Take $f$ such that $f\in\bijections{\emptyset}{X}$ by
+            \obv{finite_cardinality}.
+        $\ran{f}=X$ by \auto{bijections,ran_of_surj}.
+        $\dom{f}=\emptyset$ by \obv{bijections_dom}.
+        Hence $f=\emptyset$ by
+            \auto{setext,emptyset,bijection_is_function,
+                function_member_elim}.
+        Follows by \obv{ran_emptyset}.
+    \end{subproof}
+    Show that if $X=\emptyset$, then
+        $X$ has finite cardinality $\emptyset$.
+    \begin{subproof}
+        Assume $X=\emptyset$.
+        $\identity{\emptyset}\in
+            \bijections{\emptyset}{\emptyset}$ by
+            \obv{id_elem_bijections}.
+        Follows by \obv{finite_cardinality,omega_empty}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{proposition}\label{finite_cardinality_cons}
+    Let $n$ be a natural number.
+    Suppose $X$ has finite cardinality $n$ and $x\notin X$.
+    Then $\cons{x}{X}$ has finite cardinality $\suc{n}$.
+\end{proposition}
+\begin{proof}
+    Take $f$ such that $f\in\bijections{n}{X}$ by
+        \obv{finite_cardinality}.
+    $n\notin n$ by \obv{in_irrefl}.
+    $\cons{(n,x)}{f}\in
+        \bijections{\cons{n}{n}}{\cons{x}{X}}$ by
+        \obv{bijection_cons}.
+    $\cons{n}{n}=\suc{n}$ by \obv{suc,cons_iff,setext}.
+    $\suc{n}$ is a natural number by \obv{omega_successor}.
+    Follows by \auto{finite_cardinality}.
+\end{proof}
+
+\begin{proposition}\label{finite_cardinality_remove_element}
+    Let $n$ be a natural number.
+    Suppose $X$ has finite cardinality $\suc{n}$ and $x\in X$.
+    Then $X\setminus\{x\}$ has finite cardinality $n$.
+\end{proposition}
+\begin{proof}
+    Take $f$ such that $f\in\bijections{\suc{n}}{X}$ by
+        \obv{finite_cardinality}.
+    Take $j\in\suc{n}$ such that $f(j)=x$ by
+        \auto{bijections,surj}.
+    Let $D=\suc{n}\setminus\{j\}$ and $g=\restrl{f}{D}$.
+    $f\in\funs{\suc{n}}{X}$ by \obv{bijections_to_funs}.
+    Hence $f$ is a function and $\dom{f}=\suc{n}$ by
+        \obv{funs_is_function,funs}.
+    $f$ is injective by \obv{bijections}.
+    Hence $f\in\inj{\suc{n}}{X}$ by
+        \auto{inj,injective_function}.
+    $D\subseteq\suc{n}$ by \auto{setminus_subseteq}.
+    Hence $g\in\inj{D}{X}$ by \auto{inj_restrl}.
+    Show that $\ran{g}=X\setminus\{x\}$.
+    \begin{subproof}
+        Show that every element of $\ran{g}$ is an element of
+            $X\setminus\{x\}$.
+        \begin{subproof}
+            Fix $y\in\ran{g}$.
+            Take $i$ such that $(i,y)\in g$ by \obv{ran_iff}.
+            Hence $i\in D$ and $(i,y)\in f$ by \auto{restrl_iff}.
+            Hence $y\in\ran{f}$ by \obv{ran_intro}.
+            $\ran{f}=X$ by \auto{bijections,ran_of_surj}.
+            Hence $y\in X$.
+            $i\neq j$ by \auto{setminus,singleton_iff}.
+            Show that $y\neq x$.
+            \begin{subproof}
+                Suppose not.
+                $j\in\dom{f}$.
+                $(j,f(j))\in f$ by \obv{function_apply_elim}.
+                Hence $(j,x)\in f$.
+                Hence $i=j$ by \auto{injective}.
+                Contradiction.
+            \end{subproof}
+            Follows by \auto{setminus,singleton_iff}.
+        \end{subproof}
+        Show that every element of $X\setminus\{x\}$ is an element of
+            $\ran{g}$.
+        \begin{subproof}
+            Fix $y\in X\setminus\{x\}$.
+            Hence $y\in X$ and $y\neq x$ by
+                \auto{setminus,singleton_iff}.
+            Take $i\in\suc{n}$ such that $f(i)=y$ by
+                \auto{bijections,surj}.
+            $i\neq j$.
+            Hence $i\in D$ by \auto{setminus,singleton_iff}.
+            $(i,y)\in f$ by \auto{function_apply_elim,bijection_is_function,
+                bijections_dom}.
+            Hence $(i,y)\in g$ by \obv{restrl_iff}.
+            Follows by \obv{ran_intro}.
+        \end{subproof}
+        Follows by set extensionality.
+    \end{subproof}
+    $g\in\surj{D}{\ran{g}}$ by \auto{inj,fun_to_surj}.
+    Hence $g\in\surj{D}{X\setminus\{x\}}$.
+    $g$ is injective by \obv{restrl_injective}.
+    Hence $g\in\bijections{D}{X\setminus\{x\}}$ by
+        \obv{bijections}.
+    $D\approx n$ by \auto{successor_remove_element_equinum}.
+    Hence $n\approx D$ by \obv{equinum_sym}.
+    Take $h$ such that $h\in\bijections{n}{D}$ by \obv{equinum}.
+    $g\circ h\in\bijections{n}{X\setminus\{x\}}$ by
+        \obv{bijection_circ}.
+    Follows by \obv{finite_cardinality}.
+\end{proof}
+
+\begin{theorem}\label{finite_cardinality_disjoint_union}
+    Let $m,n$ be natural numbers.
+    Suppose $A$ has finite cardinality $m$ and
+        $B$ has finite cardinality $n$ and $A\inter B=\emptyset$.
+    Then $A\union B$ has finite cardinality $m+n$.
+\end{theorem}
+\begin{proof}
+    Let $C=\{k\in\naturals\mid
+        \text{for all $Y$ such that $Y$ has finite cardinality $k$ and
+            $A\inter Y=\emptyset$ we have
+            $A\union Y$ has finite cardinality $m+k$}\}$.
+    Show that $\emptyset\in C$.
+    \begin{subproof}
+        $\emptyset\in\naturals$ by \obv{omega_empty}.
+        Show that for all $Y$ such that
+            $Y$ has finite cardinality $\emptyset$ and
+            $A\inter Y=\emptyset$ we have
+            $A\union Y$ has finite cardinality $m+\emptyset$.
+        \begin{subproof}
+            Fix $Y$.
+            Assume $Y$ has finite cardinality $\emptyset$ and
+                $A\inter Y=\emptyset$.
+            $Y=\emptyset$ by \obv{finite_cardinality_zero_iff_emptyset}.
+            $A\union Y=A$ by \auto{union_emptyset}.
+            $m+\emptyset=m$ by \obv{num_addition_zero_right}.
+        \end{subproof}
+    \end{subproof}
+    Show that for every $k\in C$ we have $\suc{k}\in C$.
+    \begin{subproof}
+        Fix $k\in C$.
+        Show that for all $Y$ such that
+            $Y$ has finite cardinality $\suc{k}$ and
+            $A\inter Y=\emptyset$ we have
+            $A\union Y$ has finite cardinality $m+\suc{k}$.
+        \begin{subproof}
+            Fix $Y$.
+            Assume $Y$ has finite cardinality $\suc{k}$ and
+                $A\inter Y=\emptyset$.
+            Take $f$ such that $f\in\bijections{\suc{k}}{Y}$ by
+                \obv{finite_cardinality}.
+            Let $y=f(k)$ and $Y'=Y\setminus\{y\}$.
+            $k\in\suc{k}$ by \obv{suc_intro_self}.
+            Hence $y\in Y$ by
+                \auto{bijections_to_funs,funs_type_apply}.
+            $Y'$ has finite cardinality $k$ by
+                \auto{finite_cardinality_remove_element}.
+            $A\inter Y'=\emptyset$ by
+                \auto{setext,inter,setminus,emptyset}.
+            Hence $A\union Y'$ has finite cardinality $m+k$.
+            $y\notin A\union Y'$ by
+                \auto{union_iff,setminus,singleton_iff,inter,emptyset}.
+            Hence $\cons{y}{A\union Y'}$ has finite cardinality
+                $\suc{m+k}$ by
+                \obv{finite_cardinality_cons,num_addition_on_naturals}.
+            $\cons{y}{A\union Y'}=A\union Y$ by
+                \auto{setext,cons_iff,union_iff,setminus,singleton_iff}.
+            $m+\suc{k}=\suc{m+k}$ by
+                \obv{num_addition_successor_right}.
+        \end{subproof}
+        Follows by \obv{omega_successor}.
+    \end{subproof}
+    Hence $C$ is an inductive set by \obv{inductive_set}.
+    Hence every natural number is an element of $C$ by
+        \obv{omega_minimal}.
+    Thus $n\in C$.
+\end{proof}
+
+\begin{theorem}\label{finite_subset_same_cardinality}
+    Let $n$ be a natural number.
+    Suppose $A\subseteq B$ and $A$ and $B$ have finite cardinality $n$.
+    Then $A=B$.
+\end{theorem}
+\begin{proof}
+    Let $C=\{k\in\naturals\mid
+        \text{for all $X,Y$ such that $X\subseteq Y$ and
+            $X$ and $Y$ have finite cardinality $k$ we have $X=Y$}\}$.
+    $\emptyset\in C$ by
+        \auto{omega_empty,finite_cardinality_zero_iff_emptyset}.
+    Show that for every $k\in C$ we have $\suc{k}\in C$.
+    \begin{subproof}
+        Fix $k\in C$.
+        Show that for all $X,Y$ such that $X\subseteq Y$ and
+            $X$ and $Y$ have finite cardinality $\suc{k}$ we have
+            $X=Y$.
+        \begin{subproof}
+            Fix $X,Y$.
+            Assume $X\subseteq Y$ and $X$ and $Y$ have finite cardinality
+                $\suc{k}$.
+            Take $f$ such that $f\in\bijections{\suc{k}}{X}$ by
+                \obv{finite_cardinality}.
+            Let $x=f(k)$.
+            $k\in\suc{k}$ by \obv{suc_intro_self}.
+            Hence $x\in X$ by
+                \auto{bijections_to_funs,funs_type_apply}.
+            Hence $x\in Y$ by \obv{subseteq}.
+            $X\setminus\{x\}$ and $Y\setminus\{x\}$ have finite
+                cardinality $k$ by
+                \obv{finite_cardinality_remove_element}.
+            $X\setminus\{x\}\subseteq Y\setminus\{x\}$ by
+                \obv{subseteq,setminus}.
+            Hence $X\setminus\{x\}=Y\setminus\{x\}$.
+            $\cons{x}{X\setminus\{x\}}=X$ by \obv{cons_remove}.
+            $\cons{x}{Y\setminus\{x\}}=Y$ by \obv{cons_remove}.
+            \begin{align*}
+                X
+                    &= \cons{x}{X\setminus\{x\}}
+                    \\
+                    &= \cons{x}{Y\setminus\{x\}}
+                    \\
+                    &= Y
+            \end{align*}
+        \end{subproof}
+        Follows by \obv{omega_successor}.
+    \end{subproof}
+    Hence $C$ is an inductive set by \obv{inductive_set}.
+    Hence every natural number is an element of $C$ by
+        \obv{omega_minimal}.
+    Thus $n\in C$.
+\end{proof}
+
+\begin{theorem}\label{uniform_finite_partition_cardinality}
+    Let $n,k$ be natural numbers.
+    Suppose $P$ is a partition of $X$.
+    Suppose $P$ has finite cardinality $k$ and
+        every element of $P$ has finite cardinality $n$.
+    Then $X$ has finite cardinality $\naturalMul{n}{k}$.
+\end{theorem}
+\begin{proof}
+    Let $C=\{l\in\naturals\mid
+        \text{for all $Y,Q$ such that $Q$ is a partition of $Y$ and
+            $Q$ has finite cardinality $l$ and every element of $Q$
+            has finite cardinality $n$ we have
+            $Y$ has finite cardinality $\naturalMul{n}{l}$}\}$.
+    Show that $\emptyset\in C$.
+    \begin{subproof}
+        $\emptyset\in\naturals$ by \obv{omega_empty}.
+        Show that for all $Y,Q$ such that $Q$ is a partition of $Y$ and
+            $Q$ has finite cardinality $\emptyset$ and every element
+            of $Q$ has finite cardinality $n$ we have
+            $Y$ has finite cardinality $\naturalMul{n}{\emptyset}$.
+        \begin{subproof}
+            Fix $Y,Q$.
+            Assume $Q$ is a partition of $Y$ and
+                $Q$ has finite cardinality $\emptyset$ and every
+                element of $Q$ has finite cardinality $n$.
+            $Q=\emptyset$ by
+                \obv{finite_cardinality_zero_iff_emptyset}.
+            $\unions{Q}=Y$.
+            $\unions{Q}=\emptyset$ by \obv{unions_emptyset}.
+            Hence $Y=\emptyset$.
+            $\naturalMul{n}{\emptyset}=\emptyset$ by
+                \obv{natural_multiplication_zero_right}.
+            Follows by \obv{finite_cardinality_zero_iff_emptyset}.
+        \end{subproof}
+    \end{subproof}
+    Show that for every $l\in C$ we have $\suc{l}\in C$.
+    \begin{subproof}
+        Fix $l\in C$.
+        Show that for all $Y,Q$ such that $Q$ is a partition of $Y$ and
+            $Q$ has finite cardinality $\suc{l}$ and every element
+            of $Q$ has finite cardinality $n$ we have
+            $Y$ has finite cardinality $\naturalMul{n}{\suc{l}}$.
+        \begin{subproof}
+            Fix $Y,Q$.
+            Assume $Q$ is a partition of $Y$ and
+                $Q$ has finite cardinality $\suc{l}$ and every
+                element of $Q$ has finite cardinality $n$.
+            Take $f$ such that $f\in\bijections{\suc{l}}{Q}$ by
+                \obv{finite_cardinality}.
+            Let $B=f(l)$, $Q'=Q\setminus\{B\}$, and $Y'=Y\setminus B$.
+            $l\in\suc{l}$ by \obv{suc_intro_self}.
+            Hence $B\in Q$ by
+                \auto{bijections_to_funs,funs_type_apply}.
+            $Q'$ is a partition of $Y'$ by
+                \auto{partition_remove_block}.
+            $Q'$ has finite cardinality $l$ by
+                \auto{finite_cardinality_remove_element}.
+            Every element of $Q'$ has finite cardinality $n$ by
+                \auto{setminus}.
+            Hence $Y'$ has finite cardinality $\naturalMul{n}{l}$.
+            $B$ has finite cardinality $n$.
+            $Y'\inter B=\emptyset$ by
+                \auto{setext,inter,setminus,emptyset}.
+            Hence $Y'\union B$ has finite cardinality
+                $\naturalMul{n}{l}+n$ by
+                \obv{finite_cardinality_disjoint_union,
+                    natural_multiplication_closed}.
+            $B\subseteq Y$ by \obv{partition_block_subseteq}.
+            Hence $Y'\union B=Y$ by
+                \auto{setext,union_iff,setminus,subseteq}.
+            $\naturalMul{n}{\suc{l}}=\naturalMul{n}{l}+n$ by
+                \obv{natural_multiplication_successor_right}.
+        \end{subproof}
+        Follows by \obv{omega_successor}.
+    \end{subproof}
+    Hence $C$ is an inductive set by \obv{inductive_set}.
+    Hence every natural number is an element of $C$ by
+        \obv{omega_minimal}.
+    Thus $k\in C$.
+\end{proof}
+
+\begin{theorem}\label{natural_number_is_cardinal}
+    Let $n$ be a natural number.
+    Then $n$ is a cardinal.
+\end{theorem}
+\begin{proof}
+    $n$ is an ordinal by \obv{natural_number_is_ordinal}.
+    Show that for every $m\in n$ we have $\lnot(m\approx n)$.
+    \begin{subproof}
+        Fix $m\in n$.
+        $n\subseteq\naturals$
+            by
+            \obv{naturals_is_transitive_set,transitiveset_iff_subseteq}.
+        Suppose $m\approx n$.
+        Hence $m=n$ by \obv{natural_equinumerous_unique}.
+        Contradiction by \obv{in_irrefl}.
+    \end{subproof}
+    Hence $n$ is an initial ordinal by \obv{initial_ordinal}.
+    Follows by \obv{cardinal}.
+\end{proof}
+
+\begin{corollary}\label{card_of_natural_number}
+    Let $n$ be a natural number.
+    Then $\card{n}=n$.
+\end{corollary}
+\begin{proof}
+    Follows by \obv{natural_number_is_cardinal,card_of_cardinal}.
+\end{proof}
+
+\begin{theorem}\label{finite_equinumerous}
+    Suppose $X$ is finite and $X\approx Y$.
+    Then $Y$ is finite.
+\end{theorem}
+\begin{proof}
+    Take a natural number $n$ such that there exists
+        $f\in\bijections{n}{X}$ by \auto{finite}.
+    Take $f$ such that $f\in\bijections{n}{X}$ by \auto.
+    Hence $n\approx X$ by \obv{equinum}.
+    Hence $n\approx Y$ by \obv{equinum_tran}.
+    Take $g$ such that $g\in\bijections{n}{Y}$ by \obv{equinum}.
+    Follows by \obv{finite}.
+\end{proof}
+
+\begin{theorem}\label{finite_cardinality_iff_card}
+    Let $n$ be a natural number.
+    Then $X$ has finite cardinality $n$ iff $\card{X}=n$.
+\end{theorem}
+\begin{proof}
+    Show that if $X$ has finite cardinality $n$, then $\card{X}=n$.
+    \begin{subproof}
+        Assume $X$ has finite cardinality $n$.
+        Take $f$ such that $f\in\bijections{n}{X}$
+            by \obv{finite_cardinality}.
+        Hence $n\approx X$ by \obv{equinum}.
+        Hence $\card{n}=\card{X}$
+            by \obv{card_eq_iff_equinumerous}.
+        $\card{n}=n$ by \obv{card_of_natural_number}.
+    \end{subproof}
+    Show that if $\card{X}=n$, then
+        $X$ has finite cardinality $n$.
+    \begin{subproof}
+        Assume $\card{X}=n$.
+        $X\approx\card{X}$ by \obv{equinumerous_card}.
+        Hence $X\approx n$.
+        Hence $n\approx X$ by \obv{equinum_sym}.
+        Take $f$ such that $f\in\bijections{n}{X}$ by \obv{equinum}.
+        Follows by \obv{finite_cardinality}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{proposition}\label{finite_cardinality_one_elements_equal}
+    Suppose $X$ has finite cardinality $\cardOne$.
+    Let $x,y\in X$.
+    Then $x=y$.
+\end{proposition}
+\begin{proof}
+    Take $f$ such that $f\in\bijections{\cardOne}{X}$ by
+        \obv{finite_cardinality}.
+    Take $i,j\in\cardOne$ such that $f(i)=x$ and $f(j)=y$ by
+        \auto{bijections,surj}.
+    $i=\emptyset$ and $j=\emptyset$ by
+        \auto{cardinal_one,suc_iff,emptyset}.
+\end{proof}
+
+\begin{proposition}\label{finite_cardinality_one_iff_singleton}
+    $X$ has finite cardinality $\cardOne$ iff
+        there exists $x$ such that $X=\{x\}$.
+\end{proposition}
+\begin{proof}
+    $\cardOne$ is a natural number by
+        \auto{cardinal_one,omega_empty,omega_successor}.
+    Show that if $X$ has finite cardinality $\cardOne$, then
+        there exists $x$ such that $X=\{x\}$.
+    \begin{subproof}
+        Assume $X$ has finite cardinality $\cardOne$.
+        Take $f$ such that $f\in\bijections{\cardOne}{X}$ by
+            \obv{finite_cardinality}.
+        $\emptyset\in\cardOne$ by
+            \obv{cardinal_one,suc_intro_self}.
+        Let $x=f(\emptyset)$.
+        $x\in X$ by \auto{bijections_to_funs,funs_type_apply}.
+        Show that every element of $X$ is equal to $x$.
+        \begin{subproof}
+            Follows by \obv{finite_cardinality_one_elements_equal}.
+        \end{subproof}
+        Hence $X=\{x\}$ by \auto{setext,singleton_iff}.
+    \end{subproof}
+    Show that if there exists $x$ such that $X=\{x\}$, then
+        $X$ has finite cardinality $\cardOne$.
+    \begin{subproof}
+        Assume there exists $x$ such that $X=\{x\}$.
+        Take $x$ such that $X=\{x\}$.
+        $\cardOne=\{\emptyset\}$ by
+            \obv{cardinal_one,setext,suc_iff,singleton_iff,emptyset}.
+        $\{\emptyset\}\approx\{x\}$ by \obv{singletons_equinum}.
+        Hence $\cardOne\approx X$.
+        Take $f$ such that $f\in\bijections{\cardOne}{X}$ by
+            \obv{equinum}.
+        Follows by \obv{finite_cardinality}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{two_element_cardinality_characterization}
+    $A\approx\cardTwo$ iff there exist $x,y$ such that
+        $x\neq y$ and $A=\{x,y\}$.
+\end{theorem}
+\begin{proof}
+    $\cardOne\in\naturals$ by
+        \auto{cardinal_one,omega_empty,omega_successor}.
+    Hence $\cardTwo\in\naturals$ by
+        \auto{cardinal_two_successor,omega_successor}.
+    Show that if $A\approx\cardTwo$, then there exist $x,y$ such that
+        $x\neq y$ and $A=\{x,y\}$.
+    \begin{subproof}
+        Assume $A\approx\cardTwo$.
+        Hence $\cardTwo\approx A$ by \obv{equinum_sym}.
+        Take $f$ such that $f\in\bijections{\cardTwo}{A}$ by
+            \obv{equinum}.
+        Hence $A$ has finite cardinality $\cardTwo$ by
+            \obv{finite_cardinality}.
+        $\cardOne\in\cardTwo$
+            by \obv{cardinal_two_successor,suc_intro_self}.
+        Let $y=f(\cardOne)$.
+        $y\in A$ by \auto{bijections_to_funs,funs_type_apply}.
+        $A\setminus\{y\}$ has finite cardinality $\cardOne$ by
+            \obv{cardinal_two_successor,finite_cardinality_remove_element}.
+        Take $x$ such that $A\setminus\{y\}=\{x\}$ by
+            \obv{finite_cardinality_one_iff_singleton}.
+        $x\in A\setminus\{y\}$ by \auto{singleton_iff}.
+        Hence $x\in A$ and $x\neq y$ by
+            \obv{setminus,singleton_iff}.
+        $\cons{y}{A\setminus\{y\}}=A$ by \obv{cons_remove}.
+        Hence $A=\{x,y\}$ by
+            \auto{cons_iff,singleton_iff,setext}.
+        Follows by \auto.
+    \end{subproof}
+    Show that if there exist $x,y$ such that $x\neq y$ and
+            $A=\{x,y\}$, then $A\approx\cardTwo$.
+    \begin{subproof}
+        Assume there exist $x,y$ such that $x\neq y$ and $A=\{x,y\}$.
+        Take $x,y$ such that $x\neq y$ and $A=\{x,y\}$.
+        $\{y\}$ has finite cardinality $\cardOne$ by
+            \auto{finite_cardinality_one_iff_singleton}.
+        $x\notin\{y\}$ by \obv{singleton_iff}.
+        Hence $\cons{x}{\{y\}}$ has finite cardinality
+            $\suc{\cardOne}$ by \obv{finite_cardinality_cons}.
+        $\suc{\cardOne}=\cardTwo$ by \obv{cardinal_two_successor}.
+        $\cons{x}{\{y\}}=A$ by
+            \obv{setext,cons_iff,singleton_iff,upair_iff}.
+        Hence $A$ has finite cardinality $\cardTwo$.
+        Take $f$ such that $f\in\bijections{\cardTwo}{A}$ by
+            \obv{finite_cardinality}.
+        Hence $\cardTwo\approx A$ by \obv{equinum}.
+        Follows by \obv{equinum_sym}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{finite_iff_injects_into_natural}
+    $X$ is finite iff there exists a natural number $n$ such that
+        there exists an injective function from $X$ to $n$.
+\end{theorem}
+\begin{proof}
+    Show that if $X$ is finite, then there exists a natural number $n$
+        such that there exists an injective function from $X$ to $n$.
+    \begin{subproof}
+        Assume $X$ is finite.
+        Take a natural number $n$ such that there exists
+            $f\in\bijections{n}{X}$ by \auto{finite}.
+        Take $f$ such that $f\in\bijections{n}{X}$ by \auto.
+        $\converse{f}\in\bijections{X}{n}$
+            by \obv{bijection_converse_is_bijection}.
+        Hence $\converse{f}\in\funs{X}{n}$
+            by \obv{bijections_to_funs}.
+        $\converse{f}$ is injective by \obv{bijections}.
+        Thus $\converse{f}$ is an injective function from $X$ to $n$
+            by \obv{funs_is_function,injective_function}.
+    \end{subproof}
+    Show that if there exists a natural number $n$ such that
+        there exists an injective function from $X$ to $n$, then
+        $X$ is finite.
+    \begin{subproof}
+        Assume there exists a natural number $n$ such that
+            there exists an injective function from $X$ to $n$.
+        Take a natural number $n$ such that there exists an injective
+            function $f$ from $X$ to $n$.
+        Take $f$ such that $f$ is an injective function from $X$ to $n$.
+        $f\in\funs{X}{n}$ and $f$ is injective
+            by \obv{injective_function,funs_is_function}.
+        Hence $f\in\inj{X}{n}$
+            by \auto{inj,funs,funs_is_function,injective_function}.
+        $\ran{f}\subseteq n$ by \obv{inj,funs_ran}.
+        $n$ is finite by \obv{natural_number_is_finite}.
+        Hence $\ran{f}$ is finite by \obv{subseteq_finite_is_finite}.
+        $f\in\surj{X}{\ran{f}}$ by \obv{inj,fun_to_surj}.
+        $f$ is injective
+            by \obv{inj,funs,funs_is_function,injective_function}.
+        Hence $f\in\bijections{X}{\ran{f}}$ by \obv{bijections}.
+        Thus $X\approx\ran{f}$ by \obv{equinum}.
+        $\ran{f}\approx X$ by \obv{equinum_sym}.
+        Follows by \obv{finite_equinumerous}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{proposition}\label{cardinal_sum_natural_successor}
+    Let $n$ be a natural number.
+    Then $\cardSum{n}{\cardOne}=\suc{n}$.
+\end{proposition}
+\begin{proof}
+    $n\times\{\sumLeftTag\}\approx n$
+        by \obv{times_singleton_right_equinum}.
+    $\cardOne\times\{\sumRightTag\}\approx\cardOne$
+        by \obv{times_singleton_right_equinum}.
+    $\cardOne=\{\emptyset\}$
+        by \obv{cardinal_one,setext,suc_iff,singleton_iff,emptyset}.
+    Hence $\cardOne\approx\{n\}$ by \auto{singletons_equinum}.
+    Hence $\cardOne\times\{\sumRightTag\}\approx\{n\}$
+        by \obv{equinum_tran}.
+    $(n\times\{\sumLeftTag\})\inter
+        (\cardOne\times\{\sumRightTag\})=\emptyset$
+        by \obv{tagged_sum_components_disjoint}.
+    $n\inter\{n\}=\emptyset$
+        by \auto{setext,inter,singleton_iff,emptyset,in_irrefl}.
+    Hence $\taggedSum{n}{\cardOne}\approx n\union\{n\}$
+        by \auto{tagged_sum,disjoint_union_equinum_congruent}.
+    $n\union\{n\}=\suc{n}$
+        by \auto{setext,union_iff,suc_iff,singleton_iff}.
+    Hence $\card{\taggedSum{n}{\cardOne}}=\card{\suc{n}}$
+        by \obv{card_eq_iff_equinumerous}.
+    $\suc{n}$ is a natural number by \obv{omega_successor}.
+    Hence $\card{\suc{n}}=\suc{n}$
+        by \obv{card_of_natural_number}.
+    Follows by \obv{cardinal_sum}.
+\end{proof}
+
+\begin{theorem}\label{cardinal_sum_natural_numbers}
+    Let $m,n$ be natural numbers.
+    Then $\cardSum{m}{n}=m+n$.
+\end{theorem}
+\begin{proof}
+    Let $C=\{k\in\naturals\mid
+        \text{$\cardSum{m}{k}=m+k$}\}$.
+    $m$ is a cardinal by \obv{natural_number_is_cardinal}.
+    $\emptyset\in C$
+        by
+        \auto{omega_empty,cardinal_zero,cardinal_sum_zero_right,num_addition_zero_right}.
+    Show that for every $k\in C$ we have $\suc{k}\in C$.
+    \begin{subproof}
+        Fix $k\in C$.
+        Then $k$ is a natural number and
+            $\cardSum{m}{k}=m+k$.
+        $m+k$ is a natural number by \obv{num_addition_on_naturals}.
+        $\cardSum{k}{\cardOne}=\suc{k}$
+            by \obv{cardinal_sum_natural_successor}.
+        $\cardSum{m}{\suc{k}}
+            =\cardSum{\cardSum{m}{k}}{\cardOne}$
+            by \auto{cardinal_sum_associative}.
+        Hence $\cardSum{m}{\suc{k}}
+            =\cardSum{m+k}{\cardOne}$.
+        Hence $\cardSum{m}{\suc{k}}=\suc{m+k}$
+            by \obv{cardinal_sum_natural_successor}.
+        $m+\suc{k}=\suc{m+k}$
+            by \obv{num_addition_successor_right}.
+        $\suc{k}$ is a natural number by \obv{omega_successor}.
+    \end{subproof}
+    Hence $C$ is an inductive set by \obv{inductive_set}.
+    Hence every natural number is an element of $C$
+        by \obv{omega_minimal}.
+    Thus $n\in C$.
+\end{proof}
+
+\begin{theorem}\label{cardinal_product_natural_numbers}
+    Let $m,n$ be natural numbers.
+    Then $\cardProduct{m}{n}=\naturalMul{m}{n}$.
+\end{theorem}
+\begin{proof}
+    Let $C=\{k\in\naturals\mid
+        \text{$\cardProduct{m}{k}=\naturalMul{m}{k}$}\}$.
+    $m$ is a cardinal by \obv{natural_number_is_cardinal}.
+    $\emptyset\in C$
+        by
+        \auto{omega_empty,cardinal_zero,cardinal_product_zero_right,natural_multiplication_zero_right}.
+    Show that for every $k\in C$ we have $\suc{k}\in C$.
+    \begin{subproof}
+        Fix $k\in C$.
+        Then $k$ is a natural number and
+            $\cardProduct{m}{k}=\naturalMul{m}{k}$.
+        $\naturalMul{m}{k}$ is a natural number
+            by \obv{natural_multiplication_closed}.
+        $\cardSum{k}{\cardOne}=\suc{k}$
+            by \obv{cardinal_sum_natural_successor}.
+        $\cardProduct{m}{\suc{k}}
+            =\cardSum{\cardProduct{m}{k}}
+                {\cardProduct{m}{\cardOne}}$
+            by \auto{cardinal_product_distributes_over_sum}.
+        $\cardProduct{m}{\cardOne}=m$
+            by \obv{cardinal_product_one_right}.
+        Hence $\cardProduct{m}{\suc{k}}
+            =\cardSum{\naturalMul{m}{k}}{m}$.
+        Hence $\cardProduct{m}{\suc{k}}
+            =\naturalMul{m}{k}+m$
+            by \obv{cardinal_sum_natural_numbers}.
+        $\naturalMul{m}{\suc{k}}=\naturalMul{m}{k}+m$
+            by \obv{natural_multiplication_successor_right}.
+        $\suc{k}$ is a natural number by \obv{omega_successor}.
+    \end{subproof}
+    Hence $C$ is an inductive set by \obv{inductive_set}.
+    Hence every natural number is an element of $C$
+        by \obv{omega_minimal}.
+    Thus $n\in C$.
+\end{proof}
+
+\begin{theorem}\label{naturals_is_infinite}
+    $\naturals$ is infinite.
+\end{theorem}
+\begin{proof}
+    Suppose not.
+    $\naturals$ is finite.
+    $\naturals$ is an ordinal by \obv{omega_is_ordinal}.
+    Hence $\naturals$ is a natural number
+        by \obv{finite_ordinal_is_natural_number}.
+    Hence $\naturals\in\naturals$.
+    Contradiction by \obv{in_irrefl}.
+\end{proof}
+
+\begin{theorem}\label{naturals_is_cardinal}
+    $\naturals$ is a cardinal.
+\end{theorem}
+\begin{proof}
+    $\naturals$ is an ordinal by \obv{omega_is_ordinal}.
+    Show that for every $n\in\naturals$ we have
+        $\lnot(n\approx\naturals)$.
+    \begin{subproof}
+        Fix $n\in\naturals$.
+        $n$ is finite by \obv{natural_number_is_finite}.
+        Suppose $n\approx\naturals$.
+        Hence $\naturals$ is finite by \obv{finite_equinumerous}.
+        Contradiction by \obv{naturals_is_infinite}.
+    \end{subproof}
+    Hence $\naturals$ is an initial ordinal by \obv{initial_ordinal}.
+    Follows by \obv{cardinal}.
+\end{proof}
+
+\begin{corollary}\label{card_of_naturals}
+    $\card{\naturals}=\naturals$.
+\end{corollary}
+\begin{proof}
+    Follows by \obv{naturals_is_cardinal,card_of_cardinal}.
+\end{proof}
+
+\begin{theorem}\label{below_omega_iff_finite}
+    $\cardLt{F}{\naturals}$ iff $F$ is finite.
+\end{theorem}
+\begin{proof}
+    $\card{\naturals}=\naturals$ by \obv{card_of_naturals}.
+    Show that if $\cardLt{F}{\naturals}$, then $F$ is finite.
+    \begin{subproof}
+        Assume $\cardLt{F}{\naturals}$.
+        Hence $\card{F}\in\card{\naturals}$ by
+            \obv{card_elem_iff_cardinal_lt}.
+        Hence $\card{F}\in\naturals$.
+        Hence $\card{F}$ is finite by
+            \obv{natural_number_is_finite}.
+        $\card{F}\approx F$ by \obv{card_equinumerous}.
+        Follows by \obv{finite_equinumerous}.
+    \end{subproof}
+    Show that if $F$ is finite, then $\cardLt{F}{\naturals}$.
+    \begin{subproof}
+        Assume $F$ is finite.
+        Take a natural number $n$ such that there exists
+            $f\in\bijections{n}{F}$ by \auto{finite}.
+        Take $f$ such that $f\in\bijections{n}{F}$ by \auto.
+        Hence $n\approx F$ by \obv{equinum}.
+        Hence $\card{n}=\card{F}$ by
+            \obv{card_eq_iff_equinumerous}.
+        $\card{n}=n$ by \obv{card_of_natural_number}.
+        Hence $\card{F}\in\card{\naturals}$.
+        Follows by \obv{card_elem_iff_cardinal_lt}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{at_most_countable_iff_card_subseteq_naturals}
+    $X$ is at most countable iff $\card{X}\subseteq\naturals$.
+\end{theorem}
+\begin{proof}
+    $\card{\naturals}=\naturals$ by \obv{card_of_naturals}.
+    Follows by
+        \auto{at_most_countable,cardinal_le,card_subseteq_iff_cardinal_le}.
+\end{proof}
+
+\begin{theorem}\label{countably_infinite_iff_card_naturals}
+    $X$ is countably infinite iff $\card{X}=\naturals$.
+\end{theorem}
+\begin{proof}
+    Show that if $X$ is countably infinite, then
+        $\card{X}=\naturals$.
+    \begin{subproof}
+        Assume $X$ is countably infinite.
+        Hence $X$ is at most countable and $X$ is infinite
+            by \obv{countably_infinite}.
+        Hence $\card{X}\subseteq\naturals$
+            by \obv{at_most_countable_iff_card_subseteq_naturals}.
+        $\card{X}$ and $\naturals$ are ordinals
+            by \obv{card_is_ordinal,omega_is_ordinal}.
+        Hence $\card{X}\in\naturals$ or
+            $\card{X}=\naturals$
+            by \obv{ordinal_subseteq_implies_elem_or_eq}.
+        Show that $\card{X}\notin\naturals$.
+        \begin{subproof}
+            Suppose $\card{X}\in\naturals$.
+            Hence $\card{X}$ is finite
+                by \obv{natural_number_is_finite}.
+            $\card{X}\approx X$ by \obv{card_equinumerous}.
+            Hence $X$ is finite by \obv{finite_equinumerous}.
+            Contradiction.
+        \end{subproof}
+    \end{subproof}
+    Show that if $\card{X}=\naturals$, then
+        $X$ is countably infinite.
+    \begin{subproof}
+        Assume $\card{X}=\naturals$.
+        $\card{X}\subseteq\naturals$ by \obv{subseteq_refl}.
+        Hence $X$ is at most countable
+            by \obv{at_most_countable_iff_card_subseteq_naturals}.
+        Show that $X$ is infinite.
+        \begin{subproof}
+            Suppose not.
+            Hence $X$ is finite.
+            $X\approx\card{X}$ by \obv{equinumerous_card}.
+            Hence $\card{X}$ is finite by \obv{finite_equinumerous}.
+            Hence $\naturals$ is finite.
+            Contradiction by \obv{naturals_is_infinite}.
+        \end{subproof}
+        Follows by \obv{countably_infinite}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{corollary}\label{enumerable_iff_card_subseteq_naturals}
+    $X$ is enumerable iff $\card{X}\subseteq\naturals$.
+\end{corollary}
+\begin{proof}
+    Follows by
+        \obv{countable_iff_enumerable,at_most_countable_iff_card_subseteq_naturals}.
+\end{proof}

@@ -1,0 +1,514 @@
+\section{Open rank cells of finite open chains}
+
+\import{topology/urysohn/chain.tex}
+\import{topology/urysohn/rank.tex}
+\import{logic/conditional.tex}
+\import{set/logical-graph.tex}
+
+To control step values locally, we cover the space by open sets on which
+entry ranks differ by at most one. An interior cell lies in the next chain
+entry and outside the closure of the preceding entry. Closure nesting makes
+these cells open and ensures that they cover the space together with the two
+endpoint cells.
+
+The formulas specify the endpoints separately, so no predecessor is needed
+at zero. They define total terms; the open-cover and rank properties below
+require a chain with a positive number of steps.
+
+\begin{definition}\label{open_chain_rank_cell}
+    $\openChainRankCell{X}{c}{r}{k}=
+        \Apply{\logicalIfSetOp}{(k=\emptyset),c(\suc{\emptyset}),
+            \Apply{\logicalIfSetOp}{(k=r),\carrier[X]\setminus
+                    \closure{c(\unions{r})}{X},
+                c(\suc{k})\setminus
+                    \closure{c(\unions{k})}{X}}}$.
+\end{definition}
+
+\begin{definition}\label{open_chain_rank_cells}
+    $\openChainRankCells{X}{c}{r}=
+        \Apply{\graphOnDomainOp}
+            {\suc{r},
+                \fun{k:\Set}{\openChainRankCell{X}{c}{r}{k}}}$.
+\end{definition}
+
+\begin{proposition}\label{open_chain_rank_cell_zero}
+    $\openChainRankCell{X}{c}{r}{\emptyset}=c(\suc{\emptyset})$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \obv{open_chain_rank_cell,logical_if_set_true}.
+\end{proof}
+
+\begin{proposition}\label{open_chain_rank_cell_last}
+    Suppose $r\neq\emptyset$.
+    Then
+        $\openChainRankCell{X}{c}{r}{r}
+            =\carrier[X]\setminus\closure{c(\unions{r})}{X}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{open_chain_rank_cell,logical_if_set_false,logical_if_set_true}.
+\end{proof}
+
+\begin{proposition}\label{open_chain_rank_cell_interior}
+    Suppose $k\neq\emptyset$ and $k\neq r$.
+    Then
+        $\openChainRankCell{X}{c}{r}{k}
+            =c(\suc{k})\setminus\closure{c(\unions{k})}{X}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{open_chain_rank_cell,logical_if_set_false}.
+\end{proof}
+
+\begin{corollary}\label{open_chain_rank_cells_range_finite}
+    Let $r$ be a natural number.
+    Then $\ran{\openChainRankCells{X}{c}{r}}$ is finite.
+\end{corollary}
+\begin{proof}
+    Let $D=\openChainRankCells{X}{c}{r}$.
+    $D\in\funs{\suc{r}}{\ran{D}}$
+        by \auto{open_chain_rank_cells,logical_graph_on_domain_function}.
+    Hence $D$ is a function and $\dom{D}=\suc{r}$
+        by \obv{funs_is_function,funs}.
+    $\suc{r}$ is a natural number by \obv{omega_successor}.
+    Hence $\suc{r}$ is finite by \obv{natural_number_is_finite}.
+    $\suc{r}\subseteq\dom{D}$ by \obv{subseteq_refl}.
+    Hence $\img{D}{\suc{r}}$ is finite
+        by \obv{finite_function_image}.
+    $\img{D}{\suc{r}}=\ran{D}$ by \auto{img_dom}.
+\end{proof}
+
+\begin{proposition}\label{open_chain_rank_cells_apply}
+    Let $k\in\suc{r}$.
+    Then $\apply{\openChainRankCells{X}{c}{r}}{k}
+        =\openChainRankCell{X}{c}{r}{k}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{open_chain_rank_cells,logical_graph_on_domain_apply}.
+\end{proof}
+
+\begin{corollary}\label{open_chain_rank_cells_zero}
+    Suppose $\emptyset\in\suc{r}$.
+    Then $\apply{\openChainRankCells{X}{c}{r}}{\emptyset}
+        =c(\suc{\emptyset})$.
+\end{corollary}
+\begin{proof}
+    Follows by
+        \auto{open_chain_rank_cells_apply,open_chain_rank_cell_zero}.
+\end{proof}
+
+\begin{corollary}\label{open_chain_rank_cells_last}
+    Suppose $r\neq\emptyset$.
+    Then $\apply{\openChainRankCells{X}{c}{r}}{r}
+        =\carrier[X]\setminus\closure{c(\unions{r})}{X}$.
+\end{corollary}
+\begin{proof}
+    $r\in\suc{r}$ by \obv{suc_intro_self}.
+    Follows by
+        \auto{open_chain_rank_cells_apply,open_chain_rank_cell_last}.
+\end{proof}
+
+\begin{corollary}\label{open_chain_rank_cells_interior}
+    Let $k\in r$.
+    Suppose $k\neq\emptyset$.
+    Then $\apply{\openChainRankCells{X}{c}{r}}{k}
+        =c(\suc{k})\setminus\closure{c(\unions{k})}{X}$.
+\end{corollary}
+\begin{proof}
+    $k\in\suc{r}$ by \obv{suc_intro_in}.
+    $k\neq r$ by \obv{in_irrefl}.
+    Follows by
+        \auto{open_chain_rank_cells_apply,open_chain_rank_cell_interior}.
+\end{proof}
+
+\begin{proposition}\label{open_chain_rank_cell_open}
+    Let $X$ be a topological space.
+    Let $r$ be a natural number such that $r\neq\emptyset$.
+    Suppose $c$ is a finite open chain with $r$ steps in $X$.
+    Let $k\in\suc{r}$.
+    Then
+        $\openChainRankCell{X}{c}{r}{k}
+            \in\opens[X]$.
+\end{proposition}
+\begin{proof}
+    $c\in\funs{\suc{r}}{\opens[X]}$
+        by \obv{finite_open_chain_type}.
+    \begin{byCase}
+        \caseOf{$k=\emptyset$.}
+            $\emptyset\in r$ by \obv{natural_nonzero_contains_zero}.
+            $\emptyset$ is a natural number by \obv{omega_empty}.
+            $\suc{\emptyset}\in\suc{r}$
+                by \obv{natural_successor_in_successor_bound}.
+            Hence $c(\suc{\emptyset})\in\opens[X]$
+                by \obv{funs_type_apply}.
+            Follows by \auto{open_chain_rank_cell_zero}.
+        \caseOf{$k\neq\emptyset$.}
+            \begin{byCase}
+                \caseOf{$k=r$.}
+                    $\closure{c(\unions{r})}{X}$ is closed in $X$
+                        by \obv{closure_is_closed}.
+                    Hence $\closure{c(\unions{r})}{X}
+                        \subseteq\carrier[X]$
+                        by \obv{closed_in_subseteq_carrier}.
+                    Thus $\carrier[X]\setminus
+                        \closure{c(\unions{r})}{X}$ is open in $X$
+                        by \obv{complement_of_closed_is_open}.
+                    Hence $\carrier[X]\setminus
+                        \closure{c(\unions{r})}{X}\in\opens[X]$
+                        by \obv{is_open}.
+                    Follows by \auto{open_chain_rank_cell_last}.
+                \caseOf{$k\neq r$.}
+                    Hence $k\in r$ by \auto{suc_iff}.
+                    $r\subseteq\naturals$
+                        by
+                        \obv{naturals_is_transitive_set,transitiveset_iff_subseteq}.
+                    $\suc{k}\in\suc{r}$
+                        by \obv{natural_successor_in_successor_bound}.
+                    Hence $c(\suc{k})\in\opens[X]$
+                        by \obv{funs_type_apply}.
+                    Thus $c(\suc{k})$ is open in $X$ by \obv{is_open}.
+                    Hence $c(\suc{k})\subseteq\carrier[X]$
+                        by \obv{opens_type,subseteq}.
+                    $\closure{c(\unions{k})}{X}$ is closed in $X$
+                        by \obv{closure_is_closed}.
+                    Hence $\closure{c(\unions{k})}{X}
+                        \subseteq\carrier[X]$
+                        by \obv{closed_in_subseteq_carrier}.
+                    Thus $c(\suc{k})\setminus
+                        \closure{c(\unions{k})}{X}$ is open in $X$
+                        by \obv{opens_minus_closed_is_open}.
+                    Hence $c(\suc{k})\setminus
+                        \closure{c(\unions{k})}{X}\in\opens[X]$
+                        by \obv{is_open}.
+                    Follows by
+                        \obv{open_chain_rank_cell_interior}.
+            \end{byCase}
+    \end{byCase}
+\end{proof}
+
+\begin{theorem}\label{open_chain_rank_cells_typed}
+    Let $X$ be a topological space.
+    Let $r$ be a natural number such that $r\neq\emptyset$.
+    Suppose $c$ is a finite open chain with $r$ steps in $X$.
+    Then $\openChainRankCells{X}{c}{r}
+        \in\funs{\suc{r}}{\opens[X]}$.
+\end{theorem}
+\begin{proof}
+    For every $k\in\suc{r}$ we have
+        $\openChainRankCell{X}{c}{r}{k}\in\opens[X]$
+        by \obv{open_chain_rank_cell_open}.
+    Follows by
+        \auto{open_chain_rank_cells,logical_graph_on_domain_type}.
+\end{proof}
+
+\subsection{Ranks on the cells}
+
+\begin{lemma}\label{open_chain_entry_rank_after_closed_entry}
+    Let $X$ be a topological space.
+    Suppose $c$ is a finite open chain with $r$ steps in $X$.
+    Let $p\in r$.
+    Suppose $x\notin\closure{c(p)}{X}$.
+    Then $p\in\entryRank{c}{r}{x}$.
+\end{lemma}
+\begin{proof}
+    $r$ is a natural number and
+        $c\in\funs{\suc{r}}{\opens[X]}$
+        by \obv{finite_open_chain_type}.
+    $p$ is a natural number
+        by
+        \obv{naturals_is_transitive_set,transitiveset_iff_subseteq,subseteq}.
+    Let $q=\entryRank{c}{r}{x}$.
+    $q$ is an ordinal by \obv{entry_rank_is_ordinal}.
+    $p$ is an ordinal by \obv{natural_number_is_ordinal}.
+    Suppose not.
+    $q\in\entryRankCandidates{c}{r}{x}$
+        by \auto{entry_rank_is_candidate}.
+    Hence $q\in r$ and $x\in c(q)$ or $q=r$
+        by \obv{entry_rank_candidates_iff}.
+    Show that $q\in r$ and $x\in c(q)$.
+    \begin{subproof}
+        Suppose not.
+        Hence $q=r$.
+        Then $p\in q$.
+        Contradiction.
+    \end{subproof}
+    $q\in p$ or $q=p$ or $p\in q$
+        by \obv{ordinal_elem_connex}.
+    Hence $q\in p$ or $q=p$.
+    Hence $q\subseteq p$
+        by
+        \obv{ordinal_elem_implies_subseteq,subseteq_refl,natural_number_is_ordinal}.
+    $q\in\suc{r}$ and $p\in\suc{r}$ by \obv{suc_intro_in}.
+    Thus $c(q)\subseteq c(p)$
+        by \obv{finite_open_chain_monotone}.
+    $c(p)\in\opens[X]$ by \obv{funs_type_apply,suc_intro_in}.
+    Hence $c(p)\subseteq\carrier[X]$
+        by \obv{opens_type,subseteq}.
+    Thus $c(p)\subseteq\closure{c(p)}{X}$
+        by \obv{set_is_subseteq_to_closure_of_the_set}.
+    Hence $c(q)\subseteq\closure{c(p)}{X}$
+        by \obv{subseteq_transitive}.
+    Thus $x\in\closure{c(p)}{X}$ by \obv{subseteq}.
+    Contradiction.
+\end{proof}
+
+\begin{proposition}\label{open_chain_entry_rank_on_zero_cell}
+    Let $X$ be a topological space.
+    Let $r$ be a natural number such that $r\neq\emptyset$.
+    Suppose $c$ is a finite open chain with $r$ steps in $X$.
+    Let $x\in\apply{\openChainRankCells{X}{c}{r}}{\emptyset}$.
+    Then $\entryRank{c}{r}{x}=\emptyset$ or
+        $\entryRank{c}{r}{x}=\suc{\emptyset}$.
+\end{proposition}
+\begin{proof}
+    $\emptyset\in r$ by \obv{natural_nonzero_contains_zero}.
+    Hence $\emptyset\in\suc{r}$ by \obv{suc_intro_in}.
+    $x\in c(\suc{\emptyset})$
+        by \obv{open_chain_rank_cells_zero}.
+    $\emptyset$ is a natural number by \obv{omega_empty}.
+    Hence $\suc{\emptyset}\in\suc{r}$
+        by \obv{natural_successor_in_successor_bound}.
+    Thus $\suc{\emptyset}\in r$ or
+        $\suc{\emptyset}=r$ by \auto{suc_iff}.
+    Hence $\suc{\emptyset}
+        \in\entryRankCandidates{c}{r}{x}$
+        by \auto{entry_rank_candidates_iff}.
+    Thus $\entryRank{c}{r}{x}\subseteq\suc{\emptyset}$
+        by \obv{entry_rank_subseteq}.
+    $\entryRank{c}{r}{x}$ and $\suc{\emptyset}$ are ordinals
+        by
+        \obv{entry_rank_is_ordinal,emptyset_is_ordinal,suc_ordinal}.
+    Hence $\entryRank{c}{r}{x}\in\suc{\emptyset}$ or
+        $\entryRank{c}{r}{x}=\suc{\emptyset}$
+        by \obv{ordinal_subseteq_implies_elem_or_eq}.
+    Follows by \auto{suc_iff,emptyset}.
+\end{proof}
+
+\begin{proposition}\label{open_chain_entry_rank_on_interior_cell}
+    Let $X$ be a topological space.
+    Let $r$ be a natural number such that $r\neq\emptyset$.
+    Suppose $c$ is a finite open chain with $r$ steps in $X$.
+    Let $k\in r$.
+    Suppose $k\neq\emptyset$.
+    Let $x\in\apply{\openChainRankCells{X}{c}{r}}{k}$.
+    Then $\entryRank{c}{r}{x}=k$ or
+        $\entryRank{c}{r}{x}=\suc{k}$.
+\end{proposition}
+\begin{proof}
+    Let $p=\unions{k}$.
+    $r\subseteq\naturals$
+        by \obv{naturals_is_transitive_set,transitiveset_iff_subseteq}.
+    Hence $k$ is a natural number by \obv{subseteq}.
+    $p$ is a natural number and $k=\suc{p}$
+        by \auto{natural_nonzero_successor_of_union}.
+    $p\in k$ by \obv{suc_intro_self}.
+    Hence $p\in r$
+        by
+        \obv{natural_number_is_ordinal,ordinal_transitivity}.
+    $x\in c(\suc{k})$ and
+        $x\notin\closure{c(p)}{X}$
+        by
+        \auto{open_chain_rank_cells_interior,setminus}.
+    Hence $p\in\entryRank{c}{r}{x}$
+        by \obv{open_chain_entry_rank_after_closed_entry}.
+    $\entryRank{c}{r}{x}$ is an ordinal
+        by \obv{entry_rank_is_ordinal}.
+    Hence $\suc{p}\subseteq\entryRank{c}{r}{x}$
+        by \obv{ordinal_suc_subseteq}.
+    Thus $k\subseteq\entryRank{c}{r}{x}$.
+    $\suc{k}$ is a natural number by \obv{omega_successor}.
+    Hence $\suc{k}$ is an ordinal by \obv{natural_number_is_ordinal}.
+    $\suc{k}\in\suc{r}$
+        by \obv{natural_successor_in_successor_bound}.
+    Thus $\suc{k}\in r$ or $\suc{k}=r$ by \auto{suc_iff}.
+    Hence $\suc{k}\in\entryRankCandidates{c}{r}{x}$
+        by \auto{entry_rank_candidates_iff}.
+    Thus $\entryRank{c}{r}{x}\subseteq\suc{k}$
+        by \obv{entry_rank_subseteq}.
+    Hence $\entryRank{c}{r}{x}\in\suc{k}$ or
+        $\entryRank{c}{r}{x}=\suc{k}$
+        by \obv{ordinal_subseteq_implies_elem_or_eq}.
+    \begin{byCase}
+        \caseOf{$\entryRank{c}{r}{x}=\suc{k}$.}
+            Follows.
+        \caseOf{$\entryRank{c}{r}{x}\neq\suc{k}$.}
+            Hence $\entryRank{c}{r}{x}\in\suc{k}$.
+            Thus $\entryRank{c}{r}{x}\in k$ or
+                $\entryRank{c}{r}{x}=k$ by \auto{suc_iff}.
+            Show that $\entryRank{c}{r}{x}=k$.
+            \begin{subproof}
+                Suppose not.
+                Hence $\entryRank{c}{r}{x}\in k$.
+                Hence $\entryRank{c}{r}{x}
+                    \in\entryRank{c}{r}{x}$
+                    by \obv{subseteq}.
+                Contradiction by \obv{in_irrefl}.
+            \end{subproof}
+    \end{byCase}
+\end{proof}
+
+\begin{proposition}\label{open_chain_entry_rank_on_last_cell}
+    Let $X$ be a topological space.
+    Let $r$ be a natural number such that $r\neq\emptyset$.
+    Suppose $c$ is a finite open chain with $r$ steps in $X$.
+    Let $x\in\apply{\openChainRankCells{X}{c}{r}}{r}$.
+    Then $\entryRank{c}{r}{x}=r$.
+\end{proposition}
+\begin{proof}
+    Let $p=\unions{r}$.
+    $p$ is a natural number and $r=\suc{p}$
+        by \auto{natural_nonzero_successor_of_union}.
+    $p\in r$ by \obv{suc_intro_self}.
+    $x\notin\closure{c(p)}{X}$
+        by \auto{open_chain_rank_cells_last,setminus}.
+    Hence $p\in\entryRank{c}{r}{x}$
+        by \obv{open_chain_entry_rank_after_closed_entry}.
+    $\entryRank{c}{r}{x}$ is an ordinal
+        by \obv{entry_rank_is_ordinal}.
+    Hence $\suc{p}\subseteq\entryRank{c}{r}{x}$
+        by \obv{ordinal_suc_subseteq}.
+    Thus $r\subseteq\entryRank{c}{r}{x}$.
+    $\entryRank{c}{r}{x}\subseteq r$
+        by \obv{entry_rank_subseteq_sentinel}.
+    Follows by \obv{subseteq_antisymmetric}.
+\end{proof}
+
+\subsection{The open cover}
+
+\begin{theorem}\label{open_chain_rank_cells_cover_point}
+    Let $X$ be a topological space.
+    Let $r$ be a natural number such that $r\neq\emptyset$.
+    Suppose $c$ is a finite open chain with $r$ steps in $X$.
+    Let $x\in\carrier[X]$.
+    Then there exists $k\in\suc{r}$ such that
+        $x\in\apply{\openChainRankCells{X}{c}{r}}{k}$.
+\end{theorem}
+\begin{proof}
+    $c\in\funs{\suc{r}}{\opens[X]}$
+        by \obv{finite_open_chain_type}.
+    \begin{byCase}
+        \caseOf{$x\in c(r)$.}
+            Let $q=\entryRank{c}{r}{x}$.
+            $q$ is a natural number by \auto{entry_rank_is_natural}.
+            $q=\emptyset$ or there exists a natural number $j$ such that
+                $q=\suc{j}$ by \obv{natural_zero_or_successor}.
+            \begin{byCase}
+                \caseOf{$q=\emptyset$.}
+                    $\emptyset\in r$ and $x\in c(\emptyset)$
+                        by \auto{entry_rank_eq_zero_iff}.
+                    Hence $c(\emptyset)\subseteq c(\suc{\emptyset})$
+                        by \obv{finite_open_chain_adjacent}.
+                    Thus $x\in c(\suc{\emptyset})$ by \obv{subseteq}.
+                    $\emptyset\in\suc{r}$ by \obv{suc_intro_in}.
+                    Hence
+                        $x\in
+                            \apply{\openChainRankCells{X}{c}{r}}{\emptyset}$
+                        by \obv{open_chain_rank_cells_zero}.
+                \caseOf{$q\neq\emptyset$.}
+                    Take a natural number $j$ such that $q=\suc{j}$.
+                    $j\in r$
+                        by \obv{entry_rank_successor_predecessor}.
+                    $\suc{j}=r$ or
+                        $\suc{j}\in r$ and $x\in c(\suc{j})$
+                        by \obv{entry_rank_successor_candidate}.
+                    Hence $x\in c(\suc{j})$.
+                    \begin{byCase}
+                        \caseOf{$j=\emptyset$.}
+                            $j\in\suc{r}$ by \obv{suc_intro_in}.
+                            Hence
+                                $x\in\apply{
+                                    \openChainRankCells{X}{c}{r}}{j}$
+                                by
+                                \auto{open_chain_rank_cells_zero}.
+                        \caseOf{$j\neq\emptyset$.}
+                            Let $p=\unions{j}$.
+                            $p$ is a natural number and $j=\suc{p}$
+                                by
+                                \auto{natural_nonzero_successor_of_union}.
+                            $p\in j$ by \obv{suc_intro_self}.
+                            Hence $p\in r$
+                                by
+                                \obv{natural_number_is_ordinal,ordinal_transitivity}.
+                            $\closure{c(p)}{X}\subseteq c(\suc{p})$
+                                by \obv{finite_open_chain_nesting}.
+                            Hence $\closure{c(p)}{X}\subseteq c(j)$.
+                            $j\in q$ by \obv{suc_intro_self}.
+                            Thus $x\notin c(j)$
+                                by \obv{entry_rank_no_earlier_entry}.
+                            Hence $x\notin\closure{c(p)}{X}$
+                                by \obv{subseteq}.
+                            Thus
+                                $x\in c(\suc{j})\setminus
+                                    \closure{c(p)}{X}$
+                                by \obv{setminus}.
+                            Hence
+                                $x\in\apply{
+                                    \openChainRankCells{X}{c}{r}}{j}$
+                                by
+                                \auto{open_chain_rank_cells_interior}.
+                            $j\in\suc{r}$ by \obv{suc_intro_in}.
+                    \end{byCase}
+            \end{byCase}
+        \caseOf{$x\notin c(r)$.}
+            Let $p=\unions{r}$.
+            $p$ is a natural number and $r=\suc{p}$
+                by \auto{natural_nonzero_successor_of_union}.
+            $p\in r$ by \obv{suc_intro_self}.
+            $\closure{c(p)}{X}\subseteq c(\suc{p})$
+                by \obv{finite_open_chain_nesting}.
+            Hence $\closure{c(p)}{X}\subseteq c(r)$.
+            Thus $x\notin\closure{c(p)}{X}$ by \obv{subseteq}.
+            Hence
+                $x\in\carrier[X]\setminus\closure{c(p)}{X}$
+                by \obv{setminus}.
+            Thus $x\in\apply{\openChainRankCells{X}{c}{r}}{r}$
+                by \auto{open_chain_rank_cells_last}.
+            $r\in\suc{r}$ by \obv{suc_intro_self}.
+    \end{byCase}
+\end{proof}
+
+\begin{corollary}\label{open_chain_rank_cells_cover}
+    Let $X$ be a topological space.
+    Let $r$ be a natural number such that $r\neq\emptyset$.
+    Suppose $c$ is a finite open chain with $r$ steps in $X$.
+    Then
+        $\unions{\ran{\openChainRankCells{X}{c}{r}}}
+            =\carrier[X]$.
+\end{corollary}
+\begin{proof}
+    Let $D=\openChainRankCells{X}{c}{r}$.
+    $D\in\funs{\suc{r}}{\opens[X]}$
+        by \auto{open_chain_rank_cells_typed}.
+    $\ran{D}\subseteq\opens[X]$ by \obv{funs_ran}.
+    Show that for every $x\in\unions{\ran{D}}$ we have
+        $x\in\carrier[X]$.
+    \begin{subproof}
+        Fix $x\in\unions{\ran{D}}$.
+        Take $V\in\ran{D}$ such that $x\in V$
+            by \obv{unions_iff}.
+        $V\in\opens[X]$ by \obv{subseteq}.
+        Hence $V\subseteq\carrier[X]$
+            by \obv{opens_type,subseteq}.
+        Follows by \obv{subseteq}.
+    \end{subproof}
+    Hence $\unions{\ran{D}}\subseteq\carrier[X]$
+        by \obv{subseteq}.
+    Show that for every $x\in\carrier[X]$ we have
+        $x\in\unions{\ran{D}}$.
+    \begin{subproof}
+        Fix $x\in\carrier[X]$.
+        Take $k\in\suc{r}$ such that $x\in D(k)$
+            by \auto{open_chain_rank_cells_cover_point}.
+        $\suc{r}=\dom{D}$ by \obv{funs}.
+        Hence $k\in\dom{D}$.
+        $D$ is a function by \obv{funs_is_function}.
+        Hence $(k,D(k))\in D$ by \obv{function_apply_elim}.
+        Thus $D(k)\in\ran{D}$ by \auto{ran_iff}.
+        Follows by \auto{unions_iff}.
+    \end{subproof}
+    Hence $\carrier[X]\subseteq\unions{\ran{D}}$
+        by \obv{subseteq}.
+    Follows by \obv{subseteq_antisymmetric}.
+\end{proof}

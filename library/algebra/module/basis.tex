@@ -1,0 +1,635 @@
+\import{algebra/module/free.tex}
+\import{algebra/module/span.tex}
+\import{algebra/module/linear-map.tex}
+
+\section{Indexed spanning families and bases}
+
+An indexed family determines a linear map out of the free module by sending
+each canonical basis vector to the corresponding member of the family.
+Spanning, linear independence, and being a basis say respectively that this
+map is surjective, injective, and bijective.  The structural and typing guards
+are part of each predicate, so these phrases remain meaningful as global
+notions.  The permitted trivial ring is genuinely degenerate here: every
+module carrier and every free-module carrier is a singleton, so every
+well-typed indexed family is a basis, for every index set.
+
+\begin{definition}\label{linear_combination_map}
+    $\linearCombinationMap{R}{I}{M}{v}
+        =\freeModuleLift{R}{I}{M}{v}$.
+\end{definition}
+
+\begin{definition}\label{indexed_module_spanning}
+    $v$ spans $M$ over $R$ indexed by $I$ iff
+        $R$ is a ring and $M$ is a left module over $R$ and
+        $v\in\funs{I}{\carrier[M]}$ and
+        $\linearCombinationMap{R}{I}{M}{v}$ is a module surjection from
+            $\FreeModule{R}{I}$ to $M$ over $R$.
+\end{definition}
+
+\begin{definition}\label{indexed_module_linear_independence}
+    $v$ is linearly independent in $M$ over $R$ indexed by $I$ iff
+        $R$ is a ring and $M$ is a left module over $R$ and
+        $v\in\funs{I}{\carrier[M]}$ and
+        $\linearCombinationMap{R}{I}{M}{v}$ is injective.
+\end{definition}
+
+\begin{definition}\label{indexed_module_basis}
+    $v$ forms a basis of $M$ over $R$ indexed by $I$ iff
+        $R$ is a ring and $M$ is a left module over $R$ and
+        $v\in\funs{I}{\carrier[M]}$ and
+        $\linearCombinationMap{R}{I}{M}{v}$ is a module isomorphism from
+            $\FreeModule{R}{I}$ to $M$ over $R$.
+\end{definition}
+
+\begin{proposition}\label{linear_combination_map_linear}
+    Let $R$ be a ring.
+    Let $M$ be a left module over $R$.
+    Let $v\in\funs{I}{\carrier[M]}$.
+    Then $\linearCombinationMap{R}{I}{M}{v}$ is a linear map from
+        $\FreeModule{R}{I}$ to $M$ over $R$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{linear_combination_map,free_module_lift_linear}.
+\end{proof}
+
+\begin{proposition}\label{linear_combination_map_basis_apply}
+    Let $R$ be a ring.
+    Let $M$ be a left module over $R$.
+    Let $v\in\funs{I}{\carrier[M]}$ and $i\in I$.
+    Then
+        $\apply{\linearCombinationMap{R}{I}{M}{v}}{
+            \freeBasisVector{R}{I}{i}}=v(i)$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{linear_combination_map,free_module_lift_basis_apply}.
+\end{proof}
+
+\begin{proposition}\label{indexed_module_spanning_guards}
+    Suppose $v$ spans $M$ over $R$ indexed by $I$.
+    Then $R$ is a ring and $M$ is a left module over $R$ and
+        $v\in\funs{I}{\carrier[M]}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{indexed_module_spanning}.
+\end{proof}
+
+\begin{proposition}\label{indexed_module_linear_independence_guards}
+    Suppose $v$ is linearly independent in $M$ over $R$ indexed by $I$.
+    Then $R$ is a ring and $M$ is a left module over $R$ and
+        $v\in\funs{I}{\carrier[M]}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{indexed_module_linear_independence}.
+\end{proof}
+
+\begin{proposition}\label{indexed_module_basis_guards}
+    Suppose $v$ forms a basis of $M$ over $R$ indexed by $I$.
+    Then $R$ is a ring and $M$ is a left module over $R$ and
+        $v\in\funs{I}{\carrier[M]}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{indexed_module_basis}.
+\end{proof}
+
+\begin{theorem}\label{indexed_module_basis_iff}
+    Let $R$ be a ring.
+    Let $M$ be a left module over $R$.
+    Let $v\in\funs{I}{\carrier[M]}$.
+    Then $v$ forms a basis of $M$ over $R$ indexed by $I$ iff
+        $v$ spans $M$ over $R$ indexed by $I$ and
+        $v$ is linearly independent in $M$ over $R$ indexed by $I$.
+\end{theorem}
+\begin{proof}
+    Let $F=\FreeModule{R}{I}$ and
+        $f=\linearCombinationMap{R}{I}{M}{v}$.
+    $f$ is a linear map from $F$ to $M$ over $R$ by
+        \auto{linear_combination_map_linear}.
+    Show that if $v$ forms a basis of $M$ over $R$ indexed by $I$ then
+        $f$ is a module isomorphism from $F$ to $M$ over $R$.
+    \begin{subproof}
+        Assume $v$ forms a basis of $M$ over $R$ indexed by $I$.
+        $\linearCombinationMap{R}{I}{M}{v}$ is a module isomorphism from
+            $\FreeModule{R}{I}$ to $M$ over $R$ by
+            \obv{indexed_module_basis}.
+    \end{subproof}
+    If $f$ is a module isomorphism from $F$ to $M$ over $R$ then
+        $f$ is a module surjection from $F$ to $M$ over $R$ and
+        $f$ is injective by
+        \auto{module_isomorphism_is_surjection,
+            module_isomorphism_is_bijection,bijections}.
+    If $f$ is a module surjection from $F$ to $M$ over $R$ and
+        $f$ is injective then
+        $f\in\bijections{\carrier[F]}{\carrier[M]}$ by
+        \obv{module_surjection_is_surj,bijections}.
+    Hence if $f$ is a module surjection from $F$ to $M$ over $R$ and
+        $f$ is injective then
+        $f$ is a module isomorphism from $F$ to $M$ over $R$ by
+        \obv{module_isomorphism}.
+    Follows by
+        \auto{indexed_module_spanning,
+            indexed_module_linear_independence,indexed_module_basis}.
+\end{proof}
+
+\begin{theorem}\label{trivial_ring_every_indexed_family_is_basis}
+    Let $R$ be a ring.
+    Let $M$ be a left module over $R$.
+    Suppose $\ringZero[R]=\ringOne[R]$.
+    Let $I$ be a set and $v\in\funs{I}{\carrier[M]}$.
+    Then $v$ forms a basis of $M$ over $R$ indexed by $I$.
+\end{theorem}
+\begin{proof}
+    Let $F=\FreeModule{R}{I}$ and
+        $f=\linearCombinationMap{R}{I}{M}{v}$.
+    $F$ is an exact left module over $R$ by
+        \auto{free_module_is_exact}.
+    Hence $F$ is a left module over $R$.
+    $\carrier[F]=\{\neutral[F]\}$ and
+        $\carrier[M]=\{\neutral[M]\}$ by
+        \obv{trivial_ring_module_carrier_singleton}.
+    $f$ is a linear map from $F$ to $M$ over $R$ by
+        \auto{linear_combination_map_linear}.
+    Hence $f\in\funs{\carrier[F]}{\carrier[M]}$ by
+        \obv{linear_map_type}.
+    Hence $f$ is a function and $\dom{f}=\carrier[F]$ by
+        \obv{funs_is_function,funs}.
+    Show that $f\in\surj{\carrier[F]}{\carrier[M]}$.
+    \begin{subproof}
+        Show that for every $y\in\carrier[M]$ there exists
+            $x\in\carrier[F]$ such that $f(x)=y$.
+        \begin{subproof}
+            Fix $y\in\carrier[M]$.
+            $y=\neutral[M]$ by \obv{singleton_iff}.
+            $\neutral[F]\in\carrier[F]$ by
+                \obv{module_is_group,group_is_monoid,
+                    monoid_is_unital_magma,unitalmagma_type}.
+            $f(\neutral[F])=\neutral[M]$ by \obv{linear_map_zero}.
+        \end{subproof}
+        Follows by \obv{surj}.
+    \end{subproof}
+    Show that $f$ is injective.
+    \begin{subproof}
+        Show that for all $x,y\in\dom{f}$ such that $f(x)=f(y)$
+            we have $x=y$.
+        \begin{subproof}
+            Fix $x,y\in\dom{f}$.
+            Assume $f(x)=f(y)$.
+            $x,y\in\{\neutral[F]\}$.
+            Follows by \auto{singleton_iff}.
+        \end{subproof}
+        Follows by \obv{injective_function}.
+    \end{subproof}
+    Hence $f\in\bijections{\carrier[F]}{\carrier[M]}$ by
+        \obv{bijections}.
+    Hence $f$ is a module isomorphism from $F$ to $M$ over $R$ by
+        \obv{module_isomorphism}.
+    Follows by \obv{indexed_module_basis}.
+\end{proof}
+
+\subsection{Span and the linear-combination map}
+
+\begin{theorem}\label{indexed_family_span_eq_linear_combination_range}
+    Let $R$ be a ring.
+    Let $M$ be a left module over $R$.
+    Let $v\in\funs{I}{\carrier[M]}$.
+    Then
+        $\moduleSpan{R}{M}{\ran{v}}
+            =\ran{\linearCombinationMap{R}{I}{M}{v}}$.
+\end{theorem}
+\begin{proof}
+    Let $S=\FreeModule{R}{I}$ and
+        $f=\linearCombinationMap{R}{I}{M}{v}$.
+    Let $P=\moduleSpan{R}{M}{\ran{v}}$ and
+        $Q=\InducedSubmodule{R}{M}{P}$.
+    $\ran{v}\subseteq\carrier[M]$ by \obv{funs_ran}.
+    Hence $P$ is a submodule of $M$ over $R$ by
+        \auto{module_span_is_submodule}.
+    $f$ is a linear map from $S$ to $M$ over $R$ by
+        \auto{linear_combination_map_linear}.
+    Hence $\moduleImage{f}{S}$ is a submodule of $M$ over $R$ by
+        \obv{module_image_is_submodule}.
+    $f\in\funs{\carrier[S]}{\carrier[M]}$ by
+        \obv{linear_map_type}.
+    Hence $f$ is a function and $\dom{f}=\carrier[S]$ by
+        \obv{funs_is_function,funs}.
+    Hence $\ran{f}=\img{f}{\carrier[S]}$ by \auto{img_dom}.
+    Hence $\ran{f}=\moduleImage{f}{S}$ by
+        \obv{module_image}.
+    Hence $\ran{f}$ is a submodule of $M$ over $R$.
+    Show that $\ran{v}\subseteq\ran{f}$.
+    \begin{subproof}
+        Show that for every $y\in\ran{v}$ we have $y\in\ran{f}$.
+        \begin{subproof}
+            Fix $y\in\ran{v}$.
+            $v$ is a function by \obv{funs_is_function}.
+            Take $i\in\dom{v}$ such that $v(i)=y$ by
+                \obv{fun_ran_iff}.
+            Hence $i\in I$ by \obv{funs}.
+            Let $b=\freeBasisVector{R}{I}{i}$.
+            $b\in\carrier[S]$ by \auto{free_basis_vector_type}.
+            Hence $b\in\dom{f}$.
+            $f(b)=v(i)$ by
+                \auto{linear_combination_map_basis_apply}.
+            Hence $f(b)=y$.
+            Follows by \auto{fun_ran_iff}.
+        \end{subproof}
+        Follows by \obv{subseteq}.
+    \end{subproof}
+    Hence $P\subseteq\ran{f}$ by \auto{module_span_least}.
+    $Q$ is an exact left module over $R$ by
+        \auto{induced_submodule_is_exact}.
+    Hence $Q$ is a left module over $R$.
+    $\carrier[Q]=P$ by \auto{induced_submodule_carrier}.
+    $\ran{v}\subseteq P$ by
+        \obv{module_span_contains_generators}.
+    $v$ is a relation and $\dom{v}=I$ by
+        \obv{funs_is_relation,funs}.
+    Hence $\dom{v}\subseteq I$ by \obv{subseteq_refl}.
+    $v\in\rels{I}{P}$ by
+        \obv{rels_intro_dom_and_ran}.
+    Hence $v\in\funs{I}{P}$ by \obv{funs}.
+    Hence $v\in\funs{I}{\carrier[Q]}$.
+    Let $k=\freeModuleLift{R}{I}{Q}{v}$.
+    $k$ is a linear map from $S$ to $Q$ over $R$ by
+        \auto{free_module_lift_linear}.
+    $\moduleSubstructure{R}{Q}{M}$ by
+        \auto{induced_submodule_is_module_substructure}.
+    Hence $k$ is a linear map from $S$ to $M$ over $R$ by
+        \obv{linear_map_codomain_enlargement}.
+    For every $i\in I$ we have
+        $k(\freeBasisVector{R}{I}{i})=v(i)$ by
+        \auto{free_module_lift_basis_apply}.
+    Hence $k=\freeModuleLift{R}{I}{M}{v}$ by
+        \auto{free_module_lift_unique}.
+    Hence $k=f$ by \obv{linear_combination_map}.
+    $k\in\funs{\carrier[S]}{\carrier[Q]}$ by
+        \auto{free_module_lift_type}.
+    Hence $\ran{k}\subseteq\carrier[Q]$ by \obv{funs_ran}.
+    Hence $\ran{f}\subseteq P$.
+    Follows by \obv{subseteq_antisymmetric}.
+\end{proof}
+
+\subsection{Reindexing}
+
+\begin{theorem}\label{linear_combination_map_reindex}
+    Let $R$ be a ring.
+    Let $M$ be a left module over $R$.
+    Let $e\in\bijections{J}{I}$ and
+        $v\in\funs{I}{\carrier[M]}$.
+    Let $F=I\times\{\LeftRegularModule{R}\}$ and
+        $A=\moduleAdditiveGroupFamily{I}{F}$.
+    Let $r=\directSumGroupReindex{I}{J}{A}{e}$.
+    Then
+        $\linearCombinationMap{R}{J}{M}{v\circ e}\circ r
+            =\linearCombinationMap{R}{I}{M}{v}$.
+\end{theorem}
+\begin{proof}
+    Let $S=\FreeModule{R}{I}$ and $T=\FreeModule{R}{J}$.
+    Let $g=\linearCombinationMap{R}{J}{M}{v\circ e}$ and
+        $f=\linearCombinationMap{R}{I}{M}{v}$.
+    $e\in\funs{J}{I}$ by \obv{bijections_to_funs}.
+    Hence $v\circ e\in\funs{J}{\carrier[M]}$ by
+        \obv{funs_circ}.
+    $r$ is a module isomorphism from $S$ to $T$ over $R$ by
+        \auto{bijective_free_module_reindex_isomorphism}.
+    Hence $r$ is a linear map from $S$ to $T$ over $R$ by
+        \obv{module_isomorphism_is_linear_map}.
+    $g$ is a linear map from $T$ to $M$ over $R$ by
+        \auto{linear_combination_map_linear}.
+    Hence $g\circ r$ is a linear map from $S$ to $M$ over $R$ by
+        \obv{linear_map_composition}.
+    $r\in\funs{\carrier[S]}{\carrier[T]}$ and
+        $g\in\funs{\carrier[T]}{\carrier[M]}$ by
+        \obv{linear_map_type}.
+    Hence $r$ and $g$ are functions by \auto{funs_is_function}.
+    $g$ is composable with $r$ by \auto{funs_ran,funs}.
+    Show that for every $i\in I$ we have
+        $(g\circ r)(\freeBasisVector{R}{I}{i})=v(i)$.
+    \begin{subproof}
+        Fix $i\in I$.
+        Let $b=\freeBasisVector{R}{I}{i}$.
+        $e\in\surj{J}{I}$ by \obv{bijections}.
+        Take $j\in J$ such that $e(j)=i$ by \obv{surj}.
+        $r(\freeBasisVector{R}{I}{e(j)})
+            =\freeBasisVector{R}{J}{j}$ by
+            \obv{free_basis_vector_reindex}.
+        Hence $r(b)
+            =\freeBasisVector{R}{J}{j}$.
+        $b\in\carrier[S]$ by
+            \auto{free_basis_vector_type}.
+        Hence $b\in\dom{r}$ by \auto{funs}.
+        Hence $(g\circ r)(b)=g(r(b))$ by \obv{circ_apply}.
+        $g(\freeBasisVector{R}{J}{j})=(v\circ e)(j)$ by
+            \auto{linear_combination_map_basis_apply}.
+        $v$ and $e$ are functions and $j\in\dom{e}$ by
+            \auto{funs_is_function,funs}.
+        $v$ is composable with $e$ by \auto{funs_ran,funs}.
+        Hence $(v\circ e)(j)=v(e(j))$ by \obv{circ_apply}.
+    \end{subproof}
+    $g\circ r=\freeModuleLift{R}{I}{M}{v}$ by
+        \auto{free_module_lift_unique}.
+    Follows by \auto{linear_combination_map}.
+\end{proof}
+
+\begin{theorem}\label{indexed_module_spanning_reindex}
+    Let $R$ be a ring.
+    Let $M$ be a left module over $R$.
+    Let $e\in\bijections{J}{I}$ and
+        $v\in\funs{I}{\carrier[M]}$.
+    Then $v$ spans $M$ over $R$ indexed by $I$ iff
+        $v\circ e$ spans $M$ over $R$ indexed by $J$.
+\end{theorem}
+\begin{proof}
+    Let $S=\FreeModule{R}{I}$ and $T=\FreeModule{R}{J}$.
+    Let $F=I\times\{\LeftRegularModule{R}\}$ and
+        $A=\moduleAdditiveGroupFamily{I}{F}$.
+    Let $r=\directSumGroupReindex{I}{J}{A}{e}$.
+    Let $f=\linearCombinationMap{R}{I}{M}{v}$ and
+        $g=\linearCombinationMap{R}{J}{M}{v\circ e}$.
+    $e\in\funs{J}{I}$ by \obv{bijections_to_funs}.
+    Hence $v\circ e\in\funs{J}{\carrier[M]}$ by
+        \obv{funs_circ}.
+    $f$ is a linear map from $S$ to $M$ over $R$ and
+        $g$ is a linear map from $T$ to $M$ over $R$ by
+        \auto{linear_combination_map_linear}.
+    Hence $f\in\funs{\carrier[S]}{\carrier[M]}$ and
+        $g\in\funs{\carrier[T]}{\carrier[M]}$ by
+        \obv{linear_map_type}.
+    $r$ is a module isomorphism from $S$ to $T$ over $R$ by
+        \auto{bijective_free_module_reindex_isomorphism}.
+    Hence $r\in\bijections{\carrier[S]}{\carrier[T]}$ by
+        \obv{module_isomorphism_is_bijection}.
+    Hence $r\in\surj{\carrier[S]}{\carrier[T]}$ by
+        \obv{bijections}.
+    Hence $\ran{r}=\carrier[T]$ by \obv{ran_of_surj}.
+    $\dom{g}=\carrier[T]$ by \obv{funs}.
+    Hence $\dom{g}=\ran{r}$.
+    $r$ is a function by \obv{bijection_is_function}.
+    $g$ is a function by \auto{funs_is_function}.
+    Hence $\ran{g\circ r}=\ran{g}$ by \obv{ran_circ_exact}.
+    $g\circ r=f$ by \auto{linear_combination_map_reindex}.
+    Hence $\ran{f}=\ran{g}$.
+    Hence $f\in\surj{\carrier[S]}{\carrier[M]}$ iff
+        $g\in\surj{\carrier[T]}{\carrier[M]}$ by
+        \auto{funs_surj_iff}.
+    Hence $f$ is a module surjection from $S$ to $M$ over $R$ iff
+        $g$ is a module surjection from $T$ to $M$ over $R$ by
+        \auto{module_surjection}.
+    Follows by \auto{indexed_module_spanning}.
+\end{proof}
+
+\begin{theorem}\label{indexed_module_linear_independence_reindex}
+    Let $R$ be a ring.
+    Let $M$ be a left module over $R$.
+    Let $e\in\bijections{J}{I}$ and
+        $v\in\funs{I}{\carrier[M]}$.
+    Then $v$ is linearly independent in $M$ over $R$ indexed by $I$ iff
+        $v\circ e$ is linearly independent in $M$ over $R$ indexed by $J$.
+\end{theorem}
+\begin{proof}
+    Let $S=\FreeModule{R}{I}$ and $T=\FreeModule{R}{J}$.
+    Let $F=I\times\{\LeftRegularModule{R}\}$ and
+        $A=\moduleAdditiveGroupFamily{I}{F}$.
+    Let $r=\directSumGroupReindex{I}{J}{A}{e}$.
+    Let $f=\linearCombinationMap{R}{I}{M}{v}$ and
+        $g=\linearCombinationMap{R}{J}{M}{v\circ e}$.
+    $e\in\funs{J}{I}$ by \obv{bijections_to_funs}.
+    Hence $v\circ e\in\funs{J}{\carrier[M]}$ by
+        \obv{funs_circ}.
+    $f$ is a linear map from $S$ to $M$ over $R$ and
+        $g$ is a linear map from $T$ to $M$ over $R$ by
+        \auto{linear_combination_map_linear}.
+    Hence $f\in\funs{\carrier[S]}{\carrier[M]}$ and
+        $g\in\funs{\carrier[T]}{\carrier[M]}$ by
+        \obv{linear_map_type}.
+    Hence $f$ and $g$ are functions and
+        $\dom{f}=\carrier[S]$ and $\dom{g}=\carrier[T]$ by
+        \auto{funs_is_function,funs}.
+    $r$ is a module isomorphism from $S$ to $T$ over $R$ by
+        \auto{bijective_free_module_reindex_isomorphism}.
+    Hence $r\in\bijections{\carrier[S]}{\carrier[T]}$ by
+        \obv{module_isomorphism_is_bijection}.
+    Hence $r$ is a function and $r$ is injective and
+        $r\in\surj{\carrier[S]}{\carrier[T]}$ by
+        \auto{bijections,bijection_is_function}.
+    Hence $\dom{r}=\carrier[S]$ and $\ran{r}=\carrier[T]$ by
+        \obv{bijections_dom,ran_of_surj}.
+    Hence $\ran{r}=\dom{g}$.
+    Hence $g$ is composable with $r$ by \obv{subseteq_refl}.
+    $g\circ r=f$ by \auto{linear_combination_map_reindex}.
+    Show that if $g$ is injective then $f$ is injective.
+    \begin{subproof}
+        Assume $g$ is injective.
+        Hence $g\circ r$ is injective by \obv{circ_injective}.
+    \end{subproof}
+    Show that if $f$ is injective then $g$ is injective.
+    \begin{subproof}
+        Assume $f$ is injective.
+        Show that for all $x,y\in\dom{g}$ such that $g(x)=g(y)$
+            we have $x=y$.
+        \begin{subproof}
+            Fix $x,y\in\dom{g}$.
+            Assume $g(x)=g(y)$.
+            Hence $x,y\in\carrier[T]$.
+            Take $a\in\carrier[S]$ such that $r(a)=x$ by
+                \obv{surj}.
+            Take $b\in\carrier[S]$ such that $r(b)=y$ by
+                \obv{surj}.
+            Hence $a,b\in\dom{r}$.
+            Hence $(g\circ r)(a)=g(r(a))$ and
+                $(g\circ r)(b)=g(r(b))$ by \obv{circ_apply}.
+            Hence $f(a)=f(b)$.
+            $a,b\in\dom{f}$.
+            Hence $a=b$ by \auto{injective_function}.
+        \end{subproof}
+        Follows by \auto{injective_function}.
+    \end{subproof}
+    Hence $f$ is injective iff $g$ is injective by \auto.
+    Follows by \auto{indexed_module_linear_independence}.
+\end{proof}
+
+\begin{theorem}\label{indexed_module_basis_reindex}
+    Let $R$ be a ring.
+    Let $M$ be a left module over $R$.
+    Let $e\in\bijections{J}{I}$ and
+        $v\in\funs{I}{\carrier[M]}$.
+    Then $v$ forms a basis of $M$ over $R$ indexed by $I$ iff
+        $v\circ e$ forms a basis of $M$ over $R$ indexed by $J$.
+\end{theorem}
+\begin{proof}
+    $e\in\funs{J}{I}$ by \obv{bijections_to_funs}.
+    Hence $v\circ e\in\funs{J}{\carrier[M]}$ by
+        \obv{funs_circ}.
+    $v$ forms a basis of $M$ over $R$ indexed by $I$ iff
+        $v$ spans $M$ over $R$ indexed by $I$ and
+        $v$ is linearly independent in $M$ over $R$ indexed by $I$ by
+        \obv{indexed_module_basis_iff}.
+    $v$ spans $M$ over $R$ indexed by $I$ iff
+        $v\circ e$ spans $M$ over $R$ indexed by $J$ by
+        \obv{indexed_module_spanning_reindex}.
+    $v$ is linearly independent in $M$ over $R$ indexed by $I$ iff
+        $v\circ e$ is linearly independent in $M$ over $R$ indexed by $J$ by
+        \obv{indexed_module_linear_independence_reindex}.
+    $v\circ e$ forms a basis of $M$ over $R$ indexed by $J$ iff
+        $v\circ e$ spans $M$ over $R$ indexed by $J$ and
+        $v\circ e$ is linearly independent in $M$ over $R$ indexed by $J$ by
+        \obv{indexed_module_basis_iff}.
+    Follows by \auto.
+\end{proof}
+
+\subsection{Consequences for spanning and bases}
+
+\begin{theorem}\label{indexed_module_spanning_iff_span_full}
+    Let $R$ be a ring.
+    Let $M$ be a left module over $R$.
+    Let $v\in\funs{I}{\carrier[M]}$.
+    Then $v$ spans $M$ over $R$ indexed by $I$ iff
+        $\moduleSpan{R}{M}{\ran{v}}=\carrier[M]$.
+\end{theorem}
+\begin{proof}
+    Let $S=\FreeModule{R}{I}$ and
+        $f=\linearCombinationMap{R}{I}{M}{v}$.
+    $f$ is a linear map from $S$ to $M$ over $R$ by
+        \auto{linear_combination_map_linear}.
+    $f\in\funs{\carrier[S]}{\carrier[M]}$ by
+        \obv{linear_map_type}.
+    Hence $\dom{f}=\carrier[S]$ by \obv{funs}.
+    Hence $\ran{f}=\img{f}{\carrier[S]}$ by \auto{img_dom}.
+    Hence $\ran{f}=\moduleImage{f}{S}$ by
+        \obv{module_image}.
+    $f$ is a module surjection from $S$ to $M$ over $R$ iff
+        $\moduleImage{f}{S}=\carrier[M]$ by
+        \obv{module_surjection_iff_image_full}.
+    Hence $f$ is a module surjection from $S$ to $M$ over $R$ iff
+        $\ran{f}=\carrier[M]$ by \auto.
+    $\moduleSpan{R}{M}{\ran{v}}=\ran{f}$ by
+        \auto{indexed_family_span_eq_linear_combination_range}.
+    Follows by \auto{indexed_module_spanning}.
+\end{proof}
+
+\begin{theorem}\label{indexed_module_basis_coordinate_existence}
+    Let $R$ be a ring.
+    Let $M$ be a left module over $R$.
+    Let $v\in\funs{I}{\carrier[M]}$.
+    Suppose $v$ forms a basis of $M$ over $R$ indexed by $I$.
+    Let $y\in\carrier[M]$.
+    Then there exists $x\in\carrier[\FreeModule{R}{I}]$ such that
+        $\apply{\linearCombinationMap{R}{I}{M}{v}}{x}=y$.
+\end{theorem}
+\begin{proof}
+    Let $S=\FreeModule{R}{I}$ and
+        $f=\linearCombinationMap{R}{I}{M}{v}$.
+    $\linearCombinationMap{R}{I}{M}{v}$ is a module isomorphism from
+        $\FreeModule{R}{I}$ to $M$ over $R$ by
+        \obv{indexed_module_basis}.
+    Hence $f$ is a module isomorphism from $S$ to $M$ over $R$.
+    Hence $f\in\bijections{\carrier[S]}{\carrier[M]}$ by
+        \obv{module_isomorphism_is_bijection}.
+    Hence $f\in\surj{\carrier[S]}{\carrier[M]}$ by
+        \obv{bijections}.
+    Follows by \auto{surj}.
+\end{proof}
+
+\begin{theorem}\label{indexed_module_coordinate_uniqueness}
+    Let $R$ be a ring.
+    Let $M$ be a left module over $R$.
+    Let $v\in\funs{I}{\carrier[M]}$.
+    Suppose $v$ is linearly independent in $M$ over $R$ indexed by $I$.
+    Let $x,y\in\carrier[\FreeModule{R}{I}]$.
+    Suppose
+        $\apply{\linearCombinationMap{R}{I}{M}{v}}{x}
+            =\apply{\linearCombinationMap{R}{I}{M}{v}}{y}$.
+    Then $x=y$.
+\end{theorem}
+\begin{proof}
+    Let $S=\FreeModule{R}{I}$ and
+        $f=\linearCombinationMap{R}{I}{M}{v}$.
+    $f$ is a linear map from $S$ to $M$ over $R$ by
+        \auto{linear_combination_map_linear}.
+    Hence $f\in\funs{\carrier[S]}{\carrier[M]}$ by
+        \obv{linear_map_type}.
+    Hence $\dom{f}=\carrier[S]$ and $f$ is a function by
+        \obv{funs,funs_is_function}.
+    $\linearCombinationMap{R}{I}{M}{v}$ is injective by
+        \obv{indexed_module_linear_independence}.
+    Hence $f$ is injective.
+    Follows by \auto{injective_function}.
+\end{proof}
+
+\begin{theorem}\label{linear_maps_equal_on_indexed_basis}
+    Let $R$ be a ring.
+    Let $M$ be a left module over $R$.
+    Let $N$ be a left module over $R$.
+    Let $v\in\funs{I}{\carrier[M]}$.
+    Suppose $v$ forms a basis of $M$ over $R$ indexed by $I$.
+    Suppose $f$ is a linear map from $M$ to $N$ over $R$ and
+        $g$ is a linear map from $M$ to $N$ over $R$.
+    Suppose for every $i\in I$ we have $f(v(i))=g(v(i))$.
+    Then $f=g$.
+\end{theorem}
+\begin{proof}
+    Let $A=\ran{v}$.
+    $v$ spans $M$ over $R$ indexed by $I$ by
+        \auto{indexed_module_basis_iff}.
+    Hence $\moduleSpan{R}{M}{A}=\carrier[M]$ by
+        \auto{indexed_module_spanning_iff_span_full}.
+    $A\subseteq\carrier[M]$ by \auto{funs_ran}.
+    Show that for every $a\in A$ we have $f(a)=g(a)$.
+    \begin{subproof}
+        Fix $a\in A$.
+        $v$ is a function by \obv{funs_is_function}.
+        Take $i\in\dom{v}$ such that $v(i)=a$ by
+            \auto{fun_ran_iff}.
+        Hence $i\in I$ by \auto{funs}.
+        Follows by \auto.
+    \end{subproof}
+    Follows by \auto{linear_map_equality_from_spanning_set}.
+\end{proof}
+
+\subsection{Phrase fixtures}
+
+The following elementary statements keep the intended singular, plural, and
+negated readings of the three global notions in the maintained library.
+
+\begin{proposition}\label{indexed_module_spanning_phrase_fixture}
+    Let $v$ be a set that spans $M$ over $R$ indexed by $I$.
+    Then $v$ spans $M$ over $R$ indexed by $I$ and it is not the case that
+        $v$ does not span $M$ over $R$ indexed by $I$.
+\end{proposition}
+\begin{proof}
+\end{proof}
+
+\begin{proposition}\label{indexed_module_linear_independence_phrase_fixture}
+    Let $v$ be a set that is linearly independent in $M$ over $R$
+        indexed by $I$.
+    Then $v$ is linearly independent in $M$ over $R$ indexed by $I$ and
+        it is not the case that
+            $v$ is not linearly independent in $M$ over $R$ indexed by $I$.
+\end{proposition}
+\begin{proof}
+\end{proof}
+
+\begin{proposition}\label{indexed_module_basis_phrase_fixture}
+    Let $v$ be a set that forms a basis of $M$ over $R$ indexed by $I$.
+    Then $v$ forms a basis of $M$ over $R$ indexed by $I$ and
+        it is not the case that
+            $v$ does not form a basis of $M$ over $R$ indexed by $I$.
+\end{proposition}
+\begin{proof}
+\end{proof}
+
+\begin{proposition}\label{indexed_module_spanning_plural_phrase_fixture}
+    Suppose $v$, $w$ span $M$ over $R$ indexed by $I$.
+    Then $v$ spans $M$ over $R$ indexed by $I$ and
+        $w$ spans $M$ over $R$ indexed by $I$.
+\end{proposition}
+\begin{proof}
+\end{proof}
+
+\begin{proposition}\label{indexed_module_basis_plural_phrase_fixture}
+    Suppose $v$, $w$ form a basis of $M$ over $R$ indexed by $I$.
+    Then $v$ forms a basis of $M$ over $R$ indexed by $I$ and
+        $w$ forms a basis of $M$ over $R$ indexed by $I$.
+\end{proposition}
+\begin{proof}
+\end{proof}

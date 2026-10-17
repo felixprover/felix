@@ -1,0 +1,649 @@
+\import{surreal/sqrt.tex}
+\import{surreal/finite.tex}
+\import{set/finite-ordinal.tex}
+
+\section{Finite-birthday surreal arithmetic}
+
+The real construction repeatedly forms cuts whose option sets are finite and
+whose options have finite birthdays.  We first package the resulting birthday
+bound without choosing a numerical bound for the option family.
+
+\begin{theorem}\label{finite_surreal_cut_birthday}
+    Suppose $\surrealCutPair{L}{R}$.
+    Suppose $L\union R$ is finite.
+    Suppose for every $z\in L\union R$ we have $\birthday{z}$ is a
+        natural number.
+    Then $\birthday{\surrealCut{L}{R}}$ is a natural number.
+\end{theorem}
+\begin{proof}
+    Let $f=\{(z,\suc{\birthday{z}})\mid z\in L\union R\}$.
+    Show that $f$ is a relation.
+    \begin{subproof}
+        Show that for every $p\in f$ there exist $a,b$ such that
+            $p=(a,b)$.
+        \begin{subproof}
+            Fix $p\in f$.
+            Take $z\in L\union R$ such that
+                $p=(z,\suc{\birthday{z}})$.
+            Follows by \auto.
+        \end{subproof}
+        Follows by \obv{relation}.
+    \end{subproof}
+    Show that $f$ is right-unique.
+    \begin{subproof}
+        Show that for all $z,a,b$ such that $(z,a),(z,b)\in f$
+            we have $a=b$.
+        \begin{subproof}
+            Fix $z,a,b$.
+            Assume $(z,a),(z,b)\in f$.
+            Take $u,v\in L\union R$ such that
+                $(z,a)=(u,\suc{\birthday{u}})$ and
+                $(z,b)=(v,\suc{\birthday{v}})$
+                by \auto{logical_replacement_iff}.
+            Follows by \auto{pair_eq_iff}.
+        \end{subproof}
+        Follows by \obv{rightunique}.
+    \end{subproof}
+    Show that $\dom{f}=L\union R$.
+    \begin{subproof}
+        Follows by \auto{setext,dom_iff,pair_eq_iff}.
+    \end{subproof}
+    Hence $L\union R\subseteq\dom{f}$ by \obv{subseteq}.
+    Hence $\img{f}{L\union R}$ is finite
+        by \obv{finite_function_image}.
+    Show that $\surrealCutLengths{L}{R}=\img{f}{L\union R}$.
+    \begin{subproof}
+        Follows by
+            \auto{setext,surreal_cut_lengths,img_iff,pair_eq_iff}.
+    \end{subproof}
+    Hence $\surrealCutLengths{L}{R}$ is finite.
+    Show that every element of $\surrealCutLengths{L}{R}$ is finite.
+    \begin{subproof}
+        Fix $\gamma\in\surrealCutLengths{L}{R}$.
+        Take $z\in L\union R$ such that $\gamma=\suc{\birthday{z}}$
+            by \obv{surreal_cut_lengths}.
+        Hence $\suc{\birthday{z}}$ is a natural number
+            by \obv{omega_successor}.
+        Follows by \obv{natural_number_is_finite}.
+    \end{subproof}
+    Hence $\surrealCutBound{L}{R}$ is finite
+        by \auto{surreal_cut_bound,unions_of_finite_family_is_finite}.
+    $\surrealCutBound{L}{R}$ is an ordinal
+        by \obv{surreal_cut_bound_ordinal}.
+    Hence $\surrealCutBound{L}{R}$ is a natural number
+        by \obv{finite_ordinal_is_natural_number}.
+    Hence $\suc{\surrealCutBound{L}{R}}$ is a natural number
+        by \obv{omega_successor}.
+    $\birthday{\surrealCut{L}{R}}\in
+        \suc{\surrealCutBound{L}{R}}$
+        by \obv{surreal_cut_pair_birthday_bound}.
+    Follows by
+        \obv{naturals_is_transitive_set,transitiveset_iff_subseteq,subseteq}.
+\end{proof}
+
+\begin{lemma}\label{finite_surreal_add_image}
+    Suppose $A$ is finite.
+    Then $\{\surrealAdd{a}{y}\mid a\in A\}$ is finite.
+\end{lemma}
+\begin{proof}
+    Let $C=\{B\in\pow{A}\mid
+        \text{$\{\surrealAdd{b}{y}\mid b\in B\}$ is finite}\}$.
+    $\{\surrealAdd{b}{y}\mid b\in\emptyset\}=\emptyset$
+        by \auto{setext,emptyset}.
+    $\emptyset\in\pow{A}$ by \obv{powerset_bottom}.
+    $\{\surrealAdd{b}{y}\mid b\in\emptyset\}$ is finite
+        by \obv{emptyset_is_finite}.
+    Hence $\emptyset\in C$.
+    Show that for all $B,b$ such that $B\in C$ and $b\in A$ we have
+        $\cons{b}{B}\in C$.
+    \begin{subproof}
+        Fix $B,b$.
+        Assume $B\in C$ and $b\in A$.
+        $B\in\pow{A}$.
+        Hence $B\subseteq A$ by \obv{powerset_elim}.
+        Hence $\cons{b}{B}\in\pow{A}$
+            by \obv{cons_subseteq_intro,powerset_intro}.
+        Show that $\{\surrealAdd{c}{y}\mid c\in\cons{b}{B}\}
+            =\cons{\surrealAdd{b}{y}}
+                {\{\surrealAdd{c}{y}\mid c\in B\}}$.
+        \begin{subproof}
+            Show that every element of
+                $\{\surrealAdd{c}{y}\mid c\in\cons{b}{B}\}$
+                is an element of
+                $\cons{\surrealAdd{b}{y}}
+                    {\{\surrealAdd{c}{y}\mid c\in B\}}$.
+            \begin{subproof}
+                Fix $d\in\{\surrealAdd{c}{y}\mid c\in\cons{b}{B}\}$.
+                Take $c\in\cons{b}{B}$ such that
+                    $d=\surrealAdd{c}{y}$
+                    by \auto{logical_replacement_iff}.
+                $c=b$ or $c\in B$ by \obv{cons_iff}.
+                Follows by \auto{cons_iff}.
+            \end{subproof}
+            Show that every element of
+                $\cons{\surrealAdd{b}{y}}
+                    {\{\surrealAdd{c}{y}\mid c\in B\}}$
+                is an element of
+                $\{\surrealAdd{c}{y}\mid c\in\cons{b}{B}\}$.
+            \begin{subproof}
+                Fix $d\in\cons{\surrealAdd{b}{y}}
+                    {\{\surrealAdd{c}{y}\mid c\in B\}}$.
+                $d=\surrealAdd{b}{y}$ or
+                    $d\in\{\surrealAdd{c}{y}\mid c\in B\}$
+                    by \obv{cons_iff}.
+                \begin{byCase}
+                    \caseOf{$d=\surrealAdd{b}{y}$.}
+                        $b\in\cons{b}{B}$ by \auto{cons_iff}.
+                        Follows by \auto{logical_replacement_iff}.
+                    \caseOf{$d\neq\surrealAdd{b}{y}$.}
+                        Take $c\in B$ such that
+                            $d=\surrealAdd{c}{y}$
+                            by \auto{logical_replacement_iff}.
+                        $c\in\cons{b}{B}$ by \auto{cons_iff}.
+                        Follows by \auto{logical_replacement_iff}.
+                \end{byCase}
+            \end{subproof}
+            Follows by set extensionality.
+        \end{subproof}
+        $\{\surrealAdd{c}{y}\mid c\in B\}$ is finite.
+        Hence $\{\surrealAdd{c}{y}\mid c\in\cons{b}{B}\}$ is finite
+            by \auto{finite_cons}.
+    \end{subproof}
+    $A\in C$ by \obv{finite_induction}.
+\end{proof}
+
+\begin{lemma}\label{finite_surreal_add_image_right}
+    Suppose $A$ is finite and $\surreal{x}$.
+    Suppose for every $a\in A$ we have $\surreal{a}$.
+    Then $\{\surrealAdd{x}{a}\mid a\in A\}$ is finite.
+\end{lemma}
+\begin{proof}
+    $\{\surrealAdd{a}{x}\mid a\in A\}$ is finite
+        by \obv{finite_surreal_add_image}.
+    Show that every element of $\{\surrealAdd{x}{a}\mid a\in A\}$
+        is an element of $\{\surrealAdd{a}{x}\mid a\in A\}$.
+    \begin{subproof}
+        Fix $y\in\{\surrealAdd{x}{a}\mid a\in A\}$.
+        Take $a\in A$ such that $y=\surrealAdd{x}{a}$
+            by \auto{logical_replacement_iff}.
+        $\surrealAdd{x}{a}=\surrealAdd{a}{x}$ by \obv{surreal_add_commutative}.
+        Follows by \auto{logical_replacement_iff}.
+    \end{subproof}
+    $\{\surrealAdd{x}{a}\mid a\in A\}
+        \subseteq\{\surrealAdd{a}{x}\mid a\in A\}$
+        by \obv{subseteq}.
+    Follows by \obv{subseteq_finite_is_finite}.
+\end{proof}
+
+\begin{theorem}\label{surreal_addition_finite_stage}
+    Suppose $x,y\in\surrealStage{\naturals}$.
+    Then $\surrealAdd{x}{y}\in\surrealStage{\naturals}$.
+\end{theorem}
+\begin{proof}
+    Let $P:\Set\to\Set\to\Prop=\fun{u,v:\Set}{
+        (\birthday{u}\in\naturals\land\birthday{v}\in\naturals)
+        \implies\birthday{\surrealAdd{u}{v}}\in\naturals}$.
+    Show that $\forall u,v:\Set.
+        (\surreal{u}\land\surreal{v})\implies
+        (((\forall a:\Set.
+                (\surreal{a}\land\birthday{a}\in\birthday{u})
+                \implies
+                (\forall b:\Set.\ \surreal{b}\implies
+                    \Apply{P}{a,b}))
+          \land
+          (\forall b:\Set.
+                (\surreal{b}\land\birthday{b}\in\birthday{v})
+                \implies\Apply{P}{u,b}))
+         \implies\Apply{P}{u,v})$.
+    \begin{subproof}
+        Fix $u,v$.
+        Assume $\surreal{u}\land\surreal{v}$.
+        Assume
+            $(\forall a:\Set.
+                (\surreal{a}\land\birthday{a}\in\birthday{u})
+                \implies
+                (\forall b:\Set.\ \surreal{b}\implies
+                    \Apply{P}{a,b}))
+             \land
+             (\forall b:\Set.
+                (\surreal{b}\land\birthday{b}\in\birthday{v})
+                \implies\Apply{P}{u,b})$.
+        Show that
+            $(\birthday{u}\in\naturals\land\birthday{v}\in\naturals)
+            \implies\birthday{\surrealAdd{u}{v}}\in\naturals$.
+        \begin{subproof}
+            Assume $\birthday{u}\in\naturals$ and
+                $\birthday{v}\in\naturals$.
+        $u,v\in\surrealStage{\naturals}$
+            by \auto{surreal_stage_characterization,omega_is_ordinal}.
+        $\surrealLeft{u}$ and $\surrealRight{u}$ are finite and
+            $\surrealLeft{v}$ and $\surrealRight{v}$ are finite
+            by \obv{finite_surreal_options}.
+        $\{\surrealAdd{a}{v}\mid a\in\surrealLeft{u}\}$ and
+            $\{\surrealAdd{a}{v}\mid a\in\surrealRight{u}\}$ are finite
+            by \obv{finite_surreal_add_image}.
+        For every $b\in\surrealLeft{v}\union\surrealRight{v}$
+            we have $\surreal{b}$
+            by \auto{union,surreal_left_elim,surreal_right_elim}.
+        $\{\surrealAdd{u}{b}\mid b\in\surrealLeft{v}\}$ and
+            $\{\surrealAdd{u}{b}\mid b\in\surrealRight{v}\}$ are finite
+            by
+            \auto{finite_surreal_add_image_right,union,subseteq}.
+        Hence $\surrealAddLeft{u}{v}$ and
+            $\surrealAddRight{u}{v}$ are finite
+            by
+            \auto{surreal_add_left_options,surreal_add_right_options,union_of_finite_is_finite}.
+        Hence $\surrealAddLeft{u}{v}\union
+            \surrealAddRight{u}{v}$ is finite
+            by \obv{union_of_finite_is_finite}.
+        Show that for every $z\in
+            \surrealAddLeft{u}{v}\union\surrealAddRight{u}{v}$
+            we have $\birthday{z}\in\naturals$.
+        \begin{subproof}
+            Fix $z\in\surrealAddLeft{u}{v}\union
+                \surrealAddRight{u}{v}$.
+            $z\in\surrealAddLeft{u}{v}$ or
+                $z\in\surrealAddRight{u}{v}$ by \obv{union_iff}.
+            \begin{byCase}
+                \caseOf{$z\in\surrealAddLeft{u}{v}$.}
+                    $(\exists a:\Set.\ a\in\surrealLeft{u}\land
+                        z=\surrealAdd{a}{v})$ or
+                        $(\exists b:\Set.\ b\in\surrealLeft{v}\land
+                        z=\surrealAdd{u}{b})$
+                        by \obv{surreal_add_left_options_iff}.
+                    \begin{byCase}
+                        \caseOf{$\exists a:\Set.\ a\in\surrealLeft{u}\land
+                            z=\surrealAdd{a}{v}$.}
+                            Take $a\in\surrealLeft{u}$ such that
+                                $z=\surrealAdd{a}{v}$.
+                            $\surreal{a}$ and
+                                $\birthday{a}\in\birthday{u}$
+                                by \auto{surreal_left_elim}.
+                            Hence $\birthday{a}\in\naturals$
+                                by
+                                \obv{naturals_is_transitive_set,transitiveset}.
+                            $\Apply{P}{a,v}$.
+                            $\birthday{\surrealAdd{a}{v}}\in\naturals$.
+                            Follows by \obv{surreal_add_is_surreal}.
+                        \caseOf{not $\exists a:\Set.\ a\in\surrealLeft{u}\land
+                            z=\surrealAdd{a}{v}$.}
+                            Take $b\in\surrealLeft{v}$ such that
+                                $z=\surrealAdd{u}{b}$.
+                            $\surreal{b}$ and
+                                $\birthday{b}\in\birthday{v}$
+                                by \auto{surreal_left_elim}.
+                            Hence $\birthday{b}\in\naturals$
+                                by
+                                \obv{naturals_is_transitive_set,transitiveset}.
+                            $\Apply{P}{u,b}$.
+                            $\birthday{\surrealAdd{u}{b}}\in\naturals$.
+                            Follows by \obv{surreal_add_is_surreal}.
+                    \end{byCase}
+                \caseOf{$z\notin\surrealAddLeft{u}{v}$.}
+                    Hence $z\in\surrealAddRight{u}{v}$.
+                    $(\exists a:\Set.\ a\in\surrealRight{u}\land
+                        z=\surrealAdd{a}{v})$ or
+                        $(\exists b:\Set.\ b\in\surrealRight{v}\land
+                        z=\surrealAdd{u}{b})$
+                        by \obv{surreal_add_right_options_iff}.
+                    \begin{byCase}
+                        \caseOf{$\exists a:\Set.\ a\in\surrealRight{u}\land
+                            z=\surrealAdd{a}{v}$.}
+                            Take $a\in\surrealRight{u}$ such that
+                                $z=\surrealAdd{a}{v}$.
+                            $\surreal{a}$ and
+                                $\birthday{a}\in\birthday{u}$
+                                by \auto{surreal_right_elim}.
+                            Hence $\birthday{a}\in\naturals$
+                                by
+                                \obv{naturals_is_transitive_set,transitiveset}.
+                            $\Apply{P}{a,v}$.
+                            $\birthday{\surrealAdd{a}{v}}\in\naturals$.
+                            Follows by \obv{surreal_add_is_surreal}.
+                        \caseOf{not $\exists a:\Set.\ a\in\surrealRight{u}\land
+                            z=\surrealAdd{a}{v}$.}
+                            Take $b\in\surrealRight{v}$ such that
+                                $z=\surrealAdd{u}{b}$.
+                            $\surreal{b}$ and
+                                $\birthday{b}\in\birthday{v}$
+                                by \auto{surreal_right_elim}.
+                            Hence $\birthday{b}\in\naturals$
+                                by
+                                \obv{naturals_is_transitive_set,transitiveset}.
+                            $\Apply{P}{u,b}$.
+                            $\birthday{\surrealAdd{u}{b}}\in\naturals$.
+                            Follows by \obv{surreal_add_is_surreal}.
+                    \end{byCase}
+            \end{byCase}
+        \end{subproof}
+        $\surrealCutPair{\surrealAddLeft{u}{v}}
+            {\surrealAddRight{u}{v}}$
+            by \obv{surreal_add_cut_pair}.
+        Hence $\birthday{\surrealCut{\surrealAddLeft{u}{v}}
+            {\surrealAddRight{u}{v}}}\in\naturals$
+            by \obv{finite_surreal_cut_birthday}.
+        $\surrealAdd{u}{v}=\surrealCut{\surrealAddLeft{u}{v}}
+            {\surrealAddRight{u}{v}}$
+            by \obv{surreal_add_equation}.
+            Follows by
+                \obv{surreal_add_equation,finite_surreal_cut_birthday}.
+        \end{subproof}
+    \end{subproof}
+    $\forall u,v:\Set.\ (\surreal{u}\land\surreal{v})
+        \implies\Apply{P}{u,v}$
+        by \obv{surreal_binary_induction}.
+    $\surreal{x}$ and $\birthday{x}\in\naturals$ and
+        $\surreal{y}$ and $\birthday{y}\in\naturals$
+        by \auto{surreal_stage_characterization,omega_is_ordinal}.
+    Hence $\Apply{P}{x,y}$.
+    Hence $\birthday{\surrealAdd{x}{y}}\in\naturals$.
+    $\surreal{\surrealAdd{x}{y}}$ by \obv{surreal_add_is_surreal}.
+    Follows by
+        \auto{surreal_stage_characterization,omega_is_ordinal}.
+\end{proof}
+
+\begin{lemma}\label{finite_surreal_mul_option_image}
+    Suppose $A$ is finite.
+    Then $\{\surrealMulOption{x}{y}{p}\mid p\in A\}$ is finite.
+\end{lemma}
+\begin{proof}
+    Let $f=\{(p,\surrealMulOption{x}{y}{p})\mid p\in A\}$.
+    Show that $f$ is a relation.
+    \begin{subproof}
+        Show that for every $q\in f$ there exist $a,b$ such that
+            $q=(a,b)$.
+        \begin{subproof}
+            Fix $q\in f$.
+            Take $p\in A$ such that
+                $q=(p,\surrealMulOption{x}{y}{p})$
+                by \obv{logical_replacement_iff}.
+            Follows by \auto.
+        \end{subproof}
+        Follows by \obv{relation}.
+    \end{subproof}
+    Show that $f$ is right-unique.
+    \begin{subproof}
+        Show that for all $p,a,b$ such that $(p,a),(p,b)\in f$
+            we have $a=b$.
+        \begin{subproof}
+            Fix $p,a,b$.
+            Assume $(p,a),(p,b)\in f$.
+            Take $u,v\in A$ such that
+                $(p,a)=(u,\surrealMulOption{x}{y}{u})$ and
+                $(p,b)=(v,\surrealMulOption{x}{y}{v})$
+                by \auto{logical_replacement_iff}.
+            Follows by \auto{pair_eq_iff}.
+        \end{subproof}
+        Follows by \obv{rightunique}.
+    \end{subproof}
+    $\dom{f}=A$ by \auto{setext,dom_iff,pair_eq_iff}.
+    Hence $A\subseteq\dom{f}$ by \obv{subseteq}.
+    Hence $\img{f}{A}$ is finite by \obv{finite_function_image}.
+    Every element of $\img{f}{A}$ is an element of
+        $\{\surrealMulOption{x}{y}{p}\mid p\in A\}$
+        by \auto{img_iff,pair_eq_iff}.
+    Every element of $\{\surrealMulOption{x}{y}{p}\mid p\in A\}$ is an
+        element of $\img{f}{A}$ by \auto{img_iff,pair_eq_iff}.
+    Hence $\img{f}{A}=\{\surrealMulOption{x}{y}{p}\mid p\in A\}$
+        by set extensionality.
+\end{proof}
+
+\begin{theorem}\label{surreal_multiplication_finite_stage}
+    Suppose $x,y\in\surrealStage{\naturals}$.
+    Then $\surrealMul{x}{y}\in\surrealStage{\naturals}$.
+\end{theorem}
+\begin{proof}
+    Let $P:\Set\to\Set\to\Prop=\fun{u,v:\Set}{
+        (\birthday{u}\in\naturals\land\birthday{v}\in\naturals)
+        \implies\birthday{\surrealMul{u}{v}}\in\naturals}$.
+    Show that $\forall u,v:\Set.
+        (\surreal{u}\land\surreal{v})\implies
+        (((\forall a:\Set.
+                (\surreal{a}\land\birthday{a}\in\birthday{u})
+                \implies
+                (\forall b:\Set.\ \surreal{b}\implies
+                    \Apply{P}{a,b}))
+          \land
+          (\forall b:\Set.
+                (\surreal{b}\land\birthday{b}\in\birthday{v})
+                \implies\Apply{P}{u,b}))
+         \implies\Apply{P}{u,v})$.
+    \begin{subproof}
+        Fix $u,v$.
+        Assume $\surreal{u}\land\surreal{v}$.
+        Assume
+            $(\forall a:\Set.
+                (\surreal{a}\land\birthday{a}\in\birthday{u})
+                \implies
+                (\forall b:\Set.\ \surreal{b}\implies
+                    \Apply{P}{a,b}))
+             \land
+             (\forall b:\Set.
+                (\surreal{b}\land\birthday{b}\in\birthday{v})
+                \implies\Apply{P}{u,b})$.
+        Show that
+            $(\birthday{u}\in\naturals\land\birthday{v}\in\naturals)
+            \implies\birthday{\surrealMul{u}{v}}\in\naturals$.
+        \begin{subproof}
+            Assume $\birthday{u}\in\naturals$ and
+                $\birthday{v}\in\naturals$.
+            $u,v\in\surrealStage{\naturals}$
+                by \auto{surreal_stage_characterization,omega_is_ordinal}.
+            $\surrealLeft{u}$ and $\surrealRight{u}$ are finite and
+                $\surrealLeft{v}$ and $\surrealRight{v}$ are finite
+                by \obv{finite_surreal_options}.
+            Hence $\surrealLeft{u}\times\surrealLeft{v}$ and
+                $\surrealRight{u}\times\surrealRight{v}$ are finite
+                by \obv{finite_times}.
+            Hence $\surrealLeft{u}\times\surrealRight{v}$ and
+                $\surrealRight{u}\times\surrealLeft{v}$ are finite
+                by \obv{finite_times}.
+            $\surrealMulLL{u}{v}
+                =\{\surrealMulOption{u}{v}{p}\mid
+                    p\in\surrealLeft{u}\times\surrealLeft{v}\}$
+                by \obv{surreal_mul_ll,setext}.
+            Hence $\surrealMulLL{u}{v}$ is finite
+                by \auto{finite_surreal_mul_option_image}.
+            $\surrealMulRR{u}{v}
+                =\{\surrealMulOption{u}{v}{p}\mid
+                    p\in\surrealRight{u}\times\surrealRight{v}\}$
+                by \obv{surreal_mul_rr,setext}.
+            Hence $\surrealMulRR{u}{v}$ is finite
+                by \auto{finite_surreal_mul_option_image}.
+            $\surrealMulLR{u}{v}
+                =\{\surrealMulOption{u}{v}{p}\mid
+                    p\in\surrealLeft{u}\times\surrealRight{v}\}$
+                by \obv{surreal_mul_lr,setext}.
+            Hence $\surrealMulLR{u}{v}$ is finite
+                by \auto{finite_surreal_mul_option_image}.
+            $\surrealMulRL{u}{v}
+                =\{\surrealMulOption{u}{v}{p}\mid
+                    p\in\surrealRight{u}\times\surrealLeft{v}\}$
+                by \obv{surreal_mul_rl,setext}.
+            Hence $\surrealMulRL{u}{v}$ is finite
+                by \auto{finite_surreal_mul_option_image}.
+            $\surrealMulLeft{u}{v}
+                =\surrealMulLL{u}{v}\union\surrealMulRR{u}{v}$
+                by
+                \auto{surreal_mul_left_iff,surreal_mul_ll,surreal_mul_rr,union,setext}.
+            Hence $\surrealMulLeft{u}{v}$ is finite
+                by \obv{union_of_finite_is_finite}.
+            $\surrealMulRight{u}{v}
+                =\surrealMulLR{u}{v}\union\surrealMulRL{u}{v}$
+                by
+                \auto{surreal_mul_right_iff,surreal_mul_lr,surreal_mul_rl,union,setext}.
+            Hence $\surrealMulRight{u}{v}$ is finite
+                by \obv{union_of_finite_is_finite}.
+            Hence $\surrealMulLeft{u}{v}\union
+                \surrealMulRight{u}{v}$ is finite
+                by \obv{union_of_finite_is_finite}.
+            Show that for every $z\in
+                \surrealMulLeft{u}{v}\union\surrealMulRight{u}{v}$
+                we have $\birthday{z}\in\naturals$.
+            \begin{subproof}
+                Fix $z\in\surrealMulLeft{u}{v}\union
+                    \surrealMulRight{u}{v}$.
+                Take $a,b$ such that
+                    $a\in\surrealLeft{u}\union\surrealRight{u}$ and
+                    $b\in\surrealLeft{v}\union\surrealRight{v}$ and
+                    $z=\surrealMulOption{u}{v}{(a,b)}$
+                    by
+                    \auto{union,surreal_mul_left_pair_iff,surreal_mul_right_pair_iff}.
+                $\surreal{a}$ and $\birthday{a}\in\birthday{u}$ and
+                    $\surreal{b}$ and $\birthday{b}\in\birthday{v}$
+                    by
+                    \auto{union,surreal_left_elim,surreal_right_elim}.
+                Hence $\birthday{a}\in\naturals$ and
+                    $\birthday{b}\in\naturals$
+                    by
+                    \auto{naturals_is_transitive_set,transitiveset_iff_subseteq,subseteq}.
+                $\Apply{P}{a,v}$.
+                $\Apply{P}{u,b}$.
+                $\Apply{P}{a,b}$.
+                Hence $\birthday{\surrealMul{a}{v}}\in\naturals$.
+                Hence $\birthday{\surrealMul{u}{b}}\in\naturals$.
+                Hence $\birthday{\surrealMul{a}{b}}\in\naturals$.
+                Hence $\surrealMul{a}{v}\in\surrealStage{\naturals}$
+                    by
+                    \auto{surreal_stage_characterization,omega_is_ordinal,surreal_mul_is_surreal}.
+                Hence $\surrealMul{u}{b}\in\surrealStage{\naturals}$
+                    by
+                    \auto{surreal_stage_characterization,omega_is_ordinal,surreal_mul_is_surreal}.
+                Hence $\surrealMul{a}{b}\in\surrealStage{\naturals}$
+                    by
+                    \auto{surreal_stage_characterization,omega_is_ordinal,surreal_mul_is_surreal}.
+                Hence $\surrealAdd{\surrealMul{a}{v}}{\surrealMul{u}{b}}
+                    \in\surrealStage{\naturals}$
+                    by \obv{surreal_addition_finite_stage}.
+                Hence $\surrealNeg{\surrealMul{a}{b}}
+                    \in\surrealStage{\naturals}$
+                    by
+                    \obv{surreal_negation_stage,omega_is_ordinal}.
+                Hence
+                    $\surrealAdd
+                        {\surrealAdd{\surrealMul{a}{v}}
+                            {\surrealMul{u}{b}}}
+                        {\surrealNeg{\surrealMul{a}{b}}}
+                        \in\surrealStage{\naturals}$
+                    by \obv{surreal_addition_finite_stage}.
+                Hence $\surrealMulOption{u}{v}{(a,b)}
+                    \in\surrealStage{\naturals}$
+                    by \obv{surreal_mul_option_pair}.
+                Follows by
+                    \auto{surreal_stage_characterization,omega_is_ordinal}.
+            \end{subproof}
+            $\surrealCutPair{\surrealMulLeft{u}{v}}
+                {\surrealMulRight{u}{v}}$
+                by \obv{surreal_mul_cut_pair}.
+            Hence $\birthday{\surrealCut{\surrealMulLeft{u}{v}}
+                {\surrealMulRight{u}{v}}}\in\naturals$
+                by \obv{finite_surreal_cut_birthday}.
+            $\surrealMul{u}{v}=\surrealCut{\surrealMulLeft{u}{v}}
+                {\surrealMulRight{u}{v}}$
+                by \obv{surreal_mul_equation}.
+            Follows by
+                \auto{surreal_mul_equation,finite_surreal_cut_birthday}.
+        \end{subproof}
+    \end{subproof}
+    $\forall u,v:\Set.\ (\surreal{u}\land\surreal{v})
+        \implies\Apply{P}{u,v}$
+        by \auto{surreal_binary_induction}.
+    $\surreal{x}$ and $\birthday{x}\in\naturals$ and
+        $\surreal{y}$ and $\birthday{y}\in\naturals$
+        by \auto{surreal_stage_characterization,omega_is_ordinal}.
+    Hence $\Apply{P}{x,y}$ by \auto.
+    Hence $\birthday{\surrealMul{x}{y}}\in\naturals$.
+    $\surreal{\surrealMul{x}{y}}$ by \obv{surreal_mul_is_surreal}.
+    Follows by
+        \auto{surreal_stage_characterization,omega_is_ordinal}.
+\end{proof}
+
+\begin{proposition}\label{surreal_epsilon_in_finite_stage}
+    Let $n$ be a natural number.
+    Then $\surrealEpsilon{n}\in\surrealStage{\naturals}$.
+\end{proposition}
+\begin{proof}
+    $\surreal{\surrealEpsilon{n}}$ and
+        $\birthday{\surrealEpsilon{n}}=\suc{n}$
+        by \obv{surreal_epsilon_is_surreal}.
+    $\suc{n}$ is a natural number by \obv{omega_successor}.
+    Follows by
+        \auto{surreal_stage_characterization,omega_is_ordinal}.
+\end{proof}
+
+\begin{proposition}\label{surreal_negation_finite_stage}
+    Suppose $x\in\surrealStage{\naturals}$.
+    Then $\surrealNeg{x}\in\surrealStage{\naturals}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \obv{surreal_negation_stage,omega_is_ordinal}.
+\end{proof}
+
+\begin{theorem}\label{positive_finite_surreal_dominates_epsilon}
+    Let $n$ be a natural number.
+    Suppose $x\in\surrealStage{\suc{n}}$ and
+        $\surrealLt{\surrealZero}{x}$.
+    Then $\surrealLt{\surrealEpsilon{n}}{x}$.
+\end{theorem}
+\begin{proof}
+    $n$ and $\suc{n}$ are ordinals
+        by \obv{natural_number_is_ordinal,suc_ordinal}.
+    $\surreal{x}$ and $\birthday{x}\in\suc{n}$
+        by \auto{surreal_stage_characterization}.
+    $\surreal{\surrealEpsilon{n}}$ and
+        $\birthday{\surrealEpsilon{n}}=\suc{n}$
+        by \obv{surreal_epsilon_is_surreal}.
+    $\surrealLt{\surrealEpsilon{n}}{x}$ or
+        $\surrealEpsilon{n}=x$ or
+        $\surrealLt{x}{\surrealEpsilon{n}}$
+        by \obv{surreal_lt_trichotomy}.
+    \begin{byCase}
+        \caseOf{$\surrealLt{\surrealEpsilon{n}}{x}$.}
+            Follows.
+        \caseOf{not $\surrealLt{\surrealEpsilon{n}}{x}$.}
+            \begin{byCase}
+                \caseOf{$\surrealEpsilon{n}=x$.}
+                    Hence $\suc{n}\in\suc{n}$.
+                    Contradiction by \auto{in_irrefl}.
+                \caseOf{$\surrealEpsilon{n}\neq x$.}
+                    Hence $\surrealLt{x}{\surrealEpsilon{n}}$.
+                    Let $L=\{\surrealZero\}$.
+                    Let $R=\{\surrealEpsilon{k}\mid k\in n\}$.
+                    $\surrealCutPair{L}{R}$ and
+                        $\surrealEpsilon{n}=\surrealCut{L}{R}$
+                        by
+                        \auto{surreal_sign_cut_pair,surreal_epsilon_sign_left,surreal_epsilon_sign_right,surreal_epsilon_cut_equation}.
+                    For every $l\in L$ we have $\surrealLt{l}{x}$
+                        by \auto{singleton_iff}.
+                    Show that for every $r\in R$ we have
+                        $\surrealLt{x}{r}$.
+                    \begin{subproof}
+                        Fix $r\in R$.
+                        Take $k\in n$ such that
+                            $r=\surrealEpsilon{k}$
+                            by \obv{surreal_epsilon_image_iff}.
+                        $k$ is a natural number
+                            by
+                            \obv{naturals_is_transitive_set,transitiveset}.
+                        $\surrealLt{\surrealEpsilon{n}}
+                            {\surrealEpsilon{k}}$
+                            by \obv{surreal_epsilon_decreasing}.
+                        $\surreal{\surrealEpsilon{k}}$
+                            by \auto{surreal_epsilon_is_surreal}.
+                        $\surrealLt{x}{\surrealEpsilon{k}}$
+                            by \auto{surreal_lt_transitive}.
+                    \end{subproof}
+                    Hence $\suc{n}\subseteq\birthday{x}$
+                        by \auto{surreal_cut_pair_simplest}.
+                    $\birthday{x}\subseteq n$
+                        by
+                        \auto{suc_iff,ordinal_elem_implies_subseteq,subseteq,surreal_birthday_ordinal}.
+                    Hence $\suc{n}\subseteq n$
+                        by \obv{subseteq_transitive}.
+                    $n\in\suc{n}$ by \obv{suc_intro_self}.
+                    Hence $n\in n$ by \obv{subseteq}.
+                    Contradiction by \auto{in_irrefl}.
+            \end{byCase}
+    \end{byCase}
+\end{proof}

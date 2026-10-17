@@ -1,0 +1,409 @@
+\import{algebra/group/homomorphism.tex}
+
+\section{Group isomorphisms}
+
+An isomorphism is a bijective group-homomorphism graph.  As with every raw
+map in this hierarchy, its source and target remain explicit parameters.
+
+\begin{definition}\label{group_isomorphism}
+    $\groupIsomorphism{f}{G}{H}$ iff
+        $\groupHom{f}{G}{H}$ and
+        $f\in\bijections{\carrier[G]}{\carrier[H]}$.
+\end{definition}
+
+\begin{proposition}\label{group_isomorphism_is_hom}
+    Suppose $\groupIsomorphism{f}{G}{H}$.
+    Then $\groupHom{f}{G}{H}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{group_isomorphism}.
+\end{proof}
+
+\begin{proposition}\label{group_isomorphism_is_bijection}
+    Suppose $\groupIsomorphism{f}{G}{H}$.
+    Then $f\in\bijections{\carrier[G]}{\carrier[H]}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{group_isomorphism}.
+\end{proof}
+
+\begin{corollary}\label{group_isomorphism_is_embedding}
+    Suppose $\groupIsomorphism{f}{G}{H}$.
+    Then $\groupEmbedding{f}{G}{H}$.
+\end{corollary}
+\begin{proof}
+    $f\in\bijections{\carrier[G]}{\carrier[H]}$ by
+        \obv{group_isomorphism_is_bijection}.
+    Hence $f$ is injective by \obv{bijections}.
+    Follows by
+        \obv{group_embedding,group_isomorphism_is_hom}.
+\end{proof}
+
+\begin{corollary}\label{group_isomorphism_is_surjection}
+    Suppose $\groupIsomorphism{f}{G}{H}$.
+    Then $\groupSurjection{f}{G}{H}$.
+\end{corollary}
+\begin{proof}
+    $f\in\bijections{\carrier[G]}{\carrier[H]}$ by
+        \obv{group_isomorphism_is_bijection}.
+    Hence $f\in\surj{\carrier[G]}{\carrier[H]}$ by \obv{bijections}.
+    Follows by
+        \obv{group_surjection,group_isomorphism_is_hom}.
+\end{proof}
+
+\begin{proposition}\label{identity_group_isomorphism}
+    Let $G$ be a group.
+    Then
+        $\groupIsomorphism{\identity{\carrier[G]}}{G}{G}$.
+\end{proposition}
+\begin{proof}
+    $\groupHom{\identity{\carrier[G]}}{G}{G}$ by
+        \obv{identity_group_hom}.
+    $\identity{\carrier[G]}\in
+        \bijections{\carrier[G]}{\carrier[G]}$ by
+        \obv{id_elem_bijections}.
+    Follows by \obv{group_isomorphism}.
+\end{proof}
+
+\begin{theorem}\label{group_isomorphism_composition}
+    Suppose $\groupIsomorphism{f}{G}{H}$ and
+        $\groupIsomorphism{g}{H}{K}$.
+    Then $\groupIsomorphism{g\circ f}{G}{K}$.
+\end{theorem}
+\begin{proof}
+    $\groupHom{f}{G}{H}$ and $\groupHom{g}{H}{K}$ by
+        \obv{group_isomorphism_is_hom}.
+    Hence $\groupHom{g\circ f}{G}{K}$ by
+        \obv{group_hom_composition}.
+    $f\in\bijections{\carrier[G]}{\carrier[H]}$ and
+        $g\in\bijections{\carrier[H]}{\carrier[K]}$ by
+        \obv{group_isomorphism_is_bijection}.
+    Hence $g\circ f\in
+        \bijections{\carrier[G]}{\carrier[K]}$ by
+        \obv{bijection_circ}.
+    Follows by \obv{group_isomorphism}.
+\end{proof}
+
+\begin{theorem}\label{group_isomorphism_converse_hom}
+    Suppose $\groupIsomorphism{f}{G}{H}$.
+    Then $\groupHom{\converse{f}}{H}{G}$.
+\end{theorem}
+\begin{proof}
+    $\groupHom{f}{G}{H}$ by
+        \obv{group_isomorphism_is_hom}.
+    Hence $G$ is a group and $H$ is a group by
+        \obv{group_hom_source_group,group_hom_target_group}.
+    $f\in\bijections{\carrier[G]}{\carrier[H]}$ by
+        \obv{group_isomorphism_is_bijection}.
+    Hence $\converse{f}\in
+        \funs{\carrier[H]}{\carrier[G]}$ by
+        \obv{bijective_converse_are_funs}.
+    Hence $\converse{f}$ is a function and
+        $\dom{\converse{f}}=\carrier[H]$ by
+        \obv{funs_elim}.
+    $f$ is a function and $\dom{f}=\carrier[G]$ by
+        \obv{group_hom_type,funs_elim}.
+    Show that for all $a,b\in\carrier[H]$ we have
+        $(\converse{f})(\mul[H](a,b))=
+            \mul[G]((\converse{f})(a),(\converse{f})(b))$.
+    \begin{subproof}
+        Fix $a,b\in\carrier[H]$.
+        Let $x=(\converse{f})(a)$.
+        Let $y=(\converse{f})(b)$.
+        $x,y\in\carrier[G]$ by
+            \auto{funs_type_apply}.
+        $(a,x),(b,y)\in\converse{f}$ by
+            \auto{function_apply_elim}.
+        Hence $(x,a),(y,b)\in f$ by \obv{converse_iff}.
+        Hence $f(x)=a$ and $f(y)=b$ by
+            \obv{function_apply_intro}.
+        $\mul[G](x,y)\in\carrier[G]$ by
+            \obv{group_is_monoid,monoid_is_magma,magma_welldef}.
+        $f(\mul[G](x,y))=\mul[H](f(x),f(y))$ by
+            \obv{group_hom_mul}.
+        Hence $f(\mul[G](x,y))=\mul[H](a,b)$.
+        Hence $(\mul[G](x,y),\mul[H](a,b))\in f$ by
+            \auto{function_apply_elim}.
+        Hence $(\mul[H](a,b),\mul[G](x,y))\in\converse{f}$ by
+            \obv{converse_iff}.
+        Hence
+            $(\converse{f})(\mul[H](a,b))=\mul[G](x,y)$ by
+            \obv{function_apply_intro}.
+    \end{subproof}
+    Follows by \obv{group_hom}.
+\end{proof}
+
+\begin{theorem}\label{group_isomorphism_converse}
+    Suppose $\groupIsomorphism{f}{G}{H}$.
+    Then $\groupIsomorphism{\converse{f}}{H}{G}$.
+\end{theorem}
+\begin{proof}
+    $\groupHom{\converse{f}}{H}{G}$ by
+        \obv{group_isomorphism_converse_hom}.
+    $f\in\bijections{\carrier[G]}{\carrier[H]}$ by
+        \obv{group_isomorphism_is_bijection}.
+    Hence $\converse{f}\in
+        \bijections{\carrier[H]}{\carrier[G]}$ by
+        \obv{bijection_converse_is_bijection}.
+    Follows by \obv{group_isomorphism}.
+\end{proof}
+
+\begin{theorem}\label{group_isomorphism_square_converse}
+    Suppose $\groupIsomorphism{e}{G}{H}$ and
+        $\groupIsomorphism{d}{K}{L}$.
+    Suppose $\groupHom{b}{G}{K}$ and
+        $\groupHom{c}{H}{L}$.
+    Suppose $d\circ b=c\circ e$.
+    Then $\converse{d}\circ c=b\circ\converse{e}$.
+\end{theorem}
+\begin{proof}
+    Let $q=\converse{d}\circ c$.
+    $\groupIsomorphism{\converse{d}}{L}{K}$ by
+        \obv{group_isomorphism_converse}.
+    Hence $\groupHom{q}{H}{K}$ by
+        \auto{group_isomorphism_is_hom,group_hom_composition}.
+    Hence $q\in\funs{\carrier[H]}{\carrier[K]}$ and
+        $b\in\funs{\carrier[G]}{\carrier[K]}$ by
+        \obv{group_hom_type}.
+    $d\in\bijections{\carrier[K]}{\carrier[L]}$ by
+        \obv{group_isomorphism_is_bijection}.
+    \begin{align*}
+        (\converse{d}\circ c)\circ e
+            &= \converse{d}\circ(c\circ e) \explanation{by \obv{circ_assoc}}
+            \\
+            &= \converse{d}\circ(d\circ b)
+            \\
+            &= (\converse{d}\circ d)\circ b \explanation{by \obv{circ_assoc}}
+            \\
+            &= \identity{\carrier[K]}\circ b \explanation{by \obv{bijection_converse_circ}}
+            \\
+            &= b \explanation{by \obv{funs_identity_circ_left}}
+    \end{align*}
+    Hence $q\circ e=b$.
+    $e\in\bijections{\carrier[G]}{\carrier[H]}$ by
+        \obv{group_isomorphism_is_bijection}.
+    Hence $e\circ\converse{e}=\identity{\carrier[H]}$ by
+        \obv{bijection_circ_converse}.
+    \begin{align*}
+        b\circ\converse{e}
+            &= (q\circ e)\circ\converse{e}
+            \\
+            &= q\circ(e\circ\converse{e})
+                \explanation{by \obv{circ_assoc}}
+            \\
+            &= q\circ\identity{\carrier[H]}
+            \\
+            &= q
+                \explanation{by \obv{funs_circ_identity_right}}
+    \end{align*}
+\end{proof}
+
+\begin{theorem}\label{group_hom_two_sided_inverse_isomorphism}
+    Suppose $\groupHom{f}{G}{H}$ and $\groupHom{g}{H}{G}$.
+    Suppose $g\circ f=\identity{\carrier[G]}$ and
+        $f\circ g=\identity{\carrier[H]}$.
+    Then $\groupIsomorphism{f}{G}{H}$.
+\end{theorem}
+\begin{proof}
+    $f\in\funs{\carrier[G]}{\carrier[H]}$ and
+        $g\in\funs{\carrier[H]}{\carrier[G]}$ by
+        \obv{group_hom_type}.
+    Hence $f$ and $g$ are functions and
+        $\dom{f}=\carrier[G]$ and $\dom{g}=\carrier[H]$ by
+        \obv{funs_elim,funs_is_function}.
+    Show that for every $x\in\carrier[G]$ we have
+        $\apply{g}{\apply{f}{x}}=x$.
+    \begin{subproof}
+        Fix $x\in\carrier[G]$.
+        Hence $x\in\dom{f}$.
+        $g$ is composable with $f$ by
+            \obv{funs_ran,subseteq,funs_elim}.
+        $\apply{g\circ f}{x}=\apply{g}{\apply{f}{x}}$ by
+            \obv{circ_apply}.
+        $\apply{\identity{\carrier[G]}}{x}=x$ by
+            \obv{id_apply}.
+    \end{subproof}
+    Hence $g$ is a left inverse of $f$ by
+        \obv{leftinverse_from_to_iff}.
+    Hence $f$ is injective by
+        \obv{leftinverse_implies_injection}.
+    Show that for every $y\in\carrier[H]$ we have
+        $\apply{f}{\apply{g}{y}}=y$.
+    \begin{subproof}
+        Fix $y\in\carrier[H]$.
+        Hence $y\in\dom{g}$.
+        $f$ is composable with $g$ by
+            \obv{funs_ran,subseteq,funs_elim}.
+        $\apply{f\circ g}{y}=\apply{f}{\apply{g}{y}}$ by
+            \obv{circ_apply}.
+        $\apply{\identity{\carrier[H]}}{y}=y$ by
+            \obv{id_apply}.
+    \end{subproof}
+    Hence $g$ is a right inverse of $f$ by
+        \obv{rightinverse_from_to_iff}.
+    Hence $f\in\surj{\carrier[G]}{\carrier[H]}$ by
+        \obv{rightinverse_implies_surjection}.
+    Hence $f\in\bijections{\carrier[G]}{\carrier[H]}$ by
+        \obv{bijections}.
+    Follows by \obv{group_isomorphism}.
+\end{proof}
+
+\subsection{The image isomorphism}
+
+\begin{theorem}\label{group_embedding_image_isomorphism}
+    Suppose $\groupEmbedding{f}{G}{H}$.
+    Then
+        $\groupIsomorphism
+            {f}
+            {G}
+            {\subgroupStructure{H}{\img{f}{\carrier[G]}}}$.
+\end{theorem}
+\begin{proof}
+    Let $A=\img{f}{\carrier[G]}$.
+    Let $T=\subgroupStructure{H}{A}$.
+    $\groupHom{f}{G}{H}$ by \obv{group_embedding_is_hom}.
+    Hence $\subgroup{A}{H}$ by
+        \auto{group_hom_image_subgroup}.
+    $A\subseteq A$ by \obv{subseteq_refl}.
+    Hence $\groupHom{f}{G}{T}$ by
+        \obv{group_hom_codomain_corestriction}.
+    Hence $f\in\funs{\carrier[G]}{\carrier[T]}$ by
+        \obv{group_hom_type}.
+    $\carrier[T]=A$ by \auto{subgroup_structure_carrier}.
+    $\dom{f}=\carrier[G]$ by
+        \obv{group_hom_type,funs}.
+    Hence $\ran{f}=A$ by \auto{img_dom}.
+    Hence $f\in\surj{\carrier[G]}{\carrier[T]}$ by
+        \auto{funs_surj_iff}.
+    $f$ is injective by \obv{group_embedding_injective}.
+    Hence $f\in\bijections{\carrier[G]}{\carrier[T]}$ by
+        \obv{bijections}.
+    Follows by \obv{group_isomorphism}.
+\end{proof}
+
+\subsection{Chosen-map subgroup transport}
+
+\begin{corollary}\label{group_isomorphism_subgroup_image}
+    Suppose $\groupIsomorphism{f}{G}{H}$ and $\subgroup{A}{G}$.
+    Then $\subgroup{\img{f}{A}}{H}$.
+\end{corollary}
+\begin{proof}
+    $\groupHom{f}{G}{H}$ by
+        \obv{group_isomorphism_is_hom}.
+    Follows by \obv{group_hom_subgroup_image}.
+\end{proof}
+
+\begin{corollary}\label{group_isomorphism_subgroup_preimage}
+    Suppose $\groupIsomorphism{f}{G}{H}$ and $\subgroup{B}{H}$.
+    Then $\subgroup{\preimg{f}{B}}{G}$.
+\end{corollary}
+\begin{proof}
+    $\groupHom{f}{G}{H}$ by
+        \obv{group_isomorphism_is_hom}.
+    Follows by \obv{group_hom_subgroup_preimage}.
+\end{proof}
+
+\begin{theorem}\label{group_isomorphism_preimage_image}
+    Suppose $\groupIsomorphism{f}{G}{H}$ and
+        $A\subseteq\carrier[G]$.
+    Then $\preimg{f}{\img{f}{A}}=A$.
+\end{theorem}
+\begin{proof}
+    $\groupHom{f}{G}{H}$ by
+        \obv{group_isomorphism_is_hom}.
+    $f$ is injective by
+        \auto{group_isomorphism_is_bijection,bijections}.
+    $f$ is a function and $\dom{f}=\carrier[G]$ by
+        \auto{group_hom_type,funs_elim}.
+    Show that $\preimg{f}{\img{f}{A}}\subseteq A$.
+    \begin{subproof}
+        Show that for every $x\in\preimg{f}{\img{f}{A}}$ we have
+            $x\in A$.
+        \begin{subproof}
+            Fix $x\in\preimg{f}{\img{f}{A}}$.
+            Hence $x\in\carrier[G]$ and
+                $f(x)\in\img{f}{A}$ by
+                \auto{group_hom_preimage_iff}.
+            Take $a\in A$ such that $f(a)=f(x)$ by
+                \auto{group_hom_image_iff}.
+            Hence $a\in\carrier[G]$ by \obv{subseteq}.
+            Hence $a=x$ by \auto{injective_function}.
+        \end{subproof}
+        Follows by \obv{subseteq}.
+    \end{subproof}
+    Show that $A\subseteq\preimg{f}{\img{f}{A}}$.
+    \begin{subproof}
+        Show that for every $x\in A$ we have
+            $x\in\preimg{f}{\img{f}{A}}$.
+        \begin{subproof}
+            Fix $x\in A$.
+            Hence $x\in\carrier[G]$ by \obv{subseteq}.
+            $f(x)\in\img{f}{A}$ by
+                \auto{group_hom_image_iff}.
+            Follows by \auto{group_hom_preimage_iff}.
+        \end{subproof}
+        Follows by \obv{subseteq}.
+    \end{subproof}
+    Follows by \obv{subseteq_antisymmetric}.
+\end{proof}
+
+\begin{theorem}\label{group_isomorphism_image_preimage}
+    Suppose $\groupIsomorphism{f}{G}{H}$ and
+        $B\subseteq\carrier[H]$.
+    Then $\img{f}{\preimg{f}{B}}=B$.
+\end{theorem}
+\begin{proof}
+    $\groupHom{f}{G}{H}$ by
+        \obv{group_isomorphism_is_hom}.
+    $f\in\surj{\carrier[G]}{\carrier[H]}$ by
+        \auto{group_isomorphism_is_bijection,bijections}.
+    $\preimg{f}{B}\subseteq\carrier[G]$ by
+        \auto{subseteq,group_hom_preimage_iff}.
+    Show that $\img{f}{\preimg{f}{B}}\subseteq B$.
+    \begin{subproof}
+        Show that for every $y\in\img{f}{\preimg{f}{B}}$ we have
+            $y\in B$.
+        \begin{subproof}
+            Fix $y\in\img{f}{\preimg{f}{B}}$.
+            Take $x\in\preimg{f}{B}$ such that $f(x)=y$ by
+                \auto{group_hom_image_iff}.
+            $f(x)\in B$ by \auto{group_hom_preimage_iff}.
+        \end{subproof}
+        Follows by \obv{subseteq}.
+    \end{subproof}
+    Show that $B\subseteq\img{f}{\preimg{f}{B}}$.
+    \begin{subproof}
+        Show that for every $y\in B$ we have
+            $y\in\img{f}{\preimg{f}{B}}$.
+        \begin{subproof}
+            Fix $y\in B$.
+            Hence $y\in\carrier[H]$ by \obv{subseteq}.
+            Take $x\in\carrier[G]$ such that $f(x)=y$ by
+                \obv{surj}.
+            Hence $x\in\preimg{f}{B}$ by
+                \auto{group_hom_preimage_iff}.
+            Follows by \auto{group_hom_image_iff}.
+        \end{subproof}
+        Follows by \obv{subseteq}.
+    \end{subproof}
+    Follows by \obv{subseteq_antisymmetric}.
+\end{proof}
+
+\begin{definition}\label{isomorphism_set}
+    Let $G$ be a group.
+    Let $H$ be a group.
+    $\isomorphismSet{G}{H}=
+        \{f\in\groupHomSet{G}{H}
+            \mid \groupIsomorphism{f}{G}{H}\}$.
+\end{definition}
+
+\begin{proposition}\label{isomorphism_set_iff}
+    Let $G$ be a group.
+    Let $H$ be a group.
+    $f\in\isomorphismSet{G}{H}$ iff
+        $\groupIsomorphism{f}{G}{H}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{isomorphism_set,group_isomorphism,group_hom_set_iff}.
+\end{proof}

@@ -1,0 +1,1538 @@
+\section{The singular small-degree branch}
+
+\import{combinatorics/edm-statement.tex}
+\import{combinatorics/simple-graph.tex}
+\import{function.tex}
+\import{set/choice.tex}
+\import{cardinal.tex}
+\import{cardinal/comparison.tex}
+\import{cardinal/infinite.tex}
+\import{cardinal/cofinality.tex}
+\import{cardinal/normal-map.tex}
+\import{cardinal/cofinal-families.tex}
+\import{cardinal/cofinal-regular-sequence.tex}
+\import{cardinal/normal-dominating-map.tex}
+\import{set/function-partition.tex}
+
+\subsection{Cofinal degree bounds}
+
+\begin{theorem}\label{cofinal_sequence_degree_bound_map}
+    Let $\kappa$ be an infinite cardinal.
+    Suppose $\cofinalRegularCardinalSequence{r}{\lambda}{\kappa}$.
+    Suppose for every $x\in X$ we have
+        $\cardLt{\graphNeighbourhood{E}{x}{X}}{\kappa}$.
+    Then there exists $b$ such that
+        $b\in\funs{X}{\lambda}$ and for every $x\in X$ we have
+        \[
+            \cardLt{\graphNeighbourhood{E}{x}{X}}{r(b(x))}
+        \].
+\end{theorem}
+\begin{proof}
+    $\lambda$ and $\kappa$ are ordinals and
+        $r\in\funs{\lambda}{\kappa}$ by
+        \obv{cofinal_regular_cardinal_sequence_type}.
+    Hence $r$ is a function and $\dom{r}=\lambda$ by
+        \obv{funs_is_function,funs}.
+    $\cofinalIn{\ran{r}}{\kappa}$ by
+        \auto{cofinal_regular_cardinal_sequence_is_cofinal,cofinal_map}.
+    $\kappa$ is a limit ordinal by
+        \obv{infinite_cardinal_is_limit_ordinal}.
+    Show that for every $x\in X$ we have
+        $\{\xi\in\lambda\mid
+            \cardLt{\graphNeighbourhood{E}{x}{X}}{r(\xi)}\}$
+        is inhabited.
+    \begin{subproof}
+        Fix $x\in X$.
+        Let $\delta=\card{\graphNeighbourhood{E}{x}{X}}$.
+        $\delta\in\kappa$ by
+            \auto{card_elem_iff_cardinal_lt,card_of_cardinal}.
+        Hence $\suc{\delta}\in\kappa$ by \obv{suc_elem_limitordinal}.
+        Take $\gamma\in\ran{r}$ such that
+            $\suc{\delta}\subseteq\gamma$ by \obv{cofinal_in}.
+        Take $\xi\in\dom{r}$ such that $r(\xi)=\gamma$ by
+            \obv{fun_ran_iff}.
+        Hence $\xi\in\lambda$.
+        $\delta\in\suc{\delta}$ by \obv{suc_intro_self}.
+        Hence $\delta\in r(\xi)$ by \obv{subseteq}.
+        $r(\xi)$ is a regular cardinal by
+            \obv{cofinal_regular_cardinal_sequence_value}.
+        Hence $r(\xi)$ is a cardinal by \obv{regular_cardinal}.
+        Hence $\cardLt{\graphNeighbourhood{E}{x}{X}}{r(\xi)}$ by
+            \auto{card_elem_iff_cardinal_lt,card_of_cardinal}.
+        Hence $\xi\in
+            \{\eta\in\lambda\mid
+                \cardLt{\graphNeighbourhood{E}{x}{X}}{r(\eta)}\}$ by
+            \auto.
+    \end{subproof}
+    Let $b=\{(x,\choice{\{\xi\in\lambda\mid
+        \cardLt{\graphNeighbourhood{E}{x}{X}}{r(\xi)}\}})
+        \mid x\in X\}$.
+    $b$ is a relation by
+        \auto{logical_replacement_iff,relation,pair_eq_iff}.
+    $b$ is right-unique by
+        \auto{logical_replacement_iff,rightunique,pair_eq_iff}.
+    Show that every element of $\dom{b}$ is an element of $X$.
+    \begin{subproof}
+        Fix $a\in\dom{b}$.
+        Take $c$ such that $(a,c)\in b$ by \obv{dom_iff}.
+        Take $x\in X$ such that
+            $(a,c)=(x,\choice{\{\xi\in\lambda\mid
+                \cardLt{\graphNeighbourhood{E}{x}{X}}{r(\xi)}\}})$
+            by \obv{logical_replacement_iff}.
+        $a=x$ and $c=\choice{\{\xi\in\lambda\mid
+            \cardLt{\graphNeighbourhood{E}{x}{X}}{r(\xi)}\}}$
+            by \obv{pair_eq_iff}.
+    \end{subproof}
+    Show that every element of $X$ is an element of $\dom{b}$.
+    \begin{subproof}
+        Fix $x\in X$.
+        $(x,\choice{\{\xi\in\lambda\mid
+            \cardLt{\graphNeighbourhood{E}{x}{X}}{r(\xi)}\}})\in b$
+            by \obv{logical_replacement_iff}.
+        Follows by \obv{dom_intro}.
+    \end{subproof}
+    $\dom{b}=X$ by \obv{setext}.
+    Show that for every $x\in X$ we have
+        $b(x)\in\lambda$ and
+        $\cardLt{\graphNeighbourhood{E}{x}{X}}{r(b(x))}$.
+    \begin{subproof}
+        Fix $x\in X$.
+        $\choice{\{\xi\in\lambda\mid
+            \cardLt{\graphNeighbourhood{E}{x}{X}}{r(\xi)}\}}
+        \in\{\xi\in\lambda\mid
+            \cardLt{\graphNeighbourhood{E}{x}{X}}{r(\xi)}\}$ by
+            \obv{choice_in}.
+        $b(x)=\choice{\{\xi\in\lambda\mid
+            \cardLt{\graphNeighbourhood{E}{x}{X}}{r(\xi)}\}}$ by
+            \obv{logical_replacement_iff,function_apply_intro}.
+        Follows by \auto.
+    \end{subproof}
+    Hence $b$ is a function to $\lambda$ by \auto.
+    Hence $b\in\funs{X}{\lambda}$ by \obv{funs_intro}.
+    Follows by \auto.
+\end{proof}
+
+\subsection{Block-thinning vocabulary}
+
+For a block family $W$, the earlier points at stage $\nu$ are the points in
+the blocks indexed below $\nu$.
+
+\begin{definition}\label{edm_earlier_blocks}
+    $\edmEarlierBlocks{W}{\nu}
+        =\unions{\ran{\restrl{W}{\nu}}}$.
+\end{definition}
+
+\begin{proposition}\label{edm_earlier_blocks_iff}
+    Suppose $W$ is a function and $\nu\subseteq\dom{W}$.
+    Then $x\in\edmEarlierBlocks{W}{\nu}$ iff there exists $\mu\in\nu$
+        such that $x\in W(\mu)$.
+\end{proposition}
+\begin{proof}
+    Let $R=\restrl{W}{\nu}$.
+    $\dom{R}=\nu$ by
+        \auto{dom_of_restrl_eq_inter,inter_absorb_supseteq_left}.
+    Hence $R$ is a function on $\nu$.
+    Show that if $x\in\edmEarlierBlocks{W}{\nu}$, then there exists
+        $\mu\in\nu$ such that $x\in W(\mu)$.
+    \begin{subproof}
+        Assume $x\in\edmEarlierBlocks{W}{\nu}$.
+        Take $A\in\ran{R}$ such that $x\in A$ by
+            \auto{edm_earlier_blocks,unions_iff}.
+        Take $\mu\in\dom{R}$ such that $R(\mu)=A$ by
+            \obv{fun_ran_iff}.
+        Hence $\mu\in\nu$.
+        $(\restrl{W}{\nu})(\mu)=W(\mu)$ by
+            \obv{restrl_of_function_apply}.
+        Hence $R(\mu)=W(\mu)$.
+        Hence $x\in W(\mu)$.
+    \end{subproof}
+    Show that if there exists $\mu\in\nu$ such that $x\in W(\mu)$,
+        then $x\in\edmEarlierBlocks{W}{\nu}$.
+    \begin{subproof}
+        Assume there exists $\mu\in\nu$ such that $x\in W(\mu)$.
+        Take $\mu\in\nu$ such that $x\in W(\mu)$.
+        Hence $\mu\in\dom{R}$.
+        $(\restrl{W}{\nu})(\mu)=W(\mu)$ by
+            \obv{restrl_of_function_apply}.
+        Hence $R(\mu)=W(\mu)$.
+        $R(\mu)\in\ran{R}$ by \auto{fun_ran_iff}.
+        Hence $x\in\unions{\ran{R}}$ by \auto{unions_iff}.
+        Follows by \obv{edm_earlier_blocks}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+The following family records the neighbourhoods generated by a prescribed
+set of vertices.  Making it a function, rather than using an informal indexed
+union, lets the regular-union theorem apply directly.
+
+\begin{definition}\label{edm_neighbourhood_family}
+    $\edmNeighbourhoodFamily{E}{X}{P}
+        =\{(x,\graphNeighbourhood{E}{x}{X})\mid x\in P\}$.
+\end{definition}
+
+\begin{proposition}\label{edm_neighbourhood_family_iff}
+    $(x,A)\in\edmNeighbourhoodFamily{E}{X}{P}$ iff
+        $x\in P$ and $A=\graphNeighbourhood{E}{x}{X}$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{edm_neighbourhood_family,pair_eq_iff}.
+\end{proof}
+
+\begin{theorem}\label{edm_neighbourhood_family_type}
+    $\edmNeighbourhoodFamily{E}{X}{P}\in\funs{P}{\pow{X}}$.
+\end{theorem}
+\begin{proof}
+    Let $N=\edmNeighbourhoodFamily{E}{X}{P}$.
+    $N$ is a relation by
+        \auto{edm_neighbourhood_family,relation}.
+    $N$ is right-unique by
+        \auto{edm_neighbourhood_family,rightunique,pair_eq_iff}.
+    $\dom{N}=P$ by
+        \auto{setext,dom_iff,edm_neighbourhood_family,pair_eq_iff}.
+    For every $x\in P$ we have
+        $\graphNeighbourhood{E}{x}{X}\in\pow{X}$ by
+        \obv{graph_neighbourhood_subseteq,powerset_intro}.
+    For every $x\in\dom{N}$ we have
+        $N(x)=\graphNeighbourhood{E}{x}{X}$ by
+        \auto{edm_neighbourhood_family,function_apply_intro}.
+    Hence $N$ is a function to $\pow{X}$ by \auto.
+    Follows by \auto{funs_intro}.
+\end{proof}
+
+\begin{proposition}\label{edm_neighbourhood_family_apply}
+    Let $x\in P$.
+    Then $(\edmNeighbourhoodFamily{E}{X}{P})(x)
+        =\graphNeighbourhood{E}{x}{X}$.
+\end{proposition}
+\begin{proof}
+    $\edmNeighbourhoodFamily{E}{X}{P}$ is a function by
+        \auto{edm_neighbourhood_family_type,funs_is_function}.
+    $(x,\graphNeighbourhood{E}{x}{X})
+        \in\edmNeighbourhoodFamily{E}{X}{P}$ by
+        \obv{edm_neighbourhood_family}.
+    Follows by \obv{function_apply_intro}.
+\end{proof}
+
+\begin{definition}\label{edm_earlier_neighbourhoods}
+    $\edmEarlierNeighbourhoods{E}{X}{W}{\nu}
+        =\unions{\ran{\edmNeighbourhoodFamily{E}{X}
+            {\edmEarlierBlocks{W}{\nu}}}}$.
+\end{definition}
+
+\begin{proposition}\label{edm_earlier_neighbourhoods_iff}
+    $y\in\edmEarlierNeighbourhoods{E}{X}{W}{\nu}$ iff
+        there exists $x\in\edmEarlierBlocks{W}{\nu}$ such that
+            $y\in\graphNeighbourhood{E}{x}{X}$.
+\end{proposition}
+\begin{proof}
+    Let $P=\edmEarlierBlocks{W}{\nu}$.
+    Let $N=\edmNeighbourhoodFamily{E}{X}{P}$.
+    $\edmNeighbourhoodFamily{E}{X}{P}\in\funs{P}{\pow{X}}$ by
+        \obv{edm_neighbourhood_family_type}.
+    Hence $N\in\funs{P}{\pow{X}}$.
+    Hence $N$ is a function and $\dom{N}=P$ by
+        \obv{funs_is_function,funs}.
+    Hence $N$ is a function on $P$.
+    Show that if $y\in\edmEarlierNeighbourhoods{E}{X}{W}{\nu}$, then
+        there exists $x\in P$ such that
+            $y\in\graphNeighbourhood{E}{x}{X}$.
+    \begin{subproof}
+        Assume $y\in\edmEarlierNeighbourhoods{E}{X}{W}{\nu}$.
+        Take $A\in\ran{N}$ such that $y\in A$ by
+            \auto{edm_earlier_neighbourhoods,unions_iff}.
+        Take $x\in\dom{N}$ such that $N(x)=A$ by
+            \obv{fun_ran_iff}.
+        Hence $x\in P$.
+        $N(x)=\graphNeighbourhood{E}{x}{X}$ by
+            \auto{edm_neighbourhood_family_apply}.
+    \end{subproof}
+    Show that if there exists $x\in P$ such that
+            $y\in\graphNeighbourhood{E}{x}{X}$, then
+        $y\in\edmEarlierNeighbourhoods{E}{X}{W}{\nu}$.
+    \begin{subproof}
+        Assume there exists $x\in P$ such that
+            $y\in\graphNeighbourhood{E}{x}{X}$.
+        Take $x\in P$ such that
+            $y\in\graphNeighbourhood{E}{x}{X}$.
+        $N(x)=\graphNeighbourhood{E}{x}{X}$ by
+            \auto{edm_neighbourhood_family_apply}.
+        $N(x)\in\ran{N}$ by \auto{fun_ran_iff}.
+        Hence $y\in\unions{\ran{N}}$ by \auto{unions_iff}.
+        Follows by \obv{edm_earlier_neighbourhoods}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{definition}\label{edm_thinned_block}
+    $\edmThinnedBlock{E}{X}{W}{\nu}
+        =W(\nu)\setminus
+            (\edmEarlierBlocks{W}{\nu}\union
+                \edmEarlierNeighbourhoods{E}{X}{W}{\nu})$.
+\end{definition}
+
+\begin{definition}\label{edm_thinned_block_family}
+    $\edmThinnedBlockFamily{E}{X}{W}{\lambda}
+        =\{(\nu,\edmThinnedBlock{E}{X}{W}{\nu})\mid\nu\in\lambda\}$.
+\end{definition}
+
+\begin{theorem}\label{edm_thinned_block_family_type}
+    Let $W\in\funs{\lambda}{\pow{X}}$.
+    Then $\edmThinnedBlockFamily{E}{X}{W}{\lambda}
+        \in\funs{\lambda}{\pow{X}}$.
+\end{theorem}
+\begin{proof}
+    Let $L=\edmThinnedBlockFamily{E}{X}{W}{\lambda}$.
+    $W$ is a function and $\dom{W}=\lambda$ by
+        \obv{funs_is_function,funs}.
+    $L$ is a relation by
+        \auto{edm_thinned_block_family,relation}.
+    $L$ is right-unique by
+        \auto{edm_thinned_block_family,rightunique,pair_eq_iff}.
+    $\dom{L}=\lambda$ by
+        \auto{setext,dom_iff,edm_thinned_block_family,pair_eq_iff}.
+    Show that for every $\nu\in\lambda$ we have
+        $\edmThinnedBlock{E}{X}{W}{\nu}\in\pow{X}$.
+    \begin{subproof}
+        Fix $\nu\in\lambda$.
+        $W(\nu)\in\pow{X}$ by \obv{funs_type_apply}.
+        Hence $W(\nu)\subseteq X$ by \obv{powerset_elim}.
+        $\edmThinnedBlock{E}{X}{W}{\nu}\subseteq W(\nu)$ by
+            \auto{edm_thinned_block,setminus_subseteq}.
+        Hence $\edmThinnedBlock{E}{X}{W}{\nu}\subseteq X$ by
+            \obv{subseteq_transitive}.
+        Follows by \obv{powerset_intro}.
+    \end{subproof}
+    For every $\nu\in\dom{L}$ we have
+        $L(\nu)=\edmThinnedBlock{E}{X}{W}{\nu}$ by
+        \auto{edm_thinned_block_family,function_apply_intro}.
+    Hence $L$ is a function to $\pow{X}$ by \auto.
+    Follows by \auto{funs_intro}.
+\end{proof}
+
+\begin{proposition}\label{edm_thinned_block_family_apply}
+    Let $W\in\funs{\lambda}{\pow{X}}$ and $\nu\in\lambda$.
+    Then $(\edmThinnedBlockFamily{E}{X}{W}{\lambda})(\nu)
+        =\edmThinnedBlock{E}{X}{W}{\nu}$.
+\end{proposition}
+\begin{proof}
+    $\edmThinnedBlockFamily{E}{X}{W}{\lambda}$ is a function by
+        \auto{edm_thinned_block_family_type,funs_is_function}.
+    $(\nu,\edmThinnedBlock{E}{X}{W}{\nu})
+        \in\edmThinnedBlockFamily{E}{X}{W}{\lambda}$ by
+        \obv{edm_thinned_block_family}.
+    Follows by \obv{function_apply_intro}.
+\end{proof}
+
+\subsection{Small forbidden sets at a selected block}
+
+\begin{theorem}\label{edm_earlier_blocks_small}
+    Suppose $\cofinalRegularCardinalSequence{s}{\lambda}{\kappa}$.
+    Let $W\in\funs{\lambda}{\pow{X}}$.
+    Suppose for every $\xi\in\lambda$ we have
+        $W(\xi)\approx s(\xi)$ and $\lambda\in s(\xi)$.
+    Let $\nu\in\lambda$.
+    Then $\cardLt{\edmEarlierBlocks{W}{\nu}}{s(\nu)}$.
+\end{theorem}
+\begin{proof}
+    $\lambda$ and $\kappa$ are ordinals and
+        $s\in\funs{\lambda}{\kappa}$ by
+        \obv{cofinal_regular_cardinal_sequence_type}.
+    Hence $s$ is a function and $\dom{s}=\lambda$ by
+        \obv{funs_is_function,funs}.
+    $W$ is a function and $\dom{W}=\lambda$ by
+        \obv{funs_is_function,funs}.
+    $\nu$ is an ordinal and $\nu\subseteq\lambda$ by
+        \obv{elem_of_ordinal_is_ordinal,ordinal_elem_implies_subseteq}.
+    Hence $\nu\subseteq\dom{W}$.
+    Let $R=\restrl{W}{\nu}$.
+    Hence $R$ is a function.
+    $\dom{R}=\nu$ by
+        \auto{dom_of_restrl_eq_inter,inter_absorb_supseteq_left}.
+    $s(\nu)$ is a regular cardinal by
+        \obv{cofinal_regular_cardinal_sequence_value}.
+    Hence $s(\nu)$ is a cardinal by \obv{regular_cardinal}.
+    $\lambda\in s(\nu)$ by \auto.
+    $s(\nu)$ is an ordinal by
+        \obv{cofinal_regular_cardinal_sequence_value_is_ordinal}.
+    Hence $\nu\in s(\nu)$ by \obv{ordinal_transitivity}.
+    Hence $\cardLt{\nu}{s(\nu)}$ by
+        \obv{cardinal_element_small}.
+    Show that for every $\mu\in\nu$ we have
+        $\cardLt{R(\mu)}{s(\nu)}$.
+    \begin{subproof}
+        Fix $\mu\in\nu$.
+        $(\restrl{W}{\nu})(\mu)=W(\mu)$ by
+            \obv{restrl_of_function_apply}.
+        Hence $R(\mu)=W(\mu)$.
+        Hence $\mu\in\lambda$ by \obv{ordinal_transitivity}.
+        $s(\mu)\in s(\nu)$ by
+            \obv{cofinal_regular_cardinal_sequence_increasing}.
+        $s(\mu)$ is a cardinal by
+            \obv{cofinal_regular_cardinal_sequence_value_is_cardinal}.
+        $\card{W(\mu)}=\card{s(\mu)}$ by
+            \auto{card_eq_iff_equinumerous}.
+        $\card{s(\mu)}=s(\mu)$ and $\card{s(\nu)}=s(\nu)$ by
+            \obv{card_of_cardinal}.
+        Hence $\card{W(\mu)}\in\card{s(\nu)}$.
+        Hence $\cardLt{W(\mu)}{s(\nu)}$ by
+            \obv{card_elem_iff_cardinal_lt}.
+    \end{subproof}
+    Hence $\cardLt{\unions{\ran{R}}}{s(\nu)}$ by
+        \auto{regular_indexed_union}.
+    Follows by \auto{edm_earlier_blocks}.
+\end{proof}
+
+\begin{theorem}\label{edm_earlier_neighbourhoods_small}
+    Suppose $\cofinalRegularCardinalSequence{s}{\lambda}{\kappa}$.
+    Let $W\in\funs{\lambda}{\pow{X}}$.
+    Suppose for every $\xi\in\lambda$ we have
+        $W(\xi)\approx s(\xi)$ and $\lambda\in s(\xi)$.
+    Suppose for all $\mu,\eta,x$ such that $\eta\in\lambda$ and
+        $\mu\in\eta$ and $x\in W(\mu)$ we have
+        $\cardLt{\graphNeighbourhood{E}{x}{X}}{s(\eta)}$.
+    Let $\nu\in\lambda$.
+    Then $\cardLt{\edmEarlierNeighbourhoods{E}{X}{W}{\nu}}{s(\nu)}$.
+\end{theorem}
+\begin{proof}
+    $\nu$ is an ordinal by \obv{elem_of_ordinal_is_ordinal}.
+    $W$ is a function and $\dom{W}=\lambda$ by
+        \obv{funs_is_function,funs}.
+    $\nu\subseteq\lambda$ by \obv{ordinal_elem_implies_subseteq}.
+    Let $P=\edmEarlierBlocks{W}{\nu}$.
+    $\cardLt{\edmEarlierBlocks{W}{\nu}}{s(\nu)}$ by
+        \obv{edm_earlier_blocks_small}.
+    Hence $\cardLt{P}{s(\nu)}$.
+    Let $N=\edmNeighbourhoodFamily{E}{X}{P}$.
+    $\edmNeighbourhoodFamily{E}{X}{P}\in\funs{P}{\pow{X}}$ by
+        \obv{edm_neighbourhood_family_type}.
+    Hence $N\in\funs{P}{\pow{X}}$.
+    Hence $N$ is a function and $\dom{N}=P$ by
+        \obv{funs_is_function,funs}.
+    Hence $N$ is a function on $P$.
+    Show that for every $x\in P$ we have
+        $\cardLt{N(x)}{s(\nu)}$.
+    \begin{subproof}
+        Fix $x\in P$.
+        Take $\mu\in\nu$ such that $x\in W(\mu)$ by
+            \auto{edm_earlier_blocks_iff}.
+        Hence $\cardLt{\graphNeighbourhood{E}{x}{X}}{s(\nu)}$.
+        $(\edmNeighbourhoodFamily{E}{X}{P})(x)
+            =\graphNeighbourhood{E}{x}{X}$ by
+            \obv{edm_neighbourhood_family_apply}.
+        Hence $N(x)=\graphNeighbourhood{E}{x}{X}$.
+    \end{subproof}
+    $s(\nu)$ is a regular cardinal by
+        \obv{cofinal_regular_cardinal_sequence_value}.
+    Hence $\cardLt{\unions{\ran{N}}}{s(\nu)}$ by
+        \obv{regular_indexed_union}.
+    Follows by \auto{edm_earlier_neighbourhoods}.
+\end{proof}
+
+\begin{theorem}\label{edm_thinned_block_large}
+    Suppose $\cofinalRegularCardinalSequence{s}{\lambda}{\kappa}$.
+    Let $W\in\funs{\lambda}{\pow{X}}$.
+    Suppose for every $\xi\in\lambda$ we have
+        $W(\xi)\approx s(\xi)$ and
+        $W(\xi)$ is an independent set in $X$ with respect to $E$ and
+        $\lambda\in s(\xi)$.
+    Suppose for all $\mu,\eta,x$ such that $\eta\in\lambda$ and
+        $\mu\in\eta$ and $x\in W(\mu)$ we have
+        $\cardLt{\graphNeighbourhood{E}{x}{X}}{s(\eta)}$.
+    Let $\nu\in\lambda$.
+    Then $\edmThinnedBlock{E}{X}{W}{\nu}\approx s(\nu)$ and
+        $\edmThinnedBlock{E}{X}{W}{\nu}\subseteq W(\nu)$ and
+        $\edmThinnedBlock{E}{X}{W}{\nu}$ is an independent set in $X$
+            with respect to $E$.
+\end{theorem}
+\begin{proof}
+    Let $P=\edmEarlierBlocks{W}{\nu}$.
+    Let $U=\edmEarlierNeighbourhoods{E}{X}{W}{\nu}$.
+    For every $\xi\in\lambda$ we have
+        $W(\xi)\approx s(\xi)$ and $\lambda\in s(\xi)$ by
+        \auto.
+    $\cardLt{\edmEarlierBlocks{W}{\nu}}{s(\nu)}$ by
+        \obv{edm_earlier_blocks_small}.
+    Hence $\cardLt{P}{s(\nu)}$.
+    $\cardLt{\edmEarlierNeighbourhoods{E}{X}{W}{\nu}}{s(\nu)}$ by
+        \obv{edm_earlier_neighbourhoods_small}.
+    Hence $\cardLt{U}{s(\nu)}$.
+    $s(\nu)$ is an infinite cardinal by
+        \obv{cofinal_regular_cardinal_sequence_value_is_infinite_cardinal}.
+    Hence $\cardLt{P\union U}{s(\nu)}$ by
+        \obv{small_binary_union}.
+    $W(\nu)\approx s(\nu)$.
+    Hence $W(\nu)\setminus(P\union U)\approx s(\nu)$ by
+        \obv{large_minus_small}.
+    Hence $\edmThinnedBlock{E}{X}{W}{\nu}\approx s(\nu)$ by
+        \auto{edm_thinned_block}.
+    $\edmThinnedBlock{E}{X}{W}{\nu}\subseteq W(\nu)$ by
+        \auto{edm_thinned_block,setminus_subseteq}.
+    $W(\nu)$ is an independent set in $X$ with respect to $E$.
+    Hence $\edmThinnedBlock{E}{X}{W}{\nu}$ is an independent set in $X$
+        with respect to $E$ by
+        \obv{subset_of_independent_is_independent}.
+\end{proof}
+
+\begin{proposition}\label{edm_thinned_blocks_cross_nonedge}
+    Let $\lambda$ be an ordinal.
+    Let $W\in\funs{\lambda}{\pow{X}}$.
+    Let $\nu\in\lambda$ and $\mu\in\nu$.
+    Let $x\in\edmThinnedBlock{E}{X}{W}{\mu}$ and
+        $y\in\edmThinnedBlock{E}{X}{W}{\nu}$.
+    Then $x\not\mathrel{E}y$.
+\end{proposition}
+\begin{proof}
+    $W$ is a function and $\dom{W}=\lambda$ by
+        \obv{funs_is_function,funs}.
+    $\nu$ is an ordinal and $\nu\subseteq\lambda$ by
+        \obv{elem_of_ordinal_is_ordinal,ordinal_elem_implies_subseteq}.
+    Hence $\nu\subseteq\dom{W}$.
+    $\mu\in\lambda$ by \obv{ordinal_transitivity}.
+    $\edmThinnedBlock{E}{X}{W}{\mu}\subseteq W(\mu)$ by
+        \auto{edm_thinned_block,setminus_subseteq}.
+    Hence $x\in W(\mu)$ by \obv{subseteq}.
+    Hence $x\in\edmEarlierBlocks{W}{\nu}$ by
+        \auto{edm_earlier_blocks_iff}.
+    $\edmThinnedBlock{E}{X}{W}{\nu}\subseteq W(\nu)$ by
+        \auto{edm_thinned_block,setminus_subseteq}.
+    Hence $y\in W(\nu)$ by \obv{subseteq}.
+    $W(\nu)\in\pow{X}$ by \obv{funs_type_apply}.
+    Hence $W(\nu)\subseteq X$ by \obv{powerset_elim}.
+    Hence $y\in X$ by \obv{subseteq}.
+    $y\notin\edmEarlierBlocks{W}{\nu}\union
+        \edmEarlierNeighbourhoods{E}{X}{W}{\nu}$ by
+        \auto{edm_thinned_block,setminus}.
+    Hence $y\notin\edmEarlierNeighbourhoods{E}{X}{W}{\nu}$ by
+        \auto{union_iff}.
+    Suppose $x\mathrel{E}y$.
+    Hence $y\in\graphNeighbourhood{E}{x}{X}$ by
+        \auto{graph_neighbourhood_iff}.
+    Hence $y\in\edmEarlierNeighbourhoods{E}{X}{W}{\nu}$ by
+        \auto{edm_earlier_neighbourhoods_iff}.
+    Contradiction.
+\end{proof}
+
+\begin{theorem}\label{edm_thinned_block_family_properties}
+    Suppose $\cofinalRegularCardinalSequence{s}{\lambda}{\kappa}$.
+    Let $W\in\funs{\lambda}{\pow{X}}$.
+    Suppose for every $\xi\in\lambda$ we have
+        $W(\xi)\approx s(\xi)$ and
+        $W(\xi)$ is an independent set in $X$ with respect to $E$ and
+        $\lambda\in s(\xi)$.
+    Suppose for all $\mu,\eta,x$ such that $\eta\in\lambda$ and
+        $\mu\in\eta$ and $x\in W(\mu)$ we have
+        $\cardLt{\graphNeighbourhood{E}{x}{X}}{s(\eta)}$.
+    Let $L=\edmThinnedBlockFamily{E}{X}{W}{\lambda}$.
+    Then $L\in\funs{\lambda}{\pow{X}}$ and
+        for every $\nu\in\lambda$ we have
+            $L(\nu)\approx s(\nu)$ and $L(\nu)\subseteq W(\nu)$ and
+            $L(\nu)$ is an independent set in $X$ with respect to $E$.
+\end{theorem}
+\begin{proof}
+    $\edmThinnedBlockFamily{E}{X}{W}{\lambda}
+        \in\funs{\lambda}{\pow{X}}$ by
+        \obv{edm_thinned_block_family_type}.
+    Hence $L\in\funs{\lambda}{\pow{X}}$.
+    Show that for every $\nu\in\lambda$ we have
+        $L(\nu)\approx s(\nu)$ and $L(\nu)\subseteq W(\nu)$ and
+        $L(\nu)$ is an independent set in $X$ with respect to $E$.
+    \begin{subproof}
+        Fix $\nu\in\lambda$.
+        $(\edmThinnedBlockFamily{E}{X}{W}{\lambda})(\nu)
+            =\edmThinnedBlock{E}{X}{W}{\nu}$ by
+            \obv{edm_thinned_block_family_apply}.
+        Hence $L(\nu)=\edmThinnedBlock{E}{X}{W}{\nu}$.
+        $\edmThinnedBlock{E}{X}{W}{\nu}\approx s(\nu)$ and
+            $\edmThinnedBlock{E}{X}{W}{\nu}\subseteq W(\nu)$ and
+            $\edmThinnedBlock{E}{X}{W}{\nu}$ is an independent set in $X$
+                with respect to $E$ by
+            \obv{edm_thinned_block_large}.
+    \end{subproof}
+\end{proof}
+
+\subsection{Uniform block indices}
+
+\begin{definition}\label{uniform_block_index_candidates}
+    $\uniformBlockIndexCandidates{b}{K}{r}{\lambda}{\xi}
+        =\{a\in\lambda\mid
+            \fibre{\restrl{b}{K(\xi)}}{a}\approx r(\xi)\}$.
+\end{definition}
+
+\begin{definition}\label{uniform_block_index_map}
+    $\uniformBlockIndexMap{b}{K}{r}{\lambda}
+        =\{w\in\lambda\times\lambda\mid
+            \snd{w}=\choice{\uniformBlockIndexCandidates
+                {b}{K}{r}{\lambda}{\fst{w}}}\}$.
+\end{definition}
+
+\begin{theorem}\label{uniform_block_index_map_exists}
+    Let $\lambda$ be a regular cardinal.
+    Suppose $\cofinalRegularCardinalSequence{r}{\lambda}{\kappa}$ and
+        $\lambda\in r(\emptyset)$.
+    Let $b\in\funs{X}{\lambda}$.
+    Suppose for every $x\in X$ we have
+        $\cardLt{\graphNeighbourhood{E}{x}{X}}{r(b(x))}$.
+    Let $K\in\funs{\lambda}{\pow{X}}$.
+    Suppose for every $\xi\in\lambda$ we have $K(\xi)\approx r(\xi)$.
+    Then there exists $t$ such that $t\in\funs{\lambda}{\lambda}$ and
+        for every $\xi\in\lambda$ we have
+        \[
+            \fibre{\restrl{b}{K(\xi)}}{t(\xi)}\approx r(\xi)
+        \]
+        and for every $x\in\fibre{\restrl{b}{K(\xi)}}{t(\xi)}$ we have
+        \[
+            \cardLt{\graphNeighbourhood{E}{x}{X}}{r(t(\xi))}
+        \].
+\end{theorem}
+\begin{proof}
+    $\lambda$ and $\kappa$ are ordinals and
+        $r\in\funs{\lambda}{\kappa}$ by
+        \obv{cofinal_regular_cardinal_sequence_type}.
+    Hence $r$ is a function and $\dom{r}=\lambda$ by
+        \obv{funs_is_function,funs}.
+    $b$ is a function and $\dom{b}=X$ by
+        \obv{funs_is_function,funs}.
+    $K$ is a function and $\dom{K}=\lambda$ by
+        \obv{funs_is_function,funs}.
+    $\lambda$ is an infinite cardinal by \obv{regular_cardinal}.
+    Hence $\lambda$ is a limit ordinal by
+        \obv{infinite_cardinal_is_limit_ordinal}.
+    Hence $\emptyset\in\lambda$ by \obv{limit_ordinal}.
+    Show that for every $\xi\in\lambda$ we have
+        $\lambda\in r(\xi)$ and $\cardLt{\lambda}{r(\xi)}$.
+    \begin{subproof}
+        Fix $\xi\in\lambda$.
+        $\xi$ is an ordinal by \obv{elem_of_ordinal_is_ordinal}.
+        Show that $\lambda\in r(\xi)$.
+        \begin{subproof}
+            \begin{byCase}
+                \caseOf{$\xi=\emptyset$.}
+                    Hence $\lambda\in r(\xi)$.
+                \caseOf{$\xi\neq\emptyset$.}
+                    Hence $\emptyset\in\xi$ by
+                        \obv{ordinal_empty_or_emptyset_elem}.
+                    Hence $r(\emptyset)\in r(\xi)$ by
+                        \obv{cofinal_regular_cardinal_sequence_increasing}.
+                    $r(\xi)$ is a regular cardinal by
+                        \obv{cofinal_regular_cardinal_sequence_value}.
+                    Hence $r(\xi)$ is an ordinal by
+                        \auto{regular_cardinal,cardinal,initial_ordinal}.
+                    Hence $\lambda\in r(\xi)$ by
+                        \obv{ordinal_transitivity}.
+            \end{byCase}
+        \end{subproof}
+        $r(\xi)$ is a regular cardinal by
+            \obv{cofinal_regular_cardinal_sequence_value}.
+        Hence $r(\xi)$ is a cardinal by \obv{regular_cardinal}.
+        Hence $\cardLt{\lambda}{r(\xi)}$ by
+            \auto{card_elem_iff_cardinal_lt,card_of_cardinal}.
+    \end{subproof}
+    Show that for every $\xi\in\lambda$ we have
+        $\restrl{b}{K(\xi)}\in\funs{K(\xi)}{\lambda}$.
+    \begin{subproof}
+        Fix $\xi\in\lambda$.
+        $K(\xi)\in\pow{X}$ by \obv{funs_type_apply}.
+        Hence $K(\xi)\subseteq X$ by \obv{powerset_elim}.
+        Follows by \obv{funs_restrl}.
+    \end{subproof}
+    Show that for every $\xi\in\lambda$ we have
+        $\uniformBlockIndexCandidates{b}{K}{r}{\lambda}{\xi}$ is inhabited.
+    \begin{subproof}
+        Fix $\xi\in\lambda$.
+        $r(\xi)$ is a regular cardinal by
+            \obv{cofinal_regular_cardinal_sequence_value}.
+        Take $a\in\lambda$ such that
+            $\fibre{\restrl{b}{K(\xi)}}{a}\approx r(\xi)$ by
+            \auto{regular_large_fibre}.
+        Hence $a\in\uniformBlockIndexCandidates
+            {b}{K}{r}{\lambda}{\xi}$ by
+            \obv{uniform_block_index_candidates}.
+    \end{subproof}
+    Show that for every $\xi\in\lambda$ we have
+        $\choice{\uniformBlockIndexCandidates
+            {b}{K}{r}{\lambda}{\xi}}\in\lambda$.
+    \begin{subproof}
+        Fix $\xi\in\lambda$.
+        $\choice{\uniformBlockIndexCandidates{b}{K}{r}{\lambda}{\xi}}
+            \in\uniformBlockIndexCandidates{b}{K}{r}{\lambda}{\xi}$ by
+            \obv{choice_in}.
+        Follows by \obv{uniform_block_index_candidates}.
+    \end{subproof}
+    Let $t=\uniformBlockIndexMap{b}{K}{r}{\lambda}$.
+    Show that $t\subseteq\lambda\times\lambda$.
+    \begin{subproof}
+        Show that every element of $t$ is an element of
+            $\lambda\times\lambda$.
+        \begin{subproof}
+            Fix $w\in t$.
+            Follows by \auto{uniform_block_index_map}.
+        \end{subproof}
+        Follows by \obv{subseteq}.
+    \end{subproof}
+    Hence $t\in\pow{\lambda\times\lambda}$ by \obv{powerset_intro}.
+    Hence $t\in\rels{\lambda}{\lambda}$ by \obv{rels}.
+    Hence $t$ is a relation and $\dom{t}\subseteq\lambda$ by
+        \obv{rels_is_relation,rels_dom_subseteq}.
+    Show that $t$ is right-unique.
+    \begin{subproof}
+        Show that for all $\xi,a,c$ such that $(\xi,a),(\xi,c)\in t$
+            we have $a=c$.
+        \begin{subproof}
+            Fix $\xi,a,c$.
+            Assume $(\xi,a),(\xi,c)\in t$.
+            $a=\choice{\uniformBlockIndexCandidates
+                {b}{K}{r}{\lambda}{\xi}}$ by
+                \auto{uniform_block_index_map,fst_eq,snd_eq}.
+            $c=\choice{\uniformBlockIndexCandidates
+                {b}{K}{r}{\lambda}{\xi}}$ by
+                \auto{uniform_block_index_map,fst_eq,snd_eq}.
+        \end{subproof}
+        Follows by \obv{rightunique}.
+    \end{subproof}
+    Hence $t$ is a function.
+    Show that $\lambda\subseteq\dom{t}$.
+    \begin{subproof}
+        Show that every element of $\lambda$ is an element of $\dom{t}$.
+        \begin{subproof}
+            Fix $\xi\in\lambda$.
+            $\choice{\uniformBlockIndexCandidates
+                {b}{K}{r}{\lambda}{\xi}}\in\lambda$.
+            Hence $(\xi,\choice{\uniformBlockIndexCandidates
+                {b}{K}{r}{\lambda}{\xi}})
+                \in\lambda\times\lambda$ by \obv{times_tuple_intro}.
+            Hence $(\xi,\choice{\uniformBlockIndexCandidates
+                {b}{K}{r}{\lambda}{\xi}})\in t$ by
+                \auto{uniform_block_index_map,fst_eq,snd_eq}.
+            Follows by \obv{dom_intro}.
+        \end{subproof}
+        Follows by \obv{subseteq}.
+    \end{subproof}
+    Hence $\dom{t}=\lambda$ by \obv{subseteq_antisymmetric}.
+    Show that for every $\xi\in\lambda$ we have
+        $t(\xi)=\choice{\uniformBlockIndexCandidates
+            {b}{K}{r}{\lambda}{\xi}}$.
+    \begin{subproof}
+        Fix $\xi\in\lambda$.
+        $\choice{\uniformBlockIndexCandidates
+            {b}{K}{r}{\lambda}{\xi}}\in\lambda$.
+        Hence $(\xi,\choice{\uniformBlockIndexCandidates
+            {b}{K}{r}{\lambda}{\xi}})
+            \in\lambda\times\lambda$ by \obv{times_tuple_intro}.
+        Hence $(\xi,\choice{\uniformBlockIndexCandidates
+            {b}{K}{r}{\lambda}{\xi}})\in t$ by
+            \auto{uniform_block_index_map,fst_eq,snd_eq}.
+        Follows by \obv{function_apply_intro}.
+    \end{subproof}
+    Hence for every $\xi\in\lambda$ we have $t(\xi)\in\lambda$ by
+        \auto.
+    Hence $t$ is a function to $\lambda$ by \auto.
+    Hence $t\in\funs{\lambda}{\lambda}$ by \auto{funs_intro}.
+    Show that for every $\xi\in\lambda$ we have
+        $\fibre{\restrl{b}{K(\xi)}}{t(\xi)}\approx r(\xi)$ and
+        for every $x\in\fibre{\restrl{b}{K(\xi)}}{t(\xi)}$ we have
+            $\cardLt{\graphNeighbourhood{E}{x}{X}}{r(t(\xi))}$.
+    \begin{subproof}
+        Fix $\xi\in\lambda$.
+        $\choice{\uniformBlockIndexCandidates{b}{K}{r}{\lambda}{\xi}}
+        \in\uniformBlockIndexCandidates{b}{K}{r}{\lambda}{\xi}$ by
+            \obv{choice_in}.
+        Hence $\fibre{\restrl{b}{K(\xi)}}{t(\xi)}\approx r(\xi)$ by
+            \auto{uniform_block_index_candidates}.
+        Show that for every
+            $x\in\fibre{\restrl{b}{K(\xi)}}{t(\xi)}$ we have
+            $\cardLt{\graphNeighbourhood{E}{x}{X}}{r(t(\xi))}$.
+        \begin{subproof}
+            Fix $x\in\fibre{\restrl{b}{K(\xi)}}{t(\xi)}$.
+            $K(\xi)\subseteq X$ by
+                \auto{funs_type_apply,powerset_elim}.
+            Hence $K(\xi)\subseteq\dom{b}$ by \auto.
+            $\restrl{b}{K(\xi)}\in\funs{K(\xi)}{\lambda}$ by
+                \auto.
+            Hence $\restrl{b}{K(\xi)}$ is a function by
+                \obv{funs_is_function}.
+            Hence $x\in\dom{\restrl{b}{K(\xi)}}$ and
+                $(\restrl{b}{K(\xi)})(x)=t(\xi)$ by
+                \obv{function_fibre_iff}.
+            Hence $x\in K(\xi)$ by
+                \auto{dom_of_restrl_eq_inter,inter_elim_right}.
+            Hence $x\in X$ by \obv{subseteq}.
+            $(\restrl{b}{K(\xi)})(x)=b(x)$ by
+                \obv{restrl_of_function_apply}.
+            Hence $b(x)=t(\xi)$ by \auto.
+            Follows by \auto.
+        \end{subproof}
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\subsection{An assembly criterion}
+
+\begin{theorem}\label{singular_selected_blocks_assemble}
+    Let $\kappa$ be an infinite cardinal.
+    Suppose $X\approx\kappa$.
+    Suppose $E$ is a simple graph on $X$.
+    Suppose $\cofinalRegularCardinalSequence{s}{\lambda}{\kappa}$.
+    Let $W\in\funs{\lambda}{\pow{X}}$.
+    Suppose for every $\nu\in\lambda$ we have
+        $W(\nu)\approx s(\nu)$ and
+        $W(\nu)$ is an independent set in $X$ with respect to $E$ and
+        $\lambda\in s(\nu)$.
+    Suppose for all $\mu,\nu,x$ such that $\nu\in\lambda$ and
+        $\mu\in\nu$ and $x\in W(\mu)$ we have
+        $\cardLt{\graphNeighbourhood{E}{x}{X}}{s(\nu)}$.
+    Then $E$ has an independent set in $X$ equinumerous with $\kappa$.
+\end{theorem}
+\begin{proof}
+    $\lambda$ and $\kappa$ are ordinals and
+        $s\in\funs{\lambda}{\kappa}$ by
+        \obv{cofinal_regular_cardinal_sequence_type}.
+    Hence $s$ is a function and $\dom{s}=\lambda$ by
+        \obv{funs_is_function,funs}.
+    $W$ is a function and $\dom{W}=\lambda$ by
+        \obv{funs_is_function,funs}.
+    Let $L=\edmThinnedBlockFamily{E}{X}{W}{\lambda}$.
+    $L\in\funs{\lambda}{\pow{X}}$ and
+        for every $\nu\in\lambda$ we have
+            $L(\nu)\approx s(\nu)$ and $L(\nu)\subseteq W(\nu)$ and
+            $L(\nu)$ is an independent set in $X$ with respect to $E$ by
+        \auto{edm_thinned_block_family_properties}.
+    Hence $L$ is a function and $\dom{L}=\lambda$ by
+        \obv{funs_is_function,funs}.
+    Show that for every $\nu\in\lambda$ we have
+        $L(\nu)=\edmThinnedBlock{E}{X}{W}{\nu}$.
+    \begin{subproof}
+        Fix $\nu\in\lambda$.
+        $(\edmThinnedBlockFamily{E}{X}{W}{\lambda})(\nu)
+            =\edmThinnedBlock{E}{X}{W}{\nu}$ by
+            \obv{edm_thinned_block_family_apply}.
+        Follows by \auto.
+    \end{subproof}
+    Let $H=\unions{\ran{L}}$.
+    Show that $H\subseteq X$.
+    \begin{subproof}
+        Show that every element of $H$ is an element of $X$.
+        \begin{subproof}
+            Fix $x\in H$.
+            Take $A\in\ran{L}$ such that $x\in A$ by
+                \auto{unions_iff}.
+            Take $\nu\in\dom{L}$ such that $L(\nu)=A$ by
+                \auto{fun_ran_iff}.
+            Hence $\nu\in\lambda$ by \auto.
+            $L(\nu)$ is an independent set in $X$ with respect to $E$ by
+                \auto.
+            Hence $L(\nu)\subseteq X$ by \obv{independent_subseteq}.
+            Follows by \auto{subseteq}.
+        \end{subproof}
+        Follows by \obv{subseteq}.
+    \end{subproof}
+    Show that $H$ is an independent set in $X$ with respect to $E$.
+    \begin{subproof}
+        Show that for all $x,y\in H$ such that $x\neq y$ we have
+            $x\not\mathrel{E}y$.
+        \begin{subproof}
+            Fix $x,y\in H$ such that $x\neq y$.
+            Take $A\in\ran{L}$ such that $x\in A$ by
+                \auto{unions_iff}.
+            Take $B\in\ran{L}$ such that $y\in B$ by
+                \auto{unions_iff}.
+            Take $\mu\in\dom{L}$ such that $L(\mu)=A$ by
+                \auto{fun_ran_iff}.
+            Take $\nu\in\dom{L}$ such that $L(\nu)=B$ by
+                \auto{fun_ran_iff}.
+            Hence $\mu,\nu\in\lambda$ by \auto.
+            Hence $\mu$ and $\nu$ are ordinals by
+                \obv{elem_of_ordinal_is_ordinal}.
+            Hence $\mu\in\nu$ or $\nu\in\mu$ or $\mu=\nu$ by
+                \obv{ordinal_elem_connex}.
+            \begin{byCase}
+                \caseOf{$\mu=\nu$.}
+                    $L(\mu)$ is an independent set in $X$ with respect to
+                        $E$ by \auto.
+                    Hence $x\not\mathrel{E}y$ by
+                        \auto{independent_nonedge}.
+                \caseOf{$\mu\neq\nu$.}
+                    Hence $\mu\in\nu$ or $\nu\in\mu$ by \auto.
+                    \begin{byCase}
+                        \caseOf{$\mu\in\nu$.}
+                            $x\in\edmThinnedBlock{E}{X}{W}{\mu}$ and
+                                $y\in\edmThinnedBlock{E}{X}{W}{\nu}$ by
+                                \auto.
+                            Hence $x\not\mathrel{E}y$ by
+                                \obv{edm_thinned_blocks_cross_nonedge}.
+                        \caseOf{$\mu\notin\nu$.}
+                            Hence $\nu\in\mu$ by \auto.
+                            $y\in\edmThinnedBlock{E}{X}{W}{\nu}$ and
+                                $x\in\edmThinnedBlock{E}{X}{W}{\mu}$ by
+                                \auto.
+                            Hence $y\not\mathrel{E}x$ by
+                                \obv{edm_thinned_blocks_cross_nonedge}.
+                            Suppose $x\mathrel{E}y$.
+                            Hence $y\mathrel{E}x$ by
+                                \obv{simple_graph_edge_symmetric}.
+                            Contradiction.
+                    \end{byCase}
+            \end{byCase}
+        \end{subproof}
+        Follows by \auto{independent_in_graph}.
+    \end{subproof}
+    Show that $H\approx\kappa$.
+    \begin{subproof}
+        $\cardLe{H}{X}$ by \obv{subseteq_cardinal_le}.
+        $\cardLe{X}{\kappa}$ by \auto{equinum_cardinal_le}.
+        Hence $\cardLe{H}{\kappa}$ by
+            \obv{cardinal_le_transitive}.
+        Suppose not.
+        Hence $\lnot(H\approx\kappa)$.
+        Hence $\cardLt{H}{\kappa}$ by \obv{cardinal_lt}.
+        Let $\delta=\card{H}$.
+        $\card{H}\in\card{\kappa}$ by
+            \auto{card_elem_iff_cardinal_lt}.
+        $\card{\kappa}=\kappa$ by \obv{card_of_cardinal}.
+        Hence $\delta\in\kappa$ by \auto.
+        $\card{H}$ is an ordinal by \obv{card_is_ordinal}.
+        $\kappa$ is a limit ordinal by
+            \obv{infinite_cardinal_is_limit_ordinal}.
+        Hence $\suc{\delta}\in\kappa$ by \obv{suc_elem_limitordinal}.
+        $\cofinalIn{\ran{s}}{\kappa}$ by
+            \auto{cofinal_regular_cardinal_sequence_is_cofinal,cofinal_map}.
+        Take $\gamma\in\ran{s}$ such that
+            $\suc{\delta}\subseteq\gamma$ by \obv{cofinal_in}.
+        Take $\nu\in\dom{s}$ such that $s(\nu)=\gamma$ by
+            \auto{fun_ran_iff}.
+        Hence $\nu\in\lambda$ by \auto.
+        $\delta\in\suc{\delta}$ by \obv{suc_intro_self}.
+        Hence $\delta\in s(\nu)$ by \auto{subseteq}.
+        $L(\nu)\in\ran{L}$ by \auto{fun_ran_iff}.
+        Show that $L(\nu)\subseteq H$.
+        \begin{subproof}
+            Show that every element of $L(\nu)$ is an element of $H$.
+            \begin{subproof}
+                Fix $x\in L(\nu)$.
+                Hence $x\in\unions{\ran{L}}$ by \auto{unions_iff}.
+                Follows by \auto.
+            \end{subproof}
+            Follows by \obv{subseteq}.
+        \end{subproof}
+        Hence $\cardLe{L(\nu)}{H}$ by
+            \obv{subseteq_cardinal_le}.
+        $L(\nu)\approx s(\nu)$ by \auto.
+        Hence $\cardLe{s(\nu)}{L(\nu)}$ by
+            \auto{equinum_cardinal_le}.
+        Hence $\cardLe{s(\nu)}{H}$ by
+            \obv{cardinal_le_transitive}.
+        Hence $\card{s(\nu)}\subseteq\card{H}$ by
+            \auto{card_subseteq_iff_cardinal_le}.
+        $s(\nu)$ is a cardinal by
+            \obv{cofinal_regular_cardinal_sequence_value_is_cardinal}.
+        Hence $\card{s(\nu)}=s(\nu)$ by \obv{card_of_cardinal}.
+        Hence $s(\nu)\subseteq\delta$ by \auto.
+        Hence $\delta\in\delta$ by \obv{subseteq}.
+        Contradiction by \auto{in_irrefl}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\subsection{Uniform block families}
+
+\begin{definition}\label{uniform_block_family}
+    $\uniformBlockFamily{b}{K}{t}{\lambda}{X}
+        =\{w\in\lambda\times\pow{X}\mid
+            \snd{w}=\fibre{\restrl{b}{K(\fst{w})}}{t(\fst{w})}\}$.
+\end{definition}
+
+\begin{theorem}\label{uniform_independent_block_family}
+    Let $b\in\funs{X}{\lambda}$.
+    Let $K\in\funs{\lambda}{\pow{X}}$.
+    Let $t\in\funs{\lambda}{\lambda}$.
+    Suppose for every $\xi\in\lambda$ we have
+        $\fibre{\restrl{b}{K(\xi)}}{t(\xi)}\approx r(\xi)$ and
+        for every $x\in\fibre{\restrl{b}{K(\xi)}}{t(\xi)}$ we have
+            $\cardLt{\graphNeighbourhood{E}{x}{X}}{r(t(\xi))}$.
+    Suppose for every $\xi\in\lambda$ we have
+        $K(\xi)$ is an independent set in $X$ with respect to $E$.
+    Let $Z=\uniformBlockFamily{b}{K}{t}{\lambda}{X}$.
+    Then $Z\in\funs{\lambda}{\pow{X}}$ and for every $\xi\in\lambda$
+        we have $Z(\xi)\subseteq K(\xi)$ and $Z(\xi)\approx r(\xi)$ and
+        $Z(\xi)$ is an independent set in $X$ with respect to $E$ and
+        for every $x\in Z(\xi)$ we have
+            $\cardLt{\graphNeighbourhood{E}{x}{X}}{r(t(\xi))}$.
+\end{theorem}
+\begin{proof}
+    $b$ is a function and $\dom{b}=X$ by
+        \obv{funs_is_function,funs}.
+    $K$ is a function and $\dom{K}=\lambda$ by
+        \obv{funs_is_function,funs}.
+    $t$ is a function and $\dom{t}=\lambda$ by
+        \obv{funs_is_function,funs}.
+    Show that for every $\xi\in\lambda$ we have
+        $\fibre{\restrl{b}{K(\xi)}}{t(\xi)}\in\pow{X}$ and
+        $\fibre{\restrl{b}{K(\xi)}}{t(\xi)}\subseteq K(\xi)$.
+    \begin{subproof}
+        Fix $\xi\in\lambda$.
+        $K(\xi)\in\pow{X}$ by \obv{funs_type_apply}.
+        Hence $K(\xi)\subseteq X$ by \obv{powerset_elim}.
+        Hence $K(\xi)\subseteq\dom{b}$ by \auto.
+        $\fibre{\restrl{b}{K(\xi)}}{t(\xi)}
+            \subseteq\dom{\restrl{b}{K(\xi)}}$ by
+            \obv{subseteq,function_fibre_iff}.
+        $\dom{\restrl{b}{K(\xi)}}=K(\xi)$ by
+            \auto{dom_of_restrl_eq_inter,inter_absorb_supseteq_left}.
+        Hence $\fibre{\restrl{b}{K(\xi)}}{t(\xi)}\subseteq K(\xi)$ by
+            \auto.
+        Hence $\fibre{\restrl{b}{K(\xi)}}{t(\xi)}\subseteq X$ by
+            \obv{subseteq_transitive}.
+        Hence $\fibre{\restrl{b}{K(\xi)}}{t(\xi)}\in\pow{X}$ by
+            \obv{powerset_intro}.
+        Follows by \auto.
+    \end{subproof}
+    Show that $Z\subseteq\lambda\times\pow{X}$.
+    \begin{subproof}
+        Show that every element of $Z$ is an element of
+            $\lambda\times\pow{X}$.
+        \begin{subproof}
+            Fix $w\in Z$.
+            Follows by \auto{uniform_block_family}.
+        \end{subproof}
+        Follows by \obv{subseteq}.
+    \end{subproof}
+    Hence $Z\in\pow{\lambda\times\pow{X}}$ by \obv{powerset_intro}.
+    Hence $Z\in\rels{\lambda}{\pow{X}}$ by \obv{rels}.
+    Hence $Z$ is a relation and $\dom{Z}\subseteq\lambda$ by
+        \obv{rels_is_relation,rels_dom_subseteq}.
+    Show that $Z$ is right-unique.
+    \begin{subproof}
+        Show that for all $\xi,Y,V$ such that $(\xi,Y),(\xi,V)\in Z$
+            we have $Y=V$.
+        \begin{subproof}
+            Fix $\xi,Y,V$.
+            Assume $(\xi,Y),(\xi,V)\in Z$.
+            $Y=\fibre{\restrl{b}{K(\xi)}}{t(\xi)}$ by
+                \auto{uniform_block_family,fst_eq,snd_eq}.
+            $V=\fibre{\restrl{b}{K(\xi)}}{t(\xi)}$ by
+                \auto{uniform_block_family,fst_eq,snd_eq}.
+            Follows by \auto.
+        \end{subproof}
+        Follows by \obv{rightunique}.
+    \end{subproof}
+    Show that $\lambda\subseteq\dom{Z}$.
+    \begin{subproof}
+        Show that every element of $\lambda$ is an element of $\dom{Z}$.
+        \begin{subproof}
+            Fix $\xi\in\lambda$.
+            $\fibre{\restrl{b}{K(\xi)}}{t(\xi)}\in\pow{X}$ by
+                \auto.
+            Hence $(\xi,\fibre{\restrl{b}{K(\xi)}}{t(\xi)})
+                \in\lambda\times\pow{X}$ by \obv{times_tuple_intro}.
+            Hence $(\xi,\fibre{\restrl{b}{K(\xi)}}{t(\xi)})\in Z$ by
+                \auto{uniform_block_family,fst_eq,snd_eq}.
+            Follows by \obv{dom_intro}.
+        \end{subproof}
+        Follows by \obv{subseteq}.
+    \end{subproof}
+    Hence $\dom{Z}=\lambda$ by \obv{subseteq_antisymmetric}.
+    Show that for every $\xi\in\lambda$ we have
+        $Z(\xi)=\fibre{\restrl{b}{K(\xi)}}{t(\xi)}$.
+    \begin{subproof}
+        Fix $\xi\in\lambda$.
+        $\fibre{\restrl{b}{K(\xi)}}{t(\xi)}\in\pow{X}$ by
+            \auto.
+        Hence $(\xi,\fibre{\restrl{b}{K(\xi)}}{t(\xi)})
+            \in\lambda\times\pow{X}$ by \obv{times_tuple_intro}.
+        Hence $(\xi,\fibre{\restrl{b}{K(\xi)}}{t(\xi)})\in Z$ by
+            \auto{uniform_block_family,fst_eq,snd_eq}.
+        Follows by \obv{function_apply_intro}.
+    \end{subproof}
+    Hence for every $\xi\in\lambda$ we have $Z(\xi)\in\pow{X}$ by
+        \auto.
+    Hence $Z$ is a function to $\pow{X}$ by \auto.
+    Hence $Z\in\funs{\lambda}{\pow{X}}$ by \auto{funs_intro}.
+    Show that for every $\xi\in\lambda$ we have
+        $Z(\xi)\subseteq K(\xi)$ and $Z(\xi)\approx r(\xi)$ and
+        $Z(\xi)$ is an independent set in $X$ with respect to $E$ and
+        for every $x\in Z(\xi)$ we have
+            $\cardLt{\graphNeighbourhood{E}{x}{X}}{r(t(\xi))}$.
+    \begin{subproof}
+        Fix $\xi\in\lambda$.
+        $\fibre{\restrl{b}{K(\xi)}}{t(\xi)}\subseteq K(\xi)$ by
+            \auto.
+        $Z(\xi)=\fibre{\restrl{b}{K(\xi)}}{t(\xi)}$ by \auto.
+        Hence $Z(\xi)\subseteq K(\xi)$ by \auto.
+        Hence $Z(\xi)$ is an independent set in $X$ with respect to $E$ by
+            \auto{subset_of_independent_is_independent}.
+        Follows by \auto.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\subsection{Independent choices from prescribed blocks}
+
+\begin{theorem}\label{singular_independent_block_family}
+    Suppose $\cofinalRegularCardinalSequence{r}{\lambda}{\kappa}$.
+    Let $A\in\funs{\lambda}{\pow{X}}$.
+    Suppose for every $\xi\in\lambda$ we have $A(\xi)\approx r(\xi)$.
+    Suppose $E$ is a simple graph on $X$.
+    Suppose $E$ does not have a countably infinite clique in $X$.
+    Suppose for every infinite cardinal $\rho\in\kappa$ we have $\edmAt{\rho}$.
+    Then there exists $K$ such that
+        $K\in\funs{\lambda}{\pow{X}}$ and for every $\xi\in\lambda$
+        we have $K(\xi)\approx r(\xi)$ and
+            $K(\xi)$ is an independent set in $X$ with respect to $E$.
+\end{theorem}
+\begin{proof}
+    $\lambda$ and $\kappa$ are ordinals and
+        $r\in\funs{\lambda}{\kappa}$ by
+        \obv{cofinal_regular_cardinal_sequence_type}.
+    Hence $r$ is a function and $\dom{r}=\lambda$ by
+        \obv{funs_is_function,funs}.
+    $A$ is a function and $\dom{A}=\lambda$ by
+        \obv{funs_is_function,funs}.
+    Show that for every $\xi\in\lambda$ we have
+        $\{H\in\pow{A(\xi)}\mid
+            \text{$H\approx r(\xi)$ and $H$ is an independent set in $X$
+                with respect to $E$}\}$
+        is inhabited.
+    \begin{subproof}
+        Fix $\xi\in\lambda$.
+        $A(\xi)\in\pow{X}$ by \obv{funs_type_apply}.
+        Hence $A(\xi)\subseteq X$ by \obv{powerset_elim}.
+        $r(\xi)\in\kappa$ by \obv{funs_type_apply}.
+        $r(\xi)$ is a regular cardinal by
+            \obv{cofinal_regular_cardinal_sequence_value}.
+        Hence $\edmAt{r(\xi)}$.
+        $\relationTrace{E}{A(\xi)}$ is a simple graph on $A(\xi)$ by
+            \obv{induced_simple_graph}.
+        Hence $\relationTrace{E}{A(\xi)}$ has an independent set in $A(\xi)$
+                equinumerous with $r(\xi)$ or
+            $\relationTrace{E}{A(\xi)}$ has a countably infinite clique
+                in $A(\xi)$ by
+            \obv{edm_at_elim}.
+        \begin{byCase}
+            \caseOf{$\relationTrace{E}{A(\xi)}$ has an independent set
+                in $A(\xi)$ equinumerous with $r(\xi)$.}
+                Take an independent set $H$ in $A(\xi)$ with respect to
+                    $\relationTrace{E}{A(\xi)}$ such that $H\approx r(\xi)$.
+                $H\subseteq A(\xi)$ by \obv{independent_subseteq}.
+                Hence $H$ is an independent set in $X$ with respect to $E$
+                    by \auto{induced_independent_iff}.
+                Hence $H\in\{J\in\pow{A(\xi)}\mid
+                    \text{$J\approx r(\xi)$ and
+                        $J$ is an independent set in $X$
+                        with respect to $E$}\}$ by
+                    \auto{powerset_intro}.
+                Follows by \auto.
+            \caseOf{$\relationTrace{E}{A(\xi)}$ has a countably infinite clique
+                in $A(\xi)$.}
+                Take a countably infinite clique $D$ in $A(\xi)$ with respect to
+                    $\relationTrace{E}{A(\xi)}$ by \auto.
+                $D\subseteq A(\xi)$ by \obv{clique_subseteq}.
+                Hence $D$ is a clique in $X$ with respect to $E$ by
+                    \auto{induced_clique_iff}.
+                Contradiction by \auto.
+        \end{byCase}
+    \end{subproof}
+    Show that for every $\xi\in\lambda$ we have
+        $\choice{\{H\in\pow{A(\xi)}\mid
+            \text{$H\approx r(\xi)$ and $H$ is an independent set in $X$
+                with respect to $E$}\}}\in\pow{X}$.
+    \begin{subproof}
+        Fix $\xi\in\lambda$.
+        $\choice{\{H\in\pow{A(\xi)}\mid
+            \text{$H\approx r(\xi)$ and $H$ is an independent set in $X$
+                with respect to $E$}\}}\in\pow{A(\xi)}$ by
+            \auto{choice_in}.
+        Hence $\choice{\{H\in\pow{A(\xi)}\mid
+            \text{$H\approx r(\xi)$ and $H$ is an independent set in $X$
+                with respect to $E$}\}}\subseteq A(\xi)$ by
+            \obv{powerset_elim}.
+        $A(\xi)\in\pow{X}$ by \obv{funs_type_apply}.
+        Hence $A(\xi)\subseteq X$ by \obv{powerset_elim}.
+        Hence $\choice{\{H\in\pow{A(\xi)}\mid
+            \text{$H\approx r(\xi)$ and $H$ is an independent set in $X$
+                with respect to $E$}\}}\subseteq X$ by
+            \obv{subseteq_transitive}.
+        Follows by \obv{powerset_intro}.
+    \end{subproof}
+    Let $K=\{w\in\lambda\times\pow{X}\mid
+        \snd{w}=\choice{\{H\in\pow{A(\fst{w})}\mid
+            \text{$H\approx r(\fst{w})$ and
+                $H$ is an independent set in $X$ with respect to $E$}\}}\}$.
+    Show that $K\subseteq\lambda\times\pow{X}$.
+    \begin{subproof}
+        Show that every element of $K$ is an element of
+            $\lambda\times\pow{X}$.
+        \begin{subproof}
+            Fix $w\in K$.
+            Follows by \auto.
+        \end{subproof}
+        Follows by \obv{subseteq}.
+    \end{subproof}
+    Hence $K\in\pow{\lambda\times\pow{X}}$ by \obv{powerset_intro}.
+    Hence $K\in\rels{\lambda}{\pow{X}}$ by \obv{rels}.
+    Hence $K$ is a relation and $\dom{K}\subseteq\lambda$ by
+        \obv{rels_is_relation,rels_dom_subseteq}.
+    Show that $K$ is right-unique.
+    \begin{subproof}
+        Show that for all $\xi,Y,Z$ such that $(\xi,Y),(\xi,Z)\in K$
+            we have $Y=Z$.
+        \begin{subproof}
+            Fix $\xi,Y,Z$.
+            Assume $(\xi,Y),(\xi,Z)\in K$.
+            $Y=\choice{\{H\in\pow{A(\xi)}\mid
+                \text{$H\approx r(\xi)$ and
+                    $H$ is an independent set in $X$
+                    with respect to $E$}\}}$ by
+                \auto{fst_eq,snd_eq}.
+            $Z=\choice{\{H\in\pow{A(\xi)}\mid
+                \text{$H\approx r(\xi)$ and
+                    $H$ is an independent set in $X$
+                    with respect to $E$}\}}$ by
+                \auto{fst_eq,snd_eq}.
+            Follows by \auto.
+        \end{subproof}
+        Follows by \obv{rightunique}.
+    \end{subproof}
+    Show that $\lambda\subseteq\dom{K}$.
+    \begin{subproof}
+        Show that every element of $\lambda$ is an element of $\dom{K}$.
+        \begin{subproof}
+            Fix $\xi\in\lambda$.
+            $(\xi,\choice{\{H\in\pow{A(\xi)}\mid
+                \text{$H\approx r(\xi)$ and
+                    $H$ is an independent set in $X$
+                    with respect to $E$}\}})\in K$ by
+                \auto{times_tuple_intro,fst_eq,snd_eq}.
+            Follows by \obv{dom_intro}.
+        \end{subproof}
+        Follows by \obv{subseteq}.
+    \end{subproof}
+    Hence $\dom{K}=\lambda$ by \obv{subseteq_antisymmetric}.
+    Show that for every $\xi\in\lambda$ we have
+        $K(\xi)\in\pow{X}$ and $K(\xi)\approx r(\xi)$ and
+        $K(\xi)$ is an independent set in $X$ with respect to $E$.
+    \begin{subproof}
+        Fix $\xi\in\lambda$.
+        $\choice{\{H\in\pow{A(\xi)}\mid
+            \text{$H\approx r(\xi)$ and $H$ is an independent set in $X$
+                with respect to $E$}\}}
+        \in\{H\in\pow{A(\xi)}\mid
+            \text{$H\approx r(\xi)$ and $H$ is an independent set in $X$
+                with respect to $E$}\}$
+            by \obv{choice_in}.
+        $\choice{\{H\in\pow{A(\xi)}\mid
+            \text{$H\approx r(\xi)$ and $H$ is an independent set in $X$
+                with respect to $E$}\}}\in\pow{X}$ by \auto.
+        $(\xi,\choice{\{H\in\pow{A(\xi)}\mid
+            \text{$H\approx r(\xi)$ and $H$ is an independent set in $X$
+                with respect to $E$}\}})\in K$ by
+            \auto{times_tuple_intro,fst_eq,snd_eq}.
+        Hence $K(\xi)=\choice{\{H\in\pow{A(\xi)}\mid
+            \text{$H\approx r(\xi)$ and $H$ is an independent set in $X$
+                with respect to $E$}\}}$ by
+            \obv{function_apply_intro}.
+        Hence $K(\xi)\in\pow{A(\xi)}$ and $K(\xi)\approx r(\xi)$ and
+            $K(\xi)$ is an independent set in $X$ with respect to $E$ by
+            \auto.
+        Hence $K(\xi)\subseteq A(\xi)$ by \obv{powerset_elim}.
+        $A(\xi)\in\pow{X}$ by \obv{funs_type_apply}.
+        Hence $A(\xi)\subseteq X$ by \obv{powerset_elim}.
+        Hence $K(\xi)\subseteq X$ by \obv{subseteq_transitive}.
+        Hence $K(\xi)\in\pow{X}$ by \obv{powerset_intro}.
+    \end{subproof}
+    Hence $K$ is a function to $\pow{X}$ by \auto.
+    Hence $K\in\funs{\lambda}{\pow{X}}$ by \auto{funs_intro}.
+    Follows by \auto.
+\end{proof}
+
+\subsection{Nested initial-image blocks}
+
+\begin{theorem}\label{increasing_initial_image_family}
+    Let $\lambda,\kappa$ be ordinals.
+    Let $r\in\funs{\lambda}{\kappa}$.
+    Suppose $\normalMapIncreasing{r}{\lambda}$.
+    Let $e\in\bijections{\kappa}{X}$.
+    Then there exists $A$ such that
+        $A\in\funs{\lambda}{\pow{X}}$ and
+        for every $\xi\in\lambda$ we have
+            $A(\xi)=\img{e}{r(\xi)}$ and $A(\xi)\approx r(\xi)$.
+\end{theorem}
+\begin{proof}
+    $r$ is a function and $\dom{r}=\lambda$ by
+        \obv{funs_is_function,funs}.
+    $e\in\funs{\kappa}{X}$ by \obv{bijections_to_funs}.
+    Hence $e$ is a function and $\dom{e}=\kappa$ by
+        \obv{funs_is_function,funs}.
+    Let $A=\{(\xi,\img{e}{r(\xi)})\mid\xi\in\lambda\}$.
+    $A$ is a relation by \auto{relation}.
+    $A$ is right-unique by \auto{rightunique,pair_eq_iff}.
+    $\dom{A}=\lambda$ by \auto{setext,dom_iff,pair_eq_iff}.
+    Show that for every $\xi\in\lambda$ we have
+        $A(\xi)\in\pow{X}$ and $A(\xi)=\img{e}{r(\xi)}$ and
+        $A(\xi)\approx r(\xi)$.
+    \begin{subproof}
+        Fix $\xi\in\lambda$.
+        $r(\xi)\in\kappa$ by \obv{funs_type_apply}.
+        Hence $r(\xi)$ is an ordinal and $r(\xi)\subseteq\kappa$ by
+            \obv{elem_of_ordinal_is_ordinal,ordinal_elem_implies_subseteq}.
+        $\img{e}{r(\xi)}\subseteq X$ by
+            \obv{funs_image_subseteq}.
+        $A(\xi)=\img{e}{r(\xi)}$ by
+            \auto{function_apply_intro}.
+        Hence $A(\xi)\in\pow{X}$ by \auto{powerset_intro}.
+        $\restrl{e}{r(\xi)}\in
+            \bijections{r(\xi)}{\img{e}{r(\xi)}}$ by
+            \obv{bijection_restriction_to_image}.
+        Hence $r(\xi)\approx\img{e}{r(\xi)}$ by \auto{equinum}.
+        Hence $\img{e}{r(\xi)}\approx r(\xi)$ by \obv{equinum_sym}.
+        Hence $A(\xi)\approx r(\xi)$ by \auto.
+    \end{subproof}
+    Hence $A$ is a function to $\pow{X}$ by \auto.
+    Hence $A\in\funs{\lambda}{\pow{X}}$ by \auto{funs_intro}.
+    Follows by \auto.
+\end{proof}
+
+\begin{proposition}\label{increasing_initial_image_family_nested}
+    Let $\lambda,\kappa$ be ordinals.
+    Let $r\in\funs{\lambda}{\kappa}$.
+    Suppose $\normalMapIncreasing{r}{\lambda}$.
+    Let $e$ be a function.
+    Let $A$ be a function on $\lambda$.
+    Suppose for every $\zeta\in\lambda$ we have
+        $A(\zeta)=\img{e}{r(\zeta)}$.
+    Let $\eta\in\lambda$ and $\xi\in\eta$.
+    Then $A(\xi)\subseteq A(\eta)$.
+\end{proposition}
+\begin{proof}
+    $r$ is a function and $\dom{r}=\lambda$ by
+        \obv{funs_is_function,funs}.
+    $\xi,\eta\in\lambda$ by \auto{ordinal_transitivity}.
+    Hence $r(\xi)\in r(\eta)$ by \obv{normal_map_increasing}.
+    $r(\eta)\in\kappa$ by \obv{funs_type_apply}.
+    Hence $r(\eta)$ is an ordinal by
+        \obv{elem_of_ordinal_is_ordinal}.
+    Hence $r(\xi)$ is an ordinal by
+        \obv{elem_of_ordinal_is_ordinal}.
+    Hence $r(\xi)\subseteq r(\eta)$ by
+        \obv{ordinal_elem_implies_subseteq}.
+    Hence $\img{e}{r(\xi)}\subseteq\img{e}{r(\eta)}$ by
+        \obv{img_subseteq}.
+    Follows by \auto.
+\end{proof}
+
+\subsection{Diagonally separated blocks}
+
+\begin{theorem}\label{singular_selected_block_family}
+    Let $\kappa$ be a singular cardinal.
+    Let $\lambda=\cofinality{\kappa}$.
+    Suppose $X\approx\kappa$.
+    Suppose $E$ is a simple graph on $X$.
+    Suppose for every $x\in X$ we have
+        $\cardLt{\graphNeighbourhood{E}{x}{X}}{\kappa}$.
+    Suppose $E$ does not have a countably infinite clique in $X$.
+    Suppose for every infinite cardinal $\theta\in\kappa$ we have $\edmAt{\theta}$.
+    Then there exist $W,s$ such that
+        $W\in\funs{\lambda}{\pow{X}}$ and
+        $\cofinalRegularCardinalSequence{s}{\lambda}{\kappa}$ and
+        for every $\nu\in\lambda$ we have
+            $W(\nu)\approx s(\nu)$ and
+            $W(\nu)$ is an independent set in $X$ with respect to $E$ and
+            $\lambda\in s(\nu)$ and
+            for all $\mu,x$ such that $\mu\in\nu$ and $x\in W(\mu)$ we have
+                $\cardLt{\graphNeighbourhood{E}{x}{X}}{s(\nu)}$.
+\end{theorem}
+\begin{proof}
+    $\kappa$ is an infinite cardinal by \obv{singular_cardinal}.
+    Hence $\kappa$ is a limit ordinal by
+        \obv{infinite_cardinal_is_limit_ordinal}.
+    Hence $\kappa$ is an ordinal by \obv{limit_ordinal}.
+    $\lambda$ is a regular cardinal by
+        \auto{cofinality_of_limit_is_regular}.
+    Hence $\lambda$ is an infinite cardinal by \obv{regular_cardinal}.
+    Hence $\lambda$ is a limit ordinal by
+        \obv{infinite_cardinal_is_limit_ordinal}.
+    Hence $\lambda$ is an ordinal and $\emptyset\in\lambda$ by
+        \obv{limit_ordinal}.
+    Take $r$ such that
+        $\cofinalRegularCardinalSequence{r}{\lambda}{\kappa}$ and
+        $\lambda\in r(\emptyset)$ by
+        \auto{cofinal_regular_sequence_above_index_exists}.
+    $r\in\funs{\lambda}{\kappa}$ by
+        \obv{cofinal_regular_cardinal_sequence_type}.
+    Hence $r$ is a function and $\dom{r}=\lambda$ by
+        \obv{funs_is_function,funs}.
+    $\normalMapIncreasing{r}{\lambda}$ by
+        \obv{cofinal_regular_cardinal_sequence}.
+    $\kappa\approx X$ by \obv{equinum_sym}.
+    Take $e$ such that $e\in\bijections{\kappa}{X}$ by \obv{equinum}.
+    Take $A$ such that $A\in\funs{\lambda}{\pow{X}}$ and
+        for every $\xi\in\lambda$ we have
+            $A(\xi)=\img{e}{r(\xi)}$ and $A(\xi)\approx r(\xi)$ by
+        \auto{increasing_initial_image_family}.
+    Take $b$ such that $b\in\funs{X}{\lambda}$ and
+        for every $x\in X$ we have
+            $\cardLt{\graphNeighbourhood{E}{x}{X}}{r(b(x))}$ by
+        \auto{cofinal_sequence_degree_bound_map}.
+    Take $K$ such that $K\in\funs{\lambda}{\pow{X}}$ and
+        for every $\xi\in\lambda$ we have $K(\xi)\approx r(\xi)$ and
+            $K(\xi)$ is an independent set in $X$ with respect to $E$ by
+        \auto{singular_independent_block_family}.
+    Take $t$ such that $t\in\funs{\lambda}{\lambda}$ and
+        for every $\xi\in\lambda$ we have
+            $\fibre{\restrl{b}{K(\xi)}}{t(\xi)}\approx r(\xi)$ and
+            for every
+                $x\in\fibre{\restrl{b}{K(\xi)}}{t(\xi)}$ we have
+                $\cardLt{\graphNeighbourhood{E}{x}{X}}{r(t(\xi))}$ by
+        \auto{uniform_block_index_map_exists}.
+    Let $Z=\uniformBlockFamily{b}{K}{t}{\lambda}{X}$.
+    $Z\in\funs{\lambda}{\pow{X}}$ and for every $\xi\in\lambda$
+        we have $Z(\xi)\subseteq K(\xi)$ and $Z(\xi)\approx r(\xi)$ and
+        $Z(\xi)$ is an independent set in $X$ with respect to $E$ and
+        for every $x\in Z(\xi)$ we have
+            $\cardLt{\graphNeighbourhood{E}{x}{X}}{r(t(\xi))}$ by
+        \auto{uniform_independent_block_family}.
+    Take $q$ such that $\normalCofinalMap{q}{\lambda}{\lambda}$ and
+        for all $\mu,\nu$ such that $\mu\in\nu\in\lambda$ we have
+            $t(q(\mu))\in q(\nu)$ by
+        \obv{normal_dominating_map}.
+    $q\in\funs{\lambda}{\lambda}$ by
+        \obv{normal_cofinal_map_type}.
+    Hence $q$ is a function and $\dom{q}=\lambda$ by
+        \obv{funs_is_function,funs}.
+    $\ran{q}\subseteq\lambda$ by \obv{funs_ran}.
+    $Z$ is a function and $\dom{Z}=\lambda$ by
+        \auto{funs_is_function,funs}.
+    Hence $\ran{q}\subseteq\dom{Z}$ by \auto.
+    Hence $Z$ is composable with $q$ by definition.
+    Hence $Z\circ q\in\funs{\lambda}{\pow{X}}$ by \obv{funs_circ}.
+    $\ran{q}\subseteq\dom{r}$ by \auto.
+    $r$ is composable with $q$ by definition.
+    Hence $r\circ q\in\funs{\lambda}{\kappa}$ by \obv{funs_circ}.
+    Let $W=Z\circ q$.
+    Let $s=r\circ q$.
+    $W\in\funs{\lambda}{\pow{X}}$ and
+        $s\in\funs{\lambda}{\kappa}$ by \auto.
+    $\cofinalRegularCardinalSequence{s}{\lambda}{\kappa}$ by
+        \auto{cofinal_regular_sequence_normal_reindex}.
+    Show that for every $\nu\in\lambda$ we have
+        $W(\nu)\approx s(\nu)$ and
+        $W(\nu)$ is an independent set in $X$ with respect to $E$ and
+        $\lambda\in s(\nu)$ and
+        for all $\mu,x$ such that $\mu\in\nu$ and $x\in W(\mu)$ we have
+            $\cardLt{\graphNeighbourhood{E}{x}{X}}{s(\nu)}$.
+    \begin{subproof}
+        Fix $\nu\in\lambda$.
+        Hence $\nu\in\dom{q}$ by \auto.
+        $q(\nu)\in\lambda$ by \obv{funs_type_apply}.
+        Hence $q(\nu)\in\dom{Z}$ and $q(\nu)\in\dom{r}$ by
+            \auto.
+        $(Z\circ q)(\nu)=Z(q(\nu))$ by \obv{circ_apply}.
+        Hence $W(\nu)=Z(q(\nu))$ by \auto.
+        $(r\circ q)(\nu)=r(q(\nu))$ by \obv{circ_apply}.
+        Hence $s(\nu)=r(q(\nu))$ by \auto.
+        Hence $W(\nu)\approx s(\nu)$ and
+            $W(\nu)$ is an independent set in $X$ with respect to $E$ by
+            \auto.
+        Show that $\lambda\in s(\nu)$.
+        \begin{subproof}
+            Let $\zeta=q(\nu)$.
+            $\zeta\in\lambda$ by \auto.
+            Hence $\zeta$ is an ordinal by
+                \obv{elem_of_ordinal_is_ordinal}.
+            \begin{byCase}
+                \caseOf{$\zeta=\emptyset$.}
+                    Follows by \auto.
+                \caseOf{$\zeta\neq\emptyset$.}
+                    Hence $\emptyset\in\zeta$ by
+                        \auto{ordinal_empty_or_emptyset_elem}.
+                    Hence $r(\emptyset)\in r(\zeta)$ by
+                        \obv{cofinal_regular_cardinal_sequence_increasing}.
+                    $r(\zeta)$ is a regular cardinal by
+                        \obv{cofinal_regular_cardinal_sequence_value}.
+                    Hence $r(\zeta)$ is an ordinal by
+                        \auto{regular_cardinal,cardinal,initial_ordinal}.
+                    Hence $\lambda\in r(\zeta)$ by
+                        \auto{ordinal_transitivity}.
+                    Follows by \auto.
+            \end{byCase}
+        \end{subproof}
+        Show that for all $\mu,x$ such that $\mu\in\nu$ and
+            $x\in W(\mu)$ we have
+            $\cardLt{\graphNeighbourhood{E}{x}{X}}{s(\nu)}$.
+        \begin{subproof}
+            Fix $\mu,x$.
+            Assume $\mu\in\nu$ and $x\in W(\mu)$.
+            $\mu\in\lambda$ by \auto{ordinal_transitivity}.
+            Hence $\mu\in\dom{q}$ by \auto.
+            $q(\mu)\in\lambda$ by \obv{funs_type_apply}.
+            Hence $q(\mu)\in\dom{Z}$ and $q(\mu)\in\dom{r}$ by
+                \auto.
+            $(Z\circ q)(\mu)=Z(q(\mu))$ by \obv{circ_apply}.
+            Hence $W(\mu)=Z(q(\mu))$ by \auto.
+            Hence $x\in Z(q(\mu))$ by \auto.
+            Hence $\cardLt{\graphNeighbourhood{E}{x}{X}}
+                {r(t(q(\mu)))}$ by \auto.
+            Let $\alpha=t(q(\mu))$.
+            Let $\beta=q(\nu)$.
+            $\alpha\in\beta$ by \auto.
+            $\beta\in\lambda$ by \auto.
+            Hence $\alpha\in\lambda$ by
+                \auto{ordinal_transitivity}.
+            $\cardLt{\graphNeighbourhood{E}{x}{X}}{r(\alpha)}$ by
+                \auto.
+            $r(\alpha)\in r(\beta)$ by
+                \obv{cofinal_regular_cardinal_sequence_increasing}.
+            $r(\alpha)$ is a regular cardinal by
+                \obv{cofinal_regular_cardinal_sequence_value}.
+            $r(\beta)$ is a regular cardinal by
+                \obv{cofinal_regular_cardinal_sequence_value}.
+            Hence $r(\alpha)$ is a cardinal by
+                \obv{cofinal_regular_cardinal_sequence_value_is_cardinal}.
+            $r(\beta)$ is a cardinal by
+                \obv{cofinal_regular_cardinal_sequence_value_is_cardinal}.
+            Hence $\cardLt{r(\alpha)}{r(\beta)}$ by
+                \auto{card_elem_iff_cardinal_lt,card_of_cardinal}.
+            Hence $\cardLt{\graphNeighbourhood{E}{x}{X}}{r(\beta)}$ by
+                \obv{cardinal_lt_transitive}.
+            Follows by \auto.
+        \end{subproof}
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{singular_small_degree_independent}
+    Let $\kappa$ be a singular cardinal.
+    Let $\lambda=\cofinality{\kappa}$.
+    Suppose $X\approx\kappa$.
+    Suppose $E$ is a simple graph on $X$.
+    Suppose for every $x\in X$ we have
+        $\cardLt{\graphNeighbourhood{E}{x}{X}}{\kappa}$.
+    Suppose $E$ does not have a countably infinite clique in $X$.
+    Suppose for every infinite cardinal $\theta\in\kappa$ we have $\edmAt{\theta}$.
+    Then $E$ has an independent set in $X$ equinumerous with $\kappa$.
+\end{theorem}
+\begin{proof}
+    $\kappa$ is an infinite cardinal by \obv{singular_cardinal}.
+    Take $W,s$ such that
+        $W\in\funs{\lambda}{\pow{X}}$ and
+        $\cofinalRegularCardinalSequence{s}{\lambda}{\kappa}$ and
+        for every $\nu\in\lambda$ we have
+            $W(\nu)\approx s(\nu)$ and
+            $W(\nu)$ is an independent set in $X$ with respect to $E$ and
+            $\lambda\in s(\nu)$ and
+            for all $\mu,x$ such that $\mu\in\nu$ and $x\in W(\mu)$ we have
+                $\cardLt{\graphNeighbourhood{E}{x}{X}}{s(\nu)}$ by
+        \obv{singular_selected_block_family}.
+    Show that for all $\mu,\nu,x$ such that $\nu\in\lambda$ and
+        $\mu\in\nu$ and $x\in W(\mu)$ we have
+        $\cardLt{\graphNeighbourhood{E}{x}{X}}{s(\nu)}$.
+    \begin{subproof}
+        Fix $\mu,\nu,x$.
+        Assume $\nu\in\lambda$ and $\mu\in\nu$ and $x\in W(\mu)$.
+        Follows by \auto.
+    \end{subproof}
+    For every $\nu\in\lambda$ we have
+        $W(\nu)\approx s(\nu)$ and
+        $W(\nu)$ is an independent set in $X$ with respect to $E$ and
+        $\lambda\in s(\nu)$ by \auto.
+    Follows by \auto{singular_selected_blocks_assemble}.
+\end{proof}

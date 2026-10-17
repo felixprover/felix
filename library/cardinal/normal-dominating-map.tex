@@ -1,0 +1,805 @@
+\section{Normal cofinal maps dominating a function}
+
+\import{function.tex}
+\import{ordinal.tex}
+\import{cardinal/infinite.tex}
+\import{cardinal/normal-map.tex}
+\import{cardinal/cofinality.tex}
+\import{recursion/transfinite.tex}
+
+\subsection{The total recursion step}
+
+\begin{definition}\label{normal_dominating_next}
+    $\normalDominatingNext{t}{\beta}{g}
+        =\suc{(\beta\union g(\unions{\beta}))
+            \union t(g(\unions{\beta}))}$.
+\end{definition}
+
+\begin{definition}\label{normal_dominating_successor_guard}
+    $\normalDominatingSuccessorGuard{t}{\lambda}{\beta}{g}$ iff
+        $\beta$ is a successor ordinal and
+        $\normalDominatingNext{t}{\beta}{g}\in\lambda$.
+\end{definition}
+
+\begin{definition}\label{normal_dominating_limit_guard}
+    $\normalDominatingLimitGuard{\lambda}{\beta}{g}$ iff
+        $\beta$ is a limit ordinal and
+        $\unions{\ran{g}}\in\lambda$.
+\end{definition}
+
+\begin{definition}\label{normal_dominating_step}
+    $\normalDominatingStep{t}{\lambda}
+        =\{w\in
+            ((\lambda\times\pow{\lambda\times\lambda})\times\lambda)
+            \mid\text{
+            ($\fst{\fst{w}}=\emptyset$ and $\snd{w}=\emptyset$) or
+            ($\normalDominatingSuccessorGuard{t}{\lambda}
+                {\fst{\fst{w}}}{\snd{\fst{w}}}$ and
+                $\snd{w}=\normalDominatingNext{t}
+                    {\fst{\fst{w}}}{\snd{\fst{w}}}$) or
+            ($\normalDominatingLimitGuard{\lambda}
+                {\fst{\fst{w}}}{\snd{\fst{w}}}$ and
+                $\snd{w}=\unions{\ran{\snd{\fst{w}}}}$) or
+            ($\fst{\fst{w}}\neq\emptyset$ and
+                not $\normalDominatingSuccessorGuard{t}{\lambda}
+                    {\fst{\fst{w}}}{\snd{\fst{w}}}$ and
+                not $\normalDominatingLimitGuard{\lambda}
+                    {\fst{\fst{w}}}{\snd{\fst{w}}}$ and
+                $\snd{w}=\emptyset$)}\}$.
+\end{definition}
+
+\begin{proposition}\label{normal_dominating_step_iff}
+    Let $q\in\lambda\times\pow{\lambda\times\lambda}$ and
+        $y\in\lambda$.
+    Then $(q,y)\in\normalDominatingStep{t}{\lambda}$ iff
+        ($\fst{q}=\emptyset$ and $y=\emptyset$) or
+        ($\normalDominatingSuccessorGuard{t}{\lambda}
+            {\fst{q}}{\snd{q}}$ and
+            $y=\normalDominatingNext{t}{\fst{q}}{\snd{q}}$) or
+        ($\normalDominatingLimitGuard{\lambda}{\fst{q}}{\snd{q}}$ and
+            $y=\unions{\ran{\snd{q}}}$) or
+        ($\fst{q}\neq\emptyset$ and
+            not $\normalDominatingSuccessorGuard{t}{\lambda}
+                {\fst{q}}{\snd{q}}$ and
+            not $\normalDominatingLimitGuard{\lambda}
+                {\fst{q}}{\snd{q}}$ and
+            $y=\emptyset$).
+\end{proposition}
+\begin{proof}
+    $(q,y)\in
+        (\lambda\times\pow{\lambda\times\lambda})\times\lambda$ by
+        \obv{times_tuple_intro}.
+    Follows by \auto{normal_dominating_step,fst_eq,snd_eq}.
+\end{proof}
+
+\begin{theorem}\label{normal_dominating_step_type}
+    Suppose $\emptyset\in\lambda$.
+    Then $\normalDominatingStep{t}{\lambda}
+        \in\funs{\lambda\times\pow{\lambda\times\lambda}}{\lambda}$.
+\end{theorem}
+\begin{proof}
+    Let $D=\lambda\times\pow{\lambda\times\lambda}$.
+    Let $T=\normalDominatingStep{t}{\lambda}$.
+    $T\subseteq D\times\lambda$ by
+        \auto{normal_dominating_step,subseteq}.
+    Hence $T$ is a relation by
+        \auto{relation,subseteq,times_elem_is_tuple}.
+    Show that $T$ is right-unique.
+    \begin{subproof}
+        Show that for all $q,y,z$ such that $(q,y),(q,z)\in T$
+            we have $y=z$.
+        \begin{subproof}
+            Fix $q,y,z$.
+            Assume $(q,y),(q,z)\in T$.
+            Hence $q\in D$ and $y,z\in\lambda$ by
+                \obv{subseteq,times_tuple_elim}.
+            Hence
+                ($\fst{q}=\emptyset$ and $y=\emptyset$) or
+                ($\normalDominatingSuccessorGuard{t}{\lambda}
+                    {\fst{q}}{\snd{q}}$ and
+                    $y=\normalDominatingNext{t}{\fst{q}}{\snd{q}}$) or
+                ($\normalDominatingLimitGuard{\lambda}
+                    {\fst{q}}{\snd{q}}$ and
+                    $y=\unions{\ran{\snd{q}}}$) or
+                ($\fst{q}\neq\emptyset$ and
+                    not $\normalDominatingSuccessorGuard{t}{\lambda}
+                        {\fst{q}}{\snd{q}}$ and
+                    not $\normalDominatingLimitGuard{\lambda}
+                        {\fst{q}}{\snd{q}}$ and
+                    $y=\emptyset$) by
+                \auto{normal_dominating_step_iff}.
+            Hence
+                ($\fst{q}=\emptyset$ and $z=\emptyset$) or
+                ($\normalDominatingSuccessorGuard{t}{\lambda}
+                    {\fst{q}}{\snd{q}}$ and
+                    $z=\normalDominatingNext{t}{\fst{q}}{\snd{q}}$) or
+                ($\normalDominatingLimitGuard{\lambda}
+                    {\fst{q}}{\snd{q}}$ and
+                    $z=\unions{\ran{\snd{q}}}$) or
+                ($\fst{q}\neq\emptyset$ and
+                    not $\normalDominatingSuccessorGuard{t}{\lambda}
+                        {\fst{q}}{\snd{q}}$ and
+                    not $\normalDominatingLimitGuard{\lambda}
+                        {\fst{q}}{\snd{q}}$ and
+                    $z=\emptyset$) by
+                \auto{normal_dominating_step_iff}.
+            Follows by
+                \auto{normal_dominating_successor_guard,
+                    normal_dominating_limit_guard,
+                    zero_not_successorordinal,zero_not_limitordinal,
+                    limit_ordinal_is_not_successor_ordinal}.
+        \end{subproof}
+        Follows by \obv{rightunique}.
+    \end{subproof}
+    Show that $\dom{T}=D$.
+    \begin{subproof}
+        Show that $\dom{T}\subseteq D$.
+        \begin{subproof}
+            Follows by \auto{subseteq,dom_iff,times_tuple_elim}.
+        \end{subproof}
+        Show that $D\subseteq\dom{T}$.
+        \begin{subproof}
+            Show that every element of $D$ is an element of $\dom{T}$.
+            \begin{subproof}
+                Fix $q\in D$.
+                \begin{byCase}
+                    \caseOf{$\fst{q}=\emptyset$.}
+                        $(q,\emptyset)\in T$ by
+                            \auto{normal_dominating_step_iff}.
+                        Follows by \auto{dom_iff}.
+                    \caseOf{$\fst{q}\neq\emptyset$.}
+                        \begin{byCase}
+                            \caseOf{$\normalDominatingSuccessorGuard{t}
+                                    {\lambda}{\fst{q}}{\snd{q}}$.}
+                                $\normalDominatingNext{t}{\fst{q}}{\snd{q}}
+                                    \in\lambda$ by
+                                    \obv{normal_dominating_successor_guard}.
+                                Hence $(q,\normalDominatingNext{t}
+                                        {\fst{q}}{\snd{q}})\in T$ by
+                                    \auto{normal_dominating_step_iff}.
+                                Follows by \auto{dom_iff}.
+                            \caseOf{not
+                                    $\normalDominatingSuccessorGuard{t}
+                                        {\lambda}{\fst{q}}{\snd{q}}$.}
+                                \begin{byCase}
+                                    \caseOf{$\normalDominatingLimitGuard
+                                            {\lambda}{\fst{q}}{\snd{q}}$.}
+                                        $\unions{\ran{\snd{q}}}\in\lambda$ by
+                                            \obv{normal_dominating_limit_guard}.
+                                        Hence $(q,\unions{\ran{\snd{q}}})
+                                            \in T$ by
+                                            \auto{normal_dominating_step_iff}.
+                                        Follows by \auto{dom_iff}.
+                                    \caseOf{not
+                                            $\normalDominatingLimitGuard
+                                                {\lambda}{\fst{q}}{\snd{q}}$.}
+                                        $(q,\emptyset)\in T$ by
+                                            \auto{normal_dominating_step_iff}.
+                                        Follows by \auto{dom_iff}.
+                                \end{byCase}
+                        \end{byCase}
+                \end{byCase}
+            \end{subproof}
+            Follows by \obv{subseteq}.
+        \end{subproof}
+        Follows by \obv{subseteq_antisymmetric}.
+    \end{subproof}
+    Show that for every $q\in\dom{T}$ we have $T(q)\in\lambda$.
+    \begin{subproof}
+        Fix $q\in\dom{T}$.
+        $(q,T(q))\in T$ by \obv{function_apply_elim}.
+        Hence $(q,T(q))\in D\times\lambda$ by \obv{subseteq}.
+        Follows by \obv{times_tuple_elim}.
+    \end{subproof}
+    Hence $T$ is a function to $\lambda$.
+    Follows by \auto{funs_intro}.
+\end{proof}
+
+\begin{proposition}\label{normal_dominating_step_zero}
+    Suppose $\emptyset\in\lambda$.
+    Let $g\in\pow{\lambda\times\lambda}$.
+    Then $(\normalDominatingStep{t}{\lambda})((\emptyset,g))
+        =\emptyset$.
+\end{proposition}
+\begin{proof}
+    Let $q=(\emptyset,g)$.
+    $q\in\lambda\times\pow{\lambda\times\lambda}$ by
+        \obv{times_tuple_intro}.
+    $\normalDominatingStep{t}{\lambda}
+        \in\funs{\lambda\times\pow{\lambda\times\lambda}}{\lambda}$ by
+        \obv{normal_dominating_step_type}.
+    Hence $\normalDominatingStep{t}{\lambda}$ is a function by
+        \obv{funs_is_function}.
+    $(q,\emptyset)\in\normalDominatingStep{t}{\lambda}$ by
+        \auto{normal_dominating_step_iff,fst_eq,snd_eq}.
+    Hence $(\normalDominatingStep{t}{\lambda})(q)=\emptyset$ by
+        \obv{function_apply_intro}.
+\end{proof}
+
+\begin{proposition}\label{normal_dominating_step_successor}
+    Suppose $\emptyset\in\lambda$.
+    Let $\beta\in\lambda$ and
+        $g\in\pow{\lambda\times\lambda}$.
+    Suppose $\normalDominatingSuccessorGuard{t}{\lambda}{\beta}{g}$.
+    Then $(\normalDominatingStep{t}{\lambda})((\beta,g))
+        =\normalDominatingNext{t}{\beta}{g}$.
+\end{proposition}
+\begin{proof}
+    Let $q=(\beta,g)$.
+    $q\in\lambda\times\pow{\lambda\times\lambda}$ by
+        \obv{times_tuple_intro}.
+    $\normalDominatingNext{t}{\beta}{g}\in\lambda$ by
+        \obv{normal_dominating_successor_guard}.
+    $\normalDominatingStep{t}{\lambda}
+        \in\funs{\lambda\times\pow{\lambda\times\lambda}}{\lambda}$ by
+        \obv{normal_dominating_step_type}.
+    Hence $\normalDominatingStep{t}{\lambda}$ is a function by
+        \obv{funs_is_function}.
+    $(q,\normalDominatingNext{t}{\beta}{g})
+        \in\normalDominatingStep{t}{\lambda}$ by
+        \auto{normal_dominating_step_iff,fst_eq,snd_eq}.
+    Hence $(\normalDominatingStep{t}{\lambda})(q)
+        =\normalDominatingNext{t}{\beta}{g}$ by
+        \obv{function_apply_intro}.
+\end{proof}
+
+\begin{proposition}\label{normal_dominating_step_limit}
+    Suppose $\emptyset\in\lambda$.
+    Let $\beta\in\lambda$ and
+        $g\in\pow{\lambda\times\lambda}$.
+    Suppose $\normalDominatingLimitGuard{\lambda}{\beta}{g}$.
+    Then $(\normalDominatingStep{t}{\lambda})((\beta,g))
+        =\unions{\ran{g}}$.
+\end{proposition}
+\begin{proof}
+    Let $q=(\beta,g)$.
+    $q\in\lambda\times\pow{\lambda\times\lambda}$ by
+        \obv{times_tuple_intro}.
+    $\unions{\ran{g}}\in\lambda$ by
+        \obv{normal_dominating_limit_guard}.
+    $\normalDominatingStep{t}{\lambda}
+        \in\funs{\lambda\times\pow{\lambda\times\lambda}}{\lambda}$ by
+        \obv{normal_dominating_step_type}.
+    Hence $\normalDominatingStep{t}{\lambda}$ is a function by
+        \obv{funs_is_function}.
+    $(q,\unions{\ran{g}})\in\normalDominatingStep{t}{\lambda}$ by
+        \auto{normal_dominating_step_iff,fst_eq,snd_eq}.
+    Hence $(\normalDominatingStep{t}{\lambda})(q)
+        =\unions{\ran{g}}$ by \obv{function_apply_intro}.
+\end{proof}
+
+\begin{proposition}\label{normal_dominating_step_fallback}
+    Suppose $\emptyset\in\lambda$.
+    Let $\beta\in\lambda$ and
+        $g\in\pow{\lambda\times\lambda}$.
+    Suppose $\beta\neq\emptyset$ and
+        not $\normalDominatingSuccessorGuard{t}{\lambda}{\beta}{g}$ and
+        not $\normalDominatingLimitGuard{\lambda}{\beta}{g}$.
+    Then $(\normalDominatingStep{t}{\lambda})((\beta,g))
+        =\emptyset$.
+\end{proposition}
+\begin{proof}
+    Let $q=(\beta,g)$.
+    $q\in\lambda\times\pow{\lambda\times\lambda}$ by
+        \obv{times_tuple_intro}.
+    $\normalDominatingStep{t}{\lambda}
+        \in\funs{\lambda\times\pow{\lambda\times\lambda}}{\lambda}$ by
+        \obv{normal_dominating_step_type}.
+    Hence $\normalDominatingStep{t}{\lambda}$ is a function by
+        \obv{funs_is_function}.
+    $(q,\emptyset)\in\normalDominatingStep{t}{\lambda}$ by
+        \auto{normal_dominating_step_iff,fst_eq,snd_eq}.
+    Hence $(\normalDominatingStep{t}{\lambda})(q)=\emptyset$ by
+        \obv{function_apply_intro}.
+\end{proof}
+
+\subsection{The actual recursion}
+
+\begin{proposition}\label{normal_dominating_recursion_type}
+    Let $\lambda$ be a regular cardinal.
+    Let $t\in\funs{\lambda}{\lambda}$.
+    Then
+    \[
+        \ordinalRecursion{\lambda}{\lambda}
+            {\normalDominatingStep{t}{\lambda}}
+        \in\funs{\lambda}{\lambda}
+    \].
+\end{proposition}
+\begin{proof}
+    Hence $\lambda$ is a limit ordinal by
+        \obv{infinite_cardinal_is_limit_ordinal}.
+    Hence $\lambda$ is an ordinal and $\emptyset\in\lambda$ by
+        \obv{limit_ordinal}.
+    $\normalDominatingStep{t}{\lambda}
+        \in\funs{\lambda\times\pow{\lambda\times\lambda}}{\lambda}$ by
+        \obv{normal_dominating_step_type}.
+    Follows by \obv{ordinal_recursion_type}.
+\end{proof}
+
+\begin{proposition}\label{normal_dominating_recursion_equation}
+    Let $\lambda$ be a regular cardinal.
+    Let $t\in\funs{\lambda}{\lambda}$.
+    Let $\beta\in\lambda$.
+    Then
+    \[
+        (\ordinalRecursion{\lambda}{\lambda}
+            {\normalDominatingStep{t}{\lambda}})(\beta)
+        =(\normalDominatingStep{t}{\lambda})
+            ((\beta,\restrl{\ordinalRecursion{\lambda}{\lambda}
+                {\normalDominatingStep{t}{\lambda}}}{\beta}))
+    \].
+\end{proposition}
+\begin{proof}
+    Hence $\lambda$ is a limit ordinal by
+        \obv{infinite_cardinal_is_limit_ordinal}.
+    Hence $\lambda$ is an ordinal and $\emptyset\in\lambda$ by
+        \obv{limit_ordinal}.
+    $\normalDominatingStep{t}{\lambda}
+        \in\funs{\lambda\times\pow{\lambda\times\lambda}}{\lambda}$ by
+        \obv{normal_dominating_step_type}.
+    Follows by \obv{ordinal_recursion_equation}.
+\end{proof}
+
+\begin{proposition}\label{normal_dominating_recursion_zero}
+    Let $\lambda$ be a regular cardinal.
+    Let $t\in\funs{\lambda}{\lambda}$.
+    Then
+    \[
+        (\ordinalRecursion{\lambda}{\lambda}
+            {\normalDominatingStep{t}{\lambda}})(\emptyset)
+        =\emptyset
+    \].
+\end{proposition}
+\begin{proof}
+    Hence $\lambda$ is a limit ordinal by
+        \obv{infinite_cardinal_is_limit_ordinal}.
+    Hence $\emptyset\in\lambda$ by \obv{limit_ordinal}.
+    $\ordinalRecursion{\lambda}{\lambda}
+            {\normalDominatingStep{t}{\lambda}}
+        \in\funs{\lambda}{\lambda}$ by
+        \obv{normal_dominating_recursion_type}.
+    $\restrl{\ordinalRecursion{\lambda}{\lambda}
+        {\normalDominatingStep{t}{\lambda}}}{\emptyset}=\emptyset$ by
+        \auto{setext,restrl,emptyset}.
+    $(\ordinalRecursion{\lambda}{\lambda}
+            {\normalDominatingStep{t}{\lambda}})(\emptyset)
+        =(\normalDominatingStep{t}{\lambda})
+            ((\emptyset,\restrl{\ordinalRecursion{\lambda}{\lambda}
+                {\normalDominatingStep{t}{\lambda}}}{\emptyset}))$ by
+        \obv{normal_dominating_recursion_equation}.
+    $(\normalDominatingStep{t}{\lambda})((\emptyset,\emptyset))
+        =\emptyset$ by
+        \obv{normal_dominating_step_zero,powerset_bottom}.
+\end{proof}
+
+\begin{theorem}\label{normal_dominating_recursion_successor}
+    Let $\lambda$ be a regular cardinal.
+    Let $t\in\funs{\lambda}{\lambda}$.
+    Let $\mu\in\lambda$.
+    Then
+    \[
+        (\ordinalRecursion{\lambda}{\lambda}
+            {\normalDominatingStep{t}{\lambda}})(\suc{\mu})
+        =\normalDominatingNext{t}{\suc{\mu}}
+            {\restrl{\ordinalRecursion{\lambda}{\lambda}
+                {\normalDominatingStep{t}{\lambda}}}{\suc{\mu}}}
+    \]
+    and
+    \[
+        t((\ordinalRecursion{\lambda}{\lambda}
+            {\normalDominatingStep{t}{\lambda}})(\mu))
+        \in
+        (\ordinalRecursion{\lambda}{\lambda}
+            {\normalDominatingStep{t}{\lambda}})(\suc{\mu})
+    \].
+\end{theorem}
+\begin{proof}
+    $\lambda$ is an infinite cardinal and
+        $\cofinality{\lambda}=\lambda$ by \obv{regular_cardinal}.
+    Hence $\lambda$ is a limit ordinal by
+        \obv{infinite_cardinal_is_limit_ordinal}.
+    Hence $\lambda$ is an ordinal and $\emptyset\in\lambda$ by
+        \obv{limit_ordinal}.
+    $\suc{\mu}\in\lambda$ by \obv{suc_elem_limitordinal}.
+    $\ordinalRecursion{\lambda}{\lambda}
+            {\normalDominatingStep{t}{\lambda}}
+        \in\funs{\lambda}{\lambda}$ by
+        \obv{normal_dominating_recursion_type}.
+    Let $q=\ordinalRecursion{\lambda}{\lambda}
+        {\normalDominatingStep{t}{\lambda}}$.
+    $q\in\funs{\lambda}{\lambda}$.
+    Hence $q$ is a function and $\dom{q}=\lambda$ by
+        \obv{funs_is_function,funs}.
+    $q(\mu)\in\lambda$ by \obv{funs_type_apply}.
+    Hence $t(q(\mu))\in\lambda$ by \obv{funs_type_apply}.
+    $\suc{\mu}$, $q(\mu)$, and $t(q(\mu))$ are ordinals by
+        \obv{elem_of_ordinal_is_ordinal}.
+    $(\suc{\mu}\union q(\mu))\union t(q(\mu))\in\lambda$ by
+        \obv{three_ordinal_union_below}.
+    Let $A=(\suc{\mu}\union q(\mu))\union t(q(\mu))$.
+    $A\in\lambda$ and $A$ is an ordinal by
+        \obv{elem_of_ordinal_is_ordinal}.
+    Hence $\suc{A}\in\lambda$ by \obv{suc_elem_limitordinal}.
+    $\suc{\mu}$ is a successor ordinal by
+        \obv{ordinal_successor_data,elem_of_ordinal_is_ordinal}.
+    $\suc{\mu}\subseteq\lambda$ by
+        \obv{elem_of_ordinal_is_ordinal,ordinal_elem_implies_subseteq}.
+    Hence $\suc{\mu}\subseteq\dom{q}$.
+    $\mu\in\suc{\mu}$ by \obv{suc_intro_self}.
+    $\unions{\suc{\mu}}=\mu$ by
+        \obv{ordinal_successor_data,elem_of_ordinal_is_ordinal}.
+    $(\restrl{q}{\suc{\mu}})(\mu)=q(\mu)$ by
+        \obv{restrl_of_function_apply}.
+    $\normalDominatingNext{t}{\suc{\mu}}{\restrl{q}{\suc{\mu}}}
+        =\suc{A}$ by
+        \obv{normal_dominating_next}.
+    Hence $\normalDominatingSuccessorGuard{t}{\lambda}{\suc{\mu}}
+        {\restrl{q}{\suc{\mu}}}$ by
+        \obv{normal_dominating_successor_guard}.
+    $q\in\rels{\lambda}{\lambda}$ by \obv{funs}.
+    Hence $q\subseteq\lambda\times\lambda$ by \obv{rels_elim}.
+    $\restrl{q}{\suc{\mu}}\subseteq q$ by \obv{restrl_subseteq}.
+    Hence $\restrl{q}{\suc{\mu}}\subseteq\lambda\times\lambda$ by
+        \obv{subseteq_transitive}.
+    Hence $\restrl{q}{\suc{\mu}}\in\pow{\lambda\times\lambda}$ by
+        \obv{powerset_intro}.
+    $q(\suc{\mu})=(\normalDominatingStep{t}{\lambda})
+        ((\suc{\mu},\restrl{q}{\suc{\mu}}))$ by
+        \auto{normal_dominating_recursion_equation}.
+    Hence $q(\suc{\mu})=
+        \normalDominatingNext{t}{\suc{\mu}}{\restrl{q}{\suc{\mu}}}$ by
+        \obv{normal_dominating_step_successor}.
+    $t(q(\mu))\subseteq A$ by
+        \obv{union_upper_right}.
+    $t(q(\mu))\in A$ or $t(q(\mu))=A$ by
+        \obv{ordinal_subseteq_implies_elem_or_eq}.
+    Hence $t(q(\mu))\in\suc{A}$ by \auto{suc_iff}.
+    Hence $t(q(\mu))\in q(\suc{\mu})$ by
+        \obv{normal_dominating_next}.
+\end{proof}
+
+\begin{proposition}\label{normal_dominating_recursion_limit}
+    Let $\lambda$ be a regular cardinal.
+    Let $t\in\funs{\lambda}{\lambda}$.
+    Let $\beta\in\lambda$.
+    Suppose $\beta$ is a limit ordinal.
+    Then
+    \[
+        (\ordinalRecursion{\lambda}{\lambda}
+            {\normalDominatingStep{t}{\lambda}})(\beta)
+        =\unions{\ran{\restrl{\ordinalRecursion{\lambda}{\lambda}
+            {\normalDominatingStep{t}{\lambda}}}{\beta}}}
+    \].
+\end{proposition}
+\begin{proof}
+    $\lambda$ is an infinite cardinal and
+        $\cofinality{\lambda}=\lambda$ by \obv{regular_cardinal}.
+    Hence $\lambda$ is a limit ordinal by
+        \obv{infinite_cardinal_is_limit_ordinal}.
+    Hence $\lambda$ is an ordinal and $\emptyset\in\lambda$ by
+        \obv{limit_ordinal}.
+    $\ordinalRecursion{\lambda}{\lambda}
+            {\normalDominatingStep{t}{\lambda}}
+        \in\funs{\lambda}{\lambda}$ by
+        \obv{normal_dominating_recursion_type}.
+    Let $q=\ordinalRecursion{\lambda}{\lambda}
+        {\normalDominatingStep{t}{\lambda}}$.
+    $q\in\funs{\lambda}{\lambda}$.
+    Hence $q$ is a function and $\dom{q}=\lambda$ by
+        \obv{funs_is_function,funs}.
+    $\beta$ is an ordinal and $\beta\subseteq\lambda$ by
+        \obv{limit_ordinal,ordinal_elem_implies_subseteq}.
+    Hence $\restrl{q}{\beta}\in\funs{\beta}{\lambda}$ by
+        \obv{funs_restrl}.
+    $\beta\in\cofinality{\lambda}$.
+    Hence $\unions{\ran{\restrl{q}{\beta}}}\in\lambda$ by
+        \obv{small_domain_range_union_below}.
+    Hence $\normalDominatingLimitGuard{\lambda}{\beta}{\restrl{q}{\beta}}$
+        by \obv{normal_dominating_limit_guard}.
+    $q\in\rels{\lambda}{\lambda}$ by \obv{funs}.
+    Hence $q\subseteq\lambda\times\lambda$ by \obv{rels_elim}.
+    $\restrl{q}{\beta}\subseteq q$ by \obv{restrl_subseteq}.
+    Hence $\restrl{q}{\beta}\subseteq\lambda\times\lambda$ by
+        \obv{subseteq_transitive}.
+    Hence $\restrl{q}{\beta}\in\pow{\lambda\times\lambda}$ by
+        \obv{powerset_intro}.
+    $q(\beta)=(\normalDominatingStep{t}{\lambda})
+        ((\beta,\restrl{q}{\beta}))$ by
+        \auto{normal_dominating_recursion_equation}.
+    Hence $q(\beta)=\unions{\ran{\restrl{q}{\beta}}}$ by
+        \auto{normal_dominating_step_limit}.
+\end{proof}
+
+\subsection{Normality, cofinality, and domination}
+
+\begin{theorem}\label{normal_dominating_recursion_growth}
+    Let $\lambda$ be a regular cardinal.
+    Let $t\in\funs{\lambda}{\lambda}$.
+    Let $\beta\in\lambda$.
+    Then
+    \[
+        \beta\subseteq
+        (\ordinalRecursion{\lambda}{\lambda}
+            {\normalDominatingStep{t}{\lambda}})(\beta)
+    \]
+    and for every $\gamma\in\beta$ we have
+    \[
+        (\ordinalRecursion{\lambda}{\lambda}
+            {\normalDominatingStep{t}{\lambda}})(\gamma)
+        \in
+        (\ordinalRecursion{\lambda}{\lambda}
+            {\normalDominatingStep{t}{\lambda}})(\beta)
+    \].
+\end{theorem}
+\begin{proof}[Proof by \in-induction on $\beta$]
+    Hence $\lambda$ is a limit ordinal by
+        \obv{infinite_cardinal_is_limit_ordinal}.
+    Hence $\lambda$ is an ordinal by \obv{limit_ordinal}.
+    $\ordinalRecursion{\lambda}{\lambda}
+            {\normalDominatingStep{t}{\lambda}}
+        \in\funs{\lambda}{\lambda}$ by
+        \obv{normal_dominating_recursion_type}.
+    $\beta$ is an ordinal by \obv{elem_of_ordinal_is_ordinal}.
+    For every $\delta\in\beta$ we have $\delta\in\lambda$ by
+        \obv{ordinal_transitivity}.
+    Hence for every $\delta\in\beta$ we have
+        $\delta\subseteq
+            (\ordinalRecursion{\lambda}{\lambda}
+                {\normalDominatingStep{t}{\lambda}})(\delta)$
+        and for every $\xi\in\delta$ we have
+            $(\ordinalRecursion{\lambda}{\lambda}
+                {\normalDominatingStep{t}{\lambda}})(\xi)
+            \in
+            (\ordinalRecursion{\lambda}{\lambda}
+                {\normalDominatingStep{t}{\lambda}})(\delta)$.
+    Let $q=\ordinalRecursion{\lambda}{\lambda}
+        {\normalDominatingStep{t}{\lambda}}$.
+    $q\in\funs{\lambda}{\lambda}$.
+    Hence $q$ is a function and $\dom{q}=\lambda$ by
+        \obv{funs_is_function,funs}.
+    $q(\beta)\in\lambda$ by \obv{funs_type_apply}.
+    Hence for every $\delta\in\beta$ we have
+        $\delta\subseteq q(\delta)$ and for every $\xi\in\delta$ we have
+            $q(\xi)\in q(\delta)$ by \auto.
+    \begin{byCase}
+        \caseOf{$\beta=\emptyset$.}
+            $\beta\subseteq q(\beta)$ by \obv{emptyset_subseteq}.
+            For every $\gamma\in\beta$ we have
+                $q(\gamma)\in q(\beta)$ by \auto{emptyset}.
+            Follows by \auto.
+        \caseOf{$\beta\neq\emptyset$.}
+            $\emptyset\in\beta$ by
+                \obv{ordinal_empty_or_emptyset_elem}.
+            Hence $\emptyset\precedes\beta$.
+            Hence $\beta$ is a limit ordinal or
+                $\beta$ is a successor ordinal by
+                \obv{positive_ordinal_is_limit_or_successor}.
+            \begin{byCase}
+                \caseOf{$\beta$ is a limit ordinal.}
+                    $q(\beta)=\unions{\ran{\restrl{q}{\beta}}}$ by
+                        \auto{normal_dominating_recursion_limit}.
+                    $\beta\subseteq\lambda$ by
+                        \obv{ordinal_elem_implies_subseteq}.
+                    Hence $\restrl{q}{\beta}\in\funs{\beta}{\lambda}$ by
+                        \obv{funs_restrl}.
+                    Hence $\restrl{q}{\beta}$ is a function and
+                        $\dom{\restrl{q}{\beta}}=\beta$ by
+                        \obv{funs_is_function,funs}.
+                    Show that for every $\gamma\in\beta$ we have
+                        $\gamma\in q(\beta)$.
+                    \begin{subproof}
+                        Fix $\gamma\in\beta$.
+                        $\suc{\gamma}\in\beta$ by
+                            \obv{suc_elem_limitordinal}.
+                        Hence $\suc{\gamma}\subseteq q(\suc{\gamma})$.
+                        $\gamma\in\suc{\gamma}$ by \obv{suc_intro_self}.
+                        Hence $\gamma\in q(\suc{\gamma})$ by
+                            \obv{subseteq}.
+                        $(\restrl{q}{\beta})(\suc{\gamma})
+                            =q(\suc{\gamma})$ by
+                            \obv{restrl_of_function_apply,
+                                ordinal_elem_implies_subseteq}.
+                        Hence $q(\suc{\gamma})
+                            \in\ran{\restrl{q}{\beta}}$ by
+                            \auto{fun_ran_iff}.
+                        Hence $\gamma\in
+                            \unions{\ran{\restrl{q}{\beta}}}$ by
+                            \auto{unions_iff}.
+                    \end{subproof}
+                    Hence $\beta\subseteq q(\beta)$ by \obv{subseteq}.
+                    Show that for every $\gamma\in\beta$ we have
+                        $q(\gamma)\in q(\beta)$.
+                    \begin{subproof}
+                        Fix $\gamma\in\beta$.
+                        $\suc{\gamma}\in\beta$ by
+                            \obv{suc_elem_limitordinal}.
+                        For every $\xi\in\suc{\gamma}$ we have
+                            $q(\xi)\in q(\suc{\gamma})$ by \auto.
+                        $\gamma\in\suc{\gamma}$ by \obv{suc_intro_self}.
+                        Hence $q(\gamma)\in q(\suc{\gamma})$.
+                        $(\restrl{q}{\beta})(\suc{\gamma})
+                            =q(\suc{\gamma})$ by
+                            \obv{restrl_of_function_apply,
+                                ordinal_elem_implies_subseteq}.
+                        Hence $q(\suc{\gamma})
+                            \in\ran{\restrl{q}{\beta}}$ by
+                            \auto{fun_ran_iff}.
+                        Hence $q(\gamma)\in
+                            \unions{\ran{\restrl{q}{\beta}}}$ by
+                            \auto{unions_iff}.
+                    \end{subproof}
+                    Follows by \auto.
+                \caseOf{$\beta$ is not a limit ordinal.}
+                    Hence $\beta$ is a successor ordinal.
+                    $\beta=\suc{\unions{\beta}}$ by
+                        \obv{successor_ordinal_eq_suc_unions}.
+                    Let $\eta=\unions{\beta}$.
+                    $\eta\in\beta$ by
+                        \auto{suc_intro_self}.
+                    Hence $\eta\in\lambda$ by
+                        \obv{ordinal_transitivity}.
+                    $q(\suc{\eta})=
+                        \normalDominatingNext{t}{\suc{\eta}}
+                            {\restrl{q}{\suc{\eta}}}$ by
+                        \auto{normal_dominating_recursion_successor}.
+                    $\suc{\eta}\subseteq\lambda$ by
+                        \obv{ordinal_elem_implies_subseteq}.
+                    Hence $\suc{\eta}\subseteq\dom{q}$.
+                    $\eta\in\suc{\eta}$ by \obv{suc_intro_self}.
+                    $(\restrl{q}{\suc{\eta}})(\eta)=q(\eta)$ by
+                        \obv{restrl_of_function_apply}.
+                    $\unions{\suc{\eta}}=\eta$ by
+                        \obv{ordinal_successor_data}.
+                    Let $A=(\suc{\eta}\union q(\eta))
+                        \union t(q(\eta))$.
+                    $q(\suc{\eta})=\suc{A}$ by
+                        \auto{normal_dominating_next}.
+                    Hence $q(\beta)=\suc{A}$.
+                    $q(\eta)\in\lambda$ by \obv{funs_type_apply}.
+                    Hence $t(q(\eta))\in\lambda$ by
+                        \obv{funs_type_apply}.
+                    $\suc{\eta}$, $q(\eta)$, and $t(q(\eta))$
+                        are ordinals by \obv{elem_of_ordinal_is_ordinal}.
+                    Hence $A$ is an ordinal by
+                        \obv{union_of_two_ordinals_is_ordinal}.
+                    $\suc{A}$ is an ordinal by \obv{suc_ordinal}.
+                    $\suc{\eta}\subseteq A$ by
+                        \auto{union_upper_left,subseteq_transitive}.
+                    Hence $\beta\subseteq q(\beta)$ by
+                        \auto{subseteq_self_suc_intro,subseteq_transitive}.
+                    Let $r=q(\eta)$.
+                    $r$ is an ordinal.
+                    $r\subseteq A$ by
+                        \auto{union_upper_right,union_upper_left,
+                            subseteq_transitive}.
+                    Hence $r\in A$ or $r=A$ by
+                        \obv{ordinal_subseteq_implies_elem_or_eq}.
+                    Hence $r\in\suc{A}$ by \auto{suc_iff}.
+                    Hence $q(\eta)\in\suc{A}$.
+                    Hence $q(\eta)\in q(\beta)$.
+                    For every $\xi\in\eta$ we have
+                        $q(\xi)\in q(\eta)$ by \auto.
+                    Show that for every $\gamma\in\beta$ we have
+                        $q(\gamma)\in q(\beta)$.
+                    \begin{subproof}
+                        Fix $\gamma\in\beta$.
+                        \begin{byCase}
+                            \caseOf{$\gamma=\eta$.}
+                                Follows.
+                            \caseOf{$\gamma\neq\eta$.}
+                                Hence $\gamma\in\eta$ by
+                                    \auto{suc_iff}.
+                                Hence $q(\gamma)\in q(\eta)$ by
+                                    \auto.
+                                Follows by \auto{ordinal_transitivity}.
+                        \end{byCase}
+                    \end{subproof}
+                    Follows by \auto.
+            \end{byCase}
+    \end{byCase}
+\end{proof}
+
+\begin{theorem}\label{normal_dominating_recursion_is_normal_cofinal}
+    Let $\lambda$ be a regular cardinal.
+    Let $t\in\funs{\lambda}{\lambda}$.
+    Let $q=\ordinalRecursion{\lambda}{\lambda}
+        {\normalDominatingStep{t}{\lambda}}$.
+    Then $\normalCofinalMap{q}{\lambda}{\lambda}$.
+\end{theorem}
+\begin{proof}
+    Hence $\lambda$ is a limit ordinal by
+        \obv{infinite_cardinal_is_limit_ordinal}.
+    $q\in\funs{\lambda}{\lambda}$ by
+        \auto{normal_dominating_recursion_type}.
+    Hence $q$ is a function and $\dom{q}=\lambda$ by
+        \obv{funs_is_function,funs}.
+    $\ordinalMap{q}{\lambda}{\lambda}$ by \obv{ordinal_map}.
+    Show that for all $j,k$ such that $j\in k\in\lambda$ we have
+        $q(j)\in q(k)$.
+    \begin{subproof}
+        Fix $j,k$.
+        Assume $j\in k\in\lambda$.
+        Follows by \auto{normal_dominating_recursion_growth}.
+    \end{subproof}
+    Hence $\normalMapIncreasing{q}{\lambda}$ by
+        \obv{normal_map_increasing}.
+    Show that for every $l\in\lambda$ such that $l$ is a limit ordinal
+        we have $q(l)=\unions{\ran{\restrl{q}{l}}}$.
+    \begin{subproof}
+        Fix $l\in\lambda$.
+        Suppose $l$ is a limit ordinal.
+        Follows by \auto{normal_dominating_recursion_limit}.
+    \end{subproof}
+    Hence $\normalMapContinuous{q}{\lambda}$ by
+        \obv{normal_map_continuous}.
+    Hence $\normalMap{q}{\lambda}{\lambda}$ by \obv{normal_map}.
+    $\ran{q}\subseteq\lambda$ by \obv{funs_ran}.
+    Show that for every $\alpha\in\lambda$ there exists
+        $\gamma\in\ran{q}$ such that $\alpha\subseteq\gamma$.
+    \begin{subproof}
+        Fix $\alpha\in\lambda$.
+        $q(\alpha)\in\ran{q}$ by \auto{fun_ran_iff}.
+        $\alpha\subseteq q(\alpha)$ by
+            \auto{normal_dominating_recursion_growth}.
+        Follows by \auto.
+    \end{subproof}
+    Hence $\cofinalIn{\ran{q}}{\lambda}$ by \obv{cofinal_in}.
+    Hence $\cofinalMap{q}{\lambda}{\lambda}$ by \obv{cofinal_map}.
+    Follows by \obv{normal_cofinal_map}.
+\end{proof}
+
+\begin{theorem}\label{normal_dominating_recursion_later}
+    Let $\lambda$ be a regular cardinal.
+    Let $t\in\funs{\lambda}{\lambda}$.
+    Let $\nu\in\lambda$ and $\mu\in\nu$.
+    Let $q=\ordinalRecursion{\lambda}{\lambda}
+        {\normalDominatingStep{t}{\lambda}}$.
+    Then $t(q(\mu))\in q(\nu)$.
+\end{theorem}
+\begin{proof}
+    Hence $\lambda$ is a limit ordinal by
+        \obv{infinite_cardinal_is_limit_ordinal}.
+    Hence $\lambda$ is an ordinal by \obv{limit_ordinal}.
+    $\mu\in\lambda$ by \auto{ordinal_transitivity}.
+    Hence $\suc{\mu}\in\lambda$ by \obv{suc_elem_limitordinal}.
+    $q\in\funs{\lambda}{\lambda}$ by
+        \auto{normal_dominating_recursion_type}.
+    Hence $q(\nu)\in\lambda$ by \obv{funs_type_apply}.
+    Hence $q(\nu)$ is an ordinal by
+        \obv{elem_of_ordinal_is_ordinal}.
+    $t(q(\mu))\in q(\suc{\mu})$ by
+        \auto{normal_dominating_recursion_successor}.
+    $\nu$ is an ordinal by \obv{elem_of_ordinal_is_ordinal}.
+    Hence $\suc{\mu}\subseteq\nu$ by \obv{ordinal_suc_subseteq}.
+    $\suc{\mu}$ is an ordinal by \obv{suc_ordinal}.
+    Hence $\suc{\mu}\in\nu$ or $\suc{\mu}=\nu$ by
+        \auto{ordinal_subseteq_implies_elem_or_eq}.
+    \begin{byCase}
+        \caseOf{$\suc{\mu}=\nu$.}
+            Follows by \auto.
+        \caseOf{$\suc{\mu}\neq\nu$.}
+            Hence $\suc{\mu}\in\nu$ by \auto.
+            Hence $q(\suc{\mu})\in q(\nu)$ by
+                \auto{normal_dominating_recursion_growth}.
+            Follows by \auto{ordinal_transitivity}.
+    \end{byCase}
+\end{proof}
+
+\begin{theorem}\label{normal_dominating_map}
+    Let $\lambda$ be a regular cardinal.
+    Let $t\in\funs{\lambda}{\lambda}$.
+    Then there exists $q$ such that
+        $\normalCofinalMap{q}{\lambda}{\lambda}$ and
+        for all $\mu,\nu$ such that $\mu\in\nu\in\lambda$ we have
+            $t(q(\mu))\in q(\nu)$.
+\end{theorem}
+\begin{proof}
+    Let $q=\ordinalRecursion{\lambda}{\lambda}
+        {\normalDominatingStep{t}{\lambda}}$.
+    $\normalCofinalMap{q}{\lambda}{\lambda}$ by
+        \auto{normal_dominating_recursion_is_normal_cofinal}.
+    For all $\mu,\nu$ such that $\mu\in\nu\in\lambda$ we have
+        $t(q(\mu))\in q(\nu)$ by
+        \auto{normal_dominating_recursion_later}.
+    Follows by \auto.
+\end{proof}

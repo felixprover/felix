@@ -1,0 +1,713 @@
+\section{Set-domain graphs of logical operations}
+
+\import{function.tex}
+\import{set/inductive-definition.tex}
+
+Logical functions belong to the logical framework and are not themselves
+sets.  The constructions in this section restrict such a function or
+predicate to a set domain and collect its values into an ordinary set-coded
+graph or relation.  This is the explicit boundary between higher-order
+operations and the first-order fields of set-coded structures.
+
+The primary graphifier fixes only the set domain.  A codomain bound is a
+property proved afterwards, not data needed to construct the graph.
+Mathematically this is ordinary Replacement on a set.  Because the replaced
+value is supplied by a logical operation, the current checked provider records
+the construction through its TH0 Replacement interface.
+
+\begin{definition}\label{logical_graph_on_domain}
+    $\graphOnDomainOp:\Set\to(\Set\to\Set)\to\Set
+        =\fun{A:\Set}{
+            \fun{F:\Set\to\Set}{
+                \{(x,\Apply{F}{x})\mid x\in A\}}}$.
+\end{definition}
+
+\begin{proposition}\label{logical_graph_on_domain_membership}
+    $\forall A:\Set.\ \forall F:\Set\to\Set.\ \forall x,y:\Set.
+        (x,y)\in\Apply{\graphOnDomainOp}{A,F}
+        \iff (x\in A\land y=\Apply{F}{x})$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{logical_graph_on_domain}.
+\end{proof}
+
+\begin{proposition}\label{logical_graph_on_domain_elim}
+    $\forall A:\Set.\ \forall F:\Set\to\Set.\ \forall w:\Set.
+        w\in\Apply{\graphOnDomainOp}{A,F}
+        \implies
+        (\exists x:\Set.\ x\in A\land w=(x,\Apply{F}{x}))$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{logical_graph_on_domain}.
+\end{proof}
+
+\begin{theorem}\label{logical_graph_on_domain_function}
+    $\forall A:\Set.\ \forall F:\Set\to\Set.
+        \Apply{\graphOnDomainOp}{A,F}\in
+            \funs{A}{\ran{\Apply{\graphOnDomainOp}{A,F}}}$.
+\end{theorem}
+\begin{proof}
+    Fix $A,F$.
+    Let $g=\Apply{\graphOnDomainOp}{A,F}$.
+    Show that $g$ is a relation.
+    \begin{subproof}
+        Show that for every $w\in g$ there exist $x,y$ such that
+            $w=(x,y)$.
+        \begin{subproof}
+            Fix $w\in g$.
+            Take $x\in A$ such that $w=(x,\Apply{F}{x})$
+                by \obv{logical_graph_on_domain_elim}.
+            Follows by \auto.
+        \end{subproof}
+        Follows by \obv{relation}.
+    \end{subproof}
+    Show that $g$ is right-unique.
+    \begin{subproof}
+        Show that for all $x,y,z$ such that $(x,y),(x,z)\in g$
+            we have $y=z$.
+        \begin{subproof}
+            Fix $x,y,z$.
+            Assume $(x,y),(x,z)\in g$.
+            $y=\Apply{F}{x}$ and $z=\Apply{F}{x}$ by
+                \auto{logical_graph_on_domain_membership}.
+        \end{subproof}
+        Follows by \obv{rightunique}.
+    \end{subproof}
+    Show that $A=\dom{g}$.
+    \begin{subproof}
+        For every $x\in A$ we have $x\in\dom{g}$ by
+            \auto{dom_iff,logical_graph_on_domain_membership}.
+        For every $x\in\dom{g}$ we have $x\in A$ by
+            \auto{dom_iff,logical_graph_on_domain_membership}.
+        Follows by \obv{setext}.
+    \end{subproof}
+    Show that $g$ is a function to $\ran{g}$.
+    \begin{subproof}
+        Show that for every $x\in\dom{g}$ we have $g(x)\in\ran{g}$.
+        \begin{subproof}
+            Fix $x\in\dom{g}$.
+            Follows by \auto{fun_ran_iff}.
+        \end{subproof}
+    \end{subproof}
+    Follows by \auto{funs_intro}.
+\end{proof}
+
+\begin{proposition}\label{logical_graph_on_domain_dom}
+    $\forall A:\Set.\ \forall F:\Set\to\Set.
+        \dom{\Apply{\graphOnDomainOp}{A,F}}=A$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{logical_graph_on_domain_function,funs_elim}.
+\end{proof}
+
+\begin{proposition}\label{logical_graph_on_domain_apply}
+    $\forall A:\Set.\ \forall F:\Set\to\Set.\ \forall x:\Set.
+        x\in A
+        \implies
+        \apply{\Apply{\graphOnDomainOp}{A,F}}{x}
+            =\Apply{F}{x}$.
+\end{proposition}
+\begin{proof}
+    Fix $A,F,x$.
+    Assume $x\in A$.
+    Let $g=\Apply{\graphOnDomainOp}{A,F}$.
+    $g$ is a function by
+        \auto{logical_graph_on_domain_function,funs_is_function}.
+    $(x,\Apply{F}{x})\in g$ by
+        \auto{logical_graph_on_domain_membership}.
+    Follows by \obv{function_apply_intro}.
+\end{proof}
+
+\begin{proposition}\label{logical_graph_on_domain_range}
+    $\forall A:\Set.\ \forall F:\Set\to\Set.\ \forall y:\Set.
+        y\in\ran{\Apply{\graphOnDomainOp}{A,F}}
+        \iff
+        (\exists x:\Set.\ x\in A\land y=\Apply{F}{x})$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{ran_iff,logical_graph_on_domain_membership}.
+\end{proof}
+
+\begin{theorem}\label{logical_graph_on_domain_type}
+    $\forall A,B:\Set.\ \forall F:\Set\to\Set.
+        (\forall x:\Set.\ x\in A\implies\Apply{F}{x}\in B)
+        \implies
+        \Apply{\graphOnDomainOp}{A,F}\in\funs{A}{B}$.
+\end{theorem}
+\begin{proof}
+    Fix $A,B,F$.
+    Assume $\forall x:\Set.\ x\in A\implies\Apply{F}{x}\in B$.
+    Let $g=\Apply{\graphOnDomainOp}{A,F}$.
+    $g\in\funs{A}{\ran{g}}$ by
+        \auto{logical_graph_on_domain_function}.
+    Hence $g$ is a function and $A=\dom{g}$ by
+        \auto{funs_elim}.
+    Show that $g$ is a function to $B$.
+    \begin{subproof}
+        Show that for every $x\in\dom{g}$ we have $g(x)\in B$.
+        \begin{subproof}
+            Fix $x\in\dom{g}$.
+            Hence $x\in A$.
+            $g(x)=\Apply{F}{x}$ by
+                \auto{logical_graph_on_domain_apply}.
+            Follows by \auto.
+        \end{subproof}
+    \end{subproof}
+    Follows by \obv{funs_intro}.
+\end{proof}
+
+\begin{proposition}\label{logical_graph_on_domain_extensional}
+    $\forall A:\Set.\ \forall F,G:\Set\to\Set.
+        (\forall x:\Set.\ x\in A\implies
+            \Apply{F}{x}=\Apply{G}{x})
+        \implies
+        \Apply{\graphOnDomainOp}{A,F}
+            =\Apply{\graphOnDomainOp}{A,G}$.
+\end{proposition}
+\begin{proof}
+    Fix $A,F,G$.
+    Assume $\forall x:\Set.\ x\in A\implies
+        \Apply{F}{x}=\Apply{G}{x}$.
+    Let $f=\Apply{\graphOnDomainOp}{A,F}$.
+    Let $g=\Apply{\graphOnDomainOp}{A,G}$.
+    Show that $f\subseteq g$.
+    \begin{subproof}
+        Show that for every $w\in f$ we have $w\in g$.
+        \begin{subproof}
+            Fix $w\in f$.
+            Take $x\in A$ such that $w=(x,\Apply{F}{x})$
+                by \obv{logical_graph_on_domain_elim}.
+            $\Apply{F}{x}=\Apply{G}{x}$.
+            Follows by \auto{logical_graph_on_domain_membership}.
+        \end{subproof}
+        Follows by \obv{subseteq}.
+    \end{subproof}
+    Show that $g\subseteq f$.
+    \begin{subproof}
+        Show that for every $w\in g$ we have $w\in f$.
+        \begin{subproof}
+            Fix $w\in g$.
+            Take $x\in A$ such that $w=(x,\Apply{G}{x})$
+                by \obv{logical_graph_on_domain_elim}.
+            $\Apply{F}{x}=\Apply{G}{x}$.
+            Follows by \auto{logical_graph_on_domain_membership}.
+        \end{subproof}
+        Follows by \obv{subseteq}.
+    \end{subproof}
+    Follows by \obv{subseteq_antisymmetric}.
+\end{proof}
+
+\begin{proposition}\label{logical_graph_on_domain_restrl}
+    $\forall A,D:\Set.\ \forall F:\Set\to\Set.
+        \restrl{\Apply{\graphOnDomainOp}{D,F}}{A}
+            =\Apply{\graphOnDomainOp}{A\inter D,F}$.
+\end{proposition}
+\begin{proof}
+    Fix $A,D,F$.
+    Let $g=\Apply{\graphOnDomainOp}{D,F}$.
+    Let $h=\Apply{\graphOnDomainOp}{A\inter D,F}$.
+    $g$ and $h$ are relations by
+        \auto{logical_graph_on_domain_function,funs_is_relation}.
+    Hence $\restrl{g}{A}$ is a relation by
+        \obv{relation,restrl}.
+    For all $x,y$ we have
+        $x\mathrel{\restrl{g}{A}}y$ iff $x\mathrel{h}y$
+        by \auto{restrl_iff,logical_graph_on_domain_membership,inter}.
+    Follows by \auto{relext}.
+\end{proof}
+
+\begin{proposition}\label{logical_graph_on_domain_restrl_of_subset}
+    $\forall A,D:\Set.\ \forall F:\Set\to\Set.
+        A\subseteq D
+        \implies
+        \restrl{\Apply{\graphOnDomainOp}{D,F}}{A}
+            =\Apply{\graphOnDomainOp}{A,F}$.
+\end{proposition}
+\begin{proof}
+    Fix $A,D,F$.
+    Assume $A\subseteq D$.
+    $A\inter D=A$ by \obv{inter_absorb_supseteq_right}.
+    Follows by \auto{logical_graph_on_domain_restrl}.
+\end{proof}
+
+The older graphifier retains an explicit codomain argument for existing
+clients.  Its defining graph does not depend on that argument.
+
+\begin{definition}\label{logical_graph_on}
+    $\graphOnOp:\Set\to\Set\to(\Set\to\Set)\to\Set
+        =\fun{A,B:\Set}{
+                \fun{F:\Set\to\Set}{
+                    \Apply{\graphOnDomainOp}{A,F}}}$.
+\end{definition}
+
+\begin{proposition}\label{logical_graph_on_membership}
+    $\forall A,B:\Set.\ \forall F:\Set\to\Set.\ \forall x,y:\Set.
+        (x,y)\in
+            \Apply{\graphOnOp}{A,B,F}
+        \iff (x\in A\land y=\Apply{F}{x})$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{logical_graph_on,logical_graph_on_domain_membership}.
+\end{proof}
+
+\begin{proposition}\label{logical_graph_on_elim}
+    $\forall A,B:\Set.\ \forall F:\Set\to\Set.\ \forall w:\Set.
+        w\in\Apply{\graphOnOp}{A,B,F}
+        \implies
+        (\exists x:\Set.\ x\in A\land w=(x,\Apply{F}{x}))$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{logical_graph_on,logical_graph_on_domain_elim}.
+\end{proof}
+
+\begin{theorem}\label{logical_graph_on_function}
+    $\forall A,B:\Set.\ \forall F:\Set\to\Set.
+        (\forall x:\Set.\ x\in A\implies\Apply{F}{x}\in B)
+        \implies
+        \Apply{\graphOnOp}{A,B,F}
+            \in\funs{A}{B}$.
+\end{theorem}
+\begin{proof}
+    Follows by \auto{logical_graph_on,logical_graph_on_domain_type}.
+\end{proof}
+
+\begin{proposition}\label{logical_graph_on_dom}
+    $\forall A,B:\Set.\ \forall F:\Set\to\Set.
+        \dom{\Apply{\graphOnOp}{A,B,F}}=A$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{logical_graph_on,logical_graph_on_domain_dom}.
+\end{proof}
+
+\begin{proposition}\label{logical_graph_on_apply}
+    $\forall A,B:\Set.\ \forall F:\Set\to\Set.\ \forall x:\Set.
+        x\in A
+        \implies
+        \apply{\Apply{\graphOnOp}{A,B,F}}{x}
+            =\Apply{F}{x}$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{logical_graph_on,logical_graph_on_domain_apply}.
+\end{proof}
+
+\begin{proposition}\label{logical_graph_on_range}
+    $\forall A,B:\Set.\ \forall F:\Set\to\Set.\ \forall y:\Set.
+        y\in\ran{\Apply{\graphOnOp}{A,B,F}}
+        \iff
+        (\exists x:\Set.\ x\in A\land y=\Apply{F}{x})$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{logical_graph_on,logical_graph_on_domain_range}.
+\end{proof}
+
+\begin{proposition}\label{logical_graph_on_extensional}
+    $\forall A,B:\Set.\ \forall F,G:\Set\to\Set.
+        (\forall x:\Set.\ x\in A\implies
+            \Apply{F}{x}=\Apply{G}{x})
+        \implies
+        \Apply{\graphOnOp}{A,B,F}
+            =\Apply{\graphOnOp}{A,B,G}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \obv{logical_graph_on,logical_graph_on_domain_extensional}.
+\end{proof}
+
+\begin{definition}\label{logical_heterogeneous_binary_graph_on}
+    $\heteroBinaryGraphOnOp:
+        \Set\to\Set\to(\Set\to\Set\to\Set)\to\Set
+        =\fun{A,B:\Set}{
+                \fun{F:\Set\to\Set\to\Set}{
+                    \{(p,\Apply{F}{\fst{p},\snd{p}})\mid
+                        p\in A\times B\}}}$.
+\end{definition}
+
+\begin{proposition}\label{logical_heterogeneous_binary_graph_on_pair_membership}
+    $\forall A,B:\Set.\ \forall F:\Set\to\Set\to\Set.
+     \forall p,z:\Set.
+        (p,z)\in
+            \Apply{\heteroBinaryGraphOnOp}{A,B,F}
+        \iff
+        (p\in A\times B\land
+            z=\Apply{F}{\fst{p},\snd{p}})$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{logical_heterogeneous_binary_graph_on}.
+\end{proof}
+
+\begin{proposition}\label{logical_heterogeneous_binary_graph_on_membership}
+    $\forall A,B:\Set.\ \forall F:\Set\to\Set\to\Set.
+     \forall x,y,z:\Set.
+        ((x,y),z)\in
+            \Apply{\heteroBinaryGraphOnOp}{A,B,F}
+        \iff
+        (x\in A\land y\in B\land z=\Apply{F}{x,y})$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{logical_heterogeneous_binary_graph_on_pair_membership,times,fst_eq,snd_eq}.
+\end{proof}
+
+\begin{proposition}\label{logical_heterogeneous_binary_graph_on_elim}
+    $\forall A,B:\Set.\ \forall F:\Set\to\Set\to\Set.
+     \forall w:\Set.
+        w\in\Apply{\heteroBinaryGraphOnOp}{A,B,F}
+        \implies
+        (\exists p:\Set.\ p\in A\times B\land
+            w=(p,\Apply{F}{\fst{p},\snd{p}}))$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{logical_heterogeneous_binary_graph_on}.
+\end{proof}
+
+\begin{theorem}\label{logical_heterogeneous_binary_graph_on_function}
+    $\forall A,B:\Set.\ \forall F:\Set\to\Set\to\Set.
+        \Apply{\heteroBinaryGraphOnOp}{A,B,F}
+            \in
+            \funs{A\times B}
+                {\ran{\Apply{\heteroBinaryGraphOnOp}{A,B,F}}}$.
+\end{theorem}
+\begin{proof}
+    Fix $A,B,F$.
+    Let $g=\Apply{\heteroBinaryGraphOnOp}{A,B,F}$.
+    Show that $g$ is a relation.
+    \begin{subproof}
+        Show that for every $w\in g$ there exist $p,z$ such that
+            $w=(p,z)$.
+        \begin{subproof}
+            Fix $w\in g$.
+            Take $p$ such that $p\in A\times B$ and
+                $w=(p,\Apply{F}{\fst{p},\snd{p}})$
+                by \obv{logical_heterogeneous_binary_graph_on_elim}.
+            Follows by \auto.
+        \end{subproof}
+        Follows by \obv{relation}.
+    \end{subproof}
+    Show that $g$ is right-unique.
+    \begin{subproof}
+        Show that for all $p,y,z$ such that $(p,y),(p,z)\in g$
+            we have $y=z$.
+        \begin{subproof}
+            Fix $p,y,z$.
+            Assume $(p,y),(p,z)\in g$.
+            $y=\Apply{F}{\fst{p},\snd{p}}$ and
+                $z=\Apply{F}{\fst{p},\snd{p}}$ by
+                \auto{logical_heterogeneous_binary_graph_on_pair_membership}.
+        \end{subproof}
+        Follows by \obv{rightunique}.
+    \end{subproof}
+    Show that $A\times B=\dom{g}$.
+    \begin{subproof}
+        For every $p\in A\times B$ we have $p\in\dom{g}$ by
+            \auto{dom_iff,logical_heterogeneous_binary_graph_on_pair_membership}.
+        For every $p\in\dom{g}$ we have $p\in A\times B$ by
+            \auto{dom_iff,logical_heterogeneous_binary_graph_on_pair_membership}.
+        Follows by \obv{setext}.
+    \end{subproof}
+    Show that $g$ is a function to $\ran{g}$.
+    \begin{subproof}
+        Show that for every $p\in\dom{g}$ we have $g(p)\in\ran{g}$.
+        \begin{subproof}
+            Fix $p\in\dom{g}$.
+            Follows by \auto{fun_ran_iff}.
+        \end{subproof}
+    \end{subproof}
+    Follows by \auto{funs_intro}.
+\end{proof}
+
+\begin{proposition}\label{logical_heterogeneous_binary_graph_on_dom}
+    $\forall A,B:\Set.\ \forall F:\Set\to\Set\to\Set.
+        \dom{\Apply{\heteroBinaryGraphOnOp}{A,B,F}}
+            =A\times B$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{logical_heterogeneous_binary_graph_on_function,funs_elim}.
+\end{proof}
+
+\begin{proposition}\label{logical_heterogeneous_binary_graph_on_apply}
+    $\forall A,B:\Set.\ \forall F:\Set\to\Set\to\Set.
+     \forall x,y:\Set.
+        (x\in A\land y\in B)
+        \implies
+        \apply{\Apply{\heteroBinaryGraphOnOp}{A,B,F}}
+            {(x,y)}
+        =\Apply{F}{x,y}$.
+\end{proposition}
+\begin{proof}
+    Fix $A,B,F,x,y$.
+    Assume $x\in A$ and $y\in B$.
+    Let $g=\Apply{\heteroBinaryGraphOnOp}{A,B,F}$.
+    $g$ is a function by
+        \auto{logical_heterogeneous_binary_graph_on_function,funs_is_function}.
+    $((x,y),\Apply{F}{x,y})\in g$ by
+        \auto{logical_heterogeneous_binary_graph_on_membership}.
+    Follows by \obv{function_apply_intro}.
+\end{proof}
+
+\begin{proposition}\label{logical_heterogeneous_binary_graph_on_range}
+    $\forall A,B:\Set.\ \forall F:\Set\to\Set\to\Set.
+     \forall z:\Set.
+        z\in\ran{
+            \Apply{\heteroBinaryGraphOnOp}{A,B,F}}
+        \iff
+        (\exists p:\Set.\ p\in A\times B\land
+            z=\Apply{F}{\fst{p},\snd{p}})$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{ran_iff,logical_heterogeneous_binary_graph_on_pair_membership}.
+\end{proof}
+
+\begin{theorem}\label{logical_heterogeneous_binary_graph_on_type}
+    $\forall A,B,C:\Set.\ \forall F:\Set\to\Set\to\Set.
+        (\forall x,y:\Set.
+            (x\in A\land y\in B)\implies
+            \Apply{F}{x,y}\in C)
+        \implies
+        \Apply{\heteroBinaryGraphOnOp}{A,B,F}
+            \in\funs{A\times B}{C}$.
+\end{theorem}
+\begin{proof}
+    Fix $A,B,C,F$.
+    Assume $\forall x,y:\Set.
+        (x\in A\land y\in B)\implies
+        \Apply{F}{x,y}\in C$.
+    Let $g=\Apply{\heteroBinaryGraphOnOp}{A,B,F}$.
+    $g\in\funs{A\times B}{\ran{g}}$ by
+        \auto{logical_heterogeneous_binary_graph_on_function}.
+    Hence $g$ is a function and $A\times B=\dom{g}$ by
+        \auto{funs_elim}.
+    Show that $g$ is a function to $C$.
+    \begin{subproof}
+        Show that for every $p\in\dom{g}$ we have $g(p)\in C$.
+        \begin{subproof}
+            Fix $p\in\dom{g}$.
+            Hence $p\in A\times B$.
+            Hence $\fst{p}\in A$ by \obv{fst_type}.
+            $\snd{p}\in B$ by \obv{snd_type}.
+            $(p,g(p))\in g$ by \obv{function_apply_elim}.
+            Hence
+                $g(p)=\Apply{F}{\fst{p},\snd{p}}$ by
+                \auto{logical_heterogeneous_binary_graph_on_pair_membership}.
+            Follows by \auto.
+        \end{subproof}
+    \end{subproof}
+    Follows by \auto{funs_intro}.
+\end{proof}
+
+\begin{proposition}\label{logical_heterogeneous_binary_graph_on_extensional}
+    $\forall A,B:\Set.\ \forall F,G:\Set\to\Set\to\Set.
+        (\forall x,y:\Set.\ (x\in A\land y\in B)\implies
+            \Apply{F}{x,y}=\Apply{G}{x,y})
+        \implies
+        \Apply{\heteroBinaryGraphOnOp}{A,B,F}
+            =\Apply{\heteroBinaryGraphOnOp}{A,B,G}$.
+\end{proposition}
+\begin{proof}
+    Fix $A,B,F,G$.
+    Assume $\forall x,y:\Set.\ (x\in A\land y\in B)\implies
+        \Apply{F}{x,y}=\Apply{G}{x,y}$.
+    Let $f=\Apply{\heteroBinaryGraphOnOp}{A,B,F}$.
+    Let $g=\Apply{\heteroBinaryGraphOnOp}{A,B,G}$.
+    Show that $f\subseteq g$.
+    \begin{subproof}
+        Show that for every $w\in f$ we have $w\in g$.
+        \begin{subproof}
+            Fix $w\in f$.
+            Take $p$ such that $p\in A\times B$ and
+                $w=(p,\Apply{F}{\fst{p},\snd{p}})$
+                by \obv{logical_heterogeneous_binary_graph_on_elim}.
+            $p\in A\times B$.
+            Take $x,y$ such that $x\in A$ and $y\in B$ and $p=(x,y)$
+                by \obv{times_elem_is_tuple}.
+            $w=((x,y),\Apply{F}{x,y})$ by
+                \auto{fst_eq,snd_eq}.
+            $\Apply{F}{x,y}=\Apply{G}{x,y}$.
+            $((x,y),\Apply{G}{x,y})\in g$ by
+                \auto{logical_heterogeneous_binary_graph_on_membership}.
+        \end{subproof}
+        Follows by \obv{subseteq}.
+    \end{subproof}
+    Show that $g\subseteq f$.
+    \begin{subproof}
+        Show that for every $w\in g$ we have $w\in f$.
+        \begin{subproof}
+            Fix $w\in g$.
+            Take $p$ such that $p\in A\times B$ and
+                $w=(p,\Apply{G}{\fst{p},\snd{p}})$
+                by \obv{logical_heterogeneous_binary_graph_on_elim}.
+            $p\in A\times B$.
+            Take $x,y$ such that $x\in A$ and $y\in B$ and $p=(x,y)$
+                by \obv{times_elem_is_tuple}.
+            $w=((x,y),\Apply{G}{x,y})$ by
+                \auto{fst_eq,snd_eq}.
+            $\Apply{F}{x,y}=\Apply{G}{x,y}$.
+            $((x,y),\Apply{F}{x,y})\in f$ by
+                \auto{logical_heterogeneous_binary_graph_on_membership}.
+        \end{subproof}
+        Follows by \obv{subseteq}.
+    \end{subproof}
+    Follows by \obv{subseteq_antisymmetric}.
+\end{proof}
+
+\begin{definition}\label{logical_binary_graph_on}
+    $\binaryGraphOnOp:\Set\to\Set\to(\Set\to\Set\to\Set)\to\Set
+        =\fun{A,B:\Set}{
+                \fun{F:\Set\to\Set\to\Set}{
+                    \Apply{\heteroBinaryGraphOnOp}{A,A,F}}}$.
+\end{definition}
+
+\begin{proposition}\label{logical_binary_graph_on_pair_membership}
+    $\forall A,B:\Set.\ \forall F:\Set\to\Set\to\Set.
+     \forall p,z:\Set.
+        (p,z)\in
+            \Apply{\binaryGraphOnOp}{A,B,F}
+        \iff
+        (p\in A\times A\land
+            z=\Apply{F}{\fst{p},\snd{p}})$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{logical_binary_graph_on,logical_heterogeneous_binary_graph_on_pair_membership}.
+\end{proof}
+
+\begin{proposition}\label{logical_binary_graph_on_membership}
+    $\forall A,B:\Set.\ \forall F:\Set\to\Set\to\Set.
+     \forall x,y,z:\Set.
+        ((x,y),z)\in
+            \Apply{\binaryGraphOnOp}{A,B,F}
+        \iff
+        (x\in A\land y\in A\land z=\Apply{F}{x,y})$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{logical_binary_graph_on_pair_membership,times,fst_eq,snd_eq}.
+\end{proof}
+
+\begin{proposition}\label{logical_binary_graph_on_elim}
+    $\forall A,B:\Set.\ \forall F:\Set\to\Set\to\Set.
+     \forall w:\Set.
+        w\in\Apply{\binaryGraphOnOp}{A,B,F}
+        \implies
+        (\exists p:\Set.\ p\in A\times A\land
+            w=(p,\Apply{F}{\fst{p},\snd{p}}))$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \obv{logical_binary_graph_on,logical_heterogeneous_binary_graph_on_elim}.
+\end{proof}
+
+\begin{theorem}\label{logical_binary_graph_on_function}
+    $\forall A,B:\Set.\ \forall F:\Set\to\Set\to\Set.
+        (\forall x,y:\Set.
+            (x\in A\land y\in A)\implies
+            \Apply{F}{x,y}\in B)
+        \implies
+        \Apply{\binaryGraphOnOp}{A,B,F}
+            \in\funs{A\times A}{B}$.
+\end{theorem}
+\begin{proof}
+    Follows by
+        \auto{logical_binary_graph_on,logical_heterogeneous_binary_graph_on_type}.
+\end{proof}
+
+\begin{proposition}\label{logical_binary_graph_on_dom}
+    $\forall A,B:\Set.\ \forall F:\Set\to\Set\to\Set.
+        \dom{\Apply{\binaryGraphOnOp}{A,B,F}}
+            =A\times A$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{logical_binary_graph_on,logical_heterogeneous_binary_graph_on_dom}.
+\end{proof}
+
+\begin{proposition}\label{logical_binary_graph_on_apply}
+    $\forall A,B:\Set.\ \forall F:\Set\to\Set\to\Set.
+     \forall x,y:\Set.
+        (x\in A\land y\in A)
+        \implies
+        \apply{\Apply{\binaryGraphOnOp}{A,B,F}}
+            {(x,y)}
+        =\Apply{F}{x,y}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{logical_binary_graph_on,logical_heterogeneous_binary_graph_on_apply}.
+\end{proof}
+
+\begin{proposition}\label{logical_binary_graph_on_range}
+    $\forall A,B:\Set.\ \forall F:\Set\to\Set\to\Set.
+     \forall z:\Set.
+        z\in\ran{\Apply{\binaryGraphOnOp}{A,B,F}}
+        \iff
+        (\exists p:\Set.\ p\in A\times A\land
+            z=\Apply{F}{\fst{p},\snd{p}})$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{logical_binary_graph_on,logical_heterogeneous_binary_graph_on_range}.
+\end{proof}
+
+\begin{proposition}\label{logical_binary_graph_on_extensional}
+    $\forall A,B:\Set.\ \forall F,G:\Set\to\Set\to\Set.
+        (\forall x,y:\Set.\ (x\in A\land y\in A)\implies
+            \Apply{F}{x,y}=\Apply{G}{x,y})
+        \implies
+        \Apply{\binaryGraphOnOp}{A,B,F}
+            =\Apply{\binaryGraphOnOp}{A,B,G}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \obv{logical_binary_graph_on,logical_heterogeneous_binary_graph_on_extensional}.
+\end{proof}
+
+\begin{definition}\label{logical_relation_on}
+    $\relationOnOp:\Set\to(\Set\to\Set\to\Prop)\to\Set
+        =\fun{A:\Set}{
+            \fun{P:\Set\to\Set\to\Prop}{
+                \sep{A\times A}{
+                    \fun{p:\Set}{
+                        \Apply{P}{\fst{p},\snd{p}}}}}}$.
+\end{definition}
+
+\begin{proposition}\label{logical_relation_on_element}
+    $\forall A:\Set.\ \forall P:\Set\to\Set\to\Prop.
+     \forall p:\Set.
+        p\in\Apply{\relationOnOp}{A,P}
+        \iff
+        (p\in A\times A\land
+            \Apply{P}{\fst{p},\snd{p}})$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{logical_relation_on,logical_separation_iff}.
+\end{proof}
+
+\begin{proposition}\label{logical_relation_on_membership}
+    $\forall A:\Set.\ \forall P:\Set\to\Set\to\Prop.
+     \forall x,y:\Set.
+        (x,y)\in\Apply{\relationOnOp}{A,P}
+        \iff
+        (x\in A\land y\in A\land\Apply{P}{x,y})$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{logical_relation_on_element,times,fst_eq,snd_eq}.
+\end{proof}
+
+\begin{proposition}\label{logical_relation_on_subseteq}
+    $\forall A:\Set.\ \forall P:\Set\to\Set\to\Prop.
+        \Apply{\relationOnOp}{A,P}\subseteq A\times A$.
+\end{proposition}
+\begin{proof}
+    Fix $A,P$.
+    Show that for every $p\in\Apply{\relationOnOp}{A,P}$
+        we have $p\in A\times A$.
+    \begin{subproof}
+        Follows by \auto{logical_relation_on_element}.
+    \end{subproof}
+    Follows by \obv{subseteq}.
+\end{proof}

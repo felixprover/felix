@@ -1,0 +1,169 @@
+\import{relation/convergence.tex}
+
+\section{Newman's lemma for relations}
+
+\begin{lemma}\label{local_confluence_confluence_step}
+    Let $R$ be a binary relation on $X$.
+    Let $a\in X$.
+    Suppose $R$ is locally confluent at $a$ on $X$.
+    Suppose for every $u\in X$ such that $a\mathrel{R}u$
+        we have $R$ is confluent at $u$ on $X$.
+    Then $R$ is confluent at $a$ on $X$.
+\end{lemma}
+\begin{proof}
+    Let $T=\reflexiveTransitiveClosure{X}{R}$.
+    $\reflexiveTransitiveClosure{X}{R}$ is reflexive on $X$
+        by \obv{reflexive_transitive_closure_is_reflexive}.
+    $T$ is reflexive on $X$.
+    $\reflexiveTransitiveClosure{X}{R}$ is transitive
+        by \obv{reflexive_transitive_closure_is_transitive}.
+    $T$ is transitive.
+    Show that for all $b,c\in X$ such that $a\mathrel{T}b$ and
+        $a\mathrel{T}c$ we have
+        $b$ is joinable with $c$ in $X$ with respect to $R$.
+    \begin{subproof}
+        Fix $b,c\in X$.
+        Suppose $a\mathrel{T}b$ and $a\mathrel{T}c$.
+
+        Show that if $a=b$, then
+            $b$ is joinable with $c$ in $X$ with respect to $R$.
+        \begin{subproof}
+            Suppose $a=b$.
+            $b\mathrel{T}c$.
+            $c\mathrel{T}c$ by \obv{reflexive_on}.
+            Follows by \auto{joinability_relation_iff}.
+        \end{subproof}
+        Show that if $a=c$, then
+            $b$ is joinable with $c$ in $X$ with respect to $R$.
+        \begin{subproof}
+            Suppose $a=c$.
+            $c\mathrel{T}b$.
+            $b\mathrel{T}b$ by \obv{reflexive_on}.
+            Follows by \auto{joinability_relation_iff}.
+        \end{subproof}
+
+        Show that if $a\neq b$ and $a\neq c$, then
+            $b$ is joinable with $c$ in $X$ with respect to $R$.
+        \begin{subproof}
+            Suppose $a\neq b$ and $a\neq c$.
+            Take $u\in X$ such that $a\mathrel{R}u$ and $u\mathrel{T}b$
+                by \auto{reflexive_transitive_closure_first_step}.
+            Take $v\in X$ such that $a\mathrel{R}v$ and $v\mathrel{T}c$
+                by \auto{reflexive_transitive_closure_first_step}.
+            $u$ is joinable with $v$ in $X$ with respect to $R$
+                by \obv{locally_confluent_at_on}.
+            Take $w\in X$ such that $u\mathrel{T}w$ and $v\mathrel{T}w$
+                by \auto{joinability_relation_iff}.
+
+            $R$ is confluent at $u$ on $X$.
+            Hence $b$ is joinable with $w$ in $X$ with respect to $R$
+                by \obv{confluent_at_on}.
+            Take $p\in X$ such that $b\mathrel{T}p$ and $w\mathrel{T}p$
+                by \auto{joinability_relation_iff}.
+            $v\mathrel{T}p$ by \obv{transitive}.
+
+            $R$ is confluent at $v$ on $X$.
+            Hence $c$ is joinable with $p$ in $X$ with respect to $R$
+                by \obv{confluent_at_on}.
+            Take $d\in X$ such that $c\mathrel{T}d$ and $p\mathrel{T}d$
+                by \auto{joinability_relation_iff}.
+            $b\mathrel{T}d$ by \obv{transitive}.
+            Follows by \auto{joinability_relation_iff}.
+        \end{subproof}
+    \end{subproof}
+    Follows by \obv{confluent_at_on}.
+\end{proof}
+
+\begin{theorem}\label{accessible_descendant_local_confluence_implies_confluent_at}
+    Let $R$ be a binary relation on $X$.
+    Let $a\in X$.
+    Suppose $a\in\accessiblePart{X}{\converse{R}}$.
+    Suppose for every $u\in X$ such that
+        $a\mathrel{\reflexiveTransitiveClosure{X}{R}}u$
+        we have $R$ is locally confluent at $u$ on $X$.
+    Then $R$ is confluent at $a$ on $X$.
+\end{theorem}
+\begin{proof}
+    Let $T=\reflexiveTransitiveClosure{X}{R}$.
+    Let $C=\{x\in X\mid\text{if $a\mathrel{T}x$, then
+        $R$ is confluent at $x$ on $X$}\}$.
+    $\reflexiveTransitiveClosure{X}{R}$ is transitive
+        by \obv{reflexive_transitive_closure_is_transitive}.
+    $T$ is transitive.
+    Show that $C$ is progressive for $\converse{R}$ on $X$.
+    \begin{subproof}
+        Show that for every $x\in X$ we have if for every $y\in X$ such that
+            $y\mathrel{\converse{R}}x$ we have $y\in C$, then $x\in C$.
+        \begin{subproof}
+            Fix $x\in X$.
+            Suppose for every $y\in X$ such that
+                $y\mathrel{\converse{R}}x$ we have $y\in C$.
+            Show that if $a\mathrel{T}x$, then
+                $R$ is confluent at $x$ on $X$.
+            \begin{subproof}
+                Suppose $a\mathrel{T}x$.
+                $R$ is locally confluent at $x$ on $X$.
+                Show that for every $y\in X$ such that $x\mathrel{R}y$
+                    we have $R$ is confluent at $y$ on $X$.
+                \begin{subproof}
+                    Fix $y\in X$.
+                    Suppose $x\mathrel{R}y$.
+                    $y\mathrel{\converse{R}}x$ by \obv{converse_iff}.
+                    Hence $y\in C$.
+                    $x\mathrel{T}y$
+                        by \auto{reflexive_transitive_closure_contains,subseteq}.
+                    Hence $a\mathrel{T}y$ by \obv{transitive}.
+                \end{subproof}
+                Follows by \obv{local_confluence_confluence_step}.
+            \end{subproof}
+        \end{subproof}
+        Follows by \obv{progressive_on}.
+    \end{subproof}
+    Hence $a\in C$ by \obv{accessible_induction_set}.
+    $\reflexiveTransitiveClosure{X}{R}$ is reflexive on $X$
+        by \obv{reflexive_transitive_closure_is_reflexive}.
+    $T$ is reflexive on $X$.
+    $a\mathrel{T}a$ by \obv{reflexive_on}.
+\end{proof}
+
+\begin{corollary}\label{accessible_local_confluence_implies_confluent_at}
+    Let $R$ be a binary relation on $X$.
+    Suppose $R$ is locally confluent on $X$.
+    Let $a\in X$.
+    Suppose $a\in\accessiblePart{X}{\converse{R}}$.
+    Then $R$ is confluent at $a$ on $X$.
+\end{corollary}
+\begin{proof}
+    For every $u\in X$ such that
+        $a\mathrel{\reflexiveTransitiveClosure{X}{R}}u$
+        we have $R$ is locally confluent at $u$ on $X$
+        by \obv{locally_confluent_on}.
+    Follows by
+        \obv{accessible_descendant_local_confluence_implies_confluent_at}.
+\end{proof}
+
+\begin{corollary}\label{newman_relation}
+    Let $R$ be a binary relation on $X$.
+    Suppose $R$ is Noetherian on $X$.
+    Suppose $R$ is locally confluent on $X$.
+    Then $R$ is confluent on $X$.
+\end{corollary}
+\begin{proof}
+    $\converse{R}$ is well-founded on $X$ by definition.
+    Hence $X\subseteq\accessiblePart{X}{\converse{R}}$
+        by \obv{well_founded_on_implies_accessible}.
+    For every $a\in X$ we have $R$ is confluent at $a$ on $X$
+        by \obv{subseteq,accessible_local_confluence_implies_confluent_at}.
+    Follows by \obv{confluent_on}.
+\end{proof}
+
+\begin{corollary}\label{newman_relation_convergent}
+    Let $R$ be a binary relation on $X$.
+    Suppose $R$ is Noetherian on $X$.
+    Suppose $R$ is locally confluent on $X$.
+    Then $R$ is convergent on $X$.
+\end{corollary}
+\begin{proof}
+    $R$ is confluent on $X$ by \obv{newman_relation}.
+    Follows by \obv{convergent_on}.
+\end{proof}

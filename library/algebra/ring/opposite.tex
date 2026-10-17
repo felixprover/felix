@@ -1,0 +1,226 @@
+\import{algebra/ring.tex}
+\import{set/logical-graph.tex}
+
+\section{Opposite rings}
+
+The opposite ring has the same additive structure and the same unit.  Its
+multiplication reverses the order of the two factors.
+
+\begin{definition}\label{opposite_multiplication_op}
+    $\oppositeMultiplicationOp:
+        \Set\to\Set\to\Set\to\Set
+        =\fun{R,x,y:\Set}{\ringMul[R](y,x)}$.
+\end{definition}
+
+\begin{definition}\label{opposite_multiplication_graph}
+    $\oppositeMultiplicationGraph{R}=
+        \Apply{\binaryGraphOnOp}{
+            \carrier[R],\carrier[R],
+            \Apply{\oppositeMultiplicationOp}{R}}$.
+\end{definition}
+
+\begin{proposition}\label{opposite_multiplication_graph_type}
+    Let $R$ be a ring.
+    Then
+        $\oppositeMultiplicationGraph{R}
+            \in\funs{
+                \carrier[R]\times\carrier[R]}{\carrier[R]}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{opposite_multiplication_graph,
+            opposite_multiplication_op,
+            logical_binary_graph_on_function,ring_mul_type}.
+\end{proof}
+
+\begin{proposition}\label{opposite_multiplication_graph_apply}
+    Let $R$ be a ring and $x,y\in\carrier[R]$.
+    Then
+        $\apply{\oppositeMultiplicationGraph{R}}{(x,y)}
+            =\ringMul[R](y,x)$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{opposite_multiplication_graph,
+            opposite_multiplication_op,
+            logical_binary_graph_on_apply}.
+\end{proof}
+
+\begin{definition}\label{opposite_ring}
+    $\OppositeRing{R}=
+        \structure[ring]{
+            \carrier=\carrier[R],
+            \ringAdd=\ringAdd[R],
+            \ringZero=\ringZero[R],
+            \ringNeg=\ringNeg[R],
+            \ringMul=\oppositeMultiplicationGraph{R},
+            \ringOne=\ringOne[R]
+        }$.
+\end{definition}
+
+\begin{proposition}\label{opposite_ring_fields}
+    $\carrier[\OppositeRing{R}]=\carrier[R]$ and
+    $\ringAdd[\OppositeRing{R}]=\ringAdd[R]$ and
+    $\ringZero[\OppositeRing{R}]=\ringZero[R]$ and
+    $\ringNeg[\OppositeRing{R}]=\ringNeg[R]$ and
+    $\ringMul[\OppositeRing{R}]
+        =\oppositeMultiplicationGraph{R}$ and
+    $\ringOne[\OppositeRing{R}]=\ringOne[R]$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{opposite_ring,
+            ringaggregateprojection_carrier,ringaggregateprojection_ringAdd,
+            ringaggregateprojection_ringZero,ringaggregateprojection_ringNeg,
+            ringaggregateprojection_ringMul,ringaggregateprojection_ringOne}.
+\end{proof}
+
+\begin{proposition}\label{opposite_ring_mul_apply}
+    Let $R$ be a ring and $x,y\in\carrier[R]$.
+    Then
+        $\ringMul[\OppositeRing{R}](x,y)=\ringMul[R](y,x)$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{opposite_ring_fields,
+            opposite_multiplication_graph_apply}.
+\end{proof}
+
+\begin{theorem}\label{opposite_ring_is_exact}
+    Let $R$ be a ring.
+    Then $\OppositeRing{R}$ is an exact ring.
+\end{theorem}
+\begin{proof}
+    Let $S=\OppositeRing{R}$.
+    $\carrier[S]=\carrier[R]$ and
+        $\ringAdd[S]=\ringAdd[R]$ and
+        $\ringZero[S]=\ringZero[R]$ and
+        $\ringNeg[S]=\ringNeg[R]$ and
+        $\ringMul[S]=\oppositeMultiplicationGraph{R}$ and
+        $\ringOne[S]=\ringOne[R]$ by
+        \auto{opposite_ring_fields}.
+    $\ringAdd[S]\in
+        \funs{\carrier[S]\times\carrier[S]}{\carrier[S]}$ by
+        \obv{ring_add_graph}.
+    $\ringZero[S]\in\carrier[S]$ by \obv{ring_zero_type}.
+    $\ringNeg[S]\in\funs{\carrier[S]}{\carrier[S]}$ by
+        \obv{ring_neg_graph}.
+    $\ringMul[S]\in
+        \funs{\carrier[S]\times\carrier[S]}{\carrier[S]}$ by
+        \auto{opposite_multiplication_graph_type}.
+    $\ringOne[S]\in\carrier[S]$ by \obv{ring_one_type}.
+    For all $x,y,z\in\carrier[S]$ we have
+        $\ringAdd[S](x,\ringAdd[S](y,z))
+            =\ringAdd[S](\ringAdd[S](x,y),z)$ by
+        \auto{ring_add_associative}.
+    For all $x,y\in\carrier[S]$ we have
+        $\ringAdd[S](x,y)=\ringAdd[S](y,x)$ by
+        \auto{ring_add_commutative}.
+    For every $x\in\carrier[S]$ we have
+        $\ringAdd[S](\ringZero[S],x)=x$ by
+        \auto{ring_add_zero_left}.
+    For every $x\in\carrier[S]$ we have
+        $\ringAdd[S](\ringNeg[S](x),x)=\ringZero[S]$ by
+        \auto{ring_add_inverse_left}.
+    Show that for all $x,y,z\in\carrier[S]$ we have
+        $\ringMul[S](x,\ringMul[S](y,z))
+            =\ringMul[S](\ringMul[S](x,y),z)$.
+    \begin{subproof}
+        Fix $x,y,z\in\carrier[S]$.
+        Hence $x,y,z\in\carrier[R]$.
+        $\ringMul[R](z,y),\ringMul[R](y,x)\in\carrier[R]$ by
+            \obv{ring_mul_type}.
+        $\ringMul[S](y,z)=\ringMul[R](z,y)$ and
+            $\ringMul[S](x,y)=\ringMul[R](y,x)$ by
+            \auto{opposite_ring_mul_apply}.
+        Hence
+            $\ringMul[S](x,\ringMul[S](y,z))
+                =\ringMul[R](\ringMul[R](z,y),x)$ and
+            $\ringMul[S](\ringMul[S](x,y),z)
+                =\ringMul[R](z,\ringMul[R](y,x))$ by
+            \auto{opposite_ring_mul_apply}.
+        Follows by \obv{ring_mul_associative}.
+    \end{subproof}
+    Show that for every $x\in\carrier[S]$ we have
+        $\ringMul[S](\ringOne[S],x)=x$ and
+        $\ringMul[S](x,\ringOne[S])=x$.
+    \begin{subproof}
+        Fix $x\in\carrier[S]$.
+        Hence $x\in\carrier[R]$.
+        Follows by
+            \auto{opposite_ring_mul_apply,
+                ring_mul_one_left,ring_mul_one_right}.
+    \end{subproof}
+    Show that for all $x,y,z\in\carrier[S]$ we have
+        $\ringMul[S](x,\ringAdd[S](y,z))
+            =\ringAdd[S](\ringMul[S](x,y),\ringMul[S](x,z))$.
+    \begin{subproof}
+        Fix $x,y,z\in\carrier[S]$.
+        Hence $x,y,z\in\carrier[R]$.
+        $\ringAdd[R](y,z)\in\carrier[R]$ by
+            \obv{ring_add_type}.
+        $\ringMul[S](x,\ringAdd[S](y,z))
+            =\ringMul[R](\ringAdd[R](y,z),x)$ by
+            \auto{opposite_ring_mul_apply}.
+        $\ringMul[S](x,y)=\ringMul[R](y,x)$ and
+            $\ringMul[S](x,z)=\ringMul[R](z,x)$ by
+            \auto{opposite_ring_mul_apply}.
+        Follows by \auto{ring_distributive_right}.
+    \end{subproof}
+    Show that for all $x,y,z\in\carrier[S]$ we have
+        $\ringMul[S](\ringAdd[S](x,y),z)
+            =\ringAdd[S](\ringMul[S](x,z),\ringMul[S](y,z))$.
+    \begin{subproof}
+        Fix $x,y,z\in\carrier[S]$.
+        Hence $x,y,z\in\carrier[R]$.
+        $\ringAdd[R](x,y)\in\carrier[R]$ by
+            \obv{ring_add_type}.
+        $\ringMul[S](\ringAdd[S](x,y),z)
+            =\ringMul[R](z,\ringAdd[R](x,y))$ by
+            \auto{opposite_ring_mul_apply}.
+        $\ringMul[S](x,z)=\ringMul[R](z,x)$ and
+            $\ringMul[S](y,z)=\ringMul[R](z,y)$ by
+            \auto{opposite_ring_mul_apply}.
+        Follows by \auto{ring_distributive_left}.
+    \end{subproof}
+    Hence $S$ is a ring by
+        \auto{opposite_ring,ringaggregateexact,ring}.
+    Follows by \auto{opposite_ring,ringaggregateexact}.
+\end{proof}
+
+\begin{theorem}\label{opposite_ring_involutive}
+    Let $R$ be a set.
+    Suppose $R$ is an exact ring.
+    Then $\OppositeRing{\OppositeRing{R}}=R$.
+\end{theorem}
+\begin{proof}
+    Let $S=\OppositeRing{R}$ and $T=\OppositeRing{S}$.
+    $S$ is an exact ring by \auto{opposite_ring_is_exact}.
+    $T$ is an exact ring by \auto{opposite_ring_is_exact}.
+    $\carrier[T]=\carrier[R]$ and
+        $\ringAdd[T]=\ringAdd[R]$ and
+        $\ringZero[T]=\ringZero[R]$ and
+        $\ringNeg[T]=\ringNeg[R]$ and
+        $\ringOne[T]=\ringOne[R]$ by
+        \auto{opposite_ring_fields}.
+    $\ringMul[T]$ and $\ringMul[R]$ are functions and
+        $\dom{\ringMul[T]}=\carrier[R]\times\carrier[R]$ and
+        $\dom{\ringMul[R]}=\carrier[R]\times\carrier[R]$ by
+        \auto{ring_mul_graph,funs_elim}.
+    Show that for every $p\in\dom{\ringMul[T]}$ we have
+        $\ringMul[T](p)=\ringMul[R](p)$.
+    \begin{subproof}
+        Fix $p\in\dom{\ringMul[T]}$.
+        Hence $p\in\carrier[R]\times\carrier[R]$.
+        Take $x,y\in\carrier[R]$ such that $p=(x,y)$ by
+            \obv{times_elem_is_tuple}.
+        Hence $x,y\in\carrier[S]$ by
+            \auto{opposite_ring_fields}.
+        $\ringMul[T](x,y)=\ringMul[S](y,x)$ by
+            \auto{opposite_ring_mul_apply}.
+        $\ringMul[S](y,x)=\ringMul[R](x,y)$ by
+            \auto{opposite_ring_mul_apply}.
+    \end{subproof}
+    Hence $\ringMul[T]=\ringMul[R]$ by \obv{funext_on_domain}.
+    Follows by \auto{exact_ring_extensionality}.
+\end{proof}

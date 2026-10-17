@@ -1,0 +1,845 @@
+\section{Solovay's stationary splitting theorem}
+
+\import{stationary/nonreflection.tex}
+\import{stationary/reflection.tex}
+\import{recursion/transfinite.tex}
+
+The recursive colour at a stage is the least locally bad earlier colour, with
+the stage itself as a sentinel when no earlier colour is bad.
+
+\begin{definition}\label{solovay_prior_fibre}
+    $\solovayPriorFibre{p}{R}{\beta}{i}
+        =\{\gamma\in R\inter\beta\mid p(\gamma)=i\}$.
+\end{definition}
+
+\begin{definition}\label{solovay_bad_colours}
+    $\solovayBadColours{p}{R}{\beta}
+        =\{i\in\beta\mid
+            \nonstationaryIn{\solovayPriorFibre{p}{R}{\beta}{i}}{\beta}\}$.
+\end{definition}
+
+\begin{definition}\label{solovay_colour_candidates}
+    $\solovayColourCandidates{p}{R}{\beta}
+        =\solovayBadColours{p}{R}{\beta}\union\{\beta\}$.
+\end{definition}
+
+\begin{definition}\label{solovay_colour_value}
+    $\solovayColourValue{p}{R}{\beta}
+        =\inters{\solovayColourCandidates{p}{R}{\beta}}$.
+\end{definition}
+
+\begin{definition}\label{solovay_colour_step}
+    $\solovayColourStep{R}{\kappa}
+        =\{v\in((\kappa\times\pow{\kappa\times\kappa})\times\kappa)
+            \mid \snd{v}=\solovayColourValue
+                {\snd{\fst{v}}}{R}{\fst{\fst{v}}}\}$.
+\end{definition}
+
+\begin{definition}\label{solovay_colouring}
+    $\solovayColouring{R}{\kappa}
+        =\ordinalRecursion{\kappa}{\kappa}{\solovayColourStep{R}{\kappa}}$.
+\end{definition}
+
+\begin{definition}\label{solovay_full_points}
+    $\solovayFullPoints{h}{R}=\{\beta\in R\mid h(\beta)=\beta\}$.
+\end{definition}
+
+\begin{proposition}\label{solovay_prior_fibre_subset}
+    $\solovayPriorFibre{p}{R}{\beta}{i}\subseteq\beta$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{solovay_prior_fibre,subseteq,inter_elim_right}.
+\end{proof}
+
+\begin{proposition}\label{solovay_prior_fibre_history}
+    Let $\kappa$ be an ordinal.
+    Suppose $h$ is a function on $\kappa$.
+    Let $\beta\in\kappa$.
+    Then $\solovayPriorFibre{\restrl{h}{\beta}}{R}{\beta}{i}
+        =\fibre{\restrl{h}{R\inter\beta}}{i}$.
+\end{proposition}
+\begin{proof}
+    $h$ is a function and $\dom{h}=\kappa$.
+    $\kappa$ is an ordinal and $\beta$ is an ordinal
+        by \obv{elem_of_ordinal_is_ordinal}.
+    Hence $\beta\subseteq\kappa$ by \obv{ordinal_elem_implies_subseteq}.
+    $R\inter\beta\subseteq\beta$ by \obv{subseteq,inter}.
+    Hence $R\inter\beta\subseteq\kappa$ by \obv{subseteq_transitive}.
+    Show that for every $\gamma\in
+        \solovayPriorFibre{\restrl{h}{\beta}}{R}{\beta}{i}$
+        we have $\gamma\in\fibre{\restrl{h}{R\inter\beta}}{i}$.
+    \begin{subproof}
+        Fix $\gamma\in
+            \solovayPriorFibre{\restrl{h}{\beta}}{R}{\beta}{i}$.
+        Hence $\gamma\in R\inter\beta$ and
+            $(\restrl{h}{\beta})(\gamma)=i$
+            by \obv{solovay_prior_fibre}.
+        $(\restrl{h}{\beta})(\gamma)=h(\gamma)$ and
+            $(\restrl{h}{R\inter\beta})(\gamma)=h(\gamma)$
+            by \obv{restrl_of_function_apply,subseteq}.
+        $\gamma\in\dom{\restrl{h}{R\inter\beta}}$
+            by \auto{dom_of_restrl_eq_inter,inter_intro,subseteq}.
+        Follows by \obv{function_fibre_iff}.
+    \end{subproof}
+    Show that for every $\gamma\in
+        \fibre{\restrl{h}{R\inter\beta}}{i}$ we have
+        $\gamma\in\solovayPriorFibre{\restrl{h}{\beta}}{R}{\beta}{i}$.
+    \begin{subproof}
+        Fix $\gamma\in\fibre{\restrl{h}{R\inter\beta}}{i}$.
+        Hence $\gamma\in\dom{\restrl{h}{R\inter\beta}}$ and
+            $(\restrl{h}{R\inter\beta})(\gamma)=i$
+            by \obv{function_fibre_iff}.
+        Hence $\gamma\in R\inter\beta$
+            by \auto{dom_of_restrl_eq_inter,inter_elim_right}.
+        $(\restrl{h}{\beta})(\gamma)=h(\gamma)$ and
+            $(\restrl{h}{R\inter\beta})(\gamma)=h(\gamma)$
+            by \obv{restrl_of_function_apply,subseteq}.
+        Follows by \obv{solovay_prior_fibre}.
+    \end{subproof}
+    Follows by \obv{setext}.
+\end{proof}
+
+\begin{proposition}\label{solovay_prior_global_fibre}
+    Let $\kappa$ be an ordinal.
+    Let $h\in\funs{\kappa}{\kappa}$.
+    Suppose $R\subseteq\kappa$.
+    Let $\beta\in\kappa$.
+    Let $i\in\beta$.
+    Then $\solovayPriorFibre{\restrl{h}{\beta}}{R}{\beta}{i}
+        =\fibre{\restrl{h}{R}}{i}\inter\beta$.
+\end{proposition}
+\begin{proof}
+    $h$ is a function and $\dom{h}=\kappa$
+        by \obv{funs_is_function,funs}.
+    $\solovayPriorFibre{\restrl{h}{\beta}}{R}{\beta}{i}
+        =\fibre{\restrl{h}{R\inter\beta}}{i}$
+        by \obv{solovay_prior_fibre_history}.
+    $R\inter\beta\subseteq R$ by \obv{subseteq,inter}.
+    $\fibre{\restrl{h}{R\inter\beta}}{i}
+        =\fibre{\restrl{h}{R}}{i}\inter(R\inter\beta)$
+        by \obv{function_fibre_nested_restriction}.
+    $\restrl{h}{R}$ is a function
+        by \obv{restrl_of_function_is_function}.
+    $\fibre{\restrl{h}{R}}{i}\subseteq R$
+        by \auto{subseteq,function_fibre_iff,
+            dom_of_restrl_eq_inter,inter_elim_right}.
+    $\fibre{\restrl{h}{R}}{i}\inter(R\inter\beta)
+        =\fibre{\restrl{h}{R}}{i}\inter\beta$
+        by \auto{setext,inter,subseteq}.
+\end{proof}
+
+\begin{proposition}\label{solovay_colour_candidates_inhabited}
+    $\solovayColourCandidates{p}{R}{\beta}$ is inhabited.
+\end{proposition}
+\begin{proof}
+    $\beta\in\{\beta\}$ by \auto{singleton_iff}.
+    Hence $\beta\in\solovayColourCandidates{p}{R}{\beta}$
+        by \auto{solovay_colour_candidates,union_iff}.
+\end{proof}
+
+\begin{proposition}\label{solovay_colour_candidates_are_ordinals}
+    Let $\beta$ be an ordinal.
+    Every element of $\solovayColourCandidates{p}{R}{\beta}$ is an ordinal.
+\end{proposition}
+\begin{proof}
+    Fix $i\in\solovayColourCandidates{p}{R}{\beta}$.
+    $i\in\solovayBadColours{p}{R}{\beta}$ or $i\in\{\beta\}$
+        by \auto{solovay_colour_candidates,union_iff}.
+    Hence $i\in\beta$ or $i=\beta$
+        by \auto{solovay_bad_colours,singleton_iff}.
+    Follows by \obv{elem_of_ordinal_is_ordinal}.
+\end{proof}
+
+\begin{proposition}\label{solovay_colour_value_is_candidate}
+    Let $\beta$ be an ordinal.
+    Then $\solovayColourValue{p}{R}{\beta}
+        \in\solovayColourCandidates{p}{R}{\beta}$.
+\end{proposition}
+\begin{proof}
+    $\solovayColourCandidates{p}{R}{\beta}$ is inhabited
+        by \obv{solovay_colour_candidates_inhabited}.
+    Every element of $\solovayColourCandidates{p}{R}{\beta}$ is an ordinal
+        by \obv{solovay_colour_candidates_are_ordinals}.
+    Follows by \auto{solovay_colour_value,inters_of_ordinals_elem}.
+\end{proof}
+
+\begin{proposition}\label{solovay_colour_value_subseteq_sentinel}
+    Let $\beta$ be an ordinal.
+    Then $\solovayColourValue{p}{R}{\beta}\subseteq\beta$.
+\end{proposition}
+\begin{proof}
+    $\beta\in\solovayColourCandidates{p}{R}{\beta}$
+        by \auto{solovay_colour_candidates,singleton_iff,union_iff}.
+    $\solovayColourCandidates{p}{R}{\beta}$ is inhabited
+        by \obv{solovay_colour_candidates_inhabited}.
+    Every element of $\solovayColourCandidates{p}{R}{\beta}$ is an ordinal
+        by \obv{solovay_colour_candidates_are_ordinals}.
+    Follows by \auto{solovay_colour_value,inters_of_ordinals_subseteq}.
+\end{proof}
+
+\begin{proposition}\label{solovay_colour_value_in_successor}
+    Let $\beta$ be an ordinal.
+    Then $\solovayColourValue{p}{R}{\beta}\in\suc{\beta}$.
+\end{proposition}
+\begin{proof}
+    $\solovayColourValue{p}{R}{\beta}$ is an ordinal
+        by \auto{solovay_colour_value_is_candidate,
+            solovay_colour_candidates_are_ordinals}.
+    $\solovayColourValue{p}{R}{\beta}\subseteq\beta$
+        by \obv{solovay_colour_value_subseteq_sentinel}.
+    Hence $\solovayColourValue{p}{R}{\beta}\in\beta$ or
+        $\solovayColourValue{p}{R}{\beta}=\beta$
+        by \obv{ordinal_subseteq_implies_elem_or_eq}.
+    Follows by \auto{suc_iff}.
+\end{proof}
+
+\begin{proposition}\label{solovay_colour_value_eq_sentinel_iff}
+    Let $\beta$ be a limit ordinal.
+    Then $\solovayColourValue{p}{R}{\beta}=\beta$ iff
+        $\solovayBadColours{p}{R}{\beta}=\emptyset$.
+\end{proposition}
+\begin{proof}
+    Show that if $\solovayColourValue{p}{R}{\beta}=\beta$, then
+        $\solovayBadColours{p}{R}{\beta}=\emptyset$.
+    \begin{subproof}
+        Assume $\solovayColourValue{p}{R}{\beta}=\beta$.
+        Show that every element of $\solovayBadColours{p}{R}{\beta}$
+            is an element of $\emptyset$.
+        \begin{subproof}
+            Fix $i\in\solovayBadColours{p}{R}{\beta}$.
+            Hence $i\in\beta$ by \obv{solovay_bad_colours}.
+            $i\in\solovayColourCandidates{p}{R}{\beta}$
+                by \auto{solovay_colour_candidates,union_iff}.
+            $\solovayColourCandidates{p}{R}{\beta}$ is inhabited
+                by \obv{solovay_colour_candidates_inhabited}.
+            Every element of $\solovayColourCandidates{p}{R}{\beta}$
+                is an ordinal
+                by \obv{solovay_colour_candidates_are_ordinals}.
+            Hence $\solovayColourValue{p}{R}{\beta}\subseteq i$
+                by \auto{solovay_colour_value,
+                    inters_of_ordinals_subseteq}.
+            Hence $\beta\subseteq i$.
+            $i\subseteq\beta$ by \obv{ordinal_elem_implies_subseteq}.
+            Hence $i=\beta$ by \obv{subseteq_antisymmetric}.
+            Hence $\beta\in\beta$.
+            Contradiction by \obv{in_irrefl}.
+        \end{subproof}
+        Hence $\solovayBadColours{p}{R}{\beta}\subseteq\emptyset$
+            by \obv{subseteq}.
+        Follows by \obv{subseteq_emptyset_iff}.
+    \end{subproof}
+    Show that if $\solovayBadColours{p}{R}{\beta}=\emptyset$, then
+        $\solovayColourValue{p}{R}{\beta}=\beta$.
+    \begin{subproof}
+        Assume $\solovayBadColours{p}{R}{\beta}=\emptyset$.
+        Hence $\solovayColourCandidates{p}{R}{\beta}=\{\beta\}$
+            by \auto{solovay_colour_candidates,setext,union_iff,emptyset}.
+        Follows by \auto{solovay_colour_value,inters_singleton}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{proposition}\label{solovay_colour_value_bad}
+    Let $\beta$ be a limit ordinal.
+    Suppose $\solovayColourValue{p}{R}{\beta}\in\beta$.
+    Then $\solovayColourValue{p}{R}{\beta}
+        \in\solovayBadColours{p}{R}{\beta}$.
+\end{proposition}
+\begin{proof}
+    $\solovayColourValue{p}{R}{\beta}
+        \in\solovayColourCandidates{p}{R}{\beta}$
+        by \obv{solovay_colour_value_is_candidate}.
+    Hence $\solovayColourValue{p}{R}{\beta}
+            \in\solovayBadColours{p}{R}{\beta}$ or
+        $\solovayColourValue{p}{R}{\beta}=\beta$
+        by \auto{solovay_colour_candidates,union_iff,singleton_iff}.
+    $\solovayColourValue{p}{R}{\beta}\neq\beta$
+        by \obv{in_irrefl}.
+\end{proof}
+
+\begin{theorem}\label{solovay_colour_step_type}
+    Let $\kappa$ be a limit ordinal.
+    Then $\solovayColourStep{R}{\kappa}
+        \in\funs{\kappa\times\pow{\kappa\times\kappa}}{\kappa}$.
+\end{theorem}
+\begin{proof}
+    Let $D=\kappa\times\pow{\kappa\times\kappa}$.
+    Let $H=\solovayColourStep{R}{\kappa}$.
+    $H\subseteq D\times\kappa$ by \auto{solovay_colour_step,subseteq}.
+    Hence $H$ is a relation
+        by \auto{relation,subseteq,times_elem_is_tuple}.
+    Show that $H$ is right-unique.
+    \begin{subproof}
+        Show that for all $u,b,c$ such that $(u,b),(u,c)\in H$
+            we have $b=c$.
+        \begin{subproof}
+            Fix $u,b,c$.
+            Assume $(u,b),(u,c)\in H$.
+            $b=\solovayColourValue{\snd{u}}{R}{\fst{u}}$ and
+                $c=\solovayColourValue{\snd{u}}{R}{\fst{u}}$
+                by \auto{solovay_colour_step,fst_eq,snd_eq,pair_eq_iff}.
+        \end{subproof}
+        Follows by \obv{rightunique}.
+    \end{subproof}
+    Show that $\dom{H}=D$.
+    \begin{subproof}
+        $\dom{H}\subseteq D$
+            by \auto{subseteq,dom_iff,solovay_colour_step,
+                times_tuple_elim,pair_eq_iff}.
+        Show that every element of $D$ is an element of $\dom{H}$.
+        \begin{subproof}
+            Fix $u\in D$.
+            Let $\beta=\fst{u}$.
+            Let $p=\snd{u}$.
+            $u=(\beta,p)$
+                by \auto{times_elem_is_tuple,pair_eq_pair_of_proj}.
+            $\beta\in\kappa$ and $p\in\pow{\kappa\times\kappa}$
+                by \obv{times_tuple_elim}.
+            Hence $\beta$ is an ordinal
+                by \obv{elem_of_ordinal_is_ordinal,limit_ordinal}.
+            $\solovayColourValue{p}{R}{\beta}\in\suc{\beta}$
+                by \obv{solovay_colour_value_in_successor}.
+            $\suc{\beta}\in\kappa$ by \obv{suc_elem_limitordinal}.
+            Hence $\solovayColourValue{p}{R}{\beta}\in\kappa$
+                by \obv{ordinal_transitivity,limit_ordinal}.
+            $(u,\solovayColourValue{p}{R}{\beta})\in H$
+                by \auto{solovay_colour_step,fst_eq,snd_eq,
+                    times_tuple_intro}.
+            Follows by \obv{dom_intro}.
+        \end{subproof}
+        Hence $D\subseteq\dom{H}$ by \obv{subseteq}.
+        Follows by \obv{subseteq_antisymmetric}.
+    \end{subproof}
+    Show that for every $u\in\dom{H}$ we have $H(u)\in\kappa$.
+    \begin{subproof}
+        Fix $u\in\dom{H}$.
+        $(u,H(u))\in H$ by \obv{function_apply_elim}.
+        Hence $(u,H(u))\in D\times\kappa$ by \obv{subseteq}.
+        Follows by \obv{times_tuple_elim}.
+    \end{subproof}
+    Hence $H$ is a function to $\kappa$.
+    Follows by \auto{funs_intro}.
+\end{proof}
+
+\begin{proposition}\label{solovay_colour_step_apply}
+    Let $\kappa$ be a limit ordinal.
+    Let $\beta\in\kappa$.
+    Let $p\in\pow{\kappa\times\kappa}$.
+    Then $(\solovayColourStep{R}{\kappa})((\beta,p))
+        =\solovayColourValue{p}{R}{\beta}$.
+\end{proposition}
+\begin{proof}
+    Let $H=\solovayColourStep{R}{\kappa}$.
+    $H$ is a function by \auto{solovay_colour_step_type,funs_is_function}.
+    $\beta$ is an ordinal
+        by \obv{elem_of_ordinal_is_ordinal,limit_ordinal}.
+    $\solovayColourValue{p}{R}{\beta}\in\suc{\beta}$
+        by \obv{solovay_colour_value_in_successor}.
+    $\suc{\beta}\in\kappa$ by \obv{suc_elem_limitordinal}.
+    Hence $\solovayColourValue{p}{R}{\beta}\in\kappa$
+        by \obv{ordinal_transitivity,limit_ordinal}.
+    $((\beta,p),\solovayColourValue{p}{R}{\beta})\in H$
+        by \auto{solovay_colour_step,fst_eq,snd_eq,times_tuple_intro}.
+    Follows by \obv{function_apply_intro}.
+\end{proof}
+
+\begin{theorem}\label{solovay_colouring_type}
+    Let $\kappa$ be a regular cardinal.
+    Then $\solovayColouring{R}{\kappa}\in\funs{\kappa}{\kappa}$.
+\end{theorem}
+\begin{proof}
+    Hence $\kappa$ is a limit ordinal
+        by \obv{infinite_cardinal_is_limit_ordinal}.
+    Hence $\kappa$ is an ordinal by \obv{limit_ordinal}.
+    $\solovayColourStep{R}{\kappa}
+        \in\funs{\kappa\times\pow{\kappa\times\kappa}}{\kappa}$
+        by \obv{solovay_colour_step_type}.
+    Follows by \auto{solovay_colouring,ordinal_recursion_type}.
+\end{proof}
+
+\begin{theorem}\label{solovay_colouring_equation}
+    Let $\kappa$ be a regular cardinal.
+    Let $\beta\in\kappa$.
+    Then $(\solovayColouring{R}{\kappa})(\beta)
+        =\solovayColourValue
+            {\restrl{\solovayColouring{R}{\kappa}}{\beta}}{R}{\beta}$.
+\end{theorem}
+\begin{proof}
+    Let $h=\solovayColouring{R}{\kappa}$.
+    Let $H=\solovayColourStep{R}{\kappa}$.
+    Hence $\kappa$ is a limit ordinal
+        by \obv{infinite_cardinal_is_limit_ordinal}.
+    Hence $\kappa$ is an ordinal by \obv{limit_ordinal}.
+    $H\in\funs{\kappa\times\pow{\kappa\times\kappa}}{\kappa}$
+        by \auto{solovay_colour_step_type}.
+    Hence $h(\beta)=H((\beta,\restrl{h}{\beta}))$
+        by \auto{solovay_colouring,ordinal_recursion_equation}.
+    $h\in\funs{\kappa}{\kappa}$ by \auto{solovay_colouring_type}.
+    Hence $h\in\rels{\kappa}{\kappa}$ by \obv{funs}.
+    Hence $h\in\pow{\kappa\times\kappa}$ by \obv{rels}.
+    Hence $h\subseteq\kappa\times\kappa$ by \obv{powerset_elim}.
+    $\restrl{h}{\beta}\subseteq h$ by \obv{restrl_subseteq}.
+    Hence $\restrl{h}{\beta}\subseteq\kappa\times\kappa$
+        by \obv{subseteq_transitive}.
+    Hence $\restrl{h}{\beta}\in\pow{\kappa\times\kappa}$
+        by \obv{powerset_intro}.
+    $H((\beta,\restrl{h}{\beta}))
+        =\solovayColourValue{\restrl{h}{\beta}}{R}{\beta}$
+        by \auto{solovay_colour_step_apply}.
+\end{proof}
+
+\begin{theorem}\label{solovay_full_point_iff_no_bad_colours}
+    Let $\kappa$ be a regular cardinal.
+    Suppose $R\subseteq\limitOrdinalsBelow{\kappa}$.
+    Let $\beta\in R$.
+    Then $\beta\in\solovayFullPoints{\solovayColouring{R}{\kappa}}{R}$
+        iff $\solovayBadColours
+            {\restrl{\solovayColouring{R}{\kappa}}{\beta}}{R}{\beta}
+                =\emptyset$.
+\end{theorem}
+\begin{proof}
+    Hence $\beta\in\limitOrdinalsBelow{\kappa}$ by \obv{subseteq}.
+    Hence $\beta\in\kappa$ and $\beta$ is a limit ordinal
+        by \obv{limit_ordinals_below}.
+    Let $h=\solovayColouring{R}{\kappa}$.
+    $h(\beta)=\solovayColourValue{\restrl{h}{\beta}}{R}{\beta}$
+        by \auto{solovay_colouring_equation}.
+    Show that if $\beta\in\solovayFullPoints{h}{R}$, then
+        $\solovayBadColours{\restrl{h}{\beta}}{R}{\beta}=\emptyset$.
+    \begin{subproof}
+        Assume $\beta\in\solovayFullPoints{h}{R}$.
+        Hence $h(\beta)=\beta$ by \obv{solovay_full_points}.
+        Hence $\solovayColourValue{\restrl{h}{\beta}}{R}{\beta}=\beta$.
+        Follows by \obv{solovay_colour_value_eq_sentinel_iff}.
+    \end{subproof}
+    Show that if
+        $\solovayBadColours{\restrl{h}{\beta}}{R}{\beta}=\emptyset$, then
+        $\beta\in\solovayFullPoints{h}{R}$.
+    \begin{subproof}
+        Assume $\solovayBadColours{\restrl{h}{\beta}}{R}{\beta}=\emptyset$.
+        Hence $\solovayColourValue{\restrl{h}{\beta}}{R}{\beta}=\beta$
+            by \obv{solovay_colour_value_eq_sentinel_iff}.
+        Hence $h(\beta)=\beta$.
+        Follows by \obv{solovay_full_points}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{solovay_full_point_iff_local_stationary}
+    Let $\kappa$ be a regular cardinal.
+    Suppose $R\subseteq\limitOrdinalsBelow{\kappa}$.
+    Let $\beta\in R$.
+    Then $\beta\in\solovayFullPoints{\solovayColouring{R}{\kappa}}{R}$
+        iff for every $i\in\beta$ we have
+            $\fibre{\restrl{\solovayColouring{R}{\kappa}}{R}}{i}
+                \inter\beta$ is stationary in $\beta$.
+\end{theorem}
+\begin{proof}
+    Hence $\beta\in\limitOrdinalsBelow{\kappa}$ by \obv{subseteq}.
+    Hence $\beta\in\kappa$ and $\beta$ is a limit ordinal
+        by \obv{limit_ordinals_below}.
+    Hence $\kappa$ is an ordinal by
+        \auto{regular_cardinal,infinite_cardinal_is_limit_ordinal,
+            limit_ordinal}.
+    Let $h=\solovayColouring{R}{\kappa}$.
+    Let $B=\solovayBadColours{\restrl{h}{\beta}}{R}{\beta}$.
+    $h\in\funs{\kappa}{\kappa}$ by \auto{solovay_colouring_type}.
+    $R\subseteq\kappa$ by
+        \auto{subseteq,limit_ordinals_below}.
+    Show that if $\beta\in\solovayFullPoints{h}{R}$, then
+        for every $i\in\beta$ we have
+            $\fibre{\restrl{h}{R}}{i}\inter\beta$ is stationary in $\beta$.
+    \begin{subproof}
+        Assume $\beta\in\solovayFullPoints{h}{R}$.
+        Hence $B=\emptyset$
+            by \auto{solovay_full_point_iff_no_bad_colours}.
+        Fix $i\in\beta$.
+        Let $A=\solovayPriorFibre{\restrl{h}{\beta}}{R}{\beta}{i}$.
+        $A\subseteq\beta$ by \auto{solovay_prior_fibre_subset}.
+        $i\notin B$ by \auto.
+        Hence $\lnot\nonstationaryIn{A}{\beta}$
+            by \auto{solovay_bad_colours}.
+        Hence $A$ is stationary in $\beta$
+            by \auto{nonstationary_iff_not_stationary}.
+        $A=\fibre{\restrl{h}{R}}{i}\inter\beta$
+            by \obv{solovay_prior_global_fibre}.
+    \end{subproof}
+    Show that if for every $i\in\beta$ we have
+        $\fibre{\restrl{h}{R}}{i}\inter\beta$ is stationary in $\beta$,
+        then $\beta\in\solovayFullPoints{h}{R}$.
+    \begin{subproof}
+        Assume for every $i\in\beta$ we have
+            $\fibre{\restrl{h}{R}}{i}\inter\beta$ is stationary in $\beta$.
+        Show that every element of $B$ is an element of $\emptyset$.
+        \begin{subproof}
+            Fix $i\in B$.
+            Hence $i\in\beta$ and
+                $\nonstationaryIn{
+                    \solovayPriorFibre{\restrl{h}{\beta}}{R}{\beta}{i}}
+                    {\beta}$ by \obv{solovay_bad_colours}.
+            $\solovayPriorFibre{\restrl{h}{\beta}}{R}{\beta}{i}
+                =\fibre{\restrl{h}{R}}{i}\inter\beta$
+                by \obv{solovay_prior_global_fibre}.
+            Hence $\nonstationaryIn{\fibre{\restrl{h}{R}}{i}\inter\beta}
+                {\beta}$.
+            $\fibre{\restrl{h}{R}}{i}\inter\beta$ is stationary in $\beta$.
+            Contradiction by \auto{nonstationary_iff_not_stationary,
+                stationary_in_elim}.
+        \end{subproof}
+        Hence $B\subseteq\emptyset$ by \obv{subseteq}.
+        Hence $B=\emptyset$ by \obv{subseteq_emptyset_iff}.
+        Follows by \auto{solovay_full_point_iff_no_bad_colours}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{proposition}\label{solovay_restricted_colouring_type}
+    Let $\kappa$ be a regular cardinal.
+    Suppose $R\subseteq\kappa$.
+    Then $\restrl{\solovayColouring{R}{\kappa}}{R}
+        \in\funs{R}{\kappa}$.
+\end{proposition}
+\begin{proof}
+    $\solovayColouring{R}{\kappa}\in\funs{\kappa}{\kappa}$
+        by \obv{solovay_colouring_type}.
+    Follows by \obv{funs_restrl}.
+\end{proof}
+
+\begin{proposition}\label{solovay_cells_type}
+    Let $\kappa$ be a regular cardinal.
+    Suppose $R\subseteq\kappa$.
+    Then $\indexedFibres{\restrl{\solovayColouring{R}{\kappa}}{R}}{\kappa}
+        \in\funs{\kappa}{\pow{R}}$.
+\end{proposition}
+\begin{proof}
+    $\restrl{\solovayColouring{R}{\kappa}}{R}\in\funs{R}{\kappa}$
+        by \obv{solovay_restricted_colouring_type}.
+    Hence $\restrl{\solovayColouring{R}{\kappa}}{R}$ is a function and
+        $\dom{\restrl{\solovayColouring{R}{\kappa}}{R}}=R$
+        by \obv{funs_is_function,funs}.
+    $\indexedFibres{\restrl{\solovayColouring{R}{\kappa}}{R}}{\kappa}
+        \in\funs{\kappa}{\pow{\dom{
+            \restrl{\solovayColouring{R}{\kappa}}{R}}}}$
+        by \obv{indexed_fibres_type}.
+\end{proof}
+
+\begin{proposition}\label{solovay_cells_pairwise_disjoint}
+    Let $\kappa$ be a regular cardinal.
+    Suppose $R\subseteq\kappa$.
+    Then $\indexedFibres{\restrl{\solovayColouring{R}{\kappa}}{R}}{\kappa}$
+        is pairwise disjoint on $\kappa$.
+\end{proposition}
+\begin{proof}
+    $\restrl{\solovayColouring{R}{\kappa}}{R}\in\funs{R}{\kappa}$
+        by \obv{solovay_restricted_colouring_type}.
+    Hence $\restrl{\solovayColouring{R}{\kappa}}{R}$ is a function
+        by \obv{funs_is_function}.
+    Follows by \obv{indexed_fibres_pairwise_disjoint}.
+\end{proof}
+
+\begin{proposition}\label{solovay_cells_cover}
+    Let $\kappa$ be a regular cardinal.
+    Suppose $R\subseteq\kappa$.
+    Then $\unions{\ran{
+        \indexedFibres{\restrl{\solovayColouring{R}{\kappa}}{R}}{\kappa}}}
+        =R$.
+\end{proposition}
+\begin{proof}
+    $\restrl{\solovayColouring{R}{\kappa}}{R}\in\funs{R}{\kappa}$
+        by \obv{solovay_restricted_colouring_type}.
+    Follows by \obv{indexed_fibres_cover_domain}.
+\end{proof}
+
+\begin{theorem}\label{solovay_full_points_give_partition}
+    Let $\kappa$ be a regular cardinal.
+    Suppose $\naturals\in\kappa$.
+    Suppose $R$ is stationary in $\kappa$.
+    Suppose $R\subseteq\limitOrdinalsBelow{\kappa}$.
+    Suppose $\solovayFullPoints{\solovayColouring{R}{\kappa}}{R}$
+        is stationary in $\kappa$.
+    Then $\stationaryPartition{
+        \indexedFibres{\restrl{\solovayColouring{R}{\kappa}}{R}}{\kappa}}
+        {R}{\kappa}$.
+\end{theorem}
+\begin{proof}
+    Let $h=\solovayColouring{R}{\kappa}$.
+    Let $f=\restrl{h}{R}$.
+    Let $P=\indexedFibres{f}{\kappa}$.
+    Let $F=\solovayFullPoints{h}{R}$.
+    $R\subseteq\kappa$ by \obv{subseteq,limit_ordinals_below}.
+    $\kappa$ is an infinite cardinal and $\cofinality{\kappa}=\kappa$
+        by \obv{regular_cardinal}.
+    Hence $\kappa$ is a limit ordinal
+        by \obv{infinite_cardinal_is_limit_ordinal}.
+    Hence $\kappa$ is an ordinal and $\naturals\in\cofinality{\kappa}$
+        by \obv{limit_ordinal}.
+    $f\in\funs{R}{\kappa}$ by \auto{solovay_restricted_colouring_type}.
+    Hence $f$ is a function by \obv{funs_is_function}.
+    $P\in\funs{\kappa}{\pow{R}}$ by \auto{solovay_cells_type}.
+    $P$ is pairwise disjoint on $\kappa$
+        by \auto{solovay_cells_pairwise_disjoint}.
+    Show that for every $i\in\kappa$ we have
+        $P(i)$ is stationary in $\kappa$.
+    \begin{subproof}
+        Fix $i\in\kappa$.
+        Let $D=F\setminus\suc{i}$.
+        $D$ is stationary in $\kappa$ by \auto{stationary_strict_tail}.
+        $P(i)=\fibre{f}{i}$ by \auto{indexed_fibres_apply}.
+        $P(i)\in\pow{R}$ by \obv{funs_type_apply}.
+        Hence $P(i)\subseteq R$ by \obv{powerset_elim}.
+        Hence $P(i)\subseteq\kappa$ by \obv{subseteq_transitive}.
+        Show that for every $\beta\in D$ we have
+            $P(i)\inter\beta$ is stationary in $\beta$.
+        \begin{subproof}
+            Fix $\beta\in D$.
+            Hence $\beta\in F$ and $\beta\notin\suc{i}$
+                by \obv{setminus}.
+            Hence $\beta\in R$ by \auto{solovay_full_points}.
+            Hence $\beta\in\kappa$ by \obv{subseteq}.
+            Hence $i$ and $\beta$ are ordinals
+                by \obv{elem_of_ordinal_is_ordinal}.
+            Hence $\beta\notin i$ and $\beta\neq i$ by \auto{suc_iff}.
+            Hence $i\in\beta$ by \obv{ordinal_elem_connex}.
+            For every $j\in\beta$ we have
+                $\fibre{f}{j}\inter\beta$ is stationary in $\beta$
+                by \auto{solovay_full_point_iff_local_stationary}.
+            Hence $\fibre{f}{i}\inter\beta$ is stationary in $\beta$.
+        \end{subproof}
+        Follows by \obv{stationary_from_stationarily_many_local_stationary}.
+    \end{subproof}
+    Hence $P$ is a stationary subpartition of $R$ in $\kappa$
+        by \obv{stationary_subpartition}.
+    $\unions{\ran{P}}=R$ by \auto{solovay_cells_cover}.
+    Follows by \obv{stationary_partition}.
+\end{proof}
+
+\begin{theorem}\label{solovay_nonfull_points_give_self_nonreflecting_core}
+    Let $\kappa$ be a regular cardinal.
+    Suppose $\naturals\in\kappa$.
+    Suppose $R$ is stationary in $\kappa$.
+    Suppose $R\subseteq\limitOrdinalsBelow{\kappa}$.
+    Suppose $\nonstationaryIn{
+        \solovayFullPoints{\solovayColouring{R}{\kappa}}{R}}{\kappa}$.
+    Then there exists $T$ such that $T$ is stationary in $\kappa$ and
+        $T\subseteq R$ and $\selfNonreflectingIn{T}{\kappa}$.
+\end{theorem}
+\begin{proof}
+    Let $h=\solovayColouring{R}{\kappa}$.
+    Let $F=\solovayFullPoints{h}{R}$.
+    $\kappa$ is an infinite cardinal and $\cofinality{\kappa}=\kappa$
+        by \obv{regular_cardinal}.
+    Hence $\kappa$ is a limit ordinal
+        by \obv{infinite_cardinal_is_limit_ordinal}.
+    Hence $\kappa$ is an ordinal and $\naturals\in\cofinality{\kappa}$
+        by \obv{limit_ordinal}.
+    $R\subseteq\kappa$ by \obv{subseteq,limit_ordinals_below}.
+    $h\in\funs{\kappa}{\kappa}$ by \auto{solovay_colouring_type}.
+    Hence $h$ is a function and $\dom{h}=\kappa$
+        by \obv{funs_is_function,funs}.
+    Take $E$ such that $\clubIn{E}{\kappa}$ and $F\notmeets E$
+        by \auto{nonstationary_in}.
+    Let $D=R\inter E$.
+    $D$ is stationary in $\kappa$
+        by \auto{stationary_intersection_club}.
+    $D\subseteq R$ and $D\subseteq\kappa$
+        by \auto{subseteq,inter,subseteq_transitive}.
+    Let $g=\restrl{h}{D}$.
+    Hence $g\in\funs{D}{\kappa}$ by \auto{funs_restrl}.
+    Hence $g$ is a function and $\dom{g}=D$
+        by \obv{funs_is_function,funs}.
+    Show that $g$ is regressive on $D$.
+    \begin{subproof}
+        Show that for every $\beta\in D\setminus\{\emptyset\}$ we have
+            $g(\beta)\in\beta$.
+        \begin{subproof}
+            Fix $\beta\in D\setminus\{\emptyset\}$.
+            Hence $\beta\in D$ by \obv{setminus_elim_left}.
+            Hence $\beta\in R$ and $\beta\in E$ by \obv{inter}.
+            Hence $\beta\notin F$ by \auto{disjoint}.
+            Hence $h(\beta)\neq\beta$ by \auto{solovay_full_points}.
+            $\beta\in\limitOrdinalsBelow{\kappa}$ by \obv{subseteq}.
+            Hence $\beta$ is a limit ordinal and $\beta\in\kappa$
+                by \obv{limit_ordinals_below}.
+            $h(\beta)=\solovayColourValue{\restrl{h}{\beta}}{R}{\beta}$
+                by \auto{solovay_colouring_equation}.
+            $\solovayColourValue{\restrl{h}{\beta}}{R}{\beta}
+                \in\suc{\beta}$
+                by \obv{solovay_colour_value_in_successor,limit_ordinal}.
+            Hence $h(\beta)\in\beta$ by \auto{suc_iff}.
+            $g(\beta)=h(\beta)$
+                by \auto{restrl_of_function_apply}.
+        \end{subproof}
+        Follows by \obv{regressive_on}.
+    \end{subproof}
+    Let $i=\fodorValue{g}{\kappa}$.
+    Let $T=\fodorFibre{g}{\kappa}$.
+    $i\in\kappa$ and $T$ is stationary in $\kappa$ and
+        $T\subseteq D$ and
+        for every $\beta\in T$ we have $g(\beta)=i$
+        by \auto{fodor_value_and_fibre_properties}.
+    Hence $T\subseteq R$ by \obv{subseteq_transitive}.
+    Hence $T\subseteq\kappa$ by \obv{subseteq_transitive}.
+    Show that $T\subseteq\fibre{\restrl{h}{R}}{i}$.
+    \begin{subproof}
+        Show that every element of $T$ is an element of
+            $\fibre{\restrl{h}{R}}{i}$.
+        \begin{subproof}
+            Fix $\gamma\in T$.
+            Hence $\gamma\in D$ and $\gamma\in R$ by \obv{subseteq}.
+            $g(\gamma)=h(\gamma)$ and
+                $(\restrl{h}{R})(\gamma)=h(\gamma)$
+                by \auto{restrl_of_function_apply}.
+            Hence $(\restrl{h}{R})(\gamma)=i$ by \auto.
+            $\gamma\in\dom{\restrl{h}{R}}$
+                by \auto{dom_of_restrl_eq_inter,inter_intro,subseteq}.
+            Follows by \obv{function_fibre_iff}.
+        \end{subproof}
+        Follows by \obv{subseteq}.
+    \end{subproof}
+    Show that for every $\beta\in T$ we have
+        $\nonstationaryIn{T\inter\beta}{\beta}$.
+    \begin{subproof}
+        Fix $\beta\in T$.
+        Hence $\beta\in D$ and $\beta\in R$ by \obv{subseteq}.
+        Hence $\beta\in E$ by \auto{inter_elim_right}.
+        Hence $\beta\notin F$ by \auto{disjoint}.
+        $\beta\in\limitOrdinalsBelow{\kappa}$ by \auto{subseteq}.
+        Hence $\beta$ is a limit ordinal and $\beta\in\kappa$
+            by \auto{limit_ordinals_below}.
+        Hence $\beta\neq\emptyset$ by \obv{zero_not_limitordinal}.
+        Hence $\beta\in D\setminus\{\emptyset\}$
+            by \auto{setminus,singleton_iff}.
+        Hence $g(\beta)\in\beta$ by \obv{regressive_on_elim}.
+        $g(\beta)=h(\beta)$ by \auto{restrl_of_function_apply}.
+        Hence $h(\beta)\in\beta$.
+        $h(\beta)=\solovayColourValue{\restrl{h}{\beta}}{R}{\beta}$
+            by \auto{solovay_colouring_equation}.
+        Hence $\solovayColourValue{\restrl{h}{\beta}}{R}{\beta}\in\beta$.
+        Hence $\solovayColourValue{\restrl{h}{\beta}}{R}{\beta}
+            \in\solovayBadColours{\restrl{h}{\beta}}{R}{\beta}$
+            by \obv{solovay_colour_value_bad}.
+        $g(\beta)=i$.
+        Hence $i=\solovayColourValue{\restrl{h}{\beta}}{R}{\beta}$.
+        Hence $\nonstationaryIn{
+            \solovayPriorFibre{\restrl{h}{\beta}}{R}{\beta}{i}}{\beta}$
+            by \auto{solovay_bad_colours}.
+        $\solovayPriorFibre{\restrl{h}{\beta}}{R}{\beta}{i}
+            =\fibre{\restrl{h}{R}}{i}\inter\beta$
+            by \auto{solovay_prior_global_fibre}.
+        Hence $\nonstationaryIn{\fibre{\restrl{h}{R}}{i}\inter\beta}
+            {\beta}$.
+        $T\inter\beta\subseteq
+            \fibre{\restrl{h}{R}}{i}\inter\beta$
+            by \auto{subseteq,inter}.
+        Follows by \auto{nonstationary_subset}.
+    \end{subproof}
+    Hence $\selfNonreflectingIn{T}{\kappa}$
+        by \obv{self_nonreflecting_in}.
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{limit_point_stationary_subpartition}
+    Let $\kappa$ be a regular cardinal.
+    Suppose $\naturals\in\kappa$.
+    Suppose $R$ is stationary in $\kappa$.
+    Suppose $R\subseteq\limitOrdinalsBelow{\kappa}$.
+    Then there exists $P$ such that
+        $P$ is a stationary subpartition of $R$ in $\kappa$.
+\end{theorem}
+\begin{proof}
+    Let $F=\solovayFullPoints{\solovayColouring{R}{\kappa}}{R}$.
+    $R\subseteq\kappa$ by \obv{subseteq,limit_ordinals_below}.
+    $F\subseteq R$ by \auto{subseteq,solovay_full_points}.
+    Hence $F\subseteq\kappa$ by \obv{subseteq_transitive}.
+    \begin{byCase}
+    \caseOf{$F$ is stationary in $\kappa$.}
+        $\stationaryPartition{
+            \indexedFibres{\restrl{\solovayColouring{R}{\kappa}}{R}}
+                {\kappa}}{R}{\kappa}$
+            by \auto{solovay_full_points_give_partition}.
+        Hence $\indexedFibres{\restrl{\solovayColouring{R}{\kappa}}{R}}
+            {\kappa}$ is a stationary subpartition of $R$ in $\kappa$
+            by \obv{stationary_partition_is_subpartition}.
+        Follows by \auto.
+    \caseOf{$F$ is not stationary in $\kappa$.}
+        Hence $\nonstationaryIn{F}{\kappa}$
+            by \obv{nonstationary_iff_not_stationary}.
+        Take $T$ such that $T$ is stationary in $\kappa$ and
+            $T\subseteq R$ and $\selfNonreflectingIn{T}{\kappa}$
+            by \auto{solovay_nonfull_points_give_self_nonreflecting_core}.
+        Take $P$ such that $P$ is a stationary subpartition of $T$ in $\kappa$
+            by \obv{self_nonreflecting_stationary_subpartition}.
+        Hence $P$ is a stationary subpartition of $R$ in $\kappa$
+            by \obv{stationary_subpartition_superset}.
+        Follows by \auto.
+    \end{byCase}
+\end{proof}
+
+\begin{theorem}\label{solovay_stationary_subpartition}
+    Let $\kappa$ be a regular cardinal.
+    Suppose $\naturals\in\kappa$.
+    Suppose $S$ is stationary in $\kappa$.
+    Then there exists $P$ such that
+        $P$ is a stationary subpartition of $S$ in $\kappa$.
+\end{theorem}
+\begin{proof}
+    $\kappa$ is an infinite cardinal and $\cofinality{\kappa}=\kappa$
+        by \obv{regular_cardinal}.
+    Hence $\kappa$ is a limit ordinal
+        by \obv{infinite_cardinal_is_limit_ordinal}.
+    Hence $\naturals\in\cofinality{\kappa}$.
+    Let $L=\limitOrdinalsBelow{\kappa}$.
+    $\clubIn{L}{\kappa}$ by \auto{limit_ordinals_below_is_club}.
+    Let $R=S\inter L$.
+    $R$ is stationary in $\kappa$
+        by \auto{stationary_intersection_club}.
+    $R\subseteq L$ and $R\subseteq S$ by \auto{subseteq,inter}.
+    $S\subseteq\kappa$ by \obv{stationary_in_elim}.
+    Take $P$ such that $P$ is a stationary subpartition of $R$ in $\kappa$
+        by \auto{limit_point_stationary_subpartition}.
+    Hence $P$ is a stationary subpartition of $S$ in $\kappa$
+        by \obv{stationary_subpartition_superset}.
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{solovay_stationary_splitting}
+    Let $\kappa$ be a regular cardinal.
+    Suppose $\naturals\in\kappa$.
+    Suppose $S$ is stationary in $\kappa$.
+    Then there exists $P$ such that
+        $\stationaryPartition{P}{S}{\kappa}$.
+\end{theorem}
+\begin{proof}
+    Take $P$ such that $P$ is a stationary subpartition of $S$ in $\kappa$
+        by \obv{solovay_stationary_subpartition}.
+    Let $Q=\completeDisjointFamilyAt{P}{S}{\kappa}{\emptyset}$.
+    $\stationaryPartition{Q}{S}{\kappa}$
+        by \obv{stationary_subpartition_completion}.
+    Follows by \auto.
+\end{proof}
+
+\begin{corollary}\label{solovay_stationary_splitting_expanded}
+    Let $\kappa$ be a regular cardinal.
+    Suppose $\naturals\in\kappa$.
+    Suppose $S$ is stationary in $\kappa$.
+    Then there exists $P$ such that
+        $P\in\funs{\kappa}{\pow{S}}$ and
+        $\unions{\ran{P}}=S$ and
+        for every $r\in\kappa$ we have $P(r)$ is stationary in $\kappa$ and
+        for all $i,j\in\kappa$ such that $i\neq j$ we have
+            $P(i)$ is disjoint from $P(j)$.
+\end{corollary}
+\begin{proof}
+    Take $P$ such that $\stationaryPartition{P}{S}{\kappa}$
+        by \obv{solovay_stationary_splitting}.
+    $P$ is a stationary subpartition of $S$ in $\kappa$ and
+        $\unions{\ran{P}}=S$ by \obv{stationary_partition_elim}.
+    $P\in\funs{\kappa}{\pow{S}}$ and
+        $P$ is pairwise disjoint on $\kappa$ and
+        for every $i\in\kappa$ we have $P(i)$ is stationary in $\kappa$
+        by \obv{stationary_subpartition_elim}.
+    For all $i,j\in\kappa$ such that $i\neq j$ we have
+        $P(i)$ is disjoint from $P(j)$
+        by \obv{pairwise_disjoint_on}.
+    Follows by \auto.
+\end{proof}

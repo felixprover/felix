@@ -1,0 +1,361 @@
+\section{Finite join-irreducible decomposition}
+
+\import{order/irreducible.tex}
+\import{order/finite-joins.tex}
+\import{order/finite.tex}
+\import{structure/finite.tex}
+
+\begin{proposition}\label{finite_join_irreducibles}
+    Let $L$ be a finite bounded lattice.
+    Then $\joinIrreducibles{L}$ is a finite set.
+\end{proposition}
+\begin{proof}
+    $\carrier[L]$ is a finite set by \obv{finite_structure}.
+    $\joinIrreducibles{L}\subseteq\carrier[L]$ by
+        \obv{join_irreducibles_subseteq_carrier}.
+    Follows by \obv{subseteq_finite_is_finite}.
+\end{proof}
+
+\begin{proposition}\label{finite_join_irreducibles_below}
+    Let $L$ be a finite bounded lattice.
+    Then $\joinIrreduciblesBelow{L}{x}$ is a finite set.
+\end{proposition}
+\begin{proof}
+    $\joinIrreducibles{L}$ is a finite set by
+        \obv{finite_join_irreducibles}.
+    $\joinIrreduciblesBelow{L}{x}\subseteq\joinIrreducibles{L}$ by
+        \obv{join_irreducibles_below_subseteq_join_irreducibles}.
+    Follows by \obv{subseteq_finite_is_finite}.
+\end{proof}
+
+\begin{theorem}\label{join_prime_below_finite_join_iff}
+    Let $L$ be a bounded lattice.
+    Suppose $j$ is join-prime in $L$.
+    Suppose $S\subseteq\carrier[L]$ and $S$ is a finite set.
+    Then $j\mathrel{\leq[L]}\finiteJoin{L}{S}$ iff
+        there exists $s\in S$ such that $j\mathrel{\leq[L]}s$.
+\end{theorem}
+\begin{proof}
+    $j\in\carrier[L]$ by \obv{join_prime_type}.
+    $\leq[L]$ is transitive and antisymmetric by
+        \obv{ordered_set_order_transitive,
+            ordered_set_order_antisymmetric}.
+    Let $C=\{T\in\pow{\carrier[L]}\mid
+        \text{$T$ is a finite set and (if
+            $j\mathrel{\leq[L]}\finiteJoin{L}{T}$, then
+            there exists $t\in T$ such that $j\mathrel{\leq[L]}t$)}\}$.
+    Show that $\emptyset\in C$.
+    \begin{subproof}
+        $\emptyset\subseteq\carrier[L]$ by \obv{emptyset_subseteq}.
+        $\emptyset$ is a finite set by \obv{emptyset_is_finite}.
+        Show that if $j\mathrel{\leq[L]}\finiteJoin{L}{\emptyset}$, then
+            there exists $t\in\emptyset$ such that
+                $j\mathrel{\leq[L]}t$.
+        \begin{subproof}
+            Suppose $j\mathrel{\leq[L]}\finiteJoin{L}{\emptyset}$.
+            $\finiteJoin{L}{\emptyset}=\latticeBottom[L]$ by
+                \obv{finite_join_empty}.
+            Hence $j\mathrel{\leq[L]}\latticeBottom[L]$.
+            $\latticeBottom[L]\mathrel{\leq[L]}j$ by
+                \obv{lattice_bottom_leq}.
+            Thus $j=\latticeBottom[L]$ by \obv{antisymmetric}.
+            Contradiction by \obv{join_prime_nonbottom}.
+        \end{subproof}
+        Follows by \obv{pow_iff,subseteq}.
+    \end{subproof}
+    Show that for all $T,t$ such that $T\in C$ and $t\in S$ we have
+        $\cons{t}{T}\in C$.
+    \begin{subproof}
+        Fix $T,t$.
+        Assume $T\in C$ and $t\in S$.
+        $T\subseteq\carrier[L]$ by \obv{pow_iff,subseteq}.
+        $T$ is a finite set.
+        $t\in\carrier[L]$ by \obv{elem_subseteq}.
+        $\cons{t}{T}\subseteq\carrier[L]$ by
+            \obv{cons_subseteq_intro}.
+        $\cons{t}{T}$ is a finite set by \obv{finite_cons}.
+        $\finiteJoin{L}{T}\in\carrier[L]$ by \obv{finite_join_type}.
+        Show that if
+            $j\mathrel{\leq[L]}\finiteJoin{L}{\cons{t}{T}}$, then
+            there exists $s\in\cons{t}{T}$ such that
+                $j\mathrel{\leq[L]}s$.
+        \begin{subproof}
+            Suppose $j\mathrel{\leq[L]}\finiteJoin{L}{\cons{t}{T}}$.
+            $\finiteJoin{L}{\cons{t}{T}}
+                =\join[L](t,\finiteJoin{L}{T})$ by
+                \obv{finite_join_cons}.
+            Hence $j\mathrel{\leq[L]}t$ or
+                $j\mathrel{\leq[L]}\finiteJoin{L}{T}$ by
+                \obv{join_prime_elim}.
+            Thus $j\mathrel{\leq[L]}t$ or
+                there exists $s\in T$ such that $j\mathrel{\leq[L]}s$.
+            Follows by \auto{cons_iff}.
+        \end{subproof}
+        Follows by \auto{pow_iff,subseteq}.
+    \end{subproof}
+    $S\in C$ by \obv{finite_induction}.
+    Hence if $j\mathrel{\leq[L]}\finiteJoin{L}{S}$, then
+        there exists $s\in S$ such that $j\mathrel{\leq[L]}s$.
+    Show that if there exists $s\in S$ such that
+        $j\mathrel{\leq[L]}s$, then
+        $j\mathrel{\leq[L]}\finiteJoin{L}{S}$.
+    \begin{subproof}
+        Assume there exists $s\in S$ such that $j\mathrel{\leq[L]}s$.
+        Take $s\in S$ such that $j\mathrel{\leq[L]}s$.
+        $s\mathrel{\leq[L]}\finiteJoin{L}{S}$ by
+            \obv{finite_join_upper}.
+        Follows by \obv{transitive}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{definition}\label{join_irreducible_reconstruction}
+    Let $L$ be a finite bounded lattice.
+    Let $x\in\carrier[L]$.
+    $\joinIrreducibleReconstruction{L}{x}
+        =\finiteJoin{L}{\joinIrreduciblesBelow{L}{x}}$.
+\end{definition}
+
+\begin{proposition}\label{join_irreducible_reconstruction_apply}
+    Let $L$ be a finite bounded lattice.
+    Let $x\in\carrier[L]$.
+    Then $\joinIrreducibleReconstruction{L}{x}
+        =\finiteJoin{L}{\joinIrreduciblesBelow{L}{x}}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{join_irreducible_reconstruction}.
+\end{proof}
+
+\begin{proposition}\label{join_irreducible_reconstruction_type}
+    Let $L$ be a finite bounded lattice.
+    Let $x\in\carrier[L]$.
+    Then $\joinIrreducibleReconstruction{L}{x}\in\carrier[L]$.
+\end{proposition}
+\begin{proof}
+    $\joinIrreduciblesBelow{L}{x}\subseteq\carrier[L]$ by
+        \obv{join_irreducibles_below_subseteq_carrier}.
+    $\joinIrreduciblesBelow{L}{x}$ is a finite set by
+        \obv{finite_join_irreducibles_below}.
+    Follows by
+        \auto{join_irreducible_reconstruction_apply,finite_join_type}.
+\end{proof}
+
+\begin{proposition}\label{join_irreducible_reconstruction_below}
+    Let $L$ be a finite bounded lattice.
+    Let $x\in\carrier[L]$.
+    Then $\joinIrreducibleReconstruction{L}{x}\mathrel{\leq[L]}x$.
+\end{proposition}
+\begin{proof}
+    $\joinIrreduciblesBelow{L}{x}\subseteq\carrier[L]$ by
+        \obv{join_irreducibles_below_subseteq_carrier}.
+    $\joinIrreduciblesBelow{L}{x}$ is a finite set by
+        \obv{finite_join_irreducibles_below}.
+    For all $j\in\joinIrreduciblesBelow{L}{x}$ we have
+        $j\mathrel{\leq[L]}x$ by \obv{join_irreducibles_below_iff}.
+    Follows by
+        \auto{join_irreducible_reconstruction_apply,finite_join_least}.
+\end{proof}
+
+\begin{proposition}\label{join_irreducible_reconstruction_monotone}
+    Let $L$ be a finite bounded lattice.
+    Let $x,y\in\carrier[L]$.
+    Suppose $x\mathrel{\leq[L]}y$.
+    Then $\joinIrreducibleReconstruction{L}{x}
+        \mathrel{\leq[L]}\joinIrreducibleReconstruction{L}{y}$.
+\end{proposition}
+\begin{proof}
+    $\joinIrreduciblesBelow{L}{x},\joinIrreduciblesBelow{L}{y}
+        \subseteq\carrier[L]$ by
+        \obv{join_irreducibles_below_subseteq_carrier}.
+    $\joinIrreduciblesBelow{L}{x}$ and
+        $\joinIrreduciblesBelow{L}{y}$ are finite sets by
+        \obv{finite_join_irreducibles_below}.
+    $\joinIrreduciblesBelow{L}{x}
+        \subseteq\joinIrreduciblesBelow{L}{y}$ by
+        \obv{join_irreducibles_below_monotone}.
+    Follows by
+        \auto{join_irreducible_reconstruction_apply,
+            finite_join_monotone}.
+\end{proof}
+
+\begin{proposition}\label{join_irreducibles_below_lattice_bottom_empty}
+    Let $L$ be a finite bounded lattice.
+    Then $\joinIrreduciblesBelow{L}{\latticeBottom[L]}=\emptyset$.
+\end{proposition}
+\begin{proof}
+    $\leq[L]$ is antisymmetric by
+        \obv{ordered_set_order_antisymmetric}.
+    Show for every $j\in\joinIrreduciblesBelow{L}{\latticeBottom[L]}$
+        we have $j\in\emptyset$.
+    \begin{subproof}
+        Fix $j\in\joinIrreduciblesBelow{L}{\latticeBottom[L]}$.
+        $j$ is join-irreducible in $L$ and
+            $j\mathrel{\leq[L]}\latticeBottom[L]$ by
+            \auto{join_irreducibles_below_iff}.
+        $j\in\carrier[L]$ by \obv{join_irreducible_type}.
+        $\latticeBottom[L]\mathrel{\leq[L]}j$ by
+            \obv{lattice_bottom_leq}.
+        Hence $j=\latticeBottom[L]$ by \obv{antisymmetric}.
+        Contradiction by \obv{join_irreducible_nonbottom}.
+    \end{subproof}
+    Follows by \auto{emptyset,setext}.
+\end{proof}
+
+\begin{proposition}\label{join_irreducible_reconstruction_lattice_bottom}
+    Let $L$ be a finite bounded lattice.
+    Let $x\in\carrier[L]$.
+    Suppose $x=\latticeBottom[L]$.
+    Then $\joinIrreducibleReconstruction{L}{x}=\latticeBottom[L]$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{join_irreducible_reconstruction_apply,
+            join_irreducibles_below_lattice_bottom_empty,
+            finite_join_empty}.
+\end{proof}
+
+\begin{proposition}\label{join_irreducible_reconstruction_eq_self}
+    Let $L$ be a finite bounded lattice.
+    Let $j\in\carrier[L]$.
+    Suppose $j$ is join-irreducible in $L$.
+    Then $\joinIrreducibleReconstruction{L}{j}=j$.
+\end{proposition}
+\begin{proof}
+    $j\in\carrier[L]$ by \obv{join_irreducible_type}.
+    $\leq[L]$ is reflexive on $\carrier[L]$ and antisymmetric by
+        \obv{ordered_set_order_reflexive,
+            ordered_set_order_antisymmetric}.
+    $j\mathrel{\leq[L]}j$ by \obv{reflexive_on}.
+    Hence $j\in\joinIrreduciblesBelow{L}{j}$ by
+        \obv{join_irreducibles_below_iff}.
+    $\joinIrreduciblesBelow{L}{j}\subseteq\carrier[L]$ by
+        \obv{join_irreducibles_below_subseteq_carrier}.
+    $\joinIrreduciblesBelow{L}{j}$ is a finite set by
+        \obv{finite_join_irreducibles_below}.
+    $j\mathrel{\leq[L]}\joinIrreducibleReconstruction{L}{j}$ by
+        \auto{join_irreducible_reconstruction_apply,finite_join_upper}.
+    $\joinIrreducibleReconstruction{L}{j}\mathrel{\leq[L]}j$ by
+        \obv{join_irreducible_reconstruction_below}.
+    Follows by \obv{antisymmetric}.
+\end{proof}
+
+\begin{proposition}\label{not_join_irreducible_witness}
+    Let $L$ be a bounded lattice.
+    Let $b\in\carrier[L]$.
+    Suppose $b\neq\latticeBottom[L]$ and
+        $b$ is not join-irreducible in $L$.
+    Then there exist $a,c\in\carrier[L]$ such that
+        $\join[L](a,c)=b$ and $a\neq b$ and $c\neq b$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{join_irreducible_iff}.
+\end{proof}
+
+\begin{proposition}\label{not_join_irreducible_witness_below}
+    Let $L$ be a bounded lattice.
+    Let $b\in\carrier[L]$.
+    Suppose $b\neq\latticeBottom[L]$ and
+        $b$ is not join-irreducible in $L$.
+    Then there exist $a,c\in\carrier[L]$ such that
+        $\join[L](a,c)=b$ and $a\neq b$ and $c\neq b$ and
+        $a\mathrel{\leq[L]}b$ and $c\mathrel{\leq[L]}b$.
+\end{proposition}
+\begin{proof}
+    Take $a,c\in\carrier[L]$ such that
+        $\join[L](a,c)=b$ and $a\neq b$ and $c\neq b$ by
+        \obv{not_join_irreducible_witness}.
+    $a\mathrel{\leq[L]}\join[L](a,c)$ and
+        $c\mathrel{\leq[L]}\join[L](a,c)$ by \obv{join_ub}.
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{finite_join_irreducible_decomposition}
+    Let $L$ be a finite bounded lattice.
+    Let $x\in\carrier[L]$.
+    Then $\joinIrreducibleReconstruction{L}{x}=x$.
+\end{theorem}
+\begin{proof}
+    $\leq[L]$ is an order on $\carrier[L]$ by
+        \obv{ordered_set_order_on_carrier}.
+    Let $B=\{y\in\carrier[L]\mid
+        \joinIrreducibleReconstruction{L}{y}\neq y\}$.
+    Show that $B$ is not inhabited.
+    \begin{subproof}
+        Suppose $B$ is inhabited.
+        $B\subseteq\carrier[L]$ by \obv{subseteq}.
+        $\carrier[L]$ is a finite set by \obv{finite_structure}.
+        Hence $B$ is a finite set by \obv{subseteq_finite_is_finite}.
+        Take $b\in B$ such that
+            $b$ is a minimal element of $B$ with respect to $\leq[L]$ by
+            \obv{finite_minimal_element}.
+        $b\in\carrier[L]$.
+        $\joinIrreducibleReconstruction{L}{b}\neq b$.
+        $b\neq\latticeBottom[L]$ by
+            \obv{join_irreducible_reconstruction_lattice_bottom}.
+        $b$ is not join-irreducible in $L$ by
+            \obv{join_irreducible_reconstruction_eq_self}.
+        Take $a,c\in\carrier[L]$ such that
+            $\join[L](a,c)=b$ and $a\neq b$ and $c\neq b$ and
+            $a\mathrel{\leq[L]}b$ and $c\mathrel{\leq[L]}b$ by
+            \obv{not_join_irreducible_witness_below}.
+        Show that $a\notin B$.
+        \begin{subproof}
+            Suppose not.
+            Hence $a=b$ by \auto{minimal_element}.
+            Contradiction.
+        \end{subproof}
+        Show that $c\notin B$.
+        \begin{subproof}
+            Suppose not.
+            Hence $c=b$ by \auto{minimal_element}.
+            Contradiction.
+        \end{subproof}
+        Hence $\joinIrreducibleReconstruction{L}{a}=a$ and
+            $\joinIrreducibleReconstruction{L}{c}=c$ by \auto.
+        $\joinIrreducibleReconstruction{L}{a}
+            \mathrel{\leq[L]}\joinIrreducibleReconstruction{L}{b}$ and
+            $\joinIrreducibleReconstruction{L}{c}
+            \mathrel{\leq[L]}\joinIrreducibleReconstruction{L}{b}$ by
+            \obv{join_irreducible_reconstruction_monotone}.
+        Hence $a\mathrel{\leq[L]}\joinIrreducibleReconstruction{L}{b}$ and
+            $c\mathrel{\leq[L]}\joinIrreducibleReconstruction{L}{b}$.
+        $\joinIrreducibleReconstruction{L}{b}\in\carrier[L]$ by
+            \obv{join_irreducible_reconstruction_type}.
+        Hence $\join[L](a,c)
+            \mathrel{\leq[L]}\joinIrreducibleReconstruction{L}{b}$ by
+            \obv{lattice_is_join_semilattice,join_lub}.
+        Thus $b\mathrel{\leq[L]}\joinIrreducibleReconstruction{L}{b}$.
+        $\joinIrreducibleReconstruction{L}{b}\mathrel{\leq[L]}b$ by
+            \obv{join_irreducible_reconstruction_below}.
+        Hence $\joinIrreducibleReconstruction{L}{b}=b$ by
+            \obv{ordered_set_order_antisymmetric,antisymmetric}.
+        Contradiction.
+    \end{subproof}
+    Thus $x\notin B$ by \auto.
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{join_irreducible_separates_not_leq}
+    Let $L$ be a finite bounded lattice.
+    Let $x,y\in\carrier[L]$.
+    Suppose $x\not\mathrel{\leq[L]}y$.
+    Then there exists $j\in\joinIrreducibles{L}$ such that
+        $j\mathrel{\leq[L]}x$ and $j\not\mathrel{\leq[L]}y$.
+\end{theorem}
+\begin{proof}
+    Suppose not.
+    For all $j\in\joinIrreduciblesBelow{L}{x}$ we have
+        $j\mathrel{\leq[L]}y$ by
+        \auto{join_irreducibles_below_iff,join_irreducibles_iff}.
+    $\joinIrreduciblesBelow{L}{x}\subseteq\carrier[L]$ by
+        \obv{join_irreducibles_below_subseteq_carrier}.
+    $\joinIrreduciblesBelow{L}{x}$ is a finite set by
+        \obv{finite_join_irreducibles_below}.
+    Hence $\joinIrreducibleReconstruction{L}{x}
+        \mathrel{\leq[L]}y$ by
+        \auto{join_irreducible_reconstruction_apply,finite_join_least}.
+    $\joinIrreducibleReconstruction{L}{x}=x$ by
+        \obv{finite_join_irreducible_decomposition}.
+    Hence $x\mathrel{\leq[L]}y$.
+    Contradiction.
+\end{proof}

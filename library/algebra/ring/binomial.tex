@@ -1,0 +1,801 @@
+\import{algebra/ring/regular-module.tex}
+\import{algebra/ring/power.tex}
+\import{nat/binomial.tex}
+\import{set/logical-graph.tex}
+
+\section{The binomial theorem}
+
+The binomial expansion is a finite sum in the additive group of the ring.
+Its summand is displayed directly in the definition, so there is no second
+public term for the same expression.
+
+\begin{definition}\label{ring_binomial_expansion}
+    $\ringBinomialExpansion{R}{x}{y}{n}
+        =\finiteSum{\AdditiveGroup{R}}{\suc{n}}{
+            \Apply{\graphOnOp}{
+                \suc{n},\carrier[R],
+                \fun{k:\Set}{
+                    \ringMul[R](
+                        \ringNatural{R}{\naturalChoose{n}{k}},
+                        \ringMul[R](
+                            \ringPower{R}{x}{
+                                \naturalDifference{n}{k}},
+                            \ringPower{R}{y}{k}))}}}$.
+\end{definition}
+
+\begin{proposition}\label{ring_binomial_summand_graph_type}
+    Let $R$ be a commutative ring and $x,y\in\carrier[R]$.
+    Let $n$ be a natural number.
+    Then
+        $\Apply{\graphOnOp}{
+                \suc{n},\carrier[R],
+                \fun{k:\Set}{
+                    \ringMul[R](
+                        \ringNatural{R}{\naturalChoose{n}{k}},
+                        \ringMul[R](
+                            \ringPower{R}{x}{
+                                \naturalDifference{n}{k}},
+                            \ringPower{R}{y}{k}))}}
+            \in\funs{\suc{n}}{\carrier[R]}$.
+\end{proposition}
+\begin{proof}
+    $R$ is a ring by \obv{commutative_ring_is_ring}.
+    Show that for every $k\in\suc{n}$ we have
+        $\ringMul[R](
+            \ringNatural{R}{\naturalChoose{n}{k}},
+            \ringMul[R](
+                \ringPower{R}{x}{\naturalDifference{n}{k}},
+                \ringPower{R}{y}{k}))\in\carrier[R]$.
+    \begin{subproof}
+        Fix $k\in\suc{n}$.
+        $k$ is a natural number by
+            \auto{omega_successor,naturals_is_transitive_set,
+                transitiveset_iff_subseteq,subseteq}.
+        $k$ and $n$ are ordinals by
+            \obv{natural_number_is_ordinal}.
+        $k=n$ or $k\in n$ by \obv{suc_elim}.
+        Hence $k\subseteq n$ by
+            \obv{subseteq_refl,ordinal_elem_implies_subseteq}.
+        $\naturalDifference{n}{k}$ is a natural number by
+            \auto{natural_difference_specification}.
+        $\naturalChoose{n}{k}$ is a natural number by
+            \obv{natural_choose_type}.
+        $\ringNatural{R}{\naturalChoose{n}{k}},
+            \ringPower{R}{x}{\naturalDifference{n}{k}},
+            \ringPower{R}{y}{k}\in\carrier[R]$ by
+            \obv{ring_natural_type,ring_power_type}.
+        Follows by \obv{ring_mul_type}.
+    \end{subproof}
+    Follows by \obv{logical_graph_on_function}.
+\end{proof}
+
+\begin{lemma}\label{ring_binomial_first_term}
+    Let $R$ be a commutative ring and $x,y\in\carrier[R]$.
+    Let $n$ be a natural number.
+    Then
+        $\ringMul[R](
+            \ringNatural{R}{\naturalChoose{n}{\emptyset}},
+            \ringMul[R](
+                \ringPower{R}{x}{\naturalDifference{n}{\emptyset}},
+                \ringPower{R}{y}{\emptyset}))
+            =\ringPower{R}{x}{n}$.
+\end{lemma}
+\begin{proof}
+    $R$ is a ring by \obv{commutative_ring_is_ring}.
+    $\naturalChoose{n}{\emptyset}=\naturalOne$ by
+        \obv{natural_choose_first}.
+    $\naturalDifference{n}{\emptyset}=n$ by
+        \obv{natural_difference_zero}.
+    $\ringNatural{R}{\naturalOne}=\ringOne[R]$ by
+        \auto{natural_one,ring_natural_one}.
+    $\ringPower{R}{y}{\emptyset}=\ringOne[R]$ by
+        \obv{ring_power_zero}.
+    $\ringPower{R}{x}{n}\in\carrier[R]$ by
+        \obv{ring_power_type}.
+    Follows by
+        \auto{ring_one_type,ring_mul_one_left,ring_mul_one_right}.
+\end{proof}
+
+\begin{lemma}\label{ring_binomial_last_term}
+    Let $R$ be a commutative ring and $x,y\in\carrier[R]$.
+    Let $n$ be a natural number.
+    Then
+        $\ringMul[R](
+            \ringNatural{R}{\naturalChoose{n}{n}},
+            \ringMul[R](
+                \ringPower{R}{x}{\naturalDifference{n}{n}},
+                \ringPower{R}{y}{n}))
+            =\ringPower{R}{y}{n}$.
+\end{lemma}
+\begin{proof}
+    $R$ is a ring by \obv{commutative_ring_is_ring}.
+    $\naturalChoose{n}{n}=\naturalOne$ by
+        \obv{natural_choose_last}.
+    $\naturalDifference{n}{n}=\emptyset$ by
+        \obv{natural_difference_self}.
+    $\ringNatural{R}{\naturalOne}=\ringOne[R]$ by
+        \auto{natural_one,ring_natural_one}.
+    $\ringPower{R}{x}{\emptyset}=\ringOne[R]$ by
+        \obv{ring_power_zero}.
+    $\ringPower{R}{y}{n}\in\carrier[R]$ by
+        \obv{ring_power_type}.
+    Follows by
+        \auto{ring_one_type,ring_mul_one_left,ring_mul_one_right}.
+\end{proof}
+
+\begin{lemma}\label{ring_binomial_pascal_term}
+    Let $R$ be a commutative ring and $x,y\in\carrier[R]$.
+    Let $n$ be a natural number and $j\in n$.
+    Then
+        $\ringMul[R](
+            \ringNatural{R}{\naturalChoose{\suc{n}}{\suc{j}}},
+            \ringMul[R](
+                \ringPower{R}{x}{
+                    \naturalDifference{\suc{n}}{\suc{j}}},
+                \ringPower{R}{y}{\suc{j}}))
+        =\ringAdd[R](
+            \ringMul[R](x,
+                \ringMul[R](
+                    \ringNatural{R}{\naturalChoose{n}{\suc{j}}},
+                    \ringMul[R](
+                        \ringPower{R}{x}{
+                            \naturalDifference{n}{\suc{j}}},
+                        \ringPower{R}{y}{\suc{j}}))),
+            \ringMul[R](y,
+                \ringMul[R](
+                    \ringNatural{R}{\naturalChoose{n}{j}},
+                    \ringMul[R](
+                        \ringPower{R}{x}{
+                            \naturalDifference{n}{j}},
+                        \ringPower{R}{y}{j}))))$.
+\end{lemma}
+\begin{proof}
+    $R$ is a ring by \obv{commutative_ring_is_ring}.
+    $j$ is a natural number by
+        \obv{naturals_is_transitive_set,
+            transitiveset_iff_subseteq,subseteq}.
+    Hence $\suc{j}$ is a natural number by \obv{omega_successor}.
+    $j$ and $n$ are ordinals by
+        \obv{natural_number_is_ordinal}.
+    Hence $j\subseteq n$ and $\suc{j}\subseteq n$ by
+        \obv{ordinal_elem_implies_subseteq,ordinal_suc_subseteq}.
+
+    Let $a=\ringNatural{R}{\naturalChoose{n}{j}}$.
+    Let $b=\ringNatural{R}{\naturalChoose{n}{\suc{j}}}$.
+    Let $u=\ringPower{R}{x}{\naturalDifference{n}{j}}$.
+    Let $v=\ringPower{R}{x}{\naturalDifference{n}{\suc{j}}}$.
+    Let $s=\ringPower{R}{y}{j}$.
+    Let $t=\ringPower{R}{y}{\suc{j}}$.
+
+    $\naturalChoose{n}{j}$ and
+        $\naturalChoose{n}{\suc{j}}$ are natural numbers by
+        \obv{natural_choose_type}.
+    $\naturalDifference{n}{j}$ and
+        $\naturalDifference{n}{\suc{j}}$ are natural numbers by
+        \auto{natural_difference_specification}.
+    Hence $a,b,u,v,s,t\in\carrier[R]$ by
+        \auto{ring_natural_type,ring_power_type}.
+
+    $\naturalChoose{\suc{n}}{\suc{j}}
+        =\naturalChoose{n}{j}+\naturalChoose{n}{\suc{j}}$ by
+        \obv{natural_choose_pascal}.
+    Hence
+        $\ringNatural{R}{\naturalChoose{\suc{n}}{\suc{j}}}
+            =\ringAdd[R](a,b)$ by
+        \auto{ring_natural_addition}.
+
+    $\naturalDifference{\suc{n}}{\suc{j}}
+        =\naturalDifference{n}{j}$ by
+        \obv{natural_difference_successors}.
+    $\naturalDifference{\suc{n}}{\suc{j}}
+        =\suc{\naturalDifference{n}{\suc{j}}}$ by
+        \obv{natural_difference_successor_left}.
+    Hence $u=\ringMul[R](v,x)$ by
+        \auto{ring_power_successor}.
+    $t=\ringMul[R](s,y)$ by
+        \auto{ring_power_successor}.
+
+    $\ringMul[R](x,\ringMul[R](b,\ringMul[R](v,t)))
+        =\ringMul[R](b,\ringMul[R](u,t))$ by
+        \auto{ring_mul_associative,
+            commutative_ring_mul_commutative,ring_mul_type}.
+    $\ringMul[R](y,\ringMul[R](a,\ringMul[R](u,s)))
+        =\ringMul[R](a,\ringMul[R](u,t))$ by
+        \auto{ring_mul_associative,
+            commutative_ring_mul_commutative,ring_mul_type}.
+    $\ringMul[R](\ringAdd[R](a,b),\ringMul[R](u,t))
+        =\ringAdd[R](
+            \ringMul[R](a,\ringMul[R](u,t)),
+            \ringMul[R](b,\ringMul[R](u,t)))$ by
+        \obv{ring_distributive_right,ring_mul_type}.
+    Follows by
+        \auto{ring_add_commutative,ring_mul_type}.
+\end{proof}
+
+\begin{proposition}\label{ring_binomial_expansion_type}
+    Let $R$ be a commutative ring and $x,y\in\carrier[R]$.
+    Let $n$ be a natural number.
+    Then $\ringBinomialExpansion{R}{x}{y}{n}\in\carrier[R]$.
+\end{proposition}
+\begin{proof}
+    Let $G=\AdditiveGroup{R}$.
+    $R$ is a ring by \obv{commutative_ring_is_ring}.
+    $G$ is a commutative group by
+        \obv{additive_group_is_exact_commutative_group}.
+    Hence $G$ is a monoid by
+        \obv{commutative_group_is_group,group_is_monoid}.
+    For all $u,v\in\carrier[G]$ we have
+        $\mul[G](u,v)=\mul[G](v,u)$ by
+        \obv{commutative_group_commutative}.
+    $\suc{n}$ is finite by
+        \obv{omega_successor,natural_number_is_finite}.
+    Let $f=\Apply{\graphOnOp}{
+        \suc{n},\carrier[R],
+        \fun{k:\Set}{
+            \ringMul[R](
+                \ringNatural{R}{\naturalChoose{n}{k}},
+                \ringMul[R](
+                    \ringPower{R}{x}{\naturalDifference{n}{k}},
+                    \ringPower{R}{y}{k}))}}$.
+    $f\in\funs{\suc{n}}{\carrier[R]}$ by
+        \auto{ring_binomial_summand_graph_type}.
+    Hence $f\in\funs{\suc{n}}{\carrier[G]}$ by
+        \auto{additive_group_fields}.
+    $\finiteSum{G}{\suc{n}}{f}\in\carrier[G]$ by
+        \auto{finite_sum,monoid_finite_fold_canonical}.
+    Hence $\finiteSum{G}{\suc{n}}{f}\in\carrier[R]$ by
+        \auto{additive_group_fields}.
+    Follows by \auto{ring_binomial_expansion}.
+\end{proof}
+
+\begin{proposition}\label{ring_binomial_expansion_zero}
+    Let $R$ be a commutative ring and $x,y\in\carrier[R]$.
+    Then
+        $\ringBinomialExpansion{R}{x}{y}{\emptyset}
+            =\ringOne[R]$.
+\end{proposition}
+\begin{proof}
+    Let $G=\AdditiveGroup{R}$.
+    Let $f=\Apply{\graphOnOp}{
+        \suc{\emptyset},\carrier[R],
+        \fun{k:\Set}{
+            \ringMul[R](
+                \ringNatural{R}{\naturalChoose{\emptyset}{k}},
+                \ringMul[R](
+                    \ringPower{R}{x}{
+                        \naturalDifference{\emptyset}{k}},
+                    \ringPower{R}{y}{k}))}}$.
+    $R$ is a ring by \obv{commutative_ring_is_ring}.
+    $G$ is a commutative group by
+        \obv{additive_group_is_exact_commutative_group}.
+    Hence $G$ is a monoid by
+        \obv{commutative_group_is_group,group_is_monoid}.
+    For all $u,v\in\carrier[G]$ we have
+        $\mul[G](u,v)=\mul[G](v,u)$ by
+        \obv{commutative_group_commutative}.
+    $\emptyset$ is a natural number by \obv{omega_empty}.
+    Hence $f\in\funs{\suc{\emptyset}}{\carrier[R]}$ by
+        \auto{ring_binomial_summand_graph_type}.
+    Hence $f\in\funs{\suc{\emptyset}}{\carrier[G]}$ by
+        \auto{additive_group_fields}.
+    $\suc{\emptyset}=\{\emptyset\}$ by
+        \obv{setext,suc_iff,singleton_iff,emptyset}.
+    $\naturalChoose{\emptyset}{\emptyset}=\naturalOne$ by
+        \obv{natural_choose_first}.
+    $\naturalDifference{\emptyset}{\emptyset}=\emptyset$ by
+        \obv{natural_difference_zero}.
+    $\ringNatural{R}{\naturalOne}=\ringOne[R]$ by
+        \auto{natural_one,ring_natural_one}.
+    $\ringPower{R}{x}{\emptyset}=\ringOne[R]$ and
+        $\ringPower{R}{y}{\emptyset}=\ringOne[R]$ by
+        \obv{ring_power_zero}.
+    $f(\emptyset)=\ringOne[R]$ by
+        \auto{logical_graph_on_apply,ring_one_type,
+            ring_mul_one_left,ring_mul_one_right}.
+    $\finiteSum{G}{\{\emptyset\}}{f}=f(\emptyset)$ by
+        \obv{finite_sum,monoid_finite_fold_singleton,
+            singleton_iff}.
+    Follows by
+        \obv{ring_binomial_expansion}.
+\end{proof}
+
+\begin{theorem}\label{ring_binomial_expansion_successor}
+    Let $R$ be a commutative ring and $x,y\in\carrier[R]$.
+    Let $n$ be a natural number.
+    Then
+        $\ringBinomialExpansion{R}{x}{y}{\suc{n}}
+            =\ringMul[R](
+                \ringBinomialExpansion{R}{x}{y}{n},
+                \ringAdd[R](x,y))$.
+\end{theorem}
+\begin{proof}
+    Let $G=\AdditiveGroup{R}$.
+    Let $M=\LeftRegularModule{R}$.
+    Let $A=\suc{n}$.
+    Let $B=\suc{A}$.
+    $R$ is a ring by \obv{commutative_ring_is_ring}.
+    $G$ is a commutative group by
+        \obv{additive_group_is_exact_commutative_group}.
+    Hence $G$ is a monoid by
+        \obv{commutative_group_is_group,group_is_monoid}.
+    For all $a,b\in\carrier[G]$ we have
+        $\mul[G](a,b)=\mul[G](b,a)$ by
+        \obv{commutative_group_commutative}.
+    $\LeftRegularModule{R}$ is a left module over $R$ by
+        \obv{left_regular_module_is_exact}.
+    Hence $M$ is a left module over $R$.
+    $\carrier[M]=\carrier[R]$ and
+        $\scalarMul[M]=\ringMul[R]$ and
+        $\ModuleAdditiveGroup{M}=G$ by
+        \auto{left_regular_module_carrier,left_regular_module_fields,
+            left_regular_module_additive_group}.
+    $\carrier[G]=\carrier[R]$ and
+        $\mul[G]=\ringAdd[R]$ and
+        $\neutral[G]=\ringZero[R]$ by
+        \auto{additive_group_fields}.
+    $\suc{n}$ and $\suc{\suc{n}}$ are natural numbers by
+        \obv{omega_successor}.
+    Hence $A$ and $B$ are natural numbers.
+    Hence $A$ and $B$ are finite by
+        \obv{natural_number_is_finite}.
+
+    Let $f=\Apply{\graphOnOp}{
+        A,\carrier[R],
+        \fun{k:\Set}{
+            \ringMul[R](
+                \ringNatural{R}{\naturalChoose{n}{k}},
+                \ringMul[R](
+                    \ringPower{R}{x}{\naturalDifference{n}{k}},
+                    \ringPower{R}{y}{k}))}}$.
+    Let $g=\Apply{\graphOnOp}{
+        B,\carrier[R],
+        \fun{k:\Set}{
+            \ringMul[R](
+                \ringNatural{R}{\naturalChoose{\suc{n}}{k}},
+                \ringMul[R](
+                    \ringPower{R}{x}{
+                        \naturalDifference{\suc{n}}{k}},
+                    \ringPower{R}{y}{k}))}}$.
+    $f\in\funs{A}{\carrier[R]}$ and
+        $g\in\funs{B}{\carrier[R]}$ by
+        \auto{ring_binomial_summand_graph_type,omega_successor}.
+    Hence $f\in\funs{A}{\carrier[M]}$ and
+        $f\in\funs{A}{\carrier[G]}$ and
+        $g\in\funs{B}{\carrier[G]}$.
+
+    Let $u=\Apply{\graphOnOp}{
+        A,\carrier[M],
+        \fun{k:\Set}{\scalarMul[M](x,f(k))}}$.
+    Let $v=\Apply{\graphOnOp}{
+        A,\carrier[M],
+        \fun{k:\Set}{\scalarMul[M](y,f(k))}}$.
+    $u,v\in\funs{A}{\carrier[M]}$ by
+        \auto{logical_graph_on_function,module_scalar_type,
+            funs_type_apply}.
+    Hence $u,v\in\funs{A}{\carrier[G]}$.
+
+    Let $p=\Apply{\graphOnOp}{
+        B,\carrier[G],
+        \fun{k:\Set}{
+            \Apply{\logicalIfSetOp}{
+                (k\in A),\scalarMul[M](x,f(k)),\neutral[G]}}}$.
+    Let $q=\Apply{\graphOnOp}{
+        B,\carrier[G],
+        \fun{k:\Set}{
+            \Apply{\logicalIfSetOp}{
+                (k=\emptyset),\neutral[G],
+                \scalarMul[M](y,f(\unions{k}))}}}$.
+
+    Show that $p\in\funs{B}{\carrier[G]}$.
+    \begin{subproof}
+        Show that for every $k\in B$ we have
+            $\Apply{\logicalIfSetOp}{
+                (k\in A),\scalarMul[M](x,f(k)),\neutral[G]}
+                \in\carrier[G]$.
+        \begin{subproof}
+            Fix $k\in B$.
+            \begin{byCase}
+                \caseOf{$k\in A$.}
+                    $f(k)\in\carrier[M]$ by
+                        \obv{funs_type_apply}.
+                    Hence $\scalarMul[M](x,f(k))\in\carrier[M]$ by
+                        \obv{module_scalar_type}.
+                    Hence $\scalarMul[M](x,f(k))\in\carrier[G]$.
+                    Follows by \obv{logical_if_set_true}.
+                \caseOf{$k\notin A$.}
+                    $\neutral[G]\in\carrier[G]$ by
+                        \obv{monoid_is_unital_magma,unitalmagma_type}.
+                    Follows by \obv{logical_if_set_false}.
+            \end{byCase}
+        \end{subproof}
+        Follows by \auto{logical_graph_on_function}.
+    \end{subproof}
+
+    Show that $q\in\funs{B}{\carrier[G]}$.
+    \begin{subproof}
+        Show that for every $k\in B$ we have
+            $\Apply{\logicalIfSetOp}{
+                (k=\emptyset),\neutral[G],
+                \scalarMul[M](y,f(\unions{k}))}
+                \in\carrier[G]$.
+        \begin{subproof}
+            Fix $k\in B$.
+            \begin{byCase}
+                \caseOf{$k=\emptyset$.}
+                    $\neutral[G]\in\carrier[G]$ by
+                        \obv{monoid_is_unital_magma,unitalmagma_type}.
+                    Follows by \obv{logical_if_set_true}.
+                \caseOf{$k\neq\emptyset$.}
+                    $k$ is a natural number by
+                        \auto{naturals_is_transitive_set,
+                            transitiveset_iff_subseteq,subseteq}.
+                    Take a natural number $j$ such that $k=\suc{j}$ by
+                        \obv{natural_zero_or_successor}.
+                    $k=A$ or $k\in A$ by
+                        \obv{suc_iff}.
+                    Show that $j\in A$.
+                    \begin{subproof}
+                        \begin{byCase}
+                            \caseOf{$k=A$.}
+                                Hence $\suc{j}=\suc{n}$.
+                                Hence $j=n$ by \obv{suc_injective}.
+                                $n\in\suc{n}$ by
+                                    \obv{suc_intro_self}.
+                            \caseOf{$k\neq A$.}
+                                Hence $k\in A$.
+                                $A$ is an ordinal by
+                                    \obv{natural_number_is_ordinal}.
+                                $j\in k$ by \obv{suc_intro_self}.
+                                Follows by
+                                    \obv{ordinal_transitivity}.
+                        \end{byCase}
+                    \end{subproof}
+                    $j$ is \in-transitive by
+                        \obv{natural_number_is_ordinal,
+                            ordinal_is_transitiveset}.
+                    Hence $\unions{k}=j$ by
+                        \auto{transitiveset_iff_unions_suc}.
+                    $f(j)\in\carrier[M]$ by
+                        \obv{funs_type_apply}.
+                    Hence $\scalarMul[M](y,f(j))\in\carrier[M]$ by
+                        \obv{module_scalar_type}.
+                    Hence $\scalarMul[M](y,f(\unions{k}))
+                        \in\carrier[G]$.
+                    Follows by \obv{logical_if_set_false}.
+            \end{byCase}
+        \end{subproof}
+        Follows by \auto{logical_graph_on_function}.
+    \end{subproof}
+
+    Let $h=\monoidPointwiseMul{G}{B}{p}{q}$.
+    $h\in\funs{B}{\carrier[G]}$ by
+        \auto{monoid_is_magma,monoid_pointwise_mul_type}.
+    Show that $g=h$.
+    \begin{subproof}
+        Show that for every $k\in B$ we have $g(k)=h(k)$.
+        \begin{subproof}
+            Fix $k\in B$.
+            \begin{byCase}
+                \caseOf{$k=\emptyset$.}
+                    $\emptyset\in\suc{n}$ by
+                        \obv{omega_successor,
+                            natural_nonzero_contains_zero,
+                            suc_neq_emptyset}.
+                    Hence $\emptyset\in A$.
+                    $p(\emptyset)=\ringMul[R](x,f(\emptyset))$ and
+                        $q(\emptyset)=\ringZero[R]$ by
+                        \auto{logical_graph_on_apply,
+                            logical_if_set_true}.
+                    $f(\emptyset)=\ringPower{R}{x}{n}$ by
+                        \auto{logical_graph_on_apply,
+                            ring_binomial_first_term}.
+                    $g(\emptyset)=\ringPower{R}{x}{\suc{n}}$ by
+                        \auto{logical_graph_on_apply,
+                            ring_binomial_first_term,omega_successor}.
+                    $\ringPower{R}{x}{\suc{n}}
+                        =\ringMul[R](\ringPower{R}{x}{n},x)$ by
+                        \obv{ring_power_successor}.
+                    $\emptyset\in B$.
+                    $h(\emptyset)=\ringAdd[R](
+                        p(\emptyset),q(\emptyset))$ by
+                        \auto{monoid_is_magma,
+                            monoid_pointwise_mul_apply}.
+                    Follows by
+                        \auto{ring_power_type,ring_mul_type,
+                            ring_add_zero_right,
+                            commutative_ring_mul_commutative}.
+
+                \caseOf{$k\neq\emptyset$.}
+                    $k$ is a natural number by
+                        \auto{naturals_is_transitive_set,
+                            transitiveset_iff_subseteq,subseteq}.
+                    Take a natural number $j$ such that $k=\suc{j}$ by
+                        \obv{natural_zero_or_successor}.
+                    $j$ is \in-transitive by
+                        \obv{natural_number_is_ordinal,
+                            ordinal_is_transitiveset}.
+                    Hence $\unions{k}=j$ by
+                        \auto{transitiveset_iff_unions_suc}.
+                    $k=A$ or $k\in A$ by
+                        \auto{suc_iff}.
+                    \begin{byCase}
+                        \caseOf{$k\in A$.}
+                            $k=n$ or $k\in n$ by
+                                \auto{suc_iff}.
+                            $n$ is an ordinal by
+                                \obv{natural_number_is_ordinal}.
+                            $j\in k$ by \obv{suc_intro_self}.
+                            Hence $j\in n$ by
+                                \auto{ordinal_transitivity}.
+                            Hence $j\in A$ by \auto{suc_iff}.
+                            $\suc{j}\in A$ by \auto.
+                            $p(k)=\ringMul[R](x,f(k))$ and
+                                $q(k)=\ringMul[R](y,f(j))$ by
+                                \auto{logical_graph_on_apply,
+                                    logical_if_set_true,
+                                    logical_if_set_false}.
+                            $f(\suc{j})=\ringMul[R](
+                                \ringNatural{R}{
+                                    \naturalChoose{n}{\suc{j}}},
+                                \ringMul[R](
+                                    \ringPower{R}{x}{
+                                        \naturalDifference{n}{\suc{j}}},
+                                    \ringPower{R}{y}{\suc{j}}))$ by
+                                \auto{logical_graph_on_apply}.
+                            Hence $f(k)=\ringMul[R](
+                                \ringNatural{R}{
+                                    \naturalChoose{n}{\suc{j}}},
+                                \ringMul[R](
+                                    \ringPower{R}{x}{
+                                        \naturalDifference{n}{\suc{j}}},
+                                    \ringPower{R}{y}{\suc{j}}))$ by
+                                \auto.
+                            $f(j)=\ringMul[R](
+                                \ringNatural{R}{\naturalChoose{n}{j}},
+                                \ringMul[R](
+                                    \ringPower{R}{x}{
+                                        \naturalDifference{n}{j}},
+                                    \ringPower{R}{y}{j}))$ by
+                                \auto{logical_graph_on_apply}.
+                            $g(\suc{j})=\ringMul[R](
+                                \ringNatural{R}{
+                                    \naturalChoose{\suc{n}}{\suc{j}}},
+                                \ringMul[R](
+                                    \ringPower{R}{x}{
+                                        \naturalDifference{
+                                            \suc{n}}{\suc{j}}},
+                                    \ringPower{R}{y}{\suc{j}}))$ by
+                                \auto{logical_graph_on_apply}.
+                            Hence $g(k)=\ringMul[R](
+                                \ringNatural{R}{
+                                    \naturalChoose{\suc{n}}{\suc{j}}},
+                                \ringMul[R](
+                                    \ringPower{R}{x}{
+                                        \naturalDifference{
+                                            \suc{n}}{\suc{j}}},
+                                    \ringPower{R}{y}{\suc{j}}))$ by
+                                \auto.
+                            Hence $g(k)=\ringAdd[R](
+                                \ringMul[R](x,f(k)),
+                                \ringMul[R](y,f(j)))$ by
+                                \auto{ring_binomial_pascal_term}.
+                            $h(k)=\ringAdd[R](p(k),q(k))$ by
+                                \auto{monoid_is_magma,
+                                    monoid_pointwise_mul_apply}.
+                            Follows by \auto.
+
+                        \caseOf{$k\notin A$.}
+                            Hence $k=A$ by \auto.
+                            Hence $j=n$ by \auto{suc_injective}.
+                            $n\in\suc{n}$ by \obv{suc_intro_self}.
+                            Hence $n\in A$ by \auto.
+                            $p(k)=\ringZero[R]$ and
+                                $q(k)=\ringMul[R](y,f(n))$ by
+                                \auto{logical_graph_on_apply,
+                                    logical_if_set_false}.
+                            $f(n)=\ringMul[R](
+                                \ringNatural{R}{\naturalChoose{n}{n}},
+                                \ringMul[R](
+                                    \ringPower{R}{x}{
+                                        \naturalDifference{n}{n}},
+                                    \ringPower{R}{y}{n}))$ by
+                                \auto{logical_graph_on_apply}.
+                            Hence $f(n)=\ringPower{R}{y}{n}$ by
+                                \auto{ring_binomial_last_term}.
+                            $A\in\suc{A}$ by \obv{suc_intro_self}.
+                            Hence $\suc{n}\in B$ by \auto.
+                            $g(\suc{n})=\ringMul[R](
+                                \ringNatural{R}{
+                                    \naturalChoose{\suc{n}}{\suc{n}}},
+                                \ringMul[R](
+                                    \ringPower{R}{x}{
+                                        \naturalDifference{
+                                            \suc{n}}{\suc{n}}},
+                                    \ringPower{R}{y}{\suc{n}}))$ by
+                                \auto{logical_graph_on_apply}.
+                            Hence $g(\suc{n})
+                                =\ringPower{R}{y}{\suc{n}}$ by
+                                \auto{ring_binomial_last_term,
+                                    omega_successor}.
+                            Hence $g(k)=\ringPower{R}{y}{\suc{n}}$ by
+                                \auto.
+                            $\ringPower{R}{y}{\suc{n}}
+                                =\ringMul[R](
+                                    \ringPower{R}{y}{n},y)$ by
+                                \obv{ring_power_successor}.
+                            $h(k)=\ringAdd[R](p(k),q(k))$ by
+                                \auto{monoid_is_magma,
+                                    monoid_pointwise_mul_apply}.
+                            Follows by
+                                \auto{ring_power_type,ring_mul_type,
+                                    ring_add_zero_left,
+                                    commutative_ring_mul_commutative}.
+                    \end{byCase}
+            \end{byCase}
+        \end{subproof}
+        $g$ and $h$ are functions and
+            $\dom{g}=B=\dom{h}$ by
+            \auto{funs_is_function,funs_elim}.
+        Follows by \auto{funext_on_domain}.
+    \end{subproof}
+
+    Show that $\restrl{p}{A}=u$.
+    \begin{subproof}
+        $\restrl{p}{A},u\in\funs{A}{\carrier[G]}$ by
+            \auto{funs_restrl,subseteq_self_suc_intro}.
+        Show that for every $k\in A$ we have
+            $\apply{\restrl{p}{A}}{k}=u(k)$.
+        \begin{subproof}
+            Fix $k\in A$.
+            $p$ is a function and $A\subseteq\dom{p}$ by
+                \auto{funs_is_function,funs_elim,
+                    subseteq_self_suc_intro}.
+            Hence $\apply{\restrl{p}{A}}{k}=p(k)$ by
+                \obv{restrl_of_function_apply}.
+            $A\subseteq\suc{A}$ by \obv{subseteq_self_suc_intro}.
+            Hence $A\subseteq B$ by \auto.
+            Hence $k\in B$ by \obv{elem_subseteq}.
+            $p(k)=\scalarMul[M](x,f(k))$ by
+                \auto{logical_graph_on_apply,
+                    logical_if_set_true}.
+            $u(k)=\scalarMul[M](x,f(k))$ by
+                \auto{logical_graph_on_apply}.
+        \end{subproof}
+        Follows by
+            \auto{funs_elim,funext_on_domain}.
+    \end{subproof}
+    $A\notin A$ by \auto{in_irrefl}.
+    $\suc{A}=\cons{A}{A}$ by \obv{suc}.
+    Hence $B=\cons{A}{A}$ by \auto.
+    $A\in B$ by \auto{cons_iff}.
+    $p(A)=\Apply{\logicalIfSetOp}{
+        (A\in A),\scalarMul[M](x,f(A)),\neutral[G]}$ by
+        \auto{logical_graph_on_apply}.
+    Hence $p(A)=\neutral[G]$ by
+        \auto{logical_if_set_false}.
+    Hence
+        $\finiteSum{G}{B}{p}
+            =\mul[G](\finiteSum{G}{A}{u},\neutral[G])$ by
+        \auto{finite_sum,monoid_finite_fold_fresh_adjoin}.
+    $\finiteSum{G}{A}{u}\in\carrier[G]$ by
+        \auto{finite_sum,monoid_finite_fold_canonical}.
+    Hence
+        $\finiteSum{G}{B}{p}=\finiteSum{G}{A}{u}$ by
+        \auto{monoid_is_unital_magma,unitalmagma_right}.
+
+    $\scalarMul[M](x,\finiteSum{\ModuleAdditiveGroup{M}}{A}{f})
+        =\finiteSum{\ModuleAdditiveGroup{M}}{A}{u}$ by
+        \auto{module_scalar_finite_sum}.
+    Hence
+        $\finiteSum{G}{B}{p}
+            =\ringMul[R](x,\finiteSum{G}{A}{f})$ by
+        \auto.
+
+    $q(\emptyset)=\neutral[G]$ by
+        \auto{logical_graph_on_apply,logical_if_set_true,
+            natural_nonzero_contains_zero,suc_neq_emptyset}.
+    Show that for every $k\in A$ we have $q(\suc{k})=v(k)$.
+    \begin{subproof}
+        Fix $k\in A$.
+        $k$ is a natural number by
+            \auto{naturals_is_transitive_set,
+                transitiveset_iff_subseteq,subseteq}.
+        Hence $\suc{k}\in B$ by
+            \obv{natural_successor_in_successor_bound}.
+        $\suc{k}\neq\emptyset$ by \auto{suc_neq_emptyset}.
+        $k$ is \in-transitive by
+            \obv{natural_number_is_ordinal,
+                ordinal_is_transitiveset}.
+        Hence $\unions{\suc{k}}=k$ by
+            \auto{transitiveset_iff_unions_suc}.
+        $q(\suc{k})=\scalarMul[M](y,f(k))$ and
+            $v(k)=\scalarMul[M](y,f(k))$ by
+            \auto{logical_graph_on_apply,logical_if_set_false}.
+    \end{subproof}
+    Hence
+        $\finiteSum{G}{B}{q}=\finiteSum{G}{A}{v}$ by
+        \auto{finite_sum,monoid_finite_fold_successor_shift}.
+    $\scalarMul[M](y,\finiteSum{\ModuleAdditiveGroup{M}}{A}{f})
+        =\finiteSum{\ModuleAdditiveGroup{M}}{A}{v}$ by
+        \auto{module_scalar_finite_sum}.
+    Hence
+        $\finiteSum{G}{B}{q}
+            =\ringMul[R](y,\finiteSum{G}{A}{f})$ by
+        \auto.
+
+    $\finiteSum{G}{B}{h}
+        =\mul[G](\finiteSum{G}{B}{p},
+            \finiteSum{G}{B}{q})$ by
+        \auto{finite_sum,monoid_finite_fold_pointwise_mul}.
+    Hence
+        $\finiteSum{G}{B}{g}
+        =\ringAdd[R](
+            \ringMul[R](x,\finiteSum{G}{A}{f}),
+            \ringMul[R](y,\finiteSum{G}{A}{f}))$ by
+        \auto.
+    $\finiteSum{G}{A}{f}\in\carrier[R]$ by
+        \auto{finite_sum,monoid_finite_fold_canonical}.
+    $\ringAdd[R](x,y)\in\carrier[R]$ by \obv{ring_add_type}.
+    $\ringMul[R](\ringAdd[R](x,y),\finiteSum{G}{A}{f})
+        =\ringAdd[R](
+            \ringMul[R](x,\finiteSum{G}{A}{f}),
+            \ringMul[R](y,\finiteSum{G}{A}{f}))$ by
+        \obv{ring_distributive_right}.
+    $\ringMul[R](\ringAdd[R](x,y),\finiteSum{G}{A}{f})
+        =\ringMul[R](
+            \finiteSum{G}{A}{f},\ringAdd[R](x,y))$ by
+        \obv{commutative_ring_mul_commutative}.
+    Hence
+        $\finiteSum{G}{B}{g}
+            =\ringMul[R](
+                \finiteSum{G}{A}{f},\ringAdd[R](x,y))$ by
+        \auto.
+    Follows by \auto{ring_binomial_expansion}.
+\end{proof}
+
+\begin{theorem}\label{ring_binomial_theorem}
+    Let $R$ be a commutative ring and $x,y\in\carrier[R]$.
+    Let $n$ be a natural number.
+    Then
+        $\ringPower{R}{\ringAdd[R](x,y)}{n}
+            =\ringBinomialExpansion{R}{x}{y}{n}$.
+\end{theorem}
+\begin{proof}
+    $R$ is a ring by \obv{commutative_ring_is_ring}.
+    $\ringAdd[R](x,y)\in\carrier[R]$ by \obv{ring_add_type}.
+    Let $C=\{m\in\naturals\mid
+        \ringPower{R}{\ringAdd[R](x,y)}{m}
+            =\ringBinomialExpansion{R}{x}{y}{m}\}$.
+    $\ringPower{R}{\ringAdd[R](x,y)}{\emptyset}
+        =\ringOne[R]$ by \obv{ring_power_zero}.
+    $\ringBinomialExpansion{R}{x}{y}{\emptyset}
+        =\ringOne[R]$ by
+        \obv{ring_binomial_expansion_zero}.
+    Hence $\emptyset\in C$ by \obv{omega_empty}.
+    Show that for every $m\in C$ we have $\suc{m}\in C$.
+    \begin{subproof}
+        Fix $m\in C$.
+        Hence $m$ is a natural number and
+            $\ringPower{R}{\ringAdd[R](x,y)}{m}
+                =\ringBinomialExpansion{R}{x}{y}{m}$.
+        $\ringPower{R}{\ringAdd[R](x,y)}{\suc{m}}
+            =\ringMul[R](
+                \ringPower{R}{\ringAdd[R](x,y)}{m},
+                \ringAdd[R](x,y))$ by
+            \obv{ring_power_successor}.
+        $\ringBinomialExpansion{R}{x}{y}{\suc{m}}
+            =\ringMul[R](
+                \ringBinomialExpansion{R}{x}{y}{m},
+                \ringAdd[R](x,y))$ by
+            \obv{ring_binomial_expansion_successor}.
+        Hence
+            $\ringPower{R}{\ringAdd[R](x,y)}{\suc{m}}
+                =\ringBinomialExpansion{R}{x}{y}{\suc{m}}$ by
+            \auto.
+        $\suc{m}$ is a natural number by \obv{omega_successor}.
+    \end{subproof}
+    Hence $C$ is an inductive set by \obv{inductive_set}.
+    Hence every natural number is an element of $C$ by
+        \obv{omega_minimal}.
+    Thus $n\in C$.
+\end{proof}

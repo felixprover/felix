@@ -1,0 +1,94 @@
+\import{function.tex}
+
+\section{Elementary closure of the least universes}
+
+The primitive universe operation is closed under logical replacement.  The
+following small interface packages the consequences needed for bounded
+well-founded constructions with set-coded functions.
+
+\begin{definition}\label{set_coded_application_op}
+    $\setCodedApplicationOp:\Set\to\Set\to\Set
+        =\fun{f,x:\Set}{\apply{f}{x}}$.
+\end{definition}
+
+\begin{proposition}\label{replacement_of_set_coded_function_is_range}
+    Suppose $f$ is a function.
+    Then
+        $\repl{\dom{f}}{\Apply{\setCodedApplicationOp}{f}}=\ran{f}$.
+\end{proposition}
+\begin{proof}
+    Show that every element of
+        $\repl{\dom{f}}{\Apply{\setCodedApplicationOp}{f}}$
+        is an element of $\ran{f}$.
+    \begin{subproof}
+        Fix $y\in\repl{\dom{f}}{\Apply{\setCodedApplicationOp}{f}}$.
+        Take $x\in\dom{f}$ such that
+            $y=\Apply{\setCodedApplicationOp}{f,x}$
+            by \auto.
+        $y=f(x)$ by \obv{set_coded_application_op}.
+        $(x,f(x))\in f$ by \obv{function_apply_elim}.
+        Follows by \auto{ran_iff}.
+    \end{subproof}
+    Show that every element of $\ran{f}$ is an element of
+        $\repl{\dom{f}}{\Apply{\setCodedApplicationOp}{f}}$.
+    \begin{subproof}
+        Fix $y\in\ran{f}$.
+        Take $x$ such that $(x,y)\in f$ by \obv{ran_iff}.
+        Hence $x\in\dom{f}$ by \auto{dom_iff}.
+        $y=f(x)$ by \obv{function_apply_intro}.
+        Hence $y=\Apply{\setCodedApplicationOp}{f,x}$
+            by \obv{set_coded_application_op}.
+        Follows by \auto.
+    \end{subproof}
+    Follows by set extensionality.
+\end{proof}
+
+\begin{proposition}\label{universe_contains_emptyset}
+    $\emptyset\in\cumul{N}$.
+\end{proposition}
+\begin{proof}
+    $N\in\cumul{N}$ by \obv{universe_contains}.
+    Hence $\pow{N}\in\cumul{N}$
+        by \obv{universe_power_closed}.
+    $\emptyset\in\pow{N}$ by \obv{powerset_bottom}.
+    Follows by \obv{universe_transitive}.
+\end{proof}
+
+\begin{proposition}\label{universe_contains_subset_of_member}
+    Suppose $A\in\cumul{N}$ and $B\subseteq A$.
+    Then $B\in\cumul{N}$.
+\end{proposition}
+\begin{proof}
+    $\pow{A}\in\cumul{N}$ by \obv{universe_power_closed}.
+    $B\in\pow{A}$ by \obv{powerset_intro}.
+    Follows by \obv{universe_transitive}.
+\end{proof}
+
+\begin{theorem}\label{universe_contains_function_range}
+    Suppose $A\in\cumul{N}$.
+    Suppose $f$ is a function and
+        $f\subseteq A\times\cumul{N}$.
+    Then $\ran{f}\in\cumul{N}$.
+\end{theorem}
+\begin{proof}
+    $\dom{f}\subseteq A$
+        by \auto{subseteq,dom_iff,times_tuple_elim}.
+    Hence $\dom{f}\in\cumul{N}$
+        by \obv{universe_contains_subset_of_member}.
+    Show that
+        $\forall x:\Set. x\in\dom{f}\implies
+            \Apply{\setCodedApplicationOp}{f,x}
+                \in\cumul{N}$.
+    \begin{subproof}
+        Fix $x\in\dom{f}$.
+        $(x,f(x))\in f$ by \obv{function_apply_elim}.
+        Hence $f(x)\in\cumul{N}$
+            by \obv{subseteq,times_tuple_elim}.
+        Follows by \obv{set_coded_application_op}.
+    \end{subproof}
+    Hence
+        $\repl{\dom{f}}{\Apply{\setCodedApplicationOp}{f}}
+            \in\cumul{N}$
+        by \obv{universe_replacement_closed}.
+    Follows by \obv{replacement_of_set_coded_function_is_range}.
+\end{proof}

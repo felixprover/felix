@@ -1,0 +1,569 @@
+\import{topology/metric.tex}
+\import{topology/uniform.tex}
+
+\section{The uniformity induced by a pseudometric}
+
+The radius refinement used below is the ordinary positive half-radius.  It is
+spelled out once in terms of the canonical surreal field so that the
+uniformity proof does not depend on a second real-number interface.
+
+\begin{definition}\label{metric_two}
+    $\metricTwo=\surrealAdd{\surrealOne}{\surrealOne}$.
+\end{definition}
+
+\begin{definition}\label{metric_half_radius}
+    $\metricHalfRadius{e}=\surrealDiv{e}{\metricTwo}$.
+\end{definition}
+
+\begin{proposition}\label{metric_two_is_positive_real}
+    $\metricTwo\in\reals$ and
+        $\surrealLt{\surrealZero}{\metricTwo}$.
+\end{proposition}
+\begin{proof}
+    $\surrealOne\in\reals$ by \obv{surreal_one_is_real}.
+    Hence $\metricTwo\in\reals$
+        by \auto{metric_two,surreal_real_addition_closed}.
+    $\surreal{\surrealZero}$ and $\surreal{\surrealOne}$
+        by \obv{empty_surreal,surreal_one_is_surreal}.
+    $\surrealLt
+        {\surrealAdd{\surrealZero}{\surrealZero}}
+        {\surrealAdd{\surrealOne}{\surrealOne}}$
+        by \obv{surreal_zero_lt_one,surreal_add_lt_both}.
+    Follows by
+        \obv{metric_two,surreal_add_zero_left,empty_surreal}.
+\end{proof}
+
+\begin{proposition}\label{metric_half_radius_positive_real}
+    Let $e\in\reals$.
+    Suppose $\surrealLt{\surrealZero}{e}$.
+    Then $\metricHalfRadius{e}\in\reals$ and
+        $\surrealLt{\surrealZero}{\metricHalfRadius{e}}$.
+\end{proposition}
+\begin{proof}
+    $\metricTwo\in\reals$ and
+        $\surrealLt{\surrealZero}{\metricTwo}$
+        by \obv{metric_two_is_positive_real}.
+    Hence $\metricHalfRadius{e}\in\reals$
+        by
+        \auto{metric_half_radius,surreal_real_division_closed}.
+    $\surreal{e}$ and $\surreal{\metricTwo}$
+        by \obv{surreal_real_is_surreal}.
+    Follows by
+        \auto{metric_half_radius,surreal_division_positive}.
+\end{proof}
+
+\begin{proposition}\label{metric_half_radius_double}
+    Let $e\in\reals$.
+    Suppose $\surrealLt{\surrealZero}{e}$.
+    Then
+        $\surrealAdd{\metricHalfRadius{e}}{\metricHalfRadius{e}}=e$.
+\end{proposition}
+\begin{proof}
+    $\metricTwo\in\reals$ and
+        $\surrealLt{\surrealZero}{\metricTwo}$
+        by \obv{metric_two_is_positive_real}.
+    Hence $\metricTwo\neq\surrealZero$
+        by \obv{surreal_lt_irreflexive,empty_surreal}.
+    $\surreal{e}$ and $\surreal{\metricTwo}$
+        by \obv{surreal_real_is_surreal}.
+    Hence
+        $\surrealMul{\metricHalfRadius{e}}{\metricTwo}=e$
+        by
+        \auto{metric_half_radius,surreal_division_cancel_right}.
+    $\surreal{\metricHalfRadius{e}}$
+        by
+        \auto{metric_half_radius,surreal_division_is_surreal}.
+    $\surrealMul{\metricHalfRadius{e}}{\metricTwo}
+        =\surrealAdd{\metricHalfRadius{e}}{\metricHalfRadius{e}}$
+        by
+        \auto{metric_two,surreal_mul_distributive_left,surreal_mul_one_right,surreal_one_is_surreal}.
+\end{proof}
+
+\begin{definition}\label{metric_entourage}
+    $\metricEntourage{M}{e}=
+        \{p\in\carrier[M]\times\carrier[M]\mid
+            \surrealLt
+                {\metricDistance[M](\fst{p},\snd{p})}{e}\}$.
+\end{definition}
+
+\begin{proposition}\label{metric_entourage_iff}
+    $(x,y)\in\metricEntourage{M}{e}$ iff
+        $x,y\in\carrier[M]$ and
+        $\surrealLt{\metricDistance[M](x,y)}{e}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{metric_entourage,times_tuple_intro,times_tuple_elim,fst_eq,snd_eq}.
+\end{proof}
+
+\begin{proposition}\label{metric_entourage_type}
+    $\metricEntourage{M}{e}
+        \subseteq\carrier[M]\times\carrier[M]$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{metric_entourage,subseteq}.
+\end{proof}
+
+\begin{proposition}\label{metric_entourage_monotone}
+    Let $M$ be a pseudometric space.
+    Let $e,f\in\reals$.
+    Suppose $\surrealLe{e}{f}$.
+    Then $\metricEntourage{M}{e}\subseteq\metricEntourage{M}{f}$.
+\end{proposition}
+\begin{proof}
+    $\surreal{e}$ and $\surreal{f}$
+        by \obv{surreal_real_is_surreal}.
+    Show that for every $p\in\metricEntourage{M}{e}$ we have
+        $p\in\metricEntourage{M}{f}$.
+    \begin{subproof}
+        Fix $p\in\metricEntourage{M}{e}$.
+        Take $x,y$ such that $p=(x,y)$
+            by \auto{metric_entourage_type,times_elem_is_tuple,subseteq}.
+        $x,y\in\carrier[M]$ and
+            $\surrealLt{\metricDistance[M](x,y)}{e}$
+            by \auto{metric_entourage_iff}.
+        $\metricDistance[M](x,y)\in\reals$
+            by \obv{pseudometric_distance_type}.
+        Hence $\surreal{\metricDistance[M](x,y)}$
+            by \obv{surreal_real_is_surreal}.
+        Hence $\surrealLt{\metricDistance[M](x,y)}{f}$
+            by \obv{surreal_lt_le_transitive}.
+        Follows by \auto{metric_entourage_iff}.
+    \end{subproof}
+    Follows by \obv{subseteq}.
+\end{proof}
+
+\begin{proposition}\label{metric_entourage_symmetric}
+    Let $M$ be a pseudometric space.
+    Then
+        $\converse{\metricEntourage{M}{e}}
+            =\metricEntourage{M}{e}$.
+\end{proposition}
+\begin{proof}
+    $\converse{\metricEntourage{M}{e}}$ and
+        $\metricEntourage{M}{e}$ are relations
+        by
+        \auto{converse_is_relation,relation,metric_entourage_type,subseteq,times_elem_is_tuple}.
+    For all $x,y$ we have
+        $x\mathrel{\converse{\metricEntourage{M}{e}}}y$ iff
+        $y\mathrel{\metricEntourage{M}{e}}x$
+        by \obv{converse_iff}.
+    For all $x,y\in\carrier[M]$ we have
+        $\metricDistance[M](x,y)=\metricDistance[M](y,x)$
+        by \obv{pseudometric_distance_symmetric}.
+    Follows by \auto{relext,metric_entourage_iff}.
+\end{proof}
+
+\begin{proposition}\label{metric_entourage_diagonal}
+    Let $M$ be a pseudometric space.
+    Let $e\in\reals$.
+    Suppose $\surrealLt{\surrealZero}{e}$.
+    Then
+        $\identity{\carrier[M]}\subseteq\metricEntourage{M}{e}$.
+\end{proposition}
+\begin{proof}
+    Show that for every $p\in\identity{\carrier[M]}$ we have
+        $p\in\metricEntourage{M}{e}$.
+    \begin{subproof}
+        Fix $p\in\identity{\carrier[M]}$.
+        Take $x\in\carrier[M]$ such that $p=(x,x)$
+            by \obv{id_elem_inspect}.
+        $\metricDistance[M](x,x)=\surrealZero$
+            by \obv{pseudometric_distance_self}.
+        Follows by \auto{metric_entourage_iff}.
+    \end{subproof}
+    Follows by \obv{subseteq}.
+\end{proof}
+
+\begin{proposition}\label{metric_entourage_half_square}
+    Let $M$ be a pseudometric space.
+    Let $e\in\reals$.
+    Suppose $\surrealLt{\surrealZero}{e}$.
+    Then
+        $\metricEntourage{M}{\metricHalfRadius{e}}
+            \circ\metricEntourage{M}{\metricHalfRadius{e}}
+        \subseteq\metricEntourage{M}{e}$.
+\end{proposition}
+\begin{proof}
+    $\metricHalfRadius{e}\in\reals$ and
+        $\surrealLt{\surrealZero}{\metricHalfRadius{e}}$
+        by \obv{metric_half_radius_positive_real}.
+    Hence $\surreal{\metricHalfRadius{e}}$
+        by \obv{surreal_real_is_surreal}.
+    $\surrealAdd{\metricHalfRadius{e}}{\metricHalfRadius{e}}=e$
+        by \obv{metric_half_radius_double}.
+    Show that for every
+        $p\in
+            \metricEntourage{M}{\metricHalfRadius{e}}
+                \circ\metricEntourage{M}{\metricHalfRadius{e}}$
+        we have $p\in\metricEntourage{M}{e}$.
+    \begin{subproof}
+        Fix
+            $p\in
+                \metricEntourage{M}{\metricHalfRadius{e}}
+                    \circ\metricEntourage{M}{\metricHalfRadius{e}}$.
+        Take $x,z$ such that $p=(x,z)$
+            by \auto{circ_is_relation,relation}.
+        Take $y$ such that
+            $x\mathrel{\metricEntourage{M}{\metricHalfRadius{e}}}y$
+            and
+            $y\mathrel{\metricEntourage{M}{\metricHalfRadius{e}}}z$
+            by \auto{circ_iff}.
+        $x,y,z\in\carrier[M]$ and
+            $\surrealLt{\metricDistance[M](x,y)}
+                {\metricHalfRadius{e}}$ and
+            $\surrealLt{\metricDistance[M](y,z)}
+                {\metricHalfRadius{e}}$
+            by \auto{metric_entourage_iff}.
+        $\metricDistance[M](x,y)$,
+            $\metricDistance[M](y,z)$, and
+            $\metricDistance[M](x,z)$ are elements of $\reals$
+            by \obv{pseudometric_distance_type}.
+        Hence $\surreal{\metricDistance[M](x,y)}$ and
+            $\surreal{\metricDistance[M](y,z)}$ and
+            $\surreal{\metricDistance[M](x,z)}$
+            by \obv{surreal_real_is_surreal}.
+        $\surrealLt
+            {\surrealAdd{\metricDistance[M](x,y)}
+                {\metricDistance[M](y,z)}}
+            {\surrealAdd{\metricHalfRadius{e}}{\metricHalfRadius{e}}}$
+            by \obv{surreal_add_lt_both}.
+        Hence
+            $\surrealLt
+                {\surrealAdd{\metricDistance[M](x,y)}
+                    {\metricDistance[M](y,z)}}{e}$.
+        $\surrealLe{\metricDistance[M](x,z)}
+            {\surrealAdd{\metricDistance[M](x,y)}
+                {\metricDistance[M](y,z)}}$
+            by \obv{pseudometric_triangle}.
+        Hence $\surrealLt{\metricDistance[M](x,z)}{e}$
+            by \auto{surreal_le_lt_transitive,surreal_add_is_surreal}.
+        Follows by \auto{metric_entourage_iff}.
+    \end{subproof}
+    Follows by \obv{subseteq}.
+\end{proof}
+
+\begin{definition}\label{metric_uniformity}
+    $\metricUniformity{M}=
+        \{U\in\pow{\carrier[M]\times\carrier[M]}\mid
+            \text{there exists $e\in\reals$ such that
+                $\surrealLt{\surrealZero}{e}$ and
+                $\metricEntourage{M}{e}\subseteq U$}\}$.
+\end{definition}
+
+\begin{proposition}\label{metric_uniformity_iff}
+    $U\in\metricUniformity{M}$ iff
+        $U\subseteq\carrier[M]\times\carrier[M]$ and
+        there exists $e\in\reals$ such that
+            $\surrealLt{\surrealZero}{e}$ and
+            $\metricEntourage{M}{e}\subseteq U$.
+\end{proposition}
+\begin{proof}
+    Show that if $U\in\metricUniformity{M}$, then
+        $U\subseteq\carrier[M]\times\carrier[M]$ and
+        there exists $e\in\reals$ such that
+            $\surrealLt{\surrealZero}{e}$ and
+            $\metricEntourage{M}{e}\subseteq U$.
+    \begin{subproof}
+        Assume $U\in\metricUniformity{M}$.
+        $U\in\pow{\carrier[M]\times\carrier[M]}$ and
+            there exists $e\in\reals$ such that
+                $\surrealLt{\surrealZero}{e}$ and
+                $\metricEntourage{M}{e}\subseteq U$
+            by \obv{metric_uniformity}.
+        Hence $U\subseteq\carrier[M]\times\carrier[M]$
+            by \auto{pow_iff,subseteq}.
+    \end{subproof}
+    Show that if
+        $U\subseteq\carrier[M]\times\carrier[M]$ and
+        there exists $e\in\reals$ such that
+            $\surrealLt{\surrealZero}{e}$ and
+            $\metricEntourage{M}{e}\subseteq U$, then
+        $U\in\metricUniformity{M}$.
+    \begin{subproof}
+        Assume
+            $U\subseteq\carrier[M]\times\carrier[M]$ and
+            there exists $e\in\reals$ such that
+                $\surrealLt{\surrealZero}{e}$ and
+                $\metricEntourage{M}{e}\subseteq U$.
+        $U\in\pow{\carrier[M]\times\carrier[M]}$
+            by \auto{pow_iff,subseteq}.
+        Follows by \obv{metric_uniformity}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{proposition}\label{metric_uniformity_type}
+    $\metricUniformity{M}
+        \subseteq\pow{\carrier[M]\times\carrier[M]}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{metric_uniformity,subseteq}.
+\end{proof}
+
+\begin{proposition}\label{metric_entourage_is_entourage}
+    Let $M$ be a pseudometric space.
+    Let $e\in\reals$.
+    Suppose $\surrealLt{\surrealZero}{e}$.
+    Then $\metricEntourage{M}{e}\in\metricUniformity{M}$.
+\end{proposition}
+\begin{proof}
+    $\metricEntourage{M}{e}
+        \subseteq\carrier[M]\times\carrier[M]$
+        by \obv{metric_entourage_type}.
+    Follows by
+        \auto{metric_uniformity_iff,subseteq_refl}.
+\end{proof}
+
+\begin{proposition}\label{metric_uniformity_top}
+    Let $M$ be a pseudometric space.
+    Then $\carrier[M]\times\carrier[M]\in\metricUniformity{M}$.
+\end{proposition}
+\begin{proof}
+    $\surrealOne\in\reals$ and
+        $\surrealLt{\surrealZero}{\surrealOne}$
+        by \obv{surreal_one_is_real,surreal_zero_lt_one}.
+    $\metricEntourage{M}{\surrealOne}
+        \subseteq\carrier[M]\times\carrier[M]$
+        by \obv{metric_entourage_type}.
+    Follows by
+        \auto{metric_uniformity_iff,subseteq_refl}.
+\end{proof}
+
+\begin{proposition}\label{metric_uniformity_intersection}
+    Let $M$ be a pseudometric space.
+    Let $U,V\in\metricUniformity{M}$.
+    Then $U\inter V\in\metricUniformity{M}$.
+\end{proposition}
+\begin{proof}
+    $U,V\subseteq\carrier[M]\times\carrier[M]$
+        by \auto{metric_uniformity_iff}.
+    Hence $U\inter V\subseteq\carrier[M]\times\carrier[M]$
+        by \obv{inter,subseteq}.
+    Take $e\in\reals$ such that
+        $\surrealLt{\surrealZero}{e}$ and
+        $\metricEntourage{M}{e}\subseteq U$
+        by \obv{metric_uniformity}.
+    Take $f\in\reals$ such that
+        $\surrealLt{\surrealZero}{f}$ and
+        $\metricEntourage{M}{f}\subseteq V$
+        by \obv{metric_uniformity}.
+    $\surreal{e}$ and $\surreal{f}$
+        by \obv{surreal_real_is_surreal}.
+    $\surrealLe{e}{f}$ or $\surrealLe{f}{e}$
+        by \obv{surreal_le_total}.
+    \begin{byCase}
+        \caseOf{$\surrealLe{e}{f}$.}
+            $\metricEntourage{M}{e}\subseteq\metricEntourage{M}{f}$
+                by \obv{metric_entourage_monotone}.
+            Hence $\metricEntourage{M}{e}\subseteq U\inter V$
+                by \obv{inter,subseteq,subseteq_transitive}.
+            Follows by \auto{metric_uniformity_iff}.
+        \caseOf{not $\surrealLe{e}{f}$.}
+            Hence $\surrealLe{f}{e}$.
+            $\metricEntourage{M}{f}\subseteq\metricEntourage{M}{e}$
+                by \obv{metric_entourage_monotone}.
+            Hence $\metricEntourage{M}{f}\subseteq U\inter V$
+                by \obv{inter,subseteq,subseteq_transitive}.
+            Follows by \auto{metric_uniformity_iff}.
+    \end{byCase}
+\end{proof}
+
+\begin{proposition}\label{metric_uniformity_upward}
+    Let $M$ be a pseudometric space.
+    Let $U\in\metricUniformity{M}$.
+    Suppose
+        $U\subseteq V\subseteq\carrier[M]\times\carrier[M]$.
+    Then $V\in\metricUniformity{M}$.
+\end{proposition}
+\begin{proof}
+    Take $e\in\reals$ such that
+        $\surrealLt{\surrealZero}{e}$ and
+        $\metricEntourage{M}{e}\subseteq U$
+        by \obv{metric_uniformity}.
+    $\metricEntourage{M}{e}\subseteq V$
+        by \obv{subseteq_transitive}.
+    Follows by \auto{metric_uniformity_iff}.
+\end{proof}
+
+\begin{theorem}\label{metric_uniformity_is_filter}
+    Let $M$ be a pseudometric space.
+    Then $\metricUniformity{M}$ is a filter on
+        $\carrier[M]\times\carrier[M]$.
+\end{theorem}
+\begin{proof}
+    Follows by
+        \auto{filter,metric_uniformity_type,metric_uniformity_top,
+            metric_uniformity_intersection,metric_uniformity_upward,
+            pow_iff,subseteq}.
+\end{proof}
+
+\begin{proposition}\label{metric_uniformity_diagonal}
+    Let $M$ be a pseudometric space.
+    Let $U\in\metricUniformity{M}$.
+    Then $\identity{\carrier[M]}\subseteq U$.
+\end{proposition}
+\begin{proof}
+    Take $e\in\reals$ such that
+        $\surrealLt{\surrealZero}{e}$ and
+        $\metricEntourage{M}{e}\subseteq U$
+        by \obv{metric_uniformity}.
+    $\identity{\carrier[M]}\subseteq\metricEntourage{M}{e}$
+        by \obv{metric_entourage_diagonal}.
+    Follows by \obv{subseteq_transitive}.
+\end{proof}
+
+\begin{proposition}\label{metric_uniformity_converse}
+    Let $M$ be a pseudometric space.
+    Let $U\in\metricUniformity{M}$.
+    Then $\converse{U}\in\metricUniformity{M}$.
+\end{proposition}
+\begin{proof}
+    $U\subseteq\carrier[M]\times\carrier[M]$
+        by \auto{metric_uniformity_iff}.
+    Hence $\converse{U}\subseteq\carrier[M]\times\carrier[M]$
+        by \obv{converse_type}.
+    Take $e\in\reals$ such that
+        $\surrealLt{\surrealZero}{e}$ and
+        $\metricEntourage{M}{e}\subseteq U$
+        by \obv{metric_uniformity}.
+    $\metricEntourage{M}{e}$ is a relation
+        by
+        \auto{relation,metric_entourage_type,subseteq,times_elem_is_tuple}.
+    Hence
+        $\converse{\metricEntourage{M}{e}}\subseteq\converse{U}$
+        by \obv{converse_subseteq_intro}.
+    $\converse{\metricEntourage{M}{e}}
+        =\metricEntourage{M}{e}$
+        by \obv{metric_entourage_symmetric}.
+    Hence $\metricEntourage{M}{e}\subseteq\converse{U}$.
+    Follows by \auto{metric_uniformity_iff}.
+\end{proof}
+
+\begin{proposition}\label{metric_uniformity_square}
+    Let $M$ be a pseudometric space.
+    Let $U\in\metricUniformity{M}$.
+    Then there exists $V\in\metricUniformity{M}$ such that
+        $V\circ V\subseteq U$.
+\end{proposition}
+\begin{proof}
+    Take $e\in\reals$ such that
+        $\surrealLt{\surrealZero}{e}$ and
+        $\metricEntourage{M}{e}\subseteq U$
+        by \obv{metric_uniformity}.
+    $\metricHalfRadius{e}\in\reals$ and
+        $\surrealLt{\surrealZero}{\metricHalfRadius{e}}$
+        by \obv{metric_half_radius_positive_real}.
+    Let $V=\metricEntourage{M}{\metricHalfRadius{e}}$.
+    $V\in\metricUniformity{M}$
+        by \auto{metric_entourage_is_entourage}.
+    $V\circ V\subseteq\metricEntourage{M}{e}$
+        by \auto{metric_entourage_half_square}.
+    Hence $V\circ V\subseteq U$ by \obv{subseteq_transitive}.
+\end{proof}
+
+\begin{definition}\label{metric_uniform_space}
+    $\metricUniformSpace{M}=
+        \structure[uniform space]{
+            \carrier=\carrier[M],
+            \uniformity=\metricUniformity{M}
+        }$.
+\end{definition}
+
+\begin{theorem}\label{metric_uniform_space_is_uniform_space}
+    Let $M$ be a pseudometric space.
+    Then $\metricUniformSpace{M}$ is a uniform space.
+\end{theorem}
+\begin{proof}
+    Follows by
+        \auto{metric_uniform_space,uniform_space,metric_uniformity_type,
+            metric_uniformity_is_filter,metric_uniformity_diagonal,
+            metric_uniformity_converse,metric_uniformity_square,
+            uniform_spaceaggregateexact,uniform_spaceaggregateprojection_carrier,
+            uniform_spaceaggregateprojection_uniformity}.
+\end{proof}
+
+\begin{proposition}\label{metric_uniform_space_carrier}
+    $\carrier[\metricUniformSpace{M}]=\carrier[M]$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{metric_uniform_space,uniform_spaceaggregateprojection_carrier}.
+\end{proof}
+
+\begin{proposition}\label{metric_uniform_space_uniformity}
+    $\uniformity[\metricUniformSpace{M}]=\metricUniformity{M}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{metric_uniform_space,uniform_spaceaggregateprojection_uniformity}.
+\end{proof}
+
+\begin{theorem}\label{metric_uniform_space_is_separated}
+    Let $M$ be a metric space.
+    Then $\metricUniformSpace{M}$ is separated uniform.
+\end{theorem}
+\begin{proof}
+    $M$ is a pseudometric space by
+        \obv{metric_is_pseudometric_space}.
+    $\metricUniformSpace{M}$ is a uniform space
+        by \obv{metric_uniform_space_is_uniform_space}.
+    Show that
+        $\identity{\carrier[M]}\subseteq\inters{\metricUniformity{M}}$.
+    \begin{subproof}
+        $\metricUniformity{M}$ is inhabited
+            by \auto{metric_uniformity_top}.
+        For every $U\in\metricUniformity{M}$ we have
+            $\identity{\carrier[M]}\subseteq U$
+            by \obv{metric_uniformity_diagonal}.
+        Follows by \obv{inters_greatest}.
+    \end{subproof}
+    Show that
+        $\inters{\metricUniformity{M}}\subseteq
+            \identity{\carrier[M]}$.
+    \begin{subproof}
+        It suffices to show that every element of
+            $\inters{\metricUniformity{M}}$ is an element of
+            $\identity{\carrier[M]}$ by \obv{subseteq}.
+        Fix $p\in\inters{\metricUniformity{M}}$.
+        $\carrier[M]\times\carrier[M]\in\metricUniformity{M}$
+            by \obv{metric_uniformity_top}.
+        Hence $p\in\carrier[M]\times\carrier[M]$
+            by \obv{inters_destr}.
+        Take $x,y\in\carrier[M]$ such that $p=(x,y)$
+            by \obv{times_elem_is_tuple,times_tuple_elim}.
+        Show that $x=y$.
+        \begin{subproof}
+            Suppose not.
+            $\metricDistance[M](x,y)\in\reals$
+                by \obv{metric_distance_type}.
+            Hence $\surreal{\metricDistance[M](x,y)}$
+                by \obv{surreal_real_is_surreal}.
+            $\surrealLe{\surrealZero}{\metricDistance[M](x,y)}$
+                by \obv{metric_distance_nonnegative}.
+            $\metricDistance[M](x,y)\neq\surrealZero$
+                by \obv{metric_distance_zero_iff}.
+            Hence
+                $\surrealLt{\surrealZero}{\metricDistance[M](x,y)}$
+                by \auto{surreal_le}.
+            Hence
+                $\metricEntourage{M}{\metricDistance[M](x,y)}
+                    \in\metricUniformity{M}$
+                by \obv{metric_entourage_is_entourage}.
+            Thus
+                $p\in\metricEntourage{M}{\metricDistance[M](x,y)}$
+                by \obv{inters_destr}.
+            Hence
+                $\surrealLt{\metricDistance[M](x,y)}
+                    {\metricDistance[M](x,y)}$
+                by \auto{metric_entourage_iff}.
+            Contradiction by \obv{surreal_lt_irreflexive}.
+        \end{subproof}
+        Follows by \auto{id_iff}.
+    \end{subproof}
+    Hence
+        $\inters{\metricUniformity{M}}=\identity{\carrier[M]}$
+        by \obv{subseteq_antisymmetric}.
+    Follows by
+        \auto{separated_uniform_space,metric_uniform_space_carrier,metric_uniform_space_uniformity}.
+\end{proof}

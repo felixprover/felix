@@ -1,0 +1,836 @@
+\import{algebra/group/automorphism-tower-construction.tex}
+
+\section{Canonical set-sized automorphism towers}
+
+For each ordinal length, the recursive package history is projected once into
+an exact stage family and an exact bond family.  Prefix equality is literal:
+it is equality of these set-coded graphs, not merely a later comparison
+isomorphism.
+
+\subsection{The exact segment constructor}
+
+\begin{definition}\label{automorphism_tower_stages}
+    $\automorphismTowerStages{G}{\theta}=
+        \towerHistoryStages{\theta}{\towerPackageHistory{G}{\theta}}$.
+\end{definition}
+
+\begin{definition}\label{automorphism_tower_bonds}
+    $\automorphismTowerBonds{G}{\theta}=
+        \towerHistoryBonds{\theta}{\towerPackageHistory{G}{\theta}}$.
+\end{definition}
+
+\begin{definition}\label{automorphism_tower_segment}
+    $\automorphismTowerSegment{G}{\theta}=
+        \towerSegmentData{\theta}
+            {\automorphismTowerStages{G}{\theta}}
+            {\automorphismTowerBonds{G}{\theta}}$.
+\end{definition}
+
+\begin{proposition}\label{automorphism_tower_stages_type}
+    $\automorphismTowerStages{G}{\theta}\in
+        \funs{\theta}{\ran{\automorphismTowerStages{G}{\theta}}}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{automorphism_tower_stages,tower_history_stages_type}.
+\end{proof}
+
+\begin{proposition}\label{automorphism_tower_bonds_type}
+    $\automorphismTowerBonds{G}{\theta}\in
+        \funs{\subseteqrel{\theta}}{
+            \ran{\automorphismTowerBonds{G}{\theta}}}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{automorphism_tower_bonds,tower_history_bonds_type}.
+\end{proof}
+
+\begin{proposition}\label{automorphism_tower_segment_carrier}
+    $\carrier[\automorphismTowerSegment{G}{\theta}]=\theta$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{automorphism_tower_segment,
+            tower_segment_data_structure_carrier}.
+\end{proof}
+
+\begin{proposition}\label{automorphism_tower_segment_stages}
+    $\towerStages[\automorphismTowerSegment{G}{\theta}]=
+        \automorphismTowerStages{G}{\theta}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{automorphism_tower_segment,
+            tower_segment_data_structure_stages}.
+\end{proof}
+
+\begin{proposition}\label{automorphism_tower_segment_bonds}
+    $\towerBonds[\automorphismTowerSegment{G}{\theta}]=
+        \automorphismTowerBonds{G}{\theta}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{automorphism_tower_segment,
+            tower_segment_data_structure_bonds}.
+\end{proof}
+
+\begin{proposition}\label{automorphism_tower_stage_value}
+    Let $\alpha\in\theta$.
+    Then $\towerStage{\automorphismTowerSegment{G}{\theta}}{\alpha}=
+        \towerStageGroup[
+            \apply{\towerPackageHistory{G}{\theta}}{\alpha}]$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{tower_stage,automorphism_tower_segment_stages,
+            automorphism_tower_stages,tower_history_stages_apply}.
+\end{proof}
+
+\begin{proposition}\label{automorphism_tower_stage_family_value}
+    Let $\alpha\in\theta$.
+    Then $\towerStage{\automorphismTowerSegment{G}{\theta}}{\alpha}=
+        \apply{\automorphismTowerStages{G}{\theta}}{\alpha}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \obv{tower_stage,automorphism_tower_segment_stages}.
+\end{proof}
+
+\begin{proposition}\label{automorphism_tower_bond_value}
+    Let $\alpha,\beta\in\theta$.
+    Suppose $\alpha\subseteq\beta$.
+    Then $\towerBond{\automorphismTowerSegment{G}{\theta}}
+            {\alpha}{\beta}=
+        \towerIncomingMap{
+            \apply{\towerPackageHistory{G}{\theta}}{\beta}}{\alpha}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{tower_bond,automorphism_tower_segment_bonds,
+            automorphism_tower_bonds,tower_history_bonds_apply}.
+\end{proof}
+
+\subsection{Literal prefix stability}
+
+\begin{proposition}\label{automorphism_tower_stage_prefix_value}
+    Let $\theta,\eta$ be ordinals.
+    Suppose $\theta\subseteq\eta$.
+    Let $\beta\in\theta$.
+    Then $\apply{\automorphismTowerStages{G}{\theta}}{\beta}=
+        \apply{\automorphismTowerStages{G}{\eta}}{\beta}$.
+\end{proposition}
+\begin{proof}
+    $\beta\in\eta$ by \obv{subseteq}.
+    \begin{align*}
+        \apply{\automorphismTowerStages{G}{\theta}}{\beta}
+            &= \towerStageGroup[
+                \apply{\towerPackageHistory{G}{\theta}}{\beta}]
+                \explanation{by
+                    \auto{automorphism_tower_stages,
+                        tower_history_stages_apply}}
+            \\
+            &= \towerStageGroup[
+                \apply{\towerPackageHistory{G}{\eta}}{\beta}]
+                \explanation{by
+                    \obv{tower_package_history_value_stability}}
+            \\
+            &= \apply{\automorphismTowerStages{G}{\eta}}{\beta}
+                \explanation{by
+                    \auto{automorphism_tower_stages,
+                        tower_history_stages_apply}}
+    \end{align*}
+\end{proof}
+
+\begin{theorem}\label{automorphism_tower_stages_restriction}
+    Let $\theta,\eta$ be ordinals.
+    Suppose $\theta\subseteq\eta$.
+    Then $\automorphismTowerStages{G}{\theta}=
+        \restrl{\automorphismTowerStages{G}{\eta}}{\theta}$.
+\end{theorem}
+\begin{proof}
+    Follows by
+        \auto{automorphism_tower_stages_type,
+            automorphism_tower_stage_prefix_value,
+            function_eq_restriction_from_agreement}.
+\end{proof}
+
+\begin{proposition}\label{subseteqrel_monotone_for_tower}
+    Suppose $A\subseteq B$.
+    Then $\subseteqrel{A}\subseteq\subseteqrel{B}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{subseteqrel_monotone}.
+\end{proof}
+
+\begin{proposition}\label{automorphism_tower_bond_prefix_value}
+    Let $\theta,\eta$ be ordinals.
+    Suppose $\theta\subseteq\eta$.
+    Let $\alpha,\beta\in\theta$.
+    Suppose $\alpha\subseteq\beta$.
+    Then $\apply{\automorphismTowerBonds{G}{\theta}}{(\alpha,\beta)}=
+        \apply{\automorphismTowerBonds{G}{\eta}}{(\alpha,\beta)}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{tower_package_history_value_stability,
+            automorphism_tower_bonds,
+            tower_history_bonds_apply_congruent}.
+\end{proof}
+
+\begin{theorem}\label{automorphism_tower_bonds_restriction}
+    Let $\theta,\eta$ be ordinals.
+    Suppose $\theta\subseteq\eta$.
+    Then $\automorphismTowerBonds{G}{\theta}=
+        \restrl{\automorphismTowerBonds{G}{\eta}}
+            {\subseteqrel{\theta}}$.
+\end{theorem}
+\begin{proof}
+    $\automorphismTowerBonds{G}{\theta}\in
+        \funs{\subseteqrel{\theta}}{
+            \ran{\automorphismTowerBonds{G}{\theta}}}$ by
+        \obv{automorphism_tower_bonds_type}.
+    $\automorphismTowerBonds{G}{\eta}\in
+        \funs{\subseteqrel{\eta}}{
+            \ran{\automorphismTowerBonds{G}{\eta}}}$ by
+        \obv{automorphism_tower_bonds_type}.
+    $\subseteqrel{\theta}\subseteq\subseteqrel{\eta}$ by
+        \obv{subseteqrel_monotone_for_tower}.
+    Show that for every $z\in\subseteqrel{\theta}$ we have
+        $\apply{\automorphismTowerBonds{G}{\theta}}{z}=
+        \apply{\automorphismTowerBonds{G}{\eta}}{z}$.
+    \begin{subproof}
+        Fix $z\in\subseteqrel{\theta}$.
+        Take $\alpha,\beta\in\theta$ such that
+            $z=(\alpha,\beta)$ and $\alpha\subseteq\beta$ by
+            \auto{subseteqrel}.
+        Follows by
+            \auto{automorphism_tower_bond_prefix_value}.
+    \end{subproof}
+    Follows by \obv{function_eq_restriction_from_agreement}.
+\end{proof}
+
+\begin{theorem}\label{automorphism_tower_segment_restriction}
+    Let $\theta,\eta$ be ordinals.
+    Suppose $\theta\subseteq\eta$.
+    Then $\automorphismTowerSegment{G}{\theta}=
+        \towerSegmentRestriction{
+            \automorphismTowerSegment{G}{\eta}}{\theta}$.
+\end{theorem}
+\begin{proof}
+    $\restrl{
+            \towerStages[\automorphismTowerSegment{G}{\eta}]}
+            {\theta}
+        =\automorphismTowerStages{G}{\theta}$ by
+        \auto{automorphism_tower_segment_stages,
+            automorphism_tower_stages_restriction}.
+    $\restrl{
+            \towerBonds[\automorphismTowerSegment{G}{\eta}]}
+            {\subseteqrel{\theta}}
+        =\automorphismTowerBonds{G}{\theta}$ by
+        \auto{automorphism_tower_segment_bonds,
+            automorphism_tower_bonds_restriction}.
+    Follows by
+        \obv{automorphism_tower_segment,tower_segment_restriction}.
+\end{proof}
+
+\begin{proposition}\label{automorphism_tower_segment_system}
+    $\towerSegmentSystem{\automorphismTowerSegment{G}{\theta}}=
+        \towerHistorySystem{\theta}{\towerPackageHistory{G}{\theta}}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{automorphism_tower_segment_carrier,
+            automorphism_tower_segment_stages,
+            automorphism_tower_segment_bonds,
+            automorphism_tower_stages,
+            automorphism_tower_bonds}.
+\end{proof}
+
+\begin{theorem}\label{automorphism_tower_earlier_system}
+    Let $\theta,\eta$ be ordinals.
+    Suppose $\theta\subseteq\eta$.
+    Then $\towerEarlierSystem{
+            \automorphismTowerSegment{G}{\eta}}{\theta}=
+        \towerHistorySystem{\theta}{\towerPackageHistory{G}{\theta}}$.
+\end{theorem}
+\begin{proof}
+    $\restrl{
+            \automorphismTowerStages{G}{\eta}}{\theta}
+        =\automorphismTowerStages{G}{\theta}$ by
+        \obv{automorphism_tower_stages_restriction}.
+    $\restrl{
+            \automorphismTowerBonds{G}{\eta}}
+            {\subseteqrel{\theta}}
+        =\automorphismTowerBonds{G}{\theta}$ by
+        \obv{automorphism_tower_bonds_restriction}.
+    Follows by
+        \auto{group_direct_system_restriction,
+            tower_segment_system_groups,
+            tower_segment_system_bonds,
+            ordinal_directed_quasiorder_carrier,
+            ordinal_directed_quasiorder_relation,
+            automorphism_tower_segment_carrier,
+            automorphism_tower_segment_stages,
+            automorphism_tower_segment_bonds,
+            automorphism_tower_stages,
+            automorphism_tower_bonds}.
+\end{proof}
+
+\subsection{The base and successor equations}
+
+\begin{proposition}\label{automorphism_tower_segment_data_laws}
+    $\automorphismTowerSegment{G}{\theta}=
+            \towerSegmentData{\theta}
+                {\towerStages[\automorphismTowerSegment{G}{\theta}]}
+                {\towerBonds[\automorphismTowerSegment{G}{\theta}]}$ and
+        $\carrier[\automorphismTowerSegment{G}{\theta}]=\theta$ and
+        $\towerStages[\automorphismTowerSegment{G}{\theta}]\in
+            \funs{\theta}{\ran{\towerStages[
+                \automorphismTowerSegment{G}{\theta}]}}$ and
+        $\towerBonds[\automorphismTowerSegment{G}{\theta}]\in
+            \funs{\subseteqrel{\theta}}{\ran{\towerBonds[
+                \automorphismTowerSegment{G}{\theta}]}}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{automorphism_tower_segment,
+            automorphism_tower_segment_carrier,
+            automorphism_tower_segment_stages,
+            automorphism_tower_segment_bonds,
+            automorphism_tower_stages_type,
+            automorphism_tower_bonds_type}.
+\end{proof}
+
+\begin{proposition}\label{automorphism_tower_nonempty_system}
+    Let $G$ be a group.
+    Let $\theta$ be an ordinal.
+    Suppose $\theta\neq\emptyset$.
+    Then $\towerSegmentSystem{
+        \automorphismTowerSegment{G}{\theta}}$ is a group direct system.
+\end{proposition}
+\begin{proof}
+    $\towerHistory{G}{\theta}{\towerPackageHistory{G}{\theta}}$ by
+        \obv{tower_package_history_is_history}.
+    Hence $\towerHistorySystem{\theta}{\towerPackageHistory{G}{\theta}}$
+        is a group direct system by
+        \auto{tower_history_system_is_system}.
+    Follows by \obv{automorphism_tower_segment_system}.
+\end{proof}
+
+\begin{proposition}\label{automorphism_tower_system_law}
+    Let $G$ be a group.
+    Let $\theta$ be an ordinal.
+    Then $\theta=\emptyset$ or
+        $\towerSegmentSystem{\automorphismTowerSegment{G}{\theta}}$
+            is a group direct system.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{automorphism_tower_nonempty_system}.
+\end{proof}
+
+\begin{proposition}\label{automorphism_tower_base}
+    Let $\theta$ be an ordinal.
+    Suppose $\emptyset\in\theta$.
+    Then $\towerStage{\automorphismTowerSegment{G}{\theta}}{\emptyset}=G$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{automorphism_tower_stage_value,
+            tower_package_history_zero_group}.
+\end{proof}
+
+\begin{proposition}\label{automorphism_tower_base_law}
+    Let $\theta$ be an ordinal.
+    Then $\emptyset\in\theta\implies
+        \towerStage{\automorphismTowerSegment{G}{\theta}}{\emptyset}=G$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{automorphism_tower_base}.
+\end{proof}
+
+\begin{proposition}\label{automorphism_tower_successor_stage}
+    Let $G$ be a group.
+    Let $\theta$ be an ordinal.
+    Let $\alpha\in\theta$.
+    Suppose $\suc{\alpha}\in\theta$.
+    Then $\towerStage{\automorphismTowerSegment{G}{\theta}}{\suc{\alpha}}=
+        \automorphismGroup{
+            \towerStage{\automorphismTowerSegment{G}{\theta}}{\alpha}}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{automorphism_tower_stage_value,
+            tower_package_history_successor_group}.
+\end{proof}
+
+\begin{proposition}\label{automorphism_tower_successor_bond}
+    Let $G$ be a group.
+    Let $\theta$ be an ordinal.
+    Let $\alpha\in\theta$.
+    Suppose $\suc{\alpha}\in\theta$.
+    Then $\towerBond{\automorphismTowerSegment{G}{\theta}}
+            {\alpha}{\suc{\alpha}}=
+        \innerMap{\towerStage{
+            \automorphismTowerSegment{G}{\theta}}{\alpha}}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{automorphism_tower_bond_value,
+            automorphism_tower_stage_value,
+            tower_package_history_successor_bond,
+            subseteq_self_suc_intro}.
+\end{proof}
+
+\begin{proposition}\label{automorphism_tower_successor_law}
+    Let $G$ be a group.
+    Let $\theta$ be an ordinal.
+    Then for every $\alpha\in\theta$ such that
+        $\suc{\alpha}\in\theta$ we have
+        $\towerStage{\automorphismTowerSegment{G}{\theta}}{\suc{\alpha}}=
+            \automorphismGroup{\towerStage{
+                \automorphismTowerSegment{G}{\theta}}{\alpha}}$ and
+        $\towerBond{\automorphismTowerSegment{G}{\theta}}
+                {\alpha}{\suc{\alpha}}=
+            \innerMap{\towerStage{
+                \automorphismTowerSegment{G}{\theta}}{\alpha}}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \obv{automorphism_tower_successor_stage,
+            automorphism_tower_successor_bond}.
+\end{proof}
+
+\begin{theorem}\label{automorphism_tower_segment_is_diagram}
+    Let $G$ be a group.
+    Let $\theta$ be an ordinal.
+    Then $\towerSegmentDiagram
+        {\automorphismTowerSegment{G}{\theta}}{G}{\theta}$.
+\end{theorem}
+\begin{proof}
+    Follows by
+        \obv{automorphism_tower_segment_data_laws,
+            automorphism_tower_system_law,
+            automorphism_tower_base_law,
+            automorphism_tower_successor_law,
+            tower_segment_diagram}.
+\end{proof}
+
+\subsection{Stage and bond laws}
+
+\begin{proposition}\label{automorphism_tower_segment_stage_is_group}
+    Let $G$ be a group.
+    Let $\theta$ be an ordinal.
+    Let $\alpha\in\theta$.
+    Then $\towerStage{\automorphismTowerSegment{G}{\theta}}{\alpha}$
+        is a group.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{tower_package_history_is_history,
+            tower_history_system_stage_group,
+            automorphism_tower_segment_system,
+            tower_segment_system_group}.
+\end{proof}
+
+\begin{proposition}\label{automorphism_tower_bond_is_hom}
+    Let $G$ be a group.
+    Let $\theta$ be an ordinal.
+    Let $\alpha,\beta\in\theta$.
+    Suppose $\alpha\subseteq\beta$.
+    Then $\groupHom{
+            \towerBond{\automorphismTowerSegment{G}{\theta}}
+                {\alpha}{\beta}}
+        {\towerStage{\automorphismTowerSegment{G}{\theta}}{\alpha}}
+        {\towerStage{\automorphismTowerSegment{G}{\theta}}{\beta}}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{tower_package_history_is_history,
+            tower_history_system_bond_hom,
+            automorphism_tower_segment_system,
+            tower_segment_system_group,
+            tower_segment_system_bond}.
+\end{proof}
+
+\begin{proposition}\label{automorphism_tower_bond_identity}
+    Let $G$ be a group.
+    Let $\theta$ be an ordinal.
+    Let $\alpha\in\theta$.
+    Then $\towerBond{\automorphismTowerSegment{G}{\theta}}
+            {\alpha}{\alpha}=
+        \identity{\carrier[
+            \towerStage{\automorphismTowerSegment{G}{\theta}}{\alpha}]}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{tower_package_history_is_history,
+            tower_history_system_bond_identity,
+            automorphism_tower_segment_system,
+            tower_segment_system_group,
+            tower_segment_system_bond}.
+\end{proof}
+
+\begin{proposition}\label{automorphism_tower_bond_composition}
+    Let $G$ be a group.
+    Let $\theta$ be an ordinal.
+    Let $\alpha,\beta,\gamma\in\theta$.
+    Suppose $\alpha\subseteq\beta$ and $\beta\subseteq\gamma$.
+    Then $\towerBond{\automorphismTowerSegment{G}{\theta}}
+            {\alpha}{\gamma}=
+        \towerBond{\automorphismTowerSegment{G}{\theta}}
+                {\beta}{\gamma}\circ
+            \towerBond{\automorphismTowerSegment{G}{\theta}}
+                {\alpha}{\beta}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{tower_package_history_is_history,
+            tower_history_system_bond_composition,
+            automorphism_tower_segment_system,
+            tower_segment_system_bond}.
+\end{proof}
+
+\begin{proposition}\label{automorphism_tower_stage_stability}
+    Let $\theta,\eta$ be ordinals.
+    Suppose $\theta\subseteq\eta$.
+    Let $\alpha\in\theta$.
+    Then $\towerStage{\automorphismTowerSegment{G}{\theta}}{\alpha}=
+        \towerStage{\automorphismTowerSegment{G}{\eta}}{\alpha}$.
+\end{proposition}
+\begin{proof}
+    $\alpha\in\eta$ by \obv{subseteq}.
+    $\towerStage{\automorphismTowerSegment{G}{\theta}}{\alpha}=
+        \apply{\automorphismTowerStages{G}{\theta}}{\alpha}$ and
+        $\towerStage{\automorphismTowerSegment{G}{\eta}}{\alpha}=
+        \apply{\automorphismTowerStages{G}{\eta}}{\alpha}$ by
+        \obv{automorphism_tower_stage_family_value}.
+    $\apply{\automorphismTowerStages{G}{\theta}}{\alpha}=
+        \apply{\automorphismTowerStages{G}{\eta}}{\alpha}$ by
+        \obv{automorphism_tower_stage_prefix_value}.
+\end{proof}
+
+\begin{proposition}\label{automorphism_tower_bond_stability}
+    Let $\theta,\eta$ be ordinals.
+    Suppose $\theta\subseteq\eta$.
+    Let $\alpha,\beta\in\theta$.
+    Suppose $\alpha\subseteq\beta$.
+    Then $\towerBond{\automorphismTowerSegment{G}{\theta}}
+            {\alpha}{\beta}=
+        \towerBond{\automorphismTowerSegment{G}{\eta}}
+            {\alpha}{\beta}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{tower_bond,automorphism_tower_segment_bonds,
+            automorphism_tower_bond_prefix_value}.
+\end{proof}
+
+\subsection{The concrete limit equations}
+
+\begin{proposition}\label{automorphism_tower_member_earlier_system}
+    Let $\theta$ be an ordinal.
+    Let $\lambda\in\theta$.
+    Then $\towerEarlierSystem{
+            \automorphismTowerSegment{G}{\theta}}{\lambda}=
+        \towerHistorySystem{\lambda}{\towerPackageHistory{G}{\lambda}}$.
+\end{proposition}
+\begin{proof}
+    $\lambda$ is an ordinal and $\lambda\subseteq\theta$ by
+        \obv{elem_of_ordinal_is_ordinal,
+            ordinal_elem_implies_subseteq}.
+    Follows by \obv{automorphism_tower_earlier_system}.
+\end{proof}
+
+\begin{proposition}\label{automorphism_tower_limit_history_stage}
+    Let $\theta$ be an ordinal.
+    Let $\lambda\in\theta$.
+    Suppose $\lambda$ is a limit ordinal.
+    Then $\towerStage{\automorphismTowerSegment{G}{\theta}}{\lambda}=
+        \groupDirectLimit{\towerHistorySystem{\lambda}{
+            \towerPackageHistory{G}{\lambda}}}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{automorphism_tower_stage_value,
+            tower_package_history_limit_group}.
+\end{proof}
+
+\begin{proposition}\label{tower_limit_stage_system_rewrite}
+    Suppose $L=\groupDirectLimit{S}$ and $S=R$.
+    Then $L=\groupDirectLimit{R}$.
+\end{proposition}
+\begin{proof}
+\end{proof}
+
+\begin{proposition}\label{automorphism_tower_limit_stage}
+    Let $\theta$ be an ordinal.
+    Let $\lambda\in\theta$.
+    Suppose $\lambda$ is a limit ordinal.
+    Then $\towerStage{\automorphismTowerSegment{G}{\theta}}{\lambda}=
+        \groupDirectLimit{\towerEarlierSystem{
+            \automorphismTowerSegment{G}{\theta}}{\lambda}}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{automorphism_tower_limit_history_stage,
+            automorphism_tower_member_earlier_system,
+            tower_limit_stage_system_rewrite}.
+\end{proof}
+
+\begin{proposition}\label{automorphism_tower_limit_history_bond}
+    Let $\theta$ be an ordinal.
+    Let $\lambda\in\theta$.
+    Suppose $\lambda$ is a limit ordinal.
+    Let $\beta\in\lambda$.
+    Then $\towerBond{\automorphismTowerSegment{G}{\theta}}
+            {\beta}{\lambda}=
+        \directSystemCanonicalMap{
+            \towerHistorySystem{\lambda}{
+                \towerPackageHistory{G}{\lambda}}}{\beta}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{ordinal_transitivity,
+            elem_of_ordinal_is_ordinal,
+            ordinal_elem_implies_subseteq,
+            automorphism_tower_bond_value,
+            tower_package_history_limit_incoming}.
+\end{proof}
+
+\begin{proposition}\label{automorphism_tower_limit_bond}
+    Let $\theta$ be an ordinal.
+    Let $\lambda\in\theta$.
+    Suppose $\lambda$ is a limit ordinal.
+    Let $\beta\in\lambda$.
+    Then $\towerBond{\automorphismTowerSegment{G}{\theta}}
+            {\beta}{\lambda}=
+        \directSystemCanonicalMap{\towerEarlierSystem{
+            \automorphismTowerSegment{G}{\theta}}{\lambda}}{\beta}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{automorphism_tower_limit_history_bond,
+            elem_of_ordinal_is_ordinal,
+            ordinal_elem_implies_subseteq,
+            automorphism_tower_earlier_system}.
+\end{proof}
+
+\begin{proposition}\label{automorphism_tower_limit_incoming_value}
+    Let $\theta$ be an ordinal.
+    Let $\lambda\in\theta$.
+    Suppose $\lambda$ is a limit ordinal.
+    Let $\beta\in\lambda$.
+    Then $\apply{\towerIncomingFamily{
+            \automorphismTowerSegment{G}{\theta}}{\lambda}}{\beta}=
+        \apply{\directLimitCanonicalFamily{\towerEarlierSystem{
+            \automorphismTowerSegment{G}{\theta}}{\lambda}}}{\beta}$.
+\end{proposition}
+\begin{proof}
+    $\beta\in\carrier[\towerEarlierSystem{
+        \automorphismTowerSegment{G}{\theta}}{\lambda}]$ by
+        \obv{tower_earlier_system_carrier}.
+    Follows by
+        \auto{tower_incoming_family_apply,
+            automorphism_tower_limit_bond,
+            direct_limit_canonical_family_apply}.
+\end{proof}
+
+\begin{proposition}\label{automorphism_tower_limit_incoming_family_types}
+    Let $\theta$ be an ordinal.
+    Let $\lambda\in\theta$.
+    Suppose $\lambda$ is a limit ordinal.
+    Then $\towerIncomingFamily{
+            \automorphismTowerSegment{G}{\theta}}{\lambda}\in
+            \funs{\lambda}{\ran{\towerIncomingFamily{
+                \automorphismTowerSegment{G}{\theta}}{\lambda}}}$ and
+        $\directLimitCanonicalFamily{\towerEarlierSystem{
+                \automorphismTowerSegment{G}{\theta}}{\lambda}}\in
+            \funs{\lambda}{\ran{\directLimitCanonicalFamily{
+                \towerEarlierSystem{
+                    \automorphismTowerSegment{G}{\theta}}{\lambda}}}}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{tower_incoming_family_type,
+            direct_limit_canonical_family_type,
+            tower_earlier_system_carrier}.
+\end{proof}
+
+\begin{proposition}\label{automorphism_tower_limit_incoming_extensionality}
+    Suppose $\towerIncomingFamily{
+            \automorphismTowerSegment{G}{\theta}}{\lambda}\in
+            \funs{\lambda}{\ran{\towerIncomingFamily{
+                \automorphismTowerSegment{G}{\theta}}{\lambda}}}$ and
+        $\directLimitCanonicalFamily{\towerEarlierSystem{
+                \automorphismTowerSegment{G}{\theta}}{\lambda}}\in
+            \funs{\lambda}{\ran{\directLimitCanonicalFamily{
+                \towerEarlierSystem{
+                    \automorphismTowerSegment{G}{\theta}}{\lambda}}}}$.
+    Suppose for every $\beta\in\lambda$ we have
+        $\apply{\towerIncomingFamily{
+                \automorphismTowerSegment{G}{\theta}}{\lambda}}{\beta}=
+            \apply{\directLimitCanonicalFamily{\towerEarlierSystem{
+                \automorphismTowerSegment{G}{\theta}}{\lambda}}}{\beta}$.
+    Then $\towerIncomingFamily{
+            \automorphismTowerSegment{G}{\theta}}{\lambda}=
+        \directLimitCanonicalFamily{\towerEarlierSystem{
+            \automorphismTowerSegment{G}{\theta}}{\lambda}}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{typed_functions_equal_from_agreement}.
+\end{proof}
+
+\begin{theorem}\label{automorphism_tower_limit_incoming_family}
+    Let $\theta$ be an ordinal.
+    Let $\lambda\in\theta$.
+    Suppose $\lambda$ is a limit ordinal.
+    Then $\towerIncomingFamily{
+            \automorphismTowerSegment{G}{\theta}}{\lambda}=
+        \directLimitCanonicalFamily{\towerEarlierSystem{
+            \automorphismTowerSegment{G}{\theta}}{\lambda}}$.
+\end{theorem}
+\begin{proof}
+    Follows by
+        \auto{automorphism_tower_limit_incoming_family_types,
+            automorphism_tower_limit_incoming_value,
+            automorphism_tower_limit_incoming_extensionality}.
+\end{proof}
+
+\begin{proposition}\label{automorphism_tower_limit_law}
+    Let $\theta$ be an ordinal.
+    Then for every limit ordinal $\lambda\in\theta$ we have
+        $\towerStage{\automorphismTowerSegment{G}{\theta}}{\lambda}=
+            \groupDirectLimit{\towerEarlierSystem{
+                \automorphismTowerSegment{G}{\theta}}{\lambda}}$ and
+        $\towerIncomingFamily{
+                \automorphismTowerSegment{G}{\theta}}{\lambda}=
+            \directLimitCanonicalFamily{\towerEarlierSystem{
+                \automorphismTowerSegment{G}{\theta}}{\lambda}}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \obv{automorphism_tower_limit_stage,
+            automorphism_tower_limit_incoming_family}.
+\end{proof}
+
+\begin{theorem}\label{automorphism_tower_segment_is_canonical}
+    Let $G$ be a group.
+    Let $\theta$ be an ordinal.
+    Then $\canonicalTowerSegment
+        {\automorphismTowerSegment{G}{\theta}}{G}{\theta}$.
+\end{theorem}
+\begin{proof}
+    Follows by
+        \obv{automorphism_tower_segment_is_diagram,
+            automorphism_tower_limit_law,
+            canonical_tower_segment}.
+\end{proof}
+
+\begin{corollary}\label{automorphism_tower_segment_is_coherent}
+    Let $G$ be a group.
+    Let $\theta$ be an ordinal.
+    Then $\coherentTowerSegment
+        {\automorphismTowerSegment{G}{\theta}}{G}{\theta}$.
+\end{corollary}
+\begin{proof}
+    Follows by
+        \obv{automorphism_tower_segment_is_canonical,
+            canonical_tower_segment_is_coherent}.
+\end{proof}
+
+\subsection{Secondary stage and map accessors}
+
+These total terms are backed by the least successor-length segment containing
+the requested value.  The segment API above remains primary; the following
+stability laws ensure that the notation does not choose incompatible local
+witnesses.
+
+\begin{definition}\label{automorphism_tower_stage}
+    $\automorphismTowerStage{G}{\alpha}=
+        \towerStage{\automorphismTowerSegment{G}{\suc{\alpha}}}{\alpha}$.
+\end{definition}
+
+\begin{definition}\label{automorphism_tower_map}
+    $\automorphismTowerMap{G}{\alpha}{\beta}=
+        \towerBond{\automorphismTowerSegment{G}{\suc{\beta}}}
+            {\alpha}{\beta}$.
+\end{definition}
+
+\begin{proposition}\label{automorphism_tower_stage_on_segment}
+    Let $\theta$ be an ordinal.
+    Let $\alpha\in\theta$.
+    Then $\automorphismTowerStage{G}{\alpha}=
+        \towerStage{\automorphismTowerSegment{G}{\theta}}{\alpha}$.
+\end{proposition}
+\begin{proof}
+    $\alpha$ is an ordinal and $\suc{\alpha}\subseteq\theta$ by
+        \obv{elem_of_ordinal_is_ordinal,ordinal_suc_subseteq}.
+    $\suc{\alpha}$ is an ordinal by \obv{suc_ordinal}.
+    $\alpha\in\suc{\alpha}$ by \obv{suc_intro_self}.
+    Follows by
+        \obv{automorphism_tower_stage,
+            automorphism_tower_stage_stability}.
+\end{proof}
+
+\begin{proposition}\label{automorphism_tower_map_on_segment}
+    Let $\theta$ be an ordinal.
+    Let $\alpha,\beta\in\theta$.
+    Suppose $\alpha\subseteq\beta$.
+    Then $\automorphismTowerMap{G}{\alpha}{\beta}=
+        \towerBond{\automorphismTowerSegment{G}{\theta}}
+            {\alpha}{\beta}$.
+\end{proposition}
+\begin{proof}
+    $\alpha$ and $\beta$ are ordinals by
+        \obv{elem_of_ordinal_is_ordinal}.
+    Hence $\suc{\beta}$ is an ordinal and
+        $\suc{\beta}\subseteq\theta$ by
+        \obv{suc_ordinal,ordinal_suc_subseteq}.
+    $\alpha\in\beta$ or $\alpha=\beta$ by
+        \obv{ordinal_subseteq_implies_elem_or_eq}.
+    Hence $\alpha,\beta\in\suc{\beta}$ by
+        \auto{suc_iff}.
+    Follows by
+        \obv{automorphism_tower_map,
+            automorphism_tower_bond_stability}.
+\end{proof}
+
+\begin{proposition}\label{automorphism_tower_stage_is_group}
+    Let $G$ be a group.
+    Let $\alpha$ be an ordinal.
+    Then $\automorphismTowerStage{G}{\alpha}$ is a group.
+\end{proposition}
+\begin{proof}
+    $\suc{\alpha}$ is an ordinal and $\alpha\in\suc{\alpha}$ by
+        \obv{suc_ordinal,suc_intro_self}.
+    Follows by
+        \auto{automorphism_tower_stage,
+            automorphism_tower_segment_stage_is_group}.
+\end{proof}
+
+\begin{proposition}\label{automorphism_tower_map_is_hom}
+    Let $G$ be a group.
+    Let $\alpha,\beta$ be ordinals.
+    Suppose $\alpha\subseteq\beta$.
+    Then $\groupHom{\automorphismTowerMap{G}{\alpha}{\beta}}
+        {\automorphismTowerStage{G}{\alpha}}
+        {\automorphismTowerStage{G}{\beta}}$.
+\end{proposition}
+\begin{proof}
+    $\suc{\beta}$ is an ordinal by \obv{suc_ordinal}.
+    $\alpha\in\beta$ or $\alpha=\beta$ by
+        \obv{ordinal_subseteq_implies_elem_or_eq}.
+    Hence $\alpha,\beta\in\suc{\beta}$ by \auto{suc_iff}.
+    $\groupHom{\towerBond{\automorphismTowerSegment{G}{\suc{\beta}}}
+            {\alpha}{\beta}}
+        {\towerStage{\automorphismTowerSegment{G}{\suc{\beta}}}{\alpha}}
+        {\towerStage{\automorphismTowerSegment{G}{\suc{\beta}}}{\beta}}$
+        by \obv{automorphism_tower_bond_is_hom}.
+    $\automorphismTowerStage{G}{\alpha}=
+        \towerStage{\automorphismTowerSegment{G}{\suc{\beta}}}{\alpha}$
+        and
+        $\automorphismTowerStage{G}{\beta}=
+        \towerStage{\automorphismTowerSegment{G}{\suc{\beta}}}{\beta}$
+        by \obv{automorphism_tower_stage_on_segment}.
+    Follows by \obv{automorphism_tower_map}.
+\end{proof}

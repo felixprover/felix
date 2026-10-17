@@ -1,0 +1,801 @@
+\import{topology/metric-continuity.tex}
+\import{topology/real-order-intervals.tex}
+\import{surreal/real-dyadic-estimates.tex}
+\import{surreal/real-inequalities.tex}
+\import{set/logical-graph.tex}
+\import{set/function-space.tex}
+
+\section{Pointwise linear operations on real-valued maps}
+
+Every constructor has an explicit domain.  The zero map retains the literal
+constant-graph representation used by the function-space library; the other
+constructors graphify their pointwise logical operation on that domain.
+
+\begin{definition}\label{real_zero_map}
+    $\realZeroMap{D}=D\times\{\surrealZero\}$.
+\end{definition}
+
+\begin{definition}\label{real_map_neg}
+    $\realMapNeg{D}{f}=\Apply{\graphOnDomainOp}
+        {D,\fun{x:\Set}{\surrealNeg{f(x)}}}$.
+\end{definition}
+
+\begin{definition}\label{real_map_add}
+    $\realMapAdd{D}{f}{g}=\Apply{\graphOnDomainOp}
+        {D,\fun{x:\Set}{\surrealAdd{f(x)}{g(x)}}}$.
+\end{definition}
+
+\begin{definition}\label{real_map_sub}
+    $\realMapSub{D}{f}{g}=\Apply{\graphOnDomainOp}
+        {D,\fun{x:\Set}{\surrealAdd{f(x)}{\surrealNeg{g(x)}}}}$.
+\end{definition}
+
+\begin{definition}\label{real_map_scale}
+    $\realMapScale{D}{c}{f}=\Apply{\graphOnDomainOp}
+        {D,\fun{x:\Set}{\surrealMul{c}{f(x)}}}$.
+\end{definition}
+
+\begin{definition}\label{real_map_affine}
+    $\realMapAffine{D}{a}{b}{f}=\Apply{\graphOnDomainOp}
+        {D,\fun{x:\Set}{\surrealAdd{a}{\surrealMul{b}{f(x)}}}}$.
+\end{definition}
+
+\subsection{Typing and application}
+
+\begin{proposition}\label{real_zero_map_type}
+    $\realZeroMap{D}\in\funs{D}{\reals}$.
+\end{proposition}
+\begin{proof}
+    $D\times\{\surrealZero\}\in\funs{D}{\{\surrealZero\}}$
+        by \obv{constant_graph_type}.
+    $\{\surrealZero\}\subseteq\reals$
+        by \auto{singleton_iff,surreal_zero_is_real,subseteq}.
+    Follows by \auto{real_zero_map,funs_weaken_codom}.
+\end{proof}
+
+\begin{proposition}\label{real_zero_map_apply}
+    Let $x\in D$.
+    Then $\apply{\realZeroMap{D}}{x}=\surrealZero$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{real_zero_map,constant_graph_application}.
+\end{proof}
+
+\begin{proposition}\label{real_zero_map_restrl}
+    Suppose $A\subseteq D$.
+    Then $\restrl{\realZeroMap{D}}{A}=\realZeroMap{A}$.
+\end{proposition}
+\begin{proof}
+    $\restrl{\realZeroMap{D}}{A}\in\funs{A}{\reals}$
+        by \auto{real_zero_map_type,funs_restrl}.
+    $\realZeroMap{A}\in\funs{A}{\reals}$
+        by \obv{real_zero_map_type}.
+    For every $x\in A$ we have
+        $\apply{\restrl{\realZeroMap{D}}{A}}{x}
+            =\apply{\realZeroMap{A}}{x}$
+        by
+        \auto{restrl_of_function_apply,real_zero_map_type,funs_is_function,funs,real_zero_map_apply,subseteq}.
+    Follows by \obv{typed_functions_equal_from_agreement}.
+\end{proof}
+
+\begin{proposition}\label{real_map_neg_type}
+    Suppose $f\in\funs{D}{\reals}$.
+    Then $\realMapNeg{D}{f}\in\funs{D}{\reals}$.
+\end{proposition}
+\begin{proof}
+    For every $x\in D$ we have $\surrealNeg{f(x)}\in\reals$
+        by \obv{funs_type_apply,surreal_real_negation_closed}.
+    Follows by
+        \auto{real_map_neg,logical_graph_on_domain_type}.
+\end{proof}
+
+\begin{proposition}\label{real_map_neg_apply}
+    Suppose $f\in\funs{D}{\reals}$.
+    Let $x\in D$.
+    Then $\apply{\realMapNeg{D}{f}}{x}=\surrealNeg{f(x)}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{real_map_neg,logical_graph_on_domain_apply}.
+\end{proof}
+
+\begin{proposition}\label{real_map_neg_range}
+    Suppose $f\in\funs{D}{\reals}$.
+    Then $\ran{\realMapNeg{D}{f}}=\surrealNegSet{\ran{f}}$.
+\end{proposition}
+\begin{proof}
+    $\realMapNeg{D}{f}\in\funs{D}{\reals}$ by
+        \obv{real_map_neg_type}.
+    Hence $\realMapNeg{D}{f}$ is a function and
+        $\dom{\realMapNeg{D}{f}}=D$ by
+        \obv{funs_is_function,funs}.
+    $f$ is a function and $\dom{f}=D$ by
+        \obv{funs_is_function,funs}.
+    Show that $\ran{\realMapNeg{D}{f}}\subseteq
+        \surrealNegSet{\ran{f}}$.
+    \begin{subproof}
+        It suffices to show that every element of
+            $\ran{\realMapNeg{D}{f}}$ is an element of
+            $\surrealNegSet{\ran{f}}$ by \obv{subseteq}.
+        Fix $y\in\ran{\realMapNeg{D}{f}}$.
+        Take $x\in\dom{\realMapNeg{D}{f}}$ such that
+            $(\realMapNeg{D}{f})(x)=y$ by
+            \obv{fun_ran_iff}.
+        Hence $x\in D$.
+        $f(x)\in\ran{f}$ by \auto{fun_ran_iff}.
+        $(\realMapNeg{D}{f})(x)=\surrealNeg{f(x)}$ by
+            \obv{real_map_neg_apply}.
+        Follows by \obv{surreal_negation_set_iff}.
+    \end{subproof}
+    Show that $\surrealNegSet{\ran{f}}\subseteq
+        \ran{\realMapNeg{D}{f}}$.
+    \begin{subproof}
+        It suffices to show that every element of
+            $\surrealNegSet{\ran{f}}$ is an element of
+            $\ran{\realMapNeg{D}{f}}$ by \obv{subseteq}.
+        Fix $y\in\surrealNegSet{\ran{f}}$.
+        Take $z\in\ran{f}$ such that $y=\surrealNeg{z}$ by
+            \obv{surreal_negation_set_iff}.
+        Take $x\in\dom{f}$ such that $f(x)=z$ by
+            \obv{fun_ran_iff}.
+        Hence $x\in D$.
+        $(\realMapNeg{D}{f})(x)=\surrealNeg{f(x)}$ by
+            \obv{real_map_neg_apply}.
+        Follows by \auto{fun_ran_iff}.
+    \end{subproof}
+    Follows by \obv{subseteq_antisymmetric}.
+\end{proof}
+
+\begin{proposition}\label{real_map_add_type}
+    Suppose $f,g\in\funs{D}{\reals}$.
+    Then $\realMapAdd{D}{f}{g}\in\funs{D}{\reals}$.
+\end{proposition}
+\begin{proof}
+    For every $x\in D$ we have
+        $\surrealAdd{f(x)}{g(x)}\in\reals$
+        by \obv{funs_type_apply,surreal_real_addition_closed}.
+    Follows by
+        \auto{real_map_add,logical_graph_on_domain_type}.
+\end{proof}
+
+\begin{proposition}\label{real_map_add_apply}
+    Suppose $f,g\in\funs{D}{\reals}$.
+    Let $x\in D$.
+    Then $\apply{\realMapAdd{D}{f}{g}}{x}=\surrealAdd{f(x)}{g(x)}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{real_map_add,logical_graph_on_domain_apply}.
+\end{proof}
+
+\begin{proposition}\label{real_map_sub_type}
+    Suppose $f,g\in\funs{D}{\reals}$.
+    Then $\realMapSub{D}{f}{g}\in\funs{D}{\reals}$.
+\end{proposition}
+\begin{proof}
+    For every $x\in D$ we have
+        $\surrealAdd{f(x)}{\surrealNeg{g(x)}}\in\reals$
+        by
+        \obv{funs_type_apply,surreal_real_negation_closed,surreal_real_addition_closed}.
+    Follows by
+        \auto{real_map_sub,logical_graph_on_domain_type}.
+\end{proof}
+
+\begin{proposition}\label{real_map_sub_apply}
+    Suppose $f,g\in\funs{D}{\reals}$.
+    Let $x\in D$.
+    Then $\apply{\realMapSub{D}{f}{g}}{x}=
+        \surrealAdd{f(x)}{\surrealNeg{g(x)}}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{real_map_sub,logical_graph_on_domain_apply}.
+\end{proof}
+
+\begin{proposition}\label{real_map_scale_type}
+    Suppose $c\in\reals$ and $f\in\funs{D}{\reals}$.
+    Then $\realMapScale{D}{c}{f}\in\funs{D}{\reals}$.
+\end{proposition}
+\begin{proof}
+    For every $x\in D$ we have $\surrealMul{c}{f(x)}\in\reals$
+        by \obv{funs_type_apply,surreal_real_multiplication_closed}.
+    Follows by
+        \auto{real_map_scale,logical_graph_on_domain_type}.
+\end{proof}
+
+\begin{proposition}\label{real_map_scale_apply}
+    Suppose $c\in\reals$ and $f\in\funs{D}{\reals}$.
+    Let $x\in D$.
+    Then $\apply{\realMapScale{D}{c}{f}}{x}=\surrealMul{c}{f(x)}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{real_map_scale,logical_graph_on_domain_apply}.
+\end{proof}
+
+\begin{proposition}\label{real_map_affine_type}
+    Suppose $a,b\in\reals$ and $f\in\funs{D}{\reals}$.
+    Then $\realMapAffine{D}{a}{b}{f}\in\funs{D}{\reals}$.
+\end{proposition}
+\begin{proof}
+    For every $x\in D$ we have
+        $\surrealAdd{a}{\surrealMul{b}{f(x)}}\in\reals$
+        by
+        \obv{funs_type_apply,surreal_real_multiplication_closed,surreal_real_addition_closed}.
+    Follows by
+        \auto{real_map_affine,logical_graph_on_domain_type}.
+\end{proof}
+
+\begin{proposition}\label{real_map_affine_apply}
+    Suppose $a,b\in\reals$ and $f\in\funs{D}{\reals}$.
+    Let $x\in D$.
+    Then $\apply{\realMapAffine{D}{a}{b}{f}}{x}=
+        \surrealAdd{a}{\surrealMul{b}{f(x)}}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{real_map_affine,logical_graph_on_domain_apply}.
+\end{proof}
+
+\subsection{Restriction and normalization}
+
+\begin{proposition}\label{real_map_add_restrl}
+    Suppose $A\subseteq D$ and $f,g\in\funs{D}{\reals}$.
+    Then
+        $\restrl{\realMapAdd{D}{f}{g}}{A}=
+            \realMapAdd{A}{\restrl{f}{A}}{\restrl{g}{A}}$.
+\end{proposition}
+\begin{proof}
+    $\restrl{\realMapAdd{D}{f}{g}}{A}
+        =\Apply{\graphOnDomainOp}
+            {A,\fun{x:\Set}{\surrealAdd{f(x)}{g(x)}}}$
+        by
+        \auto{real_map_add,logical_graph_on_domain_restrl_of_subset}.
+    For every $x\in A$ we have
+        $\apply{\restrl{f}{A}}{x}=f(x)$ and
+        $\apply{\restrl{g}{A}}{x}=g(x)$
+        by \obv{restrl_of_function_apply,funs_is_function,funs}.
+    Hence
+        $\Apply{\graphOnDomainOp}
+            {A,\fun{x:\Set}{\surrealAdd{f(x)}{g(x)}}}
+        =\Apply{\graphOnDomainOp}
+            {A,\fun{x:\Set}{
+                \surrealAdd{\apply{\restrl{f}{A}}{x}}
+                    {\apply{\restrl{g}{A}}{x}}}}$
+        by \auto{logical_graph_on_domain_extensional}.
+    Follows by \obv{real_map_add}.
+\end{proof}
+
+\begin{proposition}\label{real_map_sub_restrl}
+    Suppose $A\subseteq D$ and $f,g\in\funs{D}{\reals}$.
+    Then
+        $\restrl{\realMapSub{D}{f}{g}}{A}=
+            \realMapSub{A}{\restrl{f}{A}}{\restrl{g}{A}}$.
+\end{proposition}
+\begin{proof}
+    $\restrl{\realMapSub{D}{f}{g}}{A}
+        =\Apply{\graphOnDomainOp}
+            {A,\fun{x:\Set}{
+                \surrealAdd{f(x)}{\surrealNeg{g(x)}}}}$
+        by
+        \auto{real_map_sub,logical_graph_on_domain_restrl_of_subset}.
+    For every $x\in A$ we have
+        $\apply{\restrl{f}{A}}{x}=f(x)$ and
+        $\apply{\restrl{g}{A}}{x}=g(x)$
+        by \obv{restrl_of_function_apply,funs_is_function,funs}.
+    Hence
+        $\Apply{\graphOnDomainOp}
+            {A,\fun{x:\Set}{
+                \surrealAdd{f(x)}{\surrealNeg{g(x)}}}}
+        =\Apply{\graphOnDomainOp}
+            {A,\fun{x:\Set}{
+                \surrealAdd{\apply{\restrl{f}{A}}{x}}
+                    {\surrealNeg{\apply{\restrl{g}{A}}{x}}}}}$
+        by \auto{logical_graph_on_domain_extensional}.
+    Follows by \obv{real_map_sub}.
+\end{proof}
+
+\begin{proposition}\label{real_map_sub_zero_right}
+    Suppose $f\in\funs{D}{\reals}$.
+    Then $\realMapSub{D}{f}{\realZeroMap{D}}=f$.
+\end{proposition}
+\begin{proof}
+    $\realMapSub{D}{f}{\realZeroMap{D}}\in\funs{D}{\reals}$
+        by \obv{real_map_sub_type,real_zero_map_type}.
+    For every $x\in D$ we have
+        $\apply{\realMapSub{D}{f}{\realZeroMap{D}}}{x}=f(x)$
+        by
+        \auto{real_map_sub_apply,real_zero_map_apply,real_zero_map_type,surreal_negation_empty,surreal_add_zero_right,funs_type_apply,surreal_real_is_surreal,empty_surreal}.
+    Follows by \obv{typed_functions_equal_from_agreement}.
+\end{proof}
+
+\subsection{Continuity}
+
+\begin{theorem}\label{real_zero_map_continuous}
+    Let $X$ be a topological space.
+    Then $\realZeroMap{\carrier[X]}$ is continuous from $X$ to
+        $\RealTopology$.
+\end{theorem}
+\begin{proof}
+    $\RealMetric$ is a pseudometric space by
+        \obv{surreal_real_pseudometric_space}.
+    $\realZeroMap{\carrier[X]}\in
+        \funs{\carrier[X]}{\carrier[\RealMetric]}$
+        by
+        \auto{real_zero_map_type,surreal_real_metric_carrier}.
+    Show that for every $x\in\carrier[X]$ we have
+        for every $e\in\reals$ we have if
+            $\surrealLt{\surrealZero}{e}$, then there exists
+            $U\in\opens[X]$ such that $x\in U$ and
+            for every $y\in U$ we have
+                $\apply{\realZeroMap{\carrier[X]}}{y}
+                    \in\metricBall{\RealMetric}
+                        {\apply{\realZeroMap{\carrier[X]}}{x}}{e}$.
+    \begin{subproof}
+        Fix $x\in\carrier[X]$.
+        Fix $e\in\reals$.
+        Assume $\surrealLt{\surrealZero}{e}$.
+        Let $U=\carrier[X]$.
+        $U\in\opens[X]$ by \obv{carrier_open}.
+        $x\in U$.
+        For every $y\in U$ we have
+            $\apply{\realZeroMap{\carrier[X]}}{y}
+                \in\metricBall{\RealMetric}
+                    {\apply{\realZeroMap{\carrier[X]}}{x}}{e}$
+            by
+            \auto{real_zero_map_apply,metric_ball_contains_centre,surreal_real_metric_space,surreal_zero_is_real,surreal_real_metric_carrier}.
+    \end{subproof}
+    $\metricTopology{\RealMetric}=\RealTopology$
+        by \obv{real_topology}.
+    Follows by \obv{metric_continuous_iff_local_balls}.
+\end{proof}
+
+\begin{theorem}\label{real_map_neg_continuous}
+    Let $X$ be a topological space.
+    Let $f\in\funs{\carrier[X]}{\reals}$.
+    Suppose $f$ is continuous from $X$ to $\RealTopology$.
+    Then $\realMapNeg{\carrier[X]}{f}$ is continuous from $X$ to
+        $\RealTopology$.
+\end{theorem}
+\begin{proof}
+    Let $g=\realMapNeg{\carrier[X]}{f}$.
+    $\RealMetric$ is a pseudometric space by
+        \obv{surreal_real_pseudometric_space}.
+    $g\in\funs{\carrier[X]}{\carrier[\RealMetric]}$
+        by
+        \auto{real_map_neg_type,surreal_real_metric_carrier}.
+    Show that for every $x\in\carrier[X]$ we have
+        for every $e\in\reals$ we have if
+            $\surrealLt{\surrealZero}{e}$, then there exists
+            $U\in\opens[X]$ such that $x\in U$ and
+            for every $y\in U$ we have
+                $g(y)\in\metricBall{\RealMetric}{g(x)}{e}$.
+    \begin{subproof}
+        Fix $x\in\carrier[X]$.
+        Fix $e\in\reals$.
+        Assume $\surrealLt{\surrealZero}{e}$.
+        Take $U\in\opens[X]$ such that $x\in U$ and
+            for every $y\in U$ we have
+                $f(y)\in\metricBall{\RealMetric}{f(x)}{e}$
+            by
+            \auto{metric_continuous_iff_local_balls,real_topology,surreal_real_metric_space,surreal_real_metric_carrier}.
+        Show that for every $y\in U$ we have
+            $g(y)\in\metricBall{\RealMetric}{g(x)}{e}$.
+        \begin{subproof}
+            Fix $y\in U$.
+            $U\subseteq\carrier[X]$ by \obv{opens_type}.
+            Hence $y\in\carrier[X]$ by \obv{subseteq}.
+            $f(x),f(y)\in\reals$ by \obv{funs_type_apply}.
+            $g(x)=\surrealNeg{f(x)}$ and $g(y)=\surrealNeg{f(y)}$
+                by \auto{real_map_neg_apply}.
+            $\metricDistance[\RealMetric](g(x),g(y))
+                =\metricDistance[\RealMetric](f(x),f(y))$
+                by \auto{real_metric_negation_invariant}.
+            $\surrealLt{\metricDistance[\RealMetric](f(x),f(y))}{e}$
+                by \auto{metric_ball_iff}.
+            Hence $\surrealLt{\metricDistance[\RealMetric](g(x),g(y))}{e}$.
+            $g(y)\in\carrier[\RealMetric]$
+                by \obv{funs_type_apply}.
+            Follows by \obv{metric_ball}.
+        \end{subproof}
+        Follows by \auto.
+    \end{subproof}
+    $\metricTopology{\RealMetric}=\RealTopology$
+        by \obv{real_topology}.
+    Follows by \auto{metric_continuous_iff_local_balls}.
+\end{proof}
+
+\begin{theorem}\label{real_map_add_continuous}
+    Let $X$ be a topological space.
+    Let $f,g\in\funs{\carrier[X]}{\reals}$.
+    Suppose $f$ and $g$ are continuous from $X$ to $\RealTopology$.
+    Then $\realMapAdd{\carrier[X]}{f}{g}$ is continuous from $X$ to
+        $\RealTopology$.
+\end{theorem}
+\begin{proof}
+    Let $h=\realMapAdd{\carrier[X]}{f}{g}$.
+    $\RealMetric$ is a metric space by \obv{surreal_real_metric_space}.
+    $\RealMetric$ is a pseudometric space by
+        \obv{surreal_real_pseudometric_space}.
+    $h\in\funs{\carrier[X]}{\carrier[\RealMetric]}$
+        by
+        \auto{real_map_add_type,surreal_real_metric_carrier}.
+    Show that for every $x\in\carrier[X]$ we have
+        for every $e\in\reals$ we have if
+            $\surrealLt{\surrealZero}{e}$, then there exists
+            $W\in\opens[X]$ such that $x\in W$ and
+            for every $y\in W$ we have
+                $h(y)\in\metricBall{\RealMetric}{h(x)}{e}$.
+    \begin{subproof}
+        Fix $x\in\carrier[X]$.
+        Fix $e\in\reals$.
+        Assume $\surrealLt{\surrealZero}{e}$.
+        Take $d\in\reals$ such that $\surrealLt{\surrealZero}{d}$ and
+            $\surrealLt{\surrealAdd{d}{d}}{e}$
+            by \obv{positive_real_has_twofold_dyadic_budget}.
+        Take $U\in\opens[X]$ such that $x\in U$ and
+            for every $y\in U$ we have
+                $f(y)\in\metricBall{\RealMetric}{f(x)}{d}$
+            by
+            \auto{metric_continuous_iff_local_balls,real_topology,surreal_real_metric_space,surreal_real_metric_carrier}.
+        Take $V\in\opens[X]$ such that $x\in V$ and
+            for every $y\in V$ we have
+                $g(y)\in\metricBall{\RealMetric}{g(x)}{d}$
+            by
+            \auto{metric_continuous_iff_local_balls,real_topology,surreal_real_metric_space,surreal_real_metric_carrier}.
+        Let $W=U\inter V$.
+        $W\in\opens[X]$ by \auto{opens_inter}.
+        $x\in W$ by \obv{inter}.
+        Show that for every $y\in W$ we have
+            $h(y)\in\metricBall{\RealMetric}{h(x)}{e}$.
+        \begin{subproof}
+            Fix $y\in W$.
+            $y\in U$ and $y\in V$ by \obv{inter}.
+            $W\subseteq\carrier[X]$ by \obv{opens_type}.
+            Hence $y\in\carrier[X]$ by \obv{subseteq}.
+            $f(x),f(y),g(x),g(y)\in\reals$
+                by \obv{funs_type_apply}.
+            Hence
+                $\surrealLt{\metricDistance[\RealMetric](f(x),f(y))}{d}$
+                and
+                $\surrealLt{\metricDistance[\RealMetric](g(x),g(y))}{d}$
+                by \auto{metric_ball_iff}.
+            $\surrealLt{
+                \surrealAdd{\metricDistance[\RealMetric](f(x),f(y))}
+                    {\metricDistance[\RealMetric](g(x),g(y))}}
+                {\surrealAdd{d}{d}}$
+                by
+                \auto{surreal_add_lt_both,metric_distance_type,surreal_real_metric_carrier,surreal_real_is_surreal}.
+            Hence
+                $\surrealLt{
+                    \surrealAdd{\metricDistance[\RealMetric](f(x),f(y))}
+                        {\metricDistance[\RealMetric](g(x),g(y))}}{e}$
+                by
+                \auto{surreal_lt_transitive,metric_distance_type,surreal_real_metric_carrier,surreal_real_is_surreal,surreal_real_addition_closed}.
+            $\surrealLe{
+                \metricDistance[\RealMetric]
+                    (\surrealAdd{f(x)}{g(x)},\surrealAdd{f(y)}{g(y)})}
+                {\surrealAdd{\metricDistance[\RealMetric](f(x),f(y))}
+                    {\metricDistance[\RealMetric](g(x),g(y))}}$
+                by \obv{real_metric_add_increment}.
+            Hence
+                $\surrealLt{\metricDistance[\RealMetric]
+                    (\surrealAdd{f(x)}{g(x)},\surrealAdd{f(y)}{g(y)})}{e}$
+                by
+                \auto{surreal_le_lt_transitive,metric_distance_type,surreal_real_metric_carrier,surreal_real_is_surreal,surreal_real_addition_closed}.
+            $h(x)=\surrealAdd{f(x)}{g(x)}$ and
+                $h(y)=\surrealAdd{f(y)}{g(y)}$
+                by \auto{real_map_add_apply}.
+            $h(y)\in\carrier[\RealMetric]$ by \obv{funs_type_apply}.
+            Follows by \auto{metric_ball_iff}.
+        \end{subproof}
+    \end{subproof}
+    $\metricTopology{\RealMetric}=\RealTopology$
+        by \obv{real_topology}.
+    Follows by \auto{metric_continuous_iff_local_balls}.
+\end{proof}
+
+\begin{proposition}\label{real_map_sub_add_right}
+    Suppose $f,g,h\in\funs{D}{\reals}$.
+    Then
+        $\realMapSub{D}{f}{\realMapAdd{D}{g}{h}}=
+            \realMapSub{D}{\realMapSub{D}{f}{g}}{h}$.
+\end{proposition}
+\begin{proof}
+    $\realMapSub{D}{f}{\realMapAdd{D}{g}{h}}\in\funs{D}{\reals}$ and
+        $\realMapSub{D}{\realMapSub{D}{f}{g}}{h}\in\funs{D}{\reals}$
+        by \obv{real_map_add_type,real_map_sub_type}.
+    Show that for every $x\in D$ we have
+        $\apply{\realMapSub{D}{f}{\realMapAdd{D}{g}{h}}}{x}
+            =\apply{\realMapSub{D}{\realMapSub{D}{f}{g}}{h}}{x}$.
+    \begin{subproof}
+        Fix $x\in D$.
+        $\apply{\realMapSub{D}{f}{\realMapAdd{D}{g}{h}}}{x}
+            =\surrealAdd{f(x)}
+                {\surrealNeg{\surrealAdd{g(x)}{h(x)}}}$
+            by
+            \auto{real_map_add_apply,real_map_add_type,real_map_sub_apply}.
+        Hence
+            $\apply{\realMapSub{D}{f}{\realMapAdd{D}{g}{h}}}{x}
+                =\surrealAdd{f(x)}
+                    {\surrealAdd{\surrealNeg{g(x)}}
+                        {\surrealNeg{h(x)}}}$
+            by
+            \auto{surreal_negation_additive,funs_type_apply,surreal_real_is_surreal}.
+        Hence
+            $\apply{\realMapSub{D}{f}{\realMapAdd{D}{g}{h}}}{x}
+                =\surrealAdd{
+                    \surrealAdd{f(x)}{\surrealNeg{g(x)}}}
+                    {\surrealNeg{h(x)}}$
+            by
+            \auto{surreal_add_associative,funs_type_apply,surreal_real_is_surreal,surreal_negation_is_surreal}.
+        Follows by
+            \auto{real_map_sub_apply,real_map_sub_type}.
+    \end{subproof}
+    Follows by \obv{typed_functions_equal_from_agreement}.
+\end{proof}
+
+\begin{proposition}\label{real_map_sub_eq_add_neg}
+    Suppose $f,g\in\funs{D}{\reals}$.
+    Then
+        $\realMapSub{D}{f}{g}=
+            \realMapAdd{D}{f}{\realMapNeg{D}{g}}$.
+\end{proposition}
+\begin{proof}
+    $\realMapSub{D}{f}{g}\in\funs{D}{\reals}$ and
+        $\realMapAdd{D}{f}{\realMapNeg{D}{g}}\in\funs{D}{\reals}$
+        by \obv{real_map_sub_type,real_map_neg_type,real_map_add_type}.
+    For every $x\in D$ we have
+        $\apply{\realMapSub{D}{f}{g}}{x}=
+            \apply{\realMapAdd{D}{f}{\realMapNeg{D}{g}}}{x}$
+        by
+        \auto{real_map_sub_apply,real_map_neg_apply,real_map_neg_type,real_map_add_apply}.
+    Follows by \obv{typed_functions_equal_from_agreement}.
+\end{proof}
+
+\begin{theorem}\label{real_map_sub_continuous}
+    Let $X$ be a topological space.
+    Let $f,g\in\funs{\carrier[X]}{\reals}$.
+    Suppose $f$ and $g$ are continuous from $X$ to $\RealTopology$.
+    Then $\realMapSub{\carrier[X]}{f}{g}$ is continuous from $X$ to
+        $\RealTopology$.
+\end{theorem}
+\begin{proof}
+    $\realMapNeg{\carrier[X]}{g}$ is continuous from $X$ to
+        $\RealTopology$ by \obv{real_map_neg_continuous}.
+    Hence
+        $\realMapAdd{\carrier[X]}{f}{\realMapNeg{\carrier[X]}{g}}$
+            is continuous from $X$ to $\RealTopology$
+        by \obv{real_map_add_continuous,real_map_neg_type}.
+    Follows by \obv{real_map_sub_eq_add_neg}.
+\end{proof}
+
+\begin{theorem}\label{real_map_scale_continuous}
+    Let $X$ be a topological space.
+    Let $c\in\reals$ and $f\in\funs{\carrier[X]}{\reals}$.
+    Suppose $f$ is continuous from $X$ to $\RealTopology$.
+    Then $\realMapScale{\carrier[X]}{c}{f}$ is continuous from $X$ to
+        $\RealTopology$.
+\end{theorem}
+\begin{proof}
+    Let $g=\realMapScale{\carrier[X]}{c}{f}$.
+    \begin{byCase}
+        \caseOf{$c=\surrealZero$.}
+            $g\in\funs{\carrier[X]}{\reals}$ and
+                $\realZeroMap{\carrier[X]}\in
+                    \funs{\carrier[X]}{\reals}$
+                by \auto{real_map_scale_type,real_zero_map_type}.
+            For every $x\in\carrier[X]$ we have
+                $g(x)=\apply{\realZeroMap{\carrier[X]}}{x}$
+                by
+                \auto{real_map_scale_apply,real_zero_map_apply,surreal_mul_zero_left,funs_type_apply,surreal_real_is_surreal}.
+            Hence $g=\realZeroMap{\carrier[X]}$
+                by \obv{typed_functions_equal_from_agreement}.
+            Follows by \auto{real_zero_map_continuous}.
+        \caseOf{$c\neq\surrealZero$.}
+            $\abs{c}\in\reals$
+                by \obv{surreal_real_abs_closed}.
+            $\surrealLt{\surrealZero}{\abs{c}}$
+                by
+                \obv{surreal_abs_positive_iff,surreal_real_is_surreal}.
+            $\RealMetric$ is a metric space
+                by \obv{surreal_real_metric_space}.
+            $\RealMetric$ is a pseudometric space by
+                \obv{surreal_real_pseudometric_space}.
+            $g\in\funs{\carrier[X]}{\carrier[\RealMetric]}$
+                by
+                \auto{real_map_scale_type,surreal_real_metric_carrier}.
+            Show that for every $x\in\carrier[X]$ we have
+                for every $e\in\reals$ we have if
+                    $\surrealLt{\surrealZero}{e}$, then there exists
+                    $U\in\opens[X]$ such that $x\in U$ and
+                    for every $y\in U$ we have
+                        $g(y)\in\metricBall{\RealMetric}{g(x)}{e}$.
+            \begin{subproof}
+                Fix $x\in\carrier[X]$.
+                Fix $e\in\reals$.
+                Assume $\surrealLt{\surrealZero}{e}$.
+                Take a natural number $n$ such that
+                    $\surrealLt{
+                        \surrealMul{\surrealEpsilon{n}}{\abs{c}}}{e}$
+                    by \obv{positive_real_scaled_epsilon_below}.
+                Let $d=\surrealEpsilon{n}$.
+                $d\in\reals$ and $\surrealLt{\surrealZero}{d}$
+                    by
+                    \auto{surreal_epsilon_is_real,surreal_epsilon_positive}.
+                Take $U\in\opens[X]$ such that $x\in U$ and
+                    for every $y\in U$ we have
+                        $f(y)\in\metricBall{\RealMetric}{f(x)}{d}$
+                    by
+                    \auto{metric_continuous_iff_local_balls,real_topology,surreal_real_metric_space,surreal_real_metric_carrier}.
+                Show that for every $y\in U$ we have
+                    $g(y)\in\metricBall{\RealMetric}{g(x)}{e}$.
+                \begin{subproof}
+                    Fix $y\in U$.
+                    $U\subseteq\carrier[X]$ by \obv{opens_type}.
+                    Hence $y\in\carrier[X]$ by \obv{subseteq}.
+                    $f(x),f(y)\in\reals$ by \obv{funs_type_apply}.
+                    $\surrealLt{
+                        \metricDistance[\RealMetric](f(x),f(y))}{d}$
+                        by \auto{metric_ball_iff}.
+                    Hence
+                        $\surrealLt{
+                            \surrealMul{\abs{c}}
+                                {\metricDistance[\RealMetric](f(x),f(y))}}
+                            {\surrealMul{\abs{c}}{d}}$
+                        by
+                        \auto{surreal_pos_mul_lt_left,metric_distance_type,surreal_real_metric_carrier,surreal_real_is_surreal}.
+                    $\surrealMul{\abs{c}}{d}
+                        =\surrealMul{d}{\abs{c}}$
+                        by
+                        \obv{surreal_mul_commutative,surreal_real_is_surreal}.
+                    Hence
+                        $\surrealLt{
+                            \surrealMul{\abs{c}}
+                                {\metricDistance[\RealMetric](f(x),f(y))}}{e}$
+                        by
+                        \auto{surreal_lt_transitive,surreal_mul_is_surreal,metric_distance_type,surreal_real_metric_carrier,surreal_real_is_surreal}.
+                    $g(x)=\surrealMul{c}{f(x)}$ and
+                        $g(y)=\surrealMul{c}{f(y)}$
+                        by \auto{real_map_scale_apply}.
+                    Hence
+                        $\metricDistance[\RealMetric](g(x),g(y))
+                            =\surrealMul{\abs{c}}
+                                {\metricDistance[\RealMetric](f(x),f(y))}$
+                        by \auto{real_metric_scale}.
+                    Hence
+                        $\surrealLt{\metricDistance[\RealMetric](g(x),g(y))}{e}$
+                        by \auto.
+                    $g(y)\in\carrier[\RealMetric]$
+                        by \obv{funs_type_apply}.
+                    Follows by \obv{metric_ball}.
+                \end{subproof}
+                Follows by \auto.
+            \end{subproof}
+            $\metricTopology{\RealMetric}=\RealTopology$
+                by \obv{real_topology}.
+            Follows by \auto{metric_continuous_iff_local_balls}.
+    \end{byCase}
+\end{proof}
+
+\begin{theorem}\label{real_constant_graph_continuous}
+    Let $X$ be a topological space.
+    Let $a\in\reals$.
+    Then $\carrier[X]\times\{a\}$ is continuous from $X$ to
+        $\RealTopology$.
+\end{theorem}
+\begin{proof}
+    Let $k=\carrier[X]\times\{a\}$.
+    $k\in\funs{\carrier[X]}{\{a\}}$ by \auto{constant_graph_type}.
+    $\{a\}\subseteq\reals$
+        by \auto{singleton_iff,subseteq}.
+    Hence $k\in\funs{\carrier[X]}{\reals}$
+        by \obv{funs_weaken_codom}.
+    $\RealMetric$ is a pseudometric space by
+        \obv{surreal_real_pseudometric_space}.
+    $k\in\funs{\carrier[X]}{\carrier[\RealMetric]}$
+        by \obv{surreal_real_metric_carrier}.
+    Show that for every $x\in\carrier[X]$ we have
+        for every $e\in\reals$ we have if
+            $\surrealLt{\surrealZero}{e}$, then there exists
+            $U\in\opens[X]$ such that $x\in U$ and
+            for every $y\in U$ we have
+                $k(y)\in\metricBall{\RealMetric}{k(x)}{e}$.
+    \begin{subproof}
+        Fix $x\in\carrier[X]$.
+        Fix $e\in\reals$.
+        Assume $\surrealLt{\surrealZero}{e}$.
+        Let $U=\carrier[X]$.
+        $U\in\opens[X]$ by \auto{carrier_open}.
+        $x\in U$.
+        For every $y\in U$ we have
+            $k(y)\in\metricBall{\RealMetric}{k(x)}{e}$
+            by
+            \auto{constant_graph_application,metric_ball_contains_centre,surreal_real_metric_space,surreal_real_metric_carrier}.
+        Follows by \auto.
+    \end{subproof}
+    $\metricTopology{\RealMetric}=\RealTopology$
+        by \obv{real_topology}.
+    Follows by \auto{metric_continuous_iff_local_balls}.
+\end{proof}
+
+\begin{proposition}\label{real_map_affine_eq_add_constant_scale}
+    Suppose $a,b\in\reals$ and $f\in\funs{D}{\reals}$.
+    Then
+        $\realMapAffine{D}{a}{b}{f}=
+            \realMapAdd{D}{D\times\{a\}}{\realMapScale{D}{b}{f}}$.
+\end{proposition}
+\begin{proof}
+    Let $k=D\times\{a\}$.
+    $k\in\funs{D}{\{a\}}$ by \auto{constant_graph_type}.
+    $\{a\}\subseteq\reals$ by \auto{singleton_iff,subseteq}.
+    Hence $k\in\funs{D}{\reals}$ by \obv{funs_weaken_codom}.
+    $\realMapAffine{D}{a}{b}{f}\in\funs{D}{\reals}$ and
+        $\realMapAdd{D}{k}{\realMapScale{D}{b}{f}}\in\funs{D}{\reals}$
+        by
+        \obv{real_map_affine_type,real_map_scale_type,real_map_add_type}.
+    For every $x\in D$ we have
+        $\apply{\realMapAffine{D}{a}{b}{f}}{x}=
+            \apply{\realMapAdd{D}{k}{\realMapScale{D}{b}{f}}}{x}$
+        by
+        \auto{real_map_affine_apply,real_map_add_apply,real_map_scale_apply,real_map_scale_type,constant_graph_application}.
+    Follows by \auto{typed_functions_equal_from_agreement}.
+\end{proof}
+
+\begin{theorem}\label{real_map_affine_continuous}
+    Let $X$ be a topological space.
+    Let $a,b\in\reals$ and $f\in\funs{\carrier[X]}{\reals}$.
+    Suppose $f$ is continuous from $X$ to $\RealTopology$.
+    Then $\realMapAffine{\carrier[X]}{a}{b}{f}$ is continuous from $X$
+        to $\RealTopology$.
+\end{theorem}
+\begin{proof}
+    $\carrier[X]\times\{a\}$ is continuous from $X$ to $\RealTopology$
+        by \obv{real_constant_graph_continuous}.
+    $\realMapScale{\carrier[X]}{b}{f}$ is continuous from $X$ to
+        $\RealTopology$ by \obv{real_map_scale_continuous}.
+    Hence
+        $\realMapAdd{\carrier[X]}{\carrier[X]\times\{a\}}
+            {\realMapScale{\carrier[X]}{b}{f}}$
+        is continuous from $X$ to $\RealTopology$
+        by
+        \auto{real_map_add_continuous,constant_graph_type,funs_weaken_codom,singleton_iff,subseteq,real_map_scale_type}.
+    Follows by \auto{real_map_affine_eq_add_constant_scale}.
+\end{proof}
+
+\begin{theorem}\label{real_affine_of_unit_range_continuous}
+    Let $X$ be a topological space.
+    Let $u\in\funs{\carrier[X]}{\reals}$.
+    Suppose $u$ is continuous from $X$ to $\RealTopology$.
+    Suppose for every $x\in\carrier[X]$ we have
+        $\surrealLe{\surrealZero}{u(x)}$ and
+        $\surrealLe{u(x)}{\surrealOne}$.
+    Let $a,b\in\reals$.
+    Suppose $\surrealLe{a}{b}$.
+    Let $d=\surrealAdd{b}{\surrealNeg{a}}$.
+    Let $h=\realMapAffine{\carrier[X]}{a}{d}{u}$.
+    Then $h$ is continuous from $X$ to $\RealTopology$ and
+        for every $x\in\carrier[X]$ we have
+            $h(x)\in\realClosedInterval{a}{b}$.
+\end{theorem}
+\begin{proof}
+    $\surrealNeg{a}\in\reals$ by \obv{surreal_real_negation_closed}.
+    Hence $d\in\reals$ by \auto{surreal_real_addition_closed}.
+    Hence $h\in\funs{\carrier[X]}{\reals}$
+        by \auto{real_map_affine_type}.
+    $h$ is continuous from $X$ to $\RealTopology$
+        by \auto{real_map_affine_continuous}.
+    Show that for every $x\in\carrier[X]$ we have
+        $h(x)\in\realClosedInterval{a}{b}$.
+    \begin{subproof}
+        Fix $x\in\carrier[X]$.
+        $u(x)\in\reals$ by \obv{funs_type_apply}.
+        $\surrealLe{a}{\surrealAdd{a}{\surrealMul{d}{u(x)}}}$ and
+            $\surrealLe{\surrealAdd{a}{\surrealMul{d}{u(x)}}}{b}$
+            by \auto{real_affine_unit_interval_range}.
+        $h(x)=\surrealAdd{a}{\surrealMul{d}{u(x)}}$
+            by \auto{real_map_affine_apply}.
+        $h(x)\in\reals$ by \obv{funs_type_apply}.
+        Follows by \auto{real_closed_interval_member_iff}.
+    \end{subproof}
+\end{proof}

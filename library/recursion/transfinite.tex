@@ -1,0 +1,105 @@
+\import{recursion/well-founded.tex}
+\import{order/ordinal-membership.tex}
+
+\section{Transfinite recursion}
+
+For a fixed ordinal $\alpha$ and codomain $B$, transfinite recursion returns
+the entire function on $\alpha$.  Its step function receives an ordinal
+$\beta$ and the graph of the values already defined on $\beta$.  Keeping the
+codomain explicit makes the construction set-sized and gives the recursion
+operator an ordinary first-order graph as its value.
+
+\begin{definition}\label{ordinal_recursion}
+    $\ordinalRecursion{\alpha}{B}{H}=
+        \wfrec{\alpha}{B}{\memrel{\alpha}}{H}$.
+\end{definition}
+
+\begin{theorem}\label{ordinal_recursion_type}
+    Let $\alpha$ be an ordinal.
+    Let $H\in\funs{\alpha\times\pow{\alpha\times B}}{B}$.
+    Then $\ordinalRecursion{\alpha}{B}{H}\in\funs{\alpha}{B}$.
+\end{theorem}
+\begin{proof}
+    $\memrel{\alpha}$ is well-founded on $\alpha$
+        by \obv{membership_is_well_founded_on}.
+    Follows by
+        \auto{ordinal_recursion,wfrec_type,memrel_is_binary_relation_on}.
+\end{proof}
+
+\begin{theorem}\label{ordinal_recursion_equation}
+    Let $\alpha$ be an ordinal.
+    Let $H\in\funs{\alpha\times\pow{\alpha\times B}}{B}$.
+    Let $\beta\in\alpha$.
+    Then
+        $\apply{\ordinalRecursion{\alpha}{B}{H}}{\beta}=
+            H((\beta,\restrl{\ordinalRecursion{\alpha}{B}{H}}{\beta}))$.
+\end{theorem}
+\begin{proof}
+    $\memrel{\alpha}$ is well-founded on $\alpha$
+        by \obv{membership_is_well_founded_on}.
+    $\downward{\memrel{\alpha}}{\beta}=\beta$
+        by \obv{ordinal_memrel_downward}.
+    Follows by
+        \auto{ordinal_recursion,wfrec_equation,memrel_is_binary_relation_on}.
+\end{proof}
+
+\begin{theorem}\label{ordinal_recursion_unique}
+    Let $\alpha$ be an ordinal.
+    Let $H\in\funs{\alpha\times\pow{\alpha\times B}}{B}$.
+    Let $f\in\funs{\alpha}{B}$.
+    Suppose for every $\beta\in\alpha$ we have
+        $f(\beta)=H((\beta,\restrl{f}{\beta}))$.
+    Then $f=\ordinalRecursion{\alpha}{B}{H}$.
+\end{theorem}
+\begin{proof}
+    Show that $f\in\recursiveFunctions{\alpha}{B}{\memrel{\alpha}}{H}$.
+    \begin{subproof}
+        For every $\beta\in\alpha$ we have
+            $\downward{\memrel{\alpha}}{\beta}=\beta$
+            by \obv{ordinal_memrel_downward}.
+        Follows by \auto{recursive_functions}.
+    \end{subproof}
+    $\memrel{\alpha}$ is well-founded on $\alpha$
+        by \obv{membership_is_well_founded_on}.
+    Hence $f=\wfrec{\alpha}{B}{\memrel{\alpha}}{H}$
+        by \obv{wfrec_unique,memrel_is_binary_relation_on}.
+    Follows by \obv{ordinal_recursion}.
+\end{proof}
+
+\begin{theorem}\label{bounded_transfinite_induction}
+    Let $\alpha$ be an ordinal.
+    Then $\forall P:\Set\to\Prop.
+        (\forall \beta:\Set.\ \beta\in\alpha\implies
+            ((\forall \gamma:\Set.\ \gamma\in\beta\implies\Apply{P}{\gamma})
+                \implies\Apply{P}{\beta}))
+        \implies
+        (\forall \beta:\Set.\ \beta\in\alpha\implies\Apply{P}{\beta})$.
+\end{theorem}
+\begin{proof}
+    Fix $P$.
+    Assume $\forall \beta:\Set.\ \beta\in\alpha\implies
+        ((\forall \gamma:\Set.\ \gamma\in\beta\implies\Apply{P}{\gamma})
+            \implies\Apply{P}{\beta})$.
+    Show that $\forall \beta:\Set.\ \beta\in\alpha\implies
+        ((\forall \gamma:\Set.\ (\gamma\in\alpha\land
+                \gamma\mathrel{\memrel{\alpha}}\beta)
+                \implies\Apply{P}{\gamma})
+            \implies\Apply{P}{\beta})$.
+    \begin{subproof}
+        Fix $\beta\in\alpha$.
+        Assume $\forall \gamma:\Set.\ (\gamma\in\alpha\land
+                \gamma\mathrel{\memrel{\alpha}}\beta)
+                \implies\Apply{P}{\gamma}$.
+        Show that $\forall \gamma:\Set.\ \gamma\in\beta
+            \implies\Apply{P}{\gamma}$.
+        \begin{subproof}
+            Fix $\gamma\in\beta$.
+            $\gamma\in\alpha$ by \obv{ordinal_transitivity}.
+            $\gamma\mathrel{\memrel{\alpha}}\beta$
+                by \obv{memrel_elem_intro}.
+        \end{subproof}
+    \end{subproof}
+    $\memrel{\alpha}$ is well-founded on $\alpha$
+        by \obv{membership_is_well_founded_on}.
+    Follows by \obv{well_founded_induction}.
+\end{proof}

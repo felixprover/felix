@@ -1,0 +1,2323 @@
+\import{algebra/group/automorphism.tex}
+\import{algebra/group/product.tex}
+\import{algebra/group/subgroup-product.tex}
+\import{set/logical-graph.tex}
+
+\section{Semidirect products}
+
+The external semidirect product below uses ordinary ordered pairs.  An action
+is supplied as a homomorphism into the exact automorphism group, whose
+composition convention is \((fg)(x)=f(g(x))\).  This keeps the action order
+and every endpoint explicit.
+
+\subsection{The external construction}
+
+\begin{proposition}\label{semidirect_action_value_automorphism}
+    Suppose
+        $\groupHom{a}{H}{\automorphismGroup{N}}$.
+    Let $h\in\carrier[H]$.
+    Then $a(h)\in\automorphismSet{N}$.
+\end{proposition}
+\begin{proof}
+    $a(h)\in\carrier[\automorphismGroup{N}]$ by
+        \obv{group_hom_apply_type}.
+    Follows by \obv{automorphism_group_carrier}.
+\end{proof}
+
+\begin{corollary}\label{semidirect_action_value_isomorphism}
+    Suppose $\groupHom{a}{H}{\automorphismGroup{N}}$.
+    Let $h\in\carrier[H]$.
+    Then $\groupIsomorphism{a(h)}{N}{N}$.
+\end{corollary}
+\begin{proof}
+    Follows by
+        \auto{semidirect_action_value_automorphism,automorphism_set_iff}.
+\end{proof}
+
+\begin{corollary}\label{semidirect_action_value_type}
+    Suppose $\groupHom{a}{H}{\automorphismGroup{N}}$.
+    Let $h\in\carrier[H]$ and $n\in\carrier[N]$.
+    Then $\apply{a(h)}{n}\in\carrier[N]$.
+\end{corollary}
+\begin{proof}
+    $\groupHom{a(h)}{N}{N}$ by
+        \obv{semidirect_action_value_isomorphism,
+            group_isomorphism_is_hom}.
+    Follows by \obv{group_hom_apply_type}.
+\end{proof}
+
+\begin{proposition}\label{semidirect_action_neutral_graph}
+    Suppose $\groupHom{a}{H}{\automorphismGroup{N}}$.
+    Then $a(\neutral[H])=\identity{\carrier[N]}$.
+\end{proposition}
+\begin{proof}
+    $a(\neutral[H])=\neutral[\automorphismGroup{N}]$ by
+        \obv{group_hom_neutral}.
+    Follows by \auto{automorphism_group_neutral}.
+\end{proof}
+
+\begin{proposition}\label{semidirect_action_neutral}
+    Suppose $\groupHom{a}{H}{\automorphismGroup{N}}$.
+    Let $n\in\carrier[N]$.
+    Then $\apply{a(\neutral[H])}{n}=n$.
+\end{proposition}
+\begin{proof}
+    $a(\neutral[H])=\identity{\carrier[N]}$ by
+        \obv{semidirect_action_neutral_graph}.
+    Follows by \auto{id_apply}.
+\end{proof}
+
+\begin{proposition}\label{semidirect_action_mul_graph}
+    Suppose $\groupHom{a}{H}{\automorphismGroup{N}}$.
+    Let $h,k\in\carrier[H]$.
+    Then $a(\mul[H](h,k))=a(h)\circ a(k)$.
+\end{proposition}
+\begin{proof}
+    $a(h),a(k)\in\automorphismSet{N}$ by
+        \obv{semidirect_action_value_automorphism}.
+    $a(\mul[H](h,k))=
+        \mul[\automorphismGroup{N}](a(h),a(k))$ by
+        \obv{group_hom_mul}.
+    Follows by \obv{automorphism_group_mul_apply}.
+\end{proof}
+
+\begin{proposition}\label{semidirect_action_mul}
+    Suppose $\groupHom{a}{H}{\automorphismGroup{N}}$.
+    Let $h,k\in\carrier[H]$ and $n\in\carrier[N]$.
+    Then
+        $\apply{a(\mul[H](h,k))}{n}=
+            \apply{a(h)}{\apply{a(k)}{n}}$.
+\end{proposition}
+\begin{proof}
+    $a(h),a(k)\in\automorphismSet{N}$ by
+        \obv{semidirect_action_value_automorphism}.
+    Hence $a(h),a(k)\in\funs{\carrier[N]}{\carrier[N]}$ by
+        \obv{automorphism_set_type,bijections_to_funs}.
+    Hence $a(h)$ and $a(k)$ are functions and
+        $\dom{a(k)}=\carrier[N]$ and
+        $\ran{a(k)}\subseteq\carrier[N]=\dom{a(h)}$ by
+        \auto{funs_elim,funs_ran}.
+    Hence $a(h)$ is composable with $a(k)$.
+    $\apply{a(k)}{n}\in\carrier[N]$ by
+        \obv{semidirect_action_value_type}.
+    $a(\mul[H](h,k))=a(h)\circ a(k)$ by
+        \obv{semidirect_action_mul_graph}.
+    Follows by \auto{circ_apply}.
+\end{proof}
+
+\begin{proposition}\label{semidirect_action_preserves_mul}
+    Suppose $\groupHom{a}{H}{\automorphismGroup{N}}$.
+    Let $h\in\carrier[H]$ and $n,m\in\carrier[N]$.
+    Then
+        $\apply{a(h)}{\mul[N](n,m)}=
+            \mul[N](\apply{a(h)}{n},\apply{a(h)}{m})$.
+\end{proposition}
+\begin{proof}
+    $\groupHom{a(h)}{N}{N}$ by
+        \obv{semidirect_action_value_isomorphism,
+            group_isomorphism_is_hom}.
+    Follows by \obv{group_hom_mul}.
+\end{proof}
+
+\begin{proposition}\label{semidirect_action_preserves_inverse}
+    Suppose $\groupHom{a}{H}{\automorphismGroup{N}}$.
+    Let $h\in\carrier[H]$ and $n\in\carrier[N]$.
+    Then
+        $\apply{a(h)}{\groupInv[N](n)}=
+            \groupInv[N](\apply{a(h)}{n})$.
+\end{proposition}
+\begin{proof}
+    $\groupHom{a(h)}{N}{N}$ by
+        \obv{semidirect_action_value_isomorphism,
+            group_isomorphism_is_hom}.
+    Follows by \obv{group_hom_inverse}.
+\end{proof}
+
+\begin{proposition}\label{semidirect_action_preserves_neutral}
+    Suppose $\groupHom{a}{H}{\automorphismGroup{N}}$.
+    Let $h\in\carrier[H]$.
+    Then $\apply{a(h)}{\neutral[N]}=\neutral[N]$.
+\end{proposition}
+\begin{proof}
+    $\groupHom{a(h)}{N}{N}$ by
+        \obv{semidirect_action_value_isomorphism,
+            group_isomorphism_is_hom}.
+    Follows by \obv{group_hom_neutral}.
+\end{proof}
+
+\begin{proposition}\label{semidirect_action_inverse_graph}
+    Suppose $\groupHom{a}{H}{\automorphismGroup{N}}$.
+    Let $h\in\carrier[H]$.
+    Then $a(\groupInv[H](h))=\converse{a(h)}$.
+\end{proposition}
+\begin{proof}
+    $a(h)\in\automorphismSet{N}$ by
+        \obv{semidirect_action_value_automorphism}.
+    $a(\groupInv[H](h))=
+        \groupInv[\automorphismGroup{N}](a(h))$ by
+        \obv{group_hom_inverse}.
+    Follows by \obv{automorphism_group_inv_apply}.
+\end{proof}
+
+\begin{definition}\label{semidirect_multiplication_op}
+    $\semidirectMultiplicationOp:
+        \Set\to\Set\to\Set\to\Set\to\Set\to\Set
+        =\fun{N,H,a,p,q:\Set}{
+            (\mul[N](\fst{p},
+                \apply{a(\snd{p})}{\fst{q}}),
+             \mul[H](\snd{p},\snd{q}))}$.
+\end{definition}
+
+\begin{definition}\label{semidirect_inverse_op}
+    $\semidirectInverseOp:
+        \Set\to\Set\to\Set\to\Set\to\Set
+        =\fun{N,H,a,p:\Set}{
+            (\apply{a(\groupInv[H](\snd{p}))}
+                {\groupInv[N](\fst{p})},
+             \groupInv[H](\snd{p}))}$.
+\end{definition}
+
+\begin{definition}\label{semidirect_multiplication_graph}
+    $\semidirectMultiplicationGraph{N}{H}{a}=
+        \Apply{\binaryGraphOnOp}
+            {\carrier[N]\times\carrier[H],
+             \carrier[N]\times\carrier[H],
+             \Apply{\semidirectMultiplicationOp}{N,H,a}}$.
+\end{definition}
+
+\begin{definition}\label{semidirect_inverse_graph}
+    $\semidirectInverseGraph{N}{H}{a}=
+        \Apply{\graphOnOp}
+            {\carrier[N]\times\carrier[H],
+             \carrier[N]\times\carrier[H],
+             \Apply{\semidirectInverseOp}{N,H,a}}$.
+\end{definition}
+
+\begin{proposition}\label{semidirect_multiplication_value_type}
+    Suppose $\groupHom{a}{H}{\automorphismGroup{N}}$.
+    Let $p,q\in\carrier[N]\times\carrier[H]$.
+    Then
+        $\Apply{\semidirectMultiplicationOp}{N,H,a,p,q}
+            \in\carrier[N]\times\carrier[H]$.
+\end{proposition}
+\begin{proof}
+    $\fst{p},\fst{q}\in\carrier[N]$ and
+        $\snd{p},\snd{q}\in\carrier[H]$ by
+        \obv{fst_type,snd_type}.
+    $\apply{a(\snd{p})}{\fst{q}}\in\carrier[N]$ by
+        \obv{semidirect_action_value_type}.
+    $N$ is a group by
+        \auto{semidirect_action_value_isomorphism,
+            group_isomorphism_is_hom,group_hom_source_group}.
+    $\mul[N](\fst{p},\apply{a(\snd{p})}{\fst{q}})\in
+        \carrier[N]$ and
+        $\mul[H](\snd{p},\snd{q})\in\carrier[H]$ by
+        \obv{group_is_monoid,monoid_is_magma,magma_welldef}.
+    Follows by \auto{semidirect_multiplication_op,times}.
+\end{proof}
+
+\begin{proposition}\label{semidirect_inverse_value_type}
+    Suppose $\groupHom{a}{H}{\automorphismGroup{N}}$.
+    Let $p\in\carrier[N]\times\carrier[H]$.
+    Then
+        $\Apply{\semidirectInverseOp}{N,H,a,p}
+            \in\carrier[N]\times\carrier[H]$.
+\end{proposition}
+\begin{proof}
+    $\fst{p}\in\carrier[N]$ and $\snd{p}\in\carrier[H]$ by
+        \obv{fst_type,snd_type}.
+    $N$ is a group by
+        \auto{semidirect_action_value_isomorphism,
+            group_isomorphism_is_hom,group_hom_source_group}.
+    $\groupInv[N](\fst{p})\in\carrier[N]$ and
+        $\groupInv[H](\snd{p})\in\carrier[H]$ by
+        \obv{group_inverse_type}.
+    $\apply{a(\groupInv[H](\snd{p}))}
+        {\groupInv[N](\fst{p})}\in\carrier[N]$ by
+        \obv{semidirect_action_value_type}.
+    Follows by \auto{semidirect_inverse_op,times}.
+\end{proof}
+
+\begin{proposition}\label{semidirect_multiplication_graph_type}
+    Suppose $\groupHom{a}{H}{\automorphismGroup{N}}$.
+    Then $\semidirectMultiplicationGraph{N}{H}{a}\in
+        \funs{
+            (\carrier[N]\times\carrier[H])\times
+            (\carrier[N]\times\carrier[H])}
+            {\carrier[N]\times\carrier[H]}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{semidirect_multiplication_graph,
+            semidirect_multiplication_value_type,
+            logical_binary_graph_on_function}.
+\end{proof}
+
+\begin{proposition}\label{semidirect_multiplication_graph_apply}
+    Suppose $\groupHom{a}{H}{\automorphismGroup{N}}$.
+    Let $p,q\in\carrier[N]\times\carrier[H]$.
+    Then
+        $\apply{\semidirectMultiplicationGraph{N}{H}{a}}{(p,q)}=
+            (\mul[N](\fst{p},\apply{a(\snd{p})}{\fst{q}}),
+             \mul[H](\snd{p},\snd{q}))$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{semidirect_multiplication_graph,
+            semidirect_multiplication_op,
+            logical_binary_graph_on_apply}.
+\end{proof}
+
+\begin{proposition}\label{semidirect_inverse_graph_type}
+    Suppose $\groupHom{a}{H}{\automorphismGroup{N}}$.
+    Then $\semidirectInverseGraph{N}{H}{a}\in
+        \funs{\carrier[N]\times\carrier[H]}
+            {\carrier[N]\times\carrier[H]}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{semidirect_inverse_graph,semidirect_inverse_value_type,
+            logical_graph_on_function}.
+\end{proof}
+
+\begin{proposition}\label{semidirect_inverse_graph_apply}
+    Suppose $\groupHom{a}{H}{\automorphismGroup{N}}$.
+    Let $p\in\carrier[N]\times\carrier[H]$.
+    Then
+        $\apply{\semidirectInverseGraph{N}{H}{a}}{p}=
+            (\apply{a(\groupInv[H](\snd{p}))}
+                {\groupInv[N](\fst{p})},
+             \groupInv[H](\snd{p}))$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{semidirect_inverse_graph,semidirect_inverse_op,
+            logical_graph_on_apply}.
+\end{proof}
+
+\begin{definition}\label{semidirect_product}
+    $\SemidirectProduct{N}{H}{a}=\structure[group]{
+        \carrier=\carrier[N]\times\carrier[H],
+        \mul=\semidirectMultiplicationGraph{N}{H}{a},
+        \neutral=(\neutral[N],\neutral[H]),
+        \groupInv=\semidirectInverseGraph{N}{H}{a}
+    }$.
+\end{definition}
+
+\begin{proposition}\label{semidirect_product_fields}
+    $\carrier[\SemidirectProduct{N}{H}{a}]=
+        \carrier[N]\times\carrier[H]$ and
+    $\mul[\SemidirectProduct{N}{H}{a}]=
+        \semidirectMultiplicationGraph{N}{H}{a}$ and
+    $\neutral[\SemidirectProduct{N}{H}{a}]=
+        (\neutral[N],\neutral[H])$ and
+    $\groupInv[\SemidirectProduct{N}{H}{a}]=
+        \semidirectInverseGraph{N}{H}{a}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{semidirect_product,groupaggregateprojection_carrier,
+            groupaggregateprojection_mul,groupaggregateprojection_neutral,
+            groupaggregateprojection_groupInv}.
+\end{proof}
+
+\begin{proposition}\label{semidirect_product_mul_apply}
+    Suppose $\groupHom{a}{H}{\automorphismGroup{N}}$.
+    Let $p,q\in\carrier[N]\times\carrier[H]$.
+    Then
+        $\mul[\SemidirectProduct{N}{H}{a}](p,q)=
+            (\mul[N](\fst{p},\apply{a(\snd{p})}{\fst{q}}),
+             \mul[H](\snd{p},\snd{q}))$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{semidirect_product_fields,
+            semidirect_multiplication_graph_apply}.
+\end{proof}
+
+\begin{proposition}\label{semidirect_product_inv_apply}
+    Suppose $\groupHom{a}{H}{\automorphismGroup{N}}$.
+    Let $p\in\carrier[N]\times\carrier[H]$.
+    Then
+        $\groupInv[\SemidirectProduct{N}{H}{a}](p)=
+            (\apply{a(\groupInv[H](\snd{p}))}
+                {\groupInv[N](\fst{p})},
+             \groupInv[H](\snd{p}))$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{semidirect_product_fields,semidirect_inverse_graph_apply}.
+\end{proof}
+
+\begin{theorem}\label{semidirect_product_is_exact_group}
+    Let $N$ be a group.
+    Let $H$ be a group.
+    Suppose $\groupHom{a}{H}{\automorphismGroup{N}}$.
+    Then $\SemidirectProduct{N}{H}{a}$ is an exact group.
+\end{theorem}
+\begin{proof}
+    Let $C=\carrier[N]\times\carrier[H]$ and
+        $S=\SemidirectProduct{N}{H}{a}$.
+    $\carrier[S]=C$ and
+        $\mul[S]=\semidirectMultiplicationGraph{N}{H}{a}$ and
+        $\neutral[S]=(\neutral[N],\neutral[H])$ and
+        $\groupInv[S]=\semidirectInverseGraph{N}{H}{a}$ by
+        \auto{semidirect_product_fields}.
+    $\mul[S]\in\funs{C\times C}{C}$ by
+        \auto{semidirect_multiplication_graph_type}.
+    $\neutral[N]\in\carrier[N]$ and
+        $\neutral[H]\in\carrier[H]$ by
+        \obv{group_is_monoid,monoid_is_unital_magma,unitalmagma_type}.
+    Hence $\neutral[S]\in C$ by \auto{times}.
+    $\groupInv[S]\in\funs{C}{C}$ by
+        \auto{semidirect_inverse_graph_type}.
+    Show that for every $p\in C$ we have
+        $\mul[S](\neutral[S],p)=p$.
+    \begin{subproof}
+        Fix $p\in C$.
+        $\fst{p}\in\carrier[N]$ and $\snd{p}\in\carrier[H]$ by
+            \obv{fst_type,snd_type}.
+        $p=(\fst{p},\snd{p})$ by
+            \auto{times_elem_is_tuple,pair_eq_pair_of_proj}.
+        $\mul[S](\neutral[S],p)=
+            (\mul[N](\neutral[N],
+                \apply{a(\neutral[H])}{\fst{p}}),
+             \mul[H](\neutral[H],\snd{p}))$ by
+            \auto{semidirect_product_mul_apply,fst_eq,snd_eq}.
+        $\apply{a(\neutral[H])}{\fst{p}}=\fst{p}$ by
+            \obv{semidirect_action_neutral}.
+        Hence
+            $\mul[N](\neutral[N],
+                \apply{a(\neutral[H])}{\fst{p}})=\fst{p}$ by
+            \auto{group_is_monoid,monoid_is_unital_magma,
+                unitalmagma_left}.
+        $\mul[H](\neutral[H],\snd{p})=\snd{p}$ by
+            \obv{group_is_monoid,monoid_is_unital_magma,
+                unitalmagma_left}.
+    \end{subproof}
+    Show that for every $p\in C$ we have
+        $\mul[S](p,\neutral[S])=p$.
+    \begin{subproof}
+        Fix $p\in C$.
+        $\fst{p}\in\carrier[N]$ and $\snd{p}\in\carrier[H]$ by
+            \obv{fst_type,snd_type}.
+        $p=(\fst{p},\snd{p})$ by
+            \auto{times_elem_is_tuple,pair_eq_pair_of_proj}.
+        $\mul[S](p,\neutral[S])=
+            (\mul[N](\fst{p},
+                \apply{a(\snd{p})}{\neutral[N]}),
+             \mul[H](\snd{p},\neutral[H]))$ by
+            \auto{semidirect_product_mul_apply,fst_eq,snd_eq}.
+        $\apply{a(\snd{p})}{\neutral[N]}=\neutral[N]$ by
+            \obv{semidirect_action_preserves_neutral}.
+        Hence
+            $\mul[N](\fst{p},
+                \apply{a(\snd{p})}{\neutral[N]})=\fst{p}$ by
+            \auto{group_is_monoid,monoid_is_unital_magma,
+                unitalmagma_right}.
+        $\mul[H](\snd{p},\neutral[H])=\snd{p}$ by
+            \obv{group_is_monoid,monoid_is_unital_magma,
+                unitalmagma_right}.
+    \end{subproof}
+    Show that for all $p,q,r\in C$ we have
+        $\mul[S](p,\mul[S](q,r))=
+            \mul[S](\mul[S](p,q),r)$.
+    \begin{subproof}
+        Fix $p,q,r\in C$.
+        Let $n=\fst{p}$ and $h=\snd{p}$.
+        Let $m=\fst{q}$ and $k=\snd{q}$.
+        Let $l=\fst{r}$ and $u=\snd{r}$.
+        $n,m,l\in\carrier[N]$ and $h,k,u\in\carrier[H]$ by
+            \auto{fst_type,snd_type}.
+        Let $b=\apply{a(h)}{m}$ and $c=\apply{a(k)}{l}$.
+        $b,c\in\carrier[N]$ by
+            \auto{semidirect_action_value_type}.
+        $\mul[N](m,c),\mul[N](n,b)\in\carrier[N]$ and
+            $\mul[H](k,u),\mul[H](h,k)\in\carrier[H]$ by
+            \obv{group_is_monoid,monoid_is_magma,magma_welldef}.
+        Hence $\mul[S](q,r),\mul[S](p,q)\in C$ by
+            \auto{semidirect_product_mul_apply,times}.
+        $\mul[S](p,\mul[S](q,r))=
+            (\mul[N](n,\apply{a(h)}{\mul[N](m,c)}),
+             \mul[H](h,\mul[H](k,u)))$ by
+            \auto{semidirect_product_mul_apply,fst_eq,snd_eq}.
+        $\mul[S](\mul[S](p,q),r)=
+            (\mul[N](\mul[N](n,b),
+                \apply{a(\mul[H](h,k))}{l}),
+             \mul[H](\mul[H](h,k),u))$ by
+            \auto{semidirect_product_mul_apply,fst_eq,snd_eq}.
+        $\apply{a(h)}{\mul[N](m,c)}=
+            \mul[N](b,\apply{a(h)}{c})$ by
+            \auto{semidirect_action_preserves_mul}.
+        $\apply{a(h)}{c}=
+            \apply{a(h)}{\apply{a(k)}{l}}$.
+        $\apply{a(\mul[H](h,k))}{l}=
+            \apply{a(h)}{\apply{a(k)}{l}}$ by
+            \obv{semidirect_action_mul}.
+        $\apply{a(h)}{c},
+            \apply{a(h)}{\apply{a(k)}{l}},
+            \apply{a(\mul[H](h,k))}{l}\in\carrier[N]$ by
+            \obv{semidirect_action_value_type,
+                group_is_monoid,monoid_is_magma,magma_welldef}.
+        Hence $\mul[N](n,\apply{a(h)}{\mul[N](m,c)})=
+            \mul[N](n,
+                \mul[N](b,\apply{a(h)}{c}))$.
+        $\mul[N](n,\mul[N](b,\apply{a(h)}{c}))=
+            \mul[N](\mul[N](n,b),\apply{a(h)}{c})$ by
+            \obv{group_is_monoid,monoid_assoc}.
+        Hence
+            $\mul[N](n,\apply{a(h)}{\mul[N](m,c)})=
+                \mul[N](\mul[N](n,b),
+                    \apply{a(\mul[H](h,k))}{l})$.
+        $\mul[H](h,\mul[H](k,u))=
+            \mul[H](\mul[H](h,k),u)$ by
+            \obv{group_is_monoid,monoid_assoc}.
+    \end{subproof}
+    Show that for every $p\in C$ we have
+        $\mul[S](p,\groupInv[S](p))=\neutral[S]$.
+    \begin{subproof}
+        Fix $p\in C$.
+        Let $n=\fst{p}$ and $h=\snd{p}$.
+        Let $v=\groupInv[N](n)$ and $k=\groupInv[H](h)$.
+        $n\in\carrier[N]$ and $h\in\carrier[H]$ by
+            \auto{fst_type,snd_type}.
+        $v\in\carrier[N]$ and $k\in\carrier[H]$ by
+            \auto{group_inverse_type}.
+        Let $w=\apply{a(k)}{v}$.
+        $w\in\carrier[N]$ by \auto{semidirect_action_value_type}.
+        $\groupInv[S](p)=(w,k)$ by
+            \auto{semidirect_product_inv_apply}.
+        Hence $\groupInv[S](p)\in C$ by \auto{times}.
+        $\mul[S](p,\groupInv[S](p))=
+            (\mul[N](n,\apply{a(h)}{w}),
+             \mul[H](h,k))$ by
+            \auto{semidirect_product_mul_apply,fst_eq,snd_eq}.
+        $\apply{a(h)}{w}=
+            \apply{a(\mul[H](h,k))}{v}$ by
+            \auto{semidirect_action_mul}.
+        $\mul[H](h,k)=\neutral[H]$ by
+            \auto{group_inverse_right}.
+        Hence $\apply{a(h)}{w}=v$ by
+            \auto{semidirect_action_neutral}.
+        Hence $\mul[N](n,\apply{a(h)}{w})=\neutral[N]$ by
+            \auto{group_inverse_right}.
+    \end{subproof}
+    Show that for every $p\in C$ we have
+        $\mul[S](\groupInv[S](p),p)=\neutral[S]$.
+    \begin{subproof}
+        Fix $p\in C$.
+        Let $n=\fst{p}$ and $h=\snd{p}$.
+        Let $v=\groupInv[N](n)$ and $k=\groupInv[H](h)$.
+        $n\in\carrier[N]$ and $h\in\carrier[H]$ by
+            \auto{fst_type,snd_type}.
+        $v\in\carrier[N]$ and $k\in\carrier[H]$ by
+            \auto{group_inverse_type}.
+        Let $w=\apply{a(k)}{v}$.
+        $w\in\carrier[N]$ by \auto{semidirect_action_value_type}.
+        $\groupInv[S](p)=(w,k)$ by
+            \auto{semidirect_product_inv_apply}.
+        Hence $\groupInv[S](p)\in C$ by \auto{times}.
+        $\mul[S](\groupInv[S](p),p)=
+            (\mul[N](w,\apply{a(k)}{n}),
+             \mul[H](k,h))$ by
+            \auto{semidirect_product_mul_apply,fst_eq,snd_eq}.
+        $\apply{a(k)}{v}=\groupInv[N](\apply{a(k)}{n})$ by
+            \auto{semidirect_action_preserves_inverse}.
+        Hence $w=\groupInv[N](\apply{a(k)}{n})$.
+        $\apply{a(k)}{n}\in\carrier[N]$ by
+            \obv{semidirect_action_value_type}.
+        Hence $\mul[N](w,\apply{a(k)}{n})=\neutral[N]$ by
+            \auto{group_inverse_left}.
+        $\mul[H](k,h)=\neutral[H]$ by
+            \auto{group_inverse_left}.
+    \end{subproof}
+    Hence $S$ is a group by
+        \auto{group,semidirect_product,groupaggregateexact,
+            groupaggregateprojection_carrier,groupaggregateprojection_mul,
+            groupaggregateprojection_neutral,groupaggregateprojection_groupInv}.
+    Follows by \auto{semidirect_product,groupaggregateexact}.
+\end{proof}
+
+\begin{corollary}\label{semidirect_product_is_group}
+    Let $N$ be a group.
+    Let $H$ be a group.
+    Suppose $\groupHom{a}{H}{\automorphismGroup{N}}$.
+    Then $\SemidirectProduct{N}{H}{a}$ is a group.
+\end{corollary}
+\begin{proof}
+    Follows by \obv{semidirect_product_is_exact_group}.
+\end{proof}
+
+\subsection{The canonical maps}
+
+\begin{definition}\label{semidirect_left_inclusion_op}
+    $\semidirectLeftInclusionOp:\Set\to\Set\to\Set
+        =\fun{H,n:\Set}{(n,\neutral[H])}$.
+\end{definition}
+
+\begin{definition}\label{semidirect_right_inclusion_op}
+    $\semidirectRightInclusionOp:\Set\to\Set\to\Set
+        =\fun{N,h:\Set}{(\neutral[N],h)}$.
+\end{definition}
+
+\begin{definition}\label{semidirect_projection_op}
+    $\semidirectProjectionOp:\Set\to\Set
+        =\fun{p:\Set}{\snd{p}}$.
+\end{definition}
+
+\begin{definition}\label{semidirect_left_inclusion}
+    $\semidirectLeftInclusion{N}{H}{a}=
+        \Apply{\graphOnOp}
+            {\carrier[N],\carrier[\SemidirectProduct{N}{H}{a}],
+             \Apply{\semidirectLeftInclusionOp}{H}}$.
+\end{definition}
+
+\begin{definition}\label{semidirect_right_inclusion}
+    $\semidirectRightInclusion{N}{H}{a}=
+        \Apply{\graphOnOp}
+            {\carrier[H],\carrier[\SemidirectProduct{N}{H}{a}],
+             \Apply{\semidirectRightInclusionOp}{N}}$.
+\end{definition}
+
+\begin{definition}\label{semidirect_projection}
+    $\semidirectProjection{N}{H}{a}=
+        \Apply{\graphOnOp}
+            {\carrier[\SemidirectProduct{N}{H}{a}],\carrier[H],
+             \semidirectProjectionOp}$.
+\end{definition}
+
+\begin{proposition}\label{semidirect_left_inclusion_type}
+    Let $N$ be a group.
+    Let $H$ be a group.
+    Suppose $\groupHom{a}{H}{\automorphismGroup{N}}$.
+    Then $\semidirectLeftInclusion{N}{H}{a}\in
+        \funs{\carrier[N]}{\carrier[\SemidirectProduct{N}{H}{a}]}$.
+\end{proposition}
+\begin{proof}
+    $\carrier[\SemidirectProduct{N}{H}{a}]=
+        \carrier[N]\times\carrier[H]$ by
+        \auto{semidirect_product_fields}.
+    $\neutral[H]\in\carrier[H]$ by
+        \obv{group_is_monoid,monoid_is_unital_magma,unitalmagma_type}.
+    For every $n\in\carrier[N]$ we have
+        $\Apply{\semidirectLeftInclusionOp}{H,n}\in
+            \carrier[\SemidirectProduct{N}{H}{a}]$ by
+        \auto{semidirect_left_inclusion_op,times}.
+    Follows by
+        \auto{semidirect_left_inclusion,logical_graph_on_function}.
+\end{proof}
+
+\begin{proposition}\label{semidirect_left_inclusion_apply}
+    Let $N$ be a group.
+    Let $H$ be a group.
+    Suppose $\groupHom{a}{H}{\automorphismGroup{N}}$.
+    Let $n\in\carrier[N]$.
+    Then $\apply{\semidirectLeftInclusion{N}{H}{a}}{n}=
+        (n,\neutral[H])$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{semidirect_left_inclusion,semidirect_left_inclusion_op,
+            logical_graph_on_apply}.
+\end{proof}
+
+\begin{proposition}\label{semidirect_right_inclusion_type}
+    Let $N$ be a group.
+    Let $H$ be a group.
+    Suppose $\groupHom{a}{H}{\automorphismGroup{N}}$.
+    Then $\semidirectRightInclusion{N}{H}{a}\in
+        \funs{\carrier[H]}{\carrier[\SemidirectProduct{N}{H}{a}]}$.
+\end{proposition}
+\begin{proof}
+    $\carrier[\SemidirectProduct{N}{H}{a}]=
+        \carrier[N]\times\carrier[H]$ by
+        \auto{semidirect_product_fields}.
+    $\neutral[N]\in\carrier[N]$ by
+        \obv{group_is_monoid,monoid_is_unital_magma,unitalmagma_type}.
+    For every $h\in\carrier[H]$ we have
+        $\Apply{\semidirectRightInclusionOp}{N,h}\in
+            \carrier[\SemidirectProduct{N}{H}{a}]$ by
+        \auto{semidirect_right_inclusion_op,times}.
+    Follows by
+        \auto{semidirect_right_inclusion,logical_graph_on_function}.
+\end{proof}
+
+\begin{proposition}\label{semidirect_right_inclusion_apply}
+    Let $N$ be a group.
+    Let $H$ be a group.
+    Suppose $\groupHom{a}{H}{\automorphismGroup{N}}$.
+    Let $h\in\carrier[H]$.
+    Then $\apply{\semidirectRightInclusion{N}{H}{a}}{h}=
+        (\neutral[N],h)$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{semidirect_right_inclusion,semidirect_right_inclusion_op,
+            logical_graph_on_apply}.
+\end{proof}
+
+\begin{proposition}\label{semidirect_projection_type}
+    Let $N$ be a group.
+    Let $H$ be a group.
+    Suppose $\groupHom{a}{H}{\automorphismGroup{N}}$.
+    Then $\semidirectProjection{N}{H}{a}\in
+        \funs{\carrier[\SemidirectProduct{N}{H}{a}]}{\carrier[H]}$.
+\end{proposition}
+\begin{proof}
+    $\carrier[\SemidirectProduct{N}{H}{a}]=
+        \carrier[N]\times\carrier[H]$ by
+        \auto{semidirect_product_fields}.
+    For every $p\in\carrier[\SemidirectProduct{N}{H}{a}]$ we have
+        $\Apply{\semidirectProjectionOp}{p}\in\carrier[H]$ by
+        \auto{semidirect_projection_op,snd_type}.
+    Follows by
+        \auto{semidirect_projection,logical_graph_on_function}.
+\end{proof}
+
+\begin{proposition}\label{semidirect_projection_apply}
+    Let $N$ be a group.
+    Let $H$ be a group.
+    Suppose $\groupHom{a}{H}{\automorphismGroup{N}}$.
+    Let $p\in\carrier[\SemidirectProduct{N}{H}{a}]$.
+    Then $\apply{\semidirectProjection{N}{H}{a}}{p}=\snd{p}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{semidirect_projection,semidirect_projection_op,
+            logical_graph_on_apply}.
+\end{proof}
+
+\begin{theorem}\label{semidirect_left_inclusion_hom}
+    Let $N$ be a group.
+    Let $H$ be a group.
+    Suppose $\groupHom{a}{H}{\automorphismGroup{N}}$.
+    Then
+        $\groupHom{\semidirectLeftInclusion{N}{H}{a}}
+            {N}{\SemidirectProduct{N}{H}{a}}$.
+\end{theorem}
+\begin{proof}
+    Let $S=\SemidirectProduct{N}{H}{a}$ and
+        $i=\semidirectLeftInclusion{N}{H}{a}$.
+    $S$ is a group by \obv{semidirect_product_is_group}.
+    $i\in\funs{\carrier[N]}{\carrier[S]}$ by
+        \auto{semidirect_left_inclusion_type}.
+    Show that for all $n,m\in\carrier[N]$ we have
+        $i(\mul[N](n,m))=\mul[S](i(n),i(m))$.
+    \begin{subproof}
+        Fix $n,m\in\carrier[N]$.
+        $\mul[N](n,m)\in\carrier[N]$ by
+            \obv{group_is_monoid,monoid_is_magma,magma_welldef}.
+        $i(n)=(n,\neutral[H])$ and
+            $i(m)=(m,\neutral[H])$ and
+            $i(\mul[N](n,m))=(\mul[N](n,m),\neutral[H])$ by
+            \auto{semidirect_left_inclusion_apply}.
+        $i(n),i(m)\in\carrier[S]$ by
+            \obv{funs_type_apply}.
+        $\mul[S](i(n),i(m))=
+            (\mul[N](n,\apply{a(\neutral[H])}{m}),
+             \mul[H](\neutral[H],\neutral[H]))$ by
+            \auto{semidirect_product_mul_apply,fst_eq,snd_eq,
+                semidirect_product_fields}.
+        $\apply{a(\neutral[H])}{m}=m$ by
+            \obv{semidirect_action_neutral}.
+        $\neutral[H]\in\carrier[H]$ by
+            \obv{group_is_monoid,monoid_is_unital_magma,
+                unitalmagma_type}.
+        $\mul[H](\neutral[H],\neutral[H])=\neutral[H]$ by
+            \obv{group_is_monoid,monoid_is_unital_magma,
+                unitalmagma_left}.
+    \end{subproof}
+    Follows by \auto{group_hom}.
+\end{proof}
+
+\begin{theorem}\label{semidirect_right_inclusion_hom}
+    Let $N$ be a group.
+    Let $H$ be a group.
+    Suppose $\groupHom{a}{H}{\automorphismGroup{N}}$.
+    Then
+        $\groupHom{\semidirectRightInclusion{N}{H}{a}}
+            {H}{\SemidirectProduct{N}{H}{a}}$.
+\end{theorem}
+\begin{proof}
+    Let $S=\SemidirectProduct{N}{H}{a}$ and
+        $j=\semidirectRightInclusion{N}{H}{a}$.
+    $S$ is a group by \obv{semidirect_product_is_group}.
+    $j\in\funs{\carrier[H]}{\carrier[S]}$ by
+        \auto{semidirect_right_inclusion_type}.
+    Show that for all $h,k\in\carrier[H]$ we have
+        $j(\mul[H](h,k))=\mul[S](j(h),j(k))$.
+    \begin{subproof}
+        Fix $h,k\in\carrier[H]$.
+        $\mul[H](h,k)\in\carrier[H]$ by
+            \obv{group_is_monoid,monoid_is_magma,magma_welldef}.
+        $j(h)=(\neutral[N],h)$ and
+            $j(k)=(\neutral[N],k)$ and
+            $j(\mul[H](h,k))=(\neutral[N],\mul[H](h,k))$ by
+            \auto{semidirect_right_inclusion_apply}.
+        $j(h),j(k)\in\carrier[S]$ by
+            \obv{funs_type_apply}.
+        $\mul[S](j(h),j(k))=
+            (\mul[N](\neutral[N],
+                \apply{a(h)}{\neutral[N]}),
+             \mul[H](h,k))$ by
+            \auto{semidirect_product_mul_apply,fst_eq,snd_eq,
+                semidirect_product_fields}.
+        $\apply{a(h)}{\neutral[N]}=\neutral[N]$ by
+            \obv{semidirect_action_preserves_neutral}.
+        $\neutral[N]\in\carrier[N]$ by
+            \obv{group_is_monoid,monoid_is_unital_magma,
+                unitalmagma_type}.
+        $\mul[N](\neutral[N],\neutral[N])=\neutral[N]$ by
+            \obv{group_is_monoid,monoid_is_unital_magma,
+                unitalmagma_left}.
+    \end{subproof}
+    Follows by \auto{group_hom}.
+\end{proof}
+
+\begin{theorem}\label{semidirect_projection_hom}
+    Let $N$ be a group.
+    Let $H$ be a group.
+    Suppose $\groupHom{a}{H}{\automorphismGroup{N}}$.
+    Then
+        $\groupHom{\semidirectProjection{N}{H}{a}}
+            {\SemidirectProduct{N}{H}{a}}{H}$.
+\end{theorem}
+\begin{proof}
+    Let $S=\SemidirectProduct{N}{H}{a}$ and
+        $p=\semidirectProjection{N}{H}{a}$.
+    $S$ is a group by \obv{semidirect_product_is_group}.
+    $p\in\funs{\carrier[S]}{\carrier[H]}$ by
+        \auto{semidirect_projection_type}.
+    Show that for all $x,y\in\carrier[S]$ we have
+        $p(\mul[S](x,y))=\mul[H](p(x),p(y))$.
+    \begin{subproof}
+        Fix $x,y\in\carrier[S]$.
+        $\carrier[S]=\carrier[N]\times\carrier[H]$ by
+            \auto{semidirect_product_fields}.
+        Hence $x,y\in\carrier[N]\times\carrier[H]$.
+        $\mul[S](x,y)\in\carrier[S]$ by
+            \obv{group_is_monoid,monoid_is_magma,magma_welldef}.
+        $p(x)=\snd{x}$ and $p(y)=\snd{y}$ by
+            \auto{semidirect_projection_apply}.
+        $\mul[S](x,y)=
+            (\mul[N](\fst{x},\apply{a(\snd{x})}{\fst{y}}),
+             \mul[H](\snd{x},\snd{y}))$ by
+            \auto{semidirect_product_mul_apply}.
+        Hence $\snd{\mul[S](x,y)}=\mul[H](\snd{x},\snd{y})$ by
+            \auto{snd_eq}.
+        $p(\mul[S](x,y))=\snd{\mul[S](x,y)}$ by
+            \auto{semidirect_projection_apply}.
+    \end{subproof}
+    Follows by \auto{group_hom}.
+\end{proof}
+
+\begin{theorem}\label{semidirect_right_inclusion_section}
+    Let $N$ be a group.
+    Let $H$ be a group.
+    Suppose $\groupHom{a}{H}{\automorphismGroup{N}}$.
+    Then
+        $\semidirectProjection{N}{H}{a}\circ
+            \semidirectRightInclusion{N}{H}{a}
+        =\identity{\carrier[H]}$.
+\end{theorem}
+\begin{proof}
+    Let $p=\semidirectProjection{N}{H}{a}$ and
+        $j=\semidirectRightInclusion{N}{H}{a}$.
+    $p\in\funs{\carrier[\SemidirectProduct{N}{H}{a}]}{\carrier[H]}$ by
+        \auto{semidirect_projection_type}.
+    $j\in\funs{\carrier[H]}{\carrier[\SemidirectProduct{N}{H}{a}]}$ by
+        \auto{semidirect_right_inclusion_type}.
+    Hence $p\circ j\in\funs{\carrier[H]}{\carrier[H]}$ by
+        \obv{funs_circ}.
+    $p$ and $j$ are functions and $\dom{j}=\carrier[H]$ and
+        $\ran{j}\subseteq\carrier[\SemidirectProduct{N}{H}{a}]
+            =\dom{p}$ by \auto{funs_elim,funs_ran}.
+    Hence $p$ is composable with $j$.
+    $\identity{\carrier[H]}\in\funs{\carrier[H]}{\carrier[H]}$ by
+        \obv{id_elem_funs}.
+    Show that for every $h\in\carrier[H]$ we have
+        $(p\circ j)(h)=(\identity{\carrier[H]})(h)$.
+    \begin{subproof}
+        Fix $h\in\carrier[H]$.
+        $j(h)=(\neutral[N],h)$ by
+            \auto{semidirect_right_inclusion_apply}.
+        $j(h)\in\carrier[\SemidirectProduct{N}{H}{a}]$ by
+            \obv{funs_type_apply}.
+        $(p\circ j)(h)=p(j(h))$ by \auto{circ_apply}.
+        Hence $(p\circ j)(h)=h$ by
+            \auto{semidirect_projection_apply,snd_eq}.
+        Follows by \obv{id_apply}.
+    \end{subproof}
+    $p\circ j$ and $\identity{\carrier[H]}$ are functions and
+        $\dom{p\circ j}=\carrier[H]
+            =\dom{\identity{\carrier[H]}}$ by \auto{funs_elim}.
+    Follows by \auto{funext_on_domain}.
+\end{proof}
+
+\begin{theorem}\label{semidirect_left_image_is_projection_kernel}
+    Let $N$ be a group.
+    Let $H$ be a group.
+    Suppose $\groupHom{a}{H}{\automorphismGroup{N}}$.
+    Let $S=\SemidirectProduct{N}{H}{a}$.
+    Then
+        $\img{\semidirectLeftInclusion{N}{H}{a}}{\carrier[N]}=
+            \groupKernel{\semidirectProjection{N}{H}{a}}{S}$.
+\end{theorem}
+\begin{proof}
+    Let $i=\semidirectLeftInclusion{N}{H}{a}$ and
+        $p=\semidirectProjection{N}{H}{a}$.
+    Let $K=\groupKernel{p}{S}$.
+    $\groupHom{i}{N}{S}$ by \auto{semidirect_left_inclusion_hom}.
+    $\groupHom{p}{S}{H}$ by \auto{semidirect_projection_hom}.
+    Show that $\img{i}{\carrier[N]}\subseteq K$.
+    \begin{subproof}
+        Show that for every $x\in\img{i}{\carrier[N]}$ we have $x\in K$.
+        \begin{subproof}
+            Fix $x\in\img{i}{\carrier[N]}$.
+            Take $n\in\carrier[N]$ such that $i(n)=x$ by
+                \auto{group_hom_image_iff,subseteq_refl}.
+            $i(n)=(n,\neutral[H])$ by
+                \auto{semidirect_left_inclusion_apply}.
+            Hence $x=(n,\neutral[H])$.
+            $x\in\carrier[S]$ by \auto{group_hom_apply_type}.
+            $p(x)=\snd{x}$ by \auto{semidirect_projection_apply}.
+            Hence $p(x)=\neutral[H]$ by \auto{snd_eq}.
+            Follows by \auto{group_kernel_iff}.
+        \end{subproof}
+        Follows by \obv{subseteq}.
+    \end{subproof}
+    Show that $K\subseteq\img{i}{\carrier[N]}$.
+    \begin{subproof}
+        Show that for every $x\in K$ we have
+            $x\in\img{i}{\carrier[N]}$.
+        \begin{subproof}
+            Fix $x\in K$.
+            Hence $x\in\carrier[S]$ and $p(x)=\neutral[H]$ by
+                \auto{group_kernel_iff}.
+            $\carrier[S]=\carrier[N]\times\carrier[H]$ by
+                \auto{semidirect_product_fields}.
+            Hence $\fst{x}\in\carrier[N]$ and
+                $\snd{x}\in\carrier[H]$ by
+                \auto{fst_type,snd_type}.
+            $p(x)=\snd{x}$ by \auto{semidirect_projection_apply}.
+            Hence $\snd{x}=\neutral[H]$.
+            $x=(\fst{x},\snd{x})$ by
+                \auto{times_elem_is_tuple,pair_eq_pair_of_proj}.
+            Hence $x=(\fst{x},\neutral[H])$.
+            $i(\fst{x})=(\fst{x},\neutral[H])$ by
+                \auto{semidirect_left_inclusion_apply}.
+            Hence $i(\fst{x})=x$.
+            Follows by
+                \auto{group_hom_image_iff,subseteq_refl}.
+        \end{subproof}
+        Follows by \obv{subseteq}.
+    \end{subproof}
+    Follows by \auto{subseteq_antisymmetric}.
+\end{proof}
+
+\begin{corollary}\label{semidirect_left_image_normal}
+    Let $N$ be a group.
+    Let $H$ be a group.
+    Suppose $\groupHom{a}{H}{\automorphismGroup{N}}$.
+    Let $S=\SemidirectProduct{N}{H}{a}$.
+    Then
+        $\normalSubgroup{
+            \img{\semidirectLeftInclusion{N}{H}{a}}{\carrier[N]}}{S}$.
+\end{corollary}
+\begin{proof}
+    Let $p=\semidirectProjection{N}{H}{a}$.
+    $\groupHom{p}{S}{H}$ by \auto{semidirect_projection_hom}.
+    Hence $\normalSubgroup{\groupKernel{p}{S}}{S}$ by
+        \obv{group_kernel_normal_subgroup}.
+    Follows by \auto{semidirect_left_image_is_projection_kernel}.
+\end{proof}
+
+\begin{theorem}\label{semidirect_inclusions_conjugation}
+    Let $N$ be a group.
+    Let $H$ be a group.
+    Suppose $\groupHom{a}{H}{\automorphismGroup{N}}$.
+    Let $S=\SemidirectProduct{N}{H}{a}$.
+    Let $n\in\carrier[N]$ and $h\in\carrier[H]$.
+    Then
+        $\conjugate{S}
+            {\apply{\semidirectRightInclusion{N}{H}{a}}{h}}
+            {\apply{\semidirectLeftInclusion{N}{H}{a}}{n}}=
+        \apply{\semidirectLeftInclusion{N}{H}{a}}
+            {\apply{a(h)}{n}}$.
+\end{theorem}
+\begin{proof}
+    Let $i=\semidirectLeftInclusion{N}{H}{a}$ and
+        $j=\semidirectRightInclusion{N}{H}{a}$.
+    $S$ is a group by \obv{semidirect_product_is_group}.
+    $i(n)=(n,\neutral[H])$ and
+        $j(h)=(\neutral[N],h)$ by
+        \auto{semidirect_left_inclusion_apply,
+            semidirect_right_inclusion_apply}.
+    $i(n),j(h)\in\carrier[S]$ by
+        \auto{semidirect_left_inclusion_type,
+            semidirect_right_inclusion_type,funs_type_apply}.
+    $\carrier[S]=\carrier[N]\times\carrier[H]$ by
+        \auto{semidirect_product_fields}.
+    Hence $i(n),j(h)\in\carrier[N]\times\carrier[H]$.
+    $\apply{a(h)}{n}\in\carrier[N]$ by
+        \obv{semidirect_action_value_type}.
+    $\neutral[N]\in\carrier[N]$ and $\neutral[H]\in\carrier[H]$ by
+        \obv{group_is_monoid,monoid_is_unital_magma,unitalmagma_type}.
+    $\mul[S](j(h),i(n))=
+        (\mul[N](\neutral[N],\apply{a(h)}{n}),
+         \mul[H](h,\neutral[H]))$ by
+        \auto{semidirect_product_mul_apply,fst_eq,snd_eq}.
+    $\mul[N](\neutral[N],\apply{a(h)}{n})=\apply{a(h)}{n}$ and
+        $\mul[H](h,\neutral[H])=h$ by
+        \obv{group_is_monoid,monoid_is_unital_magma,
+            unitalmagma_left,unitalmagma_right}.
+    Hence $\mul[S](j(h),i(n))=(\apply{a(h)}{n},h)$.
+    Let $k=\groupInv[H](h)$.
+    $k\in\carrier[H]$ by \auto{group_inverse_type}.
+    $\groupInv[S](j(h))=
+        (\apply{a(k)}{\groupInv[N](\neutral[N])},k)$ by
+        \auto{semidirect_product_inv_apply,fst_eq,snd_eq,
+            semidirect_product_fields}.
+    $\groupInv[N](\neutral[N])=\neutral[N]$ by
+        \obv{group_inverse_neutral}.
+    $\apply{a(k)}{\neutral[N]}=\neutral[N]$ by
+        \obv{semidirect_action_preserves_neutral}.
+    Hence $\groupInv[S](j(h))=(\neutral[N],k)$.
+    $\groupInv[S](j(h))\in\carrier[S]$ by
+        \obv{group_inverse_type}.
+    $\mul[S](j(h),i(n))\in\carrier[S]$ by
+        \obv{group_is_monoid,monoid_is_magma,magma_welldef}.
+    Hence $\mul[S](j(h),i(n)),\groupInv[S](j(h))\in
+        \carrier[N]\times\carrier[H]$.
+    $\mul[S](\mul[S](j(h),i(n)),\groupInv[S](j(h)))=
+        (\mul[N](\apply{a(h)}{n},
+            \apply{a(h)}{\neutral[N]}),
+         \mul[H](h,k))$ by
+        \auto{semidirect_product_mul_apply,fst_eq,snd_eq,
+            semidirect_product_fields}.
+    $\apply{a(h)}{\neutral[N]}=\neutral[N]$ by
+        \obv{semidirect_action_preserves_neutral}.
+    $\mul[N](\apply{a(h)}{n},\neutral[N])=\apply{a(h)}{n}$ by
+        \obv{group_is_monoid,monoid_is_unital_magma,
+            unitalmagma_right,semidirect_action_value_type}.
+    $\mul[H](h,k)=\neutral[H]$ by \auto{group_inverse_right}.
+    Hence
+        $\mul[S](\mul[S](j(h),i(n)),\groupInv[S](j(h)))=
+            (\apply{a(h)}{n},\neutral[H])$.
+    $i(\apply{a(h)}{n})=(\apply{a(h)}{n},\neutral[H])$ by
+        \auto{semidirect_left_inclusion_apply}.
+    Follows by \auto{group_conjugate}.
+\end{proof}
+
+\subsection{The trivial action and the binary product}
+
+The binary product uses functions on the von Neumann ordinal (2), whereas
+the external semidirect product uses ordinary pairs.  The following maps make
+that representation change explicit.
+
+\begin{definition}\label{semidirect_trivial_action_op}
+    $\semidirectTrivialActionOp:\Set\to\Set\to\Set
+        =\fun{N,h:\Set}{\identity{\carrier[N]}}$.
+\end{definition}
+
+\begin{definition}\label{semidirect_trivial_action}
+    $\semidirectTrivialAction{N}{H}=
+        \Apply{\graphOnOp}
+            {\carrier[H],\automorphismSet{N},
+             \Apply{\semidirectTrivialActionOp}{N}}$.
+\end{definition}
+
+\begin{proposition}\label{semidirect_trivial_action_type}
+    Let $N$ be a group.
+    Let $H$ be a group.
+    Then $\semidirectTrivialAction{N}{H}\in
+        \funs{\carrier[H]}{\automorphismSet{N}}$.
+\end{proposition}
+\begin{proof}
+    $\identity{\carrier[N]}\in\automorphismSet{N}$ by
+        \obv{automorphism_identity_closed}.
+    For every $h\in\carrier[H]$ we have
+        $\Apply{\semidirectTrivialActionOp}{N,h}\in
+            \automorphismSet{N}$ by
+        \auto{semidirect_trivial_action_op}.
+    Follows by
+        \auto{semidirect_trivial_action,logical_graph_on_function}.
+\end{proof}
+
+\begin{proposition}\label{semidirect_trivial_action_apply}
+    Let $N$ be a group.
+    Let $H$ be a group.
+    Let $h\in\carrier[H]$.
+    Then
+        $\apply{\semidirectTrivialAction{N}{H}}{h}=
+            \identity{\carrier[N]}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{semidirect_trivial_action,semidirect_trivial_action_op,
+            logical_graph_on_apply}.
+\end{proof}
+
+\begin{theorem}\label{semidirect_trivial_action_hom}
+    Let $N$ be a group.
+    Let $H$ be a group.
+    Then
+        $\groupHom{\semidirectTrivialAction{N}{H}}
+            {H}{\automorphismGroup{N}}$.
+\end{theorem}
+\begin{proof}
+    Let $t=\semidirectTrivialAction{N}{H}$.
+    $\automorphismGroup{N}$ is a group by
+        \obv{automorphism_group_is_group}.
+    $\carrier[\automorphismGroup{N}]=\automorphismSet{N}$ by
+        \obv{automorphism_group_carrier}.
+    Hence $t\in\funs{\carrier[H]}
+        {\carrier[\automorphismGroup{N}]}$ by
+        \auto{semidirect_trivial_action_type}.
+    Show that for all $h,k\in\carrier[H]$ we have
+        $t(\mul[H](h,k))=
+            \mul[\automorphismGroup{N}](t(h),t(k))$.
+    \begin{subproof}
+        Fix $h,k\in\carrier[H]$.
+        $\mul[H](h,k)\in\carrier[H]$ by
+            \obv{group_is_monoid,monoid_is_magma,magma_welldef}.
+        $t(h)=\identity{\carrier[N]}$ and
+            $t(k)=\identity{\carrier[N]}$ and
+            $t(\mul[H](h,k))=\identity{\carrier[N]}$ by
+            \auto{semidirect_trivial_action_apply}.
+        $\identity{\carrier[N]}\in\automorphismSet{N}$ by
+            \obv{automorphism_identity_closed}.
+        $\mul[\automorphismGroup{N}](t(h),t(k))=t(h)\circ t(k)$ by
+            \auto{automorphism_group_mul_apply}.
+        $\identity{\carrier[N]}\circ\identity{\carrier[N]}=
+            \identity{\carrier[N]}$ by
+            \auto{id_elem_funs,funs_identity_circ_left}.
+    \end{subproof}
+    Follows by \auto{group_hom}.
+\end{proof}
+
+\begin{definition}\label{semidirect_first_projection_op}
+    $\semidirectFirstProjectionOp:\Set\to\Set
+        =\fun{p:\Set}{\fst{p}}$.
+\end{definition}
+
+\begin{definition}\label{semidirect_comparison_left_projection}
+    $\semidirectComparisonLeftProjection{N}{H}=
+        \Apply{\graphOnOp}
+            {\carrier[N]\times\carrier[H],\carrier[N],
+             \semidirectFirstProjectionOp}$.
+\end{definition}
+
+\begin{definition}\label{semidirect_comparison_right_projection}
+    $\semidirectComparisonRightProjection{N}{H}=
+        \Apply{\graphOnOp}
+            {\carrier[N]\times\carrier[H],\carrier[H],
+             \semidirectProjectionOp}$.
+\end{definition}
+
+\begin{proposition}\label{semidirect_comparison_left_projection_type}
+    $\semidirectComparisonLeftProjection{N}{H}\in
+        \funs{\carrier[N]\times\carrier[H]}{\carrier[N]}$.
+\end{proposition}
+\begin{proof}
+    For every $p\in\carrier[N]\times\carrier[H]$ we have
+        $\Apply{\semidirectFirstProjectionOp}{p}\in\carrier[N]$ by
+        \auto{semidirect_first_projection_op,fst_type}.
+    Follows by
+        \auto{semidirect_comparison_left_projection,
+            logical_graph_on_function}.
+\end{proof}
+
+\begin{proposition}\label{semidirect_comparison_left_projection_apply}
+    Let $p\in\carrier[N]\times\carrier[H]$.
+    Then $\apply{\semidirectComparisonLeftProjection{N}{H}}{p}=
+        \fst{p}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{semidirect_comparison_left_projection,
+            semidirect_first_projection_op,logical_graph_on_apply}.
+\end{proof}
+
+\begin{proposition}\label{semidirect_comparison_right_projection_type}
+    $\semidirectComparisonRightProjection{N}{H}\in
+        \funs{\carrier[N]\times\carrier[H]}{\carrier[H]}$.
+\end{proposition}
+\begin{proof}
+    For every $p\in\carrier[N]\times\carrier[H]$ we have
+        $\Apply{\semidirectProjectionOp}{p}\in\carrier[H]$ by
+        \auto{semidirect_projection_op,snd_type}.
+    Follows by
+        \auto{semidirect_comparison_right_projection,
+            logical_graph_on_function}.
+\end{proof}
+
+\begin{proposition}\label{semidirect_comparison_right_projection_apply}
+    Let $p\in\carrier[N]\times\carrier[H]$.
+    Then $\apply{\semidirectComparisonRightProjection{N}{H}}{p}=
+        \snd{p}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{semidirect_comparison_right_projection,
+            semidirect_projection_op,logical_graph_on_apply}.
+\end{proof}
+
+\begin{definition}\label{semidirect_comparison_projection_family}
+    $\semidirectComparisonProjectionFamily{N}{H}=
+        \binaryFamily
+            {\semidirectComparisonLeftProjection{N}{H}}
+            {\semidirectComparisonRightProjection{N}{H}}$.
+\end{definition}
+
+\begin{proposition}\label{semidirect_comparison_projection_family_type}
+    $\semidirectComparisonProjectionFamily{N}{H}$ is a function on
+        $\suc{\suc{\emptyset}}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{semidirect_comparison_projection_family,
+            binary_family_type,funs_is_function,funs}.
+\end{proof}
+
+\begin{proposition}\label{semidirect_comparison_projection_family_left}
+    $(\semidirectComparisonProjectionFamily{N}{H})(\emptyset)=
+        \semidirectComparisonLeftProjection{N}{H}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{semidirect_comparison_projection_family,binary_family_left}.
+\end{proof}
+
+\begin{proposition}\label{semidirect_comparison_projection_family_right}
+    $(\semidirectComparisonProjectionFamily{N}{H})(\suc{\emptyset})=
+        \semidirectComparisonRightProjection{N}{H}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{semidirect_comparison_projection_family,binary_family_right}.
+\end{proof}
+
+\begin{proposition}\label{semidirect_comparison_projection_family_maps}
+    Let $I=\suc{\suc{\emptyset}}$ and
+        $A=\binaryFamily{\carrier[N]}{\carrier[H]}$.
+    Let $r=\semidirectComparisonProjectionFamily{N}{H}$.
+    Then for every $i\in I$ we have
+        $r(i)\in\funs{\carrier[N]\times\carrier[H]}{A(i)}$.
+\end{proposition}
+\begin{proof}
+    Fix $i\in I$.
+    $i=\emptyset$ or $i=\suc{\emptyset}$ by
+        \auto{suc_elim,emptyset}.
+    Follows by
+        \auto{semidirect_comparison_projection_family_left,
+            semidirect_comparison_projection_family_right,
+            semidirect_comparison_left_projection_type,
+            semidirect_comparison_right_projection_type,
+            binary_family_left,binary_family_right}.
+\end{proof}
+
+\begin{definition}\label{semidirect_product_comparison}
+    $\semidirectProductComparison{N}{H}=
+        \dependentMediator
+            {\carrier[N]\times\carrier[H]}
+            {\suc{\suc{\emptyset}}}
+            {\binaryFamily{\carrier[N]}{\carrier[H]}}
+            {\semidirectComparisonProjectionFamily{N}{H}}$.
+\end{definition}
+
+\begin{proposition}\label{semidirect_product_comparison_type}
+    $\semidirectProductComparison{N}{H}\in
+        \funs{\carrier[N]\times\carrier[H]}
+            {\dependentProduct
+                {\suc{\suc{\emptyset}}}
+                {\binaryFamily{\carrier[N]}{\carrier[H]}}}$.
+\end{proposition}
+\begin{proof}
+    Let $I=\suc{\suc{\emptyset}}$ and
+        $A=\binaryFamily{\carrier[N]}{\carrier[H]}$.
+    Let $r=\semidirectComparisonProjectionFamily{N}{H}$.
+    $A$ is a function on $I$ by
+        \auto{binary_family_type,funs_is_function,funs}.
+    $r$ is a function on $I$ by
+        \auto{semidirect_comparison_projection_family_type}.
+    For every $i\in I$ we have
+        $r(i)\in\funs{\carrier[N]\times\carrier[H]}{A(i)}$ by
+        \obv{semidirect_comparison_projection_family_maps}.
+    Follows by
+        \auto{semidirect_product_comparison,dependent_mediator_type}.
+\end{proof}
+
+\begin{proposition}\label{semidirect_product_comparison_left}
+    Let $p\in\carrier[N]\times\carrier[H]$.
+    Then
+        $\apply{\apply{\semidirectProductComparison{N}{H}}{p}}
+            {\emptyset}=\fst{p}$.
+\end{proposition}
+\begin{proof}
+    Let $I=\suc{\suc{\emptyset}}$ and
+        $A=\binaryFamily{\carrier[N]}{\carrier[H]}$.
+    Let $r=\semidirectComparisonProjectionFamily{N}{H}$.
+    $A$ is a function on $I$ and $r$ is a function on $I$ by
+        \auto{binary_family_type,funs_is_function,funs,
+            semidirect_comparison_projection_family_type}.
+    For every $i\in I$ we have
+        $r(i)\in\funs{\carrier[N]\times\carrier[H]}{A(i)}$ by
+        \obv{semidirect_comparison_projection_family_maps}.
+    $\emptyset\in I$ by \auto{suc_iff}.
+    $r(\emptyset)=\semidirectComparisonLeftProjection{N}{H}$ by
+        \auto{semidirect_comparison_projection_family_left}.
+    Follows by
+        \auto{semidirect_product_comparison,dependent_mediator_coordinate,
+            semidirect_comparison_left_projection_apply}.
+\end{proof}
+
+\begin{proposition}\label{semidirect_product_comparison_right}
+    Let $p\in\carrier[N]\times\carrier[H]$.
+    Then
+        $\apply{\apply{\semidirectProductComparison{N}{H}}{p}}
+            {\suc{\emptyset}}=\snd{p}$.
+\end{proposition}
+\begin{proof}
+    Let $I=\suc{\suc{\emptyset}}$ and
+        $A=\binaryFamily{\carrier[N]}{\carrier[H]}$.
+    Let $r=\semidirectComparisonProjectionFamily{N}{H}$.
+    $A$ is a function on $I$ and $r$ is a function on $I$ by
+        \auto{binary_family_type,funs_is_function,funs,
+            semidirect_comparison_projection_family_type}.
+    For every $i\in I$ we have
+        $r(i)\in\funs{\carrier[N]\times\carrier[H]}{A(i)}$ by
+        \obv{semidirect_comparison_projection_family_maps}.
+    $\suc{\emptyset}\in I$ by \auto{suc_iff}.
+    $r(\suc{\emptyset})=\semidirectComparisonRightProjection{N}{H}$ by
+        \auto{semidirect_comparison_projection_family_right}.
+    Follows by
+        \auto{semidirect_product_comparison,dependent_mediator_coordinate,
+            semidirect_comparison_right_projection_apply}.
+\end{proof}
+
+\begin{proposition}\label{semidirect_binary_carrier_family}
+    Let $I=\suc{\suc{\emptyset}}$.
+    Then
+        $\productMonoidCarrierFamily{I}{\binaryFamily{N}{H}}=
+            \binaryFamily{\carrier[N]}{\carrier[H]}$.
+\end{proposition}
+\begin{proof}
+    Let $C=\productMonoidCarrierFamily{I}{\binaryFamily{N}{H}}$ and
+        $A=\binaryFamily{\carrier[N]}{\carrier[H]}$.
+    $C$ is a function on $I$ by
+        \auto{product_monoid_carrier_family_type}.
+    $A$ is a function on $I$ by
+        \auto{binary_family_type,funs_is_function,funs}.
+    Show that for every $i\in I$ we have $C(i)=A(i)$.
+    \begin{subproof}
+        Fix $i\in I$.
+        $i=\emptyset$ or $i=\suc{\emptyset}$ by
+            \auto{suc_elim,emptyset}.
+        Follows by
+            \auto{product_monoid_carrier_family_apply,
+                binary_family_left,binary_family_right}.
+    \end{subproof}
+    Follows by \auto{funext_on_domain}.
+\end{proof}
+
+\begin{proposition}\label{semidirect_binary_product_carrier}
+    Let $N$ be a group.
+    Let $H$ be a group.
+    Then
+        $\carrier[\BinaryProductGroup{N}{H}]=
+            \dependentProduct
+                {\suc{\suc{\emptyset}}}
+                {\binaryFamily{\carrier[N]}{\carrier[H]}}$.
+\end{proposition}
+\begin{proof}
+    Let $I=\suc{\suc{\emptyset}}$ and $G=\binaryFamily{N}{H}$.
+    Let $C=\productMonoidCarrierFamily{I}{G}$ and
+        $A=\binaryFamily{\carrier[N]}{\carrier[H]}$.
+    $C=A$ by \auto{semidirect_binary_carrier_family}.
+    $\carrier[\ProductGroup{I}{G}]=\dependentProduct{I}{C}$ by
+        \auto{product_group_fields,product_monoid_fields}.
+    Follows by \auto{binary_product_group}.
+\end{proof}
+
+\begin{theorem}\label{semidirect_comparison_left_projection_hom}
+    Let $N$ be a group.
+    Let $H$ be a group.
+    Let $t=\semidirectTrivialAction{N}{H}$ and
+        $S=\SemidirectProduct{N}{H}{t}$.
+    Then $\groupHom{\semidirectComparisonLeftProjection{N}{H}}{S}{N}$.
+\end{theorem}
+\begin{proof}
+    Let $p=\semidirectComparisonLeftProjection{N}{H}$.
+    $\groupHom{t}{H}{\automorphismGroup{N}}$ by
+        \auto{semidirect_trivial_action_hom}.
+    $S$ is a group by \obv{semidirect_product_is_group}.
+    $\carrier[S]=\carrier[N]\times\carrier[H]$ by
+        \auto{semidirect_product_fields}.
+    Hence $p\in\funs{\carrier[S]}{\carrier[N]}$ by
+        \auto{semidirect_comparison_left_projection_type}.
+    Show that for all $x,y\in\carrier[S]$ we have
+        $p(\mul[S](x,y))=\mul[N](p(x),p(y))$.
+    \begin{subproof}
+        Fix $x,y\in\carrier[S]$.
+        Hence $x,y\in\carrier[N]\times\carrier[H]$.
+        $\mul[S](x,y)\in\carrier[S]$ by
+            \obv{group_is_monoid,monoid_is_magma,magma_welldef}.
+        $p(x)=\fst{x}$ and $p(y)=\fst{y}$ by
+            \auto{semidirect_comparison_left_projection_apply}.
+        $t(\snd{x})=\identity{\carrier[N]}$ by
+            \auto{snd_type,semidirect_trivial_action_apply}.
+        Hence $\apply{t(\snd{x})}{\fst{y}}=\fst{y}$ by
+            \auto{fst_type,id_apply}.
+        $\mul[S](x,y)=
+            (\mul[N](\fst{x},\apply{t(\snd{x})}{\fst{y}}),
+             \mul[H](\snd{x},\snd{y}))$ by
+            \auto{semidirect_product_mul_apply}.
+        Hence $\fst{\mul[S](x,y)}=\mul[N](\fst{x},\fst{y})$ by
+            \auto{fst_eq}.
+        $p(\mul[S](x,y))=\fst{\mul[S](x,y)}$ by
+            \auto{semidirect_comparison_left_projection_apply}.
+    \end{subproof}
+    Follows by \auto{group_hom}.
+\end{proof}
+
+\begin{proposition}\label{semidirect_comparison_right_projection_eq}
+    Let $N$ be a group.
+    Let $H$ be a group.
+    Let $t=\semidirectTrivialAction{N}{H}$.
+    Then
+        $\semidirectComparisonRightProjection{N}{H}=
+            \semidirectProjection{N}{H}{t}$.
+\end{proposition}
+\begin{proof}
+    $\carrier[\SemidirectProduct{N}{H}{t}]=
+        \carrier[N]\times\carrier[H]$ by
+        \auto{semidirect_product_fields}.
+    Follows by
+        \auto{semidirect_comparison_right_projection,
+            semidirect_projection}.
+\end{proof}
+
+\begin{theorem}\label{semidirect_comparison_right_projection_hom}
+    Let $N$ be a group.
+    Let $H$ be a group.
+    Let $t=\semidirectTrivialAction{N}{H}$ and
+        $S=\SemidirectProduct{N}{H}{t}$.
+    Then $\groupHom{\semidirectComparisonRightProjection{N}{H}}{S}{H}$.
+\end{theorem}
+\begin{proof}
+    $\groupHom{t}{H}{\automorphismGroup{N}}$ by
+        \auto{semidirect_trivial_action_hom}.
+    $\groupHom{\semidirectProjection{N}{H}{t}}{S}{H}$ by
+        \auto{semidirect_projection_hom}.
+    Follows by \obv{semidirect_comparison_right_projection_eq}.
+\end{proof}
+
+\begin{proposition}\label{semidirect_comparison_projection_family_homs}
+    Let $N$ be a group.
+    Let $H$ be a group.
+    Let $I=\suc{\suc{\emptyset}}$ and $G=\binaryFamily{N}{H}$.
+    Let $r=\semidirectComparisonProjectionFamily{N}{H}$ and
+        $t=\semidirectTrivialAction{N}{H}$.
+    Let $S=\SemidirectProduct{N}{H}{t}$.
+    Then for every $i\in I$ we have $\groupHom{r(i)}{S}{G(i)}$.
+\end{proposition}
+\begin{proof}
+    Fix $i\in I$.
+    $i=\emptyset$ or $i=\suc{\emptyset}$ by
+        \auto{suc_elim,emptyset}.
+    Follows by
+        \auto{semidirect_comparison_projection_family_left,
+            semidirect_comparison_projection_family_right,
+            binary_family_left,binary_family_right,
+            semidirect_comparison_left_projection_hom,
+            semidirect_comparison_right_projection_hom}.
+\end{proof}
+
+\begin{theorem}\label{semidirect_product_comparison_hom}
+    Let $N$ be a group.
+    Let $H$ be a group.
+    Let $t=\semidirectTrivialAction{N}{H}$.
+    Then
+        $\groupHom{\semidirectProductComparison{N}{H}}
+            {\SemidirectProduct{N}{H}{t}}{\BinaryProductGroup{N}{H}}$.
+\end{theorem}
+\begin{proof}
+    Let $I=\suc{\suc{\emptyset}}$ and $G=\binaryFamily{N}{H}$.
+    Let $C=\productMonoidCarrierFamily{I}{G}$ and
+        $A=\binaryFamily{\carrier[N]}{\carrier[H]}$.
+    Let $r=\semidirectComparisonProjectionFamily{N}{H}$ and
+        $S=\SemidirectProduct{N}{H}{t}$.
+    $G$ is a function on $I$ by
+        \auto{binary_family_type,funs_is_function,funs}.
+    Show that for every $i\in I$ we have $G(i)$ is a group.
+    \begin{subproof}
+        Fix $i\in I$.
+        $i=\emptyset$ or $i=\suc{\emptyset}$ by
+            \auto{suc_elim,emptyset}.
+        Follows by \auto{binary_family_left,binary_family_right}.
+    \end{subproof}
+    $r$ is a function on $I$ by
+        \auto{semidirect_comparison_projection_family_type}.
+    For every $i\in I$ we have $\groupHom{r(i)}{S}{G(i)}$ by
+        \obv{semidirect_comparison_projection_family_homs}.
+    $\groupHom{t}{H}{\automorphismGroup{N}}$ by
+        \auto{semidirect_trivial_action_hom}.
+    $S$ is a group by \obv{semidirect_product_is_group}.
+    $\carrier[S]=\carrier[N]\times\carrier[H]$ by
+        \auto{semidirect_product_fields}.
+    $C=A$ by \auto{semidirect_binary_carrier_family}.
+    $\groupHom{\dependentMediator{\carrier[S]}{I}{C}{r}}
+        {S}{\ProductGroup{I}{G}}$ by
+        \obv{product_group_mediator_hom}.
+    $\dependentMediator{\carrier[S]}{I}{C}{r}=
+        \semidirectProductComparison{N}{H}$ by
+        \auto{semidirect_product_comparison}.
+    $\ProductGroup{I}{G}=\BinaryProductGroup{N}{H}$ by
+        \obv{binary_product_group}.
+    Follows by \auto.
+\end{proof}
+
+\begin{definition}\label{semidirect_comparison_inverse_op}
+    $\semidirectComparisonInverseOp:\Set\to\Set
+        =\fun{f:\Set}{
+            (\apply{f}{\emptyset},\apply{f}{\suc{\emptyset}})}$.
+\end{definition}
+
+\begin{definition}\label{semidirect_product_comparison_inverse}
+    $\semidirectProductComparisonInverse{N}{H}=
+        \Apply{\graphOnOp}
+            {\carrier[\BinaryProductGroup{N}{H}],
+             \carrier[N]\times\carrier[H],
+             \semidirectComparisonInverseOp}$.
+\end{definition}
+
+\begin{proposition}\label{semidirect_product_comparison_inverse_type}
+    Let $N$ be a group.
+    Let $H$ be a group.
+    Then $\semidirectProductComparisonInverse{N}{H}\in
+        \funs{\carrier[\BinaryProductGroup{N}{H}]}
+            {\carrier[N]\times\carrier[H]}$.
+\end{proposition}
+\begin{proof}
+    Let $I=\suc{\suc{\emptyset}}$ and
+        $A=\binaryFamily{\carrier[N]}{\carrier[H]}$.
+    $\carrier[\BinaryProductGroup{N}{H}]=\dependentProduct{I}{A}$ by
+        \auto{semidirect_binary_product_carrier}.
+    Show that for every $f\in\carrier[\BinaryProductGroup{N}{H}]$ we have
+        $\Apply{\semidirectComparisonInverseOp}{f}\in
+            \carrier[N]\times\carrier[H]$.
+    \begin{subproof}
+        Fix $f\in\carrier[\BinaryProductGroup{N}{H}]$.
+        Hence $f\in\dependentProduct{I}{A}$.
+        $\emptyset,\suc{\emptyset}\in I$ by \auto{suc_iff}.
+        Hence $f(\emptyset)\in A(\emptyset)$ and
+            $f(\suc{\emptyset})\in A(\suc{\emptyset})$ by
+            \obv{dependent_product_coordinate}.
+        Hence $f(\emptyset)\in\carrier[N]$ and
+            $f(\suc{\emptyset})\in\carrier[H]$ by
+            \auto{binary_family_left,binary_family_right}.
+        Follows by \auto{semidirect_comparison_inverse_op,times}.
+    \end{subproof}
+    Follows by
+        \auto{semidirect_product_comparison_inverse,
+            logical_graph_on_function}.
+\end{proof}
+
+\begin{proposition}\label{semidirect_product_comparison_inverse_apply}
+    Let $N$ be a group.
+    Let $H$ be a group.
+    Let $f\in\carrier[\BinaryProductGroup{N}{H}]$.
+    Then
+        $\apply{\semidirectProductComparisonInverse{N}{H}}{f}=
+            (f(\emptyset),f(\suc{\emptyset}))$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{semidirect_product_comparison_inverse,
+            semidirect_comparison_inverse_op,logical_graph_on_apply}.
+\end{proof}
+
+\begin{proposition}\label{semidirect_product_comparison_inverse_left}
+    Let $N$ be a group.
+    Let $H$ be a group.
+    Let $p\in\carrier[N]\times\carrier[H]$.
+    Then
+        $\apply{\semidirectProductComparisonInverse{N}{H}}
+            {\apply{\semidirectProductComparison{N}{H}}{p}}=p$.
+\end{proposition}
+\begin{proof}
+    Let $g=\semidirectProductComparison{N}{H}$ and
+        $u=\semidirectProductComparisonInverse{N}{H}$.
+    $g(p)\in\dependentProduct
+        {\suc{\suc{\emptyset}}}
+        {\binaryFamily{\carrier[N]}{\carrier[H]}}$ by
+        \auto{semidirect_product_comparison_type,funs_type_apply}.
+    Hence $g(p)\in\carrier[\BinaryProductGroup{N}{H}]$ by
+        \obv{semidirect_binary_product_carrier}.
+    $u(g(p))=
+        (\apply{g(p)}{\emptyset},\apply{g(p)}{\suc{\emptyset}})$ by
+        \auto{semidirect_product_comparison_inverse_apply}.
+    $\apply{g(p)}{\emptyset}=\fst{p}$ and
+        $\apply{g(p)}{\suc{\emptyset}}=\snd{p}$ by
+        \auto{semidirect_product_comparison_left,
+            semidirect_product_comparison_right}.
+    $p=(\fst{p},\snd{p})$ by
+        \auto{times_elem_is_tuple,pair_eq_pair_of_proj}.
+\end{proof}
+
+\begin{proposition}\label{semidirect_product_comparison_inverse_right}
+    Let $N$ be a group.
+    Let $H$ be a group.
+    Let $f\in\carrier[\BinaryProductGroup{N}{H}]$.
+    Then
+        $\apply{\semidirectProductComparison{N}{H}}
+            {\apply{\semidirectProductComparisonInverse{N}{H}}{f}}=f$.
+\end{proposition}
+\begin{proof}
+    Let $I=\suc{\suc{\emptyset}}$ and
+        $A=\binaryFamily{\carrier[N]}{\carrier[H]}$.
+    Let $g=\semidirectProductComparison{N}{H}$ and
+        $u=\semidirectProductComparisonInverse{N}{H}$.
+    $\carrier[\BinaryProductGroup{N}{H}]=\dependentProduct{I}{A}$ by
+        \auto{semidirect_binary_product_carrier}.
+    Hence $f\in\dependentProduct{I}{A}$.
+    $u(f)\in\carrier[N]\times\carrier[H]$ by
+        \auto{semidirect_product_comparison_inverse_type,funs_type_apply}.
+    Hence $g(u(f))\in\dependentProduct{I}{A}$ by
+        \auto{semidirect_product_comparison_type,funs_type_apply}.
+    $f$ and $g(u(f))$ are functions and
+        $\dom{f}=I=\dom{g(u(f))}$ by
+        \auto{dependent_product_iff,funs_elim}.
+    $u(f)=(f(\emptyset),f(\suc{\emptyset}))$ by
+        \auto{semidirect_product_comparison_inverse_apply}.
+    Show that for every $i\in I$ we have
+        $\apply{g(u(f))}{i}=f(i)$.
+    \begin{subproof}
+        Fix $i\in I$.
+        $i=\emptyset$ or $i=\suc{\emptyset}$ by
+            \auto{suc_elim,emptyset}.
+        Follows by
+            \auto{semidirect_product_comparison_left,
+                semidirect_product_comparison_right,fst_eq,snd_eq}.
+    \end{subproof}
+    Follows by \auto{funext_on_domain}.
+\end{proof}
+
+\begin{theorem}\label{semidirect_product_comparison_bijection}
+    Let $N$ be a group.
+    Let $H$ be a group.
+    Then $\semidirectProductComparison{N}{H}\in
+        \bijections{\carrier[N]\times\carrier[H]}
+            {\carrier[\BinaryProductGroup{N}{H}]}$.
+\end{theorem}
+\begin{proof}
+    Let $g=\semidirectProductComparison{N}{H}$ and
+        $u=\semidirectProductComparisonInverse{N}{H}$.
+    $\carrier[\BinaryProductGroup{N}{H}]=
+        \dependentProduct
+            {\suc{\suc{\emptyset}}}
+            {\binaryFamily{\carrier[N]}{\carrier[H]}}$ by
+        \obv{semidirect_binary_product_carrier}.
+    Hence $g\in\funs{\carrier[N]\times\carrier[H]}
+        {\carrier[\BinaryProductGroup{N}{H}]}$ by
+        \auto{semidirect_product_comparison_type}.
+    Show that $g$ is injective.
+    \begin{subproof}
+        Show that for all $p,q\in\dom{g}$ such that $g(p)=g(q)$ we have
+            $p=q$.
+        \begin{subproof}
+            Fix $p,q\in\dom{g}$ such that $g(p)=g(q)$.
+            Hence $p,q\in\carrier[N]\times\carrier[H]$ by
+                \obv{funs_elim}.
+            $g(p),g(q)\in\carrier[\BinaryProductGroup{N}{H}]$ by
+                \obv{funs_type_apply}.
+            $u(g(p))=p$ and $u(g(q))=q$ by
+                \auto{semidirect_product_comparison_inverse_left}.
+        \end{subproof}
+        Follows by \auto{injective_function,funs_is_function}.
+    \end{subproof}
+    Show that $g\in\surj{\carrier[N]\times\carrier[H]}
+        {\carrier[\BinaryProductGroup{N}{H}]}$.
+    \begin{subproof}
+        Show that for every $f\in\carrier[\BinaryProductGroup{N}{H}]$
+            there exists $p\in\carrier[N]\times\carrier[H]$ such that
+                $g(p)=f$.
+        \begin{subproof}
+            Fix $f\in\carrier[\BinaryProductGroup{N}{H}]$.
+            Let $p=u(f)$.
+            $p\in\carrier[N]\times\carrier[H]$ by
+                \auto{semidirect_product_comparison_inverse_type,
+                    funs_type_apply}.
+            $g(p)=f$ by
+                \auto{semidirect_product_comparison_inverse_right}.
+            Follows by \auto.
+        \end{subproof}
+        Follows by \obv{surj}.
+    \end{subproof}
+    Follows by \auto{bijections}.
+\end{proof}
+
+\begin{theorem}\label{semidirect_product_comparison_isomorphism}
+    Let $N$ be a group.
+    Let $H$ be a group.
+    Let $t=\semidirectTrivialAction{N}{H}$.
+    Then
+        $\groupIsomorphism{\semidirectProductComparison{N}{H}}
+            {\SemidirectProduct{N}{H}{t}}{\BinaryProductGroup{N}{H}}$.
+\end{theorem}
+\begin{proof}
+    $\groupHom{\semidirectProductComparison{N}{H}}
+        {\SemidirectProduct{N}{H}{t}}{\BinaryProductGroup{N}{H}}$ by
+        \obv{semidirect_product_comparison_hom}.
+    $\carrier[\SemidirectProduct{N}{H}{t}]=
+        \carrier[N]\times\carrier[H]$ by
+        \auto{semidirect_product_fields}.
+    Hence $\semidirectProductComparison{N}{H}\in
+        \bijections{\carrier[\SemidirectProduct{N}{H}{t}]}
+            {\carrier[\BinaryProductGroup{N}{H}]}$ by
+        \auto{semidirect_product_comparison_bijection}.
+    Follows by \obv{group_isomorphism}.
+\end{proof}
+
+\begin{proposition}\label{semidirect_product_comparison_converse}
+    Let $N$ be a group.
+    Let $H$ be a group.
+    Then
+        $\converse{\semidirectProductComparison{N}{H}}=
+            \semidirectProductComparisonInverse{N}{H}$.
+\end{proposition}
+\begin{proof}
+    Let $g=\semidirectProductComparison{N}{H}$ and
+        $u=\semidirectProductComparisonInverse{N}{H}$.
+    $g\in\bijections{\carrier[N]\times\carrier[H]}
+        {\carrier[\BinaryProductGroup{N}{H}]}$ by
+        \auto{semidirect_product_comparison_bijection}.
+    Hence $\converse{g}\in\funs{\carrier[\BinaryProductGroup{N}{H}]}
+        {\carrier[N]\times\carrier[H]}$ by
+        \obv{bijective_converse_are_funs}.
+    $u\in\funs{\carrier[\BinaryProductGroup{N}{H}]}
+        {\carrier[N]\times\carrier[H]}$ by
+        \auto{semidirect_product_comparison_inverse_type}.
+    $\converse{g}$ and $u$ are functions and
+        $\dom{\converse{g}}=\carrier[\BinaryProductGroup{N}{H}]
+            =\dom{u}$ by
+        \obv{funs_is_function,funs}.
+    Show that for every $f\in\carrier[\BinaryProductGroup{N}{H}]$ we have
+        $(\converse{g})(f)=u(f)$.
+    \begin{subproof}
+        Fix $f\in\carrier[\BinaryProductGroup{N}{H}]$.
+        $u(f)\in\carrier[N]\times\carrier[H]$ by
+            \obv{funs_type_apply}.
+        $g(u(f))=f$ by
+            \auto{semidirect_product_comparison_inverse_right}.
+        Hence $(u(f),f)\in g$ by
+            \auto{function_apply_elim,bijection_is_function,
+                bijections_dom}.
+        Hence $(f,u(f))\in\converse{g}$ by \auto{converse_iff}.
+        Follows by \obv{funs_is_function,function_apply_intro}.
+    \end{subproof}
+    Follows by \auto{funext_on_domain}.
+\end{proof}
+
+
+\subsection{Recognizing an internal semidirect product}
+
+Let $N$ be a normal subgroup carrier of a group $G$.  Conjugation by an
+ambient element restricts to an automorphism of the exact induced group on
+$N$.  We keep that restriction visible in the graph before assembling the
+action of a second subgroup carrier.
+
+\begin{definition}\label{semidirect_recognition_conjugation_op}
+    $\semidirectRecognitionConjugationOp:\Set\to\Set\to\Set\to\Set
+        =\fun{G,h,n:\Set}{\conjugate{G}{h}{n}}$.
+\end{definition}
+
+\begin{definition}\label{semidirect_recognition_conjugation}
+    $\semidirectRecognitionConjugation{G}{N}{h}=
+        \Apply{\graphOnOp}
+            {N,N,\Apply{\semidirectRecognitionConjugationOp}{G,h}}$.
+\end{definition}
+
+\begin{proposition}\label{semidirect_recognition_conjugation_type}
+    Suppose $\normalSubgroup{N}{G}$.
+    Let $h\in\carrier[G]$.
+    Then $\semidirectRecognitionConjugation{G}{N}{h}\in\funs{N}{N}$.
+\end{proposition}
+\begin{proof}
+    Show that for every $n\in N$ we have
+        $\Apply{\semidirectRecognitionConjugationOp}{G,h,n}\in N$.
+    \begin{subproof}
+        Fix $n\in N$.
+        Follows by
+            \auto{semidirect_recognition_conjugation_op,
+                normal_subgroup_closed_under_conjugation}.
+    \end{subproof}
+    Follows by
+        \auto{semidirect_recognition_conjugation,
+            logical_graph_on_function}.
+\end{proof}
+
+\begin{proposition}\label{semidirect_recognition_conjugation_apply}
+    Suppose $\normalSubgroup{N}{G}$.
+    Let $h\in\carrier[G]$.
+    Let $n\in N$.
+    Then
+        $\apply{\semidirectRecognitionConjugation{G}{N}{h}}{n}=
+            \conjugate{G}{h}{n}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{semidirect_recognition_conjugation,
+            semidirect_recognition_conjugation_op,
+            logical_graph_on_apply}.
+\end{proof}
+
+\begin{theorem}\label{semidirect_recognition_conjugation_hom}
+    Suppose $\normalSubgroup{N}{G}$.
+    Let $h\in\carrier[G]$.
+    Let $N_0=\subgroupStructure{G}{N}$.
+    Then
+        $\groupHom{\semidirectRecognitionConjugation{G}{N}{h}}
+            {N_0}{N_0}$.
+\end{theorem}
+\begin{proof}
+    Let $c=\semidirectRecognitionConjugation{G}{N}{h}$.
+    $\subgroup{N}{G}$ by \obv{normal_subgroup_is_subgroup}.
+    $N_0$ is a group and $\carrier[N_0]=N$ by
+        \auto{subgroup_structure_is_group,subgroup_structure_carrier}.
+    Hence $c\in\funs{\carrier[N_0]}{\carrier[N_0]}$ by
+        \auto{semidirect_recognition_conjugation_type}.
+    Show that for all $x,y\in\carrier[N_0]$ we have
+        $c(\mul[N_0](x,y))=\mul[N_0](c(x),c(y))$.
+    \begin{subproof}
+        Fix $x,y\in\carrier[N_0]$.
+        Hence $x,y\in N$.
+        Hence $x,y\in\carrier[G]$ by
+            \auto{normal_subgroup_subseteq,subseteq}.
+        $\mul[N_0](x,y)=\mul[G](x,y)$ by
+            \auto{subgroup_structure_mul_apply}.
+        $\mul[G](x,y)\in N$ by \obv{subgroup_mul}.
+        Hence $c(\mul[N_0](x,y))=
+            \conjugate{G}{h}{\mul[G](x,y)}$ by
+            \auto{semidirect_recognition_conjugation_apply}.
+        $c(x)=\conjugate{G}{h}{x}$ and
+            $c(y)=\conjugate{G}{h}{y}$ by
+            \auto{semidirect_recognition_conjugation_apply}.
+        $c(x),c(y)\in N$ by
+            \auto{normal_subgroup_closed_under_conjugation}.
+        Hence $\mul[N_0](c(x),c(y))=
+            \mul[G](\conjugate{G}{h}{x},\conjugate{G}{h}{y})$ by
+            \auto{subgroup_structure_mul_apply}.
+        $\conjugate{G}{h}{\mul[G](x,y)}=
+            \mul[G](\conjugate{G}{h}{x},\conjugate{G}{h}{y})$ by
+            \obv{group_conjugate_mul}.
+    \end{subproof}
+    Follows by \auto{group_hom}.
+\end{proof}
+
+\begin{theorem}\label{semidirect_recognition_conjugation_bijection}
+    Suppose $\normalSubgroup{N}{G}$.
+    Let $h\in\carrier[G]$.
+    Then $\semidirectRecognitionConjugation{G}{N}{h}\in\bijections{N}{N}$.
+\end{theorem}
+\begin{proof}
+    Let $c=\semidirectRecognitionConjugation{G}{N}{h}$.
+    Let $u=\semidirectRecognitionConjugation
+        {G}{N}{\groupInv[G](h)}$.
+    $G$ is a group by \obv{normal_subgroup_ambient_group}.
+    $\groupInv[G](h)\in\carrier[G]$ by
+        \obv{group_inverse_type}.
+    $c,u\in\funs{N}{N}$ by
+        \auto{semidirect_recognition_conjugation_type}.
+    Show that $c$ is injective.
+    \begin{subproof}
+        Show that for all $x,y\in\dom{c}$ such that $c(x)=c(y)$ we have
+            $x=y$.
+        \begin{subproof}
+            Fix $x,y\in\dom{c}$ such that $c(x)=c(y)$.
+            Hence $x,y\in N$ by \obv{funs_elim}.
+            Hence $x,y\in\carrier[G]$ by
+                \auto{normal_subgroup_subseteq,subseteq}.
+            $c(x)=\conjugate{G}{h}{x}$ and
+                $c(y)=\conjugate{G}{h}{y}$ by
+                \auto{semidirect_recognition_conjugation_apply}.
+            Hence
+                $\conjugate{G}{\groupInv[G](h)}{\conjugate{G}{h}{x}}=
+                    \conjugate{G}{\groupInv[G](h)}
+                        {\conjugate{G}{h}{y}}$.
+            Follows by \obv{group_conjugate_inverse_left}.
+        \end{subproof}
+        Follows by \auto{injective_function,funs_is_function}.
+    \end{subproof}
+    Show that $c\in\surj{N}{N}$.
+    \begin{subproof}
+        Show that for every $y\in N$ there exists $x\in N$ such that
+            $c(x)=y$.
+        \begin{subproof}
+            Fix $y\in N$.
+            Hence $y\in\carrier[G]$ by
+                \auto{normal_subgroup_subseteq,subseteq}.
+            Let $x=u(y)$.
+            $x\in N$ by \auto{funs_type_apply}.
+            $u(y)=\conjugate{G}{\groupInv[G](h)}{y}$ by
+                \auto{semidirect_recognition_conjugation_apply}.
+            $c(x)=\conjugate{G}{h}{x}$ by
+                \auto{semidirect_recognition_conjugation_apply}.
+            Hence $c(x)=y$ by
+                \auto{group_conjugate_inverse_right}.
+            Follows by \auto.
+        \end{subproof}
+        Follows by \obv{surj}.
+    \end{subproof}
+    Follows by \auto{bijections}.
+\end{proof}
+
+\begin{theorem}\label{semidirect_recognition_conjugation_isomorphism}
+    Suppose $\normalSubgroup{N}{G}$.
+    Let $h\in\carrier[G]$.
+    Let $N_0=\subgroupStructure{G}{N}$.
+    Then
+        $\groupIsomorphism
+            {\semidirectRecognitionConjugation{G}{N}{h}}{N_0}{N_0}$.
+\end{theorem}
+\begin{proof}
+    $\carrier[N_0]=N$ by \auto{subgroup_structure_carrier}.
+    $\groupHom{\semidirectRecognitionConjugation{G}{N}{h}}
+        {N_0}{N_0}$ by
+        \obv{semidirect_recognition_conjugation_hom}.
+    $\semidirectRecognitionConjugation{G}{N}{h}\in
+        \bijections{\carrier[N_0]}{\carrier[N_0]}$ by
+        \auto{semidirect_recognition_conjugation_bijection}.
+    Follows by \obv{group_isomorphism}.
+\end{proof}
+
+\begin{proposition}\label{semidirect_recognition_conjugation_automorphism}
+    Suppose $\normalSubgroup{N}{G}$.
+    Let $h\in\carrier[G]$.
+    Let $N_0=\subgroupStructure{G}{N}$.
+    Then
+        $\semidirectRecognitionConjugation{G}{N}{h}\in
+            \automorphismSet{N_0}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{automorphism_set_iff,
+            semidirect_recognition_conjugation_isomorphism}.
+\end{proof}
+
+\begin{definition}\label{semidirect_recognition_action_op}
+    $\semidirectRecognitionActionOp:\Set\to\Set\to\Set\to\Set
+        =\fun{G,N,h:\Set}{
+            \semidirectRecognitionConjugation{G}{N}{h}}$.
+\end{definition}
+
+\begin{definition}\label{semidirect_recognition_action}
+    $\semidirectRecognitionAction{G}{N}{H}=
+        \Apply{\graphOnOp}
+            {H,\automorphismSet{\subgroupStructure{G}{N}},
+             \Apply{\semidirectRecognitionActionOp}{G,N}}$.
+\end{definition}
+
+\begin{proposition}\label{semidirect_recognition_action_type}
+    Suppose $\normalSubgroup{N}{G}$ and $\subgroup{H}{G}$.
+    Let $N_0=\subgroupStructure{G}{N}$.
+    Then $\semidirectRecognitionAction{G}{N}{H}\in
+        \funs{H}{\automorphismSet{N_0}}$.
+\end{proposition}
+\begin{proof}
+    Show that for every $h\in H$ we have
+        $\Apply{\semidirectRecognitionActionOp}{G,N,h}\in
+            \automorphismSet{N_0}$.
+    \begin{subproof}
+        Fix $h\in H$.
+        $h\in\carrier[G]$ by \auto{subgroup_subseteq,subseteq}.
+        Follows by
+            \auto{semidirect_recognition_action_op,
+                semidirect_recognition_conjugation_automorphism}.
+    \end{subproof}
+    Follows by
+        \auto{semidirect_recognition_action,logical_graph_on_function}.
+\end{proof}
+
+\begin{proposition}\label{semidirect_recognition_action_apply}
+    Suppose $\normalSubgroup{N}{G}$ and $\subgroup{H}{G}$.
+    Let $h\in H$.
+    Then
+        $\apply{\semidirectRecognitionAction{G}{N}{H}}{h}=
+            \semidirectRecognitionConjugation{G}{N}{h}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{semidirect_recognition_action,
+            semidirect_recognition_action_op,logical_graph_on_apply}.
+\end{proof}
+
+\begin{theorem}\label{semidirect_recognition_action_hom}
+    Suppose $\normalSubgroup{N}{G}$ and $\subgroup{H}{G}$.
+    Let $N_0=\subgroupStructure{G}{N}$ and
+        $H_0=\subgroupStructure{G}{H}$.
+    Then
+        $\groupHom{\semidirectRecognitionAction{G}{N}{H}}
+            {H_0}{\automorphismGroup{N_0}}$.
+\end{theorem}
+\begin{proof}
+    Let $c=\semidirectRecognitionAction{G}{N}{H}$.
+    Let $A=\automorphismGroup{N_0}$.
+    $G$ is a group by \obv{normal_subgroup_ambient_group}.
+    $N_0$ is a group and $H_0$ is a group by
+        \auto{normal_subgroup_is_subgroup,
+            subgroup_structure_is_group}.
+    $A$ is a group and $\carrier[A]=\automorphismSet{N_0}$ by
+        \auto{automorphism_group_is_group,automorphism_group_carrier}.
+    $\carrier[H_0]=H$ by \auto{subgroup_structure_carrier}.
+    Hence $c\in\funs{\carrier[H_0]}{\carrier[A]}$ by
+        \auto{semidirect_recognition_action_type}.
+    Show that for all $h,k\in\carrier[H_0]$ we have
+        $c(\mul[H_0](h,k))=\mul[A](c(h),c(k))$.
+    \begin{subproof}
+        Fix $h,k\in\carrier[H_0]$.
+        Hence $h,k\in H$.
+        Hence $h,k\in\carrier[G]$ by
+            \auto{subgroup_subseteq,subseteq}.
+        Let $r=\semidirectRecognitionConjugation
+            {G}{N}{\mul[G](h,k)}$.
+        Let $c_h=\semidirectRecognitionConjugation{G}{N}{h}$.
+        Let $c_k=\semidirectRecognitionConjugation{G}{N}{k}$.
+        $\mul[G](h,k)\in H$ by \obv{subgroup_mul}.
+        $\mul[H_0](h,k)=\mul[G](h,k)$ by
+            \auto{subgroup_structure_mul_apply}.
+        Hence $c(\mul[H_0](h,k))=r$ by
+            \auto{semidirect_recognition_action_apply}.
+        $c(h)=c_h$ and $c(k)=c_k$ by
+            \auto{semidirect_recognition_action_apply}.
+        $c_h,c_k,r\in\funs{N}{N}$ by
+            \auto{semidirect_recognition_conjugation_type,
+                group_is_monoid,monoid_is_magma,magma_welldef}.
+        $c_h$ is composable with $c_k$ by
+            \auto{funs_elim,funs_ran}.
+        Hence $c_h\circ c_k\in\funs{N}{N}$ by \obv{funs_circ}.
+        $r$ and $c_h\circ c_k$ are functions and
+            $\dom{r}=N=\dom{c_h\circ c_k}$ by
+            \auto{funs_is_function,funs_elim}.
+        Show that for every $n\in N$ we have
+            $r(n)=(c_h\circ c_k)(n)$.
+        \begin{subproof}
+            Fix $n\in N$.
+            Hence $n\in\carrier[G]$ by
+                \auto{normal_subgroup_subseteq,subseteq}.
+            $c_k(n)\in N$ by \obv{funs_type_apply}.
+            Hence $c_k(n)\in\carrier[G]$ by
+                \auto{normal_subgroup_subseteq,subseteq}.
+            $(c_h\circ c_k)(n)=c_h(c_k(n))$ by
+                \auto{circ_apply,funs_elim,funs_ran}.
+            $c_k(n)=\conjugate{G}{k}{n}$ and
+                $c_h(c_k(n))=\conjugate{G}{h}{c_k(n)}$ by
+                \auto{semidirect_recognition_conjugation_apply}.
+            $r(n)=\conjugate{G}{\mul[G](h,k)}{n}$ by
+                \auto{semidirect_recognition_conjugation_apply,
+                    group_is_monoid,monoid_is_magma,magma_welldef}.
+            Follows by \auto{group_conjugate_composition}.
+        \end{subproof}
+        Hence $r=c_h\circ c_k$ by \auto{funext_on_domain}.
+        $c_h,c_k\in\automorphismSet{N_0}$ by
+            \auto{semidirect_recognition_conjugation_automorphism}.
+        Hence $\mul[A](c_h,c_k)=c_h\circ c_k$ by
+            \auto{automorphism_group_mul_apply}.
+    \end{subproof}
+    Follows by \auto{group_hom}.
+\end{proof}
+
+\begin{definition}\label{semidirect_recognition_multiplication_op}
+    $\semidirectRecognitionMultiplicationOp:\Set\to\Set\to\Set
+        =\fun{G,p:\Set}{\mul[G](\fst{p},\snd{p})}$.
+\end{definition}
+
+\begin{definition}\label{semidirect_recognition_map}
+    $\semidirectRecognitionMap{G}{N}{H}=
+        \Apply{\graphOnOp}
+            {N\times H,\carrier[G],
+             \Apply{\semidirectRecognitionMultiplicationOp}{G}}$.
+\end{definition}
+
+\begin{proposition}\label{semidirect_recognition_map_iff}
+    $(p,y)\in\semidirectRecognitionMap{G}{N}{H}$ iff
+        $p\in N\times H$ and
+        $y=\mul[G](\fst{p},\snd{p})$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{semidirect_recognition_map,
+            semidirect_recognition_multiplication_op,
+            logical_graph_on_membership}.
+\end{proof}
+
+\begin{corollary}\label{semidirect_recognition_map_pair_iff}
+    $((n,h),y)\in\semidirectRecognitionMap{G}{N}{H}$ iff
+        $n\in N$ and $h\in H$ and $y=\mul[G](n,h)$.
+\end{corollary}
+\begin{proof}
+    Follows by
+        \auto{semidirect_recognition_map_iff,times,fst_eq,snd_eq}.
+\end{proof}
+
+\begin{proposition}\label{semidirect_recognition_map_type}
+    Suppose $\normalSubgroup{N}{G}$ and $\subgroup{H}{G}$.
+    Then $\semidirectRecognitionMap{G}{N}{H}\in
+        \funs{N\times H}{\carrier[G]}$.
+\end{proposition}
+\begin{proof}
+    $G$ is a group by \obv{normal_subgroup_ambient_group}.
+    Show that for every $p\in N\times H$ we have
+        $\Apply{\semidirectRecognitionMultiplicationOp}{G,p}\in
+            \carrier[G]$.
+    \begin{subproof}
+        Fix $p\in N\times H$.
+        $\fst{p}\in N$ and $\snd{p}\in H$ by
+            \obv{fst_type,snd_type}.
+        Hence $\fst{p},\snd{p}\in\carrier[G]$ by
+            \auto{normal_subgroup_subseteq,subgroup_subseteq,subseteq}.
+        Follows by
+            \auto{semidirect_recognition_multiplication_op,
+                group_is_monoid,monoid_is_magma,magma_welldef}.
+    \end{subproof}
+    Follows by
+        \auto{semidirect_recognition_map,logical_graph_on_function}.
+\end{proof}
+
+\begin{proposition}\label{semidirect_recognition_map_apply}
+    Suppose $\normalSubgroup{N}{G}$ and $\subgroup{H}{G}$.
+    Let $n\in N$ and $h\in H$.
+    Then
+        $\apply{\semidirectRecognitionMap{G}{N}{H}}{(n,h)}=
+            \mul[G](n,h)$.
+\end{proposition}
+\begin{proof}
+    $(n,h)\in N\times H$ by \auto{times}.
+    Follows by
+        \auto{semidirect_recognition_map,
+            semidirect_recognition_multiplication_op,
+            logical_graph_on_apply,fst_eq,snd_eq}.
+\end{proof}
+
+\begin{theorem}\label{semidirect_recognition_map_hom}
+    Suppose $\normalSubgroup{N}{G}$ and $\subgroup{H}{G}$.
+    Let $N_0=\subgroupStructure{G}{N}$ and
+        $H_0=\subgroupStructure{G}{H}$.
+    Let $c=\semidirectRecognitionAction{G}{N}{H}$.
+    Let $S=\SemidirectProduct{N_0}{H_0}{c}$.
+    Then $\groupHom{\semidirectRecognitionMap{G}{N}{H}}{S}{G}$.
+\end{theorem}
+\begin{proof}
+    Let $f=\semidirectRecognitionMap{G}{N}{H}$.
+    $G$ is a group by \obv{normal_subgroup_ambient_group}.
+    $\subgroup{N}{G}$ by \obv{normal_subgroup_is_subgroup}.
+    $N_0$ is a group and $H_0$ is a group by
+        \obv{subgroup_structure_is_group}.
+    $\carrier[N_0]=N$ and $\carrier[H_0]=H$ by
+        \auto{subgroup_structure_carrier}.
+    $\groupHom{c}{H_0}{\automorphismGroup{N_0}}$ by
+        \auto{semidirect_recognition_action_hom}.
+    Hence $S$ is a group and $\carrier[S]=N\times H$ by
+        \auto{semidirect_product_is_group,semidirect_product_fields,
+            subgroup_structure_carrier}.
+    Hence $f\in\funs{\carrier[S]}{\carrier[G]}$ by
+        \auto{semidirect_recognition_map_type}.
+    Show that for all $p,q\in\carrier[S]$ we have
+        $f(\mul[S](p,q))=\mul[G](f(p),f(q))$.
+    \begin{subproof}
+        Fix $p,q\in\carrier[S]$.
+        Hence $p,q\in N\times H$.
+        Hence $p,q\in\carrier[N_0]\times\carrier[H_0]$.
+        Let $n=\fst{p}$ and $h=\snd{p}$.
+        Let $m=\fst{q}$ and $k=\snd{q}$.
+        $n,m\in N$ and $h,k\in H$ by
+            \auto{fst_type,snd_type}.
+        Hence $n,m,h,k\in\carrier[G]$ by
+            \auto{normal_subgroup_subseteq,subgroup_subseteq,subseteq}.
+        $c(h)=\semidirectRecognitionConjugation{G}{N}{h}$ by
+            \auto{semidirect_recognition_action_apply}.
+        $\apply{c(h)}{m}=\conjugate{G}{h}{m}$ by
+            \auto{semidirect_recognition_conjugation_apply}.
+        $\conjugate{G}{h}{m}\in N$ by
+            \obv{normal_subgroup_closed_under_conjugation}.
+        $\mul[N_0](n,\apply{c(h)}{m})=
+            \mul[G](n,\conjugate{G}{h}{m})$ by
+            \auto{subgroup_structure_mul_apply}.
+        $\mul[H_0](h,k)=\mul[G](h,k)$ by
+            \auto{subgroup_structure_mul_apply}.
+        $\mul[S](p,q)=
+            (\mul[G](n,\conjugate{G}{h}{m}),\mul[G](h,k))$ by
+            \auto{semidirect_product_mul_apply}.
+        $\mul[G](n,\conjugate{G}{h}{m})\in N$ and
+            $\mul[G](h,k)\in H$ by \obv{subgroup_mul}.
+        Hence $\conjugate{G}{h}{m},\mul[G](h,k),
+            \mul[G](m,k)\in\carrier[G]$ by
+            \auto{normal_subgroup_subseteq,subgroup_subseteq,subseteq,
+                group_is_monoid,monoid_is_magma,magma_welldef}.
+        Hence
+            $f(\mul[S](p,q))=
+                \mul[G]
+                    (\mul[G](n,\conjugate{G}{h}{m}),
+                     \mul[G](h,k))$ by
+            \auto{semidirect_recognition_map_apply}.
+        $f(p)=\mul[G](n,h)$ and $f(q)=\mul[G](m,k)$ by
+            \auto{semidirect_recognition_map_apply,
+                times_elem_is_tuple,pair_eq_pair_of_proj}.
+        $\mul[G](h,m)=
+            \mul[G](\conjugate{G}{h}{m},h)$ by
+            \obv{subgroup_product_swap_right_factor}.
+        $\mul[G]
+            (\mul[G](n,\conjugate{G}{h}{m}),\mul[G](h,k))=
+            \mul[G]
+                (n,\mul[G](\conjugate{G}{h}{m},\mul[G](h,k)))$ by
+            \obv{group_is_monoid,monoid_assoc}.
+        $\mul[G](\conjugate{G}{h}{m},\mul[G](h,k))=
+            \mul[G](\mul[G](\conjugate{G}{h}{m},h),k)$ by
+            \obv{group_is_monoid,monoid_assoc}.
+        $\mul[G](h,\mul[G](m,k))=
+            \mul[G](\mul[G](h,m),k)$ by
+            \obv{group_is_monoid,monoid_assoc}.
+        $\mul[G](\mul[G](n,h),\mul[G](m,k))=
+            \mul[G](n,\mul[G](h,\mul[G](m,k)))$ by
+            \obv{group_is_monoid,monoid_assoc}.
+    \end{subproof}
+    Follows by \auto{group_hom}.
+\end{proof}
+
+\begin{theorem}\label{semidirect_recognition_map_surjective}
+    Suppose $\normalSubgroup{N}{G}$ and $\subgroup{H}{G}$.
+    Suppose $\subgroupProduct{G}{N}{H}=\carrier[G]$.
+    Then $\semidirectRecognitionMap{G}{N}{H}\in
+        \surj{N\times H}{\carrier[G]}$.
+\end{theorem}
+\begin{proof}
+    Let $f=\semidirectRecognitionMap{G}{N}{H}$.
+    $\subgroup{N}{G}$ by \obv{normal_subgroup_is_subgroup}.
+    $f\in\funs{N\times H}{\carrier[G]}$ by
+        \auto{semidirect_recognition_map_type}.
+    Show that for every $y\in\carrier[G]$ there exists
+        $p\in N\times H$ such that $f(p)=y$.
+    \begin{subproof}
+        Fix $y\in\carrier[G]$.
+        Hence $y\in\subgroupProduct{G}{N}{H}$.
+        Take $n\in N$ such that there exists $h\in H$ such that
+            $y=\mul[G](n,h)$ by
+            \obv{subgroup_product_iff_for_subgroups}.
+        Take $h\in H$ such that $y=\mul[G](n,h)$.
+        Let $p=(n,h)$.
+        $p\in N\times H$ by \auto{times}.
+        $f(p)=\mul[G](n,h)$ by
+            \auto{semidirect_recognition_map_apply}.
+        Follows by \auto.
+    \end{subproof}
+    Follows by \auto{surj}.
+\end{proof}
+
+\begin{theorem}\label{semidirect_recognition_map_injective}
+    Suppose $\normalSubgroup{N}{G}$ and $\subgroup{H}{G}$.
+    Suppose $N\inter H=\trivialSubgroupCarrier{G}$.
+    Then $\semidirectRecognitionMap{G}{N}{H}$ is injective.
+\end{theorem}
+\begin{proof}
+    Let $f=\semidirectRecognitionMap{G}{N}{H}$.
+    $G$ is a group by \obv{normal_subgroup_ambient_group}.
+    $\subgroup{N}{G}$ by \obv{normal_subgroup_is_subgroup}.
+    $f\in\funs{N\times H}{\carrier[G]}$ by
+        \auto{semidirect_recognition_map_type}.
+    Show that for all $p,q\in\dom{f}$ such that $f(p)=f(q)$ we have
+        $p=q$.
+    \begin{subproof}
+        Fix $p,q\in\dom{f}$ such that $f(p)=f(q)$.
+        Hence $p,q\in N\times H$ by \obv{funs_elim}.
+        Let $n=\fst{p}$ and $h=\snd{p}$.
+        Let $m=\fst{q}$ and $k=\snd{q}$.
+        $n,m\in N$ and $h,k\in H$ by
+            \auto{fst_type,snd_type}.
+        Hence $n,m,h,k\in\carrier[G]$ by
+            \auto{normal_subgroup_subseteq,subgroup_subseteq,subseteq}.
+        $f(p)=\mul[G](n,h)$ and $f(q)=\mul[G](m,k)$ by
+            \auto{semidirect_recognition_map_apply,
+                times_elem_is_tuple,pair_eq_pair_of_proj}.
+        Hence $\mul[G](n,h)=\mul[G](m,k)$.
+        $\mul[G](m,k)\in\carrier[G]$ by
+            \obv{group_is_monoid,monoid_is_magma,magma_welldef}.
+        Let $x=\mul[G](\groupInv[G](n),m)$.
+        $\groupInv[G](n)\in N$ by \obv{subgroup_inv}.
+        Hence $x\in N$ by \auto{subgroup_mul}.
+        Hence $x\in\carrier[G]$ by
+            \auto{normal_subgroup_subseteq,subseteq}.
+        $\groupInv[G](k)\in H$ by \obv{subgroup_inv}.
+        Hence $\mul[G](h,\groupInv[G](k))\in H$ by
+            \obv{subgroup_mul}.
+        $h=\mul[G](\groupInv[G](n),\mul[G](m,k))$ by
+            \obv{group_solve_left}.
+        $\mul[G](\groupInv[G](n),\mul[G](m,k))=
+            \mul[G](x,k)$ by
+            \auto{group_inverse_type,group_is_monoid,monoid_assoc}.
+        Hence $\mul[G](x,k)=h$.
+        Hence $x=\mul[G](h,\groupInv[G](k))$ by
+            \auto{group_solve_right}.
+        Hence $x\in H$.
+        Hence $x\in N\inter H$ by \obv{inter_intro}.
+        Hence $x\in\trivialSubgroupCarrier{G}$.
+        Hence $x=\neutral[G]$ by
+            \auto{trivial_subgroup_carrier,singleton_iff}.
+        $\mul[G](\groupInv[G](n),n)=\neutral[G]$ by
+            \obv{group_inverse_left}.
+        Hence
+            $\mul[G](\groupInv[G](n),m)=
+                \mul[G](\groupInv[G](n),n)$.
+        Hence $m=n$ by
+            \auto{group_inverse_type,group_cancel_left}.
+        Hence $\mul[G](n,h)=\mul[G](n,k)$.
+        Hence $h=k$ by \obv{group_cancel_left}.
+        $p=(n,h)$ and $q=(m,k)$ by
+            \auto{times_elem_is_tuple,pair_eq_pair_of_proj}.
+    \end{subproof}
+    Follows by \auto{injective_function,funs_is_function}.
+\end{proof}
+
+\begin{theorem}\label{semidirect_recognition_map_bijection}
+    Suppose $\normalSubgroup{N}{G}$ and $\subgroup{H}{G}$.
+    Suppose $N\inter H=\trivialSubgroupCarrier{G}$.
+    Suppose $\subgroupProduct{G}{N}{H}=\carrier[G]$.
+    Then $\semidirectRecognitionMap{G}{N}{H}\in
+        \bijections{N\times H}{\carrier[G]}$.
+\end{theorem}
+\begin{proof}
+    $\semidirectRecognitionMap{G}{N}{H}\in
+        \funs{N\times H}{\carrier[G]}$ by
+        \obv{semidirect_recognition_map_type}.
+    $\semidirectRecognitionMap{G}{N}{H}$ is injective by
+        \obv{semidirect_recognition_map_injective}.
+    $\semidirectRecognitionMap{G}{N}{H}\in
+        \surj{N\times H}{\carrier[G]}$ by
+        \obv{semidirect_recognition_map_surjective}.
+    Follows by \obv{bijections}.
+\end{proof}
+
+\begin{theorem}\label{semidirect_recognition_isomorphism}
+    Suppose $\normalSubgroup{N}{G}$ and $\subgroup{H}{G}$.
+    Suppose $N\inter H=\trivialSubgroupCarrier{G}$.
+    Suppose $\subgroupProduct{G}{N}{H}=\carrier[G]$.
+    Let $N_0=\subgroupStructure{G}{N}$ and
+        $H_0=\subgroupStructure{G}{H}$.
+    Let $c=\semidirectRecognitionAction{G}{N}{H}$.
+    Then
+        $\groupIsomorphism{\semidirectRecognitionMap{G}{N}{H}}
+            {\SemidirectProduct{N_0}{H_0}{c}}{G}$.
+\end{theorem}
+\begin{proof}
+    Let $S=\SemidirectProduct{N_0}{H_0}{c}$.
+    $\groupHom{\semidirectRecognitionMap{G}{N}{H}}{S}{G}$ by
+        \obv{semidirect_recognition_map_hom}.
+    $\groupHom{c}{H_0}{\automorphismGroup{N_0}}$ by
+        \auto{semidirect_recognition_action_hom}.
+    Hence $\carrier[S]=N\times H$ by
+        \auto{semidirect_product_fields,subgroup_structure_carrier}.
+    Hence $\semidirectRecognitionMap{G}{N}{H}\in
+        \bijections{\carrier[S]}{\carrier[G]}$ by
+        \auto{semidirect_recognition_map_bijection}.
+    Follows by \auto{group_isomorphism}.
+\end{proof}

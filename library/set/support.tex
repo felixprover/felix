@@ -1,0 +1,185 @@
+\import{function.tex}
+\import{set/finite.tex}
+\import{set/indexed-family.tex}
+\import{set/logical-graph.tex}
+
+\section{Supports of functions}
+
+\begin{definition}\label{support_on}
+    $\supportOn{I}{f}{z}=\{i\in I\mid f(i)\neq z\}$.
+\end{definition}
+
+\begin{proposition}\label{support_on_iff}
+    $i\in\supportOn{I}{f}{z}$ iff $i\in I$ and $f(i)\neq z$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{support_on}.
+\end{proof}
+
+\begin{proposition}\label{support_on_subseteq}
+    $\supportOn{I}{f}{z}\subseteq I$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{subseteq,support_on_iff}.
+\end{proof}
+
+\begin{definition}\label{dependent_support}
+    $\dependentSupport{I}{f}{z}
+        =\{i\in I\mid f(i)\neq z(i)\}$.
+\end{definition}
+
+\begin{proposition}\label{dependent_support_iff}
+    $i\in\dependentSupport{I}{f}{z}$ iff
+        $i\in I$ and $f(i)\neq z(i)$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{dependent_support}.
+\end{proof}
+
+\begin{proposition}\label{dependent_support_subseteq}
+    $\dependentSupport{I}{f}{z}\subseteq I$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{subseteq,dependent_support_iff}.
+\end{proof}
+
+\begin{theorem}\label{dependent_support_precomposition}
+    Let $e\in\funs{J}{I}$.
+    Let $f,z\in\dependentProduct{I}{A}$.
+    Then
+        $\dependentSupport{J}{f\circ e}{z\circ e}
+            =\preimg{e}{\dependentSupport{I}{f}{z}}$.
+\end{theorem}
+\begin{proof}
+    $e$ is a function and $\dom{e}=J$ and $\ran{e}\subseteq I$ by
+        \obv{funs_is_function,funs,funs_ran}.
+    $f,z\in\funs{I}{\unions{\ran{A}}}$ by
+        \obv{dependent_product_iff}.
+    Hence $f$ is a function and $z$ is a function and
+        $\dom{f}=I=\dom{z}$ by
+        \obv{funs_is_function,funs}.
+    $f$ is composable with $e$ and $z$ is composable with $e$.
+    Show that for every $j$ we have
+        $j\in\dependentSupport{J}{f\circ e}{z\circ e}$ iff
+        $j\in\preimg{e}{\dependentSupport{I}{f}{z}}$.
+    \begin{subproof}
+        Fix $j$.
+        \begin{byCase}
+        \caseOf{$j\in J$.}
+            Hence $j\in\dom{e}$.
+            $(f\circ e)(j)=f(e(j))$ and
+                $(z\circ e)(j)=z(e(j))$ by
+                \obv{circ_apply}.
+            $e(j)\in I$ by \obv{funs_type_apply}.
+            Follows by
+                \auto{dependent_support_iff,preimg_iff,
+                    function_apply_iff}.
+        \caseOf{$j\notin J$.}
+            $j\notin\dom{e}$.
+            Follows by
+                \auto{dependent_support_iff,preimg_subseteq_dom,
+                    subseteq}.
+        \end{byCase}
+    \end{subproof}
+    Follows by \auto{setext}.
+\end{proof}
+
+\begin{theorem}\label{support_postcomposition_bound}
+    Suppose $f\in\funs{I}{A}$ and $u\in\funs{A}{B}$.
+    Let $z\in A$ and $w\in B$.
+    Suppose $u(z)=w$.
+    Then
+        $\supportOn{I}{u\circ f}{w}\subseteq\supportOn{I}{f}{z}$.
+\end{theorem}
+\begin{proof}
+    $u\circ f\in\funs{I}{B}$ by \obv{funs_circ}.
+    Show that for every $i\in\supportOn{I}{u\circ f}{w}$ we have
+        $i\in\supportOn{I}{f}{z}$.
+    \begin{subproof}
+        Fix $i\in\supportOn{I}{u\circ f}{w}$.
+        Hence $i\in I$ and $(u\circ f)(i)\neq w$ by
+            \obv{support_on_iff}.
+        $(u\circ f)(i)=u(f(i))$ by
+            \auto{circ_apply,funs_is_function,funs_ran,funs,
+                funs_elim}.
+        Suppose not.
+        Hence $f(i)=z$ by \auto{support_on_iff}.
+        Contradiction.
+    \end{subproof}
+    Follows by \obv{subseteq}.
+\end{proof}
+
+\begin{definition}\label{support_pointwise_binary_value_op}
+    $\supportPointwiseBinaryValueOp:
+        \Set\to\Set\to\Set\to\Set\to\Set
+        =\fun{b,f,g,i:\Set}{b((f(i),g(i)))}$.
+\end{definition}
+
+\begin{definition}\label{support_pointwise_binary}
+    $\supportPointwiseBinary{I}{b}{f}{g}
+        =\Apply{\graphOnDomainOp}{
+            I,\Apply{\supportPointwiseBinaryValueOp}{b,f,g}}$.
+\end{definition}
+
+\begin{proposition}\label{support_pointwise_binary_apply}
+    Let $i\in I$.
+    Then
+        $\apply{\supportPointwiseBinary{I}{b}{f}{g}}{i}
+        =b((f(i),g(i)))$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{support_pointwise_binary,
+            support_pointwise_binary_value_op,
+            logical_graph_on_domain_apply}.
+\end{proof}
+
+\begin{proposition}\label{support_pointwise_binary_type}
+    Suppose $f,g\in\funs{I}{A}$ and $b\in\funs{A\times A}{A}$.
+    Then $\supportPointwiseBinary{I}{b}{f}{g}\in\funs{I}{A}$.
+\end{proposition}
+\begin{proof}
+    $\supportPointwiseBinary{I}{b}{f}{g}$ is a function on $I$ by
+        \auto{support_pointwise_binary,
+            logical_graph_on_domain_function,funs_elim}.
+    For every $i\in I$ we have $f(i),g(i)\in A$ by
+        \obv{funs_type_apply}.
+    Hence for every $i\in I$ we have $(f(i),g(i))\in A\times A$ by
+        \auto{times_tuple_intro}.
+    Hence for every $i\in I$ we have $b((f(i),g(i)))\in A$ by
+        \obv{funs_type_apply}.
+    Follows by
+        \auto{funs_intro,funs_elim,support_pointwise_binary_apply}.
+\end{proof}
+
+\begin{theorem}\label{support_pointwise_binary_bound}
+    Suppose $f,g\in\funs{I}{A}$ and $b\in\funs{A\times A}{A}$.
+    Let $z\in A$.
+    Suppose $b((z,z))=z$.
+    Then
+        $\supportOn{I}{\supportPointwiseBinary{I}{b}{f}{g}}{z}
+        \subseteq\supportOn{I}{f}{z}\union\supportOn{I}{g}{z}$.
+\end{theorem}
+\begin{proof}
+    Show that for every
+        $i\in\supportOn{I}{\supportPointwiseBinary{I}{b}{f}{g}}{z}$
+        we have $i\in
+            \supportOn{I}{f}{z}\union\supportOn{I}{g}{z}$.
+    \begin{subproof}
+        Fix $i\in
+            \supportOn{I}{\supportPointwiseBinary{I}{b}{f}{g}}{z}$.
+        Hence $i\in I$ and
+            $\apply{\supportPointwiseBinary{I}{b}{f}{g}}{i}\neq z$ by
+            \obv{support_on_iff}.
+        Suppose not.
+        Hence $i\notin\supportOn{I}{f}{z}$ and
+            $i\notin\supportOn{I}{g}{z}$ by \auto{union_iff}.
+        Hence $f(i)=z$ and $g(i)=z$ by
+            \auto{support_on_iff}.
+        $\apply{\supportPointwiseBinary{I}{b}{f}{g}}{i}
+            =b((f(i),g(i)))$ by
+            \obv{support_pointwise_binary_apply}.
+        Contradiction.
+    \end{subproof}
+    Follows by \obv{subseteq}.
+\end{proof}

@@ -1,0 +1,432 @@
+\section{Cardinality}\label{form_sec_cardinality}
+
+\import{set.tex}
+\import{ordinal.tex}
+\import{function.tex}
+\import{nat.tex}
+\import{set/finite.tex}
+\import{set/finite-ordinal.tex}
+\import{set/equinumerosity.tex}
+\import{set/cantor.tex}
+\import{set/choice.tex}
+
+\begin{definition}\label{finite_cardinality}
+    $X$ has finite cardinality $k$ iff $k$ is a natural number and
+    there exists a bijection from $k$ to $X$.
+\end{definition}
+
+This is deliberately a finite-cardinality interface: its witness is required
+to be a von Neumann natural. General comparison is expressed below by
+injections. The canonical initial-ordinal representative and its equivalence
+with this relation-level interface are developed in the cardinal-object and
+cardinal-comparison modules.
+
+\begin{definition}\label{cardinal_le}
+    $\cardLe{A}{B}$ iff there exists $f\in\inj{A}{B}$.
+\end{definition}
+
+\begin{definition}\label{cardinal_lt}
+    $\cardLt{A}{B}$ iff $\cardLe{A}{B}\land\lnot(A\approx B)$.
+\end{definition}
+
+\begin{proposition}\label{cardinal_le_refl}
+    $\cardLe{A}{A}$.
+\end{proposition}
+\begin{proof}
+    $\identity{A}\in\inj{A}{A}$
+        by \auto{id_elem_funs,funs,funs_is_function,identity_injective,inj,injective_function}.
+    Follows by \obv{cardinal_le}.
+\end{proof}
+
+\begin{proposition}\label{cardinal_le_transitive}
+    Suppose $\cardLe{A}{B}$ and $\cardLe{B}{C}$.
+    Then $\cardLe{A}{C}$.
+\end{proposition}
+\begin{proof}
+    Take $f$ such that $f\in\inj{A}{B}$ by \auto{cardinal_le}.
+    Take $g$ such that $g\in\inj{B}{C}$ by \auto{cardinal_le}.
+    $g\circ f\in\inj{A}{C}$ by \obv{inj_circ}.
+    Follows by \obv{cardinal_le}.
+\end{proof}
+
+\begin{proposition}\label{subseteq_cardinal_le}
+    Suppose $A\subseteq B$.
+    Then $\cardLe{A}{B}$.
+\end{proposition}
+\begin{proof}
+    $\identity{A}\in\funs{A}{A}$ by \obv{id_elem_funs}.
+    Hence $\identity{A}\in\funs{A}{B}$
+        by \obv{funs_weaken_codom}.
+    $\identity{A}$ is injective by \obv{identity_injective}.
+    Hence $\identity{A}\in\inj{A}{B}$
+        by \auto{inj,funs,funs_is_function,injective_function}.
+    Follows by \obv{cardinal_le}.
+\end{proof}
+
+\begin{proposition}\label{equinum_cardinal_le}
+    Suppose $A\approx B$.
+    Then $\cardLe{A}{B}$ and $\cardLe{B}{A}$.
+\end{proposition}
+\begin{proof}
+    Take $f$ such that $f\in\bijections{A}{B}$ by \obv{equinum}.
+    $f\in\inj{A}{B}$ by
+        \auto{bijections_to_funs,bijection_is_function,bijections_dom,bijections,inj,injective_function}.
+    $\converse{f}\in\bijections{B}{A}$
+        by \obv{bijection_converse_is_bijection}.
+    Hence $\converse{f}\in\inj{B}{A}$
+        by
+        \auto{bijections_to_funs,bijection_is_function,bijections_dom,bijections,inj,injective_function}.
+    Follows by \obv{cardinal_le}.
+\end{proof}
+
+\begin{theorem}\label{cardinal_le_antisymmetric_up_to_equinum}
+    Suppose $\cardLe{A}{B}$ and $\cardLe{B}{A}$.
+    Then $A\approx B$.
+\end{theorem}
+\begin{proof}
+    Take $f$ such that $f\in\inj{A}{B}$ by \auto{cardinal_le}.
+    Take $g$ such that $g\in\inj{B}{A}$ by \auto{cardinal_le}.
+    $f$ is an injective function from $A$ to $B$
+        by \auto{inj,funs,funs_is_function,injective_function}.
+    $g$ is an injective function from $B$ to $A$
+        by \auto{inj,funs,funs_is_function,injective_function}.
+    Follows by \obv{cantorschroederbernstein}.
+\end{proof}
+
+\begin{proposition}\label{cardinal_lt_irreflexive}
+    $\lnot\cardLt{A}{A}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{cardinal_lt,equinum_refl}.
+\end{proof}
+
+\begin{theorem}\label{cardinal_pigeonhole}
+    Suppose $f\in\funs{A}{B}$ and $\cardLt{B}{A}$.
+    Then there exist $x,y\in A$ such that $x\neq y$ and $f(x)=f(y)$.
+\end{theorem}
+\begin{proof}
+    Suppose not.
+    Hence for every $x,y\in A$ such that $f(x)=f(y)$ we have $x=y$
+        by \auto.
+    Hence $f\in\inj{A}{B}$ by \obv{inj}.
+    Hence $\cardLe{A}{B}$ by \obv{cardinal_le}.
+    $\cardLe{B}{A}$ and $\lnot(B\approx A)$
+        by \obv{cardinal_lt}.
+    $B\approx A$ by
+        \obv{cardinal_le_antisymmetric_up_to_equinum}.
+    Contradiction.
+\end{proof}
+
+\begin{theorem}\label{surjection_has_injective_section}
+    Suppose $f\in\surj{A}{B}$.
+    Then there exists $g\in\inj{B}{A}$ such that for every $b\in B$
+        we have $f(g(b))=b$.
+\end{theorem}
+\begin{proof}
+    $f$ is a function and $\dom{f}=A$
+        by \auto{surj_to_fun,funs_is_function,funs}.
+    $\converse{f}$ is a relation by \obv{converse_is_relation}.
+    Show that for every $b\in B$ there exists $a$ such that
+        $b\mathrel{\converse{f}}a$.
+    \begin{subproof}
+        Fix $b\in B$.
+        Take $a\in A$ such that $f(a)=b$ by \obv{surj}.
+        $(a,b)\in f$ by \auto{function_apply_elim}.
+        Hence $(b,a)\in\converse{f}$ by \obv{converse_iff}.
+    \end{subproof}
+    Take $g$ such that $g$ is a function on $B$ and for every $b\in B$
+        we have $b\mathrel{\converse{f}}g(b)$
+        by \obv{axiom_of_choice}.
+    Show that for every $b\in B$ we have $g(b)\in A$.
+    \begin{subproof}
+        Fix $b\in B$.
+        $(g(b),b)\in f$ by \auto{converse_iff}.
+        Hence $g(b)\in\dom{f}$ by \obv{dom_intro}.
+    \end{subproof}
+    Hence $g\in\funs{B}{A}$ by \obv{funs_intro}.
+    For every $b,c\in B$ such that $g(b)=g(c)$ we have $b=c$
+        by \auto{converse_iff,rightunique}.
+    Hence $g\in\inj{B}{A}$ by \obv{inj}.
+    Show that for every $b\in B$ we have $f(g(b))=b$.
+    \begin{subproof}
+        Fix $b\in B$.
+        $(g(b),b)\in f$ by \auto{converse_iff}.
+        Follows by \obv{function_apply_intro}.
+    \end{subproof}
+\end{proof}
+
+\begin{proposition}\label{function_range_cardinal_le_domain}
+    Suppose $f$ is a function.
+    Then $\cardLe{\ran{f}}{\dom{f}}$.
+\end{proposition}
+\begin{proof}
+    $f\in\funs{\dom{f}}{\ran{f}}$ by
+        \obv{function_exact_type_to_range}.
+    Hence $f\in\surj{\dom{f}}{\ran{f}}$ by \obv{fun_to_surj}.
+    Take $g\in\inj{\ran{f}}{\dom{f}}$ such that for every
+        $y\in\ran{f}$ we have $f(g(y))=y$ by
+        \obv{surjection_has_injective_section}.
+    Follows by \auto{cardinal_le}.
+\end{proof}
+
+\begin{theorem}\label{injection_from_inhabited_set_has_surjective_retraction}
+    Suppose $f\in\inj{A}{B}$ and $A$ is inhabited.
+    Then there exists $g\in\surj{B}{A}$ such that for every $a\in A$
+        we have $g(f(a))=a$.
+\end{theorem}
+\begin{proof}
+    Take $a_0$ such that $a_0\in A$.
+    $f\in\funs{A}{B}$ by \obv{inj}.
+    Hence $f$ is a function and $\dom{f}=A$ and $\ran{f}\subseteq B$
+        by \obv{funs_is_function,funs,funs_ran}.
+    $f$ is injective
+        by \auto{inj,funs,funs_is_function,injective_function}.
+    Let $R=\converse{f}\union((B\setminus\ran{f})\times\{a_0\})$.
+    $\converse{f}$ is a relation by \obv{converse_is_relation}.
+    $(B\setminus\ran{f})\times\{a_0\}$ is a relation
+        by \auto{relation,times_elem_is_tuple}.
+    Hence $R$ is a relation by \obv{union_relations_is_relation}.
+    Show that for every $b\in B$ there exists $a$ such that $b\mathrel{R}a$.
+    \begin{subproof}
+        Fix $b\in B$.
+        \begin{byCase}
+            \caseOf{$b\in\ran{f}$.}
+                Take $a$ such that $(a,b)\in f$ by \obv{ran_iff}.
+                Hence $(b,a)\in\converse{f}$ by \obv{converse_iff}.
+                Hence $(b,a)\in R$ by \auto{union_iff}.
+            \caseOf{$b\notin\ran{f}$.}
+                $b\in B\setminus\ran{f}$ by \obv{setminus}.
+                $(b,a_0)\in(B\setminus\ran{f})\times\{a_0\}$
+                    by \auto{times_tuple_intro,singleton_iff}.
+                Hence $(b,a_0)\in R$ by \auto{union_iff}.
+        \end{byCase}
+    \end{subproof}
+    Take $g$ such that $g$ is a function on $B$ and for every $b\in B$
+        we have $b\mathrel{R}g(b)$
+        by \obv{axiom_of_choice}.
+    Show that for every $b\in B$ we have $g(b)\in A$.
+    \begin{subproof}
+        Fix $b\in B$.
+        $(b,g(b))\in R$.
+        $(b,g(b))\in\converse{f}$ or
+            $(b,g(b))\in(B\setminus\ran{f})\times\{a_0\}$
+            by \obv{union_iff}.
+        Follows by
+            \auto{converse_iff,dom_intro,times_tuple_elim,singleton_iff}.
+    \end{subproof}
+    Hence $g\in\funs{B}{A}$ by \obv{funs_intro}.
+    Show that for every $a\in A$ we have $g(f(a))=a$.
+    \begin{subproof}
+        Fix $a\in A$.
+        $f(a)\in\ran{f}$ by \auto{fun_ran_iff}.
+        $f(a)\in B$ by \obv{funs_type_apply}.
+        $(f(a),g(f(a)))\in R$.
+        $(f(a),g(f(a)))\notin
+            (B\setminus\ran{f})\times\{a_0\}$
+            by \auto{times_tuple_elim,setminus}.
+        Hence $(f(a),g(f(a)))\in\converse{f}$
+            by \auto{union_iff}.
+        Thus $(g(f(a)),f(a))\in f$ by \obv{converse_iff}.
+        $(a,f(a))\in f$ by \obv{function_apply_elim}.
+        Follows by \obv{injective}.
+    \end{subproof}
+    Show that for every $a\in A$ there exists $b\in B$ such that
+        $g(b)=a$.
+    \begin{subproof}
+        Fix $a\in A$.
+        $f(a)\in B$ by \obv{funs_type_apply}.
+        $g(f(a))=a$.
+    \end{subproof}
+    $g\in\surj{B}{A}$ by \obv{surj}.
+\end{proof}
+
+\begin{definition}\label{at_most_countable}
+    $X$ is at most countable iff there exists $f\in\inj{X}{\naturals}$.
+\end{definition}
+
+\begin{abbreviation}\label{countable}
+    $X$ is countable iff $X$ is at most countable.
+\end{abbreviation}
+
+\begin{definition}\label{countably_infinite}
+    $X$ is countably infinite iff $X$ is at most countable and $X$ is infinite.
+\end{definition}
+
+Throughout this library, ``countable'' means ``at most countable''.
+``Countably infinite'' uses the equivalent finite/infinite formulation above;
+its characterization by the canonical cardinal is established in the
+cardinality reconciliation layer.
+
+\begin{definition}\label{enumerable}
+    $X$ is enumerable iff $X=\emptyset$ or
+        there exists $f\in\surj{\naturals}{X}$.
+\end{definition}
+
+\begin{proposition}\label{emptyset_countable}
+    $\emptyset$ is countable.
+\end{proposition}
+\begin{proof}
+    $\identity{\emptyset}\in\funs{\emptyset}{\emptyset}$
+        by \obv{id_elem_funs}.
+    Hence $\identity{\emptyset}\in\funs{\emptyset}{\naturals}$
+        by \obv{emptyset_subseteq,funs_weaken_codom}.
+    $\identity{\emptyset}$ is injective by \obv{identity_injective}.
+    Hence $\identity{\emptyset}\in\inj{\emptyset}{\naturals}$
+        by \auto{inj,funs,funs_is_function,injective_function}.
+    Follows by \obv{at_most_countable}.
+\end{proof}
+
+\begin{proposition}\label{emptyset_enumerable}
+    $\emptyset$ is enumerable.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{enumerable}.
+\end{proof}
+
+\begin{theorem}\label{finite_is_countable}
+    Suppose $X$ is finite.
+    Then $X$ is countable.
+\end{theorem}
+\begin{proof}
+    Take a natural number $n$ such that there exists
+        $f\in\bijections{n}{X}$ by \auto{finite}.
+    Take $f$ such that $f\in\bijections{n}{X}$ by \auto.
+    $\converse{f}\in\bijections{X}{n}$
+        by \obv{bijection_converse_is_bijection}.
+    Hence $\converse{f}\in\funs{X}{n}$ and
+        $\converse{f}$ is injective
+        by \obv{bijections_to_funs,bijections}.
+    $n\subseteq\naturals$ by
+        \obv{naturals_is_transitive_set,transitiveset_iff_subseteq}.
+    Hence $\converse{f}\in\funs{X}{\naturals}$
+        by \obv{funs_weaken_codom}.
+    Hence $\converse{f}\in\inj{X}{\naturals}$
+        by \auto{inj,funs,funs_is_function,injective_function}.
+    Follows by \obv{at_most_countable}.
+\end{proof}
+
+\begin{proposition}\label{countable_iff_finite_or_countably_infinite}
+    $X$ is countable iff $X$ is finite or $X$ is countably infinite.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{at_most_countable,countably_infinite,finite_is_countable}.
+\end{proof}
+
+\begin{theorem}\label{subseteq_countable_is_countable}
+    Suppose $A\subseteq B$ and $B$ is countable.
+    Then $A$ is countable.
+\end{theorem}
+\begin{proof}
+    Take $f$ such that $f\in\inj{B}{\naturals}$ by \auto{at_most_countable}.
+    $\restrl{f}{A}\in\inj{A}{\naturals}$ by \obv{inj_restrl}.
+    Follows by \obv{at_most_countable}.
+\end{proof}
+
+\begin{theorem}\label{countable_iff_equinumerous_subset_naturals}
+    $X$ is countable iff there exists $N\subseteq\naturals$ such that
+        $X\approx N$.
+\end{theorem}
+\begin{proof}
+    Show that if $X$ is countable, then there exists
+        $N\subseteq\naturals$ such that $X\approx N$.
+    \begin{subproof}
+        Assume $X$ is countable.
+        Take $f$ such that $f\in\inj{X}{\naturals}$ by \auto{at_most_countable}.
+        Let $N=\ran{f}$.
+        $N\subseteq\naturals$ by \auto{inj,funs_ran}.
+        $f\in\surj{X}{N}$ by \auto{inj,fun_to_surj}.
+        $f$ is injective
+            by \auto{inj,funs,funs_is_function,injective_function}.
+        Hence $f\in\bijections{X}{N}$
+            by \obv{bijections}.
+        Thus $X\approx N$ by \obv{equinum}.
+    \end{subproof}
+    Show that if there exists $N\subseteq\naturals$ such that
+        $X\approx N$, then $X$ is countable.
+    \begin{subproof}
+        Assume there exists $N\subseteq\naturals$ such that $X\approx N$.
+        Take $N\subseteq\naturals$ such that $X\approx N$.
+        Take $f$ such that $f\in\bijections{X}{N}$ by \obv{equinum}.
+        $f\in\funs{X}{N}$ and $f$ is injective
+            by \obv{bijections_to_funs,bijections}.
+        Hence $f\in\funs{X}{\naturals}$ by \obv{funs_weaken_codom}.
+        Hence $f\in\inj{X}{\naturals}$
+            by \auto{inj,funs,funs_is_function,injective_function}.
+        Follows by \obv{at_most_countable}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{countable_implies_enumerable}
+    Suppose $X$ is countable.
+    Then $X$ is enumerable.
+\end{theorem}
+\begin{proof}
+    \begin{byCase}
+        \caseOf{$X=\emptyset$.}
+            Follows by \obv{enumerable}.
+        \caseOf{$X\neq\emptyset$.}
+            $X$ is inhabited by \obv{nonempty_inhabited}.
+            Take $f$ such that $f\in\inj{X}{\naturals}$ by \auto{at_most_countable}.
+            Take $g\in\surj{\naturals}{X}$ such that for every $x\in X$
+                we have $g(f(x))=x$
+                by \obv{injection_from_inhabited_set_has_surjective_retraction}.
+            Follows by \auto{enumerable}.
+    \end{byCase}
+\end{proof}
+
+\begin{theorem}\label{enumerable_implies_countable}
+    Suppose $X$ is enumerable.
+    Then $X$ is countable.
+\end{theorem}
+\begin{proof}
+    \begin{byCase}
+        \caseOf{$X=\emptyset$.}
+            Follows by \obv{emptyset_countable}.
+        \caseOf{$X\neq\emptyset$.}
+            Take $f$ such that $f\in\surj{\naturals}{X}$ by \auto{enumerable}.
+            Take $g\in\inj{X}{\naturals}$ such that for every $x\in X$
+                we have $f(g(x))=x$
+                by \obv{surjection_has_injective_section}.
+            Follows by \auto{at_most_countable}.
+    \end{byCase}
+\end{proof}
+
+\begin{theorem}\label{countable_iff_enumerable}
+    $X$ is countable iff $X$ is enumerable.
+\end{theorem}
+\begin{proof}
+    Follows by
+        \auto{countable_implies_enumerable,enumerable_implies_countable}.
+\end{proof}
+
+\begin{theorem}\label{cantor_strict_cardinality}
+    $\cardLt{A}{\pow{A}}$.
+\end{theorem}
+\begin{proof}
+    Let $s=\{(a,\{a\})\mid a\in A\}$.
+    $s$ is a relation by \auto{relation}.
+    $s$ is right-unique by \auto{rightunique,pair_eq_iff}.
+    $\dom{s}=A$ by \auto{setext,dom_iff,pair_eq_iff}.
+    Show that for every $a\in A$ we have $s(a)\in\pow{A}$.
+    \begin{subproof}
+        Fix $a\in A$.
+        $s(a)=\{a\}$ by \obv{function_apply_intro}.
+        $\{a\}\subseteq A$ by \obv{singleton_subset_intro}.
+        Follows by \obv{powerset_intro}.
+    \end{subproof}
+    Hence $s\in\funs{A}{\pow{A}}$ by \obv{funs_intro}.
+    For every $a,b\in A$ such that $s(a)=s(b)$ we have $a=b$
+        by \auto{function_apply_intro,singleton_iff}.
+    Hence $s\in\inj{A}{\pow{A}}$ by \obv{inj}.
+    Thus $\cardLe{A}{\pow{A}}$ by \obv{cardinal_le}.
+    Show that $\lnot(A\approx\pow{A})$.
+    \begin{subproof}
+        Suppose $A\approx\pow{A}$.
+        Take $f$ such that $f\in\bijections{A}{\pow{A}}$ by \obv{equinum}.
+        Hence $f\in\surj{A}{\pow{A}}$ by \obv{bijections}.
+        Contradiction by \auto{cantor}.
+    \end{subproof}
+    Follows by \obv{cardinal_lt}.
+\end{proof}

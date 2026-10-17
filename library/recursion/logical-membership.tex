@@ -1,0 +1,232 @@
+\import{set/regularity.tex}
+
+\section{Logical membership recursion}
+
+The construction in this section is logical rather than set-coded.  Its
+values may therefore themselves be higher-order functions.  The closure
+predicate is the impredicative least class closed under the recursion step.
+
+\begin{definition}\label{membership_rec_one_closure}
+    $\membershipRecOneClosureOp :
+        (\Set\to(\Set\to(\Set\to\Set))\to(\Set\to\Set))\to
+        \Set\to(\Set\to\Set)\to\Prop
+        =\fun{F:\Set\to(\Set\to(\Set\to\Set))\to(\Set\to\Set)}{
+            \fun{X:\Set}{
+                \fun{Y:\Set\to\Set}{
+                    \forall R:\Set\to(\Set\to\Set)\to\Prop.
+                    (\forall Z:\Set.\ \forall f:\Set\to(\Set\to\Set).
+                        (\forall z:\Set.\ z\in Z\implies
+                            \Apply{R}{z,\Apply{f}{z}})
+                        \implies
+                        \Apply{R}{Z,\Apply{F}{Z,f}})
+                    \implies\Apply{R}{X,Y}}}}$.
+\end{definition}
+
+\begin{theorem}\label{membership_rec_one_closure_intro}
+    $\forall F:\Set\to(\Set\to(\Set\to\Set))\to(\Set\to\Set).
+     \forall X:\Set.\ \forall f:\Set\to(\Set\to\Set).
+        (\forall x:\Set.\ x\in X\implies
+            \Apply{\membershipRecOneClosureOp}
+                {F,x,\Apply{f}{x}})
+        \implies
+        \Apply{\membershipRecOneClosureOp}
+            {F,X,\Apply{F}{X,f}}$.
+\end{theorem}
+\begin{proof}
+    Follows by \auto{membership_rec_one_closure}.
+\end{proof}
+
+\begin{definition}\label{membership_rec_one_inversion}
+    $\membershipRecOneInversionOp :
+        (\Set\to(\Set\to(\Set\to\Set))\to(\Set\to\Set))\to
+        \Set\to(\Set\to\Set)\to\Prop
+        =\fun{F:\Set\to(\Set\to(\Set\to\Set))\to(\Set\to\Set)}{
+            \fun{X:\Set}{
+                \fun{Y:\Set\to\Set}{
+                    \exists f:\Set\to(\Set\to\Set).
+                        (\forall x:\Set.\ x\in X\implies
+                            \Apply{\membershipRecOneClosureOp}
+                                {F,x,\Apply{f}{x}})
+                        \land Y=\Apply{F}{X,f}}}}$.
+\end{definition}
+
+\begin{theorem}\label{membership_rec_one_inversion_closed}
+    $\forall F:\Set\to(\Set\to(\Set\to\Set))\to(\Set\to\Set).
+     \forall X:\Set.\ \forall g:\Set\to(\Set\to\Set).
+        (\forall x:\Set.\ x\in X\implies
+            \Apply{\membershipRecOneInversionOp}
+                {F,x,\Apply{g}{x}})
+        \implies
+        \Apply{\membershipRecOneInversionOp}
+            {F,X,\Apply{F}{X,g}}$.
+\end{theorem}
+\begin{proof}
+    Fix $F,X,g$.
+    Assume $\forall x:\Set.\ x\in X\implies
+        \Apply{\membershipRecOneInversionOp}
+            {F,x,\Apply{g}{x}}$.
+    Show that $\forall x:\Set.\ x\in X\implies
+        \Apply{\membershipRecOneClosureOp}
+            {F,x,\Apply{g}{x}}$.
+    \begin{subproof}
+        Fix $x\in X$.
+        Take $f:\Set\to(\Set\to\Set)$ such that
+            $(\forall z:\Set.\ z\in x\implies
+                \Apply{\membershipRecOneClosureOp}
+                    {F,z,\Apply{f}{z}})
+            \land \Apply{g}{x}=\Apply{F}{x,f}$
+            by \auto{membership_rec_one_inversion}.
+        $\Apply{\membershipRecOneClosureOp}
+            {F,x,\Apply{F}{x,f}}$
+            by \obv{membership_rec_one_closure_intro}.
+    \end{subproof}
+    Follows by \obv{membership_rec_one_inversion}.
+\end{proof}
+
+\begin{theorem}\label{membership_rec_one_closure_inversion}
+    $\forall F:\Set\to(\Set\to(\Set\to\Set))\to(\Set\to\Set).
+     \forall X:\Set.\ \forall Y:\Set\to\Set.
+        \Apply{\membershipRecOneClosureOp}{F,X,Y}
+        \implies
+        (\exists f:\Set\to(\Set\to\Set).
+            (\forall x:\Set.\ x\in X\implies
+                \Apply{\membershipRecOneClosureOp}
+                    {F,x,\Apply{f}{x}})
+            \land Y=\Apply{F}{X,f})$.
+\end{theorem}
+\begin{proof}
+    Fix $F,X,Y$.
+    Assume
+        $\Apply{\membershipRecOneClosureOp}{F,X,Y}$.
+    Follows by \auto{membership_rec_one_closure,membership_rec_one_inversion,membership_rec_one_inversion_closed}.
+\end{proof}
+
+\begin{definition}\label{membership_rec_one_functional}
+    $\membershipRecOneFunctionalOp :
+        (\Set\to(\Set\to(\Set\to\Set))\to(\Set\to\Set))\to\Prop
+        =\fun{F:\Set\to(\Set\to(\Set\to\Set))\to(\Set\to\Set)}{
+            \forall X:\Set.\ \forall g,h:\Set\to(\Set\to\Set).
+                (\forall x:\Set.\ x\in X\implies
+                    \Apply{g}{x}=\Apply{h}{x})
+                \implies
+                \Apply{F}{X,g}=\Apply{F}{X,h}}$.
+\end{definition}
+
+\begin{lemma}\label{membership_rec_one_closure_unique_step}
+    $\forall F:\Set\to(\Set\to(\Set\to\Set))\to(\Set\to\Set).
+     \forall X:\Set.
+        \Apply{\membershipRecOneFunctionalOp}{F}
+        \land
+        (\forall x:\Set.\ x\in X\implies
+            (\forall Y,Z:\Set\to\Set.
+                \Apply{\membershipRecOneClosureOp}{F,x,Y}
+                \land
+                \Apply{\membershipRecOneClosureOp}{F,x,Z}
+                \implies Y=Z))
+        \implies
+        (\forall Y,Z:\Set\to\Set.
+            \Apply{\membershipRecOneClosureOp}{F,X,Y}
+            \land
+            \Apply{\membershipRecOneClosureOp}{F,X,Z}
+            \implies Y=Z)$.
+\end{lemma}
+\begin{proof}
+    Fix $F,X$.
+    Assume $\Apply{\membershipRecOneFunctionalOp}{F}$.
+    Assume $\forall x:\Set.\ x\in X\implies
+        (\forall Y,Z:\Set\to\Set.
+            \Apply{\membershipRecOneClosureOp}{F,x,Y}
+            \land
+            \Apply{\membershipRecOneClosureOp}{F,x,Z}
+            \implies Y=Z)$.
+    Fix $Y,Z$.
+    Assume
+        $\Apply{\membershipRecOneClosureOp}{F,X,Y}
+        \land
+        \Apply{\membershipRecOneClosureOp}{F,X,Z}$.
+    Take $g:\Set\to(\Set\to\Set)$ such that
+        $(\forall x:\Set.\ x\in X\implies
+            \Apply{\membershipRecOneClosureOp}
+                {F,x,\Apply{g}{x}})
+        \land Y=\Apply{F}{X,g}$
+        by \obv{membership_rec_one_closure_inversion}.
+    Take $h:\Set\to(\Set\to\Set)$ such that
+        $(\forall x:\Set.\ x\in X\implies
+            \Apply{\membershipRecOneClosureOp}
+                {F,x,\Apply{h}{x}})
+        \land Z=\Apply{F}{X,h}$
+        by \obv{membership_rec_one_closure_inversion}.
+    Show that $\forall x:\Set.\ x\in X\implies
+        \Apply{g}{x}=\Apply{h}{x}$.
+    \begin{subproof}
+        Fix $x\in X$.
+    \end{subproof}
+    $\Apply{F}{X,g}=\Apply{F}{X,h}$
+        by \obv{membership_rec_one_functional}.
+\end{proof}
+
+\begin{theorem}\label{membership_rec_one_closure_unique}
+    $\forall X:\Set.
+     \forall F:\Set\to(\Set\to(\Set\to\Set))\to(\Set\to\Set).
+        \Apply{\membershipRecOneFunctionalOp}{F}
+        \implies
+        (\forall Y,Z:\Set\to\Set.
+            \Apply{\membershipRecOneClosureOp}{F,X,Y}
+            \land
+            \Apply{\membershipRecOneClosureOp}{F,X,Z}
+            \implies Y=Z)$.
+\end{theorem}
+\begin{proof}[Proof by \in-induction on $X$]
+    Follows by \auto{membership_rec_one_closure_unique_step}.
+\end{proof}
+
+\begin{definition}\label{membership_rec_one}
+    $\membershipRecOneOp :
+        (\Set\to(\Set\to(\Set\to\Set))\to(\Set\to\Set))\to
+        \Set\to(\Set\to\Set)
+        =\fun{F:\Set\to(\Set\to(\Set\to\Set))\to(\Set\to\Set)}{
+            \fun{X:\Set}{
+                \Select[\Set\to\Set]{
+                    \fun{Y:\Set\to\Set}{
+                        \Apply{\membershipRecOneClosureOp}{F,X,Y}}}}}$.
+\end{definition}
+
+\begin{theorem}\label{membership_rec_one_is_closed}
+    $\forall X:\Set.
+     \forall F:\Set\to(\Set\to(\Set\to\Set))\to(\Set\to\Set).
+        \Apply{\membershipRecOneFunctionalOp}{F}
+        \implies
+            \Apply{\membershipRecOneClosureOp}
+                {F,X,\Apply{\membershipRecOneOp}{F,X}}$.
+\end{theorem}
+\begin{proof}[Proof by \in-induction on $X$]
+    Fix $F$.
+    Assume $\Apply{\membershipRecOneFunctionalOp}{F}$.
+    $\Apply{\membershipRecOneClosureOp}
+        {F,X,\Apply{F}{X,\Apply{\membershipRecOneOp}{F}}}$
+        by \obv{membership_rec_one_closure_intro}.
+    Hence $\exists Y:\Set\to\Set.
+        \Apply{\membershipRecOneClosureOp}{F,X,Y}$.
+    Follows by \auto{membership_rec_one}.
+\end{proof}
+
+\begin{theorem}\label{membership_rec_one_equation}
+    $\forall F:\Set\to(\Set\to(\Set\to\Set))\to(\Set\to\Set).
+        \Apply{\membershipRecOneFunctionalOp}{F}
+        \implies
+        (\forall X:\Set.
+            \Apply{\membershipRecOneOp}{F,X}
+            =\Apply{F}{X,\Apply{\membershipRecOneOp}{F}})$.
+\end{theorem}
+\begin{proof}
+    Fix $F$.
+    Assume $\Apply{\membershipRecOneFunctionalOp}{F}$.
+    Fix $X$.
+    $\Apply{\membershipRecOneClosureOp}
+        {F,X,\Apply{\membershipRecOneOp}{F,X}}$
+        by \obv{membership_rec_one_is_closed}.
+    $\Apply{\membershipRecOneClosureOp}
+        {F,X,\Apply{F}{X,\Apply{\membershipRecOneOp}{F}}}$
+        by \obv{membership_rec_one_closure_intro,membership_rec_one_is_closed}.
+    Follows by \obv{membership_rec_one_closure_unique}.
+\end{proof}

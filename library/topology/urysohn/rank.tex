@@ -1,0 +1,481 @@
+\section{Entry ranks in finite refinements}
+
+\import{set/finite-interleave.tex}
+
+The entry rank records where a point first enters a finite sequence of sets.
+We use the last index as a default when the point has not entered earlier.
+Thus the rank always exists, but a rank equal to the last index does not
+distinguish membership in the last set from membership in none of the sets.
+Under refinement, a positive entry rank becomes either an inserted index or
+the following old index; rank zero stays zero. This alternative will control
+the step values.
+
+\begin{definition}\label{entry_rank_candidates}
+    $\entryRankCandidates{c}{r}{x}
+        =\{i\in r\mid x\in c(i)\}\union\{r\}$.
+\end{definition}
+
+\begin{definition}\label{entry_rank}
+    $\entryRank{c}{r}{x}
+        =\inters{\entryRankCandidates{c}{r}{x}}$.
+\end{definition}
+
+\begin{proposition}\label{entry_rank_candidates_iff}
+    $i\in\entryRankCandidates{c}{r}{x}$ iff
+        $i\in r$ and $x\in c(i)$ or $i=r$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{entry_rank_candidates,union_iff,singleton_iff}.
+\end{proof}
+
+\begin{proposition}\label{entry_rank_candidates_inhabited}
+    $\entryRankCandidates{c}{r}{x}$ is inhabited.
+\end{proposition}
+\begin{proof}
+    $r\in\entryRankCandidates{c}{r}{x}$
+        by \auto{entry_rank_candidates_iff}.
+\end{proof}
+
+\begin{proposition}\label{entry_rank_candidates_are_ordinals}
+    Let $r$ be a natural number.
+    Then every element of $\entryRankCandidates{c}{r}{x}$ is an ordinal.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{entry_rank_candidates_iff,natural_number_is_ordinal,elem_of_ordinal_is_ordinal}.
+\end{proof}
+
+\begin{proposition}\label{entry_rank_is_ordinal}
+    Let $r$ be a natural number.
+    Then $\entryRank{c}{r}{x}$ is an ordinal.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{entry_rank,inters_of_ordinals_is_ordinal,entry_rank_candidates_inhabited,entry_rank_candidates_are_ordinals}.
+\end{proof}
+
+\begin{proposition}\label{entry_rank_is_candidate}
+    Let $r$ be a natural number.
+    Then $\entryRank{c}{r}{x}\in\entryRankCandidates{c}{r}{x}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{entry_rank,inters_of_ordinals_elem,entry_rank_candidates_inhabited,entry_rank_candidates_are_ordinals}.
+\end{proof}
+
+\begin{proposition}\label{entry_rank_subseteq}
+    Let $r$ be a natural number.
+    Let $i\in\entryRankCandidates{c}{r}{x}$.
+    Then $\entryRank{c}{r}{x}\subseteq i$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{entry_rank,inters_of_ordinals_subseteq,entry_rank_candidates_inhabited,entry_rank_candidates_are_ordinals}.
+\end{proof}
+
+\begin{proposition}\label{entry_rank_subseteq_sentinel}
+    Let $r$ be a natural number.
+    Then $\entryRank{c}{r}{x}\subseteq r$.
+\end{proposition}
+\begin{proof}
+    $r\in\entryRankCandidates{c}{r}{x}$
+        by \auto{entry_rank_candidates_iff}.
+    Follows by \obv{entry_rank_subseteq}.
+\end{proof}
+
+\begin{proposition}\label{entry_rank_is_natural}
+    Let $r$ be a natural number.
+    Then $\entryRank{c}{r}{x}$ is a natural number.
+\end{proposition}
+\begin{proof}
+    $\entryRank{c}{r}{x}\in\entryRankCandidates{c}{r}{x}$
+        by \obv{entry_rank_is_candidate}.
+    Hence $\entryRank{c}{r}{x}\in r$ or
+        $\entryRank{c}{r}{x}=r$
+        by \auto{entry_rank_candidates_iff}.
+    Follows by
+        \obv{naturals_is_transitive_set,transitiveset_iff_subseteq,subseteq}.
+\end{proof}
+
+\begin{proposition}\label{entry_rank_in_successor}
+    Let $r$ be a natural number.
+    Then $\entryRank{c}{r}{x}\in\suc{r}$.
+\end{proposition}
+\begin{proof}
+    $\entryRank{c}{r}{x}\in r$ or
+        $\entryRank{c}{r}{x}=r$
+        by \auto{entry_rank_is_candidate,entry_rank_candidates_iff}.
+    Follows by \auto{suc_iff}.
+\end{proof}
+
+\begin{proposition}\label{entry_rank_no_earlier_entry}
+    Let $r$ be a natural number.
+    Let $i\in\entryRank{c}{r}{x}$.
+    Then $x\notin c(i)$.
+\end{proposition}
+\begin{proof}
+    Suppose $x\in c(i)$.
+    $\entryRank{c}{r}{x}\subseteq r$
+        by \obv{entry_rank_subseteq_sentinel}.
+    Hence $i\in r$ by \obv{subseteq}.
+    Thus $i\in\entryRankCandidates{c}{r}{x}$
+        by \auto{entry_rank_candidates_iff}.
+    Hence $\entryRank{c}{r}{x}\subseteq i$
+        by \obv{entry_rank_subseteq}.
+    $i$ and $\entryRank{c}{r}{x}$ are ordinals
+        by \auto{entry_rank_is_ordinal,elem_of_ordinal_is_ordinal}.
+    $i\subseteq\entryRank{c}{r}{x}$
+        by \obv{ordinal_elem_implies_subseteq}.
+    Hence $i=\entryRank{c}{r}{x}$
+        by \obv{subseteq_antisymmetric}.
+    Contradiction by \obv{in_irrefl}.
+\end{proof}
+
+\begin{proposition}\label{entry_rank_eq_from_first_candidate}
+    Let $r$ be a natural number.
+    Let $q\in\suc{r}$.
+    Suppose $q=r$ or $q\in r$ and $x\in c(q)$.
+    Suppose for every $i\in q$ we have $x\notin c(i)$.
+    Then $\entryRank{c}{r}{x}=q$.
+\end{proposition}
+\begin{proof}
+    $q\in\entryRankCandidates{c}{r}{x}$
+        by \auto{entry_rank_candidates_iff}.
+    Hence $\entryRank{c}{r}{x}\subseteq q$
+        by \obv{entry_rank_subseteq}.
+    Suppose not.
+    $q$ and $\entryRank{c}{r}{x}$ are ordinals
+        by \obv{natural_number_is_ordinal,entry_rank_is_ordinal,elem_of_ordinal_is_ordinal}.
+    Hence $\entryRank{c}{r}{x}\in q$
+        by \obv{ordinal_subseteq_implies_elem_or_eq}.
+    $\entryRank{c}{r}{x}\in\entryRankCandidates{c}{r}{x}$
+        by \obv{entry_rank_is_candidate}.
+    $q\subseteq r$ by
+        \obv{suc_iff,natural_number_is_ordinal,ordinal_elem_implies_subseteq,subseteq_refl}.
+    Hence $\entryRank{c}{r}{x}\in r$ by \obv{subseteq}.
+    Hence $x\in c(\entryRank{c}{r}{x})$
+        by \auto{entry_rank_candidates_iff,in_irrefl}.
+    Contradiction.
+\end{proof}
+
+\begin{proposition}\label{entry_rank_eq_zero_iff}
+    Let $r$ be a natural number.
+    Then $\entryRank{c}{r}{x}=\emptyset$ iff
+        $r=\emptyset$ or $\emptyset\in r$ and $x\in c(\emptyset)$.
+\end{proposition}
+\begin{proof}
+    If $\entryRank{c}{r}{x}=\emptyset$, then
+        $r=\emptyset$ or $\emptyset\in r$ and $x\in c(\emptyset)$
+        by \auto{entry_rank_is_candidate,entry_rank_candidates_iff}.
+    Show that if $r=\emptyset$ or
+        $\emptyset\in r$ and $x\in c(\emptyset)$, then
+        $\entryRank{c}{r}{x}=\emptyset$.
+    \begin{subproof}
+        Assume $r=\emptyset$ or
+            $\emptyset\in r$ and $x\in c(\emptyset)$.
+        Then $\emptyset\in\entryRankCandidates{c}{r}{x}$
+            by \auto{entry_rank_candidates_iff}.
+        Hence $\entryRank{c}{r}{x}\subseteq\emptyset$
+            by \obv{entry_rank_subseteq}.
+        Follows by \obv{subseteq_emptyset_iff}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{proposition}\label{entry_rank_successor_predecessor}
+    Let $r$ be a natural number.
+    Suppose $\entryRank{c}{r}{x}=\suc{j}$.
+    Then $j\in r$.
+\end{proposition}
+\begin{proof}
+    $\entryRank{c}{r}{x}\subseteq r$
+        by \obv{entry_rank_subseteq_sentinel}.
+    $j\in\suc{j}$ by \obv{suc_intro_self}.
+    Follows by \obv{subseteq}.
+\end{proof}
+
+\begin{proposition}\label{entry_rank_successor_candidate}
+    Let $r$ be a natural number.
+    Suppose $\entryRank{c}{r}{x}=\suc{j}$.
+    Then $\suc{j}=r$ or
+        $\suc{j}\in r$ and $x\in c(\suc{j})$.
+\end{proposition}
+\begin{proof}
+    $\entryRank{c}{r}{x}\in\entryRankCandidates{c}{r}{x}$
+        by \obv{entry_rank_is_candidate}.
+    Follows by \auto{entry_rank_candidates_iff}.
+\end{proof}
+
+\begin{proposition}\label{entry_rank_eq_sentinel_outside_last}
+    Let $r$ be a natural number.
+    Suppose $c\in\funs{\suc{r}}{A}$.
+    Suppose for every $i\in r$ we have $c(i)\subseteq c(r)$.
+    Suppose $x\notin c(r)$.
+    Then $\entryRank{c}{r}{x}=r$.
+\end{proposition}
+\begin{proof}
+    $\entryRank{c}{r}{x}\in\entryRankCandidates{c}{r}{x}$
+        by \obv{entry_rank_is_candidate}.
+    Hence $\entryRank{c}{r}{x}\in r$ and
+        $x\in c(\entryRank{c}{r}{x})$ or
+        $\entryRank{c}{r}{x}=r$
+        by \obv{entry_rank_candidates_iff}.
+    Suppose not.
+    Hence $\entryRank{c}{r}{x}\in r$ and
+        $x\in c(\entryRank{c}{r}{x})$.
+    Thus $c(\entryRank{c}{r}{x})\subseteq c(r)$.
+    Hence $x\in c(r)$ by \obv{subseteq}.
+    Contradiction.
+\end{proof}
+
+\subsection{Entry ranks under refinement}
+
+\begin{proposition}\label{entry_rank_interleave_zero}
+    Let $r$ be a natural number.
+    Suppose $c\in\funs{\suc{r}}{A}$ and $m\in\funs{r}{A}$.
+    Suppose $\entryRank{c}{r}{x}=\emptyset$.
+    Then
+        $\entryRank{\finiteInterleave{c}{m}}{r+r}{x}=\emptyset$.
+\end{proposition}
+\begin{proof}
+    Let $d=\finiteInterleave{c}{m}$.
+    Let $R=r+r$.
+    $\dom{c}=\suc{r}$ and $\dom{m}=r$ by \obv{funs_elim}.
+    $R$ is a natural number by \auto{num_addition_on_naturals}.
+    We have $r=\emptyset$ or
+        $\emptyset\in r$ and $x\in c(\emptyset)$
+        by \obv{entry_rank_eq_zero_iff}.
+    \begin{byCase}
+    \caseOf{$r=\emptyset$.}
+        Then $R=\emptyset$ by \auto{num_addition_zero_right}.
+        Follows by \auto{entry_rank_eq_zero_iff}.
+    \caseOf{$r\neq\emptyset$.}
+        Then $\emptyset\in r$ and $x\in c(\emptyset)$.
+        Take a natural number $q$ such that $r=\suc{q}$
+            by \obv{natural_zero_or_successor}.
+        $R=\suc{\suc{q+q}}$
+            by \auto{num_addition_successor_left,num_addition_successor_right}.
+        Hence $R\neq\emptyset$ by \auto{suc_neq_emptyset}.
+        Thus $\emptyset\in R$
+            by \obv{natural_nonzero_contains_zero}.
+        $\emptyset\in\suc{r}$
+            by \obv{natural_nonzero_contains_zero,omega_successor,suc_neq_emptyset}.
+        $d(\emptyset+\emptyset)=c(\emptyset)$
+            by \auto{finite_interleave_even}.
+        $\emptyset+\emptyset=\emptyset$
+            by \obv{omega_empty,num_addition_zero_right}.
+        Hence $d(\emptyset)=c(\emptyset)$.
+        Thus $x\in d(\emptyset)$.
+        Follows by \auto{entry_rank_eq_zero_iff}.
+    \end{byCase}
+\end{proof}
+
+\begin{lemma}\label{entry_rank_interleave_no_entry_before_inserted}
+    Let $r$ be a natural number.
+    Suppose $c\in\funs{\suc{r}}{A}$ and $m\in\funs{r}{A}$.
+    Let $j\in r$.
+    Suppose for every $i\in r$ we have
+        $m(i)\subseteq c(\suc{i})$.
+    Suppose $\entryRank{c}{r}{x}=\suc{j}$.
+    Let $k\in\suc{j+j}$.
+    Then $x\notin\apply{\finiteInterleave{c}{m}}{k}$.
+\end{lemma}
+\begin{proof}
+    Let $d=\finiteInterleave{c}{m}$.
+    $\dom{c}=\suc{r}$ and $\dom{m}=r$ by \obv{funs_elim}.
+    $j$ is a natural number
+        by \obv{naturals_is_transitive_set,transitiveset_iff_subseteq,subseteq}.
+    $\suc{j}=\entryRank{c}{r}{x}\subseteq r$
+        by \obv{entry_rank_subseteq_sentinel}.
+    $k\in\finiteEvenIndices{j}\union\finiteOddIndices{j}$
+        by \obv{finite_double_index_partition}.
+    Hence $k\in\finiteEvenIndices{j}$ or
+        $k\in\finiteOddIndices{j}$ by \obv{union_iff}.
+    \begin{byCase}
+    \caseOf{$k\in\finiteEvenIndices{j}$.}
+        Take $i\in\suc{j}$ such that $k=i+i$
+            by \obv{finite_even_indices}.
+        Hence $i\in\entryRank{c}{r}{x}$.
+        Thus $x\notin c(i)$
+            by \obv{entry_rank_no_earlier_entry}.
+        $i\in r$ by \obv{subseteq}.
+        Hence $i\in\suc{r}$ by \auto{suc_iff}.
+        $d(i+i)=c(i)$ by \auto{finite_interleave_even}.
+    \caseOf{$k\notin\finiteEvenIndices{j}$.}
+        Then $k\in\finiteOddIndices{j}$.
+        Take $i\in j$ such that $k=\suc{i+i}$
+            by \obv{finite_odd_indices}.
+        $i\in r$
+            by \obv{natural_number_is_ordinal,ordinal_transitivity}.
+        $i$ is a natural number
+            by \obv{naturals_is_transitive_set,transitiveset_iff_subseteq,subseteq}.
+        $i$ and $j$ are ordinals
+            by \obv{natural_number_is_ordinal}.
+        Hence $\suc{i}\subseteq j$
+            by \obv{ordinal_suc_subseteq}.
+        $j\subseteq\suc{j}$ by \obv{subseteq_self_suc_intro}.
+        Hence $\suc{i}\subseteq\suc{j}$
+            by \obv{subseteq_transitive}.
+        $\suc{i}$ and $\suc{j}$ are ordinals
+            by \obv{suc_ordinal}.
+        $\suc{i}\neq\suc{j}$
+            by \obv{suc_injective,in_irrefl}.
+        Hence $\suc{i}\in\suc{j}$
+            by \obv{ordinal_subseteq_implies_elem_or_eq}.
+        Thus $x\notin c(\suc{i})$
+            by \obv{entry_rank_no_earlier_entry}.
+        $m(i)\subseteq c(\suc{i})$.
+        Hence $x\notin m(i)$ by \obv{subseteq}.
+        $d(\suc{i+i})=m(i)$
+            by \auto{finite_interleave_odd}.
+    \end{byCase}
+\end{proof}
+
+\begin{proposition}\label{entry_rank_interleave_inserted}
+    Let $r$ be a natural number.
+    Suppose $c\in\funs{\suc{r}}{A}$ and $m\in\funs{r}{A}$.
+    Let $j\in r$.
+    Suppose for every $i\in r$ we have
+        $m(i)\subseteq c(\suc{i})$.
+    Suppose $\entryRank{c}{r}{x}=\suc{j}$ and $x\in m(j)$.
+    Then
+        $\entryRank{\finiteInterleave{c}{m}}{r+r}{x}
+            =\suc{j+j}$.
+\end{proposition}
+\begin{proof}
+    Let $d=\finiteInterleave{c}{m}$.
+    Let $R=r+r$.
+    Let $q=\suc{j+j}$.
+    $\dom{c}=\suc{r}$ and $\dom{m}=r$ by \obv{funs_elim}.
+    $j$ is a natural number
+        by \obv{naturals_is_transitive_set,transitiveset_iff_subseteq,subseteq}.
+    $R$ is a natural number by \auto{num_addition_on_naturals}.
+    $q\in\finiteOddIndices{r}$
+        by \obv{finite_odd_indices}.
+    Hence $q\in\finiteEvenIndices{r}\union\finiteOddIndices{r}$
+        by \auto{union_iff}.
+    Thus $q\in\suc{R}$
+        by \auto{finite_double_index_partition}.
+    $q\neq R$ by \obv{natural_double_not_successor_double}.
+    Hence $q\in R$ by \auto{suc_iff}.
+    $d(q)=m(j)$ by \auto{finite_interleave_odd}.
+    Hence $x\in d(q)$.
+    Thus $q\in\entryRankCandidates{d}{R}{x}$
+        by \auto{entry_rank_candidates_iff}.
+    For every $i\in q$ we have $x\notin d(i)$
+        by \auto{entry_rank_interleave_no_entry_before_inserted}.
+    Follows by \auto{entry_rank_eq_from_first_candidate}.
+\end{proof}
+
+\begin{proposition}\label{entry_rank_interleave_after_inserted}
+    Let $r$ be a natural number.
+    Suppose $c\in\funs{\suc{r}}{A}$ and $m\in\funs{r}{A}$.
+    Let $j\in r$.
+    Suppose for every $i\in r$ we have
+        $m(i)\subseteq c(\suc{i})$.
+    Suppose $\entryRank{c}{r}{x}=\suc{j}$ and $x\notin m(j)$.
+    Then
+        $\entryRank{\finiteInterleave{c}{m}}{r+r}{x}
+            =\suc{\suc{j+j}}$.
+\end{proposition}
+\begin{proof}
+    Let $d=\finiteInterleave{c}{m}$.
+    Let $R=r+r$.
+    Let $p=\suc{j+j}$.
+    Let $q=\suc{p}$.
+    $\dom{c}=\suc{r}$ and $\dom{m}=r$ by \obv{funs_elim}.
+    $j$ is a natural number
+        by \obv{naturals_is_transitive_set,transitiveset_iff_subseteq,subseteq}.
+    Hence $\suc{j}$ is a natural number by \obv{omega_successor}.
+    $R$ is a natural number by \auto{num_addition_on_naturals}.
+    $j$ and $r$ are ordinals by \obv{natural_number_is_ordinal}.
+    Hence $\suc{j}\subseteq r$ by \obv{ordinal_suc_subseteq}.
+    $\suc{j}$ and $r$ are ordinals
+        by \obv{suc_ordinal,natural_number_is_ordinal}.
+    Hence $\suc{j}\in r$ or $\suc{j}=r$
+        by \obv{ordinal_subseteq_implies_elem_or_eq}.
+    Thus $\suc{j}\in\suc{r}$ by \auto{suc_iff}.
+    $q=\suc{j}+\suc{j}$
+        by \auto{num_addition_successor_left,num_addition_successor_right}.
+    Hence $q\in\finiteEvenIndices{r}$
+        by \obv{finite_even_indices}.
+    Thus $q\in\finiteEvenIndices{r}\union\finiteOddIndices{r}$
+        by \auto{union_iff}.
+    Hence $q\in\suc{R}$
+        by \auto{finite_double_index_partition}.
+    $d(q)=c(\suc{j})$ by \auto{finite_interleave_even}.
+    We have $\suc{j}=r$ or
+        $\suc{j}\in r$ and $x\in c(\suc{j})$
+        by \obv{entry_rank_successor_candidate}.
+    Show that $q=R$ or $q\in R$ and $x\in d(q)$.
+    \begin{subproof}
+        \begin{byCase}
+        \caseOf{$\suc{j}=r$.}
+            Then $q=R$.
+        \caseOf{$\suc{j}\neq r$.}
+            Then $\suc{j}\in r$ and $x\in c(\suc{j})$.
+            $q\neq R$ by \obv{natural_double_injective}.
+            Hence $q\in R$ by \auto{suc_iff}.
+            $x\in d(q)$.
+        \end{byCase}
+    \end{subproof}
+    Show that for every $k\in q$ we have $x\notin d(k)$.
+    \begin{subproof}
+        Fix $k\in q$.
+        $k\in p$ or $k=p$ by \auto{suc_iff}.
+        \begin{byCase}
+        \caseOf{$k\in p$.}
+            Follows by
+                \auto{entry_rank_interleave_no_entry_before_inserted}.
+        \caseOf{$k\notin p$.}
+            Then $k=p$.
+            $d(p)=m(j)$ by \auto{finite_interleave_odd}.
+        \end{byCase}
+    \end{subproof}
+    Follows by \auto{entry_rank_eq_from_first_candidate}.
+\end{proof}
+
+\begin{corollary}\label{entry_rank_interleave_outside_last}
+    Let $r$ be a natural number.
+    Suppose $c\in\funs{\suc{r}}{A}$ and $m\in\funs{r}{A}$.
+    Let $j\in r$.
+    Suppose for every $i\in r$ we have
+        $m(i)\subseteq c(\suc{i})$.
+    Suppose $\entryRank{c}{r}{x}=\suc{j}$ and $\suc{j}=r$.
+    Suppose $x\notin c(r)$.
+    Then
+        $\entryRank{\finiteInterleave{c}{m}}{r+r}{x}=r+r$.
+\end{corollary}
+\begin{proof}
+    $j$ is a natural number
+        by \obv{naturals_is_transitive_set,transitiveset_iff_subseteq,subseteq}.
+    $m(j)\subseteq c(\suc{j})=c(r)$.
+    Hence $x\notin m(j)$ by \obv{subseteq}.
+    $\entryRank{\finiteInterleave{c}{m}}{r+r}{x}
+        =\suc{\suc{j+j}}$
+        by \obv{entry_rank_interleave_after_inserted}.
+    $r+r=\suc{\suc{j+j}}$
+        by \auto{num_addition_successor_left,num_addition_successor_right}.
+\end{proof}
+
+\begin{theorem}\label{entry_rank_under_finite_interleave}
+    Let $r$ be a natural number.
+    Suppose $c\in\funs{\suc{r}}{A}$ and $m\in\funs{r}{A}$.
+    Suppose for every $i\in r$ we have
+        $c(i)\subseteq m(i)$ and $m(i)\subseteq c(\suc{i})$.
+    Suppose $\entryRank{c}{r}{x}=\suc{j}$.
+    Then
+        $\entryRank{\finiteInterleave{c}{m}}{r+r}{x}
+            =\suc{j+j}$ or
+        $\entryRank{\finiteInterleave{c}{m}}{r+r}{x}
+            =\suc{\suc{j+j}}$.
+\end{theorem}
+\begin{proof}
+    $j\in r$ by \obv{entry_rank_successor_predecessor}.
+    \begin{byCase}
+    \caseOf{$x\in m(j)$.}
+        Follows by \auto{entry_rank_interleave_inserted}.
+    \caseOf{$x\notin m(j)$.}
+        Follows by \auto{entry_rank_interleave_after_inserted}.
+    \end{byCase}
+\end{proof}

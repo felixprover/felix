@@ -1,0 +1,620 @@
+\import{topology/uniform-completeness-core.tex}
+\import{topology/metric-uniform-convergence.tex}
+\import{set/finite-ordinal.tex}
+\import{set/filter-finite.tex}
+\import{set/sequence-filter.tex}
+\import{set/choice.tex}
+
+\section{Filter and sequential completeness for metric uniformities}
+
+The converse from sequential to filter completeness requires a countable
+entourage base and is therefore proved for metric uniformities.  A Cauchy
+filter supplies, at each dyadic radius, a
+filter member of that diameter.  Finite intersections make these choices
+nested before a point is selected.
+
+\begin{definition}\label{metric_filter_witnesses}
+    $\metricFilterWitnesses{M}{F}{n}=
+        \{A\in F\mid
+            A\times A\subseteq
+                \metricEntourage{M}{\surrealEpsilon{n}}\}$.
+\end{definition}
+
+\begin{proposition}\label{surreal_epsilon_is_positive_real}
+    Let $n$ be a natural number.
+    Then $\surrealEpsilon{n}\in\reals$ and
+        $\surrealLt{\surrealZero}{\surrealEpsilon{n}}$.
+\end{proposition}
+\begin{proof}
+    $\surrealEpsilon{n}\in\surrealDyadics$
+        by \obv{surreal_epsilon_is_dyadic}.
+    Hence $\surrealEpsilon{n}\in\reals$
+        by \obv{surreal_dyadics_subset_reals,subseteq}.
+    Follows by
+        \obv{surreal_epsilon_positive,natural_number_is_ordinal}.
+\end{proof}
+
+\begin{proposition}\label{metric_filter_witnesses_inhabited}
+    Let $M$ be a metric space.
+    Suppose $\uniformCauchyFilter{\metricUniformSpace{M}}{F}$.
+    Let $n$ be a natural number.
+    Then $\metricFilterWitnesses{M}{F}{n}$ is inhabited.
+\end{proposition}
+\begin{proof}
+    $\surrealEpsilon{n}\in\reals$ and
+        $\surrealLt{\surrealZero}{\surrealEpsilon{n}}$
+        by \obv{surreal_epsilon_is_positive_real}.
+    Hence
+        $\metricEntourage{M}{\surrealEpsilon{n}}
+            \in\metricUniformity{M}$
+        by \obv{metric_entourage_is_entourage}.
+    Hence
+        $\metricEntourage{M}{\surrealEpsilon{n}}
+            \in\uniformity[\metricUniformSpace{M}]$
+        by \obv{metric_uniform_space_uniformity}.
+    Take $A\in F$ such that
+        $A\times A\subseteq\metricEntourage{M}{\surrealEpsilon{n}}$
+        by \obv{uniform_cauchy_filter_entourage_square}.
+    $A\in\metricFilterWitnesses{M}{F}{n}$
+        by \obv{metric_filter_witnesses}.
+\end{proof}
+
+\begin{definition}\label{metric_filter_witness}
+    $\metricFilterWitness{M}{F}{n}=
+        \choice{\metricFilterWitnesses{M}{F}{n}}$.
+\end{definition}
+
+\begin{proposition}\label{metric_filter_witness_properties}
+    Let $M$ be a metric space.
+    Suppose $\uniformCauchyFilter{\metricUniformSpace{M}}{F}$.
+    Let $n$ be a natural number.
+    Then $\metricFilterWitness{M}{F}{n}\in F$ and
+        $\metricFilterWitness{M}{F}{n}
+            \times\metricFilterWitness{M}{F}{n}
+        \subseteq\metricEntourage{M}{\surrealEpsilon{n}}$.
+\end{proposition}
+\begin{proof}
+    $\metricFilterWitnesses{M}{F}{n}$ is inhabited
+        by \obv{metric_filter_witnesses_inhabited}.
+    Hence
+        $\metricFilterWitness{M}{F}{n}
+            \in\metricFilterWitnesses{M}{F}{n}$
+        by \auto{metric_filter_witness,choice_in}.
+    Follows by \obv{metric_filter_witnesses}.
+\end{proof}
+
+\begin{proposition}\label{metric_filter_witness_inhabited}
+    Let $M$ be a metric space.
+    Suppose $\uniformCauchyFilter{\metricUniformSpace{M}}{F}$.
+    Let $n$ be a natural number.
+    Then $\metricFilterWitness{M}{F}{n}$ is inhabited.
+\end{proposition}
+\begin{proof}
+    $F$ is a proper filter on $\carrier[\metricUniformSpace{M}]$
+        by \obv{uniform_cauchy_filter_is_proper}.
+    $\metricFilterWitness{M}{F}{n}\in F$
+        by \auto{metric_filter_witness_properties}.
+    Hence $\metricFilterWitness{M}{F}{n}\neq\emptyset$
+        by \auto{proper_filter}.
+    Follows by \obv{nonempty_inhabited}.
+\end{proof}
+
+\begin{definition}\label{metric_filter_witness_graph}
+    $\metricFilterWitnessGraph{M}{F}=
+        \{(n,\metricFilterWitness{M}{F}{n})\mid n\in\naturals\}$.
+\end{definition}
+
+\begin{proposition}\label{metric_filter_witness_graph_type}
+    Let $M$ be a metric space.
+    Suppose $\uniformCauchyFilter{\metricUniformSpace{M}}{F}$.
+    Then $\metricFilterWitnessGraph{M}{F}\in\funs{\naturals}{F}$.
+\end{proposition}
+\begin{proof}
+    $\metricFilterWitnessGraph{M}{F}$ is a relation
+        by \auto{metric_filter_witness_graph,relation}.
+    $\metricFilterWitnessGraph{M}{F}$ is right-unique
+        by \auto{metric_filter_witness_graph,rightunique,pair_eq_iff}.
+    $\dom{\metricFilterWitnessGraph{M}{F}}=\naturals$
+        by \auto{metric_filter_witness_graph,setext,dom_iff,pair_eq_iff}.
+    For every $n\in\naturals$ we have
+        $\metricFilterWitness{M}{F}{n}\in F$
+        by \auto{metric_filter_witness_properties}.
+    Hence $\metricFilterWitnessGraph{M}{F}$ is a function to $F$
+        by \auto{metric_filter_witness_graph,function_apply_intro}.
+    Follows by \obv{funs_intro}.
+\end{proof}
+
+\begin{proposition}\label{metric_filter_witness_graph_application}
+    Let $M$ be a metric space.
+    Suppose $\uniformCauchyFilter{\metricUniformSpace{M}}{F}$.
+    Let $n$ be a natural number.
+    Then
+        $\apply{\metricFilterWitnessGraph{M}{F}}{n}
+            =\metricFilterWitness{M}{F}{n}$.
+\end{proposition}
+\begin{proof}
+    $(n,\metricFilterWitness{M}{F}{n})
+        \in\metricFilterWitnessGraph{M}{F}$
+        by \obv{metric_filter_witness_graph}.
+    Follows by
+        \auto{metric_filter_witness_graph_type,funs_is_function,function_apply_intro}.
+\end{proof}
+
+\begin{definition}\label{metric_filter_core_family}
+    $\metricFilterCoreFamily{M}{F}{n}=
+        \img{\metricFilterWitnessGraph{M}{F}}{\suc{n}}$.
+\end{definition}
+
+\begin{definition}\label{metric_filter_core}
+    $\metricFilterCore{M}{F}{n}=
+        \inters{\metricFilterCoreFamily{M}{F}{n}}$.
+\end{definition}
+
+\begin{proposition}\label{metric_filter_core_family_properties}
+    Let $M$ be a metric space.
+    Suppose $\uniformCauchyFilter{\metricUniformSpace{M}}{F}$.
+    Let $n$ be a natural number.
+    Then $\metricFilterCoreFamily{M}{F}{n}\subseteq F$ and
+        $\metricFilterCoreFamily{M}{F}{n}$ is finite and inhabited.
+\end{proposition}
+\begin{proof}
+    $\metricFilterWitnessGraph{M}{F}\in\funs{\naturals}{F}$
+        by \obv{metric_filter_witness_graph_type}.
+    Hence $\metricFilterWitnessGraph{M}{F}$ is a function
+        by \obv{funs_is_function}.
+    $\metricFilterCoreFamily{M}{F}{n}
+        \subseteq\ran{\metricFilterWitnessGraph{M}{F}}$
+        by \auto{metric_filter_core_family,img_subseteq_ran}.
+    $\ran{\metricFilterWitnessGraph{M}{F}}\subseteq F$
+        by \obv{funs_ran}.
+    Hence $\metricFilterCoreFamily{M}{F}{n}\subseteq F$
+        by \obv{subseteq_transitive}.
+    $\suc{n}\in\naturals$ by \obv{omega_successor}.
+    Hence $\suc{n}$ is finite
+        by \obv{natural_number_is_finite}.
+    $\naturals$ is an ordinal and $\suc{n}\in\naturals$
+        by \obv{omega_is_ordinal,omega_successor}.
+    $\suc{n}$ is an ordinal by \obv{natural_number_is_ordinal}.
+    Hence $\suc{n}\subseteq\naturals$
+        by \obv{ordinal_elem_implies_subseteq}.
+    $\dom{\metricFilterWitnessGraph{M}{F}}=\naturals$
+        by \obv{funs}.
+    Hence $\metricFilterCoreFamily{M}{F}{n}$ is finite
+        by \auto{metric_filter_core_family,finite_function_image}.
+    $n\in\suc{n}$ by \obv{suc_intro_self}.
+    $(n,\metricFilterWitness{M}{F}{n})
+        \in\metricFilterWitnessGraph{M}{F}$
+        by \obv{metric_filter_witness_graph}.
+    Hence
+        $\metricFilterWitness{M}{F}{n}
+            \in\metricFilterCoreFamily{M}{F}{n}$
+        by \auto{metric_filter_core_family,img_iff}.
+\end{proof}
+
+\begin{proposition}\label{metric_filter_core_is_filter_member}
+    Let $M$ be a metric space.
+    Suppose $\uniformCauchyFilter{\metricUniformSpace{M}}{F}$.
+    Let $n$ be a natural number.
+    Then $\metricFilterCore{M}{F}{n}\in F$.
+\end{proposition}
+\begin{proof}
+    $F$ is a proper filter on $\carrier[\metricUniformSpace{M}]$
+        by \obv{uniform_cauchy_filter_is_proper}.
+    Hence $F$ is a filter on $\carrier[\metricUniformSpace{M}]$
+        by \obv{proper_filter_is_filter}.
+    $\metricFilterCoreFamily{M}{F}{n}\subseteq F$ and
+        $\metricFilterCoreFamily{M}{F}{n}$ is finite and inhabited
+        by \obv{metric_filter_core_family_properties}.
+    Follows by \auto{metric_filter_core,filter_finite_intersection_in}.
+\end{proof}
+
+\begin{proposition}\label{metric_filter_core_inhabited}
+    Let $M$ be a metric space.
+    Suppose $\uniformCauchyFilter{\metricUniformSpace{M}}{F}$.
+    Let $n$ be a natural number.
+    Then $\metricFilterCore{M}{F}{n}$ is inhabited.
+\end{proposition}
+\begin{proof}
+    $F$ is a proper filter on $\carrier[\metricUniformSpace{M}]$
+        by \obv{uniform_cauchy_filter_is_proper}.
+    $\metricFilterCore{M}{F}{n}\in F$
+        by \obv{metric_filter_core_is_filter_member}.
+    Hence $\metricFilterCore{M}{F}{n}\neq\emptyset$
+        by \auto{proper_filter}.
+    Follows by \obv{nonempty_inhabited}.
+\end{proof}
+
+\begin{proposition}\label{metric_filter_core_below_witness}
+    Let $M$ be a metric space.
+    Suppose $\uniformCauchyFilter{\metricUniformSpace{M}}{F}$.
+    Let $k,n$ be natural numbers.
+    Suppose $k\subseteq n$.
+    Then
+        $\metricFilterCore{M}{F}{n}
+            \subseteq\metricFilterWitness{M}{F}{k}$.
+\end{proposition}
+\begin{proof}
+    $k$ and $n$ are ordinals by \obv{natural_number_is_ordinal}.
+    Hence $k\in n$ or $k=n$
+        by \obv{ordinal_subseteq_implies_elem_or_eq}.
+    Hence $k\in\suc{n}$ by \auto{suc_iff}.
+    $(k,\metricFilterWitness{M}{F}{k})
+        \in\metricFilterWitnessGraph{M}{F}$
+        by \obv{metric_filter_witness_graph}.
+    Hence
+        $\metricFilterWitness{M}{F}{k}
+            \in\metricFilterCoreFamily{M}{F}{n}$
+        by \auto{metric_filter_core_family,img_iff}.
+    Follows by
+        \auto{metric_filter_core,inters_subseteq_elem}.
+\end{proof}
+
+\begin{definition}\label{metric_filter_selected_point}
+    $\metricFilterSelectedPoint{M}{F}{n}=
+        \choice{\metricFilterCore{M}{F}{n}}$.
+\end{definition}
+
+\begin{proposition}\label{metric_filter_selected_point_in_core}
+    Let $M$ be a metric space.
+    Suppose $\uniformCauchyFilter{\metricUniformSpace{M}}{F}$.
+    Let $n$ be a natural number.
+    Then
+        $\metricFilterSelectedPoint{M}{F}{n}
+            \in\metricFilterCore{M}{F}{n}$.
+\end{proposition}
+\begin{proof}
+    $\metricFilterCore{M}{F}{n}$ is inhabited
+        by \obv{metric_filter_core_inhabited}.
+    Follows by
+        \auto{metric_filter_selected_point,choice_in}.
+\end{proof}
+
+\begin{definition}\label{metric_filter_selected_sequence}
+    $\metricFilterSelectedSequence{M}{F}=
+        \{(n,\metricFilterSelectedPoint{M}{F}{n})
+            \mid n\in\naturals\}$.
+\end{definition}
+
+\begin{proposition}\label{metric_filter_selected_sequence_type}
+    Let $M$ be a metric space.
+    Suppose $\uniformCauchyFilter{\metricUniformSpace{M}}{F}$.
+    Then
+        $\metricFilterSelectedSequence{M}{F}
+            \in\funs{\naturals}{\carrier[M]}$.
+\end{proposition}
+\begin{proof}
+    $\metricFilterSelectedSequence{M}{F}$ is a relation
+        by \auto{metric_filter_selected_sequence,relation}.
+    $\metricFilterSelectedSequence{M}{F}$ is right-unique
+        by
+        \auto{metric_filter_selected_sequence,rightunique,pair_eq_iff}.
+    $\dom{\metricFilterSelectedSequence{M}{F}}=\naturals$
+        by
+        \auto{metric_filter_selected_sequence,setext,dom_iff,pair_eq_iff}.
+    $F$ is a proper filter on $\carrier[\metricUniformSpace{M}]$
+        by \obv{uniform_cauchy_filter_is_proper}.
+    Hence $F$ is a filter on $\carrier[\metricUniformSpace{M}]$
+        by \obv{proper_filter_is_filter}.
+    For every $n\in\naturals$ we have
+        $\metricFilterCore{M}{F}{n}\in F$
+        by \obv{metric_filter_core_is_filter_member}.
+    Hence for every $n\in\naturals$ we have
+        $\metricFilterCore{M}{F}{n}
+            \subseteq\carrier[\metricUniformSpace{M}]$
+        by \obv{filter,subseteq,pow_iff}.
+    For every $n\in\naturals$ we have
+        $\metricFilterSelectedPoint{M}{F}{n}
+            \in\metricFilterCore{M}{F}{n}$
+        by \obv{metric_filter_selected_point_in_core}.
+    Hence for every $n\in\naturals$ we have
+        $\metricFilterSelectedPoint{M}{F}{n}\in\carrier[M]$
+        by \auto{metric_uniform_space_carrier,subseteq}.
+    Hence $\metricFilterSelectedSequence{M}{F}$ is a function to
+        $\carrier[M]$
+        by
+        \auto{metric_filter_selected_sequence,function_apply_intro}.
+    Follows by \obv{funs_intro}.
+\end{proof}
+
+\begin{proposition}\label{metric_filter_selected_sequence_application}
+    Let $M$ be a metric space.
+    Suppose $\uniformCauchyFilter{\metricUniformSpace{M}}{F}$.
+    Let $n$ be a natural number.
+    Then
+        $\apply{\metricFilterSelectedSequence{M}{F}}{n}
+            =\metricFilterSelectedPoint{M}{F}{n}$.
+\end{proposition}
+\begin{proof}
+    $(n,\metricFilterSelectedPoint{M}{F}{n})
+        \in\metricFilterSelectedSequence{M}{F}$
+        by \obv{metric_filter_selected_sequence}.
+    Follows by
+        \auto{metric_filter_selected_sequence_type,funs_is_function,function_apply_intro}.
+\end{proof}
+
+\begin{proposition}\label{metric_filter_selected_sequence_is_cauchy}
+    Let $M$ be a metric space.
+    Suppose $\uniformCauchyFilter{\metricUniformSpace{M}}{F}$.
+    Then
+        $\uniformCauchySequence{\metricUniformSpace{M}}
+            {\metricFilterSelectedSequence{M}{F}}$.
+\end{proposition}
+\begin{proof}
+    $\metricFilterSelectedSequence{M}{F}
+        \in\funs{\naturals}{\carrier[M]}$
+        by \obv{metric_filter_selected_sequence_type}.
+    Hence
+        $\metricFilterSelectedSequence{M}{F}
+            \in\funs{\naturals}{\carrier[\metricUniformSpace{M}]}$
+        by \obv{metric_uniform_space_carrier}.
+    Show that for every
+        $U\in\uniformity[\metricUniformSpace{M}]$ there exists
+        $K\in\naturals$ such that for all $m,n\in\naturals$ such that
+        $K\subseteq m$ and $K\subseteq n$ we have
+        $(\apply{\metricFilterSelectedSequence{M}{F}}{m},
+         \apply{\metricFilterSelectedSequence{M}{F}}{n})\in U$.
+    \begin{subproof}
+        Fix $U\in\uniformity[\metricUniformSpace{M}]$.
+        $U\in\metricUniformity{M}$
+            by \obv{metric_uniform_space_uniformity}.
+        Take $e\in\reals$ such that
+            $\surrealLt{\surrealZero}{e}$ and
+            $\metricEntourage{M}{e}\subseteq U$
+            by \obv{metric_uniformity}.
+        Take $K\in\naturals$ such that
+            $\surrealLt
+                {\surrealMul{\surrealEpsilon{K}}{\surrealOne}}{e}$
+            by
+            \obv{positive_real_scaled_epsilon_below,surreal_one_is_real,surreal_zero_lt_one}.
+        $\surrealMul{\surrealEpsilon{K}}{\surrealOne}
+            =\surrealEpsilon{K}$
+            by
+            \auto{surreal_mul_one_right,surreal_epsilon_is_surreal,natural_number_is_ordinal}.
+        Hence $\surrealLt{\surrealEpsilon{K}}{e}$.
+        $\surrealEpsilon{K}\in\reals$
+            by \obv{surreal_epsilon_is_positive_real}.
+        Hence $\surrealLe{\surrealEpsilon{K}}{e}$
+            by
+            \obv{surreal_le,surreal_lt_asymmetric,surreal_real_is_surreal}.
+        Hence
+            $\metricEntourage{M}{\surrealEpsilon{K}}
+                \subseteq\metricEntourage{M}{e}$
+            by \obv{metric_entourage_monotone}.
+        Hence
+            $\metricEntourage{M}{\surrealEpsilon{K}}\subseteq U$
+            by \obv{subseteq_transitive}.
+        Show that
+            $\forall m,n:\Set.
+                (m\in\naturals\land n\in\naturals\land
+                 K\subseteq m\land K\subseteq n)
+                \implies
+                (\apply{\metricFilterSelectedSequence{M}{F}}{m},
+                 \apply{\metricFilterSelectedSequence{M}{F}}{n})\in U$.
+        \begin{subproof}
+            Fix $m,n$.
+            Assume
+                $m\in\naturals\land n\in\naturals\land
+                K\subseteq m\land K\subseteq n$.
+            $\metricFilterSelectedPoint{M}{F}{m}
+                \in\metricFilterCore{M}{F}{m}$ and
+                $\metricFilterSelectedPoint{M}{F}{n}
+                \in\metricFilterCore{M}{F}{n}$
+                by \obv{metric_filter_selected_point_in_core}.
+            $\metricFilterCore{M}{F}{m}
+                \subseteq\metricFilterWitness{M}{F}{K}$ and
+                $\metricFilterCore{M}{F}{n}
+                \subseteq\metricFilterWitness{M}{F}{K}$
+                by \obv{metric_filter_core_below_witness}.
+            Hence
+                $\metricFilterSelectedPoint{M}{F}{m},
+                 \metricFilterSelectedPoint{M}{F}{n}
+                    \in\metricFilterWitness{M}{F}{K}$
+                by \obv{subseteq}.
+            Hence
+                $(\metricFilterSelectedPoint{M}{F}{m},
+                  \metricFilterSelectedPoint{M}{F}{n})
+                    \in
+                    \metricFilterWitness{M}{F}{K}
+                        \times\metricFilterWitness{M}{F}{K}$
+                by \obv{times_tuple_intro}.
+            $\metricFilterWitness{M}{F}{K}
+                    \times\metricFilterWitness{M}{F}{K}
+                \subseteq\metricEntourage{M}{\surrealEpsilon{K}}$
+                by \auto{metric_filter_witness_properties}.
+            Hence
+                $(\metricFilterSelectedPoint{M}{F}{m},
+                  \metricFilterSelectedPoint{M}{F}{n})\in U$
+                by \obv{subseteq}.
+            $\apply{\metricFilterSelectedSequence{M}{F}}{m}
+                    =\metricFilterSelectedPoint{M}{F}{m}$ and
+                $\apply{\metricFilterSelectedSequence{M}{F}}{n}
+                    =\metricFilterSelectedPoint{M}{F}{n}$
+                by \obv{metric_filter_selected_sequence_application}.
+        \end{subproof}
+        Follows by \auto.
+    \end{subproof}
+    $\uniformCauchySequence{\metricUniformSpace{M}}
+            {\metricFilterSelectedSequence{M}{F}}$ iff
+        $\metricFilterSelectedSequence{M}{F}
+            \in\funs{\naturals}
+                {\carrier[\metricUniformSpace{M}]}$ and for every
+            $U\in\uniformity[\metricUniformSpace{M}]$ there exists
+            $K\in\naturals$ such that for all $m,n\in\naturals$ such that
+            $K\subseteq m$ and $K\subseteq n$ we have
+            $(\apply{\metricFilterSelectedSequence{M}{F}}{m},
+             \apply{\metricFilterSelectedSequence{M}{F}}{n})\in U$ by
+        \obv{uniform_cauchy_sequence_iff_entourages}.
+\end{proof}
+
+\begin{proposition}\label{metric_selected_sequence_limit_is_filter_limit}
+    Let $M$ be a metric space.
+    Suppose $\uniformCauchyFilter{\metricUniformSpace{M}}{F}$.
+    Suppose
+        $\uniformSequenceConverges{\metricUniformSpace{M}}
+            {\metricFilterSelectedSequence{M}{F}}{x}$.
+    Then $\uniformFilterConverges{\metricUniformSpace{M}}{F}{x}$.
+\end{proposition}
+\begin{proof}
+    Let $X=\metricUniformSpace{M}$.
+    $X$ is a uniform space
+        by \obv{metric_uniform_space_is_uniform_space}.
+    $F$ is a proper filter on $\carrier[X]$
+        by \obv{uniform_cauchy_filter_is_proper}.
+    Hence $F$ is a filter on $\carrier[X]$
+        by \obv{proper_filter_is_filter}.
+    $x\in\carrier[\metricUniformSpace{M}]$ by
+        \obv{uniform_sequence_convergence_point}.
+    Hence $x\in\carrier[X]$.
+    $\metricFilterSelectedSequence{M}{F}
+        \in\funs{\naturals}{\carrier[\metricUniformSpace{M}]}$ by
+        \obv{uniform_sequence_convergence_sequence}.
+    Hence $\metricFilterSelectedSequence{M}{F}
+        \in\funs{\naturals}{\carrier[X]}$.
+    Show that for every $U\in\uniformity[X]$ we have
+        $\uniformBall{X}{U}{x}\in F$.
+    \begin{subproof}
+        Fix $U\in\uniformity[X]$.
+        Take $V\in\uniformity[X]$ such that
+            $V\circ V\subseteq U$
+            by \obv{uniformity_square}.
+        Hence $V\in\uniformity[\metricUniformSpace{M}]$.
+        $V\in\metricUniformity{M}$
+            by \obv{metric_uniform_space_uniformity}.
+        Take $e\in\reals$ such that
+            $\surrealLt{\surrealZero}{e}$ and
+            $\metricEntourage{M}{e}\subseteq V$
+            by \obv{metric_uniformity}.
+        Take $K\in\naturals$ such that
+            $\surrealLt
+                {\surrealMul{\surrealEpsilon{K}}{\surrealOne}}{e}$
+            by
+            \obv{positive_real_scaled_epsilon_below,surreal_one_is_real,surreal_zero_lt_one}.
+        $\surrealMul{\surrealEpsilon{K}}{\surrealOne}
+            =\surrealEpsilon{K}$
+            by
+            \auto{surreal_mul_one_right,surreal_epsilon_is_surreal,natural_number_is_ordinal}.
+        Hence $\surrealLt{\surrealEpsilon{K}}{e}$.
+        $\surrealEpsilon{K}\in\reals$
+            by \obv{surreal_epsilon_is_positive_real}.
+        Hence $\surrealLe{\surrealEpsilon{K}}{e}$
+            by
+            \obv{surreal_le,surreal_lt_asymmetric,surreal_real_is_surreal}.
+        Hence
+            $\metricEntourage{M}{\surrealEpsilon{K}}
+                \subseteq\metricEntourage{M}{e}$
+            by \obv{metric_entourage_monotone}.
+        Hence
+            $\metricEntourage{M}{\surrealEpsilon{K}}\subseteq V$
+            by \obv{subseteq_transitive}.
+        Take $N\in\naturals$ such that for every $n\in\naturals$
+            such that $N\subseteq n$ we have
+            $(x,\apply{\metricFilterSelectedSequence{M}{F}}{n})\in V$
+            by \obv{uniform_sequence_convergence_entourage}.
+        Let $H=K\union N$.
+        $K\subseteq N$ or $N\subseteq K$
+            by \obv{ordinal_subseteq_or_subseteq,natural_number_is_ordinal}.
+        Hence $H=K$ or $H=N$
+            by
+            \obv{union_absorb_subseteq_left,union_absorb_subseteq_right}.
+        Hence $H\in\naturals$.
+        $K\subseteq H$ and $N\subseteq H$
+            by \obv{union_upper_left,union_upper_right}.
+        $\metricFilterCore{M}{F}{H}\in F$
+            by \obv{metric_filter_core_is_filter_member}.
+        Show that
+            $\metricFilterCore{M}{F}{H}
+                \subseteq\uniformBall{X}{U}{x}$.
+        \begin{subproof}
+            It suffices to show that every element of
+                $\metricFilterCore{M}{F}{H}$ is an element of
+                $\uniformBall{X}{U}{x}$ by \obv{subseteq}.
+            Fix $y\in\metricFilterCore{M}{F}{H}$.
+            $\metricFilterSelectedPoint{M}{F}{H}
+                \in\metricFilterCore{M}{F}{H}$
+                by \obv{metric_filter_selected_point_in_core}.
+            $\metricFilterCore{M}{F}{H}
+                \subseteq\metricFilterWitness{M}{F}{K}$
+                by \obv{metric_filter_core_below_witness}.
+            Hence
+                $\metricFilterSelectedPoint{M}{F}{H},y
+                    \in\metricFilterWitness{M}{F}{K}$
+                by \obv{subseteq}.
+            Hence
+                $(\metricFilterSelectedPoint{M}{F}{H},y)
+                    \in
+                    \metricFilterWitness{M}{F}{K}
+                        \times\metricFilterWitness{M}{F}{K}$
+                by \obv{times_tuple_intro}.
+            $\metricFilterWitness{M}{F}{K}
+                    \times\metricFilterWitness{M}{F}{K}
+                \subseteq\metricEntourage{M}{\surrealEpsilon{K}}$
+                by \auto{metric_filter_witness_properties}.
+            Hence $(\metricFilterSelectedPoint{M}{F}{H},y)\in V$
+                by \obv{subseteq}.
+            $(x,\apply{\metricFilterSelectedSequence{M}{F}}{H})\in V$.
+            $\apply{\metricFilterSelectedSequence{M}{F}}{H}
+                =\metricFilterSelectedPoint{M}{F}{H}$
+                by \obv{metric_filter_selected_sequence_application}.
+            Hence $(x,\metricFilterSelectedPoint{M}{F}{H})\in V$.
+            Hence $(x,y)\in V\circ V$ by \auto{circ_iff}.
+            Hence $(x,y)\in U$ by \obv{subseteq}.
+            Follows by \obv{uniform_ball_iff}.
+        \end{subproof}
+        $\uniformBall{X}{U}{x}\subseteq\carrier[X]$
+            by \obv{uniform_ball_subset_carrier}.
+        Follows by \obv{filter_in_iff_exists_subset}.
+    \end{subproof}
+    Follows by \auto{uniform_filter_convergence_iff_entourages}.
+\end{proof}
+
+\begin{theorem}\label{sequentially_complete_metric_implies_complete_uniform}
+    Let $M$ be a metric space.
+    Suppose $M$ is sequentially complete metric.
+    Then $\metricUniformSpace{M}$ is complete uniform.
+\end{theorem}
+\begin{proof}
+    $\metricUniformSpace{M}$ is sequentially complete uniform
+        by \obv{metric_sequential_completeness_iff_uniform}.
+    Show that for every $F$ such that
+        $\uniformCauchyFilter{\metricUniformSpace{M}}{F}$ there exists
+        $x\in\carrier[\metricUniformSpace{M}]$ such that
+        $\uniformFilterConverges{\metricUniformSpace{M}}{F}{x}$.
+    \begin{subproof}
+        Fix $F$.
+        Assume $\uniformCauchyFilter{\metricUniformSpace{M}}{F}$.
+        $\uniformCauchySequence{\metricUniformSpace{M}}
+            {\metricFilterSelectedSequence{M}{F}}$
+            by \obv{metric_filter_selected_sequence_is_cauchy}.
+        Take $x\in\carrier[\metricUniformSpace{M}]$ such that
+            $\uniformSequenceConverges{\metricUniformSpace{M}}
+                {\metricFilterSelectedSequence{M}{F}}{x}$
+            by \obv{sequentially_complete_uniform_space}.
+        $\uniformFilterConverges{\metricUniformSpace{M}}{F}{x}$
+            by \obv{metric_selected_sequence_limit_is_filter_limit}.
+    \end{subproof}
+    Follows by \obv{complete_uniform_space}.
+\end{proof}
+
+\begin{theorem}\label{metric_uniform_completeness_iff}
+    Let $M$ be a metric space.
+    Then $M$ is sequentially complete metric iff
+        $\metricUniformSpace{M}$ is complete uniform.
+\end{theorem}
+\begin{proof}
+    Show that if $M$ is sequentially complete metric, then
+        $\metricUniformSpace{M}$ is complete uniform.
+    \begin{subproof}
+        Assume $M$ is sequentially complete metric.
+        Follows by
+            \obv{sequentially_complete_metric_implies_complete_uniform}.
+    \end{subproof}
+    Show that if $\metricUniformSpace{M}$ is complete uniform, then
+        $M$ is sequentially complete metric.
+    \begin{subproof}
+        Assume $\metricUniformSpace{M}$ is complete uniform.
+        Hence $\metricUniformSpace{M}$ is sequentially complete uniform
+            by \obv{complete_uniform_implies_sequentially_complete}.
+        Follows by \obv{metric_sequential_completeness_iff_uniform}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}

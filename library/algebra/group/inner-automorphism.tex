@@ -1,0 +1,628 @@
+\import{algebra/group/automorphism.tex}
+
+\section{Inner automorphisms}
+
+\begin{definition}\label{inner_automorphism_op}
+    $\innerAutomorphismOp:\Set\to\Set\to\Set
+        =\fun{G,a:\Set}{\ConjugationMap{G}{a}}$.
+\end{definition}
+
+\begin{definition}\label{inner_map}
+    $\innerMap{G}=
+        \Apply{\graphOnOp}
+            {\carrier[G],\automorphismSet{G},\Apply{\innerAutomorphismOp}{G}}$.
+\end{definition}
+
+\begin{proposition}\label{inner_automorphism_closed}
+    Let $G$ be a group.
+    Let $a\in\carrier[G]$.
+    Then $\ConjugationMap{G}{a}\in\automorphismSet{G}$.
+\end{proposition}
+\begin{proof}
+    $\groupIsomorphism{\ConjugationMap{G}{a}}{G}{G}$ by
+        \obv{conjugation_map_group_isomorphism}.
+    Follows by \obv{automorphism_set_iff}.
+\end{proof}
+
+\begin{proposition}\label{inner_map_type}
+    Let $G$ be a group.
+    Then $\innerMap{G}\in\funs{\carrier[G]}{\automorphismSet{G}}$.
+\end{proposition}
+\begin{proof}
+    Show that $\forall a:\Set.
+        a\in\carrier[G]\implies
+        \Apply{\innerAutomorphismOp}{G,a}
+            \in\automorphismSet{G}$.
+    \begin{subproof}
+        Fix $a:\Set$.
+        Assume $a\in\carrier[G]$.
+        Follows by
+            \auto{inner_automorphism_op,inner_automorphism_closed}.
+    \end{subproof}
+    Follows by \auto{inner_map,logical_graph_on_function}.
+\end{proof}
+
+\begin{proposition}\label{inner_map_apply}
+    Let $G$ be a group.
+    Let $a\in\carrier[G]$.
+    Then $\apply{\innerMap{G}}{a}=\ConjugationMap{G}{a}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{inner_map,inner_automorphism_op,logical_graph_on_apply}.
+\end{proof}
+
+\begin{proposition}\label{inner_map_apply_element}
+    Let $G$ be a group.
+    Let $a,x\in\carrier[G]$.
+    Then $\apply{\apply{\innerMap{G}}{a}}{x}=\conjugate{G}{a}{x}$.
+\end{proposition}
+\begin{proof}
+    $\apply{\innerMap{G}}{a}=\ConjugationMap{G}{a}$ by
+        \obv{inner_map_apply}.
+    Follows by \auto{conjugation_map_apply}.
+\end{proof}
+
+\begin{theorem}\label{inner_map_group_hom}
+    Let $G$ be a group.
+    Then
+        $\groupHom{\innerMap{G}}{G}{\automorphismGroup{G}}$.
+\end{theorem}
+\begin{proof}
+    Let $A=\automorphismGroup{G}$.
+    $A$ is a group by notion.
+    $\carrier[A]=\automorphismSet{G}$ by
+        \auto{automorphism_group_carrier}.
+    Hence $\innerMap{G}\in\funs{\carrier[G]}{\carrier[A]}$ by
+        \auto{inner_map_type}.
+    Show that for all $a,b\in\carrier[G]$ we have
+        $\apply{\innerMap{G}}{\mul[G](a,b)}=
+            \mul[A](\apply{\innerMap{G}}{a},\apply{\innerMap{G}}{b})$.
+    \begin{subproof}
+        Fix $a,b\in\carrier[G]$.
+        $\mul[G](a,b)\in\carrier[G]$ by
+            \obv{group_is_monoid,monoid_is_magma,magma_welldef}.
+        $\apply{\innerMap{G}}{a},\apply{\innerMap{G}}{b}
+            \in\automorphismSet{G}$ by
+            \obv{inner_map_type,funs_type_apply}.
+        $\apply{\innerMap{G}}{\mul[G](a,b)}=
+            \ConjugationMap{G}{\mul[G](a,b)}$ by
+            \obv{inner_map_apply}.
+        $\mul[A](\apply{\innerMap{G}}{a},\apply{\innerMap{G}}{b})=
+            \ConjugationMap{G}{a}\circ\ConjugationMap{G}{b}$ by
+            \auto{automorphism_group_mul_apply,inner_map_apply}.
+        Follows by \obv{conjugation_map_composition}.
+    \end{subproof}
+    Follows by \auto{group_hom}.
+\end{proof}
+
+\begin{corollary}\label{inner_map_in_group_hom_set}
+    Let $G$ be a group.
+    Then $\innerMap{G}\in
+        \groupHomSet{G}{\automorphismGroup{G}}$.
+\end{corollary}
+\begin{proof}
+    $\groupHom{\innerMap{G}}{G}{\automorphismGroup{G}}$ by
+        \obv{inner_map_group_hom}.
+    Follows by \obv{group_hom_set_iff}.
+\end{proof}
+
+\begin{proposition}\label{inner_map_mul}
+    Let $G$ be a group.
+    Let $a,b\in\carrier[G]$.
+    Then
+        $\apply{\innerMap{G}}{\mul[G](a,b)}=
+            \mul[\automorphismGroup{G}](
+                \apply{\innerMap{G}}{a},\apply{\innerMap{G}}{b})$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{inner_map_group_hom,group_hom_mul}.
+\end{proof}
+
+\subsection{Naturality}
+
+\begin{theorem}\label{automorphism_transport_inner_element}
+    Suppose $\groupIsomorphism{e}{G}{H}$.
+    Let $a\in\carrier[G]$.
+    Then
+        $\apply{\automorphismTransport{e}{G}{H}}{
+            \apply{\innerMap{G}}{a}}=
+            \apply{\innerMap{H}}{e(a)}$.
+\end{theorem}
+\begin{proof}
+    Let $c=\converse{e}$.
+    Let $p=\ConjugationMap{G}{a}$.
+    Let $q=\ConjugationMap{H}{e(a)}$.
+    $G$ is a group and $H$ is a group by
+        \obv{group_isomorphism_is_hom,group_hom_source_group,group_hom_target_group}.
+    $e\in\bijections{\carrier[G]}{\carrier[H]}$ by
+        \obv{group_isomorphism_is_bijection}.
+    Hence $e\in\funs{\carrier[G]}{\carrier[H]}$ and
+        $c\in\funs{\carrier[H]}{\carrier[G]}$ by
+        \auto{bijections_to_funs,bijective_converse_are_funs}.
+    Hence $e$ is a function and $c$ is a function and
+        $\dom{c}=\carrier[H]$ by
+        \auto{funs_elim}.
+    Hence $e$ is composable with $c$ by
+        \auto{funs_ran,funs}.
+    $p\in\funs{\carrier[G]}{\carrier[G]}$ by
+        \auto{conjugation_map_function}.
+    Hence $p$ is a function and $p$ is composable with $c$ by
+        \auto{funs_is_function,funs_ran,funs}.
+    $p\in\automorphismSet{G}$ by
+        \auto{inner_automorphism_closed}.
+    Hence $p\circ c\in\funs{\carrier[H]}{\carrier[G]}$ and
+        $e\circ(p\circ c)\in
+            \funs{\carrier[H]}{\carrier[H]}$ by
+        \obv{funs_circ}.
+    Hence $p\circ c$ is a function and
+        $e$ is composable with $p\circ c$ by
+        \auto{funs_is_function,funs_ran,funs}.
+    $\Apply{\automorphismTransportOp}{e,p}
+        \in\automorphismSet{H}$ by
+        \obv{automorphism_transport_op_closed}.
+    $\Apply{\automorphismTransportOp}{e,p}
+        =e\circ(p\circ c)$ by
+        \obv{automorphism_transport_op}.
+    Hence $\groupHom{e\circ(p\circ c)}{H}{H}$ by
+        \obv{automorphism_set_is_hom}.
+    $e(a)\in\carrier[H]$ by
+        \obv{group_isomorphism_is_hom,group_hom_apply_type}.
+    $\groupHom{q}{H}{H}$ by
+        \auto{conjugation_map_group_hom}.
+    $e\circ c=\identity{\carrier[H]}$ by
+        \auto{bijection_circ_converse}.
+    Show that for every $y\in\carrier[H]$ we have
+        $(e\circ(p\circ c))(y)=q(y)$.
+    \begin{subproof}
+        Fix $y\in\carrier[H]$.
+        $c(y)\in\carrier[G]$ by \obv{funs_type_apply}.
+        $(e\circ c)(y)=y$ by
+            \auto{funs_circ,circ_apply,id_apply}.
+        Hence $e(c(y))=y$ by \obv{circ_apply}.
+        $p(c(y))=\conjugate{G}{a}{c(y)}$ by
+            \auto{conjugation_map_apply}.
+        $(e\circ(p\circ c))(y)=e(p(c(y)))$ by
+            \auto{circ_apply,funs_circ,funs}.
+        Hence
+            $(e\circ(p\circ c))(y)=
+                e(\conjugate{G}{a}{c(y)})$.
+        $e(\conjugate{G}{a}{c(y)})=
+            \conjugate{H}{e(a)}{e(c(y))}$ by
+            \obv{group_isomorphism_is_hom,group_hom_conjugate}.
+        Hence $(e\circ(p\circ c))(y)=
+            \conjugate{H}{e(a)}{y}$.
+        $e(a)\in\carrier[H]$ by
+            \obv{group_isomorphism_is_hom,group_hom_apply_type}.
+        $q(y)=\conjugate{H}{e(a)}{y}$ by
+            \auto{conjugation_map_apply}.
+    \end{subproof}
+    Hence $e\circ(p\circ c)=q$ by
+        \obv{group_hom_extensionality}.
+    $\apply{\innerMap{G}}{a}=p$ and
+        $\apply{\innerMap{H}}{e(a)}=q$ by
+        \obv{inner_map_apply,group_isomorphism_is_hom,group_hom_apply_type}.
+    Follows by \auto{automorphism_transport_apply}.
+\end{proof}
+
+\begin{theorem}\label{automorphism_transport_inner_naturality}
+    Suppose $\groupIsomorphism{e}{G}{H}$.
+    Then
+        $\automorphismTransport{e}{G}{H}\circ\innerMap{G}=
+            \innerMap{H}\circ e$.
+\end{theorem}
+\begin{proof}
+    Let $F=\automorphismTransport{e}{G}{H}$.
+    Let $A=\automorphismGroup{H}$.
+    $G$ is a group and $H$ is a group by
+        \obv{group_isomorphism_is_hom,group_hom_source_group,group_hom_target_group}.
+    $\groupHom{\innerMap{G}}{G}{\automorphismGroup{G}}$ and
+        $\groupHom{F}{\automorphismGroup{G}}{A}$ by
+        \auto{inner_map_group_hom,automorphism_transport_group_hom}.
+    Hence
+        $\groupHom{F\circ\innerMap{G}}{G}{A}$ by
+        \obv{group_hom_composition}.
+    $\groupHom{e}{G}{H}$ and $\groupHom{\innerMap{H}}{H}{A}$ by
+        \obv{group_isomorphism_is_hom,inner_map_group_hom}.
+    Hence $\groupHom{\innerMap{H}\circ e}{G}{A}$ by
+        \obv{group_hom_composition}.
+    $\innerMap{G}\in\funs{\carrier[G]}{\automorphismSet{G}}$ and
+        $F\in\funs{\automorphismSet{G}}{\automorphismSet{H}}$ by
+        \auto{inner_map_type,automorphism_transport_type}.
+    Hence $F$ is composable with $\innerMap{G}$ by
+        \auto{funs_ran,funs}.
+    $e\in\funs{\carrier[G]}{\carrier[H]}$ and
+        $\innerMap{H}\in\funs{\carrier[H]}{\automorphismSet{H}}$ by
+        \obv{group_isomorphism_is_hom,group_hom_type,inner_map_type}.
+    Hence $\innerMap{H}$ is composable with $e$ by
+        \auto{funs_ran,funs}.
+    Show that for every $a\in\carrier[G]$ we have
+        $(F\circ\innerMap{G})(a)=(\innerMap{H}\circ e)(a)$.
+    \begin{subproof}
+        Fix $a\in\carrier[G]$.
+        $(F\circ\innerMap{G})(a)=F(\apply{\innerMap{G}}{a})$ and
+            $(\innerMap{H}\circ e)(a)=\apply{\innerMap{H}}{e(a)}$ by
+            \auto{circ_apply,funs_is_function,funs}.
+        Follows by \auto{automorphism_transport_inner_element}.
+    \end{subproof}
+    Follows by \auto{group_hom_extensionality}.
+\end{proof}
+
+\subsection{The inner carrier and kernel}
+
+\begin{definition}\label{inner_automorphism_carrier}
+    $\innerAutomorphismCarrier{G}=
+        \img{\innerMap{G}}{\carrier[G]}$.
+\end{definition}
+
+\begin{proposition}\label{inner_automorphism_carrier_iff}
+    Let $G$ be a group.
+    Then $f\in\innerAutomorphismCarrier{G}$ iff
+        there exists $a\in\carrier[G]$ such that
+            $f=\apply{\innerMap{G}}{a}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{inner_automorphism_carrier,inner_map_group_hom,group_hom_image_iff,subseteq_refl}.
+\end{proof}
+
+\begin{theorem}\label{inner_automorphism_carrier_subgroup}
+    Let $G$ be a group.
+    Then
+        $\subgroup
+            {\innerAutomorphismCarrier{G}}
+            {\automorphismGroup{G}}$.
+\end{theorem}
+\begin{proof}
+    Follows by
+        \auto{inner_automorphism_carrier,inner_map_group_hom,group_hom_image_subgroup}.
+\end{proof}
+
+\begin{definition}\label{inner_automorphism_group}
+    $\innerAutomorphismGroup{G}=
+        \subgroupStructure
+            {\automorphismGroup{G}}
+            {\innerAutomorphismCarrier{G}}$.
+\end{definition}
+
+\begin{theorem}\label{inner_automorphism_group_is_exact_group}
+    Let $G$ be a group.
+    Then $\innerAutomorphismGroup{G}$ is an exact group.
+\end{theorem}
+\begin{proof}
+    Follows by
+        \auto{inner_automorphism_group,inner_automorphism_carrier_subgroup,subgroup_structure_is_exact_group}.
+\end{proof}
+
+\begin{theorem}\label{inner_map_kernel_is_centre}
+    Let $G$ be a group.
+    Then
+        $\groupKernel{\innerMap{G}}{G}
+        =\groupCentre{G}$.
+\end{theorem}
+\begin{proof}
+    Let $N=\groupKernel{\innerMap{G}}{G}$.
+    Let $Z=\groupCentre{G}$.
+    $\groupHom{\innerMap{G}}{G}{\automorphismGroup{G}}$ by
+        \obv{inner_map_group_hom}.
+    $\neutral[\automorphismGroup{G}]=\identity{\carrier[G]}$ by
+        \obv{automorphism_group_neutral}.
+    Show that $N\subseteq Z$.
+    \begin{subproof}
+        Show that for every $a\in N$ we have $a\in Z$.
+        \begin{subproof}
+            Fix $a\in N$.
+            Hence $a\in\carrier[G]$ and
+                $\apply{\innerMap{G}}{a}=\identity{\carrier[G]}$ by
+                \auto{group_kernel_iff}.
+            Show that for every $x\in\carrier[G]$ we have
+                $\commutesIn{G}{a}{x}$.
+            \begin{subproof}
+                Fix $x\in\carrier[G]$.
+                $\apply{\apply{\innerMap{G}}{a}}{x}=x$ by
+                    \auto{id_apply}.
+                Hence $\conjugate{G}{a}{x}=x$ by
+                    \obv{inner_map_apply_element}.
+                Follows by \obv{commutes_in_iff_conjugate_fixed}.
+            \end{subproof}
+            Follows by \obv{group_centre_iff}.
+        \end{subproof}
+        Follows by \obv{subseteq}.
+    \end{subproof}
+    Show that $Z\subseteq N$.
+    \begin{subproof}
+        Show that for every $a\in Z$ we have $a\in N$.
+        \begin{subproof}
+            Fix $a\in Z$.
+            Hence $a\in\carrier[G]$ by
+                \auto{group_centre_subseteq,subseteq}.
+            $\groupHom{\apply{\innerMap{G}}{a}}{G}{G}$ by
+                \auto{inner_map_apply,conjugation_map_group_hom}.
+            $\groupHom{\identity{\carrier[G]}}{G}{G}$ by
+                \obv{identity_group_hom}.
+            Show that for every $x\in\carrier[G]$ we have
+                $\apply{\apply{\innerMap{G}}{a}}{x}=
+                    (\identity{\carrier[G]})(x)$.
+            \begin{subproof}
+                Fix $x\in\carrier[G]$.
+                $\commutesIn{G}{a}{x}$ by
+                    \auto{group_centre_iff}.
+                Hence $\conjugate{G}{a}{x}=x$ by
+                    \obv{commutes_in_iff_conjugate_fixed}.
+                Follows by \obv{inner_map_apply_element,id_apply}.
+            \end{subproof}
+            Hence $\apply{\innerMap{G}}{a}=\identity{\carrier[G]}$ by
+                \obv{group_hom_extensionality}.
+            Follows by \auto{group_kernel_iff}.
+        \end{subproof}
+        Follows by \obv{subseteq}.
+    \end{subproof}
+    Follows by \obv{subseteq_antisymmetric}.
+\end{proof}
+
+\begin{theorem}\label{inner_map_injective_iff_centre_trivial}
+    Let $G$ be a group.
+    Then $\innerMap{G}$ is injective iff
+        $\groupCentre{G}=\trivialSubgroupCarrier{G}$.
+\end{theorem}
+\begin{proof}
+    $\groupHom{\innerMap{G}}{G}{\automorphismGroup{G}}$ by
+        \obv{inner_map_group_hom}.
+    $\groupKernel{\innerMap{G}}{G}
+        =\groupCentre{G}$ by
+        \obv{inner_map_kernel_is_centre}.
+    Follows by \auto{group_hom_injective_iff_kernel_trivial}.
+\end{proof}
+
+\begin{theorem}\label{inner_map_embedding_iff_centreless}
+    Let $G$ be a group.
+    Then $\groupEmbedding
+        {\innerMap{G}}{G}{\automorphismGroup{G}}$ iff
+        $\centrelessGroup{G}$.
+\end{theorem}
+\begin{proof}
+    $\groupHom{\innerMap{G}}{G}{\automorphismGroup{G}}$ by
+        \obv{inner_map_group_hom}.
+    Follows by
+        \auto{group_embedding,
+            inner_map_injective_iff_centre_trivial,
+            centreless_group}.
+\end{proof}
+
+\begin{corollary}\label{centreless_inner_map_embedding}
+    Suppose $\centrelessGroup{G}$.
+    Then $\groupEmbedding
+        {\innerMap{G}}{G}{\automorphismGroup{G}}$.
+\end{corollary}
+\begin{proof}
+    $G$ is a group by \obv{centreless_group_is_group}.
+    Follows by \obv{inner_map_embedding_iff_centreless}.
+\end{proof}
+
+\subsection{The inner subgroup is normal}
+
+\begin{proposition}\label{automorphism_group_conjugate_apply}
+    Let $G$ be a group.
+    Let $f,q\in\automorphismSet{G}$.
+    Then
+        $\conjugate{\automorphismGroup{G}}{f}{q}=
+            f\circ(q\circ\converse{f})$.
+\end{proposition}
+\begin{proof}
+    Let $A=\automorphismGroup{G}$.
+    $\groupInv[A](f)=\converse{f}$ by
+        \auto{automorphism_group_inv_apply}.
+    $f\circ q\in\automorphismSet{G}$ and
+        $\converse{f}\in\automorphismSet{G}$ by
+        \obv{automorphism_composition_closed,automorphism_inverse_closed}.
+    $\mul[A](f,q)=f\circ q$ by
+        \auto{automorphism_group_mul_apply}.
+    Hence
+        $\mul[A](\mul[A](f,q),\groupInv[A](f))=
+            (f\circ q)\circ\converse{f}$ by
+        \auto{automorphism_group_mul_apply}.
+    $(f\circ q)\circ\converse{f}=f\circ(q\circ\converse{f})$ by
+        \obv{circ_assoc}.
+    Follows by \obv{group_conjugate}.
+\end{proof}
+
+\begin{proposition}\label{automorphism_group_conjugate_is_transport}
+    Let $G$ be a group.
+    Let $f,q\in\automorphismSet{G}$.
+    Then
+        $\conjugate{\automorphismGroup{G}}{f}{q}=
+            \apply{\automorphismTransport{f}{G}{G}}{q}$.
+\end{proposition}
+\begin{proof}
+    $\groupIsomorphism{f}{G}{G}$ by
+        \obv{automorphism_set_iff}.
+    $\apply{\automorphismTransport{f}{G}{G}}{q}=
+        f\circ(q\circ\converse{f})$ by
+        \obv{automorphism_transport_apply}.
+    Follows by \obv{automorphism_group_conjugate_apply}.
+\end{proof}
+
+\begin{theorem}\label{inner_automorphism_carrier_normal}
+    Let $G$ be a group.
+    Then
+        $\normalSubgroup
+            {\innerAutomorphismCarrier{G}}
+            {\automorphismGroup{G}}$.
+\end{theorem}
+\begin{proof}
+    Let $I=\innerAutomorphismCarrier{G}$.
+    Let $A=\automorphismGroup{G}$.
+    $\subgroup{I}{A}$ by
+        \auto{inner_automorphism_carrier_subgroup}.
+    Hence $I\subseteq\carrier[A]$ by \obv{subgroup_subseteq}.
+    $\carrier[A]=\automorphismSet{G}$ by
+        \auto{automorphism_group_carrier}.
+    Show that for all $f\in\carrier[A]$ we have for every $q\in I$
+        we have $\conjugate{A}{f}{q}\in I$.
+    \begin{subproof}
+        Fix $f\in\carrier[A]$.
+        Fix $q\in I$.
+        Hence $f\in\automorphismSet{G}$.
+        $q\in\carrier[A]$ by \obv{subseteq}.
+        Hence $q\in\automorphismSet{G}$.
+        Take $a\in\carrier[G]$ such that
+            $q=\apply{\innerMap{G}}{a}$ by
+            \obv{inner_automorphism_carrier_iff}.
+        $\groupIsomorphism{f}{G}{G}$ by
+            \obv{automorphism_set_iff}.
+        Hence $f(a)\in\carrier[G]$ by
+            \auto{group_isomorphism_is_hom,group_hom_apply_type}.
+        $\conjugate{A}{f}{q}=
+            \apply{\automorphismTransport{f}{G}{G}}{q}$ by
+            \auto{automorphism_group_conjugate_is_transport}.
+        Hence
+            $\conjugate{A}{f}{q}=\apply{\innerMap{G}}{f(a)}$ by
+            \auto{automorphism_transport_inner_element}.
+        Follows by \auto{inner_automorphism_carrier_iff}.
+    \end{subproof}
+    Follows by \auto{normal_subgroup_iff_closed_under_conjugation}.
+\end{proof}
+
+\subsection{Centralizers in the automorphism group}
+
+The inner automorphisms of a centreless group have trivial centralizer.  The
+usual centrelessness theorem for the full automorphism group is then the
+formal consequence that the centre centralizes every subgroup.
+
+\begin{theorem}\label{inner_automorphism_centralizer_trivial}
+    Suppose $\centrelessGroup{G}$.
+    Then
+        $\groupCentralizer
+            {\automorphismGroup{G}}
+            {\innerAutomorphismCarrier{G}}
+        =\trivialSubgroupCarrier{\automorphismGroup{G}}$.
+\end{theorem}
+\begin{proof}
+    Let $A=\automorphismGroup{G}$.
+    Let $I=\innerAutomorphismCarrier{G}$.
+    Let $C=\groupCentralizer{A}{I}$.
+    Let $T=\trivialSubgroupCarrier{A}$.
+    $G$ is a group by \obv{centreless_group_is_group}.
+    Hence $A$ is a group by notion.
+    $\carrier[A]=\automorphismSet{G}$ by
+        \auto{automorphism_group_carrier}.
+    $\groupCentre{G}=\trivialSubgroupCarrier{G}$ by
+        \obv{centreless_group_centre}.
+    Hence $\innerMap{G}$ is injective by
+        \obv{inner_map_injective_iff_centre_trivial}.
+    $\innerMap{G}\in\funs{\carrier[G]}{\automorphismSet{G}}$ by
+        \obv{inner_map_type}.
+    Hence $\innerMap{G}$ is a function and
+        $\dom{\innerMap{G}}=\carrier[G]$ by
+        \auto{funs_elim}.
+    $\subgroup{\groupCentralizer{A}{I}}{A}$ by
+        \obv{group_centralizer_subgroup}.
+    Hence $\subgroup{C}{A}$.
+    Show that $C\subseteq T$.
+    \begin{subproof}
+        Show that for every $f\in C$ we have $f\in T$.
+        \begin{subproof}
+            Fix $f\in C$.
+            Hence $f\in\groupCentralizer{A}{I}$.
+            Hence $f\in\carrier[A]$ by
+                \obv{group_centralizer}.
+            Hence $f\in\automorphismSet{G}$.
+            $\groupIsomorphism{f}{G}{G}$ and
+                $\groupHom{f}{G}{G}$ by
+                \obv{automorphism_set_iff,
+                    group_isomorphism_is_hom}.
+            Show that for every $a\in\carrier[G]$ we have $f(a)=a$.
+            \begin{subproof}
+                Fix $a\in\carrier[G]$.
+                Let $q=\apply{\innerMap{G}}{a}$.
+                $q\in\innerAutomorphismCarrier{G}$ by
+                    \auto{inner_automorphism_carrier_iff}.
+                Hence $q\in I$.
+                $q\in\automorphismSet{G}$ by
+                    \auto{inner_map_type,funs_type_apply}.
+                Hence $q\in\carrier[A]$.
+                Hence $q\in I\inter\carrier[A]$ by
+                    \obv{inter_intro}.
+                Hence $\commutesIn{A}{f}{q}$ by
+                    \obv{group_centralizer}.
+                Hence $\conjugate{A}{f}{q}=q$ by
+                    \obv{commutes_in_iff_conjugate_fixed}.
+                $\conjugate{A}{f}{q}=
+                    \apply{\automorphismTransport{f}{G}{G}}{q}$ by
+                    \auto{automorphism_group_conjugate_is_transport}.
+                Hence
+                    $\apply{\automorphismTransport{f}{G}{G}}{q}=q$.
+                $\apply{\automorphismTransport{f}{G}{G}}{q}=
+                    \apply{\innerMap{G}}{f(a)}$ by
+                    \auto{automorphism_transport_inner_element}.
+                Hence $\apply{\innerMap{G}}{f(a)}=
+                    \apply{\innerMap{G}}{a}$.
+                $f(a)\in\carrier[G]$ by
+                    \obv{group_hom_apply_type}.
+                Follows by \auto{injective_function}.
+            \end{subproof}
+            $\groupHom{\identity{\carrier[G]}}{G}{G}$ by
+                \obv{identity_group_hom}.
+            For every $a\in\carrier[G]$ we have
+                $f(a)=(\identity{\carrier[G]})(a)$ by
+                \obv{id_apply}.
+            Hence $f=\identity{\carrier[G]}$ by
+                \obv{group_hom_extensionality}.
+            Hence $f=\neutral[A]$ by
+                \auto{automorphism_group_neutral}.
+            Follows by
+                \obv{trivial_subgroup_carrier,singleton_iff}.
+        \end{subproof}
+        Follows by \obv{subseteq}.
+    \end{subproof}
+    $\neutral[A]\in C$ by \obv{subgroup_neutral}.
+    Show that $T\subseteq C$.
+    \begin{subproof}
+        Show that for every $f\in T$ we have $f\in C$.
+        \begin{subproof}
+            Fix $f\in T$.
+            Hence $f=\neutral[A]$ by
+                \auto{trivial_subgroup_carrier,singleton_iff}.
+        \end{subproof}
+        Follows by \obv{subseteq}.
+    \end{subproof}
+    Hence $C=T$ by \obv{subseteq_antisymmetric}.
+\end{proof}
+
+\begin{theorem}\label{automorphism_group_centreless}
+    Suppose $\centrelessGroup{G}$.
+    Then $\centrelessGroup{\automorphismGroup{G}}$.
+\end{theorem}
+\begin{proof}
+    Let $A=\automorphismGroup{G}$.
+    Let $Z=\groupCentre{A}$.
+    Let $T=\trivialSubgroupCarrier{A}$.
+    Hence $A$ is a group by notion.
+    $\subgroup{\innerAutomorphismCarrier{G}}{A}$ by
+        \obv{inner_automorphism_carrier_subgroup}.
+    Hence $\innerAutomorphismCarrier{G}\subseteq\carrier[A]$ by
+        \obv{subgroup_subseteq}.
+    Hence
+        $\groupCentralizer{A}{\carrier[A]}\subseteq
+            \groupCentralizer{A}{\innerAutomorphismCarrier{G}}$ by
+        \obv{group_centralizer_antitone}.
+    $Z=\groupCentralizer{A}{\carrier[A]}$ by
+        \obv{group_centre}.
+    $\groupCentralizer{A}{\innerAutomorphismCarrier{G}}=T$ by
+        \auto{inner_automorphism_centralizer_trivial}.
+    Hence $Z\subseteq T$.
+    $\subgroup{Z}{A}$ by \auto{group_centre_subgroup}.
+    Hence $\neutral[A]\in Z$ by \obv{subgroup_neutral}.
+    Show that $T\subseteq Z$.
+    \begin{subproof}
+        Show that for every $f\in T$ we have $f\in Z$.
+        \begin{subproof}
+            Fix $f\in T$.
+            Hence $f=\neutral[A]$ by
+                \auto{trivial_subgroup_carrier,singleton_iff}.
+        \end{subproof}
+        Follows by \obv{subseteq}.
+    \end{subproof}
+    Hence $Z=T$ by \obv{subseteq_antisymmetric}.
+    Follows by \obv{centreless_group}.
+\end{proof}

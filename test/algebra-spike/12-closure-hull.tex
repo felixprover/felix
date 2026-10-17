@@ -1,0 +1,259 @@
+\import{set/powerset.tex}
+\import{set/indexed-family.tex}
+
+\section{Bounded closure systems and hulls}
+
+Felix's unrestricted intersection of the empty family is empty.  A closure
+system on an ambient set therefore uses the intersection bounded by that
+ambient set; in particular, the empty intersection is the whole ambient set.
+
+\begin{definition}\label{spike_bounded_intersection}
+    $\boundedIntersection{X}{D}
+        =\{x\in X\mid
+            \text{for every $B\in D$ we have $x\in B$}\}$.
+\end{definition}
+
+\begin{proposition}\label{spike_bounded_intersection_iff}
+    $x\in\boundedIntersection{X}{D}$ iff
+        $x\in X$ and for every $B\in D$ we have $x\in B$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{spike_bounded_intersection}.
+\end{proof}
+
+\begin{proposition}\label{spike_bounded_intersection_subseteq}
+    $\boundedIntersection{X}{D}\subseteq X$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{subseteq,spike_bounded_intersection_iff}.
+\end{proof}
+
+\begin{proposition}\label{spike_bounded_intersection_empty}
+    $\boundedIntersection{X}{\emptyset}=X$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{setext,spike_bounded_intersection_iff,emptyset}.
+\end{proof}
+
+\begin{proposition}\label{spike_bounded_intersection_eq_inters}
+    Suppose $D$ is inhabited and $D\subseteq\pow{X}$.
+    Then $\boundedIntersection{X}{D}=\inters{D}$.
+\end{proposition}
+\begin{proof}
+    Show that every element of $\boundedIntersection{X}{D}$ is an element of
+        $\inters{D}$.
+    \begin{subproof}
+        Fix $x\in\boundedIntersection{X}{D}$.
+        Follows by
+            \auto{spike_bounded_intersection_iff,inters_iff_forall}.
+    \end{subproof}
+    Show that every element of $\inters{D}$ is an element of
+        $\boundedIntersection{X}{D}$.
+    \begin{subproof}
+        Fix $x\in\inters{D}$.
+        Take $B$ such that $B\in D$ by \auto.
+        $B\subseteq X$ by \auto{subseteq,powerset_elim}.
+        $x\in B$ by \auto{inters_iff_forall}.
+        Hence $x\in X$ by \auto{subseteq}.
+        For every $A\in D$ we have $x\in A$ by
+            \auto{inters_iff_forall}.
+        Follows by \auto{spike_bounded_intersection_iff}.
+    \end{subproof}
+    Follows by \auto{setext}.
+\end{proof}
+
+\begin{definition}\label{spike_prototype_closure_system}
+    $\prototypeClosureSystem{C}{X}$ iff
+        $C\subseteq\pow{X}$ and
+        for every $D\subseteq C$ we have
+            $\boundedIntersection{X}{D}\in C$.
+\end{definition}
+
+\begin{proposition}\label{spike_prototype_closure_system_bounded}
+    Suppose $\prototypeClosureSystem{C}{X}$.
+    Then $C\subseteq\pow{X}$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{spike_prototype_closure_system}.
+\end{proof}
+
+\begin{proposition}\label{spike_prototype_closure_system_intersection}
+    Suppose $\prototypeClosureSystem{C}{X}$ and $D\subseteq C$.
+    Then $\boundedIntersection{X}{D}\in C$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{spike_prototype_closure_system}.
+\end{proof}
+
+\begin{proposition}\label{spike_prototype_closure_system_top}
+    Suppose $\prototypeClosureSystem{C}{X}$.
+    Then $X\in C$.
+\end{proposition}
+\begin{proof}
+    $\emptyset\subseteq C$ by \auto{emptyset_subseteq}.
+    Hence $\boundedIntersection{X}{\emptyset}\in C$ by
+        \auto{spike_prototype_closure_system_intersection}.
+    Follows by \auto{spike_bounded_intersection_empty}.
+\end{proof}
+
+\begin{definition}\label{spike_closure_supersets}
+    $\spikeClosureSupersets{C}{A}
+        =\{B\in C\mid A\subseteq B\}$.
+\end{definition}
+
+\begin{proposition}\label{spike_closure_supersets_iff}
+    $B\in\spikeClosureSupersets{C}{A}$ iff
+        $B\in C$ and $A\subseteq B$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{spike_closure_supersets}.
+\end{proof}
+
+\begin{proposition}\label{spike_closure_supersets_subseteq}
+    $\spikeClosureSupersets{C}{A}\subseteq C$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{subseteq,spike_closure_supersets_iff}.
+\end{proof}
+
+\begin{definition}\label{spike_closure_hull}
+    $\closureHull{X}{C}{A}
+        =\boundedIntersection{X}{\spikeClosureSupersets{C}{A}}$.
+\end{definition}
+
+\begin{proposition}\label{spike_closure_hull_subseteq}
+    $\closureHull{X}{C}{A}\subseteq X$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{spike_closure_hull,spike_bounded_intersection_subseteq}.
+\end{proof}
+
+\begin{proposition}\label{spike_closure_supersets_inhabited}
+    Suppose $\prototypeClosureSystem{C}{X}$ and $A\subseteq X$.
+    Then $\spikeClosureSupersets{C}{A}$ is inhabited.
+\end{proposition}
+\begin{proof}
+    $X\in C$ by \auto{spike_prototype_closure_system_top}.
+    Hence $X\in\spikeClosureSupersets{C}{A}$ by
+        \auto{spike_closure_supersets_iff}.
+    Follows by \auto.
+\end{proof}
+
+\begin{proposition}\label{spike_closure_hull_extensive}
+    Suppose $\prototypeClosureSystem{C}{X}$ and $A\subseteq X$.
+    Then $A\subseteq\closureHull{X}{C}{A}$.
+\end{proposition}
+\begin{proof}
+    Show that every element of $A$ is an element of
+        $\closureHull{X}{C}{A}$.
+    \begin{subproof}
+        Fix $x\in A$.
+        Hence $x\in X$ by \auto{subseteq}.
+        Show that for every $B\in\spikeClosureSupersets{C}{A}$ we have
+            $x\in B$.
+        \begin{subproof}
+            Fix $B\in\spikeClosureSupersets{C}{A}$.
+            $A\subseteq B$ by \auto{spike_closure_supersets_iff}.
+            Follows by \auto{subseteq}.
+        \end{subproof}
+        Follows by
+            \auto{spike_closure_hull,
+                spike_bounded_intersection_iff}.
+    \end{subproof}
+    Follows by \auto{subseteq}.
+\end{proof}
+
+\begin{proposition}\label{spike_closure_hull_closed}
+    Suppose $\prototypeClosureSystem{C}{X}$ and $A\subseteq X$.
+    Then $\closureHull{X}{C}{A}\in C$.
+\end{proposition}
+\begin{proof}
+    $\spikeClosureSupersets{C}{A}\subseteq C$ by
+        \auto{spike_closure_supersets_subseteq}.
+    $\boundedIntersection{X}{\spikeClosureSupersets{C}{A}}\in C$ by
+        \auto{spike_prototype_closure_system_intersection}.
+    Follows by \auto{spike_closure_hull}.
+\end{proof}
+
+\begin{proposition}\label{spike_closure_hull_least}
+    Suppose $\prototypeClosureSystem{C}{X}$ and $A\subseteq X$.
+    Let $B\in C$.
+    Suppose $A\subseteq B$.
+    Then $\closureHull{X}{C}{A}\subseteq B$.
+\end{proposition}
+\begin{proof}
+    $B\in\spikeClosureSupersets{C}{A}$ by
+        \auto{spike_closure_supersets_iff}.
+    Follows by
+        \auto{subseteq,spike_closure_hull,
+            spike_bounded_intersection_iff}.
+\end{proof}
+
+\begin{proposition}\label{spike_closure_hull_monotone}
+    Suppose $\prototypeClosureSystem{C}{X}$.
+    Suppose $A\subseteq B$ and $B\subseteq X$.
+    Then $\closureHull{X}{C}{A}\subseteq\closureHull{X}{C}{B}$.
+\end{proposition}
+\begin{proof}
+    $A\subseteq X$ by \auto{subseteq_transitive}.
+    $B\subseteq\closureHull{X}{C}{B}$ by
+        \auto{spike_closure_hull_extensive}.
+    Hence $A\subseteq\closureHull{X}{C}{B}$ by
+        \auto{subseteq_transitive}.
+    $\closureHull{X}{C}{B}\in C$ by
+        \auto{spike_closure_hull_closed}.
+    Follows by \auto{spike_closure_hull_least}.
+\end{proof}
+
+\begin{proposition}\label{spike_closure_hull_idempotent}
+    Suppose $\prototypeClosureSystem{C}{X}$ and $A\subseteq X$.
+    Then
+        $\closureHull{X}{C}{\closureHull{X}{C}{A}}
+            =\closureHull{X}{C}{A}$.
+\end{proposition}
+\begin{proof}
+    Let $H=\closureHull{X}{C}{A}$.
+    $H\subseteq X$ by \auto{spike_closure_hull_subseteq}.
+    $H\subseteq\closureHull{X}{C}{H}$ by
+        \auto{spike_closure_hull_extensive}.
+    $H\in C$ by \auto{spike_closure_hull_closed}.
+    $\closureHull{X}{C}{H}\subseteq H$ by
+        \auto{spike_closure_hull_least,subseteq_refl}.
+    Follows by \auto{subseteq_antisymmetric}.
+\end{proof}
+
+\begin{proposition}\label{spike_closure_hull_already_closed}
+    Suppose $\prototypeClosureSystem{C}{X}$ and $A\in C$.
+    Then $\closureHull{X}{C}{A}=A$.
+\end{proposition}
+\begin{proof}
+    $C\subseteq\pow{X}$ by
+        \auto{spike_prototype_closure_system_bounded}.
+    Hence $A\subseteq X$ by \auto{subseteq,powerset_elim}.
+    $A\subseteq\closureHull{X}{C}{A}$ by
+        \auto{spike_closure_hull_extensive}.
+    $\closureHull{X}{C}{A}\subseteq A$ by
+        \auto{spike_closure_hull_least,subseteq_refl}.
+    Follows by \auto{subseteq_antisymmetric}.
+\end{proof}
+
+\begin{proposition}\label{spike_empty_closure_supersets}
+    $\spikeClosureSupersets{C}{\emptyset}=C$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{setext,spike_closure_supersets_iff,emptyset_subseteq}.
+\end{proof}
+
+\begin{proposition}\label{spike_closure_hull_empty}
+    Suppose $\prototypeClosureSystem{C}{X}$.
+    Then
+        $\closureHull{X}{C}{\emptyset}
+            =\boundedIntersection{X}{C}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{spike_closure_hull,spike_empty_closure_supersets}.
+\end{proof}

@@ -1,0 +1,212 @@
+\import{recursion/transfinite-scalar.tex}
+
+\section{A growing-package recursion example}
+
+This small client exercises codomain-free recursion with records whose fields
+grow with the index.  It is an acceptance example for the recursion API, not
+a tower definition.  A package at $\alpha$ stores the carrier
+$\alpha+1$, the current value $\alpha$, and an unbounded set-coded incoming
+family obtained by extending the predecessor history at $\alpha$.
+
+\begin{struct}\label{growing_recursion_package}
+    A growing recursion package $P$ is a onesorted structure equipped with
+    \begin{enumerate}
+        \item\label{growing_recursion_package_current}
+            a current value
+            $\growingCurrent[P]\in\carrier[P]$;
+        \item\label{growing_recursion_package_incoming}
+            an incoming family
+            $\growingIncoming[P]:
+                \carrier[P]\to\ran{\growingIncoming[P]}$;
+    \end{enumerate}.
+\end{struct}
+
+\begin{definition}\label{growing_recursion_package_op}
+    $\growingRecursionPackage{\alpha}{p}=
+        \structure[growing recursion package]{
+            \carrier=\suc{\alpha},
+            \growingCurrent=\alpha,
+            \growingIncoming=\cons{(\alpha,\alpha)}{p}
+        }$.
+\end{definition}
+
+\begin{definition}\label{growing_recursion_step_op}
+    $\growingRecursionStepOp:\Set\to\Set\to\Set
+        =\fun{\alpha,p:\Set}{
+                \growingRecursionPackage{\alpha}{p}}$.
+\end{definition}
+
+\begin{proposition}\label{growing_recursion_package_carrier}
+    $\carrier[\growingRecursionPackage{\alpha}{p}]=\suc{\alpha}$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{growing_recursion_package_op,growing_recursion_packageaggregateprojection_carrier}.
+\end{proof}
+
+\begin{proposition}\label{growing_recursion_package_current_value}
+    $\growingCurrent[\growingRecursionPackage{\alpha}{p}]=\alpha$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{growing_recursion_package_op,growing_recursion_packageaggregateprojection_growingCurrent}.
+\end{proof}
+
+\begin{proposition}\label{growing_recursion_package_incoming_value}
+    $\growingIncoming[\growingRecursionPackage{\alpha}{p}]
+        =\cons{(\alpha,\alpha)}{p}$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{growing_recursion_package_op,growing_recursion_packageaggregateprojection_growingIncoming}.
+\end{proof}
+
+\begin{theorem}\label{growing_recursion_package_is_exact}
+    Suppose $p$ is a function and $\dom{p}=\alpha$.
+    Then $\growingRecursionPackage{\alpha}{p}$ is an exact
+        growing recursion package.
+\end{theorem}
+\begin{proof}
+    Let $P=\growingRecursionPackage{\alpha}{p}$.
+    Let $q=\cons{(\alpha,\alpha)}{p}$.
+    $\alpha\notin\alpha$ by \obv{in_irrefl}.
+    Hence $\alpha\notin\dom{p}$.
+    Hence $q$ is a function and
+        $\dom{q}=\cons{\alpha}{\dom{p}}$ by
+        \auto{extend_set_function_at_new_point}.
+    Hence $\dom{q}=\cons{\alpha}{\alpha}$.
+    $\cons{\alpha}{\alpha}=\suc{\alpha}$ by \obv{suc_eq_cons}.
+    Hence $\dom{q}=\suc{\alpha}$.
+    Show that $q$ is a function to $\ran{q}$.
+    \begin{subproof}
+        Show that for every $x\in\dom{q}$ we have $q(x)\in\ran{q}$.
+        \begin{subproof}
+            Fix $x\in\dom{q}$.
+            Follows by \auto{fun_ran_iff}.
+        \end{subproof}
+    \end{subproof}
+    Hence $q\in\funs{\suc{\alpha}}{\ran{q}}$ by
+        \obv{funs_intro}.
+    $\carrier[P]=\suc{\alpha}$ by
+        \auto{growing_recursion_package_carrier}.
+    $\growingCurrent[P]=\alpha$ by
+        \auto{growing_recursion_package_current_value}.
+    $\growingIncoming[P]=q$ by
+        \auto{growing_recursion_package_incoming_value}.
+    $\alpha\in\suc{\alpha}$ by \obv{suc_intro_self}.
+    Hence $\growingCurrent[P]\in\carrier[P]$.
+    $\growingIncoming[P]\in
+        \funs{\carrier[P]}{\ran{\growingIncoming[P]}}$.
+    $P$ is a growing recursion package by
+        \auto{growing_recursion_package_op,growing_recursion_package,growing_recursion_packageaggregateexact,growing_recursion_packageaggregateprojection_carrier,growing_recursion_packageaggregateprojection_growingCurrent,growing_recursion_packageaggregateprojection_growingIncoming}.
+    Follows by \auto{growing_recursion_package_op,growing_recursion_packageaggregateexact}.
+\end{proof}
+
+\begin{definition}\label{growing_recursion}
+    $\growingRecursion{\theta}=
+        \Apply{\unboundedOrdinalRecursionOp}
+            {\theta,\growingRecursionStepOp}$.
+\end{definition}
+
+\begin{proposition}\label{growing_recursion_function}
+    Let $\theta$ be an ordinal.
+    Then $\growingRecursion{\theta}$ is a function.
+\end{proposition}
+\begin{proof}
+    $\Apply{\recursiveSetFunctionOp}{\growingRecursion{\theta}}$ by
+        \auto{growing_recursion,unbounded_ordinal_recursion_function}.
+    Hence $\recursiveSetFunction{\growingRecursion{\theta}}$ by
+        \obv{recursive_set_function_op}.
+    Follows by \obv{recursive_set_function}.
+\end{proof}
+
+\begin{proposition}\label{growing_recursion_domain}
+    Let $\theta$ be an ordinal.
+    Then $\dom{\growingRecursion{\theta}}=\theta$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{growing_recursion,unbounded_ordinal_recursion_domain}.
+\end{proof}
+
+\begin{proposition}\label{growing_recursion_equation}
+    Let $\theta$ be an ordinal.
+    Let $\alpha\in\theta$.
+    Then $\apply{\growingRecursion{\theta}}{\alpha}
+        =\growingRecursionPackage{\alpha}{
+            \restrl{\growingRecursion{\theta}}{\alpha}}$.
+\end{proposition}
+\begin{proof}
+    $\apply{\growingRecursion{\theta}}{\alpha}
+        =\Apply{\growingRecursionStepOp}{\alpha,
+            \restrl{\growingRecursion{\theta}}{\alpha}}$ by
+        \auto{growing_recursion,unbounded_ordinal_recursion_equation}.
+    Follows by \obv{growing_recursion_step_op}.
+\end{proof}
+
+\begin{theorem}\label{growing_recursion_value_is_exact_package}
+    Let $\theta$ be an ordinal.
+    Let $\alpha\in\theta$.
+    Then $\apply{\growingRecursion{\theta}}{\alpha}$ is an exact
+        growing recursion package.
+\end{theorem}
+\begin{proof}
+    Let $f=\growingRecursion{\theta}$.
+    Let $p=\restrl{f}{\alpha}$.
+    $f$ is a function by \obv{growing_recursion_function}.
+    $\dom{f}=\theta$ by \auto{growing_recursion_domain}.
+    $p$ is a function by \obv{restrl_of_function_is_function}.
+    $\alpha$ is an ordinal by \obv{elem_of_ordinal_is_ordinal}.
+    Hence $\alpha\subseteq\theta$ by
+        \obv{ordinal_elem_implies_subseteq}.
+    $\dom{p}=\dom{f}\inter\alpha$ by
+        \auto{dom_of_restrl_eq_inter}.
+    Hence $\dom{p}=\alpha$ by
+        \auto{inter_absorb_supseteq_left}.
+    Hence $\growingRecursionPackage{\alpha}{p}$ is an exact
+        growing recursion package by
+        \obv{growing_recursion_package_is_exact}.
+    $f(\alpha)=\growingRecursionPackage{\alpha}{p}$ by
+        \auto{growing_recursion_equation}.
+    Follows by \auto.
+\end{proof}
+
+\begin{proposition}\label{growing_recursion_value_carrier}
+    Let $\theta$ be an ordinal.
+    Let $\alpha\in\theta$.
+    Then $\carrier[\apply{\growingRecursion{\theta}}{\alpha}]=\suc{\alpha}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{growing_recursion_equation,growing_recursion_package_carrier}.
+\end{proof}
+
+\begin{proposition}\label{growing_recursion_value_current}
+    Let $\theta$ be an ordinal.
+    Let $\alpha\in\theta$.
+    Then $\growingCurrent[\apply{\growingRecursion{\theta}}{\alpha}]=\alpha$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{growing_recursion_equation,growing_recursion_package_current_value}.
+\end{proof}
+
+\begin{proposition}\label{growing_recursion_value_incoming}
+    Let $\theta$ be an ordinal.
+    Let $\alpha\in\theta$.
+    Then $\growingIncoming[\apply{\growingRecursion{\theta}}{\alpha}]
+        =\cons{(\alpha,\alpha)}{
+            \restrl{\growingRecursion{\theta}}{\alpha}}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{growing_recursion_equation,growing_recursion_package_incoming_value}.
+\end{proof}
+
+\begin{theorem}\label{growing_recursion_segment}
+    Let $\theta,\eta$ be ordinals.
+    Suppose $\theta\subseteq\eta$.
+    Then $\growingRecursion{\theta}
+        =\restrl{\growingRecursion{\eta}}{\theta}$.
+\end{theorem}
+\begin{proof}
+    Follows by
+        \auto{growing_recursion,unbounded_ordinal_recursion_segment}.
+\end{proof}

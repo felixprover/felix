@@ -1,0 +1,225 @@
+\import{topology/metric.tex}
+\import{surreal/real-dyadic-estimates.tex}
+\import{surreal/real-metric.tex}
+
+\section{Sequences in metric spaces}
+
+\begin{theorem}\label{metric_limit_unique}
+    Let $M$ be a metric space.
+    Suppose $\metricConverges{M}{s}{x}$ and
+        $\metricConverges{M}{s}{y}$.
+    Then $x=y$.
+\end{theorem}
+\begin{proof}
+    $s\in\funs{\naturals}{\carrier[M]}$ and
+        $x,y\in\carrier[M]$ by \obv{metric_convergence}.
+    Suppose not.
+        Let $r=\metricDistance[M](x,y)$.
+        $r\in\reals$ by \auto{metric_distance_type}.
+        $\surrealLe{\surrealZero}{r}$
+            by \obv{metric_distance_nonnegative}.
+        $r\neq\surrealZero$ by \obv{metric_distance_zero_iff}.
+        Hence $\surrealLt{\surrealZero}{r}$
+            by \auto{surreal_le}.
+        Take $d\in\reals$ such that $\surrealLt{\surrealZero}{d}$ and
+            $\surrealLt{\surrealAdd{\surrealAdd{d}{d}}{d}}{r}$
+            by \obv{positive_real_has_threefold_dyadic_budget}.
+        Take $N\in\naturals$ such that for every $n\in\naturals$
+            such that $N\subseteq n$ we have
+                $s(n)\in\metricBall{M}{x}{d}$
+            by \obv{metric_convergence}.
+        Take $K\in\naturals$ such that for every $n\in\naturals$
+            such that $K\subseteq n$ we have
+                $s(n)\in\metricBall{M}{y}{d}$
+            by \obv{metric_convergence}.
+        $(N\subset K\lor K\subset N)\lor N=K$
+            by
+            \obv{ordinal_subset_trichotomy,natural_number_is_ordinal}.
+        Hence $N\subseteq K$ or $K\subseteq N$
+            by \auto{subset,subseteq_refl}.
+        Let $L=N\union K$.
+        $L=N$ or $L=K$
+            by
+            \obv{union_absorb_subseteq_left,union_absorb_subseteq_right}.
+        Hence $L\in\naturals$.
+        $N\subseteq L$ and $K\subseteq L$
+            by \obv{union_upper_left,union_upper_right}.
+        $s(L)\in\metricBall{M}{x}{d}$ and
+            $s(L)\in\metricBall{M}{y}{d}$.
+        Hence
+            $\surrealLt{\metricDistance[M](x,s(L))}{d}$ and
+            $\surrealLt{\metricDistance[M](y,s(L))}{d}$
+            by \auto{metric_ball_iff}.
+        $s(L)\in\carrier[M]$ by \obv{funs_type_apply}.
+        $\metricDistance[M](s(L),y)=\metricDistance[M](y,s(L))$
+            by \obv{metric_distance_symmetric}.
+        Hence
+            $\surrealLt{
+                \surrealAdd{\metricDistance[M](x,s(L))}
+                    {\metricDistance[M](s(L),y)}}
+                {\surrealAdd{d}{d}}$
+            by
+            \auto{surreal_add_lt_both,metric_distance_type,surreal_real_is_surreal}.
+        $\surrealLe{r}{
+            \surrealAdd{\metricDistance[M](x,s(L))}
+                {\metricDistance[M](s(L),y)}}$
+            by \auto{metric_triangle}.
+        Hence $\surrealLt{r}{\surrealAdd{d}{d}}$
+            by
+            \auto{surreal_le_lt_transitive,metric_distance_type,surreal_real_is_surreal,surreal_real_addition_closed}.
+        $\surrealLt{
+            \surrealAdd{\surrealZero}{\surrealAdd{d}{d}}}
+            {\surrealAdd{d}{\surrealAdd{d}{d}}}$
+            by
+            \obv{surreal_add_lt_left,surreal_add_is_surreal,surreal_real_is_surreal,empty_surreal}.
+        $\surrealAdd{\surrealZero}{\surrealAdd{d}{d}}
+            =\surrealAdd{d}{d}$
+            by
+            \obv{surreal_add_zero_left,surreal_add_is_surreal,surreal_real_is_surreal}.
+        $\surrealAdd{d}{\surrealAdd{d}{d}}
+            =\surrealAdd{\surrealAdd{d}{d}}{d}$
+            by
+            \obv{surreal_add_associative,surreal_add_commutative,surreal_real_is_surreal}.
+        Hence
+            $\surrealLt{\surrealAdd{d}{d}}
+                {\surrealAdd{\surrealAdd{d}{d}}{d}}$
+            by \auto.
+        Hence
+            $\surrealLt{r}{\surrealAdd{\surrealAdd{d}{d}}{d}}$
+            by
+            \auto{surreal_lt_transitive,surreal_add_is_surreal,surreal_real_is_surreal}.
+    Contradiction by
+        \obv{surreal_lt_asymmetric,surreal_add_is_surreal,surreal_real_is_surreal}.
+\end{proof}
+
+\begin{theorem}\label{metric_distance_zero_from_convergent_bounds}
+    Let $M$ be a metric space.
+    Let $b\in\funs{\naturals}{\reals}$.
+    Suppose $\metricConverges{\RealMetric}{b}{\surrealZero}$.
+    Suppose for every $n\in\naturals$ we have
+        $\surrealLe{\surrealZero}{b(n)}$.
+    Let $x,y\in\carrier[M]$.
+    Suppose for every $n\in\naturals$ we have
+        $\surrealLe{\metricDistance[M](x,y)}{b(n)}$.
+    Then $x=y$.
+\end{theorem}
+\begin{proof}
+    Let $q=\metricDistance[M](x,y)$.
+    $q\in\reals$ by \auto{metric_distance_type}.
+    $\surrealLe{\surrealZero}{q}$
+        by \obv{metric_distance_nonnegative}.
+    Suppose not.
+    $q\neq\surrealZero$ by \auto{metric_distance_zero_iff}.
+    Hence $\surrealLt{\surrealZero}{q}$ by \auto{surreal_le}.
+    Take $N\in\naturals$ such that for every $n\in\naturals$
+        such that $N\subseteq n$ we have
+            $b(n)\in\metricBall{\RealMetric}{\surrealZero}{q}$
+        by \obv{metric_convergence}.
+    $N\subseteq N$ by \obv{subseteq_refl}.
+    Hence $b(N)\in\metricBall{\RealMetric}{\surrealZero}{q}$.
+    Hence
+        $\surrealLt{
+            \metricDistance[\RealMetric](\surrealZero,b(N))}{q}$
+        by \obv{metric_ball}.
+    $b(N)\in\reals$ and $\surrealLe{\surrealZero}{b(N)}$
+        by \obv{funs_type_apply}.
+    $\metricDistance[\RealMetric](\surrealZero,b(N))
+        =\abs{\surrealAdd{\surrealZero}{\surrealNeg{b(N)}}}$
+        by \obv{surreal_real_metric_distance,surreal_zero_is_real}.
+    $\surrealAdd{\surrealZero}{\surrealNeg{b(N)}}
+        =\surrealNeg{b(N)}$
+        by
+        \obv{surreal_add_zero_left,surreal_negation_is_surreal,surreal_real_is_surreal}.
+    Hence
+        $\metricDistance[\RealMetric](\surrealZero,b(N))
+            =\abs{\surrealNeg{b(N)}}$
+        by \auto.
+    $\abs{\surrealNeg{b(N)}}=\abs{b(N)}$
+        by
+        \obv{surreal_abs_negation,surreal_real_is_surreal}.
+    $\abs{b(N)}=b(N)$
+        by
+        \obv{surreal_abs_nonnegative,surreal_real_is_surreal}.
+    Hence $\surrealLt{b(N)}{q}$ by \auto.
+    $\surrealLe{q}{b(N)}$ by \auto.
+    Contradiction by
+        \auto{surreal_le,surreal_lt_asymmetric,surreal_real_is_surreal}.
+\end{proof}
+
+\begin{theorem}\label{metric_limit_respects_closed_distance_bound}
+    Let $M$ be a metric space.
+    Suppose $\metricConverges{M}{s}{x}$.
+    Let $y\in\carrier[M]$ and $r\in\reals$.
+    Suppose there exists $N\in\naturals$ such that
+        for every $n\in\naturals$ such that $N\subseteq n$ we have
+            $\surrealLe{\metricDistance[M](s(n),y)}{r}$.
+    Then $\surrealLe{\metricDistance[M](x,y)}{r}$.
+\end{theorem}
+\begin{proof}
+    $s\in\funs{\naturals}{\carrier[M]}$ and $x\in\carrier[M]$
+        by \obv{metric_convergence}.
+    Let $q=\metricDistance[M](x,y)$.
+    $q\in\reals$ by \auto{metric_distance_type}.
+    Suppose not.
+    $\surrealLt{r}{q}$
+        by
+        \auto{surreal_lt_trichotomy,surreal_le,surreal_lt_asymmetric,surreal_real_is_surreal}.
+    Let $g=\surrealAdd{q}{\surrealNeg{r}}$.
+    $\surrealNeg{r}\in\reals$ by \obv{surreal_real_negation_closed}.
+    Hence $g\in\reals$ by \auto{surreal_real_addition_closed}.
+    $\surrealLt{\surrealZero}{g}$
+        by \obv{surreal_subtraction_positive,surreal_real_is_surreal}.
+    Take a natural number $j$ such that
+        $\surrealLt{
+            \surrealMul{\surrealEpsilon{j}}{\surrealOne}}{g}$
+        by
+        \obv{positive_real_scaled_epsilon_below,surreal_one_is_real,surreal_zero_lt_one}.
+    Let $d=\surrealEpsilon{j}$.
+    $d\in\reals$ and $\surrealLt{\surrealZero}{d}$
+        by \auto{surreal_epsilon_is_real,surreal_epsilon_positive}.
+    $\surrealMul{d}{\surrealOne}=d$
+        by \auto{surreal_mul_one_right,surreal_epsilon_is_surreal}.
+    Hence $\surrealLt{d}{g}$.
+    Hence $\surrealLt{\surrealAdd{d}{r}}{q}$
+        by
+        \obv{surreal_lt_subtract_add,surreal_real_is_surreal}.
+    Take $K\in\naturals$ such that for every $n\in\naturals$
+        such that $K\subseteq n$ we have
+            $s(n)\in\metricBall{M}{x}{d}$
+        by \obv{metric_convergence}.
+    Take $N\in\naturals$ such that for every $n\in\naturals$
+        such that $N\subseteq n$ we have
+            $\surrealLe{\metricDistance[M](s(n),y)}{r}$.
+    $(N\subset K\lor K\subset N)\lor N=K$
+        by
+        \obv{ordinal_subset_trichotomy,natural_number_is_ordinal}.
+    Hence $N\subseteq K$ or $K\subseteq N$
+        by \auto{subset,subseteq_refl}.
+    Let $L=N\union K$.
+    $L=N$ or $L=K$
+        by
+        \obv{union_absorb_subseteq_left,union_absorb_subseteq_right}.
+    Hence $L\in\naturals$.
+    $N\subseteq L$ and $K\subseteq L$
+        by \obv{union_upper_left,union_upper_right}.
+    Hence $s(L)\in\metricBall{M}{x}{d}$ and
+        $\surrealLe{\metricDistance[M](s(L),y)}{r}$.
+    Hence $\surrealLt{\metricDistance[M](x,s(L))}{d}$
+        by \auto{metric_ball_iff}.
+    $s(L)\in\carrier[M]$ by \obv{funs_type_apply}.
+    $\surrealLt{
+        \surrealAdd{\metricDistance[M](x,s(L))}
+            {\metricDistance[M](s(L),y)}}
+        {\surrealAdd{d}{r}}$
+        by
+        \obv{surreal_add_lt_le,metric_distance_type,surreal_real_is_surreal}.
+    $\surrealLe{q}{
+        \surrealAdd{\metricDistance[M](x,s(L))}
+            {\metricDistance[M](s(L),y)}}$
+        by \auto{metric_triangle}.
+    Hence $\surrealLt{q}{\surrealAdd{d}{r}}$
+        by
+        \auto{surreal_le_lt_transitive,metric_distance_type,surreal_real_is_surreal,surreal_real_addition_closed}.
+    Contradiction by
+        \obv{surreal_lt_asymmetric,surreal_add_is_surreal,surreal_real_is_surreal}.
+\end{proof}

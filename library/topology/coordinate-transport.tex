@@ -1,0 +1,283 @@
+\section{Transporting coordinate atlases}
+
+\import{topology/coordinate-atlas-restriction.tex}
+
+Extra fields of a topological record do not change its charts or atlases.
+The following results make it possible to add or forget coordinate data
+without identifying a richer record with its topological reduct.
+
+\subsection{Equal topological fields}
+
+\begin{theorem}\label{coordinate_compatibility_same_fields}
+    Let $G$ be a coordinate pseudogroup and $X,Y$ be topological spaces.
+    Suppose $\carrier[X]=\carrier[Y]$ and $\opens[X]=\opens[Y]$.
+    Then $c$ is compatible with $d$ on $X$ under $G$ iff
+        $c$ is compatible with $d$ on $Y$ under $G$.
+\end{theorem}
+\begin{proof}
+    $c$ is an open partial homeomorphism from $X$ to $\model[G]$ iff
+        $c$ is an open partial homeomorphism from $Y$ to $\model[G]$ by
+        \obv{open_partial_homeomorphism_same_source_fields}.
+    $d$ is an open partial homeomorphism from $X$ to $\model[G]$ iff
+        $d$ is an open partial homeomorphism from $Y$ to $\model[G]$ by
+        \obv{open_partial_homeomorphism_same_source_fields}.
+    Follows by \auto{coordinate_chart_compatibility}.
+\end{proof}
+
+\begin{theorem}\label{coordinate_atlas_same_fields}
+    Let $G$ be a coordinate pseudogroup and $X,Y$ be topological spaces.
+    Suppose $\carrier[X]=\carrier[Y]$ and $\opens[X]=\opens[Y]$.
+    Then $A$ is a coordinate atlas on $X$ under $G$ iff
+        $A$ is a coordinate atlas on $Y$ under $G$.
+\end{theorem}
+\begin{proof}
+    For every $c$ we have $c$ is an open partial homeomorphism from $X$ to $\model[G]$
+        iff $c$ is an open partial homeomorphism from $Y$ to $\model[G]$ by
+        \obv{open_partial_homeomorphism_same_source_fields}.
+    For all $c,d$ we have $c$ is compatible with $d$ on $X$ under $G$ iff
+        $c$ is compatible with $d$ on $Y$ under $G$ by
+        \obv{coordinate_compatibility_same_fields}.
+    Follows by \auto{coordinate_atlas}.
+\end{proof}
+
+\begin{theorem}\label{compatible_hull_same_fields}
+    Let $G$ be a coordinate pseudogroup and $X,Y$ be topological spaces.
+    Suppose $\carrier[X]=\carrier[Y]$ and $\opens[X]=\opens[Y]$.
+    Then $\compatibleHull{G}{X}{A}=\compatibleHull{G}{Y}{A}$.
+\end{theorem}
+\begin{proof}
+    For every $c$ we have $c$ is an open partial homeomorphism from $X$ to $\model[G]$
+        iff $c$ is an open partial homeomorphism from $Y$ to $\model[G]$ by
+        \obv{open_partial_homeomorphism_same_source_fields}.
+    For all $c,d$ we have $c$ is compatible with $d$ on $X$ under $G$ iff
+        $c$ is compatible with $d$ on $Y$ under $G$ by
+        \obv{coordinate_compatibility_same_fields}.
+    For every $c$ we have $c\in\compatibleHull{G}{X}{A}$ iff
+        $c\in\compatibleHull{G}{Y}{A}$ by \auto{compatible_hull_iff}.
+    Follows by set extensionality.
+\end{proof}
+
+\begin{theorem}\label{maximal_coordinate_atlas_same_fields}
+    Let $G$ be a coordinate pseudogroup and $X,Y$ be topological spaces.
+    Suppose $\carrier[X]=\carrier[Y]$ and $\opens[X]=\opens[Y]$.
+    Then $A$ is a maximal coordinate atlas on $X$ under $G$ iff
+        $A$ is a maximal coordinate atlas on $Y$ under $G$.
+\end{theorem}
+\begin{proof}
+    $A$ is a coordinate atlas on $X$ under $G$ iff
+        $A$ is a coordinate atlas on $Y$ under $G$ by
+        \obv{coordinate_atlas_same_fields}.
+    $\compatibleHull{G}{X}{A}=\compatibleHull{G}{Y}{A}$ by
+        \obv{compatible_hull_same_fields}.
+    Follows by \auto{maximal_coordinate_atlas}.
+\end{proof}
+
+\subsection{Changing the source by a homeomorphism}
+
+For a homeomorphism $h$ from $X$ to $Y$, a chart on $X$ becomes a chart on $Y$ by
+composition with the inverse of $h$. This changes the source, not the
+coordinate model or the allowed transitions. We first record the set-level
+operation and its composition laws.
+
+\begin{definition}\label{transported_atlas}
+    $\TransportedAtlas{A}{h}=\{c\circ\converse{h}\mid c\in A\}$.
+\end{definition}
+
+\begin{theorem}\label{transported_atlas_iff}
+    Then $b\in\TransportedAtlas{A}{h}$ iff
+        there exists $c\in A$ such that $b=c\circ\converse{h}$.
+\end{theorem}
+\begin{proof}
+    Follows by \auto{transported_atlas,logical_replacement_iff}.
+\end{proof}
+
+\begin{theorem}\label{transported_atlas_composition}
+    Then $\TransportedAtlas{\TransportedAtlas{A}{h}}{k}=\TransportedAtlas{A}{k\circ h}$.
+\end{theorem}
+\begin{proof}
+    For every $c$ we have $(c\circ\converse{h})\circ\converse{k}
+        =c\circ\converse{k\circ h}$ by \auto{circ_converse,circ_assoc}.
+    For every $b$ we have $b\in\TransportedAtlas{\TransportedAtlas{A}{h}}{k}$ iff
+        $b\in\TransportedAtlas{A}{k\circ h}$ by \auto{transported_atlas_iff}.
+    Follows by set extensionality.
+\end{proof}
+
+\begin{theorem}\label{transported_atlas_identity}
+    Suppose every element of $A$ is a relation.
+    Suppose for every $c\in A$ we have $\dom{c}\subseteq X$.
+    Then $\TransportedAtlas{A}{\identity{X}}=A$.
+\end{theorem}
+\begin{proof}
+    $\converse{\identity{X}}=\identity{X}$ by \obv{converse_identity}.
+    For every $c\in A$ we have $c\circ\identity{X}=c$ by \obv{relation_circ_identity}.
+    For every $b$ we have $b\in\TransportedAtlas{A}{\identity{X}}$ iff $b\in A$ by
+        \auto{transported_atlas_iff}.
+    Follows by set extensionality.
+\end{proof}
+
+\begin{theorem}\label{transported_atlas_roundtrip}
+    Let $h\in\bijections{X}{Y}$.
+    Suppose every element of $A$ is a relation.
+    Suppose for every $c\in A$ we have $\dom{c}\subseteq X$.
+    Then $\TransportedAtlas{\TransportedAtlas{A}{h}}{\converse{h}}=A$.
+\end{theorem}
+\begin{proof}
+    $\converse{h}\circ h=\identity{X}$ by \obv{bijection_converse_circ}.
+    $\TransportedAtlas{\TransportedAtlas{A}{h}}{\converse{h}}
+        =\TransportedAtlas{A}{\converse{h}\circ h}$ by \obv{transported_atlas_composition}.
+    $\TransportedAtlas{A}{\identity{X}}=A$ by \obv{transported_atlas_identity}.
+\end{proof}
+
+\begin{theorem}\label{transported_atlas_restriction}
+    Let $h$ be an injection.
+    Suppose every element of $A$ is a function.
+    Then $\TransportedAtlas{\RestrictedAtlas{A}{U}}{\restrl{h}{U}}
+        =\RestrictedAtlas{\TransportedAtlas{A}{h}}{\img{h}{U}}$.
+\end{theorem}
+\begin{proof}
+    $\converse{h}$ is a function by \obv{injective_converse_is_function}.
+    $\converse{\converse{h}}=h$ by \obv{converse_converse_eq}.
+    $\preimg{\converse{h}}{U}=\img{h}{U}$ by \auto{preim_eq_img_of_converse}.
+    $\img{h}{U}\subseteq\preimg{\converse{h}}{U}$ by \obv{subseteq_refl}.
+    $\converse{\restrl{h}{U}}=\restrl{\converse{h}}{\img{h}{U}}$ by \obv{restriction_converse}.
+    For every $c\in A$ we have $(\restrl{c}{U})\circ\converse{\restrl{h}{U}}
+        =\restrl{c\circ\converse{h}}{\img{h}{U}}$ by \auto{partial_composition_local_restriction}.
+    For every $b$ we have $b\in\TransportedAtlas{\RestrictedAtlas{A}{U}}{\restrl{h}{U}}$ iff
+        $b\in\RestrictedAtlas{\TransportedAtlas{A}{h}}{\img{h}{U}}$ by
+        \auto{transported_atlas_iff,restricted_atlas_iff}.
+    Follows by set extensionality.
+\end{proof}
+
+\begin{theorem}\label{coordinate_compatibility_transport}
+    Let $G$ be a coordinate pseudogroup and $X,Y$ be topological spaces.
+    Suppose $h$ is a homeomorphism from $X$ to $Y$.
+    Suppose $c$ is compatible with $d$ on $X$ under $G$.
+    Then $c\circ\converse{h}$ is compatible with $d\circ\converse{h}$ on $Y$ under $G$.
+\end{theorem}
+\begin{proof}
+    $c$ and $d$ are open partial homeomorphisms from $X$ to $\model[G]$ and
+        $\chartTransition{d}{c}\in\changes[G]$ by \obv{coordinate_chart_compatibility}.
+    $\converse{h}$ is a homeomorphism from $Y$ to $X$ by \obv{homeomorphism_inverse}.
+    $\converse{h}$ is an open partial homeomorphism from $Y$ to $X$ by
+        \obv{homeomorphism_is_open_partial_homeomorphism}.
+    $c\circ\converse{h}$ and $d\circ\converse{h}$ are open partial homeomorphisms
+        from $Y$ to $\model[G]$ by \obv{open_partial_homeomorphism_composition}.
+    $c$ and $d$ are raw coordinate charts on $\carrier[X]$ modelled on $\model[G]$ by
+        \obv{open_partial_homeomorphism_is_raw_chart}.
+    $c$ and $d$ are injections and $\dom{c}\subseteq\carrier[X]$ by \obv{raw_coordinate_chart}.
+    $h\in\bijections{\carrier[X]}{\carrier[Y]}$ by \obv{homeomorphism}.
+    $\chartTransition{d\circ\converse{h}}{c\circ\converse{h}}=\chartTransition{d}{c}$ by
+        \obv{chart_transition_change_of_source}.
+    Follows by \obv{coordinate_chart_compatibility}.
+\end{proof}
+
+\begin{classification}\label{transported_atlas_is_atlas}
+    Let $G$ be a coordinate pseudogroup and $X,Y$ be topological spaces.
+    Let $A$ be a coordinate atlas on $X$ under $G$.
+    Suppose $h$ is a homeomorphism from $X$ to $Y$.
+    Then $\TransportedAtlas{A}{h}$ is a coordinate atlas on $Y$ under $G$.
+\end{classification}
+\begin{proof}
+    Let $B=\TransportedAtlas{A}{h}$.
+    $\converse{h}$ is a homeomorphism from $Y$ to $X$ by \obv{homeomorphism_inverse}.
+    $\converse{h}$ is an open partial homeomorphism from $Y$ to $X$ by
+        \obv{homeomorphism_is_open_partial_homeomorphism}.
+    Every element of $A$ is an open partial homeomorphism from $X$ to $\model[G]$ by
+        \obv{coordinate_atlas}.
+    Every element of $B$ is an open partial homeomorphism from $Y$ to $\model[G]$ by
+        \auto{transported_atlas_iff,open_partial_homeomorphism_composition}.
+    For all $c,d\in A$ we have $c$ is compatible with $d$ on $X$ under $G$ by
+        \obv{coordinate_atlas}.
+    For all $b,e\in B$ we have $b$ is compatible with $e$ on $Y$ under $G$ by
+        \auto{transported_atlas_iff,coordinate_compatibility_transport}.
+    $h\in\bijections{\carrier[X]}{\carrier[Y]}$ by \obv{homeomorphism}.
+    $h\in\surj{\carrier[X]}{\carrier[Y]}$ and $\dom{h}=\carrier[X]$ by
+        \obv{bijections,bijections_dom}.
+    $h$ is a function by \obv{bijection_is_function}.
+    $\converse{h}$ is a relation by \obv{converse_is_relation}.
+    Show that for every $q\in\carrier[Y]$ there exists $b\in B$ such that $q\in\dom{b}$.
+    \begin{subproof}
+        Fix $q\in\carrier[Y]$.
+        Take $p\in\carrier[X]$ such that $h(p)=q$ by \obv{surj}.
+        Take $c\in A$ such that $p\in\dom{c}$ by \obv{coordinate_atlas}.
+        $c$ is a function by \auto{open_partial_homeomorphism_bijection,bijection_is_function}.
+        $(p,q)\in h$ by \auto{function_apply_iff}.
+        $q\in\dom{c\circ\converse{h}}$ by
+            \auto{relation_composition_domain,preimg_iff,converse_iff}.
+        $c\circ\converse{h}\in B$ by \obv{transported_atlas_iff}.
+    \end{subproof}
+    Follows by \auto{coordinate_atlas}.
+\end{proof}
+
+\subsection{Transport of maximal atlases}
+
+\begin{classification}\label{transported_maximal_atlas_is_maximal}
+    Let $G$ be a coordinate pseudogroup and $X,Y$ be topological spaces.
+    Let $A$ be a maximal coordinate atlas on $X$ under $G$.
+    Suppose $h$ is a homeomorphism from $X$ to $Y$.
+    Then $\TransportedAtlas{A}{h}$ is a maximal coordinate atlas on $Y$ under $G$.
+\end{classification}
+\begin{proof}
+    Let $B=\TransportedAtlas{A}{h}$ and $k=\converse{h}$.
+    $A$ is a coordinate atlas on $X$ under $G$ and $\compatibleHull{G}{X}{A}\subseteq A$ by
+        \obv{maximal_coordinate_atlas}.
+    $B$ is a coordinate atlas on $Y$ under $G$ by \auto{transported_atlas_is_atlas}.
+    $k$ is a homeomorphism from $Y$ to $X$ by \auto{homeomorphism_inverse}.
+    $h\in\bijections{\carrier[X]}{\carrier[Y]}$ and
+        $k\in\bijections{\carrier[Y]}{\carrier[X]}$ by \obv{homeomorphism}.
+    $h$ is a function by \obv{bijection_is_function}.
+    $\converse{k}=h$ by \auto{converse_converse_eq}.
+    $h$ is an open partial homeomorphism from $X$ to $Y$ by
+        \obv{homeomorphism_is_open_partial_homeomorphism}.
+    Show that every element of $\compatibleHull{G}{Y}{B}$ is an element of $B$.
+    \begin{subproof}
+        Fix $b\in\compatibleHull{G}{Y}{B}$.
+        $b$ is an open partial homeomorphism from $Y$ to $\model[G]$ by
+            \auto{compatible_hull_iff}.
+        $b$ is a raw coordinate chart on $\carrier[Y]$ modelled on $\model[G]$ by
+            \obv{open_partial_homeomorphism_is_raw_chart}.
+        $b$ is an injection and $\dom{b}\subseteq\carrier[Y]$ by \obv{raw_coordinate_chart}.
+        $b\circ h$ is an open partial homeomorphism from $X$ to $\model[G]$ by
+            \obv{open_partial_homeomorphism_composition}.
+        Show that for every $c\in A$ we have $b\circ h$ is compatible with $c$ on $X$ under $G$.
+        \begin{subproof}
+            Fix $c\in A$.
+            $c$ is an open partial homeomorphism from $X$ to $\model[G]$ by \obv{coordinate_atlas}.
+            $c$ is a raw coordinate chart on $\carrier[X]$ modelled on $\model[G]$ by
+                \obv{open_partial_homeomorphism_is_raw_chart}.
+            $c$ is an injection and $\dom{c}\subseteq\carrier[X]$ by \obv{raw_coordinate_chart}.
+            $c\circ k\in B$ by \obv{transported_atlas_iff}.
+            $b$ is compatible with $c\circ k$ on $Y$ under $G$ by \auto{compatible_hull_iff}.
+            $b\circ\converse{k}$ is compatible with $(c\circ k)\circ\converse{k}$
+                on $X$ under $G$ by \obv{coordinate_compatibility_transport}.
+            $(c\circ k)\circ h=c$ by \auto{composition_bijection_roundtrip}.
+        \end{subproof}
+        $b\circ h\in\compatibleHull{G}{X}{A}$ by \auto{compatible_hull_iff}.
+        $b\circ h\in A$ by \obv{subseteq}.
+        $(b\circ h)\circ k=b$ by \auto{composition_bijection_roundtrip}.
+        Follows by \auto{transported_atlas_iff}.
+    \end{subproof}
+    $\compatibleHull{G}{Y}{B}\subseteq B$ by \obv{subseteq}.
+    Follows by \obv{maximal_coordinate_atlas}.
+\end{proof}
+
+\begin{theorem}\label{transported_atlas_maximalization}
+    Let $G$ be a coordinate pseudogroup and $X,Y$ be topological spaces.
+    Let $A$ be a coordinate atlas on $X$ under $G$.
+    Suppose $h$ is a homeomorphism from $X$ to $Y$.
+    Then $\MaxAtlas{G}{Y}{\TransportedAtlas{A}{h}}
+        =\TransportedAtlas{\MaxAtlas{G}{X}{A}}{h}$.
+\end{theorem}
+\begin{proof}
+    Let $B=\TransportedAtlas{A}{h}$ and $D=\TransportedAtlas{\MaxAtlas{G}{X}{A}}{h}$.
+    $B$ is a coordinate atlas on $Y$ under $G$ by \auto{transported_atlas_is_atlas}.
+    $\MaxAtlas{G}{X}{A}$ is a maximal coordinate atlas on $X$ under $G$ by
+        \obv{max_atlas_is_maximal}.
+    $D$ is a maximal coordinate atlas on $Y$ under $G$ by
+        \auto{transported_maximal_atlas_is_maximal}.
+    $D$ is a coordinate atlas on $Y$ under $G$ by \obv{maximal_coordinate_atlas}.
+    $A\subseteq\MaxAtlas{G}{X}{A}$ by \obv{atlas_subset_max_atlas}.
+    $B\subseteq D$ by \auto{transported_atlas_iff,subseteq}.
+    $\MaxAtlas{G}{Y}{B}=\MaxAtlas{G}{Y}{D}$ by \obv{atlas_extension_same_max_atlas}.
+    $D=\MaxAtlas{G}{Y}{D}$ by \obv{maximal_coordinate_atlas_fixed_point}.
+\end{proof}

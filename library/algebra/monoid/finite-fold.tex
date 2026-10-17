@@ -1,0 +1,2070 @@
+\import{algebra/monoid/homomorphism.tex}
+\import{set/finite-interleave.tex}
+\import{set/logical-graph.tex}
+\import{set/finite-fold.tex}
+
+\section{Finite folds in commutative monoids}
+
+\begin{proposition}\label{monoid_sequence_append_range}
+    $\ran{\sequenceAppend{s}{x}}=\cons{x}{\ran{s}}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{sequence_append_range}.
+\end{proof}
+
+\begin{proposition}\label{monoid_sequence_append_injective_elim}
+    Suppose $s$ is a finite sequence in $A$ and $x\in A$.
+    Suppose $\sequenceAppend{s}{x}$ is injective.
+    Then $s$ is injective and $x\notin\ran{s}$.
+\end{proposition}
+\begin{proof}
+    Let $t=\sequenceAppend{s}{x}$.
+    $t$ is injective.
+    $s$ is a function and $t$ is a function by
+        \auto{finite_sequence_domain,funs_is_function,
+            sequence_append_finite_sequence}.
+    $s\subseteq t$ by \auto{sequence_append_range,sequence_append,
+        subseteq,cons_iff}.
+    Show that $s$ is injective.
+    \begin{subproof}
+        Show that for all $i,j,u$ such that $(i,u),(j,u)\in s$ we have
+            $i=j$.
+        \begin{subproof}
+            Fix $i,j,u$.
+            Assume $(i,u),(j,u)\in s$.
+            Hence $(i,u),(j,u)\in t$ by \obv{subseteq}.
+            Follows by \obv{injective}.
+        \end{subproof}
+        Follows by \obv{injective}.
+    \end{subproof}
+    Show that $x\notin\ran{s}$.
+    \begin{subproof}
+        Suppose not.
+        Take $i\in\dom{s}$ such that $s(i)=x$ by
+            \auto{fun_ran_iff}.
+        $\dom{s}\notin\dom{s}$ by \obv{in_irrefl}.
+        $i\in\dom{t}$ by
+            \auto{sequence_append_domain,subseteq_self_suc_intro,subseteq}.
+        $\dom{s}\in\dom{t}$ by
+            \auto{sequence_append_domain,suc_intro_self}.
+        $t(i)=s(i)$ by \auto{sequence_append_old_value}.
+        $t(\dom{s})=x$ by \auto{sequence_append_last_value}.
+        Hence $i=\dom{s}$ by \auto{injective_function}.
+        Contradiction.
+    \end{subproof}
+\end{proof}
+
+\begin{proposition}\label{monoid_sequence_append_injective_intro}
+    Suppose $s$ is a finite sequence in $A$ and $x\in A$.
+    Suppose $s$ is injective and $x\notin\ran{s}$.
+    Then $\sequenceAppend{s}{x}$ is injective.
+\end{proposition}
+\begin{proof}
+    Let $t=\sequenceAppend{s}{x}$.
+    $s$ is a function and $t$ is a function by
+        \auto{finite_sequence_domain,funs_is_function,
+            sequence_append_finite_sequence}.
+    Show that for all $i,j\in\dom{t}$ such that $t(i)=t(j)$ we have
+        $i=j$.
+    \begin{subproof}
+        Fix $i,j\in\dom{t}$.
+        Assume $t(i)=t(j)$.
+        $i\in\dom{s}$ or $i=\dom{s}$ by
+            \auto{sequence_append_domain,suc_iff}.
+        $j\in\dom{s}$ or $j=\dom{s}$ by
+            \auto{sequence_append_domain,suc_iff}.
+        \begin{byCase}
+        \caseOf{$i\in\dom{s}$ and $j\in\dom{s}$.}
+            $t(i)=s(i)$ and $t(j)=s(j)$ by
+                \auto{sequence_append_old_value}.
+            Hence $s(i)=s(j)$.
+            Follows by \auto{injective_function}.
+        \caseOf{It is not the case that
+            $i\in\dom{s}$ and $j\in\dom{s}$.}
+            $i=\dom{s}$ or $j=\dom{s}$.
+            \begin{byCase}
+            \caseOf{$i=\dom{s}$.}
+                $t(i)=x$ by \auto{sequence_append_last_value}.
+                Show that $j=\dom{s}$.
+                \begin{subproof}
+                    Suppose not.
+                    Hence $j\in\dom{s}$.
+                    $t(j)=s(j)$ by \auto{sequence_append_old_value}.
+                    Hence $s(j)=x$.
+                    Thus $x\in\ran{s}$ by \auto{fun_ran_iff}.
+                    Contradiction.
+                \end{subproof}
+            \caseOf{$i\neq\dom{s}$.}
+                Hence $j=\dom{s}$.
+                $t(j)=x$ by \auto{sequence_append_last_value}.
+                Show that $i=\dom{s}$.
+                \begin{subproof}
+                    Suppose not.
+                    Hence $i\in\dom{s}$.
+                    $t(i)=s(i)$ by \auto{sequence_append_old_value}.
+                    Hence $s(i)=x$.
+                    Thus $x\in\ran{s}$ by \auto{fun_ran_iff}.
+                    Contradiction.
+                \end{subproof}
+            \end{byCase}
+        \end{byCase}
+    \end{subproof}
+    Follows by \obv{injective_function}.
+\end{proof}
+
+\begin{proposition}\label{monoid_map_finite_sequence}
+    Suppose $s$ is a finite sequence in $A$ and $f\in\funs{A}{B}$.
+    Then $f\circ s$ is a finite sequence in $B$.
+\end{proposition}
+\begin{proof}
+    $s\in\funs{\dom{s}}{A}$ and $\dom{s}$ is a natural number by
+        \obv{finite_sequence_domain}.
+    Hence $f\circ s\in\funs{\dom{s}}{B}$ by \obv{funs_circ}.
+    Follows by \obv{finite_sequence}.
+\end{proof}
+
+\begin{proposition}\label{monoid_map_sequence_append}
+    Suppose $s$ is a finite sequence in $A$.
+    Suppose $f\in\funs{A}{B}$ and $x\in A$.
+    Then
+        $f\circ\sequenceAppend{s}{x}
+            =\sequenceAppend{f\circ s}{f(x)}$.
+\end{proposition}
+\begin{proof}
+    Let $t=\sequenceAppend{s}{x}$.
+    Let $u=f\circ t$ and $v=\sequenceAppend{f\circ s}{f(x)}$.
+    $s\in\funs{\dom{s}}{A}$ and $s$ is a function
+        by \auto{finite_sequence_domain,funs_is_function}.
+    $f\circ s$ is a finite sequence in $B$ by
+        \obv{monoid_map_finite_sequence}.
+    Hence $f\circ s$ is a function by
+        \auto{finite_sequence_domain,funs_is_function}.
+    $f(x)\in B$ by \obv{funs_type_apply}.
+    $t$ is a finite sequence in $A$ by
+        \auto{sequence_append_finite_sequence}.
+    Hence $t\in\funs{\dom{t}}{A}$ by
+        \auto{finite_sequence_domain}.
+    $f$ is composable with $t$ and $f$ is composable with $s$ by
+        \auto{funs_ran,funs}.
+    Hence $u$ is a finite sequence in $B$ by
+        \auto{monoid_map_finite_sequence}.
+    $v$ is a finite sequence in $B$ by
+        \auto{sequence_append_finite_sequence}.
+    Hence $u$ is a function by
+        \auto{finite_sequence_domain,funs_is_function}.
+    $v$ is a function by
+        \auto{finite_sequence_domain,funs_is_function}.
+    $\dom{u}=\dom{t}=\suc{\dom{s}}$ by
+        \auto{funs_circ,finite_sequence_domain,funs_elim,
+            sequence_append_domain}.
+    $\dom{v}=\suc{\dom{f\circ s}}=\suc{\dom{s}}$ by
+        \auto{sequence_append_domain,funs_circ,
+            finite_sequence_domain,funs_elim}.
+    Hence $\dom{u}=\dom{v}$.
+    Show that for every $i\in\dom{u}$ we have $u(i)=v(i)$.
+    \begin{subproof}
+        Fix $i\in\dom{u}$.
+        Hence $i\in\suc{\dom{s}}$.
+        $i\in\dom{s}$ or $i=\dom{s}$ by \auto{suc_iff}.
+        \begin{byCase}
+        \caseOf{$i\in\dom{s}$.}
+            Hence $i\in\dom{t}$ by
+                \obv{sequence_append_domain,
+                    subseteq_self_suc_intro,subseteq}.
+            $(f\circ t)(i)=f(t(i))$ by
+                \obv{circ_apply,funs_is_function}.
+            Hence $u(i)=f(t(i))$.
+            $t(i)=s(i)$ by \auto{sequence_append_old_value}.
+            $i\in\dom{f\circ s}$ by
+                \auto{funs_circ,finite_sequence_domain,funs_elim}.
+            $v(i)=(f\circ s)(i)$ by
+                \auto{sequence_append_old_value}.
+            $(f\circ s)(i)=f(s(i))$ by
+                \obv{circ_apply,funs_is_function}.
+            \begin{align*}
+                u(i)
+                    &= f(t(i))
+                    \\
+                    &= f(s(i))
+                    \\
+                    &= (f\circ s)(i)
+                    \\
+                    &= v(i)
+            \end{align*}
+        \caseOf{$i\notin\dom{s}$.}
+            Hence $i=\dom{s}$.
+            $i\in\dom{t}$ by
+                \obv{sequence_append_domain,suc_intro_self}.
+            $(f\circ t)(i)=f(t(i))$ by
+                \obv{circ_apply,funs_is_function}.
+            Hence $u(i)=f(t(i))$.
+            $t(i)=x$ by \auto{sequence_append_last_value}.
+            $\dom{f\circ s}=\dom{s}$ by
+                \auto{funs_circ,finite_sequence_domain,funs_elim}.
+            Hence $v(i)=f(x)$ by
+                \auto{sequence_append_last_value}.
+            \begin{align*}
+                u(i)
+                    &= f(t(i))
+                    \\
+                    &= f(x)
+                    \\
+                    &= v(i)
+            \end{align*}
+        \end{byCase}
+    \end{subproof}
+    Follows by \auto{funext_on_domain}.
+\end{proof}
+
+\begin{proposition}\label{monoid_mapped_append_fold}
+    Let $M$ be a monoid.
+    Suppose $s$ is a finite sequence in $A$.
+    Suppose $f\in\funs{A}{\carrier[M]}$ and $x\in A$.
+    Then
+        $\sequenceFold{\mul[M]}{\neutral[M]}{
+            f\circ\sequenceAppend{s}{x}}
+        =\mul[M]
+            (\sequenceFold{\mul[M]}{\neutral[M]}{f\circ s},f(x))$.
+\end{proposition}
+\begin{proof}
+    $f\circ s$ is a finite sequence in $\carrier[M]$ by
+        \obv{monoid_map_finite_sequence}.
+    $f(x)\in\carrier[M]$ by \obv{funs_type_apply}.
+    Follows by
+        \auto{monoid_map_sequence_append,sequence_fold_append}.
+\end{proof}
+
+\begin{proposition}\label{monoid_mapped_fold_type}
+    Let $M$ be a monoid.
+    Suppose $s$ is a finite sequence in $A$.
+    Suppose $f\in\funs{A}{\carrier[M]}$.
+    Then
+        $\sequenceFold{\mul[M]}{\neutral[M]}{f\circ s}
+            \in\carrier[M]$.
+\end{proposition}
+\begin{proof}
+    $f\circ s$ is a finite sequence in $\carrier[M]$ by
+        \obv{monoid_map_finite_sequence}.
+    $\neutral[M]\in\carrier[M]$ by
+        \obv{monoid_is_unital_magma,unitalmagma_type}.
+    $\mul[M]\in
+        \funs{\carrier[M]\times\carrier[M]}{\carrier[M]}$ by
+        \obv{monoid_is_magma,magma_mul_graph}.
+    Follows by \obv{sequence_fold_typed}.
+\end{proof}
+
+\begin{proposition}\label{monoid_commutative_monoid_exchange}
+    Let $M$ be a monoid.
+    Suppose for all $x,y\in\carrier[M]$ we have
+        $\mul[M](x,y)=\mul[M](y,x)$.
+    Let $p,a,b\in\carrier[M]$.
+    Then
+        $\mul[M](\mul[M](p,a),b)
+            =\mul[M](\mul[M](p,b),a)$.
+\end{proposition}
+\begin{proof}
+    $\mul[M](a,b)=\mul[M](b,a)$.
+    $\mul[M](p,\mul[M](a,b))
+        =\mul[M](\mul[M](p,a),b)$ by \obv{monoid_assoc}.
+    $\mul[M](p,\mul[M](b,a))
+        =\mul[M](\mul[M](p,b),a)$ by \obv{monoid_assoc}.
+\end{proof}
+
+\begin{proposition}\label{monoid_sequence_fold_adjacent_transposition}
+    Let $M$ be a monoid.
+    Suppose for all $x,y\in\carrier[M]$ we have
+        $\mul[M](x,y)=\mul[M](y,x)$.
+    Suppose $s$ is a finite sequence in $A$ and
+        $f\in\funs{A}{\carrier[M]}$.
+    Let $a,b\in A$.
+    Then
+        $\sequenceFold{\mul[M]}{\neutral[M]}{
+            f\circ\sequenceAppend{\sequenceAppend{s}{a}}{b}}
+        =\sequenceFold{\mul[M]}{\neutral[M]}{
+            f\circ\sequenceAppend{\sequenceAppend{s}{b}}{a}}$.
+\end{proposition}
+\begin{proof}
+    $\sequenceAppend{s}{a}$ and $\sequenceAppend{s}{b}$ are finite
+        sequences in $A$ by \obv{sequence_append_finite_sequence}.
+    Let $p=\sequenceFold{\mul[M]}{\neutral[M]}{f\circ s}$.
+    $p\in\carrier[M]$ by \auto{monoid_mapped_fold_type}.
+    $f(a),f(b)\in\carrier[M]$ by \obv{funs_type_apply}.
+    $\sequenceFold{\mul[M]}{\neutral[M]}{
+            f\circ\sequenceAppend{\sequenceAppend{s}{a}}{b}}
+        =\mul[M](\mul[M](p,f(a)),f(b))$ by
+        \auto{monoid_mapped_append_fold}.
+    $\sequenceFold{\mul[M]}{\neutral[M]}{
+            f\circ\sequenceAppend{\sequenceAppend{s}{b}}{a}}
+        =\mul[M](\mul[M](p,f(b)),f(a))$ by
+        \auto{monoid_mapped_append_fold}.
+    Follows by \auto{monoid_commutative_monoid_exchange}.
+\end{proof}
+
+\begin{theorem}\label{monoid_fold_extract_value}
+    Let $M$ be a monoid.
+    Suppose for all $u,v\in\carrier[M]$ we have
+        $\mul[M](u,v)=\mul[M](v,u)$.
+    Suppose $s$ is a finite sequence in $A$ and $s$ is injective.
+    Suppose $f\in\funs{A}{\carrier[M]}$ and $x\in\ran{s}$.
+    Then there exists $r$ such that
+        $r$ is a finite sequence in $A$ and
+        $r$ is injective and
+        $\ran{r}=\ran{s}\setminus\{x\}$ and
+        $\sequenceFold{\mul[M]}{\neutral[M]}{f\circ s}
+            =\mul[M]
+                (\sequenceFold{\mul[M]}{\neutral[M]}{f\circ r},
+                 f(x))$.
+\end{theorem}
+\begin{proof}
+    Let $C=\{t\in\finiteSequences{A}\mid
+        \text{if $t$ is injective, then for every $a\in\ran{t}$
+        there exists $r$ such that
+            $r$ is a finite sequence in $A$ and
+            $r$ is injective and
+            $\ran{r}=\ran{t}\setminus\{a\}$ and
+            $\sequenceFold{\mul[M]}{\neutral[M]}{f\circ t}
+                =\mul[M]
+                    (\sequenceFold{\mul[M]}{\neutral[M]}{f\circ r},
+                     f(a))$}\}$.
+    $\emptyset\in C$ by
+        \auto{finite_sequences_iff,emptyset_finite_sequence,
+            ran_emptyset,emptyset}.
+    Show that for every $t,y$ such that
+        $t\in C$ and $y\in A$ and $t$ is a finite sequence in $A$
+        we have $\sequenceAppend{t}{y}\in C$.
+    \begin{subproof}
+        Fix $t,y$.
+        Assume $t\in C$ and $y\in A$ and
+            $t$ is a finite sequence in $A$.
+        Let $q=\sequenceAppend{t}{y}$.
+        $q$ is a finite sequence in $A$ by
+            \auto{sequence_append_finite_sequence}.
+        Hence $q\in\finiteSequences{A}$ by
+            \auto{finite_sequences_iff}.
+        Show that if $q$ is injective, then for every $a\in\ran{q}$
+            there exists $r$ such that
+                $r$ is a finite sequence in $A$ and
+                $r$ is injective and
+                $\ran{r}=\ran{q}\setminus\{a\}$ and
+                $\sequenceFold{\mul[M]}{\neutral[M]}{f\circ q}
+                    =\mul[M]
+                        (\sequenceFold{\mul[M]}{\neutral[M]}{f\circ r},
+                         f(a))$.
+        \begin{subproof}
+            Assume $q$ is injective.
+            Hence $t$ is injective and $y\notin\ran{t}$ by
+                \auto{monoid_sequence_append_injective_elim}.
+            Fix $a\in\ran{q}$.
+            $\ran{q}=\cons{y}{\ran{t}}$ by
+                \auto{sequence_append_range}.
+            \begin{byCase}
+            \caseOf{$a=y$.}
+                $\ran{t}=\ran{q}\setminus\{a\}$ by
+                    \auto{setext,setminus,cons_iff,singleton_iff}.
+                $\sequenceFold{\mul[M]}{\neutral[M]}{f\circ q}
+                    =\mul[M]
+                        (\sequenceFold{\mul[M]}{\neutral[M]}{f\circ t},
+                         f(a))$ by
+                    \auto{monoid_mapped_append_fold}.
+                Follows by \auto.
+            \caseOf{$a\neq y$.}
+                Hence $a\in\ran{t}$ by \auto{cons_iff}.
+                Take $r$ such that
+                    $r$ is a finite sequence in $A$ and
+                    $r$ is injective and
+                    $\ran{r}=\ran{t}\setminus\{a\}$ and
+                    $\sequenceFold{\mul[M]}{\neutral[M]}{f\circ t}
+                        =\mul[M]
+                            (\sequenceFold{\mul[M]}{\neutral[M]}{f\circ r},
+                             f(a))$.
+                $y\notin\ran{r}$ by \auto{setminus}.
+                Let $w=\sequenceAppend{r}{y}$.
+                $w$ is a finite sequence in $A$ by
+                    \auto{sequence_append_finite_sequence}.
+                $w$ is injective by
+                    \auto{monoid_sequence_append_injective_intro}.
+                $\ran{w}=\cons{y}{\ran{r}}$ by
+                    \auto{sequence_append_range}.
+                Hence $\ran{w}=\ran{q}\setminus\{a\}$ by
+                    \auto{setext,setminus,cons_iff,singleton_iff}.
+                Let $p=\sequenceFold{\mul[M]}{\neutral[M]}{f\circ r}$.
+                $p\in\carrier[M]$ by
+                    \auto{monoid_mapped_fold_type}.
+                $a\in A$ by
+                    \auto{finite_sequence_domain,funs_ran,subseteq}.
+                Hence $f(a)\in\carrier[M]$ by
+                    \obv{funs_type_apply}.
+                $f(y)\in\carrier[M]$ by \obv{funs_type_apply}.
+                $\sequenceFold{\mul[M]}{\neutral[M]}{f\circ q}
+                    =\mul[M]
+                        (\sequenceFold{\mul[M]}{\neutral[M]}{f\circ t},
+                         f(y))$ by
+                    \auto{monoid_mapped_append_fold}.
+                Hence
+                    $\sequenceFold{\mul[M]}{\neutral[M]}{f\circ q}
+                        =\mul[M](\mul[M](p,f(a)),f(y))$.
+                $\sequenceFold{\mul[M]}{\neutral[M]}{f\circ w}
+                    =\mul[M](p,f(y))$ by
+                    \auto{monoid_mapped_append_fold}.
+                $\mul[M](\mul[M](p,f(a)),f(y))
+                    =\mul[M](\mul[M](p,f(y)),f(a))$ by
+                    \obv{monoid_commutative_monoid_exchange}.
+                Hence
+                    $\sequenceFold{\mul[M]}{\neutral[M]}{f\circ q}
+                        =\mul[M]
+                            (\sequenceFold{\mul[M]}{\neutral[M]}{f\circ w},
+                             f(a))$.
+            \end{byCase}
+        \end{subproof}
+        Follows by \auto.
+    \end{subproof}
+    $s\in C$ by \obv{finite_sequence_induction}.
+\end{proof}
+
+\begin{theorem}\label{monoid_sequence_fold_permutation_invariant}
+    Let $M$ be a monoid.
+    Suppose for all $u,v\in\carrier[M]$ we have
+        $\mul[M](u,v)=\mul[M](v,u)$.
+    Suppose $s$ is a finite sequence in $A$ and
+        $t$ is a finite sequence in $A$.
+    Suppose $s$ is injective and $t$ is injective.
+    Suppose $\ran{s}=\ran{t}$.
+    Suppose $f\in\funs{A}{\carrier[M]}$.
+    Then
+        $\sequenceFold{\mul[M]}{\neutral[M]}{f\circ s}
+            =\sequenceFold{\mul[M]}{\neutral[M]}{f\circ t}$.
+\end{theorem}
+\begin{proof}
+    Let $C=\{q\in\finiteSequences{A}\mid
+        \text{if $q$ is injective, then for every $r$ such that
+            $r$ is a finite sequence in $A$ and
+            $r$ is injective and $\ran{q}=\ran{r}$ we have
+            $\sequenceFold{\mul[M]}{\neutral[M]}{f\circ q}
+                =\sequenceFold{\mul[M]}{\neutral[M]}{f\circ r}$}\}$.
+    Show that $\emptyset\in C$.
+    \begin{subproof}
+        $\emptyset$ is a finite sequence in $A$ by
+            \obv{emptyset_finite_sequence}.
+        Hence $\emptyset\in\finiteSequences{A}$ by
+            \obv{finite_sequences_iff}.
+        $\emptyset$ is injective by \auto{emptyset,injective}.
+        Show that for every $r$ such that
+            $r$ is a finite sequence in $A$ and
+            $r$ is injective and $\ran{\emptyset}=\ran{r}$ we have
+            $\sequenceFold{\mul[M]}{\neutral[M]}{f\circ\emptyset}
+                =\sequenceFold{\mul[M]}{\neutral[M]}{f\circ r}$.
+        \begin{subproof}
+            Fix $r$.
+            Assume $r$ is a finite sequence in $A$ and
+                $r$ is injective and $\ran{\emptyset}=\ran{r}$.
+            Hence $\ran{r}=\emptyset$ by \obv{ran_emptyset}.
+            $r$ is a relation by
+                \auto{finite_sequence_domain,funs_is_relation}.
+            Hence $r=\emptyset$ by
+                \auto{setext,emptyset,relation,ran_intro}.
+        \end{subproof}
+    \end{subproof}
+    Show that for every $q,y$ such that
+        $q\in C$ and $y\in A$ and $q$ is a finite sequence in $A$
+        we have $\sequenceAppend{q}{y}\in C$.
+    \begin{subproof}
+        Fix $q,y$.
+        Assume $q\in C$ and $y\in A$ and
+            $q$ is a finite sequence in $A$.
+        Let $w=\sequenceAppend{q}{y}$.
+        $w$ is a finite sequence in $A$ by
+            \auto{sequence_append_finite_sequence}.
+        Hence $w\in\finiteSequences{A}$ by
+            \obv{finite_sequences_iff}.
+        Show that if $w$ is injective, then for every $r$ such that
+            $r$ is a finite sequence in $A$ and
+            $r$ is injective and $\ran{w}=\ran{r}$ we have
+            $\sequenceFold{\mul[M]}{\neutral[M]}{f\circ w}
+                =\sequenceFold{\mul[M]}{\neutral[M]}{f\circ r}$.
+        \begin{subproof}
+            Assume $w$ is injective.
+            Hence $q$ is injective and $y\notin\ran{q}$ by
+                \obv{monoid_sequence_append_injective_elim}.
+            Fix $r$.
+            Assume $r$ is a finite sequence in $A$ and
+                $r$ is injective and $\ran{w}=\ran{r}$.
+            $\ran{w}=\cons{y}{\ran{q}}$ by
+                \auto{sequence_append_range}.
+            Hence $y\in\ran{r}$ by \auto{cons_iff}.
+            Take $v$ such that
+                $v$ is a finite sequence in $A$ and
+                $v$ is injective and
+                $\ran{v}=\ran{r}\setminus\{y\}$ and
+                $\sequenceFold{\mul[M]}{\neutral[M]}{f\circ r}
+                    =\mul[M]
+                        (\sequenceFold{\mul[M]}{\neutral[M]}{f\circ v},
+                         f(y))$ by
+                \obv{monoid_fold_extract_value}.
+            $\ran{q}=\ran{r}\setminus\{y\}$ by
+                \auto{setext,setminus,cons_iff,singleton_iff}.
+            Hence $\ran{q}=\ran{v}$.
+            $\sequenceFold{\mul[M]}{\neutral[M]}{f\circ q}
+                =\sequenceFold{\mul[M]}{\neutral[M]}{f\circ v}$.
+            $\sequenceFold{\mul[M]}{\neutral[M]}{f\circ w}
+                =\mul[M]
+                    (\sequenceFold{\mul[M]}{\neutral[M]}{f\circ q},
+                     f(y))$ by
+                \auto{monoid_mapped_append_fold}.
+        \end{subproof}
+        Follows by \auto.
+    \end{subproof}
+    $s\in C$ by \obv{finite_sequence_induction}.
+\end{proof}
+
+\begin{corollary}\label{monoid_enumeration_fold_invariant}
+    Let $M$ be a monoid.
+    Suppose for all $u,v\in\carrier[M]$ we have
+        $\mul[M](u,v)=\mul[M](v,u)$.
+    Suppose $e$ is an enumeration of $A$ and
+        $d$ is an enumeration of $A$.
+    Suppose $f\in\funs{A}{\carrier[M]}$.
+    Then
+        $\sequenceFold{\mul[M]}{\neutral[M]}{f\circ e}
+            =\sequenceFold{\mul[M]}{\neutral[M]}{f\circ d}$.
+\end{corollary}
+\begin{proof}
+    $e$ is a finite sequence in $A$ and
+        $d$ is a finite sequence in $A$ by
+        \obv{enumeration_is_finite_sequence}.
+    $e$ is injective and $d$ is injective and
+        $\ran{e}=A=\ran{d}$ by
+        \auto{enumeration,bijections,ran_of_surj}.
+    Follows by \obv{monoid_sequence_fold_permutation_invariant}.
+\end{proof}
+
+\begin{definition}\label{monoid_finite_fold_values}
+    $\monoidFiniteFoldValues{M}{A}{f}=
+        \{y\in\carrier[M]\mid
+            \text{there exists $e$ such that
+                $e$ is an enumeration of $A$ and
+                $y=\sequenceFold{\mul[M]}{\neutral[M]}{f\circ e}$}\}$.
+\end{definition}
+
+\begin{proposition}\label{monoid_finite_fold_values_iff}
+    $y\in\monoidFiniteFoldValues{M}{A}{f}$ iff
+        $y\in\carrier[M]$ and there exists $e$ such that
+            $e$ is an enumeration of $A$ and
+            $y=\sequenceFold{\mul[M]}{\neutral[M]}{f\circ e}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{monoid_finite_fold_values}.
+\end{proof}
+
+\begin{theorem}\label{monoid_finite_fold_values_inhabited_subsingleton}
+    Let $M$ be a monoid.
+    Suppose for all $u,v\in\carrier[M]$ we have
+        $\mul[M](u,v)=\mul[M](v,u)$.
+    Suppose $A$ is finite and $f\in\funs{A}{\carrier[M]}$.
+    Then $\monoidFiniteFoldValues{M}{A}{f}$ is inhabited and
+        $\monoidFiniteFoldValues{M}{A}{f}$ is a subsingleton.
+\end{theorem}
+\begin{proof}
+    Take $e$ such that $e$ is an enumeration of $A$ by
+        \obv{finite_iff_has_enumeration}.
+    $e$ is a finite sequence in $A$ by
+        \obv{enumeration_is_finite_sequence}.
+    Let $p=\sequenceFold{\mul[M]}{\neutral[M]}{f\circ e}$.
+    $p\in\carrier[M]$ by \auto{monoid_mapped_fold_type}.
+    Hence $p\in\monoidFiniteFoldValues{M}{A}{f}$ by
+        \obv{monoid_finite_fold_values_iff}.
+    Hence $\monoidFiniteFoldValues{M}{A}{f}$ is inhabited.
+    Show that $\monoidFiniteFoldValues{M}{A}{f}$ is a subsingleton.
+    \begin{subproof}
+        Show that for all $u,v\in\monoidFiniteFoldValues{M}{A}{f}$
+            we have $u=v$.
+        \begin{subproof}
+            Fix $u,v\in\monoidFiniteFoldValues{M}{A}{f}$.
+            Take $d$ such that $d$ is an enumeration of $A$ and
+                $u=\sequenceFold{\mul[M]}{\neutral[M]}{f\circ d}$ by
+                \obv{monoid_finite_fold_values}.
+            Take $q$ such that $q$ is an enumeration of $A$ and
+                $v=\sequenceFold{\mul[M]}{\neutral[M]}{f\circ q}$ by
+                \obv{monoid_finite_fold_values}.
+            Follows by \auto{monoid_enumeration_fold_invariant}.
+        \end{subproof}
+    \end{subproof}
+\end{proof}
+
+\begin{theorem}\label{monoid_finite_fold_values_singleton}
+    Let $M$ be a monoid.
+    Suppose for all $u,v\in\carrier[M]$ we have
+        $\mul[M](u,v)=\mul[M](v,u)$.
+    Suppose $A$ is finite and $f\in\funs{A}{\carrier[M]}$.
+    Then there exists $p\in\carrier[M]$ such that
+        $\monoidFiniteFoldValues{M}{A}{f}=\{p\}$.
+\end{theorem}
+\begin{proof}
+    $\monoidFiniteFoldValues{M}{A}{f}$ is inhabited and
+        $\monoidFiniteFoldValues{M}{A}{f}$ is a subsingleton by
+        \obv{monoid_finite_fold_values_inhabited_subsingleton}.
+    Take $p$ such that
+        $p\in\monoidFiniteFoldValues{M}{A}{f}$.
+    Hence $p\in\carrier[M]$ by
+        \obv{monoid_finite_fold_values}.
+    $\monoidFiniteFoldValues{M}{A}{f}=\{p\}$ by
+        \auto{singleton_iff_inhabited_subsingleton}.
+\end{proof}
+
+\begin{proposition}\label{monoid_unions_singleton}
+    $\unions{\{x\}}=x$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{setext,unions_iff,singleton_iff}.
+\end{proof}
+
+\begin{definition}\label{monoid_finite_fold}
+    $\finiteFold{M}{A}{f}=\unions{\monoidFiniteFoldValues{M}{A}{f}}$.
+\end{definition}
+
+\begin{theorem}\label{monoid_finite_fold_canonical}
+    Let $M$ be a monoid.
+    Suppose for all $u,v\in\carrier[M]$ we have
+        $\mul[M](u,v)=\mul[M](v,u)$.
+    Suppose $A$ is finite and $f\in\funs{A}{\carrier[M]}$.
+    Then
+        $\finiteFold{M}{A}{f}\in\carrier[M]$ and
+        $\monoidFiniteFoldValues{M}{A}{f}
+            =\{\finiteFold{M}{A}{f}\}$ and
+        for every $e$ such that $e$ is an enumeration of $A$ we have
+            $\finiteFold{M}{A}{f}
+                =\sequenceFold{\mul[M]}{\neutral[M]}{f\circ e}$.
+\end{theorem}
+\begin{proof}
+    Take $p\in\carrier[M]$ such that
+        $\monoidFiniteFoldValues{M}{A}{f}=\{p\}$ by
+        \obv{monoid_finite_fold_values_singleton}.
+    $\finiteFold{M}{A}{f}=\unions{\{p\}}$ by
+        \obv{monoid_finite_fold}.
+    Hence $\finiteFold{M}{A}{f}=p$ by
+        \auto{monoid_unions_singleton}.
+    Hence $\finiteFold{M}{A}{f}\in\carrier[M]$ and
+        $\monoidFiniteFoldValues{M}{A}{f}
+            =\{\finiteFold{M}{A}{f}\}$.
+    Show that for every $e$ such that $e$ is an enumeration of $A$
+        we have
+            $\finiteFold{M}{A}{f}
+                =\sequenceFold{\mul[M]}{\neutral[M]}{f\circ e}$.
+    \begin{subproof}
+        Fix $e$.
+        Assume $e$ is an enumeration of $A$.
+        $e$ is a finite sequence in $A$ by
+            \obv{enumeration_is_finite_sequence}.
+        Hence
+            $\sequenceFold{\mul[M]}{\neutral[M]}{f\circ e}
+                \in\carrier[M]$ by \obv{monoid_mapped_fold_type}.
+        Hence
+            $\sequenceFold{\mul[M]}{\neutral[M]}{f\circ e}
+                \in\monoidFiniteFoldValues{M}{A}{f}$ by
+            \obv{monoid_finite_fold_values_iff}.
+        Follows by \auto{singleton_iff}.
+    \end{subproof}
+\end{proof}
+
+\begin{proposition}\label{monoid_finite_fold_empty}
+    Let $M$ be a monoid.
+    Suppose for all $x,y\in\carrier[M]$ we have
+        $\mul[M](x,y)=\mul[M](y,x)$.
+    Suppose $f\in\funs{\emptyset}{\carrier[M]}$.
+    Then $\finiteFold{M}{\emptyset}{f}=\neutral[M]$.
+\end{proposition}
+\begin{proof}
+    Take $e$ such that $e$ is an enumeration of $\emptyset$ by
+        \obv{emptyset_is_finite,finite_iff_has_enumeration}.
+    $e$ is a relation and $\ran{e}=\emptyset$ by
+        \auto{enumeration,bijections,bijection_is_function,
+            funs_is_relation,ran_of_surj}.
+    Hence $e=\emptyset$ by
+        \auto{setext,emptyset,relation,ran_intro}.
+    $f$ is a relation and $\dom{f}=\emptyset$ by
+        \obv{funs_elim,funs_is_relation}.
+    Hence $f=\emptyset$ by
+        \auto{setext,emptyset,relation,dom_intro}.
+    $f\circ\emptyset=\emptyset$ by
+        \auto{setext,circ,emptyset}.
+    $\finiteFold{M}{\emptyset}{f}
+        =\sequenceFold{\mul[M]}{\neutral[M]}{f\circ e}$ by
+        \auto{emptyset_is_finite,monoid_finite_fold_canonical}.
+    Follows by \auto{sequence_fold_empty}.
+\end{proof}
+
+\begin{proposition}\label{monoid_finite_fold_singleton}
+    Let $M$ be a monoid.
+    Suppose for all $x,y\in\carrier[M]$ we have
+        $\mul[M](x,y)=\mul[M](y,x)$.
+    Let $a\in A$.
+    Suppose $f\in\funs{\{a\}}{\carrier[M]}$.
+    Then $\finiteFold{M}{\{a\}}{f}=f(a)$.
+\end{proposition}
+\begin{proof}
+    Let $e=\sequenceAppend{\emptyset}{a}$.
+    $\emptyset$ is a finite sequence in $A$ by
+        \obv{emptyset_finite_sequence}.
+    Hence $e$ is a finite sequence in $A$ by
+        \auto{sequence_append_finite_sequence}.
+    $\emptyset$ is injective and $a\notin\ran{\emptyset}$ by
+        \auto{emptyset,injective,ran_emptyset}.
+    Hence $e$ is injective by
+        \obv{monoid_sequence_append_injective_intro}.
+    $\ran{e}=\{a\}$ by
+        \auto{sequence_append_range,ran_emptyset,
+            setext,cons_iff,singleton_iff,emptyset}.
+    Hence $e$ is an enumeration of $\{a\}$ by
+        \obv{finite_sequence_enumerates_range_iff_injective}.
+    $\{a\}$ is finite by \obv{singleton_is_finite}.
+    $\finiteFold{M}{\{a\}}{f}
+        =\sequenceFold{\mul[M]}{\neutral[M]}{f\circ e}$ by
+        \auto{monoid_finite_fold_canonical}.
+    $\emptyset$ is a finite sequence in $\{a\}$ and $a\in\{a\}$ by
+        \auto{emptyset_finite_sequence,singleton_iff}.
+    $\sequenceFold{\mul[M]}{\neutral[M]}{f\circ e}
+        =\mul[M](
+            \sequenceFold{\mul[M]}{\neutral[M]}{f\circ\emptyset},
+            f(a))$ by \auto{monoid_mapped_append_fold}.
+    $f\circ\emptyset=\emptyset$ by
+        \auto{setext,circ,emptyset}.
+    $f(a)\in\carrier[M]$ by \obv{funs_type_apply}.
+    Follows by
+        \auto{sequence_fold_empty,monoid_is_unital_magma,
+            unitalmagma_left}.
+\end{proof}
+
+\begin{theorem}\label{monoid_finite_fold_fresh_adjoin}
+    Let $M$ be a monoid.
+    Suppose for all $x,y\in\carrier[M]$ we have
+        $\mul[M](x,y)=\mul[M](y,x)$.
+    Suppose $A$ is finite and $a\notin A$.
+    Suppose $f\in\funs{\cons{a}{A}}{\carrier[M]}$.
+    Then
+        $\finiteFold{M}{\cons{a}{A}}{f}
+        =\mul[M](\finiteFold{M}{A}{\restrl{f}{A}},f(a))$.
+\end{theorem}
+\begin{proof}
+    Take $e$ such that $e$ is an enumeration of $A$ by
+        \obv{finite_iff_has_enumeration}.
+    $e$ is a finite sequence in $A$ by
+        \obv{enumeration_is_finite_sequence}.
+    $e$ is injective and $\ran{e}=A$ by
+        \auto{enumeration,bijections,ran_of_surj}.
+    Hence $a\notin\ran{e}$.
+    Let $d=\sequenceAppend{e}{a}$.
+    $\dom{e}$ is a natural number and
+        $e\in\funs{\dom{e}}{A}$ by
+        \obv{finite_sequence_domain}.
+    Hence $e$ is a function by \obv{funs_is_function}.
+    For every $i\in\dom{e}$ we have $e(i)\in\cons{a}{A}$ by
+        \auto{funs_type_apply,cons_iff}.
+    Hence $e\in\funs{\dom{e}}{\cons{a}{A}}$ by
+        \obv{funs_intro}.
+    Thus $e$ is a finite sequence in $\cons{a}{A}$ by
+        \obv{finite_sequence}.
+    $a\in\cons{a}{A}$ by \auto{cons_iff}.
+    Hence $d$ is a finite sequence in $\cons{a}{A}$ by
+        \auto{sequence_append_finite_sequence,cons_iff}.
+    $d$ is injective by
+        \obv{monoid_sequence_append_injective_intro}.
+    $\ran{d}=\cons{a}{A}$ by
+        \auto{sequence_append_range}.
+    Hence $d$ is an enumeration of $\cons{a}{A}$ by
+        \obv{finite_sequence_enumerates_range_iff_injective}.
+    $\cons{a}{A}$ is finite by \obv{finite_cons}.
+    $\restrl{f}{A}\in\funs{A}{\carrier[M]}$ by
+        \auto{funs_restrl,subseteq,cons_iff}.
+    $\finiteFold{M}{\cons{a}{A}}{f}
+        =\sequenceFold{\mul[M]}{\neutral[M]}{f\circ d}$ by
+        \auto{monoid_finite_fold_canonical}.
+    $\sequenceFold{\mul[M]}{\neutral[M]}{f\circ d}
+        =\mul[M](
+            \sequenceFold{\mul[M]}{\neutral[M]}{f\circ e},f(a))$ by
+        \auto{monoid_mapped_append_fold,cons_iff}.
+    $f\circ e$ and $\restrl{f}{A}\circ e$ are functions by
+        \auto{funs_circ,funs_is_function}.
+    $f$ is composable with $e$ and $\restrl{f}{A}$ is composable with $e$
+        by \auto{funs_ran,funs}.
+    $\dom{f\circ e}=\dom{e}=\dom{\restrl{f}{A}\circ e}$ by
+        \auto{funs_circ,funs_elim}.
+    Show that for every $i\in\dom{f\circ e}$ we have
+        $(f\circ e)(i)=(\restrl{f}{A}\circ e)(i)$.
+    \begin{subproof}
+        Fix $i\in\dom{f\circ e}$.
+        Hence $i\in\dom{e}$.
+        $e(i)\in A$ by \obv{funs_type_apply}.
+        $(f\circ e)(i)=f(e(i))$ by
+            \obv{circ_apply,funs_is_function}.
+        $(\restrl{f}{A}\circ e)(i)
+            =\apply{\restrl{f}{A}}{e(i)}$ by
+            \obv{circ_apply,funs_is_function}.
+        $\apply{\restrl{f}{A}}{e(i)}=f(e(i))$ by
+            \obv{restrl_of_function_apply,funs_is_function}.
+    \end{subproof}
+    Hence $f\circ e=\restrl{f}{A}\circ e$ by
+        \obv{funext_on_domain}.
+    $\finiteFold{M}{A}{\restrl{f}{A}}
+        =\sequenceFold{\mul[M]}{\neutral[M]}{
+            \restrl{f}{A}\circ e}$ by
+        \auto{monoid_finite_fold_canonical}.
+\end{proof}
+
+\begin{theorem}\label{monoid_finite_fold_bijective_reindex}
+    Let $M$ be a monoid.
+    Suppose for all $x,y\in\carrier[M]$ we have
+        $\mul[M](x,y)=\mul[M](y,x)$.
+    Suppose $A$ is finite and $B$ is finite.
+    Suppose $e\in\bijections{B}{A}$ and
+        $f\in\funs{A}{\carrier[M]}$.
+    Then
+        $\finiteFold{M}{B}{f\circ e}=\finiteFold{M}{A}{f}$.
+\end{theorem}
+\begin{proof}
+    $f\circ e\in\funs{B}{\carrier[M]}$ by
+        \auto{bijections_to_funs,funs_circ}.
+    Take $d$ such that $d$ is an enumeration of $B$ by
+        \obv{finite_iff_has_enumeration}.
+    Take a natural number $n$ such that
+        $d\in\bijections{n}{B}$ by \obv{enumeration}.
+    $e\circ d$ is a bijection from $n$ to $A$ by
+        \obv{bijections,bijection_circ}.
+    Hence $e\circ d$ is an enumeration of $A$ by
+        \obv{enumeration}.
+    $\finiteFold{M}{B}{f\circ e}
+        =\sequenceFold{\mul[M]}{\neutral[M]}{(f\circ e)\circ d}$ by
+        \auto{monoid_finite_fold_canonical}.
+    $\finiteFold{M}{A}{f}
+        =\sequenceFold{\mul[M]}{\neutral[M]}{f\circ(e\circ d)}$ by
+        \auto{monoid_finite_fold_canonical}.
+    $(f\circ e)\circ d=f\circ(e\circ d)$ by
+        \obv{circ_assoc}.
+\end{proof}
+
+\begin{theorem}\label{monoid_finite_fold_successor_shift}
+    Let $M$ be a monoid.
+    Suppose for all $u,v\in\carrier[M]$ we have
+        $\mul[M](u,v)=\mul[M](v,u)$.
+    Let $n$ be a natural number.
+    Suppose $f\in\funs{\suc{n}}{\carrier[M]}$ and
+        $g\in\funs{\suc{\suc{n}}}{\carrier[M]}$.
+    Suppose $g(\emptyset)=\neutral[M]$ and for every $k\in\suc{n}$
+        we have $g(\suc{k})=f(k)$.
+    Then
+        $\finiteFold{M}{\suc{\suc{n}}}{g}
+            =\finiteFold{M}{\suc{n}}{f}$.
+\end{theorem}
+\begin{proof}
+    Let $A=\suc{n}$.
+    Let $B=\suc{A}$.
+    Let $D=B\setminus\{\emptyset\}$.
+    $\suc{n}$ and $\suc{\suc{n}}$ are natural numbers by
+        \obv{omega_successor}.
+    Hence $A$ and $B$ are finite by
+        \obv{natural_number_is_finite}.
+    $D\subseteq B$ by \auto{setminus_subseteq}.
+    Hence $D$ is finite by \obv{subseteq_finite_is_finite}.
+    $\emptyset\in B$ by
+        \obv{natural_nonzero_contains_zero,suc_neq_emptyset}.
+    $\emptyset\notin D$ by
+        \auto{setminus,singleton_iff}.
+    $\cons{\emptyset}{D}=B$ by
+        \auto{cons_remove}.
+    Hence
+        $\finiteFold{M}{B}{g}
+            =\mul[M](
+                \finiteFold{M}{D}{\restrl{g}{D}},g(\emptyset))$ by
+        \auto{monoid_finite_fold_fresh_adjoin}.
+    $\restrl{g}{D}\in\funs{D}{\carrier[M]}$ by
+        \obv{funs_restrl}.
+    Hence $\finiteFold{M}{D}{\restrl{g}{D}}\in\carrier[M]$ by
+        \auto{monoid_finite_fold_canonical}.
+    Hence
+        $\finiteFold{M}{B}{g}
+            =\finiteFold{M}{D}{\restrl{g}{D}}$ by
+        \auto{monoid_is_unital_magma,unitalmagma_right}.
+
+    Let $e=\Apply{\graphOnOp}{
+        A,D,\fun{k:\Set}{\suc{k}}}$.
+    Show that $e\in\bijections{A}{D}$.
+    \begin{subproof}
+        Show that for every $k\in A$ we have $\suc{k}\in D$.
+        \begin{subproof}
+            Fix $k\in A$.
+            $k$ is a natural number by
+                \auto{naturals_is_transitive_set,
+                    transitiveset_iff_subseteq,subseteq}.
+            Hence $\suc{k}\in B$ by
+                \obv{natural_successor_in_successor_bound}.
+            $\suc{k}\neq\emptyset$ by \obv{suc_neq_emptyset}.
+            Follows by \auto{setminus,singleton_iff}.
+        \end{subproof}
+        Hence $e\in\funs{A}{D}$ by
+            \auto{logical_graph_on_function}.
+        Show that $e$ is injective.
+        \begin{subproof}
+            Show that for all $k,l\in\dom{e}$ such that
+                $e(k)=e(l)$ we have $k=l$.
+            \begin{subproof}
+                Fix $k,l\in\dom{e}$.
+                Assume $e(k)=e(l)$.
+                $k,l\in A$ by \obv{funs_elim}.
+                $e(k)=\suc{k}$ and $e(l)=\suc{l}$ by
+                    \auto{logical_graph_on_apply}.
+                Follows by \obv{suc_injective}.
+            \end{subproof}
+            $e$ is a function by \obv{funs_is_function}.
+            Follows by \obv{injective_function}.
+        \end{subproof}
+        Show that $e\in\surj{A}{D}$.
+        \begin{subproof}
+            Show that for every $z\in D$ there exists $k\in A$
+                such that $e(k)=z$.
+            \begin{subproof}
+                Fix $z\in D$.
+                Hence $z\in B$ and $z\neq\emptyset$ by
+                    \auto{setminus,singleton_iff}.
+                $z$ is a natural number by
+                    \auto{naturals_is_transitive_set,
+                        transitiveset_iff_subseteq,subseteq}.
+                Take a natural number $k$ such that $z=\suc{k}$ by
+                    \obv{natural_zero_or_successor}.
+                Hence $z\in\suc{A}$.
+                $z=A$ or $z\in A$ by \obv{suc_iff}.
+                Show that $k\in A$.
+                \begin{subproof}
+                    \begin{byCase}
+                        \caseOf{$z=A$.}
+                            Hence $\suc{k}=\suc{n}$.
+                            Hence $k=n$ by \obv{suc_injective}.
+                            $n\in\suc{n}$ by \obv{suc_intro_self}.
+                            Hence $k\in A$.
+                        \caseOf{$z\neq A$.}
+                            Hence $z\in A$.
+                            $A$ is an ordinal by
+                                \obv{natural_number_is_ordinal}.
+                            $k\in z$ by \obv{suc_intro_self}.
+                            Hence $k\in A$ by
+                                \obv{ordinal_transitivity}.
+                    \end{byCase}
+                \end{subproof}
+                $e(k)=\suc{k}$ by
+                    \auto{logical_graph_on_apply}.
+                Hence $e(k)=z$.
+            \end{subproof}
+            Follows by \obv{surj}.
+        \end{subproof}
+        Follows by \obv{bijections}.
+    \end{subproof}
+
+    Hence $e\in\funs{A}{D}$ by \obv{bijections_to_funs}.
+    Let $r=\restrl{g}{D}$.
+    $r\in\funs{D}{\carrier[M]}$ by
+        \obv{funs_restrl}.
+    Hence $r\circ e\in\funs{A}{\carrier[M]}$ by
+        \obv{funs_circ}.
+    Show that $r\circ e=f$.
+    \begin{subproof}
+        Show that for every $k\in A$ we have
+            $(r\circ e)(k)=f(k)$.
+        \begin{subproof}
+            Fix $k\in A$.
+            $e(k)=\suc{k}$ by
+                \auto{logical_graph_on_apply}.
+            $e(k)\in D$ by \obv{funs_type_apply}.
+            $g$ is a function and $D\subseteq\dom{g}$ by
+                \obv{funs_is_function,funs_elim,setminus_subseteq}.
+            Hence $r(e(k))=g(e(k))$ by
+                \auto{restrl_of_function_apply}.
+            $e$ and $r$ are functions by
+                \obv{funs_is_function}.
+            $\dom{e}=A$ by \obv{funs_elim}.
+            Hence $k\in\dom{e}$.
+            $r$ is composable with $e$ by
+                \auto{funs_ran,funs}.
+            $(r\circ e)(k)=r(e(k))$ by \obv{circ_apply}.
+            $g(\suc{k})=f(k)$.
+            Follows by \auto.
+        \end{subproof}
+        Follows by
+            \auto{funs_elim,funext_on_domain}.
+    \end{subproof}
+    $\finiteFold{M}{A}{r\circ e}
+        =\finiteFold{M}{D}{r}$ by
+        \auto{monoid_finite_fold_bijective_reindex}.
+    Follows by \auto.
+\end{proof}
+
+\begin{lemma}\label{monoid_sequence_fold_hom}
+    Suppose $h$ is a monoid homomorphism from $M$ to $N$.
+    Suppose $s$ is a finite sequence in $A$ and
+        $f\in\funs{A}{\carrier[M]}$.
+    Then
+        $h(\sequenceFold{\mul[M]}{\neutral[M]}{f\circ s})
+        =\sequenceFold{\mul[N]}{\neutral[N]}{(h\circ f)\circ s}$.
+\end{lemma}
+\begin{proof}
+    $M$ is a monoid by \obv{monoid_hom_source_monoid}.
+    $N$ is a monoid by \obv{monoid_hom_target_monoid}.
+    $h\circ f\in\funs{A}{\carrier[N]}$ by
+        \obv{monoid_hom_type,funs_circ}.
+    $h$ is composable with $f$ by
+        \auto{monoid_hom_type,funs_ran,funs}.
+    Let $C=\{q\in\finiteSequences{A}\mid
+        h(\sequenceFold{\mul[M]}{\neutral[M]}{f\circ q})
+        =\sequenceFold{\mul[N]}{\neutral[N]}{(h\circ f)\circ q}\}$.
+    $\emptyset\in\finiteSequences{A}$ by
+        \auto{finite_sequences_iff,emptyset_finite_sequence}.
+    $f\circ\emptyset=\emptyset$ and
+        $(h\circ f)\circ\emptyset=\emptyset$ by
+        \auto{setext,circ,emptyset}.
+    $h(\neutral[M])=\neutral[N]$ by \obv{monoid_hom_neutral}.
+    Hence $\emptyset\in C$ by \auto{sequence_fold_empty}.
+    Show that for every $q,a$ such that
+        $q\in C$ and $a\in A$ and $q$ is a finite sequence in $A$
+        we have $\sequenceAppend{q}{a}\in C$.
+    \begin{subproof}
+        Fix $q,a$.
+        Assume $q\in C$ and $a\in A$ and
+            $q$ is a finite sequence in $A$.
+        Let $r=\sequenceAppend{q}{a}$.
+        $r$ is a finite sequence in $A$ by
+            \auto{sequence_append_finite_sequence}.
+        Hence $r\in\finiteSequences{A}$ by
+            \auto{finite_sequences_iff}.
+        Let $p=\sequenceFold{\mul[M]}{\neutral[M]}{f\circ q}$.
+        $p\in\carrier[M]$ and $f(a)\in\carrier[M]$ by
+            \auto{monoid_mapped_fold_type,funs_type_apply}.
+        $h(\mul[M](p,f(a)))=\mul[N](h(p),h(f(a)))$ by
+            \obv{monoid_hom_mul}.
+        $\sequenceFold{\mul[M]}{\neutral[M]}{f\circ r}
+            =\mul[M](p,f(a))$ by
+            \auto{monoid_mapped_append_fold}.
+        $\sequenceFold{\mul[N]}{\neutral[N]}{(h\circ f)\circ r}
+            =\mul[N](
+                \sequenceFold{\mul[N]}{\neutral[N]}{
+                    (h\circ f)\circ q},
+                (h\circ f)(a))$ by
+            \auto{monoid_mapped_append_fold}.
+        $a\in\dom{h\circ f}$ by
+            \obv{funs_circ,funs_elim}.
+        $(h\circ f)(a)=h(f(a))$ by
+            \auto{circ_apply,monoid_hom_type,funs_is_function,
+                funs_ran,funs,funs_elim,funs_circ}.
+        Follows by \auto.
+    \end{subproof}
+    $s\in C$ by \obv{finite_sequence_induction}.
+\end{proof}
+
+\begin{theorem}\label{monoid_hom_preserves_finite_fold}
+    Suppose $h$ is a monoid homomorphism from $M$ to $N$.
+    Suppose for all $x,y\in\carrier[M]$ we have
+        $\mul[M](x,y)=\mul[M](y,x)$.
+    Suppose for all $x,y\in\carrier[N]$ we have
+        $\mul[N](x,y)=\mul[N](y,x)$.
+    Suppose $A$ is finite and $f\in\funs{A}{\carrier[M]}$.
+    Then
+        $h(\finiteFold{M}{A}{f})
+        =\finiteFold{N}{A}{h\circ f}$.
+\end{theorem}
+\begin{proof}
+    $M$ is a monoid by \obv{monoid_hom_source_monoid}.
+    $N$ is a monoid by \obv{monoid_hom_target_monoid}.
+    $h\circ f\in\funs{A}{\carrier[N]}$ by
+        \obv{monoid_hom_type,funs_circ}.
+    Take $e$ such that $e$ is an enumeration of $A$ by
+        \obv{finite_iff_has_enumeration}.
+    $e$ is a finite sequence in $A$ by
+        \obv{enumeration_is_finite_sequence}.
+    $\finiteFold{M}{A}{f}
+        =\sequenceFold{\mul[M]}{\neutral[M]}{f\circ e}$ by
+        \auto{monoid_finite_fold_canonical}.
+    $\finiteFold{N}{A}{h\circ f}
+        =\sequenceFold{\mul[N]}{\neutral[N]}{(h\circ f)\circ e}$ by
+        \auto{monoid_finite_fold_canonical}.
+    Follows by \auto{monoid_sequence_fold_hom}.
+\end{proof}
+
+\begin{theorem}\label{monoid_finite_fold_delete_neutral}
+    Let $M$ be a monoid.
+    Suppose for all $x,y\in\carrier[M]$ we have
+        $\mul[M](x,y)=\mul[M](y,x)$.
+    Suppose $A$ is finite and $f\in\funs{A}{\carrier[M]}$.
+    Let $a\in A$.
+    Suppose $f(a)=\neutral[M]$.
+    Then
+        $\finiteFold{M}{A}{f}
+        =\finiteFold{M}{A\setminus\{a\}}{
+            \restrl{f}{A\setminus\{a\}}}$.
+\end{theorem}
+\begin{proof}
+    Let $D=A\setminus\{a\}$.
+    $D\subseteq A$ by \auto{setminus_subseteq}.
+    Hence $D$ is finite by \obv{subseteq_finite_is_finite}.
+    $a\notin D$ by \auto{setminus,singleton_iff}.
+    $\cons{a}{D}=A$ by \auto{cons_remove}.
+    $\restrl{f}{D}\in\funs{D}{\carrier[M]}$ by
+        \obv{funs_restrl}.
+    $\finiteFold{M}{A}{f}
+        =\mul[M](\finiteFold{M}{D}{\restrl{f}{D}},f(a))$ by
+        \auto{monoid_finite_fold_fresh_adjoin}.
+    $\finiteFold{M}{D}{\restrl{f}{D}}\in\carrier[M]$ by
+        \auto{monoid_finite_fold_canonical}.
+    Follows by
+        \auto{monoid_is_unital_magma,unitalmagma_right}.
+\end{proof}
+
+\begin{lemma}\label{monoid_restriction_of_restriction}
+    Let $f$ be a function.
+    Suppose $B\subseteq A$.
+    Then
+        $\restrl{\restrl{f}{A}}{B}=\restrl{f}{B}$.
+\end{lemma}
+\begin{proof}
+    Follows by \obv{restrl_restrl}.
+\end{proof}
+
+\begin{theorem}\label{monoid_finite_fold_disjoint_union}
+    Let $M$ be a monoid.
+    Suppose for all $x,y\in\carrier[M]$ we have
+        $\mul[M](x,y)=\mul[M](y,x)$.
+    Suppose $A$ is finite and $B$ is finite.
+    Suppose $A$ is disjoint from $B$.
+    Suppose $f\in\funs{A\union B}{\carrier[M]}$.
+    Then
+        $\finiteFold{M}{A\union B}{f}
+        =\mul[M](
+            \finiteFold{M}{A}{\restrl{f}{A}},
+            \finiteFold{M}{B}{\restrl{f}{B}})$.
+\end{theorem}
+\begin{proof}
+    Let $C=\{Y\in\pow{B}\mid
+        \text{if $A$ is disjoint from $Y$, then
+        for every $q$ such that
+            $q\in\funs{A\union Y}{\carrier[M]}$ we have
+            $\finiteFold{M}{A\union Y}{q}
+            =\mul[M](
+                \finiteFold{M}{A}{\restrl{q}{A}},
+                \finiteFold{M}{Y}{\restrl{q}{Y}})$}\}$.
+    Show that $\emptyset\in C$.
+    \begin{subproof}
+        $\emptyset\in\pow{B}$ by \obv{powerset_bottom}.
+        Show that if $A$ is disjoint from $\emptyset$, then
+            for every $q$ such that
+                $q\in\funs{A\union\emptyset}{\carrier[M]}$ we have
+                $\finiteFold{M}{A\union\emptyset}{q}
+                =\mul[M](
+                    \finiteFold{M}{A}{\restrl{q}{A}},
+                    \finiteFold{M}{\emptyset}{\restrl{q}{\emptyset}})$.
+        \begin{subproof}
+            Assume $A$ is disjoint from $\emptyset$.
+            Fix $q$.
+            Assume $q\in\funs{A\union\emptyset}{\carrier[M]}$.
+            $A\union\emptyset=A$ by \obv{union_emptyset}.
+            Hence $q\in\funs{A}{\carrier[M]}$.
+            $\restrl{q}{A}=q$ by
+                \auto{funs_elim,restrl_by_dom}.
+            $\restrl{q}{\emptyset}\in
+                \funs{\emptyset}{\carrier[M]}$ by
+                \auto{funs_restrl,emptyset,subseteq}.
+            $\finiteFold{M}{\emptyset}{\restrl{q}{\emptyset}}
+                =\neutral[M]$ by \obv{monoid_finite_fold_empty}.
+            $\finiteFold{M}{A}{q}\in\carrier[M]$ by
+                \auto{monoid_finite_fold_canonical}.
+            Follows by
+                \auto{monoid_is_unital_magma,unitalmagma_right}.
+        \end{subproof}
+    \end{subproof}
+    Show that for all $Y,y$ such that $Y\in C$ and $y\in B$ we have
+        $\cons{y}{Y}\in C$.
+    \begin{subproof}
+        Fix $Y,y$.
+        Assume $Y\in C$ and $y\in B$.
+        $Y\subseteq B$ by \obv{powerset_elim}.
+        Hence $\cons{y}{Y}\subseteq B$ by
+            \obv{cons_subseteq_intro}.
+        Thus $\cons{y}{Y}\in\pow{B}$ by \obv{powerset_intro}.
+        $Y$ is finite by \obv{subseteq_finite_is_finite}.
+        Hence $\cons{y}{Y}$ is finite by \obv{finite_cons}.
+        Show that if $A$ is disjoint from $\cons{y}{Y}$, then
+            for every $q$ such that
+                $q\in\funs{A\union\cons{y}{Y}}{\carrier[M]}$ we have
+                $\finiteFold{M}{A\union\cons{y}{Y}}{q}
+                =\mul[M](
+                    \finiteFold{M}{A}{\restrl{q}{A}},
+                    \finiteFold{M}{\cons{y}{Y}}{
+                        \restrl{q}{\cons{y}{Y}}})$.
+        \begin{subproof}
+            Assume $A$ is disjoint from $\cons{y}{Y}$.
+            Fix $q$.
+            Assume $q\in\funs{A\union\cons{y}{Y}}{\carrier[M]}$.
+            \begin{byCase}
+            \caseOf{$y\in Y$.}
+                $\cons{y}{Y}=Y$ by \obv{cons_absorb}.
+                $A$ is disjoint from $Y$.
+                Follows by \auto.
+            \caseOf{$y\notin Y$.}
+                Let $U=A\union Y$.
+                $U$ is finite by \obv{union_of_finite_is_finite}.
+                $A$ is disjoint from $Y$ by
+                    \auto{disjoint,inter,cons_iff,emptyset}.
+                $y\notin A$ by
+                    \auto{disjoint,inter,cons_iff,emptyset}.
+                Hence $y\notin U$ by \auto{union_iff}.
+                $A\union\cons{y}{Y}=\cons{y}{U}$ by
+                    \auto{setext,union_iff,cons_iff}.
+                Hence $q\in\funs{\cons{y}{U}}{\carrier[M]}$.
+                $\restrl{q}{U}\in\funs{U}{\carrier[M]}$ and
+                    $\restrl{q}{\cons{y}{Y}}
+                        \in\funs{\cons{y}{Y}}{\carrier[M]}$ by
+                    \auto{funs_restrl,subseteq,union_iff,cons_iff}.
+                $\restrl{q}{A}\in\funs{A}{\carrier[M]}$ and
+                    $\restrl{q}{Y}\in\funs{Y}{\carrier[M]}$ by
+                    \auto{funs_restrl,subseteq,union_iff,cons_iff}.
+                $\finiteFold{M}{A\union\cons{y}{Y}}{q}
+                    =\mul[M](
+                        \finiteFold{M}{U}{\restrl{q}{U}},q(y))$ by
+                    \auto{monoid_finite_fold_fresh_adjoin}.
+                $A\subseteq U$ and $Y\subseteq U$ by
+                    \auto{subseteq,union_iff}.
+                $\restrl{\restrl{q}{U}}{A}=\restrl{q}{A}$ by
+                    \obv{restrl_restrl}.
+                $\restrl{\restrl{q}{U}}{Y}=\restrl{q}{Y}$ by
+                    \obv{restrl_restrl}.
+                Hence
+                    $\finiteFold{M}{U}{\restrl{q}{U}}
+                    =\mul[M](
+                        \finiteFold{M}{A}{\restrl{q}{A}},
+                        \finiteFold{M}{Y}{\restrl{q}{Y}})$ by
+                    \auto.
+                $Y\subseteq\cons{y}{Y}$ by
+                    \auto{subseteq,cons_iff}.
+                $\restrl{\restrl{q}{\cons{y}{Y}}}{Y}
+                    =\restrl{q}{Y}$ by \obv{restrl_restrl}.
+                $q$ is a function and $\dom{q}=\cons{y}{U}$ by
+                    \obv{funs_is_function,funs_elim}.
+                $\cons{y}{Y}\subseteq\dom{q}$ and
+                    $y\in\cons{y}{Y}$ by
+                    \auto{subseteq,cons_iff,union_iff}.
+                $\apply{\restrl{q}{\cons{y}{Y}}}{y}=q(y)$ by
+                    \obv{restrl_of_function_apply}.
+                Hence
+                    $\finiteFold{M}{\cons{y}{Y}}{
+                            \restrl{q}{\cons{y}{Y}}}
+                    =\mul[M](
+                        \finiteFold{M}{Y}{\restrl{q}{Y}},q(y))$ by
+                    \auto{monoid_finite_fold_fresh_adjoin}.
+                $\finiteFold{M}{A}{\restrl{q}{A}}\in\carrier[M]$ by
+                    \auto{monoid_finite_fold_canonical}.
+                $\finiteFold{M}{Y}{\restrl{q}{Y}}\in\carrier[M]$ by
+                    \auto{monoid_finite_fold_canonical}.
+                $q(y)\in\carrier[M]$ by
+                    \auto{funs_type_apply,cons_iff}.
+                Follows by \auto{monoid_assoc}.
+            \end{byCase}
+        \end{subproof}
+    \end{subproof}
+    $B\in C$ by \obv{finite_induction,subseteq_refl}.
+    Follows by \obv{restrl_by_dom,funs_elim}.
+\end{proof}
+
+\subsection{Pointwise products and neutral extensions}
+
+\begin{definition}\label{monoid_pointwise_mul_op}
+    $\monoidPointwiseMulOp:
+        \Set\to\Set\to\Set\to\Set\to\Set
+        =\fun{M,f,g,a:\Set}{\mul[M](f(a),g(a))}$.
+\end{definition}
+
+\begin{definition}\label{monoid_pointwise_mul}
+    $\monoidPointwiseMul{M}{A}{f}{g}
+        =\Apply{\graphOnOp}{
+            A,\carrier[M],\Apply{\monoidPointwiseMulOp}{M,f,g}}$.
+\end{definition}
+
+\begin{proposition}\label{monoid_pointwise_mul_type}
+    Let $M$ be a magma.
+    Suppose $f,g\in\funs{A}{\carrier[M]}$.
+    Then $\monoidPointwiseMul{M}{A}{f}{g}
+        \in\funs{A}{\carrier[M]}$.
+\end{proposition}
+\begin{proof}
+    For every $a\in A$ we have
+        $\mul[M](f(a),g(a))\in\carrier[M]$ by
+        \obv{funs_type_apply,magma_welldef}.
+    Hence for every $a\in A$ we have
+        $\Apply{\Apply{\monoidPointwiseMulOp}{M,f,g}}{a}
+            \in\carrier[M]$ by \auto{monoid_pointwise_mul_op}.
+    Follows by
+        \auto{monoid_pointwise_mul,logical_graph_on_function}.
+\end{proof}
+
+\begin{proposition}\label{monoid_pointwise_mul_apply}
+    Let $M$ be a magma.
+    Suppose $f,g\in\funs{A}{\carrier[M]}$.
+    Let $a\in A$.
+    Then
+        $\apply{\monoidPointwiseMul{M}{A}{f}{g}}{a}
+            =\mul[M](f(a),g(a))$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{monoid_pointwise_mul,monoid_pointwise_mul_op,
+            logical_graph_on_apply}.
+\end{proof}
+
+\begin{theorem}\label{monoid_finite_fold_pointwise_mul}
+    Let $M$ be a monoid.
+    Suppose for all $x,y\in\carrier[M]$ we have
+        $\mul[M](x,y)=\mul[M](y,x)$.
+    Suppose $A$ is finite and $f,g\in\funs{A}{\carrier[M]}$.
+    Then
+        $\finiteFold{M}{A}{\monoidPointwiseMul{M}{A}{f}{g}}
+            =\mul[M](\finiteFold{M}{A}{f},
+                \finiteFold{M}{A}{g})$.
+\end{theorem}
+\begin{proof}
+    Let $C=\{X\in\pow{A}\mid
+        \text{for all $p,q\in\funs{X}{\carrier[M]}$ we have
+        $\finiteFold{M}{X}{\monoidPointwiseMul{M}{X}{p}{q}}
+            =\mul[M](\finiteFold{M}{X}{p},
+                \finiteFold{M}{X}{q})$}\}$.
+    Show that $\emptyset\in C$.
+    \begin{subproof}
+        $\emptyset\in\pow{A}$ by \obv{powerset_bottom}.
+        Show that for all $p,q\in\funs{\emptyset}{\carrier[M]}$ we have
+            $\finiteFold{M}{\emptyset}{
+                \monoidPointwiseMul{M}{\emptyset}{p}{q}}
+                =\mul[M](\finiteFold{M}{\emptyset}{p},
+                    \finiteFold{M}{\emptyset}{q})$.
+        \begin{subproof}
+            Fix $p,q\in\funs{\emptyset}{\carrier[M]}$.
+            $\monoidPointwiseMul{M}{\emptyset}{p}{q}
+                \in\funs{\emptyset}{\carrier[M]}$ by
+                \obv{monoid_is_magma,monoid_pointwise_mul_type}.
+            $\finiteFold{M}{\emptyset}{
+                    \monoidPointwiseMul{M}{\emptyset}{p}{q}}
+                =\neutral[M]$ and
+                $\finiteFold{M}{\emptyset}{p}=\neutral[M]$ and
+                $\finiteFold{M}{\emptyset}{q}=\neutral[M]$ by
+                \obv{monoid_finite_fold_empty}.
+            $\neutral[M]\in\carrier[M]$ by
+                \obv{monoid_is_unital_magma,unitalmagma_type}.
+            $\mul[M](\neutral[M],\neutral[M])=\neutral[M]$ by
+                \obv{monoid_is_unital_magma,unitalmagma_left}.
+        \end{subproof}
+    \end{subproof}
+    Show that for all $X,a$ such that $X\in C$ and $a\in A$ we have
+        $\cons{a}{X}\in C$.
+    \begin{subproof}
+        Fix $X,a$.
+        Assume $X\in C$ and $a\in A$.
+        $X\subseteq A$ by \obv{powerset_elim}.
+        Hence $\cons{a}{X}\subseteq A$ by \obv{cons_subseteq_intro}.
+        Thus $\cons{a}{X}\in\pow{A}$ by \obv{powerset_intro}.
+        $X$ is finite by \obv{subseteq_finite_is_finite}.
+        Hence $\cons{a}{X}$ is finite by \obv{finite_cons}.
+        Show that for all $p,q\in
+            \funs{\cons{a}{X}}{\carrier[M]}$ we have
+            $\finiteFold{M}{\cons{a}{X}}{
+                \monoidPointwiseMul{M}{\cons{a}{X}}{p}{q}}
+                =\mul[M](\finiteFold{M}{\cons{a}{X}}{p},
+                    \finiteFold{M}{\cons{a}{X}}{q})$.
+        \begin{subproof}
+            Fix $p,q\in\funs{\cons{a}{X}}{\carrier[M]}$.
+            \begin{byCase}
+            \caseOf{$a\in X$.}
+                $\cons{a}{X}=X$ by \obv{cons_absorb}.
+                Follows by \auto.
+            \caseOf{$a\notin X$.}
+                Let $p_X=\restrl{p}{X}$ and $q_X=\restrl{q}{X}$.
+                Let $h=\monoidPointwiseMul{M}{\cons{a}{X}}{p}{q}$.
+                Let $h_X=\monoidPointwiseMul{M}{X}{p_X}{q_X}$.
+                $p_X,q_X\in\funs{X}{\carrier[M]}$ by
+                    \auto{funs_restrl,subseteq,cons_iff}.
+                Hence $h_X\in\funs{X}{\carrier[M]}$ by
+                    \auto{monoid_is_magma,monoid_pointwise_mul_type}.
+                $h\in\funs{\cons{a}{X}}{\carrier[M]}$ by
+                    \auto{monoid_is_magma,monoid_pointwise_mul_type}.
+                Show that $\restrl{h}{X}=h_X$.
+                \begin{subproof}
+                    $\restrl{h}{X},h_X\in
+                        \funs{X}{\carrier[M]}$ by
+                        \auto{funs_restrl,subseteq,cons_iff}.
+                    Show that for every $x\in X$ we have
+                        $\apply{\restrl{h}{X}}{x}=h_X(x)$.
+                    \begin{subproof}
+                        Fix $x\in X$.
+                        $h$ is a function and $X\subseteq\dom{h}$ by
+                            \auto{funs_is_function,funs_elim,subseteq,
+                                cons_iff}.
+                        Hence $\apply{\restrl{h}{X}}{x}=h(x)$ by
+                            \obv{restrl_of_function_apply}.
+                        $p$ is a function and $X\subseteq\dom{p}$ by
+                            \auto{funs_is_function,funs_elim,subseteq,
+                                cons_iff}.
+                        Hence $p_X(x)=p(x)$ by
+                            \auto{restrl_of_function_apply}.
+                        $q$ is a function and $X\subseteq\dom{q}$ by
+                            \auto{funs_is_function,funs_elim,subseteq,
+                                cons_iff}.
+                        Hence $q_X(x)=q(x)$ by
+                            \auto{restrl_of_function_apply}.
+                        $h(x)=\mul[M](p(x),q(x))$ and
+                            $h_X(x)=\mul[M](p_X(x),q_X(x))$ by
+                            \auto{monoid_is_magma,
+                                monoid_pointwise_mul_apply,cons_iff}.
+                        \begin{align*}
+                            \apply{\restrl{h}{X}}{x}
+                                &= h(x)
+                                \\
+                                &= \mul[M](p(x),q(x))
+                                \\
+                                &= \mul[M](p_X(x),q_X(x))
+                                \\
+                                &= h_X(x)
+                        \end{align*}
+                    \end{subproof}
+                    Follows by \auto{funs_elim,funext_on_domain}.
+                \end{subproof}
+                $h(a)=\mul[M](p(a),q(a))$ by
+                    \auto{monoid_is_magma,monoid_pointwise_mul_apply,
+                        cons_iff}.
+                $\finiteFold{M}{\cons{a}{X}}{h}
+                    =\mul[M](\finiteFold{M}{X}{h_X},
+                        \mul[M](p(a),q(a)))$ by
+                    \auto{monoid_finite_fold_fresh_adjoin}.
+                $\finiteFold{M}{X}{h_X}
+                    =\mul[M](\finiteFold{M}{X}{p_X},
+                        \finiteFold{M}{X}{q_X})$ by \auto.
+                $\finiteFold{M}{\cons{a}{X}}{p}
+                    =\mul[M](\finiteFold{M}{X}{p_X},p(a))$ and
+                    $\finiteFold{M}{\cons{a}{X}}{q}
+                    =\mul[M](\finiteFold{M}{X}{q_X},q(a))$ by
+                    \auto{monoid_finite_fold_fresh_adjoin}.
+                $\finiteFold{M}{X}{p_X},
+                    \finiteFold{M}{X}{q_X},p(a),q(a)
+                    \in\carrier[M]$ by
+                    \auto{monoid_finite_fold_canonical,
+                        funs_type_apply,cons_iff}.
+                Let $P=\finiteFold{M}{X}{p_X}$.
+                Let $Q=\finiteFold{M}{X}{q_X}$.
+                Let $u=p(a)$ and $v=q(a)$.
+                $P,Q,u,v\in\carrier[M]$.
+                $\mul[M](u,v),\mul[M](v,u)\in\carrier[M]$ by
+                    \obv{monoid_is_magma,magma_welldef}.
+                $\mul[M](\mul[M](P,Q),\mul[M](u,v))
+                    =\mul[M](P,\mul[M](Q,\mul[M](u,v)))$ by
+                    \obv{monoid_assoc}.
+                $\mul[M](u,v)=\mul[M](v,u)$.
+                Hence $\mul[M](P,\mul[M](Q,\mul[M](u,v)))
+                    =\mul[M](P,\mul[M](Q,\mul[M](v,u)))$.
+                $\mul[M](Q,\mul[M](v,u))
+                    =\mul[M](\mul[M](Q,v),u)$ by
+                    \obv{monoid_assoc}.
+                $\mul[M](Q,v)\in\carrier[M]$ by
+                    \obv{monoid_is_magma,magma_welldef}.
+                Hence $\mul[M](\mul[M](Q,v),u)
+                    =\mul[M](u,\mul[M](Q,v))$.
+                $\mul[M](P,\mul[M](u,\mul[M](Q,v)))
+                    =\mul[M](\mul[M](P,u),\mul[M](Q,v))$ by
+                    \obv{monoid_assoc}.
+            \end{byCase}
+        \end{subproof}
+    \end{subproof}
+    $A\in C$ by \obv{finite_induction,subseteq_refl}.
+\end{proof}
+
+\begin{theorem}\label{monoid_finite_fold_all_neutral}
+    Let $M$ be a monoid.
+    Suppose for all $x,y\in\carrier[M]$ we have
+        $\mul[M](x,y)=\mul[M](y,x)$.
+    Suppose $A$ is finite and $f\in\funs{A}{\carrier[M]}$.
+    Suppose for every $a\in A$ we have $f(a)=\neutral[M]$.
+    Then $\finiteFold{M}{A}{f}=\neutral[M]$.
+\end{theorem}
+\begin{proof}
+    Let $C=\{X\in\pow{A}\mid
+        \text{for every $p\in\funs{X}{\carrier[M]}$ such that
+            for every $x\in X$ we have $p(x)=\neutral[M]$ we have
+            $\finiteFold{M}{X}{p}=\neutral[M]$}\}$.
+    Show that $\emptyset\in C$.
+    \begin{subproof}
+        $\emptyset\in\pow{A}$ by \obv{powerset_bottom}.
+        For every $p\in\funs{\emptyset}{\carrier[M]}$ we have
+            $\finiteFold{M}{\emptyset}{p}=\neutral[M]$ by
+            \obv{monoid_finite_fold_empty}.
+    \end{subproof}
+    Show that for all $X,a$ such that $X\in C$ and $a\in A$ we have
+        $\cons{a}{X}\in C$.
+    \begin{subproof}
+        Fix $X,a$.
+        Assume $X\in C$ and $a\in A$.
+        $X\subseteq A$ by \obv{powerset_elim}.
+        Hence $\cons{a}{X}\subseteq A$ by \obv{cons_subseteq_intro}.
+        Thus $\cons{a}{X}\in\pow{A}$ by \obv{powerset_intro}.
+        $X$ is finite by \obv{subseteq_finite_is_finite}.
+        Hence $\cons{a}{X}$ is finite by \obv{finite_cons}.
+        Show that for every $p\in
+            \funs{\cons{a}{X}}{\carrier[M]}$ such that
+            for every $x\in\cons{a}{X}$ we have
+                $p(x)=\neutral[M]$ we have
+            $\finiteFold{M}{\cons{a}{X}}{p}=\neutral[M]$.
+        \begin{subproof}
+            Fix $p\in\funs{\cons{a}{X}}{\carrier[M]}$.
+            Assume for every $x\in\cons{a}{X}$ we have
+                $p(x)=\neutral[M]$.
+            \begin{byCase}
+            \caseOf{$a\in X$.}
+                $\cons{a}{X}=X$ by \obv{cons_absorb}.
+                Follows by \auto.
+            \caseOf{$a\notin X$.}
+                Let $p_X=\restrl{p}{X}$.
+                $p_X\in\funs{X}{\carrier[M]}$ by
+                    \auto{funs_restrl,subseteq,cons_iff}.
+                Show that for every $x\in X$ we have
+                    $p_X(x)=\neutral[M]$.
+                \begin{subproof}
+                    Fix $x\in X$.
+                    $p$ is a function and $X\subseteq\dom{p}$ by
+                        \auto{funs_is_function,funs_elim,subseteq,
+                            cons_iff}.
+                    Hence $p_X(x)=p(x)$ by
+                        \auto{restrl_of_function_apply}.
+                    $x\in\cons{a}{X}$ by \auto{cons_iff}.
+                \end{subproof}
+                Hence $\finiteFold{M}{X}{p_X}=\neutral[M]$.
+                $p(a)=\neutral[M]$ by \auto{cons_iff}.
+                $\finiteFold{M}{\cons{a}{X}}{p}
+                    =\mul[M](\finiteFold{M}{X}{p_X},p(a))$ by
+                    \auto{monoid_finite_fold_fresh_adjoin}.
+                $\neutral[M]\in\carrier[M]$ by
+                    \obv{monoid_is_unital_magma,unitalmagma_type}.
+                $\mul[M](\neutral[M],\neutral[M])=\neutral[M]$ by
+                    \obv{monoid_is_unital_magma,unitalmagma_left}.
+            \end{byCase}
+        \end{subproof}
+    \end{subproof}
+    $A\in C$ by \obv{finite_induction,subseteq_refl}.
+\end{proof}
+
+\begin{theorem}\label{monoid_finite_fold_neutral_extension}
+    Let $M$ be a monoid.
+    Suppose for all $x,y\in\carrier[M]$ we have
+        $\mul[M](x,y)=\mul[M](y,x)$.
+    Suppose $A$ is finite and $B$ is finite and $B\subseteq A$.
+    Suppose $f\in\funs{A}{\carrier[M]}$.
+    Suppose for every $a\in A\setminus B$ we have
+        $f(a)=\neutral[M]$.
+    Then
+        $\finiteFold{M}{A}{f}
+            =\finiteFold{M}{B}{\restrl{f}{B}}$.
+\end{theorem}
+\begin{proof}
+    Let $D=A\setminus B$.
+    $D\subseteq A$ by \auto{setminus_subseteq}.
+    Hence $D$ is finite by \obv{subseteq_finite_is_finite}.
+    $B$ is disjoint from $D$ by
+        \obv{disjoint,inter,emptyset,setminus}.
+    Show that $B\union D=A$.
+    \begin{subproof}
+        Show that every element of $B\union D$ is an element of $A$.
+        \begin{subproof}
+            Fix $a\in B\union D$.
+            $a\in B$ or $a\in D$ by \obv{union_iff}.
+            Follows by \obv{subseteq}.
+        \end{subproof}
+        Hence $B\union D\subseteq A$ by \obv{subseteq}.
+        Show that every element of $A$ is an element of $B\union D$.
+        \begin{subproof}
+            Fix $a\in A$.
+            $a\in B$ or $a\notin B$.
+            Hence $a\in B$ or $a\in D$ by \auto{setminus}.
+            Follows by \obv{union_iff}.
+        \end{subproof}
+        Hence $A\subseteq B\union D$ by \obv{subseteq}.
+        Follows by \obv{subseteq_antisymmetric}.
+    \end{subproof}
+    Hence $f\in\funs{B\union D}{\carrier[M]}$.
+    $\restrl{f}{D}\in\funs{D}{\carrier[M]}$ by
+        \obv{funs_restrl}.
+    Show that for every $a\in D$ we have
+        $\apply{\restrl{f}{D}}{a}=\neutral[M]$.
+    \begin{subproof}
+        Fix $a\in D$.
+        $f$ is a function and $D\subseteq\dom{f}$ by
+            \obv{funs_is_function,funs_elim,subseteq}.
+        $\apply{\restrl{f}{D}}{a}=f(a)$ by
+            \obv{restrl_of_function_apply}.
+    \end{subproof}
+    Hence $\finiteFold{M}{D}{\restrl{f}{D}}=\neutral[M]$ by
+        \obv{monoid_finite_fold_all_neutral}.
+    $\finiteFold{M}{A}{f}
+        =\mul[M](\finiteFold{M}{B}{\restrl{f}{B}},
+            \finiteFold{M}{D}{\restrl{f}{D}})$ by
+        \auto{monoid_finite_fold_disjoint_union}.
+    $\finiteFold{M}{B}{\restrl{f}{B}}\in\carrier[M]$ by
+        \auto{funs_restrl,monoid_finite_fold_canonical}.
+    Follows by
+        \auto{monoid_is_unital_magma,unitalmagma_right}.
+\end{proof}
+
+\begin{definition}\label{monoid_finite_fold_row_value_op}
+    $\monoidFiniteFoldRowValueOp:\Set\to\Set\to\Set\to\Set
+        =\fun{f,a,b:\Set}{f((a,b))}$.
+\end{definition}
+
+\begin{definition}\label{monoid_finite_fold_row}
+    $\monoidFiniteFoldRow{B}{f}{a}
+        =\Apply{\graphOnDomainOp}{
+            B,\Apply{\monoidFiniteFoldRowValueOp}{f,a}}$.
+\end{definition}
+
+\begin{proposition}\label{monoid_finite_fold_row_type}
+    Suppose $f\in\funs{A\times B}{C}$ and $a\in A$.
+    Then $\monoidFiniteFoldRow{B}{f}{a}\in\funs{B}{C}$.
+\end{proposition}
+\begin{proof}
+    $\monoidFiniteFoldRow{B}{f}{a}$ is a function on $B$ by
+        \auto{monoid_finite_fold_row,
+            logical_graph_on_domain_function,funs_elim}.
+    For every $b\in B$ we have
+        $\apply{\monoidFiniteFoldRow{B}{f}{a}}{b}=f((a,b))$ by
+        \auto{monoid_finite_fold_row,monoid_finite_fold_row_value_op,
+            logical_graph_on_domain_apply}.
+    For every $b\in B$ we have $f((a,b))\in C$ by
+        \obv{times_tuple_intro,funs_type_apply}.
+    Follows by \auto{funs_intro,funs_elim}.
+\end{proof}
+
+\begin{proposition}\label{monoid_finite_fold_row_apply}
+    Let $b\in B$.
+    Then
+        $\apply{\monoidFiniteFoldRow{B}{f}{a}}{b}=f((a,b))$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{monoid_finite_fold_row,monoid_finite_fold_row_value_op,
+            logical_graph_on_domain_apply}.
+\end{proof}
+
+\begin{definition}\label{monoid_finite_fold_rows_value_op}
+    $\monoidFiniteFoldRowsValueOp:\Set\to\Set\to\Set\to\Set\to\Set
+        =\fun{M,B,f,a:\Set}{
+            \finiteFold{M}{B}{\monoidFiniteFoldRow{B}{f}{a}}}$.
+\end{definition}
+
+\begin{definition}\label{monoid_finite_fold_rows}
+    $\monoidFiniteFoldRows{M}{A}{B}{f}
+        =\Apply{\graphOnDomainOp}{
+            A,\Apply{\monoidFiniteFoldRowsValueOp}{M,B,f}}$.
+\end{definition}
+
+\begin{proposition}\label{monoid_finite_fold_rows_apply}
+    Let $a\in A$.
+    Then
+        $\apply{\monoidFiniteFoldRows{M}{A}{B}{f}}{a}
+        =\finiteFold{M}{B}{\monoidFiniteFoldRow{B}{f}{a}}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{monoid_finite_fold_rows,monoid_finite_fold_rows_value_op,
+            logical_graph_on_domain_apply}.
+\end{proof}
+
+\begin{proposition}\label{monoid_finite_fold_rows_type}
+    Let $M$ be a monoid.
+    Suppose for all $x,y\in\carrier[M]$ we have
+        $\mul[M](x,y)=\mul[M](y,x)$.
+    Suppose $A$ is finite and $B$ is finite.
+    Suppose $f\in\funs{A\times B}{\carrier[M]}$.
+    Then
+        $\monoidFiniteFoldRows{M}{A}{B}{f}
+            \in\funs{A}{\carrier[M]}$.
+\end{proposition}
+\begin{proof}
+    $\monoidFiniteFoldRows{M}{A}{B}{f}$ is a function on $A$ by
+        \auto{monoid_finite_fold_rows,
+            logical_graph_on_domain_function,funs_elim}.
+    Show that for every $a\in A$ we have
+        $\apply{\monoidFiniteFoldRows{M}{A}{B}{f}}{a}
+            \in\carrier[M]$.
+    \begin{subproof}
+        Fix $a\in A$.
+        $\monoidFiniteFoldRow{B}{f}{a}
+            \in\funs{B}{\carrier[M]}$ by
+            \obv{monoid_finite_fold_row_type}.
+        $\finiteFold{M}{B}{\monoidFiniteFoldRow{B}{f}{a}}
+            \in\carrier[M]$ by
+            \auto{monoid_finite_fold_canonical}.
+        Follows by \obv{monoid_finite_fold_rows_apply}.
+    \end{subproof}
+    Follows by \obv{funs_intro,funs_elim}.
+\end{proof}
+
+\begin{definition}\label{monoid_finite_fold_pair_value_op}
+    $\monoidFiniteFoldPairValueOp:\Set\to\Set\to\Set
+        =\fun{a,b:\Set}{(a,b)}$.
+\end{definition}
+
+\begin{definition}\label{monoid_finite_fold_pairing}
+    $\monoidFiniteFoldPairing{B}{a}
+        =\Apply{\graphOnDomainOp}{
+            B,\Apply{\monoidFiniteFoldPairValueOp}{a}}$.
+\end{definition}
+
+\begin{proposition}\label{monoid_finite_fold_pairing_apply}
+    Let $b\in B$.
+    Then $\apply{\monoidFiniteFoldPairing{B}{a}}{b}=(a,b)$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{monoid_finite_fold_pairing,
+            monoid_finite_fold_pair_value_op,
+            logical_graph_on_domain_apply}.
+\end{proof}
+
+\begin{proposition}\label{monoid_finite_fold_pairing_bijection}
+    Then
+        $\monoidFiniteFoldPairing{B}{a}
+            \in\bijections{B}{\{a\}\times B}$.
+\end{proposition}
+\begin{proof}
+    Let $p=\monoidFiniteFoldPairing{B}{a}$.
+    $p$ is a function on $B$ by
+        \auto{monoid_finite_fold_pairing,
+            logical_graph_on_domain_function,funs_elim}.
+    For every $b\in B$ we have $p(b)=(a,b)$ by
+        \auto{monoid_finite_fold_pairing_apply}.
+    For every $b\in B$ we have $(a,b)\in\{a\}\times B$ by
+        \auto{times_tuple_intro,singleton_iff}.
+    Hence $p\in\funs{B}{\{a\}\times B}$ by
+        \auto{funs_intro,funs_elim}.
+    Show that $p$ is injective.
+    \begin{subproof}
+        Show that for all $b,c\in\dom{p}$ such that $p(b)=p(c)$
+            we have $b=c$.
+        \begin{subproof}
+            Fix $b,c\in\dom{p}$.
+            Assume $p(b)=p(c)$.
+            $b,c\in B$ by \obv{funs_elim}.
+            $p(b)=(a,b)$ and $p(c)=(a,c)$ by
+                \obv{monoid_finite_fold_pairing_apply}.
+            Follows by \auto{pair_eq_iff}.
+        \end{subproof}
+        Follows by \obv{injective_function}.
+    \end{subproof}
+    Show that $p\in\surj{B}{\{a\}\times B}$.
+    \begin{subproof}
+        Show that for every $w\in\{a\}\times B$ there exists $b\in B$
+            such that $p(b)=w$.
+        \begin{subproof}
+            Fix $w\in\{a\}\times B$.
+            Take $u,b$ such that $u\in\{a\}$ and $b\in B$ and
+                $w=(u,b)$ by
+                \auto{times}.
+            $u=a$ by \obv{singleton_iff}.
+            Hence $p(b)=w$ by
+                \auto{monoid_finite_fold_pairing_apply}.
+        \end{subproof}
+        Follows by \obv{surj}.
+    \end{subproof}
+    Follows by \obv{bijections}.
+\end{proof}
+
+\begin{theorem}\label{monoid_finite_fold_singleton_row}
+    Let $M$ be a monoid.
+    Suppose for all $x,y\in\carrier[M]$ we have
+        $\mul[M](x,y)=\mul[M](y,x)$.
+    Suppose $B$ is finite.
+    Suppose $f\in\funs{A\times B}{\carrier[M]}$ and $a\in A$.
+    Then
+        $\finiteFold{M}{\{a\}\times B}{
+            \restrl{f}{\{a\}\times B}}
+        =\finiteFold{M}{B}{\monoidFiniteFoldRow{B}{f}{a}}$.
+\end{theorem}
+\begin{proof}
+    $\{a\}\times B$ is finite by \obv{singleton_times_finite}.
+    Let $p=\monoidFiniteFoldPairing{B}{a}$.
+    $p\in\bijections{B}{\{a\}\times B}$ by
+        \auto{monoid_finite_fold_pairing_bijection}.
+    $\{a\}\subseteq A$ by \auto{subseteq,singleton_iff}.
+    Hence $\{a\}\times B\subseteq A\times B$ by
+        \obv{times_subseteq_left}.
+    $\restrl{f}{\{a\}\times B}
+        \in\funs{\{a\}\times B}{\carrier[M]}$ by
+        \obv{funs_restrl}.
+    $\monoidFiniteFoldRow{B}{f}{a}
+        \in\funs{B}{\carrier[M]}$ by
+        \obv{monoid_finite_fold_row_type}.
+    $\restrl{f}{\{a\}\times B}\circ p
+        \in\funs{B}{\carrier[M]}$ by
+        \auto{bijections_to_funs,funs_circ}.
+    Hence $\restrl{f}{\{a\}\times B}\circ p$ is a function on $B$ by
+        \obv{funs_is_function,funs_elim}.
+    $\monoidFiniteFoldRow{B}{f}{a}$ is a function on $B$ by
+        \obv{funs_is_function,funs_elim}.
+    Show that for every $b\in B$ we have
+        $(\restrl{f}{\{a\}\times B}\circ p)(b)
+            =\apply{\monoidFiniteFoldRow{B}{f}{a}}{b}$.
+    \begin{subproof}
+        Fix $b\in B$.
+        $p(b)=(a,b)$ by
+            \auto{monoid_finite_fold_pairing_apply}.
+        $(a,b)\in\{a\}\times B$ by
+            \auto{times_tuple_intro,singleton_iff}.
+        $f$ is a function and $\dom{f}=A\times B$ by
+            \obv{funs_is_function,funs_elim}.
+        $\apply{\restrl{f}{\{a\}\times B}}{(a,b)}=f((a,b))$ by
+            \obv{restrl_of_function_apply}.
+        $p$ and $\restrl{f}{\{a\}\times B}$ are functions by
+            \auto{bijections_to_funs,funs_is_function}.
+        $\restrl{f}{\{a\}\times B}$ is composable with $p$ by
+            \auto{bijections_to_funs,funs_ran,funs}.
+        $b\in\dom{p}$ by
+            \auto{bijections_to_funs,funs_elim}.
+        $(\restrl{f}{\{a\}\times B}\circ p)(b)
+            =\apply{\restrl{f}{\{a\}\times B}}{p(b)}$ by
+            \obv{circ_apply}.
+        Follows by \auto{monoid_finite_fold_row_apply}.
+    \end{subproof}
+    Hence
+        $\restrl{f}{\{a\}\times B}\circ p
+            =\monoidFiniteFoldRow{B}{f}{a}$ by
+        \obv{funext_on_domain,funs_elim}.
+    $\finiteFold{M}{B}{\restrl{f}{\{a\}\times B}\circ p}
+        =\finiteFold{M}{\{a\}\times B}{
+            \restrl{f}{\{a\}\times B}}$ by
+        \obv{monoid_finite_fold_bijective_reindex}.
+\end{proof}
+
+\begin{lemma}\label{monoid_finite_fold_rows_restriction}
+    Let $M$ be a monoid.
+    Suppose for all $x,y\in\carrier[M]$ we have
+        $\mul[M](x,y)=\mul[M](y,x)$.
+    Suppose $A$ is finite and $D$ is finite and $B$ is finite.
+    Suppose $A\subseteq D$ and
+        $f\in\funs{D\times B}{\carrier[M]}$.
+    Then
+        $\restrl{\monoidFiniteFoldRows{M}{D}{B}{f}}{A}
+        =\monoidFiniteFoldRows{M}{A}{B}{
+            \restrl{f}{A\times B}}$.
+\end{lemma}
+\begin{proof}
+    Let $q=\restrl{f}{A\times B}$.
+    $A\times B\subseteq D\times B$ by
+        \obv{times_subseteq_left}.
+    $f$ is a function and $\dom{f}=D\times B$ by
+        \obv{funs_is_function,funs_elim}.
+    Hence $A\times B\subseteq\dom{f}$.
+    Hence $q\in\funs{A\times B}{\carrier[M]}$ by
+        \auto{funs_restrl}.
+    Let $r=\restrl{\monoidFiniteFoldRows{M}{D}{B}{f}}{A}$.
+    Let $s=\monoidFiniteFoldRows{M}{A}{B}{q}$.
+    $\monoidFiniteFoldRows{M}{D}{B}{f}
+        \in\funs{D}{\carrier[M]}$ by
+        \obv{monoid_finite_fold_rows_type}.
+    Hence $\monoidFiniteFoldRows{M}{D}{B}{f}$ is a function and
+        $\dom{\monoidFiniteFoldRows{M}{D}{B}{f}}=D$ by
+        \obv{funs_is_function,funs_elim}.
+    Hence $A\subseteq
+        \dom{\monoidFiniteFoldRows{M}{D}{B}{f}}$.
+    Hence $r\in\funs{A}{\carrier[M]}$ by
+        \auto{funs_restrl}.
+    $s\in\funs{A}{\carrier[M]}$ by
+        \auto{monoid_finite_fold_rows_type}.
+    Thus $r$ and $s$ are functions and $\dom{r}=A=\dom{s}$ by
+        \auto{funs_is_function,funs_elim}.
+    Show that for every $a\in A$ we have $r(a)=s(a)$.
+    \begin{subproof}
+        Fix $a\in A$.
+        Hence $a\in D$ by \obv{subseteq}.
+        Let $u=\monoidFiniteFoldRow{B}{f}{a}$.
+        Let $v=\monoidFiniteFoldRow{B}{q}{a}$.
+        $u,v\in\funs{B}{\carrier[M]}$ by
+            \auto{monoid_finite_fold_row_type}.
+        Hence $u$ and $v$ are functions and $\dom{u}=B=\dom{v}$ by
+            \auto{funs_is_function,funs_elim}.
+        Show that for every $b\in B$ we have $u(b)=v(b)$.
+        \begin{subproof}
+            Fix $b\in B$.
+            $(a,b)\in A\times B$ by \obv{times_tuple_intro}.
+            $q((a,b))=f((a,b))$ by
+                \auto{restrl_of_function_apply,funs_is_function}.
+            $u(b)=f((a,b))$ and $v(b)=q((a,b))$ by
+                \auto{monoid_finite_fold_row_apply}.
+        \end{subproof}
+        Hence $u=v$ by \obv{funext_on_domain}.
+        $r(a)=\apply{\monoidFiniteFoldRows{M}{D}{B}{f}}{a}$ by
+            \auto{restrl_of_function_apply,funs_is_function}.
+        $\apply{\monoidFiniteFoldRows{M}{D}{B}{f}}{a}
+            =\finiteFold{M}{B}{u}$ by
+            \auto{monoid_finite_fold_rows_apply}.
+        $s(a)=\finiteFold{M}{B}{v}$ by
+            \auto{monoid_finite_fold_rows_apply}.
+        \begin{align*}
+            r(a)
+                &= \apply{\monoidFiniteFoldRows{M}{D}{B}{f}}{a}
+                \\
+                &= \finiteFold{M}{B}{u}
+                \\
+                &= \finiteFold{M}{B}{v}
+                \\
+                &= s(a)
+        \end{align*}
+    \end{subproof}
+    Follows by \auto{funext_on_domain}.
+\end{proof}
+
+\begin{theorem}\label{monoid_finite_fold_fubini}
+    Let $M$ be a monoid.
+    Suppose for all $x,y\in\carrier[M]$ we have
+        $\mul[M](x,y)=\mul[M](y,x)$.
+    Suppose $A$ is finite and $B$ is finite.
+    Suppose $f\in\funs{A\times B}{\carrier[M]}$.
+    Then
+        $\finiteFold{M}{A\times B}{f}
+        =\finiteFold{M}{A}{
+            \monoidFiniteFoldRows{M}{A}{B}{f}}$.
+\end{theorem}
+\begin{proof}
+    Let $C=\{X\in\pow{A}\mid
+        \text{for every $q$ such that
+            $q\in\funs{X\times B}{\carrier[M]}$ we have
+            $\finiteFold{M}{X\times B}{q}
+            =\finiteFold{M}{X}{
+                \monoidFiniteFoldRows{M}{X}{B}{q}}$}\}$.
+    Show that $\emptyset\in C$.
+    \begin{subproof}
+        $\emptyset\in\pow{A}$ by \obv{powerset_bottom}.
+        Show that for every $q$ such that
+            $q\in\funs{\emptyset\times B}{\carrier[M]}$ we have
+            $\finiteFold{M}{\emptyset\times B}{q}
+            =\finiteFold{M}{\emptyset}{
+                \monoidFiniteFoldRows{M}{\emptyset}{B}{q}}$.
+        \begin{subproof}
+            Fix $q$.
+            Assume $q\in\funs{\emptyset\times B}{\carrier[M]}$.
+            $\emptyset\times B=\emptyset$ by \obv{times_empty_left}.
+            Hence $q\in\funs{\emptyset}{\carrier[M]}$.
+            $\monoidFiniteFoldRows{M}{\emptyset}{B}{q}
+                \in\funs{\emptyset}{\carrier[M]}$ by
+                \obv{emptyset_is_finite,
+                    monoid_finite_fold_rows_type}.
+            $\finiteFold{M}{\emptyset}{q}=\neutral[M]$ and
+                $\finiteFold{M}{\emptyset}{
+                    \monoidFiniteFoldRows{M}{\emptyset}{B}{q}}
+                    =\neutral[M]$ by
+                \obv{monoid_finite_fold_empty}.
+        \end{subproof}
+    \end{subproof}
+    Show that for all $X,a$ such that $X\in C$ and $a\in A$ we have
+        $\cons{a}{X}\in C$.
+    \begin{subproof}
+        Fix $X,a$.
+        Assume $X\in C$ and $a\in A$.
+        $X\subseteq A$ by \obv{powerset_elim}.
+        Hence $\cons{a}{X}\subseteq A$ by
+            \obv{cons_subseteq_intro}.
+        Thus $\cons{a}{X}\in\pow{A}$ by \obv{powerset_intro}.
+        $X$ is finite by \obv{subseteq_finite_is_finite}.
+        $\cons{a}{X}$ is finite by \obv{finite_cons}.
+        Show that for every $q$ such that
+            $q\in\funs{\cons{a}{X}\times B}{\carrier[M]}$ we have
+            $\finiteFold{M}{\cons{a}{X}\times B}{q}
+            =\finiteFold{M}{\cons{a}{X}}{
+                \monoidFiniteFoldRows{M}{\cons{a}{X}}{B}{q}}$.
+        \begin{subproof}
+            Fix $q$.
+            Assume $q\in\funs{\cons{a}{X}\times B}{\carrier[M]}$.
+            \begin{byCase}
+            \caseOf{$a\in X$.}
+                $\cons{a}{X}=X$ by \obv{cons_absorb}.
+                Follows by \auto.
+            \caseOf{$a\notin X$.}
+                Let $P=\{a\}\times B$.
+                Let $Q=X\times B$.
+                $P$ is finite and $Q$ is finite by
+                    \obv{singleton_times_finite,finite_times}.
+                $\cons{a}{X}\times B=P\union Q$ by
+                    \auto{times_cons_left}.
+                $P$ is disjoint from $Q$ by
+                    \auto{disjoint,inter,emptyset,times,pair_eq_iff,
+                        singleton_iff}.
+                Hence
+                    $\finiteFold{M}{\cons{a}{X}\times B}{q}
+                    =\mul[M](
+                        \finiteFold{M}{P}{\restrl{q}{P}},
+                        \finiteFold{M}{Q}{\restrl{q}{Q}})$ by
+                    \auto{monoid_finite_fold_disjoint_union}.
+                $\finiteFold{M}{P}{\restrl{q}{P}}
+                    =\finiteFold{M}{B}{
+                        \monoidFiniteFoldRow{B}{q}{a}}$ by
+                    \auto{monoid_finite_fold_singleton_row,
+                        cons_iff}.
+                $\restrl{q}{Q}\in\funs{Q}{\carrier[M]}$ by
+                    \auto{funs_restrl,subseteq,times,cons_iff}.
+                Hence
+                    $\finiteFold{M}{Q}{\restrl{q}{Q}}
+                    =\finiteFold{M}{X}{
+                        \monoidFiniteFoldRows{M}{X}{B}{
+                            \restrl{q}{Q}}}$ by \auto.
+                Let $r=\monoidFiniteFoldRows{M}{\cons{a}{X}}{B}{q}$.
+                $r\in\funs{\cons{a}{X}}{\carrier[M]}$ by
+                    \auto{monoid_finite_fold_rows_type}.
+                $X\subseteq\cons{a}{X}$ by
+                    \auto{subseteq,cons_iff}.
+                $Q=X\times B$.
+                $\restrl{r}{X}
+                    =\monoidFiniteFoldRows{M}{X}{B}{
+                        \restrl{q}{Q}}$ by
+                    \auto{monoid_finite_fold_rows_restriction,
+                        finite_cons}.
+                $a\in\cons{a}{X}$ by \auto{cons_iff}.
+                $\apply{\monoidFiniteFoldRows{M}{\cons{a}{X}}{B}{q}}{a}
+                    =\finiteFold{M}{B}{
+                        \monoidFiniteFoldRow{B}{q}{a}}$ by
+                    \obv{monoid_finite_fold_rows_apply}.
+                Hence $r(a)=\finiteFold{M}{B}{
+                    \monoidFiniteFoldRow{B}{q}{a}}$.
+                $\finiteFold{M}{\cons{a}{X}}{r}
+                    =\mul[M](\finiteFold{M}{X}{\restrl{r}{X}},r(a))$
+                    by \obv{monoid_finite_fold_fresh_adjoin}.
+                $\finiteFold{M}{B}{
+                        \monoidFiniteFoldRow{B}{q}{a}}
+                    \in\carrier[M]$ by
+                    \auto{monoid_finite_fold_row_type,
+                        monoid_finite_fold_canonical,cons_iff}.
+                $\finiteFold{M}{X}{
+                        \monoidFiniteFoldRows{M}{X}{B}{
+                            \restrl{q}{Q}}}
+                    \in\carrier[M]$ by
+                    \auto{monoid_finite_fold_rows_type,
+                        monoid_finite_fold_canonical}.
+                Follows by \auto.
+            \end{byCase}
+        \end{subproof}
+    \end{subproof}
+    $A\in C$ by \obv{finite_induction,subseteq_refl}.
+\end{proof}
+
+\begin{definition}\label{finite_product}
+    $\finiteProduct{M}{A}{f}=\finiteFold{M}{A}{f}$.
+\end{definition}
+
+\begin{definition}\label{finite_sum}
+    $\finiteSum{G}{A}{f}=\finiteFold{G}{A}{f}$.
+\end{definition}
+
+\begin{proposition}\label{finite_product_is_finite_fold}
+    $\finiteProduct{M}{A}{f}=\finiteFold{M}{A}{f}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{finite_product}.
+\end{proof}
+
+\begin{proposition}\label{finite_sum_is_finite_fold}
+    $\finiteSum{G}{A}{f}=\finiteFold{G}{A}{f}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{finite_sum}.
+\end{proof}

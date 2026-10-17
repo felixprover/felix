@@ -1,0 +1,166 @@
+\section{Continuity into generated topologies}
+
+\import{topology/generated.tex}
+\import{topology/continuity.tex}
+\import{set/filter-map.tex}
+
+For a fixed map, the subsets with open preimage form a topology on its
+codomain.  This observation is the universal proof principle for generated
+topologies.
+
+\begin{definition}\label{preimage_open_family}
+    $\preimageOpenFamily{X}{S}{f}
+        =\{V\in\pow{S}\mid \preimg{f}{V}\in\opens[X]\}$.
+\end{definition}
+
+\begin{theorem}\label{preimage_open_family_is_topology}
+    Let $X$ be a topological space.
+    Let $f\in\funs{\carrier[X]}{S}$.
+    Then $\preimageOpenFamily{X}{S}{f}$ is a topology on $S$.
+\end{theorem}
+\begin{proof}
+    Let $P=\preimageOpenFamily{X}{S}{f}$.
+    $\preimageOpenFamily{X}{S}{f}\subseteq\pow{S}$ by
+        \obv{preimage_open_family,subseteq}.
+    Hence $P\subseteq\pow{S}$.
+    $\preimg{f}{S}=\carrier[X]$ by
+        \obv{preimg_codom_of_function}.
+    $\carrier[X]\in\opens[X]$ by \obv{carrier_open}.
+    Hence $\preimg{f}{S}\in\opens[X]$.
+    Thus $S\in P$ by
+        \obv{preimage_open_family,powerset_top}.
+
+    Show that for all $A,B\in P$ we have $A\inter B\in P$.
+    \begin{subproof}
+        Fix $A,B\in P$.
+        Hence $A,B\in\preimageOpenFamily{X}{S}{f}$.
+        $A,B\subseteq S$ by
+            \obv{preimage_open_family,powerset_elim}.
+        Hence $A\inter B\subseteq S$ by \obv{inter_subseteq}.
+        Thus $A\inter B\in\pow{S}$ by \obv{powerset_intro}.
+        $\preimg{f}{A},\preimg{f}{B}\in\opens[X]$ by
+            \obv{preimage_open_family}.
+        Hence $\preimg{f}{A}\inter\preimg{f}{B}\in\opens[X]$ by
+            \obv{opens_inter}.
+        $f$ is a function by \obv{funs_is_function}.
+        $\preimg{f}{A\inter B}
+            =\preimg{f}{A}\inter\preimg{f}{B}$ by
+            \obv{function_preimage_intersection}.
+        Hence $\preimg{f}{A\inter B}\in\opens[X]$.
+        Follows by \obv{preimage_open_family}.
+    \end{subproof}
+
+    Show that for every $F\subseteq P$ we have $\unions{F}\in P$.
+    \begin{subproof}
+        Fix $F\subseteq P$.
+        For every $V\in F$ we have $V\subseteq S$ by
+            \obv{preimage_open_family,powerset_elim,subseteq}.
+        Hence $\unions{F}\subseteq S$ by \obv{unions_family}.
+        Thus $\unions{F}\in\pow{S}$ by \obv{powerset_intro}.
+        Let $G=\{A\in\opens[X]\mid
+            \text{there exists $V\in F$ such that
+                $A=\preimg{f}{V}$}\}$.
+        $G\subseteq\opens[X]$ by \obv{subseteq}.
+        Hence $\unions{G}\in\opens[X]$ by \obv{opens_unions}.
+        Show that $\preimg{f}{\unions{F}}=\unions{G}$.
+        \begin{subproof}
+            Show that every element of $\preimg{f}{\unions{F}}$ is an
+                element of $\unions{G}$.
+            \begin{subproof}
+                Fix $x\in\preimg{f}{\unions{F}}$.
+                Take $y\in\unions{F}$ such that $(x,y)\in f$ by
+                    \obv{preimg_iff}.
+                Take $V\in F$ such that $y\in V$ by \obv{unions_iff}.
+                Hence $x\in\preimg{f}{V}$ by \auto{preimg_iff}.
+                $V\in P$ by \obv{subseteq}.
+                Hence $V\in\preimageOpenFamily{X}{S}{f}$.
+                Hence $\preimg{f}{V}\in\opens[X]$ by
+                    \obv{preimage_open_family}.
+                Thus $\preimg{f}{V}\in G$.
+                Follows by \auto{unions_iff}.
+            \end{subproof}
+            Show that every element of $\unions{G}$ is an element of
+                $\preimg{f}{\unions{F}}$.
+            \begin{subproof}
+                Fix $x\in\unions{G}$.
+                Take $A\in G$ such that $x\in A$ by \obv{unions_iff}.
+                Take $V\in F$ such that $A=\preimg{f}{V}$.
+                Hence $x\in\preimg{f}{V}$.
+                Take $y\in V$ such that $(x,y)\in f$ by
+                    \obv{preimg_iff}.
+                $y\in\unions{F}$ by \auto{unions_iff}.
+                Follows by \auto{preimg_iff}.
+            \end{subproof}
+            Follows by set extensionality.
+        \end{subproof}
+        Hence $\preimg{f}{\unions{F}}\in\opens[X]$.
+        Follows by \obv{preimage_open_family}.
+    \end{subproof}
+    Hence $P$ is a topology on $S$ by \obv{topology_family}.
+    Thus $\preimageOpenFamily{X}{S}{f}$ is a topology on $S$.
+\end{proof}
+
+\begin{theorem}\label{continuous_to_generated_topology_iff}
+    Let $X$ be a topological space.
+    Suppose $B$ is a family of subsets of $S$.
+    Let $f\in\funs{\carrier[X]}{S}$.
+    Then $f$ is continuous from $X$ to $\GeneratedTopology{S}{B}$ iff
+        for every $V\in B$ we have $\preimg{f}{V}\in\opens[X]$.
+\end{theorem}
+\begin{proof}
+    $\GeneratedTopology{S}{B}$ is a topological space by
+        \obv{generated_topology_is_topological_space}.
+    Show that if $f$ is continuous from $X$ to
+        $\GeneratedTopology{S}{B}$, then for every $V\in B$ we have
+        $\preimg{f}{V}\in\opens[X]$.
+    \begin{subproof}
+        Assume $f$ is continuous from $X$ to $\GeneratedTopology{S}{B}$.
+        Fix $V\in B$.
+        $B\subseteq\generatedOpens{S}{B}$ by
+            \obv{generated_opens_contains}.
+        Hence $V\in\generatedOpens{S}{B}$ by \obv{subseteq}.
+        Hence $V\in\opens[\GeneratedTopology{S}{B}]$ by
+            \obv{generated_topology_opens}.
+        Follows by \obv{continuous_map}.
+    \end{subproof}
+
+    Show that if for every $V\in B$ we have
+        $\preimg{f}{V}\in\opens[X]$, then
+        $f$ is continuous from $X$ to $\GeneratedTopology{S}{B}$.
+    \begin{subproof}
+        Assume for every $V\in B$ we have
+            $\preimg{f}{V}\in\opens[X]$.
+        $\preimageOpenFamily{X}{S}{f}$ is a topology on $S$ by
+            \obv{preimage_open_family_is_topology}.
+        Show that $B\subseteq\preimageOpenFamily{X}{S}{f}$.
+        \begin{subproof}
+            It suffices to show that every element of $B$ is an element of
+                $\preimageOpenFamily{X}{S}{f}$ by \obv{subseteq}.
+            Fix $V\in B$.
+            $V\subseteq S$.
+            Hence $V\in\pow{S}$ by \obv{powerset_intro}.
+            $\preimg{f}{V}\in\opens[X]$.
+            Follows by \obv{preimage_open_family}.
+        \end{subproof}
+        Hence $\generatedOpens{S}{B}
+            \subseteq\preimageOpenFamily{X}{S}{f}$ by
+            \obv{generated_opens_least}.
+        $\carrier[\GeneratedTopology{S}{B}]=S$ by
+            \obv{generated_topology_carrier}.
+        Hence $f\in\funs{\carrier[X]}
+            {\carrier[\GeneratedTopology{S}{B}]}$.
+        Show that for every $V\in\opens[\GeneratedTopology{S}{B}]$ we have
+            $\preimg{f}{V}\in\opens[X]$.
+        \begin{subproof}
+            Fix $V\in\opens[\GeneratedTopology{S}{B}]$.
+            Hence $V\in\generatedOpens{S}{B}$ by
+                \obv{generated_topology_opens}.
+            Hence $V\in\preimageOpenFamily{X}{S}{f}$ by \obv{subseteq}.
+            Hence $V\in\pow{S}$ and
+                $\preimg{f}{V}\in\opens[X]$ by
+                \obv{preimage_open_family}.
+        \end{subproof}
+        Follows by \obv{continuous_map}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}

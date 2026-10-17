@@ -1,0 +1,221 @@
+name: felix
+version: 0.3.0.0
+license: CC0-1.0
+license-file: license.md
+github: adelon/felix
+
+extra-source-files:
+    - license.md
+    - readme.md
+    - test/prover-supervision/signal-probe.c
+
+data-files:
+    - library/prelude.tex
+
+dependencies:
+    # Prover pipe ownership uses the qualified GHC 9.10 handle interface.
+    - base >= 4.20.2 && < 4.21
+    - binary
+    - bytestring
+    - containers
+    - crypton
+    - deepseq
+    - directory
+    # Felix.Syntax.Earley relies on this version's internal lifecycle.
+    - Earley == 0.13.0.1
+    - effectful
+    - filelock
+    - filepath
+    - hashable
+    - lucid2
+    - megaparsec
+    - memory
+    - mtl
+    - optparse-applicative
+    - parser-combinators
+    - prettyprinter
+    # Process acquisition/descriptor inheritance is qualified against this implementation.
+    - process == 1.6.26.1
+    - regex-applicative
+    - sqlite-simple
+    - stm
+    - temporary
+    - text
+    - text-builder
+    - transformers
+    - unix
+    - unliftio
+    - unordered-containers
+    - vector
+
+default-extensions:
+    - ImportQualifiedPost
+    - BlockArguments
+    - DeriveFunctor
+    - DeriveGeneric
+    - FlexibleContexts
+    - FlexibleInstances
+    - GADTs
+    - GeneralizedNewtypeDeriving
+    - InstanceSigs
+    - LambdaCase
+    - NoImplicitPrelude
+    - OverloadedStrings
+    - PatternSynonyms
+    - ScopedTypeVariables
+    - TypeFamilies
+    - TypeOperators
+
+
+# Each part gets it own GHC options, because otherwise all
+# external libraries are compiled with our picky settings,
+# resulting in an unfriendly wall of warnings.
+
+library:
+    source-dirs: source/
+    when:
+        - condition: os(darwin) || os(linux)
+          c-sources: cbits/spawn-vampire.c
+    other-modules:
+        - Felix.Provers.Pipes
+        - Felix.Provers.Timer
+        - Felix.Codec.Admission
+        - Felix.Math.Codec.Internal
+        - Felix.Checking.DefinitionView
+        - Felix.Checking.Elimination
+        - Felix.Checking.GlobalTyping.Internal
+        - Felix.Checking.Core.Representation.Internal
+        - Felix.Checking.Core.Resolved.Internal
+        - Felix.Checking.Core.Resolved.Substrate.Internal
+        - Felix.Checking.Kernel.Conversion.Checked
+        - Felix.Checking.Kernel.Conversion.Policy
+        - Felix.Checking.Kernel.Conversion.Pure
+        - Felix.Checking.Kernel.Derivation.Internal
+        - Felix.Checking.Kernel.Derivation.Conversion
+        - Felix.Checking.Notion.RuleTerm
+        - Felix.Checking.Notion.Formation
+        - Felix.Checking.Notion.FormationProof
+        - Felix.Checking.NaturalNumeral
+        - Felix.Checking.Obvious.Choice
+        - Felix.Checking.Obvious.Equality
+        - Felix.Checking.Obvious.Conversion
+        - Felix.Checking.Obvious.LogicalView
+        - Felix.Checking.Obvious.Match
+        - Felix.Checking.Obvious.Search
+        - Felix.Checking.Obvious.Driver
+        - Felix.Checking.Obvious.Refutation
+        - Felix.Checking.Obvious.Template
+        - Felix.Checking.Proof.Authorization.Internal
+        - Felix.Render.Html.Assets
+    generated-other-modules:
+        - Paths_felix
+    ghc-options:
+        # Warnings
+        - -Wall
+        - -Wcompat
+        - -Wincomplete-uni-patterns
+        - -Wincomplete-record-updates
+        - -Wredundant-constraints
+        # Cleaning up GHC's error messages
+        - -freverse-errors
+        - -fhide-source-paths
+
+executables:
+    felix:
+        main: cli/Main.hs
+        c-sources: cbits/runtime-defaults.c
+        dependencies:
+            - felix
+        ghc-options:
+            - -rtsopts
+            - -threaded
+            - -with-rtsopts=-A64m
+            # Warnings
+            - -Wall
+            - -Wcompat
+            - -Wincomplete-uni-patterns
+            - -Wincomplete-record-updates
+            - -Wredundant-constraints
+            # Cleaning up GHC's error messages
+            - -freverse-errors
+            - -fhide-source-paths
+        # Workaround: supresses warning about
+        # 'Multiple files use the same module name'.
+        when:
+        - condition: false
+          other-modules: Paths_felix
+
+tests:
+    felix-test:
+        main: Main.hs
+        source-dirs:
+            - test/
+            - test-support/
+        dependencies:
+            - felix
+            - hedgehog
+            - pretty-simple
+            - tasty
+            - tasty-golden
+            - tasty-hedgehog
+            - tasty-hunit
+        build-tools:
+            - felix:felix
+        ghc-options:
+            # Warnings
+            - -Wall
+            - -Wcompat
+            - -Wincomplete-uni-patterns
+            - -Wincomplete-record-updates
+            - -Wredundant-constraints
+            # Cleaning up GHC's error messages
+            - -freverse-errors
+            - -fhide-source-paths
+
+benchmarks:
+    parser-bench:
+        main: Main.hs
+        source-dirs:
+            - benchmark/parser/
+            - test-support/
+        dependencies:
+            - felix
+        ghc-options:
+            - -rtsopts
+            - -Wall
+            - -Wcompat
+            - -Wincomplete-patterns
+
+    conversion-focused:
+        main: Main.hs
+        source-dirs:
+            - benchmark/conversion/
+        dependencies:
+            - felix
+        ghc-options:
+            - -rtsopts
+            - -Wall
+            - -Wcompat
+            - -Wincomplete-uni-patterns
+            - -Wincomplete-record-updates
+            - -Wredundant-constraints
+            - -freverse-errors
+            - -fhide-source-paths
+
+    source-scan-bench:
+        main: Main.hs
+        source-dirs:
+            - benchmark/source-scan/
+            - test-support/
+        dependencies:
+            - felix
+            - criterion
+        ghc-options:
+            - -rtsopts
+            - -Wall
+            - -Wcompat
+            - -Wincomplete-uni-patterns
+            - -Wincomplete-record-updates
+            - -Wredundant-constraints
+            - -freverse-errors
+            - -fhide-source-paths

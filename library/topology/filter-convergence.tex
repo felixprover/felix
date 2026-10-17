@@ -1,0 +1,200 @@
+\section{Filter convergence}
+
+\import{topology/neighbourhood-filter.tex}
+\import{topology/basis.tex}
+\import{set/filter-basis.tex}
+\import{set/filter-finite.tex}
+\import{set/filter-tendsto.tex}
+
+The following convergence predicate is a raw relation.  It requires the
+proposed point to lie in the carrier, but does not itself assert that the
+ambient structure is topological or that the family is a filter.  Public
+elimination and equivalence results state those typing hypotheses explicitly.
+
+\begin{definition}\label{filter_converges}
+    $\filterConverges{F}{x}{X}$ iff $x\in\carrier[X]$ and
+        $\neighbourhoods{x}{X}\subseteq F$.
+\end{definition}
+
+\begin{theorem}\label{filter_converges_iff_identity_tendsto}
+    Let $X$ be a topological space.
+    Let $F$ be a filter on $\carrier[X]$ and $x\in\carrier[X]$.
+    Then $\filterConverges{F}{x}{X}$ iff
+        $\identity{\carrier[X]}$ tends from $F$ on $\carrier[X]$ to
+            $\neighbourhoods{x}{X}$ on $\carrier[X]$.
+\end{theorem}
+\begin{proof}
+    $\neighbourhoods{x}{X}$ is a filter on $\carrier[X]$ by
+        \obv{neighbourhoods_is_filter}.
+    $\identity{\carrier[X]}\in
+        \funs{\carrier[X]}{\carrier[X]}$ by \obv{id_elem_funs}.
+    $\filterPushforward{\carrier[X]}{\carrier[X]}
+        {\identity{\carrier[X]}}{F}=F$ by
+        \obv{identity_filter_pushforward}.
+    $\filterConverges{F}{x}{X}$ iff
+        $\neighbourhoods{x}{X}\subseteq F$ by
+        \auto{filter_converges}.
+    $F$ refines $\neighbourhoods{x}{X}$ on $\carrier[X]$ iff
+        $\neighbourhoods{x}{X}\subseteq F$ by
+        \auto{filter_refines}.
+    Follows by \auto{filter_tendsto}.
+\end{proof}
+
+\begin{theorem}\label{filter_converges_iff_open_basis_members}
+    Let $X$ be a topological space.
+    Suppose $F$ is a filter on $\carrier[X]$ and
+        $B$ is an open basis of $X$.
+    Let $x\in\carrier[X]$.
+    Then $\filterConverges{F}{x}{X}$ iff
+        for every $V\in B$ such that $x\in V$ we have $V\in F$.
+\end{theorem}
+\begin{proof}
+    Show that if $\filterConverges{F}{x}{X}$, then
+        for every $V\in B$ such that $x\in V$ we have $V\in F$.
+    \begin{subproof}
+        Assume $\filterConverges{F}{x}{X}$.
+        $\neighbourhoods{x}{X}\subseteq F$ by
+            \obv{filter_converges}.
+        Fix $V\in B$.
+        Assume $x\in V$.
+        Hence $V\in\neighbourhoods{x}{X}$ by
+            \obv{open_basis_member_is_neighbourhood}.
+        Follows by \obv{subseteq}.
+    \end{subproof}
+    Show that if for every $V\in B$ such that $x\in V$ we have
+        $V\in F$, then $\filterConverges{F}{x}{X}$.
+    \begin{subproof}
+        Assume for every $V\in B$ such that $x\in V$ we have
+            $V\in F$.
+        Show that $\neighbourhoods{x}{X}\subseteq F$.
+        \begin{subproof}
+            It suffices to show that every element of
+                $\neighbourhoods{x}{X}$ is an element of $F$ by
+                \obv{subseteq}.
+            Fix $N\in\neighbourhoods{x}{X}$.
+            Take $V\in B$ such that $x\in V\subseteq N$ by
+                \obv{open_basis_refines_neighbourhood}.
+            Hence $V\in F$.
+            $V,N\subseteq\carrier[X]$ by
+                \auto{filter,neighbourhoods,pow_iff,subseteq}.
+            Follows by \obv{filter}.
+        \end{subproof}
+        Follows by \obv{filter_converges}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{filter_converges_iff_open_prebasis_members}
+    Let $X$ be a topological space.
+    Suppose $F$ is a filter on $\carrier[X]$ and
+        $B$ is an open prebasis of $X$.
+    Let $x\in\carrier[X]$.
+    Then $\filterConverges{F}{x}{X}$ iff
+        for every $U\in B$ such that $x\in U$ we have $U\in F$.
+\end{theorem}
+\begin{proof}
+    $\finiteIntersectionsOn{\carrier[X]}{B}$ is an open basis of $X$ by
+        \obv{finite_intersections_of_open_prebasis_form_open_basis}.
+    Show that if $\filterConverges{F}{x}{X}$, then
+        for every $U\in B$ such that $x\in U$ we have $U\in F$.
+    \begin{subproof}
+        Assume $\filterConverges{F}{x}{X}$.
+        Fix $U\in B$.
+        Assume $x\in U$.
+        $B\subseteq\opens[X]$ by \obv{open_prebasis}.
+        Hence $U\in\opens[X]$ by \obv{subseteq}.
+        Thus $U\in\neighbourhoods{x}{X}$ by
+            \obv{open_set_containing_point_is_neighbourhood}.
+        $\neighbourhoods{x}{X}\subseteq F$ by
+            \obv{filter_converges}.
+        Follows by \obv{subseteq}.
+    \end{subproof}
+    Show that if for every $U\in B$ such that $x\in U$ we have
+        $U\in F$, then $\filterConverges{F}{x}{X}$.
+    \begin{subproof}
+        Assume for every $U\in B$ such that $x\in U$ we have
+            $U\in F$.
+        Show that for every
+            $V\in\finiteIntersectionsOn{\carrier[X]}{B}$ such that
+            $x\in V$ we have $V\in F$.
+        \begin{subproof}
+            Fix $V\in\finiteIntersectionsOn{\carrier[X]}{B}$.
+            Assume $x\in V$.
+            Take $D$ such that $D\subseteq B$ and $D$ is finite and
+                $V=\boundedIntersection{\carrier[X]}{D}$ by
+                \obv{finite_intersections_on}.
+            Show that $D\subseteq F$.
+            \begin{subproof}
+                It suffices to show that every element of $D$ is an
+                    element of $F$ by \obv{subseteq}.
+                Fix $U\in D$.
+                $U\in B$ by \obv{subseteq}.
+                $x\in\boundedIntersection{\carrier[X]}{D}$.
+                Hence $x\in U$ by \obv{bounded_intersection_iff}.
+            \end{subproof}
+            $\boundedIntersection{\carrier[X]}{D}\in F$ by
+                \obv{filter_bounded_finite_intersection_in}.
+        \end{subproof}
+        Follows by
+            \obv{filter_converges_iff_open_basis_members}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{generated_filter_converges_iff_refines_neighbourhoods}
+    Let $X$ be a topological space and $x\in\carrier[X]$.
+    Suppose $B$ is a proper filter basis on $\carrier[X]$.
+    Then $\filterConverges{\generatedFilter{\carrier[X]}{B}}{x}{X}$ iff
+        $B$ refines $\neighbourhoods{x}{X}$
+            as filter families on $\carrier[X]$.
+\end{theorem}
+\begin{proof}
+    $\neighbourhoods{x}{X}$ is a filter on $\carrier[X]$
+        by \obv{neighbourhoods_is_filter}.
+    $B$ is a filter basis on $\carrier[X]$ by
+        \obv{proper_filter_basis_is_filter_basis}.
+    Show that if
+        $\filterConverges{\generatedFilter{\carrier[X]}{B}}{x}{X}$, then
+        $B$ refines $\neighbourhoods{x}{X}$
+            as filter families on $\carrier[X]$.
+    \begin{subproof}
+        Assume $\filterConverges{\generatedFilter{\carrier[X]}{B}}{x}{X}$.
+        $B$ is a family of subsets of $\carrier[X]$
+            by \obv{filter_basis}.
+        $\neighbourhoods{x}{X}$ is a family of subsets of $\carrier[X]$
+            by \obv{filter}.
+        Show that for every $N\in\neighbourhoods{x}{X}$ there exists
+            $C\in B$ such that $C\subseteq N$.
+        \begin{subproof}
+            Fix $N\in\neighbourhoods{x}{X}$.
+            $\neighbourhoods{x}{X}
+                \subseteq\generatedFilter{\carrier[X]}{B}$
+                by \obv{filter_converges}.
+            Hence $N\in\generatedFilter{\carrier[X]}{B}$ by \obv{subseteq}.
+            Follows by \auto{generated_filter_iff}.
+        \end{subproof}
+        Follows by \obv{filter_family_refinement}.
+    \end{subproof}
+
+    Show that if $B$ refines $\neighbourhoods{x}{X}$
+        as filter families on $\carrier[X]$, then
+        $\filterConverges{\generatedFilter{\carrier[X]}{B}}{x}{X}$.
+    \begin{subproof}
+        Assume $B$ refines $\neighbourhoods{x}{X}$
+            as filter families on $\carrier[X]$.
+        Show that $\neighbourhoods{x}{X}
+            \subseteq\generatedFilter{\carrier[X]}{B}$.
+        \begin{subproof}
+            It suffices to show that every element of
+                $\neighbourhoods{x}{X}$ is an element of
+                $\generatedFilter{\carrier[X]}{B}$ by \obv{subseteq}.
+            Fix $N\in\neighbourhoods{x}{X}$.
+            Take $C\in B$ such that $C\subseteq N$
+                by \obv{filter_family_refinement}.
+            $N\subseteq\carrier[X]$ by \obv{filter}.
+            Follows by \auto{generated_filter_iff}.
+        \end{subproof}
+        Follows by \obv{filter_converges}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}

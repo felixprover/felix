@@ -1,0 +1,405 @@
+\section{Function powers}
+
+\import{set/function-space.tex}
+\import{set/dependent-operation.tex}
+
+The power of a set indexed by I is the existing function space from I to that
+set. Its coordinate maps and reindexings are specializations of the dependent
+product operations; equal coordinates still retain their distinct indices.
+
+\subsection{Constant families}
+
+\begin{theorem}\label{constant_family_dependent_product}
+    $\dependentProduct{I}{I\times\{A\}}=\funs{I}{A}$.
+\end{theorem}
+\begin{proof}
+    Let $C=I\times\{A\}$.
+    $C\in\funs{I}{\{A\}}$ by \auto{constant_graph_type}.
+    Hence $C$ is a function and $\dom{C}=I$ by
+        \obv{funs_is_function,funs}.
+    Show that every element of $\dependentProduct{I}{C}$ is an element
+        of $\funs{I}{A}$.
+    \begin{subproof}
+        Fix $f\in\dependentProduct{I}{C}$.
+        Hence $f$ is a function and $\dom{f}=I$ by
+            \auto{dependent_product_iff,funs_is_function,funs}.
+        For every $i\in I$ we have $f(i)\in C(i)$ by
+            \obv{dependent_product_coordinate}.
+        Hence for every $i\in I$ we have $f(i)\in A$ by
+            \auto{constant_graph_application}.
+        Thus $f$ is a function to $A$.
+        Follows by \obv{funs_intro}.
+    \end{subproof}
+    Show that every element of $\funs{I}{A}$ is an element of
+        $\dependentProduct{I}{C}$.
+    \begin{subproof}
+        Fix $f\in\funs{I}{A}$.
+        Hence $f$ is a function and $\dom{f}=I$ by
+            \obv{funs_is_function,funs}.
+        Show that for every $i\in I$ we have $f(i)\in C(i)$.
+        \begin{subproof}
+            Fix $i\in I$.
+            $f(i)\in A$ by \obv{funs_type_apply}.
+            $C(i)=A$ by \auto{constant_graph_application}.
+        \end{subproof}
+        Show that $f\in\funs{I}{\unions{\ran{C}}}$.
+        \begin{subproof}
+            Show that for every $i\in\dom{f}$ we have
+                $f(i)\in\unions{\ran{C}}$.
+            \begin{subproof}
+                Fix $i\in\dom{f}$.
+                Hence $i\in I$.
+                $f(i)\in C(i)$.
+                Follows by \obv{indexed_family_member_union}.
+            \end{subproof}
+            Hence $f$ is a function to $\unions{\ran{C}}$.
+            Follows by \obv{funs_intro}.
+        \end{subproof}
+        Follows by \obv{dependent_product}.
+    \end{subproof}
+    Follows by \auto{setext}.
+\end{proof}
+
+\begin{proposition}\label{constant_family_precomposition}
+    Let $e\in\funs{J}{I}$.
+    Then $(I\times\{A\})\circ e=J\times\{A\}$.
+\end{proposition}
+\begin{proof}
+    $I\times\{A\}\in\funs{I}{\{A\}}$ by \obv{constant_graph_type}.
+    Hence $(I\times\{A\})\circ e\in\funs{J}{\{A\}}$ by \obv{funs_circ}.
+    Follows by \auto{singleton_codom_function_space,singleton_iff}.
+\end{proof}
+
+\subsection{Coordinate evaluation}
+
+\begin{definition}\label{function_evaluation}
+    $\functionEvaluation{I}{A}{i}=\dependentProjection{I}{I\times\{A\}}{i}$.
+\end{definition}
+
+\begin{proposition}\label{function_evaluation_type}
+    Let $i\in I$.
+    Then $\functionEvaluation{I}{A}{i}\in\funs{\funs{I}{A}}{A}$.
+\end{proposition}
+\begin{proof}
+    $I\times\{A\}$ is a function on $I$ by
+        \auto{constant_graph_type,funs_is_function,funs}.
+    $\dependentProjection{I}{I\times\{A\}}{i}\in
+        \funs{\dependentProduct{I}{I\times\{A\}}}{(I\times\{A\})(i)}$ by
+        \obv{dependent_projection_type}.
+    $(I\times\{A\})(i)=A$ by \obv{constant_graph_application}.
+    Follows by \obv{function_evaluation,constant_family_dependent_product}.
+\end{proof}
+
+\begin{proposition}\label{function_evaluation_apply}
+    Let $i\in I$ and $x\in\funs{I}{A}$.
+    Then $(\functionEvaluation{I}{A}{i})(x)=x(i)$.
+\end{proposition}
+\begin{proof}
+    $I\times\{A\}$ is a function on $I$ by
+        \auto{constant_graph_type,funs_is_function,funs}.
+    $x\in\dependentProduct{I}{I\times\{A\}}$ by
+        \obv{constant_family_dependent_product}.
+    Follows by \auto{function_evaluation,dependent_projection_apply}.
+\end{proof}
+
+\subsection{Reindexing}
+
+An index map from J to I acts in the opposite direction on function powers,
+by precomposition. It need not be injective or surjective.
+
+\begin{definition}\label{function_reindex}
+    $\functionReindex{I}{J}{A}{e}=\dependentReindex{I}{J}{I\times\{A\}}{e}$.
+\end{definition}
+
+\begin{proposition}\label{function_reindex_type}
+    Let $e\in\funs{J}{I}$.
+    Then $\functionReindex{I}{J}{A}{e}\in\funs{\funs{I}{A}}{\funs{J}{A}}$.
+\end{proposition}
+\begin{proof}
+    $I\times\{A\}$ is a function on $I$ by
+        \auto{constant_graph_type,funs_is_function,funs}.
+    $\dependentReindex{I}{J}{I\times\{A\}}{e}\in
+        \funs{\dependentProduct{I}{I\times\{A\}}}{
+            \dependentProduct{J}{(I\times\{A\})\circ e}}$ by
+        \obv{dependent_reindex_type}.
+    $(I\times\{A\})\circ e=J\times\{A\}$ by
+        \obv{constant_family_precomposition}.
+    Follows by \auto{function_reindex,constant_family_dependent_product}.
+\end{proof}
+
+\begin{proposition}\label{function_reindex_apply}
+    Let $e\in\funs{J}{I}$ and $x\in\funs{I}{A}$.
+    Then $(\functionReindex{I}{J}{A}{e})(x)=x\circ e$.
+\end{proposition}
+\begin{proof}
+    $I\times\{A\}$ is a function on $I$ by
+        \auto{constant_graph_type,funs_is_function,funs}.
+    $x\in\dependentProduct{I}{I\times\{A\}}$ by
+        \obv{constant_family_dependent_product}.
+    Follows by \auto{function_reindex,dependent_reindex_apply}.
+\end{proof}
+
+\begin{theorem}\label{function_reindex_coordinate}
+    Let $e\in\funs{J}{I}$ and $j\in J$.
+    Then $\functionEvaluation{J}{A}{j}\circ\functionReindex{I}{J}{A}{e}
+        =\functionEvaluation{I}{A}{e(j)}$.
+\end{theorem}
+\begin{proof}
+    Let $r=\functionReindex{I}{J}{A}{e}$ and $p=\functionEvaluation{J}{A}{j}$.
+    $r\in\funs{\funs{I}{A}}{\funs{J}{A}}$ by \auto{function_reindex_type}.
+    $p\in\funs{\funs{J}{A}}{A}$ by \auto{function_evaluation_type}.
+    Hence $p\circ r\in\funs{\funs{I}{A}}{A}$ by \obv{funs_circ}.
+    $e(j)\in I$ by \obv{funs_type_apply}.
+    Hence $\functionEvaluation{I}{A}{e(j)}\in\funs{\funs{I}{A}}{A}$ by
+        \obv{function_evaluation_type}.
+    Show that for every $x\in\funs{I}{A}$ we have
+        $(p\circ r)(x)=(\functionEvaluation{I}{A}{e(j)})(x)$.
+    \begin{subproof}
+        Fix $x\in\funs{I}{A}$.
+        $(p\circ r)(x)=p(r(x))$ by
+            \auto{circ_apply,funs_is_function,funs,funs_ran}.
+        $r(x)\in\funs{J}{A}$ by \obv{funs_type_apply}.
+        $p(r(x))=\apply{r(x)}{j}$ by \auto{function_evaluation_apply}.
+        $r(x)=x\circ e$ by \auto{function_reindex_apply}.
+        $(x\circ e)(j)=x(e(j))$ by
+            \auto{circ_apply,funs_is_function,funs,funs_ran}.
+        $(\functionEvaluation{I}{A}{e(j)})(x)=x(e(j))$ by
+            \obv{function_evaluation_apply}.
+    \end{subproof}
+    Follows by \auto{typed_functions_equal_from_agreement}.
+\end{proof}
+
+\begin{theorem}\label{function_reindex_identity}
+    $\functionReindex{I}{I}{A}{\identity{I}}=\identity{\funs{I}{A}}$.
+\end{theorem}
+\begin{proof}
+    $\identity{I}\in\funs{I}{I}$ by \obv{id_elem_funs}.
+    $\functionReindex{I}{I}{A}{\identity{I}}\in\funs{\funs{I}{A}}{\funs{I}{A}}$
+        by \obv{function_reindex_type}.
+    $\identity{\funs{I}{A}}\in\funs{\funs{I}{A}}{\funs{I}{A}}$ by
+        \obv{id_elem_funs}.
+    For every $x\in\funs{I}{A}$ we have
+        $(\functionReindex{I}{I}{A}{\identity{I}})(x)
+            =(\identity{\funs{I}{A}})(x)$ by
+        \auto{function_reindex_apply,funs_circ_identity_right,id_apply}.
+    Follows by \auto{typed_functions_equal_from_agreement}.
+\end{proof}
+
+\begin{theorem}\label{function_reindex_composition}
+    Let $e\in\funs{J}{I}$ and $d\in\funs{K}{J}$.
+    Then $\functionReindex{J}{K}{A}{d}\circ\functionReindex{I}{J}{A}{e}
+        =\functionReindex{I}{K}{A}{e\circ d}$.
+\end{theorem}
+\begin{proof}
+    Let $r=\functionReindex{I}{J}{A}{e}$ and $s=\functionReindex{J}{K}{A}{d}$.
+    $r\in\funs{\funs{I}{A}}{\funs{J}{A}}$ and
+        $s\in\funs{\funs{J}{A}}{\funs{K}{A}}$ by \auto{function_reindex_type}.
+    Hence $s\circ r\in\funs{\funs{I}{A}}{\funs{K}{A}}$ by \obv{funs_circ}.
+    $e\circ d\in\funs{K}{I}$ by \obv{funs_circ}.
+    Hence $\functionReindex{I}{K}{A}{e\circ d}\in
+        \funs{\funs{I}{A}}{\funs{K}{A}}$ by \obv{function_reindex_type}.
+    Show that for every $x\in\funs{I}{A}$ we have
+        $(s\circ r)(x)=(\functionReindex{I}{K}{A}{e\circ d})(x)$.
+    \begin{subproof}
+        Fix $x\in\funs{I}{A}$.
+        $(s\circ r)(x)=s(r(x))$ by
+            \auto{circ_apply,funs_is_function,funs,funs_ran}.
+        $r(x)\in\funs{J}{A}$ by \obv{funs_type_apply}.
+        $s(r(x))=r(x)\circ d$ and $r(x)=x\circ e$ by
+            \auto{function_reindex_apply}.
+        $(\functionReindex{I}{K}{A}{e\circ d})(x)=x\circ(e\circ d)$ by
+            \obv{function_reindex_apply}.
+        Follows by \auto{circ_assoc}.
+    \end{subproof}
+    Follows by \auto{typed_functions_equal_from_agreement}.
+\end{proof}
+
+\begin{theorem}\label{function_reindex_bijection}
+    Let $e\in\bijections{J}{I}$.
+    Then $\functionReindex{I}{J}{A}{e}\in\bijections{\funs{I}{A}}{\funs{J}{A}}$.
+\end{theorem}
+\begin{proof}
+    $I\times\{A\}$ is a function on $I$ by
+        \auto{constant_graph_type,funs_is_function,funs}.
+    $e\in\funs{J}{I}$ by \obv{bijections_to_funs}.
+    $(I\times\{A\})\circ e=J\times\{A\}$ by
+        \obv{constant_family_precomposition}.
+    $\dependentReindex{I}{J}{I\times\{A\}}{e}\in
+        \bijections{\dependentProduct{I}{I\times\{A\}}}{
+            \dependentProduct{J}{(I\times\{A\})\circ e}}$ by
+        \obv{dependent_reindex_bijection}.
+    Follows by \auto{function_reindex,constant_family_dependent_product}.
+\end{proof}
+
+\begin{theorem}\label{function_reindex_converse}
+    Let $e\in\bijections{J}{I}$.
+    Then $\converse{\functionReindex{I}{J}{A}{e}}
+        =\functionReindex{J}{I}{A}{\converse{e}}$.
+\end{theorem}
+\begin{proof}
+    Let $r=\functionReindex{I}{J}{A}{e}$ and
+        $s=\functionReindex{J}{I}{A}{\converse{e}}$.
+    $e\in\funs{J}{I}$ and $\converse{e}\in\funs{I}{J}$ by
+        \obv{bijections_to_funs,bijection_converse_is_bijection}.
+    $r\in\bijections{\funs{I}{A}}{\funs{J}{A}}$ by
+        \auto{function_reindex_bijection}.
+    $s\in\funs{\funs{J}{A}}{\funs{I}{A}}$ by
+        \auto{function_reindex_type}.
+    $e\circ\converse{e}=\identity{I}$ by \obv{bijection_circ_converse}.
+    Hence $s\circ r=\identity{\funs{I}{A}}$ by
+        \auto{function_reindex_composition,function_reindex_identity}.
+    $r\circ\converse{r}=\identity{\funs{J}{A}}$ by
+        \obv{bijection_circ_converse}.
+    $\converse{r}\in\funs{\funs{J}{A}}{\funs{I}{A}}$ by
+        \obv{bijection_converse_is_bijection,bijections_to_funs}.
+    $(s\circ r)\circ\converse{r}=\converse{r}$ by
+        \auto{funs_identity_circ_left}.
+    $s\circ(r\circ\converse{r})=s$ by \auto{funs_circ_identity_right}.
+    Follows by \auto{circ_assoc}.
+\end{proof}
+
+\subsection{Constant coordinates}
+
+The diagonal sends an element to the constant function with that value. It is
+the product mediator of the constant family of identity maps, also when there
+are no coordinates.
+
+\begin{definition}\label{function_diagonal}
+    $\functionDiagonal{I}{A}
+        =\dependentMediator{A}{I}{I\times\{A\}}{I\times\{\identity{A}\}}$.
+\end{definition}
+
+\begin{proposition}\label{function_diagonal_type}
+    $\functionDiagonal{I}{A}\in\funs{A}{\funs{I}{A}}$.
+\end{proposition}
+\begin{proof}
+    $I\times\{A\}$ is a function on $I$ and
+        $I\times\{\identity{A}\}$ is a function on $I$ by
+        \auto{constant_graph_type,funs_is_function,funs}.
+    For every $i\in I$ we have
+        $(I\times\{\identity{A}\})(i)\in\funs{A}{(I\times\{A\})(i)}$ by
+        \auto{constant_graph_application,id_elem_funs}.
+    $\dependentMediator{A}{I}{I\times\{A\}}{I\times\{\identity{A}\}}\in
+        \funs{A}{\dependentProduct{I}{I\times\{A\}}}$ by
+        \obv{dependent_mediator_type}.
+    Follows by \auto{function_diagonal,constant_family_dependent_product}.
+\end{proof}
+
+\begin{proposition}\label{function_diagonal_coordinate}
+    Let $a\in A$ and $i\in I$.
+    Then $\apply{\apply{\functionDiagonal{I}{A}}{a}}{i}=a$.
+\end{proposition}
+\begin{proof}
+    $I\times\{A\}$ is a function on $I$ and
+        $I\times\{\identity{A}\}$ is a function on $I$ by
+        \auto{constant_graph_type,funs_is_function,funs}.
+    For every $j\in I$ we have
+        $(I\times\{\identity{A}\})(j)\in\funs{A}{(I\times\{A\})(j)}$ by
+        \auto{constant_graph_application,id_elem_funs}.
+    Follows by \auto{function_diagonal,dependent_mediator_coordinate,
+        constant_graph_application,id_apply}.
+\end{proof}
+
+\begin{proposition}\label{function_diagonal_apply}
+    Let $a\in A$.
+    Then $(\functionDiagonal{I}{A})(a)=I\times\{a\}$.
+\end{proposition}
+\begin{proof}
+    $(\functionDiagonal{I}{A})(a)\in\funs{I}{A}$ by
+        \auto{function_diagonal_type,funs_type_apply}.
+    $I\times\{a\}\in\funs{I}{\{a\}}$ by \obv{constant_graph_type}.
+    For every $i\in I$ we have
+        $\apply{\apply{\functionDiagonal{I}{A}}{a}}{i}=(I\times\{a\})(i)$ by
+        \auto{function_diagonal_coordinate,constant_graph_application}.
+    Follows by \auto{typed_functions_equal_from_agreement}.
+\end{proof}
+
+\begin{theorem}\label{function_evaluation_diagonal}
+    Let $i\in I$.
+    Then $\functionEvaluation{I}{A}{i}\circ\functionDiagonal{I}{A}=\identity{A}$.
+\end{theorem}
+\begin{proof}
+    Let $d=\functionDiagonal{I}{A}$ and $p=\functionEvaluation{I}{A}{i}$.
+    $d\in\funs{A}{\funs{I}{A}}$ by \auto{function_diagonal_type}.
+    $p\in\funs{\funs{I}{A}}{A}$ by \auto{function_evaluation_type}.
+    Hence $p\circ d\in\funs{A}{A}$ by \obv{funs_circ}.
+    $\identity{A}\in\funs{A}{A}$ by \obv{id_elem_funs}.
+    Show that for every $a\in A$ we have $(p\circ d)(a)=(\identity{A})(a)$.
+    \begin{subproof}
+        Fix $a\in A$.
+        $(p\circ d)(a)=p(d(a))$ by
+            \auto{circ_apply,funs_is_function,funs,funs_ran}.
+        $d(a)\in\funs{I}{A}$ by \obv{funs_type_apply}.
+        $p(d(a))=\apply{d(a)}{i}$ by \auto{function_evaluation_apply}.
+        $\apply{d(a)}{i}=a$ by \auto{function_diagonal_coordinate}.
+        $(\identity{A})(a)=a$ by \obv{id_apply}.
+    \end{subproof}
+    Follows by \auto{typed_functions_equal_from_agreement}.
+\end{proof}
+
+\begin{proposition}\label{function_diagonal_singleton}
+    Let $x\in\funs{\{i\}}{A}$.
+    Then $(\functionDiagonal{\{i\}}{A})(x(i))=x$.
+\end{proposition}
+\begin{proof}
+    $i\in\{i\}$ by \obv{singleton_intro}.
+    Hence $x(i)\in A$ by \auto{funs_type_apply}.
+    $(\functionDiagonal{\{i\}}{A})(x(i))\in\funs{\{i\}}{A}$ by
+        \auto{function_diagonal_type,funs_type_apply}.
+    For every $j\in\{i\}$ we have
+        $\apply{\apply{\functionDiagonal{\{i\}}{A}}{x(i)}}{j}=x(j)$ by
+        \auto{function_diagonal_coordinate,singleton_iff}.
+    Follows by \auto{typed_functions_equal_from_agreement}.
+\end{proof}
+
+\begin{theorem}\label{singleton_evaluation_bijection}
+    $\functionEvaluation{\{i\}}{A}{i}\in\bijections{\funs{\{i\}}{A}}{A}$.
+\end{theorem}
+\begin{proof}
+    Let $p=\functionEvaluation{\{i\}}{A}{i}$ and $d=\functionDiagonal{\{i\}}{A}$.
+    $i\in\{i\}$ by \obv{singleton_intro}.
+    $p\in\funs{\funs{\{i\}}{A}}{A}$ by \auto{function_evaluation_type}.
+    $d\in\funs{A}{\funs{\{i\}}{A}}$ by \auto{function_diagonal_type}.
+    For every $x\in\funs{\{i\}}{A}$ we have $d(p(x))=x$ by
+        \auto{function_evaluation_apply,function_diagonal_singleton}.
+    Hence $d$ is a left inverse of $p$ by \obv{leftinverse_from_to_iff}.
+    Hence $p$ is an injection by \obv{leftinverse_implies_injection}.
+    For every $a\in A$ we have $p(d(a))=a$ by
+        \auto{function_evaluation_apply,function_diagonal_coordinate,funs_type_apply}.
+    Hence $d$ is a right inverse of $p$ by \obv{rightinverse_from_to_iff}.
+    Hence $p\in\surj{\funs{\{i\}}{A}}{A}$ by \obv{rightinverse_implies_surjection}.
+    Follows by \obv{bijections}.
+\end{proof}
+
+\begin{theorem}\label{singleton_evaluation_converse}
+    $\converse{\functionEvaluation{\{i\}}{A}{i}}=\functionDiagonal{\{i\}}{A}$.
+\end{theorem}
+\begin{proof}
+    Let $p=\functionEvaluation{\{i\}}{A}{i}$ and $d=\functionDiagonal{\{i\}}{A}$.
+    $i\in\{i\}$ by \obv{singleton_intro}.
+    $p\in\bijections{\funs{\{i\}}{A}}{A}$ by \auto{singleton_evaluation_bijection}.
+    Hence $p$ is an injection by \auto{bijections,surj,funs_is_function}.
+    Hence $\converse{p}$ is a left inverse of $p$ by
+        \obv{injective_converse_is_leftinverse}.
+    $\converse{p}\in\funs{A}{\funs{\{i\}}{A}}$ by
+        \obv{bijection_converse_is_bijection,bijections_to_funs}.
+    $d\in\funs{A}{\funs{\{i\}}{A}}$ by \auto{function_diagonal_type}.
+    Show that for every $a\in A$ we have $(\converse{p})(a)=d(a)$.
+    \begin{subproof}
+        Fix $a\in A$.
+        $d(a)\in\funs{\{i\}}{A}$ by \obv{funs_type_apply}.
+        $p(d(a))=a$ by
+            \auto{function_evaluation_apply,function_diagonal_coordinate}.
+        Follows by \auto{leftinverse,bijections_dom}.
+    \end{subproof}
+    Follows by \auto{typed_functions_equal_from_agreement}.
+\end{proof}
+
+\begin{proposition}\label{function_diagonal_empty}
+    $\functionDiagonal{\emptyset}{A}=A\times\{\emptyset\}$.
+\end{proposition}
+\begin{proof}
+    $\functionDiagonal{\emptyset}{A}\in\funs{A}{\{\emptyset\}}$ by
+        \auto{function_diagonal_type,empty_domain_function_space}.
+    Follows by \auto{singleton_codom_function_space,singleton_iff}.
+\end{proof}

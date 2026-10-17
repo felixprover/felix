@@ -1,0 +1,338 @@
+\import{relation/transitive-closure.tex}
+
+\section{Joinability and confluence}
+
+\begin{definition}\label{joinability_relation}
+    Let $R$ be a binary relation on $X$.
+    $\joinabilityRelation{X}{R}=
+        \converse{\reflexiveTransitiveClosure{X}{R}}
+            \circ\reflexiveTransitiveClosure{X}{R}$.
+\end{definition}
+
+\begin{classification}\label{joinability_relation_type}
+    Let $R$ be a binary relation on $X$.
+    Then $\joinabilityRelation{X}{R}$ is a binary relation on $X$.
+\end{classification}
+\begin{proof}
+    $\reflexiveTransitiveClosure{X}{R}$ is a binary relation on $X$
+        by notion.
+    $\converse{\reflexiveTransitiveClosure{X}{R}}$ is a binary relation on
+        $X$ by notion.
+    $\converse{\reflexiveTransitiveClosure{X}{R}}
+        \circ\reflexiveTransitiveClosure{X}{R}$ is a binary relation on $X$
+        by notion.
+    Follows by definition.
+\end{proof}
+
+\begin{definition}\label{joinable_on}
+    Let $R$ be a binary relation on $X$.
+    Let $b,c\in X$.
+    $b$ is joinable with $c$ in $X$ with respect to $R$ iff
+        $b\mathrel{\joinabilityRelation{X}{R}}c$.
+\end{definition}
+
+\begin{proposition}\label{joinability_relation_iff}
+    Let $R$ be a binary relation on $X$.
+    Let $b,c\in X$.
+    Then $b$ is joinable with $c$ in $X$ with respect to $R$ iff
+        there exists $d\in X$ such that
+            $b\mathrel{\reflexiveTransitiveClosure{X}{R}}d$ and
+            $c\mathrel{\reflexiveTransitiveClosure{X}{R}}d$.
+\end{proposition}
+\begin{proof}
+    Let $T=\reflexiveTransitiveClosure{X}{R}$.
+    $T$ is a binary relation on $X$ by notion.
+    $T\subseteq X\times X$ by definition.
+    Show that if $b$ is joinable with $c$ in $X$ with respect to $R$, then
+        there exists $d\in X$ such that $b\mathrel{T}d$ and $c\mathrel{T}d$.
+    \begin{subproof}
+        Suppose $b$ is joinable with $c$ in $X$ with respect to $R$.
+        Then $b\mathrel{(\converse{T}\circ T)}c$
+            by \auto{joinable_on,joinability_relation}.
+        Take $d$ such that $b\mathrel{T}d$ and
+            $d\mathrel{\converse{T}}c$ by \obv{circ_iff}.
+        $c\mathrel{T}d$ by \obv{converse_iff}.
+        $(b,d)\in X\times X$ by \obv{subseteq}.
+        Hence $d\in X$ by \obv{times_tuple_elim}.
+    \end{subproof}
+    Show that if there exists $d\in X$ such that $b\mathrel{T}d$ and
+        $c\mathrel{T}d$, then
+        $b$ is joinable with $c$ in $X$ with respect to $R$.
+    \begin{subproof}
+        Suppose there exists $d\in X$ such that $b\mathrel{T}d$ and
+            $c\mathrel{T}d$.
+        Take $d\in X$ such that $b\mathrel{T}d$ and $c\mathrel{T}d$.
+        $d\mathrel{\converse{T}}c$ by \obv{converse_iff}.
+        Hence $b\mathrel{(\converse{T}\circ T)}c$ by \auto{circ_iff}.
+        Follows by \obv{joinable_on,joinability_relation}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{definition}\label{confluent_at_on}
+    Let $R$ be a binary relation on $X$.
+    Let $a\in X$.
+    $R$ is confluent at $a$ on $X$ iff for all $b,c\in X$ such that
+        $a\mathrel{\reflexiveTransitiveClosure{X}{R}}b$ and
+        $a\mathrel{\reflexiveTransitiveClosure{X}{R}}c$
+        we have $b$ is joinable with $c$ in $X$ with respect to $R$.
+\end{definition}
+
+\begin{definition}\label{locally_confluent_at_on}
+    Let $R$ be a binary relation on $X$.
+    Let $a\in X$.
+    $R$ is locally confluent at $a$ on $X$ iff for all $b,c\in X$ such that
+        $a\mathrel{R}b$ and $a\mathrel{R}c$
+        we have $b$ is joinable with $c$ in $X$ with respect to $R$.
+\end{definition}
+
+\begin{definition}\label{confluent_on}
+    Let $R$ be a binary relation on $X$.
+    $R$ is confluent on $X$ iff
+        for every $a\in X$ we have $R$ is confluent at $a$ on $X$.
+\end{definition}
+
+\begin{definition}\label{locally_confluent_on}
+    Let $R$ be a binary relation on $X$.
+    $R$ is locally confluent on $X$ iff
+        for every $a\in X$ we have $R$ is locally confluent at $a$ on $X$.
+\end{definition}
+
+\begin{proposition}\label{joinability_relation_is_reflexive}
+    Let $R$ be a binary relation on $X$.
+    Then $\joinabilityRelation{X}{R}$ is reflexive on $X$.
+\end{proposition}
+\begin{proof}
+    $\reflexiveTransitiveClosure{X}{R}$ is reflexive on $X$
+        by \obv{reflexive_transitive_closure_is_reflexive}.
+    Show that for every $b\in X$ we have
+        $b\mathrel{\joinabilityRelation{X}{R}}b$.
+    \begin{subproof}
+        Fix $b\in X$.
+        $b\mathrel{\reflexiveTransitiveClosure{X}{R}}b$
+            by \obv{reflexive_on}.
+        $b\mathrel{\converse{\reflexiveTransitiveClosure{X}{R}}}b$
+            by \obv{converse_iff}.
+        $b\mathrel{(\converse{\reflexiveTransitiveClosure{X}{R}}\circ
+            \reflexiveTransitiveClosure{X}{R})}b$ by \auto{circ_iff}.
+        Follows by \obv{joinability_relation}.
+    \end{subproof}
+    Follows by \obv{reflexive_on}.
+\end{proof}
+
+\begin{proposition}\label{joinability_relation_is_symmetric}
+    Let $R$ be a binary relation on $X$.
+    Then $\joinabilityRelation{X}{R}$ is symmetric.
+\end{proposition}
+\begin{proof}
+    $\joinabilityRelation{X}{R}$ is a binary relation on $X$ by notion.
+    $\joinabilityRelation{X}{R}\subseteq X\times X$ by definition.
+    Show that for all $b,c$ such that
+        $b\mathrel{\joinabilityRelation{X}{R}}c$ we have
+        $c\mathrel{\joinabilityRelation{X}{R}}b$.
+    \begin{subproof}
+        Fix $b,c$.
+        Suppose $b\mathrel{\joinabilityRelation{X}{R}}c$.
+        $(b,c)\in X\times X$ by \obv{subseteq}.
+        Hence $b,c\in X$ by \obv{times_tuple_elim}.
+        $b$ is joinable with $c$ in $X$ with respect to $R$
+            by \obv{joinable_on}.
+        Take $d\in X$ such that
+            $b\mathrel{\reflexiveTransitiveClosure{X}{R}}d$ and
+            $c\mathrel{\reflexiveTransitiveClosure{X}{R}}d$
+            by \obv{joinability_relation_iff}.
+        $d\mathrel{\converse{\reflexiveTransitiveClosure{X}{R}}}b$
+            by \obv{converse_iff}.
+        $c\mathrel{(\converse{\reflexiveTransitiveClosure{X}{R}}\circ
+            \reflexiveTransitiveClosure{X}{R})}b$ by \auto{circ_iff}.
+        Follows by \obv{joinability_relation}.
+    \end{subproof}
+    Follows by \auto{symmetric}.
+\end{proof}
+
+\begin{corollary}\label{joinable_reflexive}
+    Let $R$ be a binary relation on $X$.
+    Let $b\in X$.
+    Then $b$ is joinable with $b$ in $X$ with respect to $R$.
+\end{corollary}
+\begin{proof}
+    $\joinabilityRelation{X}{R}$ is reflexive on $X$
+        by \obv{joinability_relation_is_reflexive}.
+    Follows by \obv{joinable_on,reflexive_on}.
+\end{proof}
+
+\begin{corollary}\label{joinable_symmetric}
+    Let $R$ be a binary relation on $X$.
+    Let $b,c\in X$.
+    Suppose $b$ is joinable with $c$ in $X$ with respect to $R$.
+    Then $c$ is joinable with $b$ in $X$ with respect to $R$.
+\end{corollary}
+\begin{proof}
+    $\joinabilityRelation{X}{R}$ is symmetric
+        by \obv{joinability_relation_is_symmetric}.
+    Follows by \auto{joinable_on,symmetric}.
+\end{proof}
+
+\begin{proposition}\label{confluent_at_implies_locally_confluent_at}
+    Let $R$ be a binary relation on $X$.
+    Let $a\in X$.
+    Suppose $R$ is confluent at $a$ on $X$.
+    Then $R$ is locally confluent at $a$ on $X$.
+\end{proposition}
+\begin{proof}
+    $R\subseteq\reflexiveTransitiveClosure{X}{R}$
+        by \obv{reflexive_transitive_closure_contains}.
+    Follows by \obv{confluent_at_on,locally_confluent_at_on,subseteq}.
+\end{proof}
+
+\begin{proposition}\label{confluent_on_implies_locally_confluent_on}
+    Let $R$ be a binary relation on $X$.
+    Suppose $R$ is confluent on $X$.
+    Then $R$ is locally confluent on $X$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{confluent_on,locally_confluent_on,
+        confluent_at_implies_locally_confluent_at}.
+\end{proof}
+
+\begin{proposition}\label{confluent_on_iff_peak_relation}
+    Let $R$ be a binary relation on $X$.
+    Then $R$ is confluent on $X$ iff
+        $\reflexiveTransitiveClosure{X}{R}\circ
+            \converse{\reflexiveTransitiveClosure{X}{R}}
+        \subseteq\joinabilityRelation{X}{R}$.
+\end{proposition}
+\begin{proof}
+    Let $T=\reflexiveTransitiveClosure{X}{R}$.
+    Let $J=\joinabilityRelation{X}{R}$.
+    $T$ is a binary relation on $X$ by notion.
+    $\converse{T}$ is a binary relation on $X$ by notion.
+    $T\circ\converse{T}$ is a binary relation on $X$ by notion.
+    $T\circ\converse{T}$ is a relation by notion.
+    $J$ is a binary relation on $X$ by notion.
+
+    Show that if $R$ is confluent on $X$, then
+        $T\circ\converse{T}\subseteq J$.
+    \begin{subproof}
+        Suppose $R$ is confluent on $X$.
+        Show that for all $b,c$ such that
+            $b\mathrel{(T\circ\converse{T})}c$ we have $b\mathrel{J}c$.
+        \begin{subproof}
+            Fix $b,c$.
+            Suppose $b\mathrel{(T\circ\converse{T})}c$.
+            Take $a$ such that $b\mathrel{\converse{T}}a$ and
+                $a\mathrel{T}c$ by \obv{circ_iff}.
+            $a\mathrel{T}b$ by \obv{converse_iff}.
+            $T\subseteq X\times X$ by definition.
+            $(a,b),(a,c)\in X\times X$ by \obv{subseteq}.
+            Hence $a,b,c\in X$ by \obv{times_tuple_elim}.
+            $R$ is confluent at $a$ on $X$ by \obv{confluent_on}.
+            Thus $b$ is joinable with $c$ in $X$ with respect to $R$
+                by \obv{confluent_at_on}.
+            Follows by \obv{joinable_on}.
+        \end{subproof}
+        Show that for every $w\in T\circ\converse{T}$ we have $w\in J$.
+        \begin{subproof}
+            Fix $w\in T\circ\converse{T}$.
+            Take $b,c$ such that $(b,c)=w$ by \auto{relation}.
+            $b\mathrel{(T\circ\converse{T})}c$.
+            Hence $b\mathrel{J}c$.
+        \end{subproof}
+        Follows by \obv{subseteq}.
+    \end{subproof}
+
+    Show that if $T\circ\converse{T}\subseteq J$, then
+        $R$ is confluent on $X$.
+    \begin{subproof}
+        Suppose $T\circ\converse{T}\subseteq J$.
+        Show that for every $a\in X$ we have $R$ is confluent at $a$ on $X$.
+        \begin{subproof}
+            Fix $a\in X$.
+            Show that for all $b,c\in X$ such that
+                $a\mathrel{T}b$ and $a\mathrel{T}c$ we have
+                $b$ is joinable with $c$ in $X$ with respect to $R$.
+            \begin{subproof}
+                Fix $b,c\in X$.
+                Suppose $a\mathrel{T}b$ and $a\mathrel{T}c$.
+                $b\mathrel{\converse{T}}a$ by \obv{converse_iff}.
+                Hence $b\mathrel{(T\circ\converse{T})}c$
+                    by \auto{circ_iff}.
+                Thus $b\mathrel{J}c$ by \obv{subseteq}.
+                Follows by \obv{joinable_on}.
+            \end{subproof}
+            Follows by \obv{confluent_at_on}.
+        \end{subproof}
+        Follows by \obv{confluent_on}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{proposition}\label{locally_confluent_on_iff_peak_relation}
+    Let $R$ be a binary relation on $X$.
+    Then $R$ is locally confluent on $X$ iff
+        $R\circ\converse{R}\subseteq\joinabilityRelation{X}{R}$.
+\end{proposition}
+\begin{proof}
+    $R\circ\converse{R}$ is a binary relation on $X$ by notion.
+    $R\circ\converse{R}$ is a relation by notion.
+    $\joinabilityRelation{X}{R}$ is a binary relation on $X$ by notion.
+    Show that if $R$ is locally confluent on $X$, then
+        $R\circ\converse{R}\subseteq\joinabilityRelation{X}{R}$.
+    \begin{subproof}
+        Suppose $R$ is locally confluent on $X$.
+        Show that for all $b,c$ such that
+            $b\mathrel{(R\circ\converse{R})}c$ we have
+            $b\mathrel{\joinabilityRelation{X}{R}}c$.
+        \begin{subproof}
+            Fix $b,c$.
+            Suppose $b\mathrel{(R\circ\converse{R})}c$.
+            Take $a$ such that $b\mathrel{\converse{R}}a$ and
+                $a\mathrel{R}c$ by \obv{circ_iff}.
+            $a\mathrel{R}b$ by \obv{converse_iff}.
+            $R\subseteq X\times X$ by definition.
+            $(a,b),(a,c)\in X\times X$ by \obv{subseteq}.
+            Hence $a,b,c\in X$ by \obv{times_tuple_elim}.
+            $R$ is locally confluent at $a$ on $X$
+                by \obv{locally_confluent_on}.
+            Thus $b$ is joinable with $c$ in $X$ with respect to $R$
+                by \obv{locally_confluent_at_on}.
+            Follows by \obv{joinable_on}.
+        \end{subproof}
+        Show that for every $w\in R\circ\converse{R}$ we have
+            $w\in\joinabilityRelation{X}{R}$.
+        \begin{subproof}
+            Fix $w\in R\circ\converse{R}$.
+            Take $b,c$ such that $(b,c)=w$ by \auto{relation}.
+            $b\mathrel{(R\circ\converse{R})}c$.
+            Hence $b\mathrel{\joinabilityRelation{X}{R}}c$.
+        \end{subproof}
+        Follows by \obv{subseteq}.
+    \end{subproof}
+    Show that if
+        $R\circ\converse{R}\subseteq\joinabilityRelation{X}{R}$, then
+        $R$ is locally confluent on $X$.
+    \begin{subproof}
+        Suppose $R\circ\converse{R}\subseteq\joinabilityRelation{X}{R}$.
+        Show that for every $a\in X$ we have
+            $R$ is locally confluent at $a$ on $X$.
+        \begin{subproof}
+            Fix $a\in X$.
+            Show that for all $b,c\in X$ such that
+                $a\mathrel{R}b$ and $a\mathrel{R}c$ we have
+                $b$ is joinable with $c$ in $X$ with respect to $R$.
+            \begin{subproof}
+                Fix $b,c\in X$.
+                Suppose $a\mathrel{R}b$ and $a\mathrel{R}c$.
+                $b\mathrel{\converse{R}}a$ by \obv{converse_iff}.
+                Hence $b\mathrel{(R\circ\converse{R})}c$
+                    by \auto{circ_iff}.
+                Thus $b\mathrel{\joinabilityRelation{X}{R}}c$
+                    by \obv{subseteq}.
+                Follows by \obv{joinable_on}.
+            \end{subproof}
+            Follows by \obv{locally_confluent_at_on}.
+        \end{subproof}
+        Follows by \obv{locally_confluent_on}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}

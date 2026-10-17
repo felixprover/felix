@@ -1,0 +1,466 @@
+\section{The Birkhoff map}
+
+\import{order/substructure.tex}
+\import{order/downset-lattice.tex}
+\import{order/irreducible.tex}
+\import{order/lattice-morphism.tex}
+\import{set/logical-graph.tex}
+
+This module develops the forward Birkhoff map without a finiteness
+hypothesis.  Distributivity enters only when union is identified with the
+image of a binary join.
+
+\begin{definition}\label{join_irreducible_poset}
+    Let $L$ be a bounded lattice.
+    $\joinIrreduciblePoset{L}
+        =\orderedSubset{L}{\joinIrreducibles{L}}$.
+\end{definition}
+
+\begin{theorem}\label{join_irreducible_poset_is_exact_ordered_set}
+    Let $L$ be a bounded lattice.
+    Then $\joinIrreduciblePoset{L}$ is an exact ordered set.
+\end{theorem}
+\begin{proof}
+    Hence $L$ is an ordered set by \obv{lattice_is_ordered_set}.
+    Follows by
+        \auto{join_irreducible_poset,
+            ordered_subset_is_exact_ordered_set}.
+\end{proof}
+
+\begin{classification}\label{join_irreducible_poset_is_ordered_set}
+    Let $L$ be a bounded lattice.
+    Then $\joinIrreduciblePoset{L}$ is an ordered set.
+\end{classification}
+\begin{proof}
+    Follows by \obv{join_irreducible_poset_is_exact_ordered_set}.
+\end{proof}
+
+\begin{proposition}\label{join_irreducible_poset_carrier}
+    Let $L$ be a bounded lattice.
+    Then $\carrier[\joinIrreduciblePoset{L}]=\joinIrreducibles{L}$.
+\end{proposition}
+\begin{proof}
+    $\joinIrreducibles{L}\subseteq\carrier[L]$ by
+        \obv{join_irreducibles_subseteq_carrier}.
+    Follows by
+        \auto{join_irreducible_poset,ordered_subset_carrier_of_subset}.
+\end{proof}
+
+\begin{proposition}\label{join_irreducible_poset_order}
+    Let $L$ be a bounded lattice.
+    Then $\leq[\joinIrreduciblePoset{L}]
+        =\relationTrace{\leq[L]}{\joinIrreducibles{L}}$.
+\end{proposition}
+\begin{proof}
+    $\joinIrreducibles{L}\subseteq\carrier[L]$ by
+        \obv{join_irreducibles_subseteq_carrier}.
+    Hence $\joinIrreducibles{L}\inter\carrier[L]
+        =\joinIrreducibles{L}$ by
+        \obv{inter_absorb_supseteq_right}.
+    Follows by
+        \auto{join_irreducible_poset,ordered_subset_order}.
+\end{proof}
+
+\begin{proposition}\label{join_irreducible_poset_order_iff}
+    Let $L$ be a bounded lattice.
+    Let $j,k\in\joinIrreducibles{L}$.
+    Then $j\mathrel{\leq[\joinIrreduciblePoset{L}]}k$ iff
+        $j\mathrel{\leq[L]}k$.
+\end{proposition}
+\begin{proof}
+    $j,k\in\carrier[L]$ by
+        \obv{join_irreducibles_subseteq_carrier,elem_subseteq}.
+    Follows by
+        \auto{join_irreducible_poset_order,relation_trace_iff}.
+\end{proof}
+
+\begin{proposition}\label{join_irreducibles_below_is_downset}
+    Let $L$ be a bounded lattice.
+    Let $x\in\carrier[L]$.
+    Then $\joinIrreduciblesBelow{L}{x}$ is a downset in
+        $\joinIrreduciblePoset{L}$.
+\end{proposition}
+\begin{proof}
+    Let $P=\joinIrreduciblePoset{L}$.
+    $P$ is an ordered set by
+        \obv{join_irreducible_poset_is_ordered_set}.
+    Hence $P$ is a quasiordered set by \obv{orderedset}.
+    $\carrier[P]=\joinIrreducibles{L}$ by
+        \auto{join_irreducible_poset_carrier}.
+    $\joinIrreduciblesBelow{L}{x}\subseteq\joinIrreducibles{L}$ by
+        \obv{join_irreducibles_below_subseteq_join_irreducibles}.
+    Hence $\joinIrreduciblesBelow{L}{x}\subseteq\carrier[P]$.
+    $\leq[L]$ is transitive by
+        \obv{ordered_set_order_transitive}.
+    Show for all $j,k$ such that
+        $j\in\joinIrreduciblesBelow{L}{x}$ and
+        $k\in\carrier[P]$ and
+        $k\mathrel{\leq[P]}j$ we have
+        $k\in\joinIrreduciblesBelow{L}{x}$.
+    \begin{subproof}
+        Fix $j,k$.
+        Assume $j\in\joinIrreduciblesBelow{L}{x}$ and
+            $k\in\carrier[P]$ and $k\mathrel{\leq[P]}j$.
+        $j$ is join-irreducible in $L$ and
+            $j\mathrel{\leq[L]}x$ by
+            \obv{join_irreducibles_below_iff}.
+        $j\in\joinIrreducibles{L}$ by
+            \obv{join_irreducibles_iff}.
+        $k\in\joinIrreducibles{L}$.
+        Hence $k$ is join-irreducible in $L$ by
+            \obv{join_irreducibles_iff}.
+        $k\mathrel{\leq[L]}j$ by
+            \auto{join_irreducible_poset_order_iff}.
+        Hence $k\mathrel{\leq[L]}x$ by \obv{transitive}.
+        Follows by \obv{join_irreducibles_below_iff}.
+    \end{subproof}
+    Follows by \obv{downset}.
+\end{proof}
+
+\begin{definition}\label{birkhoff_map}
+    Let $L$ be a bounded lattice.
+    $\birkhoffMap{L}
+        =\Apply{\graphOnDomainOp}
+            {\carrier[L],
+             \fun{x:\Set}{\joinIrreduciblesBelow{L}{x}}}$.
+\end{definition}
+
+\begin{theorem}\label{birkhoff_map_type}
+    Let $L$ be a bounded lattice.
+    Then $\birkhoffMap{L}\in
+        \funs{\carrier[L]}
+            {\downsets{\joinIrreduciblePoset{L}}}$.
+\end{theorem}
+\begin{proof}
+    $\joinIrreduciblePoset{L}$ is an ordered set by
+        \obv{join_irreducible_poset_is_ordered_set}.
+    Hence $\joinIrreduciblePoset{L}$ is a quasiordered set by
+        \obv{orderedset}.
+    For every $x\in\carrier[L]$ we have
+        $\joinIrreduciblesBelow{L}{x}
+            \in\downsets{\joinIrreduciblePoset{L}}$ by
+        \auto{join_irreducibles_below_is_downset,downsets_iff}.
+    Follows by
+        \auto{birkhoff_map,logical_graph_on_domain_type}.
+\end{proof}
+
+\begin{proposition}\label{birkhoff_map_is_function}
+    Let $L$ be a bounded lattice.
+    Then $\birkhoffMap{L}$ is a function.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{birkhoff_map_type,funs_is_function}.
+\end{proof}
+
+\begin{proposition}\label{birkhoff_map_apply}
+    Let $L$ be a bounded lattice.
+    Let $x\in\carrier[L]$.
+    Then $\apply{\birkhoffMap{L}}{x}=\joinIrreduciblesBelow{L}{x}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{birkhoff_map,logical_graph_on_domain_apply}.
+\end{proof}
+
+\begin{theorem}\label{birkhoff_map_order_preserving}
+    Let $L$ be a bounded lattice.
+    Then
+        $\orderPreserving
+            {\birkhoffMap{L}}
+            {\carrier[L]}{\leq[L]}
+            {\carrier[\downsetLattice{\joinIrreduciblePoset{L}}]}
+            {\leq[\downsetLattice{\joinIrreduciblePoset{L}}]}$.
+\end{theorem}
+\begin{proof}
+    Let $P=\joinIrreduciblePoset{L}$.
+    Let $D=\downsetLattice{P}$.
+    Hence $L$ is an ordered set and $P$ is an ordered set by
+        \obv{lattice_is_ordered_set,
+            join_irreducible_poset_is_ordered_set}.
+    Hence $L$ is a quasiordered set and $P$ is a quasiordered set by
+        \obv{orderedset}.
+    $\leq[L]$ is a binary relation on $\carrier[L]$ by
+        \obv{quasiorder_type}.
+    $\carrier[D]=\downsets{P}$ and
+        $\leq[D]=\subseteqrel{\downsets{P}}$ by
+        \auto{downset_lattice_carrier,downset_lattice_order}.
+    $\subseteqrel{\downsets{P}}$ is a quasiorder on $\downsets{P}$ by
+        \obv{subseteqrel_is_quasiorder}.
+    Hence $\subseteqrel{\downsets{P}}$ is a binary relation on
+        $\downsets{P}$ by definition.
+    Hence $\leq[D]$ is a binary relation on $\carrier[D]$.
+    $\birkhoffMap{L}\in\funs{\carrier[L]}{\carrier[D]}$ by
+        \auto{birkhoff_map_type,downset_lattice_carrier}.
+    Show for all $x,y\in\carrier[L]$ such that
+        $x\mathrel{\leq[L]}y$ we have
+        $\apply{\birkhoffMap{L}}{x}\mathrel{\leq[D]}\apply{\birkhoffMap{L}}{y}$.
+    \begin{subproof}
+        Fix $x,y\in\carrier[L]$.
+        Assume $x\mathrel{\leq[L]}y$.
+        $\joinIrreduciblesBelow{L}{x}
+            \subseteq\joinIrreduciblesBelow{L}{y}$ by
+            \obv{join_irreducibles_below_monotone}.
+        $\apply{\birkhoffMap{L}}{x}=\joinIrreduciblesBelow{L}{x}$ and
+            $\apply{\birkhoffMap{L}}{y}=\joinIrreduciblesBelow{L}{y}$ by
+            \obv{birkhoff_map_apply}.
+        $\leq[D]=\subseteqrel{\downsets{P}}$ and
+            $\carrier[D]=\downsets{P}$ by
+            \obv{downset_lattice_order,downset_lattice_carrier}.
+        $\apply{\birkhoffMap{L}}{x},\apply{\birkhoffMap{L}}{y}\in\downsets{P}$ by
+            \obv{birkhoff_map_type,funs_type_apply}.
+        Follows by \auto{subseteqrel,pair_eq_iff}.
+    \end{subproof}
+    Follows by \obv{order_preserving}.
+\end{proof}
+
+\begin{proposition}\label{birkhoff_map_lattice_bottom}
+    Let $L$ be a bounded lattice.
+    Then $\apply{\birkhoffMap{L}}{\latticeBottom[L]}=\emptyset$.
+\end{proposition}
+\begin{proof}
+    $\leq[L]$ is antisymmetric by
+        \obv{ordered_set_order_antisymmetric}.
+    $\latticeBottom[L]\in\carrier[L]$ by
+        \obv{lattice_bottom_type}.
+    Show that $\joinIrreduciblesBelow{L}{\latticeBottom[L]}
+        =\emptyset$.
+    \begin{subproof}
+        Show for every
+            $j\in\joinIrreduciblesBelow{L}{\latticeBottom[L]}$
+            we have $j\in\emptyset$.
+        \begin{subproof}
+            Fix $j\in\joinIrreduciblesBelow{L}{\latticeBottom[L]}$.
+            $j$ is join-irreducible in $L$ and
+                $j\mathrel{\leq[L]}\latticeBottom[L]$ by
+                \auto{join_irreducibles_below_iff}.
+            $j\in\carrier[L]$ by \obv{join_irreducible_type}.
+            $\latticeBottom[L]\mathrel{\leq[L]}j$ by
+                \obv{lattice_bottom_leq}.
+            Hence $j=\latticeBottom[L]$ by \obv{antisymmetric}.
+            Contradiction by \obv{join_irreducible_nonbottom}.
+        \end{subproof}
+        Follows by \auto{emptyset,setext}.
+    \end{subproof}
+    Follows by \obv{birkhoff_map_apply}.
+\end{proof}
+
+\begin{proposition}\label{birkhoff_map_lattice_top}
+    Let $L$ be a bounded lattice.
+    Then $\apply{\birkhoffMap{L}}{\latticeTop[L]}=\joinIrreducibles{L}$.
+\end{proposition}
+\begin{proof}
+    $\latticeTop[L]\in\carrier[L]$ by \obv{lattice_top_type}.
+    Show that $\joinIrreduciblesBelow{L}{\latticeTop[L]}
+        =\joinIrreducibles{L}$.
+    \begin{subproof}
+        $\joinIrreduciblesBelow{L}{\latticeTop[L]}
+            \subseteq\joinIrreducibles{L}$ by
+            \obv{join_irreducibles_below_subseteq_join_irreducibles}.
+        Show for every $j\in\joinIrreducibles{L}$ we have
+            $j\in\joinIrreduciblesBelow{L}{\latticeTop[L]}$.
+        \begin{subproof}
+            Fix $j\in\joinIrreducibles{L}$.
+            Hence $j$ is join-irreducible in $L$ by
+                \obv{join_irreducibles_iff}.
+            $j\in\carrier[L]$ by \obv{join_irreducible_type}.
+            Hence $j\mathrel{\leq[L]}\latticeTop[L]$ by
+                \obv{lattice_leq_top}.
+            Follows by \obv{join_irreducibles_below_iff}.
+        \end{subproof}
+        Follows by \obv{subseteq_antisymmetric,subseteq}.
+    \end{subproof}
+    Follows by \obv{birkhoff_map_apply}.
+\end{proof}
+
+\begin{theorem}\label{birkhoff_map_meet}
+    Let $L$ be a bounded lattice.
+    Let $x,y\in\carrier[L]$.
+    Then $\apply{\birkhoffMap{L}}{\meet[L](x,y)}
+        =\apply{\birkhoffMap{L}}{x}\inter\apply{\birkhoffMap{L}}{y}$.
+\end{theorem}
+\begin{proof}
+    $\meet[L](x,y)\in\carrier[L]$ by \obv{meet_type}.
+    $\apply{\birkhoffMap{L}}{\meet[L](x,y)}
+        =\joinIrreduciblesBelow{L}{\meet[L](x,y)}$ and
+        $\apply{\birkhoffMap{L}}{x}=\joinIrreduciblesBelow{L}{x}$ and
+        $\apply{\birkhoffMap{L}}{y}=\joinIrreduciblesBelow{L}{y}$ by
+        \obv{birkhoff_map_apply}.
+    Show for every $j$ we have
+        $j\in\joinIrreduciblesBelow{L}{\meet[L](x,y)}$ iff
+        $j\in\joinIrreduciblesBelow{L}{x}\inter
+            \joinIrreduciblesBelow{L}{y}$.
+    \begin{subproof}
+        Fix $j$.
+        Show that if
+            $j\in\joinIrreduciblesBelow{L}{\meet[L](x,y)}$, then
+            $j\in\joinIrreduciblesBelow{L}{x}\inter
+                \joinIrreduciblesBelow{L}{y}$.
+        \begin{subproof}
+            Assume $j\in\joinIrreduciblesBelow{L}{\meet[L](x,y)}$.
+            $j$ is join-irreducible in $L$ and
+                $j\mathrel{\leq[L]}\meet[L](x,y)$ by
+                \obv{join_irreducibles_below_iff}.
+            $j\in\carrier[L]$ by \obv{join_irreducible_type}.
+            $\meet[L](x,y)\mathrel{\leq[L]}x$ and
+                $\meet[L](x,y)\mathrel{\leq[L]}y$ by \obv{meet_lb}.
+            $\leq[L]$ is transitive by
+                \obv{lattice_is_ordered_set,
+                    ordered_set_order_transitive}.
+            Hence $j\mathrel{\leq[L]}x$ and
+                $j\mathrel{\leq[L]}y$ by \obv{transitive}.
+            Follows by
+                \obv{join_irreducibles_below_iff,inter_intro}.
+        \end{subproof}
+        Show that if $j\in\joinIrreduciblesBelow{L}{x}\inter
+            \joinIrreduciblesBelow{L}{y}$, then
+            $j\in\joinIrreduciblesBelow{L}{\meet[L](x,y)}$.
+        \begin{subproof}
+            Assume $j\in\joinIrreduciblesBelow{L}{x}\inter
+                \joinIrreduciblesBelow{L}{y}$.
+            $j\in\joinIrreduciblesBelow{L}{x}$ and
+                $j\in\joinIrreduciblesBelow{L}{y}$ by
+                \obv{inter_elim_left,inter_elim_right}.
+            Hence $j$ is join-irreducible in $L$ and
+                $j\mathrel{\leq[L]}x$ and
+                $j\mathrel{\leq[L]}y$ by
+                \auto{join_irreducibles_below_iff}.
+            $j\in\carrier[L]$ by \obv{join_irreducible_type}.
+            Hence $j\mathrel{\leq[L]}\meet[L](x,y)$ by
+                \obv{meet_glb}.
+            Follows by \obv{join_irreducibles_below_iff}.
+        \end{subproof}
+        Follows by \auto.
+    \end{subproof}
+    Follows by \auto{setext}.
+\end{proof}
+
+\begin{proposition}\label{birkhoff_map_join_union_subseteq}
+    Let $L$ be a bounded lattice.
+    Let $x,y\in\carrier[L]$.
+    Then $\apply{\birkhoffMap{L}}{x}\union\apply{\birkhoffMap{L}}{y}
+        \subseteq\apply{\birkhoffMap{L}}{\join[L](x,y)}$.
+\end{proposition}
+\begin{proof}
+    $\join[L](x,y)\in\carrier[L]$ by \obv{join_type}.
+    $x\mathrel{\leq[L]}\join[L](x,y)$ and
+        $y\mathrel{\leq[L]}\join[L](x,y)$ by \obv{join_ub}.
+    Hence $\joinIrreduciblesBelow{L}{x}
+            \subseteq\joinIrreduciblesBelow{L}{\join[L](x,y)}$ and
+        $\joinIrreduciblesBelow{L}{y}
+            \subseteq\joinIrreduciblesBelow{L}{\join[L](x,y)}$ by
+        \obv{join_irreducibles_below_monotone}.
+    $\apply{\birkhoffMap{L}}{x}=\joinIrreduciblesBelow{L}{x}$ and
+        $\apply{\birkhoffMap{L}}{y}=\joinIrreduciblesBelow{L}{y}$ and
+        $\apply{\birkhoffMap{L}}{\join[L](x,y)}
+            =\joinIrreduciblesBelow{L}{\join[L](x,y)}$ by
+        \obv{birkhoff_map_apply}.
+    Follows by \auto{subseteq,union_iff}.
+\end{proof}
+
+\begin{theorem}\label{birkhoff_map_join}
+    Let $L$ be a bounded distributive lattice.
+    Let $x,y\in\carrier[L]$.
+    Then $\apply{\birkhoffMap{L}}{\join[L](x,y)}
+        =\apply{\birkhoffMap{L}}{x}\union\apply{\birkhoffMap{L}}{y}$.
+\end{theorem}
+\begin{proof}
+    $L$ is a bounded lattice and $L$ is a distributive lattice by
+        \obv{bounded_distributive_lattice}.
+    $\join[L](x,y)\in\carrier[L]$ by \obv{join_type}.
+    $\apply{\birkhoffMap{L}}{x}\union\apply{\birkhoffMap{L}}{y}
+        \subseteq\apply{\birkhoffMap{L}}{\join[L](x,y)}$ by
+        \obv{birkhoff_map_join_union_subseteq}.
+    Show for every $j\in\apply{\birkhoffMap{L}}{\join[L](x,y)}$ we have
+        $j\in\apply{\birkhoffMap{L}}{x}\union\apply{\birkhoffMap{L}}{y}$.
+    \begin{subproof}
+        Fix $j\in\apply{\birkhoffMap{L}}{\join[L](x,y)}$.
+        Hence $j\in\joinIrreduciblesBelow{L}{\join[L](x,y)}$ by
+            \obv{birkhoff_map_apply}.
+        Hence $j$ is join-irreducible in $L$ and
+            $j\mathrel{\leq[L]}\join[L](x,y)$ by
+            \auto{join_irreducibles_below_iff}.
+        Hence $j$ is join-prime in $L$ by
+            \obv{join_irreducible_implies_join_prime}.
+        Hence $j\mathrel{\leq[L]}x$ or $j\mathrel{\leq[L]}y$ by
+            \obv{join_prime_elim}.
+        Thus $j\in\joinIrreduciblesBelow{L}{x}$ or
+            $j\in\joinIrreduciblesBelow{L}{y}$ by
+            \auto{join_irreducibles_below_iff}.
+        Follows by \auto{birkhoff_map_apply,union_iff}.
+    \end{subproof}
+    Follows by \obv{subseteq_antisymmetric,subseteq}.
+\end{proof}
+
+\begin{theorem}\label{birkhoff_map_is_bounded_lattice_hom}
+    Let $L$ be a bounded distributive lattice.
+    Then $\boundedLatticeHom
+        {\birkhoffMap{L}}{L}
+        {\downsetLattice{\joinIrreduciblePoset{L}}}$.
+\end{theorem}
+\begin{proof}
+    Let $P=\joinIrreduciblePoset{L}$.
+    Let $D=\downsetLattice{P}$.
+    $L$ is a bounded lattice by \obv{bounded_distributive_lattice}.
+    Hence $L$ is a lattice by \obv{bounded_lattice_is_lattice}.
+    $\joinIrreduciblePoset{L}$ is an ordered set by
+        \obv{join_irreducible_poset_is_ordered_set}.
+    Hence $\joinIrreduciblePoset{L}$ is a quasiordered set by
+        \obv{orderedset}.
+    $\downsetLattice{\joinIrreduciblePoset{L}}$ is a bounded
+        distributive lattice by
+        \obv{downset_lattice_is_bounded_distributive_lattice}.
+    Hence $\downsetLattice{\joinIrreduciblePoset{L}}$ is a bounded
+        lattice by
+        \obv{bounded_distributive_lattice_is_bounded_lattice}.
+    Hence $P$ is an ordered set and $D$ is a bounded lattice.
+    Hence $P$ is a quasiordered set by \obv{orderedset}.
+    Hence $D$ is a lattice by \obv{bounded_lattice_is_lattice}.
+    $\birkhoffMap{L}\in\funs{\carrier[L]}{\carrier[D]}$ by
+        \auto{birkhoff_map_type,downset_lattice_carrier}.
+    Show for all $x,y\in\carrier[L]$ we have
+        $\apply{\birkhoffMap{L}}{\meet[L](x,y)}
+            =\meet[D](\apply{\birkhoffMap{L}}{x},\apply{\birkhoffMap{L}}{y})$ and
+        $\apply{\birkhoffMap{L}}{\join[L](x,y)}
+            =\join[D](\apply{\birkhoffMap{L}}{x},\apply{\birkhoffMap{L}}{y})$.
+    \begin{subproof}
+        Fix $x,y\in\carrier[L]$.
+        $\apply{\birkhoffMap{L}}{x},\apply{\birkhoffMap{L}}{y}\in\downsets{P}$ by
+            \auto{birkhoff_map_type,funs_type_apply}.
+        $\meet[D](\apply{\birkhoffMap{L}}{x},\apply{\birkhoffMap{L}}{y})
+            =\apply{\birkhoffMap{L}}{x}\inter\apply{\birkhoffMap{L}}{y}$ by
+            \auto{downset_lattice_meet}.
+        $\join[D](\apply{\birkhoffMap{L}}{x},\apply{\birkhoffMap{L}}{y})
+            =\apply{\birkhoffMap{L}}{x}\union\apply{\birkhoffMap{L}}{y}$ by
+            \auto{downset_lattice_join}.
+        Follows by \obv{birkhoff_map_meet,birkhoff_map_join}.
+    \end{subproof}
+    Hence $\latticeHom{\birkhoffMap{L}}{L}{D}$ by
+        \obv{lattice_hom}.
+    $\latticeBottom[D]=\emptyset$ and
+        $\latticeTop[D]=\carrier[P]$ by
+        \auto{downset_lattice_bottom,downset_lattice_top}.
+    $\carrier[P]=\joinIrreducibles{L}$ by
+        \auto{join_irreducible_poset_carrier}.
+    Follows by
+        \obv{bounded_lattice_hom,birkhoff_map_lattice_bottom,
+            birkhoff_map_lattice_top}.
+\end{proof}
+
+\begin{theorem}\label{birkhoff_map_basic_laws}
+    Let $L$ be a bounded lattice.
+    Then $\birkhoffMap{L}\in
+        \funs{\carrier[L]}{\downsets{\joinIrreduciblePoset{L}}}$ and
+        $\apply{\birkhoffMap{L}}{\latticeBottom[L]}=\emptyset$ and
+        $\apply{\birkhoffMap{L}}{\latticeTop[L]}=\joinIrreducibles{L}$ and
+        for all $x,y\in\carrier[L]$ we have
+            $\apply{\birkhoffMap{L}}{\meet[L](x,y)}
+                =\apply{\birkhoffMap{L}}{x}\inter\apply{\birkhoffMap{L}}{y}$ and
+            $\apply{\birkhoffMap{L}}{x}\union\apply{\birkhoffMap{L}}{y}
+                \subseteq\apply{\birkhoffMap{L}}{\join[L](x,y)}$.
+\end{theorem}
+\begin{proof}
+    Follows by
+        \obv{birkhoff_map_type,birkhoff_map_lattice_bottom,
+            birkhoff_map_lattice_top,birkhoff_map_meet,
+            birkhoff_map_join_union_subseteq}.
+\end{proof}

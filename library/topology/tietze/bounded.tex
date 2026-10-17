@@ -1,0 +1,472 @@
+\import{topology/tietze/iteration.tex}
+\import{topology/tail-budget-map-convergence.tex}
+\import{surreal/real-metric-completeness.tex}
+
+\section{The bounded Tietze extension}
+
+\subsection{The deterministic limit for a fixed shrinker}
+
+\begin{definition}\label{tietze_bounded_limit}
+    Let $X$ be a topological space.
+    $\tietzeBoundedLimit{X}{h}{A}{f}{r}
+        =\pointwiseMetricLimitMap{\RealMetric}{\carrier[X]}
+            {\tietzePartialSums{X}{h}{A}{f}{r}}$.
+\end{definition}
+
+\begin{theorem}\label{tietze_partial_sums_tail_budget}
+    Let $X$ be a topological space.
+    Let $h$ be a normal shrinker for $X$.
+    Let $A\in\closeds{X}$.
+    Suppose $f\in\funs{A}{\reals}$ and $f$ is continuous from
+        $\subspaceTopology{X}{A}$ to $\RealTopology$.
+    Let $r\in\reals$.
+    Suppose $\surrealLt{\surrealZero}{r}$ and
+        for every $a\in A$ we have $\surrealLe{\abs{f(a)}}{r}$.
+    Let $S=\tietzePartialSums{X}{h}{A}{f}{r}$.
+    Let $b=\tietzeBudgetSequence{r}$.
+    Then
+        $\metricMapTailBudget{\RealMetric}{\carrier[X]}{S}{b}$.
+\end{theorem}
+\begin{proof}
+    $\RealMetric$ is a metric space
+        by \obv{surreal_real_metric_space}.
+    $\carrier[\RealMetric]=\reals$
+        by \obv{surreal_real_metric_carrier}.
+    $S\in\funs{\naturals}{\funs{\carrier[X]}{\carrier[\RealMetric]}}$
+        by \auto{tietze_partial_sums_typed}.
+    $b\in\funs{\naturals}{\reals}$
+        by \auto{tietze_budget_sequence_typed}.
+    $\surrealLe{\surrealZero}{r}$
+        by
+        \obv{surreal_le,surreal_real_is_surreal,empty_surreal}.
+    For every $n\in\naturals$ we have
+        $\surrealLe{\surrealZero}{b(n)}$
+        by \auto{tietze_budget_sequence_nonnegative}.
+    For every $i\in\naturals$ we have for every
+        $y\in\carrier[X]$ we have
+        $\surrealLe{
+            \surrealAdd{
+                \metricDistance[\RealMetric]
+                    (\apply{\apply{S}{\suc{i}}}{y},
+                     \apply{\apply{S}{i}}{y})}
+                {b(\suc{i})}}
+            {b(i)}$
+        by \obv{tietze_partial_sums_remaining_budget}.
+    Hence
+        $\metricMapRemainingBudget{\RealMetric}{\carrier[X]}{S}{b}$
+        by \obv{metric_map_remaining_budget_intro}.
+    $\metricConverges{\RealMetric}{b}{\surrealZero}$
+        by \auto{tietze_budget_sequence_converges_zero}.
+    Follows by \obv{metric_map_tail_budget_intro}.
+\end{proof}
+
+\begin{theorem}\label{tietze_bounded_limit_data}
+    Let $X$ be a topological space.
+    Let $h$ be a normal shrinker for $X$.
+    Let $A\in\closeds{X}$.
+    Suppose $f\in\funs{A}{\reals}$ and $f$ is continuous from
+        $\subspaceTopology{X}{A}$ to $\RealTopology$.
+    Let $r\in\reals$.
+    Suppose $\surrealLt{\surrealZero}{r}$ and
+        for every $a\in A$ we have $\surrealLe{\abs{f(a)}}{r}$.
+    Let $S=\tietzePartialSums{X}{h}{A}{f}{r}$.
+    Let $b=\tietzeBudgetSequence{r}$.
+    Let $F=\tietzeBoundedLimit{X}{h}{A}{f}{r}$.
+    Then $\uniformMapCauchy{\metricUniformSpace{\RealMetric}}
+            {\carrier[X]}{S}$ and
+        $F\in\funs{\carrier[X]}{\reals}$ and
+        $\uniformMapConverges{\metricUniformSpace{\RealMetric}}
+            {\carrier[X]}{S}{F}$ and
+        (for every $n\in\naturals$ we have for every
+            $x\in\carrier[X]$ we have
+            $\surrealLe{\metricDistance[\RealMetric]
+                (F(x),\apply{\apply{S}{n}}{x})}{b(n)}$).
+\end{theorem}
+\begin{proof}
+    $\RealMetric$ is sequentially complete metric
+        by \obv{surreal_real_metric_sequentially_complete}.
+    $\carrier[\RealMetric]=\reals$
+        by \obv{surreal_real_metric_carrier}.
+    $\metricMapTailBudget{\RealMetric}{\carrier[X]}{S}{b}$
+        by \obv{tietze_partial_sums_tail_budget}.
+    $F=\pointwiseMetricLimitMap{\RealMetric}{\carrier[X]}{S}$
+        by \auto{tietze_bounded_limit}.
+    Follows by \auto{metric_map_limit_from_tail_budget}.
+\end{proof}
+
+\begin{corollary}\label{tietze_bounded_limit_typed}
+    Let $X$ be a topological space.
+    Let $h$ be a normal shrinker for $X$.
+    Let $A\in\closeds{X}$.
+    Suppose $f\in\funs{A}{\reals}$ and $f$ is continuous from
+        $\subspaceTopology{X}{A}$ to $\RealTopology$.
+    Let $r\in\reals$.
+    Suppose $\surrealLt{\surrealZero}{r}$ and
+        for every $a\in A$ we have $\surrealLe{\abs{f(a)}}{r}$.
+    Then $\tietzeBoundedLimit{X}{h}{A}{f}{r}
+        \in\funs{\carrier[X]}{\reals}$.
+\end{corollary}
+\begin{proof}
+    Follows by \auto{tietze_bounded_limit_data}.
+\end{proof}
+
+\begin{corollary}\label{tietze_partial_sums_converge_uniformly}
+    Let $X$ be a topological space.
+    Let $h$ be a normal shrinker for $X$.
+    Let $A\in\closeds{X}$.
+    Suppose $f\in\funs{A}{\reals}$ and $f$ is continuous from
+        $\subspaceTopology{X}{A}$ to $\RealTopology$.
+    Let $r\in\reals$.
+    Suppose $\surrealLt{\surrealZero}{r}$ and
+        for every $a\in A$ we have $\surrealLe{\abs{f(a)}}{r}$.
+    Then
+        $\uniformMapConverges{\metricUniformSpace{\RealMetric}}
+            {\carrier[X]}{\tietzePartialSums{X}{h}{A}{f}{r}}
+            {\tietzeBoundedLimit{X}{h}{A}{f}{r}}$.
+\end{corollary}
+\begin{proof}
+    Follows by \auto{tietze_bounded_limit_data}.
+\end{proof}
+
+\begin{theorem}\label{tietze_bounded_limit_continuous}
+    Let $X$ be a topological space.
+    Let $h$ be a normal shrinker for $X$.
+    Let $A\in\closeds{X}$.
+    Suppose $f\in\funs{A}{\reals}$ and $f$ is continuous from
+        $\subspaceTopology{X}{A}$ to $\RealTopology$.
+    Let $r\in\reals$.
+    Suppose $\surrealLt{\surrealZero}{r}$ and
+        for every $a\in A$ we have $\surrealLe{\abs{f(a)}}{r}$.
+    Then $\tietzeBoundedLimit{X}{h}{A}{f}{r}$ is continuous from
+        $X$ to $\RealTopology$.
+\end{theorem}
+\begin{proof}
+    Let $S=\tietzePartialSums{X}{h}{A}{f}{r}$.
+    Let $F=\tietzeBoundedLimit{X}{h}{A}{f}{r}$.
+    $\RealMetric$ is a metric space by \obv{surreal_real_metric_space}.
+    $\uniformMapConverges{\metricUniformSpace{\RealMetric}}
+        {\carrier[X]}{S}{F}$
+        by \auto{tietze_partial_sums_converge_uniformly}.
+    For every $n\in\naturals$ we have
+        $\apply{S}{n}$ is continuous from $X$ to
+            $\metricTopology{\RealMetric}$
+        by
+        \auto{tietze_partial_sums_apply,tietze_partial_sum_continuous,real_topology}.
+    $F$ is continuous from $X$ to $\metricTopology{\RealMetric}$
+        by \obv{uniform_limit_of_continuous_maps}.
+    Follows by \obv{real_topology}.
+\end{proof}
+
+\begin{corollary}\label{tietze_bounded_limit_tail_bound}
+    Let $X$ be a topological space.
+    Let $h$ be a normal shrinker for $X$.
+    Let $A\in\closeds{X}$.
+    Suppose $f\in\funs{A}{\reals}$ and $f$ is continuous from
+        $\subspaceTopology{X}{A}$ to $\RealTopology$.
+    Let $r\in\reals$.
+    Suppose $\surrealLt{\surrealZero}{r}$ and
+        for every $a\in A$ we have $\surrealLe{\abs{f(a)}}{r}$.
+    Let $n\in\naturals$ and $x\in\carrier[X]$.
+    Then
+        $\surrealLe{\metricDistance[\RealMetric]
+            (\apply{\tietzeBoundedLimit{X}{h}{A}{f}{r}}{x},
+             \apply{\tietzePartialSumAt{X}{h}{A}{f}{r}{n}}{x})}
+            {\tietzeRadius{r}{n}}$.
+\end{corollary}
+\begin{proof}
+    Follows by
+        \auto{tietze_bounded_limit_data,tietze_partial_sums_apply,tietze_budget_sequence_apply}.
+\end{proof}
+
+\subsection{Agreement and the global bound}
+
+\begin{theorem}\label{tietze_bounded_limit_agrees_on_subspace}
+    Let $X$ be a topological space.
+    Let $h$ be a normal shrinker for $X$.
+    Let $A\in\closeds{X}$.
+    Suppose $f\in\funs{A}{\reals}$ and $f$ is continuous from
+        $\subspaceTopology{X}{A}$ to $\RealTopology$.
+    Let $r\in\reals$.
+    Suppose $\surrealLt{\surrealZero}{r}$ and
+        for every $x\in A$ we have $\surrealLe{\abs{f(x)}}{r}$.
+    Let $a\in A$.
+    Then $\apply{\tietzeBoundedLimit{X}{h}{A}{f}{r}}{a}=f(a)$.
+\end{theorem}
+\begin{proof}
+    Let $F=\tietzeBoundedLimit{X}{h}{A}{f}{r}$.
+    Let $S=\tietzePartialSums{X}{h}{A}{f}{r}$.
+    Let $b=\tietzeBudgetSequence{r}$.
+    Let $c=\surrealAdd{\surrealOne}{\surrealOne}$.
+    Let $b_2=\realScaledSequence{c}{b}$.
+    $A\subseteq\carrier[X]$ by \obv{closeds,pow_iff,subseteq}.
+    Hence $a\in\carrier[X]$ by \obv{subseteq}.
+    $F(a),f(a)\in\reals$
+        by \auto{tietze_bounded_limit_typed,funs_type_apply}.
+    $c\in\reals$
+        by \auto{surreal_one_is_real,surreal_real_addition_closed}.
+    $b\in\funs{\naturals}{\reals}$
+        by \auto{tietze_budget_sequence_typed}.
+    Hence $b_2\in\funs{\naturals}{\reals}$
+        by \auto{real_scaled_sequence_typed}.
+    $\surrealLe{\surrealZero}{r}$
+        by
+        \obv{surreal_le,surreal_real_is_surreal,empty_surreal}.
+    $\metricConverges{\RealMetric}{b}{\surrealZero}$
+        by \auto{tietze_budget_sequence_converges_zero}.
+    Hence $\metricConverges{\RealMetric}{b_2}{\surrealZero}$
+        by \auto{real_sequence_scale_converges_zero}.
+    Show that for every $n\in\naturals$ we have
+        $\surrealLe{\surrealZero}{b_2(n)}$.
+    \begin{subproof}
+        Fix $n\in\naturals$.
+        $b(n)=\tietzeRadius{r}{n}$
+            by \auto{tietze_budget_sequence_apply}.
+        $\surrealLe{\surrealZero}{b(n)}$
+            by \auto{tietze_budget_sequence_nonnegative}.
+        $\surrealLe{\surrealZero}{c}$
+            by
+            \auto{surreal_add_le_both,surreal_add_zero_left,surreal_zero_lt_one,surreal_le,surreal_one_is_surreal,empty_surreal}.
+        $b_2(n)=\surrealMul{c}{b(n)}$
+            by \auto{real_scaled_sequence_apply}.
+        $\surreal{c}$ and $\surreal{b(n)}$
+            by \obv{funs_type_apply,surreal_real_is_surreal}.
+        $\surrealLe{\surrealZero}{\surrealMul{c}{b(n)}}$
+            by \obv{surreal_mul_nonneg_nonneg,empty_surreal}.
+    \end{subproof}
+    Show that for every $n\in\naturals$ we have
+        $\surrealLe{\metricDistance[\RealMetric](F(a),f(a))}{b_2(n)}$.
+    \begin{subproof}
+        Fix $n\in\naturals$.
+        Let $S_n=\tietzePartialSumAt{X}{h}{A}{f}{r}{n}$.
+        Let $E_n=\tietzeResidualAt{X}{h}{A}{f}{r}{n}$.
+        Let $R=\tietzeRadius{r}{n}$.
+        $S_n\in\funs{\carrier[X]}{\reals}$ and
+            $E_n\in\funs{A}{\reals}$
+            by \auto{tietze_partial_sum_typed,tietze_residual_typed}.
+        $S_n(a),E_n(a)\in\reals$ by \obv{funs_type_apply}.
+        $\surrealLe{\metricDistance[\RealMetric](F(a),S_n(a))}{R}$
+            by \auto{tietze_bounded_limit_tail_bound}.
+        $\surrealLe{\abs{E_n(a)}}{R}$
+            by \auto{tietze_residual_bound}.
+        $E_n=\realMapSub{A}{f}{\restrl{S_n}{A}}$
+            by \obv{tietze_residual_definition}.
+        $\restrl{S_n}{A}\in\funs{A}{\reals}$
+            by \obv{funs_restrl}.
+        $\apply{\restrl{S_n}{A}}{a}=S_n(a)$
+            by
+            \auto{restrl_of_function_apply,funs_is_function,funs}.
+        Hence $E_n(a)=\surrealAdd{f(a)}{\surrealNeg{S_n(a)}}$
+            by \auto{real_map_sub_apply}.
+        $\metricDistance[\RealMetric](f(a),S_n(a))
+            =\abs{\surrealAdd{f(a)}{\surrealNeg{S_n(a)}}}$
+            by \obv{surreal_real_metric_distance}.
+        Hence $\surrealLe{
+            \metricDistance[\RealMetric](f(a),S_n(a))}{R}$.
+        $F(a),S_n(a),f(a)\in\carrier[\RealMetric]$
+            by \obv{surreal_real_metric_carrier}.
+        $\metricDistance[\RealMetric](S_n(a),f(a))
+            =\metricDistance[\RealMetric](f(a),S_n(a))$
+            by \obv{metric_distance_symmetric,surreal_real_metric_space}.
+        Hence $\surrealLe{
+            \metricDistance[\RealMetric](S_n(a),f(a))}{R}$.
+        $\surrealLe{\metricDistance[\RealMetric](F(a),f(a))}
+            {\surrealAdd{
+                \metricDistance[\RealMetric](F(a),S_n(a))}
+                {\metricDistance[\RealMetric](S_n(a),f(a))}}$
+            by \obv{metric_triangle,surreal_real_metric_space}.
+        $\surrealLe{
+            \surrealAdd{
+                \metricDistance[\RealMetric](F(a),S_n(a))}
+                {\metricDistance[\RealMetric](S_n(a),f(a))}}
+            {\surrealAdd{R}{R}}$
+            by
+            \obv{surreal_add_le_both,metric_distance_type,surreal_real_metric_space,surreal_real_metric_carrier,tietze_radius_is_real,surreal_real_is_surreal}.
+        Hence $\surrealLe{\metricDistance[\RealMetric](F(a),f(a))}
+            {\surrealAdd{R}{R}}$
+            by
+            \auto{surreal_le_transitive,metric_distance_type,surreal_real_metric_space,surreal_real_metric_carrier,tietze_radius_is_real,surreal_real_is_surreal,surreal_add_is_surreal}.
+        $\surrealMul{c}{R}=\surrealAdd{R}{R}$
+            by
+            \auto{surreal_mul_distributive_right,surreal_mul_one_left,tietze_radius_is_real,surreal_real_is_surreal,surreal_one_is_surreal}.
+        $b_2(n)=\surrealMul{c}{b(n)}$
+            by \auto{real_scaled_sequence_apply}.
+        $b(n)=R$ by \auto{tietze_budget_sequence_apply}.
+        Hence $b_2(n)=\surrealAdd{R}{R}$ by \auto.
+        Follows by \auto.
+    \end{subproof}
+    $F(a),f(a)\in\carrier[\RealMetric]$
+        by \obv{surreal_real_metric_carrier}.
+    Follows by
+        \auto{metric_distance_zero_from_convergent_bounds,surreal_real_metric_space}.
+\end{proof}
+
+\begin{theorem}\label{tietze_bounded_limit_restriction}
+    Let $X$ be a topological space.
+    Let $h$ be a normal shrinker for $X$.
+    Let $A\in\closeds{X}$.
+    Suppose $f\in\funs{A}{\reals}$ and $f$ is continuous from
+        $\subspaceTopology{X}{A}$ to $\RealTopology$.
+    Let $r\in\reals$.
+    Suppose $\surrealLt{\surrealZero}{r}$ and
+        for every $a\in A$ we have $\surrealLe{\abs{f(a)}}{r}$.
+    Then $\restrl{\tietzeBoundedLimit{X}{h}{A}{f}{r}}{A}=f$.
+\end{theorem}
+\begin{proof}
+    Let $F=\tietzeBoundedLimit{X}{h}{A}{f}{r}$.
+    $A\subseteq\carrier[X]$ by \auto{closeds,pow_iff,subseteq}.
+    $F\in\funs{\carrier[X]}{\reals}$
+        by \auto{tietze_bounded_limit_typed}.
+    Hence $\restrl{F}{A}\in\funs{A}{\reals}$
+        by \obv{funs_restrl}.
+    For every $a\in A$ we have
+        $\apply{\restrl{F}{A}}{a}=f(a)$
+        by
+        \auto{restrl_of_function_apply,funs_is_function,funs,tietze_bounded_limit_agrees_on_subspace}.
+    Follows by \auto{typed_functions_equal_from_agreement}.
+\end{proof}
+
+\begin{theorem}\label{tietze_bounded_limit_bound}
+    Let $X$ be a topological space.
+    Let $h$ be a normal shrinker for $X$.
+    Let $A\in\closeds{X}$.
+    Suppose $f\in\funs{A}{\reals}$ and $f$ is continuous from
+        $\subspaceTopology{X}{A}$ to $\RealTopology$.
+    Let $r\in\reals$.
+    Suppose $\surrealLt{\surrealZero}{r}$ and
+        for every $a\in A$ we have $\surrealLe{\abs{f(a)}}{r}$.
+    Let $x\in\carrier[X]$.
+    Then
+        $\surrealLe{\abs{
+            \apply{\tietzeBoundedLimit{X}{h}{A}{f}{r}}{x}}}{r}$.
+\end{theorem}
+\begin{proof}
+    Let $F=\tietzeBoundedLimit{X}{h}{A}{f}{r}$.
+    Let $S_0=\tietzePartialSumAt{X}{h}{A}{f}{r}{\emptyset}$.
+    $S_0=\realZeroMap{\carrier[X]}$
+        by \obv{tietze_partial_sum_zero}.
+    Hence $S_0(x)=\surrealZero$ by \auto{real_zero_map_apply}.
+    $\tietzeRadius{r}{\emptyset}=r$ by \obv{tietze_radius_zero}.
+    $F(x),S_0(x)\in\reals$
+        by
+        \auto{tietze_bounded_limit_typed,tietze_partial_sum_typed,funs_type_apply,omega_empty}.
+    $\surrealLe{\metricDistance[\RealMetric](F(x),S_0(x))}{r}$
+        by \auto{tietze_bounded_limit_tail_bound,omega_empty}.
+    $\metricDistance[\RealMetric](F(x),S_0(x))=\abs{F(x)}$
+        by
+        \auto{surreal_real_metric_distance,surreal_negation_empty,surreal_add_zero_right,surreal_real_is_surreal,empty_surreal}.
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{tietze_positive_bounded_extension_from_normal_shrinker}
+    Let $X$ be a topological space.
+    Let $h$ be a normal shrinker for $X$.
+    Let $A\in\closeds{X}$.
+    Suppose $f\in\funs{A}{\reals}$ and $f$ is continuous from
+        $\subspaceTopology{X}{A}$ to $\RealTopology$.
+    Let $r\in\reals$.
+    Suppose $\surrealLt{\surrealZero}{r}$ and
+        for every $a\in A$ we have $\surrealLe{\abs{f(a)}}{r}$.
+    Let $F=\tietzeBoundedLimit{X}{h}{A}{f}{r}$.
+    Then $F\in\funs{\carrier[X]}{\reals}$ and
+        $F$ is continuous from $X$ to $\RealTopology$ and
+        $\restrl{F}{A}=f$ and
+        (for every $x\in\carrier[X]$ we have
+            $\surrealLe{\abs{F(x)}}{r}$).
+\end{theorem}
+\begin{proof}
+    Follows by
+        \auto{tietze_bounded_limit_typed,tietze_bounded_limit_continuous,tietze_bounded_limit_restriction,tietze_bounded_limit_bound}.
+\end{proof}
+
+\subsection{The nonnegative-radius theorem}
+
+\begin{theorem}\label{tietze_extension_bounded_real_from_normal_shrinker}
+    Let $X$ be a topological space.
+    Let $h$ be a normal shrinker for $X$.
+    Let $A\in\closeds{X}$.
+    Suppose $f\in\funs{A}{\reals}$ and $f$ is continuous from
+        $\subspaceTopology{X}{A}$ to $\RealTopology$.
+    Let $r\in\reals$.
+    Suppose $\surrealLe{\surrealZero}{r}$ and
+        for every $a\in A$ we have $\surrealLe{\abs{f(a)}}{r}$.
+    Then there exists $F\in\funs{\carrier[X]}{\reals}$ such that
+        $F$ is continuous from $X$ to $\RealTopology$ and
+        $\restrl{F}{A}=f$ and
+        for every $x\in\carrier[X]$ we have
+            $\surrealLe{\abs{F(x)}}{r}$.
+\end{theorem}
+\begin{proof}
+    \begin{byCase}
+    \caseOf{$r=\surrealZero$.}
+        Show that $f$ is constantly $\surrealZero$ on $A$.
+        \begin{subproof}
+            Fix $a\in A$.
+            $f(a)\in\reals$ by \obv{funs_type_apply}.
+            $\surrealLe{\abs{f(a)}}{\surrealZero}$.
+            $\surrealLe{\surrealZero}{\abs{f(a)}}$
+                by
+                \obv{surreal_abs_nonnegative_value,surreal_real_is_surreal}.
+            $\surreal{f(a)}$ by \obv{surreal_real_is_surreal}.
+            $\surreal{\abs{f(a)}}$ and $\surreal{\surrealZero}$
+                by \obv{surreal_abs_is_surreal,empty_surreal}.
+            Hence $\abs{f(a)}=\surrealZero$
+                by \obv{surreal_le_antisymmetric}.
+            Follows by
+                \obv{surreal_abs_eq_zero_iff,surreal_real_is_surreal}.
+        \end{subproof}
+        Let $F=\realZeroMap{\carrier[X]}$.
+        $F\in\funs{\carrier[X]}{\reals}$
+            by \auto{real_zero_map_type}.
+        $F$ is continuous from $X$ to $\RealTopology$
+            by \auto{real_zero_map_continuous}.
+        $A\subseteq\carrier[X]$ by \auto{closeds,pow_iff,subseteq}.
+        Hence $\restrl{F}{A}=\realZeroMap{A}$
+            by \auto{real_zero_map_restrl}.
+        $\realZeroMap{A}\in\funs{A}{\reals}$
+            by \obv{real_zero_map_type}.
+        For every $a\in A$ we have $\apply{\realZeroMap{A}}{a}=f(a)$
+            by \auto{real_zero_map_apply}.
+        Hence $\realZeroMap{A}=f$
+            by \obv{typed_functions_equal_from_agreement}.
+        Hence $\restrl{F}{A}=f$.
+        For every $x\in\carrier[X]$ we have
+            $\surrealLe{\abs{F(x)}}{r}$
+            by
+            \auto{real_zero_map_apply,surreal_abs_zero,surreal_le_reflexive,empty_surreal}.
+        Follows by \auto.
+    \caseOf{$r\neq\surrealZero$.}
+        $\surrealLt{\surrealZero}{r}$
+            by
+            \auto{surreal_le,surreal_real_is_surreal,empty_surreal}.
+        Let $F=\tietzeBoundedLimit{X}{h}{A}{f}{r}$.
+        $F\in\funs{\carrier[X]}{\reals}$ and
+            $F$ is continuous from $X$ to $\RealTopology$ and
+            $\restrl{F}{A}=f$ and
+            for every $x\in\carrier[X]$ we have
+                $\surrealLe{\abs{F(x)}}{r}$
+            by
+            \obv{tietze_positive_bounded_extension_from_normal_shrinker}.
+        Follows by \auto.
+    \end{byCase}
+\end{proof}
+
+\begin{theorem}\label{tietze_extension_bounded_real}
+    Let $X$ be a normal space.
+    Let $A\in\closeds{X}$.
+    Suppose $f\in\funs{A}{\reals}$ and $f$ is continuous from
+        $\subspaceTopology{X}{A}$ to $\RealTopology$.
+    Let $r\in\reals$.
+    Suppose $\surrealLe{\surrealZero}{r}$ and
+        for every $a\in A$ we have $\surrealLe{\abs{f(a)}}{r}$.
+    Then there exists $F\in\funs{\carrier[X]}{\reals}$ such that
+        $F$ is continuous from $X$ to $\RealTopology$ and
+        $\restrl{F}{A}=f$ and
+        for every $x\in\carrier[X]$ we have
+            $\surrealLe{\abs{F(x)}}{r}$.
+\end{theorem}
+\begin{proof}
+    Take $h$ such that $h$ is a normal shrinker for $X$
+        by \obv{normal_shrinker_exists}.
+    Follows by
+        \obv{tietze_extension_bounded_real_from_normal_shrinker}.
+\end{proof}

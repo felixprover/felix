@@ -1,0 +1,313 @@
+\import{test/algebra-spike/02-module-reduct.tex}
+\import{test/algebra-spike/03-submodule-equivalence.tex}
+\import{algebra/group/subgroup.tex}
+
+\section{The exact module induced on a submodule}
+
+\begin{definition}\label{spike_induced_submodule}
+    $\InducedSubmodule{R}{M}{N}=
+        \structure[left module over R]{
+            \carrier=
+                \carrier[\subgroupStructure{\ModuleAdditiveGroup{M}}{N}],
+            \mul=\mul[\subgroupStructure{\ModuleAdditiveGroup{M}}{N}],
+            \neutral=
+                \neutral[\subgroupStructure{\ModuleAdditiveGroup{M}}{N}],
+            \groupInv=
+                \groupInv[\subgroupStructure{\ModuleAdditiveGroup{M}}{N}],
+            \scalarMul=
+                \restrl{\scalarMul[M]}{\carrier[R]\times N}
+        }$.
+\end{definition}
+
+\begin{proposition}\label{spike_induced_submodule_fields}
+    Let $K=\subgroupStructure{\ModuleAdditiveGroup{M}}{N}$.
+    $\carrier[\InducedSubmodule{R}{M}{N}]=\carrier[K]$ and
+    $\mul[\InducedSubmodule{R}{M}{N}]=\mul[K]$ and
+    $\neutral[\InducedSubmodule{R}{M}{N}]=\neutral[K]$ and
+    $\groupInv[\InducedSubmodule{R}{M}{N}]=\groupInv[K]$ and
+    $\scalarMul[\InducedSubmodule{R}{M}{N}]
+        =\restrl{\scalarMul[M]}{\carrier[R]\times N}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{spike_induced_submodule,
+            left_moduleaggregateprojection_carrier,
+            left_moduleaggregateprojection_mul,
+            left_moduleaggregateprojection_neutral,
+            left_moduleaggregateprojection_groupInv,
+            left_moduleaggregateprojection_scalarMul}.
+\end{proof}
+
+\begin{proposition}\label{spike_induced_scalar_type}
+    Suppose $\prototypeSubmodule{R}{N}{M}$.
+    Then
+        $\restrl{\scalarMul[M]}{\carrier[R]\times N}
+            \in\funs{\carrier[R]\times N}{N}$.
+\end{proposition}
+\begin{proof}
+    Let $f=\scalarMul[M]$.
+    Let $s=\restrl{f}{\carrier[R]\times N}$.
+    $M$ is a left module over $R$ by
+        \auto{spike_prototype_submodule}.
+    $N\subseteq\carrier[M]$ by
+        \auto{spike_prototype_submodule,subgroup_subseteq,
+            spike_module_additive_group_fields}.
+    $\carrier[R]\times N
+        \subseteq\carrier[R]\times\carrier[M]$ by
+        \auto{times_subseteq_right}.
+    $f\in\funs{\carrier[R]\times\carrier[M]}{\carrier[M]}$ by
+        \auto{module_scalar_graph}.
+    Hence $\carrier[R]\times N\subseteq\dom{f}$ by \auto{funs}.
+    $s\in\funs{\carrier[R]\times N}{\carrier[M]}$ by
+        \auto{funs_restrl}.
+    Hence $s$ is a function and
+        $\dom{s}=\carrier[R]\times N$ by \auto{funs_elim}.
+    Show that $s$ is a function to $N$.
+    \begin{subproof}
+        Show that for every $p\in\dom{s}$ we have $s(p)\in N$.
+        \begin{subproof}
+            Fix $p\in\dom{s}$.
+            Hence $p\in\carrier[R]\times N$ by \auto.
+            Take $a,x$ such that $a\in\carrier[R]$ and $x\in N$ and
+                $p=(a,x)$ by \auto{times_elem_is_tuple}.
+            $f$ is a function by \auto{funs_is_function}.
+            $s(p)=f(p)$ by \auto{restrl_of_function_apply}.
+            Hence $s(p)=\scalarMul[M](a,x)$ by \auto.
+            Follows by \auto{spike_prototype_submodule}.
+        \end{subproof}
+        Follows.
+    \end{subproof}
+    Follows by \auto{funs_intro}.
+\end{proof}
+
+\begin{proposition}\label{spike_induced_scalar_apply}
+    Suppose $\prototypeSubmodule{R}{N}{M}$.
+    Let $a\in\carrier[R]$ and $x\in N$.
+    Then
+        $\scalarMul[\InducedSubmodule{R}{M}{N}](a,x)
+            =\scalarMul[M](a,x)$.
+\end{proposition}
+\begin{proof}
+    Let $P=\InducedSubmodule{R}{M}{N}$.
+    Let $f=\scalarMul[M]$.
+    Let $s=\restrl{f}{\carrier[R]\times N}$.
+    $\scalarMul[M]$ is a function by
+        \auto{spike_prototype_submodule,module_scalar_graph,
+            funs_is_function}.
+    $N\subseteq\carrier[M]$ by
+        \auto{spike_prototype_submodule,subgroup_subseteq,
+            spike_module_additive_group_fields}.
+    $\carrier[R]\times N
+        \subseteq\carrier[R]\times\carrier[M]$ by
+        \auto{times_subseteq_right}.
+    Hence $\carrier[R]\times N\subseteq\dom{f}$ by
+        \auto{spike_prototype_submodule,module_scalar_graph,funs}.
+    $(a,x)\in\carrier[R]\times N$ by \auto{times_tuple_intro}.
+    Hence $s((a,x))=f((a,x))$ by
+        \auto{restrl_of_function_apply}.
+    $\scalarMul[P]=s$ by
+        \auto{spike_induced_submodule,
+            left_moduleaggregateprojection_scalarMul}.
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{spike_induced_submodule_is_exact}
+    Suppose $\prototypeSubmodule{R}{N}{M}$.
+    Then $\InducedSubmodule{R}{M}{N}$ is an exact left module over $R$.
+\end{theorem}
+\begin{proof}
+    Let $G=\ModuleAdditiveGroup{M}$.
+    Let $K=\subgroupStructure{G}{N}$.
+    Let $P=\InducedSubmodule{R}{M}{N}$.
+    $M$ is a left module over $R$ and $\subgroup{N}{G}$ by
+        \auto{spike_prototype_submodule}.
+    $N\subseteq\carrier[M]$ by
+        \auto{subgroup_subseteq,spike_module_additive_group_fields}.
+    Hence $R$ is a ring by \auto{module_scalar_ring}.
+    $G$ is an exact commutative group by
+        \auto{spike_module_additive_group_is_exact}.
+    $K$ is an exact group by
+        \auto{subgroup_structure_is_exact_group}.
+    Hence $K$ is a group and $K$ is a monoid and
+        $K$ is a unital magma and $K$ is a magma by
+        \auto{group_is_monoid,monoid_is_unital_magma,
+            monoid_is_magma}.
+    Show that for all $x,y\in\carrier[K]$ we have
+        $\mul[K](x,y)=\mul[K](y,x)$.
+    \begin{subproof}
+        Fix $x,y\in\carrier[K]$.
+        Hence $x,y\in N$ by \auto{subgroup_structure_carrier}.
+        Hence $x,y\in\carrier[G]$ by
+            \auto{subgroup_subseteq,subseteq}.
+        $\mul[K](x,y)=\mul[G](x,y)$ and
+            $\mul[K](y,x)=\mul[G](y,x)$ by
+            \auto{subgroup_structure_mul_apply}.
+        $\mul[G](x,y)=\mul[G](y,x)$ by
+            \auto{commutative_group_commutative}.
+        Follows by \auto.
+    \end{subproof}
+    $\carrier[P]=\carrier[K]$ and $\mul[P]=\mul[K]$ and
+        $\neutral[P]=\neutral[K]$ and
+        $\groupInv[P]=\groupInv[K]$ by
+        \auto{spike_induced_submodule_fields}.
+    $\mul[P]\in\funs{\carrier[P]\times\carrier[P]}{\carrier[P]}$ by
+        \auto{magma_mul_graph}.
+    $\neutral[P]\in\carrier[P]$ by \auto{unitalmagma_type}.
+    $\groupInv[P]\in\funs{\carrier[P]}{\carrier[P]}$ by
+        \auto{group_inverse_graph}.
+    For all $x,y,z\in\carrier[P]$ we have
+        $\mul[P](x,\mul[P](y,z))=\mul[P](\mul[P](x,y),z)$ by
+        \auto{monoid_assoc}.
+    For every $x\in\carrier[P]$ we have
+        $\mul[P](x,\neutral[P])=x$ and
+        $\mul[P](\neutral[P],x)=x$ by
+        \auto{unitalmagma_right,unitalmagma_left}.
+    For every $x\in\carrier[P]$ we have
+        $\mul[P](x,\groupInv[P](x))=\neutral[P]$ and
+        $\mul[P](\groupInv[P](x),x)=\neutral[P]$ by
+        \auto{group_inverse_right,group_inverse_left}.
+    Hence $P$ is a group by
+        \auto{spike_induced_submodule,left_moduleaggregateexact,
+            magma,unitalmagma,monoid,group}.
+    For all $x,y\in\carrier[P]$ we have
+        $\mul[P](x,y)=\mul[P](y,x)$ by \auto.
+    Hence $P$ is a commutative group by
+        \auto{group,commutative_group}.
+    $\scalarMul[P]\in
+        \funs{\carrier[R]\times\carrier[P]}{\carrier[P]}$ by
+        \auto{spike_induced_submodule_fields,
+            subgroup_structure_carrier,spike_induced_scalar_type}.
+
+    Show that for all $a,x,y$ such that
+        $a\in\carrier[R]$ and $x,y\in\carrier[P]$ we have
+        $\scalarMul[P](a,\mul[P](x,y))
+            =\mul[P](\scalarMul[P](a,x),\scalarMul[P](a,y))$.
+    \begin{subproof}
+        Fix $a,x,y$.
+        Assume $a\in\carrier[R]$ and $x,y\in\carrier[P]$.
+        Hence $x,y\in N$ by \auto{subgroup_structure_carrier}.
+        Hence $x,y\in\carrier[M]$ by \auto{subseteq}.
+        $\mul[G](x,y)\in N$ by \auto{subgroup_mul}.
+        Hence $\mul[M](x,y)\in N$ by
+            \auto{spike_module_additive_group_fields}.
+        $\mul[P](x,y)=\mul[M](x,y)$ by
+            \auto{subgroup_structure_mul_apply,
+                spike_module_additive_group_fields}.
+        Hence $\mul[P](x,y)\in N$ by
+            \auto.
+        $\scalarMul[M](a,x),\scalarMul[M](a,y)\in N$ by
+            \auto{spike_prototype_submodule}.
+        $\scalarMul[P](a,x),\scalarMul[P](a,y)\in N$ by
+            \auto{spike_induced_scalar_apply}.
+        $\scalarMul[P](a,\mul[P](x,y))
+            =\scalarMul[M](a,\mul[M](x,y))$ by
+            \auto{spike_induced_scalar_apply}.
+        $\mul[P](\scalarMul[P](a,x),\scalarMul[P](a,y))
+            =\mul[M](\scalarMul[M](a,x),\scalarMul[M](a,y))$ by
+            \auto{spike_induced_scalar_apply,
+                subgroup_structure_mul_apply,
+                spike_module_additive_group_fields}.
+        Follows by \auto{module_scalar_vector_distributive}.
+    \end{subproof}
+    Show that for all $a,b,x$ such that
+        $a,b\in\carrier[R]$ and $x\in\carrier[P]$ we have
+        $\scalarMul[P](\ringAdd[R](a,b),x)
+            =\mul[P](\scalarMul[P](a,x),\scalarMul[P](b,x))$.
+    \begin{subproof}
+        Fix $a,b,x$.
+        Assume $a,b\in\carrier[R]$ and $x\in\carrier[P]$.
+        Hence $x\in N$ by \auto{subgroup_structure_carrier}.
+        Hence $x\in\carrier[M]$ by \auto{subseteq}.
+        $\ringAdd[R](a,b)\in\carrier[R]$ by
+            \auto{ring_add_type}.
+        $\scalarMul[P](a,x),\scalarMul[P](b,x)\in N$ by
+            \auto{spike_induced_scalar_apply,
+                spike_prototype_submodule}.
+        Follows by
+            \auto{spike_induced_scalar_apply,
+                subgroup_structure_mul_apply,
+                spike_module_additive_group_fields,
+                module_scalar_add_distributive}.
+    \end{subproof}
+    Show that for all $a,b,x$ such that
+        $a,b\in\carrier[R]$ and $x\in\carrier[P]$ we have
+        $\scalarMul[P](a,\scalarMul[P](b,x))
+            =\scalarMul[P](\ringMul[R](a,b),x)$.
+    \begin{subproof}
+        Fix $a,b,x$.
+        Assume $a,b\in\carrier[R]$ and $x\in\carrier[P]$.
+        Hence $x\in N$ by \auto{subgroup_structure_carrier}.
+        Hence $x\in\carrier[M]$ by \auto{subseteq}.
+        $\ringMul[R](a,b)\in\carrier[R]$ by
+            \auto{ring_mul_type}.
+        $\scalarMul[P](b,x)\in N$ by
+            \auto{spike_induced_scalar_apply,
+                spike_prototype_submodule}.
+        Follows by
+            \auto{spike_induced_scalar_apply,
+                module_scalar_associative}.
+    \end{subproof}
+    Show that for every $x\in\carrier[P]$ we have
+        $\scalarMul[P](\ringOne[R],x)=x$.
+    \begin{subproof}
+        Fix $x\in\carrier[P]$.
+        Hence $x\in N$ by \auto{subgroup_structure_carrier}.
+        Hence $x\in\carrier[M]$ by \auto{subseteq}.
+        $\ringOne[R]\in\carrier[R]$ by \auto{ring_one_type}.
+        Follows by
+            \auto{spike_induced_scalar_apply,module_scalar_one}.
+    \end{subproof}
+    It is not the case that it is not the case that
+        $P$ is a left module over $R$ by
+        \auto{spike_induced_submodule,left_moduleaggregateexact,
+            left_module}.
+    Hence $P$ is a left module over $R$ by \auto.
+    Follows by
+        \auto{spike_induced_submodule,left_moduleaggregateexact}.
+\end{proof}
+
+\begin{theorem}\label{spike_induced_submodule_additive_reduct}
+    Suppose $\prototypeSubmodule{R}{N}{M}$.
+    Then
+        $\ModuleAdditiveGroup{\InducedSubmodule{R}{M}{N}}
+            =\subgroupStructure{\ModuleAdditiveGroup{M}}{N}$.
+\end{theorem}
+\begin{proof}
+    Let $P=\InducedSubmodule{R}{M}{N}$.
+    Let $K=\subgroupStructure{\ModuleAdditiveGroup{M}}{N}$.
+    $P$ is an exact left module over $R$ by
+        \auto{spike_induced_submodule_is_exact}.
+    Hence $\ModuleAdditiveGroup{P}$ is an exact commutative group by
+        \auto{spike_module_additive_group_is_exact}.
+    Hence $\ModuleAdditiveGroup{P}$ is a group by
+        \auto{commutative_group_is_group}.
+    Hence $\ModuleAdditiveGroup{P}$ is an exact group by
+        \auto{spike_module_additive_group,groupaggregateexact}.
+    $\subgroup{N}{\ModuleAdditiveGroup{M}}$ by
+        \auto{spike_prototype_submodule}.
+    Hence $K$ is an exact group by
+        \auto{subgroup_structure_is_exact_group}.
+    $\carrier[\ModuleAdditiveGroup{P}]=\carrier[K]$ and
+        $\mul[\ModuleAdditiveGroup{P}]=\mul[K]$ and
+        $\neutral[\ModuleAdditiveGroup{P}]=\neutral[K]$ and
+        $\groupInv[\ModuleAdditiveGroup{P}]=\groupInv[K]$ by
+        \auto{spike_module_additive_group_fields,
+            spike_induced_submodule_fields}.
+    Follows by \auto{exact_group_extensionality}.
+\end{proof}
+
+\begin{proposition}\label{spike_induced_submodule_inclusion_reused}
+    Suppose $\prototypeSubmodule{R}{N}{M}$.
+    Then
+        $\subgroupInclusion{\ModuleAdditiveGroup{M}}{N}
+            \in\funs{\carrier[\InducedSubmodule{R}{M}{N}]}{
+                \carrier[M]}$.
+\end{proposition}
+\begin{proof}
+    $\subgroup{N}{\ModuleAdditiveGroup{M}}$ by
+        \auto{spike_prototype_submodule}.
+    Follows by
+        \auto{subgroup_inclusion_type,subgroup_structure_carrier,
+            spike_module_additive_group_fields,
+            spike_induced_submodule_fields}.
+\end{proof}

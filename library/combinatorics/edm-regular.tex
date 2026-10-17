@@ -1,0 +1,636 @@
+\section{The regular-cardinal branch}
+
+\import{function.tex}
+\import{combinatorics/graph-cardinality.tex}
+\import{cardinal.tex}
+\import{cardinal/comparison.tex}
+\import{cardinal/cofinal-families.tex}
+\import{cardinal/cofinality.tex}
+\import{recursion/transfinite.tex}
+\import{set/choice.tex}
+
+\subsection{Forbidden points from a history}
+
+\begin{definition}\label{edm_history_neighbourhoods}
+    $\edmHistoryNeighbourhoods{E}{X}{g}
+        =\{(x,\graphNeighbourhood{E}{x}{X})\mid x\in\ran{g}\}$.
+\end{definition}
+
+\begin{proposition}\label{edm_history_neighbourhoods_iff}
+    $(x,A)\in\edmHistoryNeighbourhoods{E}{X}{g}$ iff
+        $x\in\ran{g}$ and $A=\graphNeighbourhood{E}{x}{X}$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{edm_history_neighbourhoods,pair_eq_iff}.
+\end{proof}
+
+\begin{theorem}\label{edm_history_neighbourhoods_type}
+    $\edmHistoryNeighbourhoods{E}{X}{g}
+        \in\funs{\ran{g}}{\pow{X}}$.
+\end{theorem}
+\begin{proof}
+    Let $N=\edmHistoryNeighbourhoods{E}{X}{g}$.
+    $N$ is a relation by
+        \auto{edm_history_neighbourhoods,relation}.
+    $N$ is right-unique by
+        \auto{edm_history_neighbourhoods,rightunique,pair_eq_iff}.
+    $\dom{N}=\ran{g}$ by
+        \auto{setext,dom_iff,edm_history_neighbourhoods,pair_eq_iff}.
+    For every $x\in\ran{g}$ we have
+        $\graphNeighbourhood{E}{x}{X}\in\pow{X}$ by
+        \obv{graph_neighbourhood_subseteq,powerset_intro}.
+    For every $x\in\dom{N}$ we have
+        $N(x)=\graphNeighbourhood{E}{x}{X}$ by
+        \auto{edm_history_neighbourhoods,function_apply_intro}.
+    Hence $N$ is a function to $\pow{X}$ by \auto.
+    Follows by \auto{funs_intro}.
+\end{proof}
+
+\begin{proposition}\label{edm_history_neighbourhoods_apply}
+    Let $x\in\ran{g}$.
+    Then $(\edmHistoryNeighbourhoods{E}{X}{g})(x)
+        =\graphNeighbourhood{E}{x}{X}$.
+\end{proposition}
+\begin{proof}
+    $\edmHistoryNeighbourhoods{E}{X}{g}$ is a function by
+        \auto{edm_history_neighbourhoods_type,funs_is_function}.
+    $(x,\graphNeighbourhood{E}{x}{X})
+        \in\edmHistoryNeighbourhoods{E}{X}{g}$ by
+        \obv{edm_history_neighbourhoods}.
+    Follows by \obv{function_apply_intro}.
+\end{proof}
+
+\begin{definition}\label{edm_forbidden_set}
+    $\edmForbiddenSet{E}{X}{g}
+        =\ran{g}\union
+            \unions{\ran{\edmHistoryNeighbourhoods{E}{X}{g}}}$.
+\end{definition}
+
+\begin{proposition}\label{edm_forbidden_set_iff}
+    $z\in\edmForbiddenSet{E}{X}{g}$ iff
+        $z\in\ran{g}$ or there exists $x\in\ran{g}$ such that
+            $z\in\graphNeighbourhood{E}{x}{X}$.
+\end{proposition}
+\begin{proof}
+    Let $N=\edmHistoryNeighbourhoods{E}{X}{g}$.
+    $N\in\funs{\ran{g}}{\pow{X}}$ by
+        \auto{edm_history_neighbourhoods_type}.
+    Hence $N$ is a function and $\dom{N}=\ran{g}$ by
+        \obv{funs_is_function,funs}.
+    Show that if $z\in\edmForbiddenSet{E}{X}{g}$, then
+        $z\in\ran{g}$ or there exists $x\in\ran{g}$ such that
+            $z\in\graphNeighbourhood{E}{x}{X}$.
+    \begin{subproof}
+        Assume $z\in\edmForbiddenSet{E}{X}{g}$.
+        Hence $z\in\ran{g}$ or
+            $z\in\unions{\ran{N}}$ by
+            \auto{edm_forbidden_set,union_iff}.
+        \begin{byCase}
+            \caseOf{$z\in\ran{g}$.}
+                Follows.
+            \caseOf{$z\notin\ran{g}$.}
+                Hence $z\in\unions{\ran{N}}$.
+                Take $A\in\ran{N}$ such that $z\in A$ by
+                    \obv{unions_iff}.
+                Take $x\in\dom{N}$ such that $N(x)=A$ by
+                    \obv{fun_ran_iff}.
+                Hence $x\in\ran{g}$.
+                $N(x)=\graphNeighbourhood{E}{x}{X}$ by
+                    \auto{edm_history_neighbourhoods_apply}.
+                Hence $z\in\graphNeighbourhood{E}{x}{X}$.
+        \end{byCase}
+    \end{subproof}
+    Show that if $z\in\ran{g}$ or there exists $x\in\ran{g}$ such that
+            $z\in\graphNeighbourhood{E}{x}{X}$, then
+        $z\in\edmForbiddenSet{E}{X}{g}$.
+    \begin{subproof}
+        Assume $z\in\ran{g}$ or there exists $x\in\ran{g}$ such that
+            $z\in\graphNeighbourhood{E}{x}{X}$.
+        \begin{byCase}
+            \caseOf{$z\in\ran{g}$.}
+                Follows by \auto{edm_forbidden_set,union_iff}.
+            \caseOf{$z\notin\ran{g}$.}
+                Take $x\in\ran{g}$ such that
+                    $z\in\graphNeighbourhood{E}{x}{X}$.
+                $N(x)=\graphNeighbourhood{E}{x}{X}$ by
+                    \auto{edm_history_neighbourhoods_apply}.
+                $N(x)\in\ran{N}$ by \auto{fun_ran_iff}.
+                Hence $z\in\unions{\ran{N}}$ by \auto{unions_iff}.
+                Follows by \auto{edm_forbidden_set,union_iff}.
+        \end{byCase}
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{proposition}\label{edm_history_neighbourhood_union_subseteq}
+    $\unions{\ran{\edmHistoryNeighbourhoods{E}{X}{g}}}
+        \subseteq X$.
+\end{proposition}
+\begin{proof}
+    $\edmHistoryNeighbourhoods{E}{X}{g}
+        \in\funs{\ran{g}}{\pow{X}}$ by
+        \obv{edm_history_neighbourhoods_type}.
+    Hence every element of
+        $\ran{\edmHistoryNeighbourhoods{E}{X}{g}}$ is a subset of $X$ by
+        \auto{funs_ran,subseteq,powerset_elim}.
+    Follows by \auto{subseteq,unions_iff}.
+\end{proof}
+
+\begin{proposition}\label{edm_forbidden_set_subseteq}
+    Suppose $\ran{g}\subseteq X$.
+    Then $\edmForbiddenSet{E}{X}{g}\subseteq X$.
+\end{proposition}
+\begin{proof}
+    $\unions{\ran{\edmHistoryNeighbourhoods{E}{X}{g}}}
+        \subseteq X$ by
+        \obv{edm_history_neighbourhood_union_subseteq}.
+    Follows by \auto{edm_forbidden_set,subseteq_union_iff}.
+\end{proof}
+
+\subsection{Availability at a regular-cardinal stage}
+
+\begin{theorem}\label{edm_regular_stage_available}
+    Let $\kappa$ be a regular cardinal.
+    Suppose $X\approx\kappa$.
+    Let $\beta\in\kappa$.
+    Let $g\in\funs{\beta}{X}$.
+    Suppose for every $x\in X$ we have
+        $\cardLt{\graphNeighbourhood{E}{x}{X}}{\kappa}$.
+    Then $\cardLt{\edmForbiddenSet{E}{X}{g}}{\kappa}$ and
+        $X\setminus\edmForbiddenSet{E}{X}{g}\approx\kappa$.
+\end{theorem}
+\begin{proof}
+    $g$ is a function and $\dom{g}=\beta$ by
+        \obv{funs_is_function,funs}.
+    Hence $\cardLe{\ran{g}}{\dom{g}}$ by
+        \obv{function_range_cardinal_le_domain}.
+    Hence $\cardLe{\ran{g}}{\beta}$.
+    $\cardLt{\beta}{\kappa}$ by \obv{cardinal_element_small}.
+    Hence $\cardLt{\ran{g}}{\kappa}$ by
+        \obv{cardinal_le_lt_transitive}.
+    $\ran{g}\subseteq X$ by \obv{funs_ran}.
+    Let $N=\edmHistoryNeighbourhoods{E}{X}{g}$.
+    $N\in\funs{\ran{g}}{\pow{X}}$ by
+        \auto{edm_history_neighbourhoods_type}.
+    Hence $N$ is a function and $\dom{N}=\ran{g}$ by
+        \obv{funs_is_function,funs}.
+    For every $x\in\ran{g}$ we have
+        $N(x)=\graphNeighbourhood{E}{x}{X}$ by
+        \auto{edm_history_neighbourhoods_apply}.
+    Hence for every $x\in\ran{g}$ we have
+        $\cardLt{N(x)}{\kappa}$ by \auto{subseteq}.
+    Hence $\cardLt{\unions{\ran{N}}}{\kappa}$ by
+        \auto{regular_indexed_union}.
+    Hence $\cardLt{\ran{g}\union\unions{\ran{N}}}{\kappa}$ by
+        \obv{small_binary_union}.
+    Hence $\cardLt{\edmForbiddenSet{E}{X}{g}}{\kappa}$ by
+        \auto{edm_forbidden_set}.
+    Hence $X\setminus\edmForbiddenSet{E}{X}{g}\approx\kappa$ by
+        \obv{large_minus_small}.
+\end{proof}
+
+\subsection{The total greedy step}
+
+\begin{definition}\label{edm_greedy_step}
+    $\edmGreedyStep{E}{X}{\kappa}
+        =\{w\in
+            ((\kappa\times\pow{\kappa\times X})\times X)\mid
+            \text{
+            ($X\setminus
+                \edmForbiddenSet{E}{X}{\snd{\fst{w}}}$ is inhabited and
+                $\snd{w}=\choice{X\setminus
+                    \edmForbiddenSet{E}{X}{\snd{\fst{w}}}}$) or
+            ($X\setminus
+                \edmForbiddenSet{E}{X}{\snd{\fst{w}}}=\emptyset$ and
+                $\snd{w}=\choice{X}$)}\}$.
+\end{definition}
+
+\begin{proposition}\label{edm_greedy_step_iff}
+    Let $q\in\kappa\times\pow{\kappa\times X}$ and $y\in X$.
+    Then $(q,y)\in\edmGreedyStep{E}{X}{\kappa}$ iff
+        ($X\setminus\edmForbiddenSet{E}{X}{\snd{q}}$ is inhabited and
+            $y=\choice{X\setminus
+                \edmForbiddenSet{E}{X}{\snd{q}}}$) or
+        ($X\setminus\edmForbiddenSet{E}{X}{\snd{q}}=\emptyset$ and
+            $y=\choice{X}$).
+\end{proposition}
+\begin{proof}
+    $(q,y)\in
+        (\kappa\times\pow{\kappa\times X})\times X$ by
+        \obv{times_tuple_intro}.
+    Follows by \auto{edm_greedy_step,fst_eq,snd_eq}.
+\end{proof}
+
+\begin{theorem}\label{edm_greedy_step_type}
+    Suppose $X$ is inhabited.
+    Then $\edmGreedyStep{E}{X}{\kappa}
+        \in\funs{\kappa\times\pow{\kappa\times X}}{X}$.
+\end{theorem}
+\begin{proof}
+    Let $D=\kappa\times\pow{\kappa\times X}$.
+    Let $T=\edmGreedyStep{E}{X}{\kappa}$.
+    $T\subseteq D\times X$ by
+        \auto{edm_greedy_step,subseteq}.
+    Hence $T$ is a relation by
+        \auto{relation,subseteq,times_elem_is_tuple}.
+    Show that $T$ is right-unique.
+    \begin{subproof}
+        Show that for all $q,y,z$ such that $(q,y),(q,z)\in T$
+            we have $y=z$.
+        \begin{subproof}
+            Fix $q,y,z$.
+            Assume $(q,y),(q,z)\in T$.
+            Hence $q\in D$ and $y,z\in X$ by
+                \obv{subseteq,times_tuple_elim}.
+            Hence
+                ($X\setminus\edmForbiddenSet{E}{X}{\snd{q}}$
+                    is inhabited and
+                    $y=\choice{X\setminus
+                        \edmForbiddenSet{E}{X}{\snd{q}}}$) or
+                ($X\setminus\edmForbiddenSet{E}{X}{\snd{q}}=\emptyset$ and
+                    $y=\choice{X}$) by
+                \auto{edm_greedy_step_iff}.
+            Hence
+                ($X\setminus\edmForbiddenSet{E}{X}{\snd{q}}$
+                    is inhabited and
+                    $z=\choice{X\setminus
+                        \edmForbiddenSet{E}{X}{\snd{q}}}$) or
+                ($X\setminus\edmForbiddenSet{E}{X}{\snd{q}}=\emptyset$ and
+                    $z=\choice{X}$) by
+                \auto{edm_greedy_step_iff}.
+            Follows by \auto{emptyset}.
+        \end{subproof}
+        Follows by \obv{rightunique}.
+    \end{subproof}
+    Show that $\dom{T}=D$.
+    \begin{subproof}
+        Show that $\dom{T}\subseteq D$.
+        \begin{subproof}
+            Follows by \auto{subseteq,dom_iff,times_tuple_elim}.
+        \end{subproof}
+        Show that $D\subseteq\dom{T}$.
+        \begin{subproof}
+            Show that every element of $D$ is an element of $\dom{T}$.
+            \begin{subproof}
+                Fix $q\in D$.
+                $X\setminus\edmForbiddenSet{E}{X}{\snd{q}}\subseteq X$ by
+                    \obv{setminus_subseteq}.
+                Let $A=X\setminus
+                    \edmForbiddenSet{E}{X}{\snd{q}}$.
+                $A\subseteq X$.
+                \begin{byCase}
+                    \caseOf{$A$ is inhabited.}
+                        Hence $\choice{A}\in A$ by \obv{choice_in}.
+                        Hence $\choice{A}\in X$ by \obv{subseteq}.
+                        $(q,\choice{A})\in T$ by
+                            \auto{edm_greedy_step_iff}.
+                        Follows by \auto{dom_iff}.
+                    \caseOf{$A$ is not inhabited.}
+                        Hence $A=\emptyset$ by
+                            \obv{nonempty_inhabited}.
+                        $\choice{X}\in X$ by \obv{choice_in}.
+                        $(q,\choice{X})\in T$ by
+                            \auto{edm_greedy_step_iff}.
+                        Follows by \auto{dom_iff}.
+                \end{byCase}
+            \end{subproof}
+            Follows by \obv{subseteq}.
+        \end{subproof}
+        Follows by \obv{subseteq_antisymmetric}.
+    \end{subproof}
+    Show that for every $q\in\dom{T}$ we have $T(q)\in X$.
+    \begin{subproof}
+        Fix $q\in\dom{T}$.
+        $(q,T(q))\in T$ by \obv{function_apply_elim}.
+        Hence $(q,T(q))\in D\times X$ by \obv{subseteq}.
+        Follows by \obv{times_tuple_elim}.
+    \end{subproof}
+    Hence $T$ is a function to $X$.
+    Follows by \auto{funs_intro}.
+\end{proof}
+
+\begin{proposition}\label{edm_greedy_step_available}
+    Suppose $X$ is inhabited.
+    Let $\beta\in\kappa$ and
+        $g\in\pow{\kappa\times X}$.
+    Suppose $X\setminus\edmForbiddenSet{E}{X}{g}$ is inhabited.
+    Then $(\edmGreedyStep{E}{X}{\kappa})((\beta,g))
+        =\choice{X\setminus\edmForbiddenSet{E}{X}{g}}$ and
+        $(\edmGreedyStep{E}{X}{\kappa})((\beta,g))
+            \in X\setminus\edmForbiddenSet{E}{X}{g}$.
+\end{proposition}
+\begin{proof}
+    $(\beta,g)\in\kappa\times\pow{\kappa\times X}$ by
+        \obv{times_tuple_intro}.
+    Let $q=(\beta,g)$.
+    $q\in\kappa\times\pow{\kappa\times X}$.
+    $\edmGreedyStep{E}{X}{\kappa}
+        \in\funs{\kappa\times\pow{\kappa\times X}}{X}$ by
+        \obv{edm_greedy_step_type}.
+    Hence $\edmGreedyStep{E}{X}{\kappa}$ is a function by
+        \obv{funs_is_function}.
+    $\choice{X\setminus\edmForbiddenSet{E}{X}{g}}
+        \in X\setminus\edmForbiddenSet{E}{X}{g}$ by \obv{choice_in}.
+    Hence $\choice{X\setminus\edmForbiddenSet{E}{X}{g}}\in X$ by
+        \obv{setminus_subseteq,subseteq}.
+    $(q,\choice{X\setminus\edmForbiddenSet{E}{X}{g}})
+        \in\edmGreedyStep{E}{X}{\kappa}$ by
+        \auto{edm_greedy_step_iff,fst_eq,snd_eq}.
+    Hence $(\edmGreedyStep{E}{X}{\kappa})(q)
+        =\choice{X\setminus\edmForbiddenSet{E}{X}{g}}$ by
+        \obv{function_apply_intro}.
+\end{proof}
+
+\begin{proposition}\label{edm_greedy_step_empty}
+    Suppose $X$ is inhabited.
+    Let $\beta\in\kappa$ and
+        $g\in\pow{\kappa\times X}$.
+    Suppose $X\setminus\edmForbiddenSet{E}{X}{g}=\emptyset$.
+    Then $(\edmGreedyStep{E}{X}{\kappa})((\beta,g))=\choice{X}$.
+\end{proposition}
+\begin{proof}
+    $(\beta,g)\in\kappa\times\pow{\kappa\times X}$ by
+        \obv{times_tuple_intro}.
+    Let $q=(\beta,g)$.
+    $q\in\kappa\times\pow{\kappa\times X}$.
+    $\edmGreedyStep{E}{X}{\kappa}
+        \in\funs{\kappa\times\pow{\kappa\times X}}{X}$ by
+        \obv{edm_greedy_step_type}.
+    Hence $\edmGreedyStep{E}{X}{\kappa}$ is a function by
+        \obv{funs_is_function}.
+    $\choice{X}\in X$ by \obv{choice_in}.
+    Hence $(q,\choice{X})\in\edmGreedyStep{E}{X}{\kappa}$ by
+        \auto{edm_greedy_step_iff,fst_eq,snd_eq}.
+    Hence $(\edmGreedyStep{E}{X}{\kappa})(q)=\choice{X}$ by
+        \obv{function_apply_intro}.
+\end{proof}
+
+\subsection{The greedy recursion}
+
+\begin{proposition}\label{edm_greedy_recursion_type}
+    Let $\kappa$ be an ordinal.
+    Suppose $X$ is inhabited.
+    Then
+    \[
+        \ordinalRecursion{\kappa}{X}{\edmGreedyStep{E}{X}{\kappa}}
+            \in\funs{\kappa}{X}
+    \].
+\end{proposition}
+\begin{proof}
+    $\edmGreedyStep{E}{X}{\kappa}
+        \in\funs{\kappa\times\pow{\kappa\times X}}{X}$ by
+        \obv{edm_greedy_step_type}.
+    Follows by \obv{ordinal_recursion_type}.
+\end{proof}
+
+\begin{proposition}\label{edm_greedy_recursion_equation}
+    Let $\kappa$ be an ordinal.
+    Suppose $X$ is inhabited.
+    Let $\beta\in\kappa$.
+    Then
+    \[
+        (\ordinalRecursion{\kappa}{X}
+            {\edmGreedyStep{E}{X}{\kappa}})(\beta)
+        =(\edmGreedyStep{E}{X}{\kappa})
+            ((\beta,\restrl{\ordinalRecursion{\kappa}{X}
+                {\edmGreedyStep{E}{X}{\kappa}}}{\beta}))
+    \].
+\end{proposition}
+\begin{proof}
+    $\edmGreedyStep{E}{X}{\kappa}
+        \in\funs{\kappa\times\pow{\kappa\times X}}{X}$ by
+        \obv{edm_greedy_step_type}.
+    Follows by \obv{ordinal_recursion_equation}.
+\end{proof}
+
+\begin{theorem}\label{edm_greedy_new_point}
+    Let $\kappa$ be a regular cardinal.
+    Suppose $X\approx\kappa$.
+    Let $\beta\in\kappa$.
+    Suppose for every $x\in X$ we have
+        $\cardLt{\graphNeighbourhood{E}{x}{X}}{\kappa}$.
+    Then
+    \[
+        (\ordinalRecursion{\kappa}{X}
+            {\edmGreedyStep{E}{X}{\kappa}})(\beta)
+        \in X\setminus\edmForbiddenSet{E}{X}
+            {\restrl{\ordinalRecursion{\kappa}{X}
+                {\edmGreedyStep{E}{X}{\kappa}}}{\beta}}
+    \].
+\end{theorem}
+\begin{proof}
+    $\kappa$ is infinite by definition.
+    Hence $\kappa$ is an ordinal by \auto{cardinal,initial_ordinal}.
+    $\kappa$ is inhabited by \obv{infinite_is_inhabited}.
+    Hence $X$ is inhabited by \obv{equinum_inhabited}.
+    $\ordinalRecursion{\kappa}{X}{\edmGreedyStep{E}{X}{\kappa}}
+        \in\funs{\kappa}{X}$ by
+        \obv{edm_greedy_recursion_type}.
+    $(\ordinalRecursion{\kappa}{X}
+            {\edmGreedyStep{E}{X}{\kappa}})(\beta)
+        =(\edmGreedyStep{E}{X}{\kappa})
+            ((\beta,\restrl{\ordinalRecursion{\kappa}{X}
+                {\edmGreedyStep{E}{X}{\kappa}}}{\beta}))$ by
+        \obv{edm_greedy_recursion_equation}.
+    Let $h=\ordinalRecursion{\kappa}{X}
+        {\edmGreedyStep{E}{X}{\kappa}}$.
+    $h\in\funs{\kappa}{X}$ and
+        $h(\beta)=(\edmGreedyStep{E}{X}{\kappa})
+            ((\beta,\restrl{h}{\beta}))$.
+    $\beta$ is an ordinal by \obv{elem_of_ordinal_is_ordinal}.
+    Hence $\beta\subseteq\kappa$ by
+        \obv{ordinal_elem_implies_subseteq}.
+    Hence $\restrl{h}{\beta}\in\funs{\beta}{X}$ by
+        \obv{funs_restrl}.
+    $h\in\rels{\kappa}{X}$ by \obv{funs}.
+    Hence $h\in\pow{\kappa\times X}$ by \obv{rels}.
+    Hence $h\subseteq\kappa\times X$ by \obv{powerset_elim}.
+    $\restrl{h}{\beta}\subseteq h$ by \obv{restrl_subseteq}.
+    Hence $\restrl{h}{\beta}\subseteq\kappa\times X$ by
+        \obv{subseteq_transitive}.
+    Hence $\restrl{h}{\beta}\in\pow{\kappa\times X}$ by
+        \obv{powerset_intro}.
+    $X\setminus\edmForbiddenSet{E}{X}{\restrl{h}{\beta}}
+        \approx\kappa$ by \auto{edm_regular_stage_available}.
+    Hence $X\setminus\edmForbiddenSet{E}{X}{\restrl{h}{\beta}}$
+        is inhabited by \obv{equinum_inhabited}.
+    Hence $(\edmGreedyStep{E}{X}{\kappa})
+            ((\beta,\restrl{h}{\beta}))
+        \in X\setminus
+            \edmForbiddenSet{E}{X}{\restrl{h}{\beta}}$ by
+        \auto{edm_greedy_step_available}.
+    Hence $h(\beta)\in
+        X\setminus\edmForbiddenSet{E}{X}{\restrl{h}{\beta}}$.
+\end{proof}
+
+\begin{theorem}\label{edm_greedy_later_separated}
+    Let $\kappa$ be a regular cardinal.
+    Suppose $X\approx\kappa$.
+    Let $\beta\in\kappa$ and $\alpha\in\beta$.
+    Suppose for every $x\in X$ we have
+        $\cardLt{\graphNeighbourhood{E}{x}{X}}{\kappa}$.
+    Then
+    \[
+        (\ordinalRecursion{\kappa}{X}
+            {\edmGreedyStep{E}{X}{\kappa}})(\alpha)
+        \neq
+        (\ordinalRecursion{\kappa}{X}
+            {\edmGreedyStep{E}{X}{\kappa}})(\beta)
+    \]
+    and
+    \[
+        (\ordinalRecursion{\kappa}{X}
+            {\edmGreedyStep{E}{X}{\kappa}})(\alpha)
+        \not\mathrel{E}
+        (\ordinalRecursion{\kappa}{X}
+            {\edmGreedyStep{E}{X}{\kappa}})(\beta)
+    \].
+\end{theorem}
+\begin{proof}
+    Hence $\kappa$ is a cardinal and $\kappa$ is infinite by definition.
+    Hence $\kappa$ is an ordinal by \auto{cardinal,initial_ordinal}.
+    $\kappa$ is inhabited by \obv{infinite_is_inhabited}.
+    Hence $X$ is inhabited by \obv{equinum_inhabited}.
+    $\ordinalRecursion{\kappa}{X}{\edmGreedyStep{E}{X}{\kappa}}
+        \in\funs{\kappa}{X}$ by
+        \obv{edm_greedy_recursion_type}.
+    $(\ordinalRecursion{\kappa}{X}
+            {\edmGreedyStep{E}{X}{\kappa}})(\beta)
+        \in X\setminus\edmForbiddenSet{E}{X}
+            {\restrl{\ordinalRecursion{\kappa}{X}
+                {\edmGreedyStep{E}{X}{\kappa}}}{\beta}}$ by
+        \obv{edm_greedy_new_point}.
+    Let $h=\ordinalRecursion{\kappa}{X}
+        {\edmGreedyStep{E}{X}{\kappa}}$.
+    $h\in\funs{\kappa}{X}$ and
+        $h(\beta)\in X\setminus
+            \edmForbiddenSet{E}{X}{\restrl{h}{\beta}}$.
+    Hence $h$ is a function and $\dom{h}=\kappa$ by
+        \obv{funs_is_function,funs}.
+    $\beta$ is an ordinal by \obv{elem_of_ordinal_is_ordinal}.
+    Hence $\beta\subseteq\kappa$ by
+        \obv{ordinal_elem_implies_subseteq}.
+    Hence $\beta\subseteq\dom{h}$.
+    $\restrl{h}{\beta}\in\funs{\beta}{X}$ by
+        \obv{funs_restrl}.
+    Hence $\restrl{h}{\beta}$ is a function and
+        $\dom{\restrl{h}{\beta}}=\beta$ by
+        \obv{funs_is_function,funs}.
+    $(\restrl{h}{\beta})(\alpha)=h(\alpha)$ by
+        \obv{restrl_of_function_apply}.
+    Hence $h(\alpha)\in\ran{\restrl{h}{\beta}}$ by
+        \auto{fun_ran_iff}.
+    Hence $h(\alpha)\in
+        \edmForbiddenSet{E}{X}{\restrl{h}{\beta}}$ by
+        \auto{edm_forbidden_set_iff}.
+    $h(\alpha),h(\beta)\in X$ by \obv{funs_type_apply}.
+    $h(\beta)\notin
+        \edmForbiddenSet{E}{X}{\restrl{h}{\beta}}$ by
+        \obv{setminus}.
+    Hence $h(\alpha)\neq h(\beta)$.
+    Show that $h(\alpha)\not\mathrel{E}h(\beta)$.
+    \begin{subproof}
+        Suppose $h(\alpha)\mathrel{E}h(\beta)$.
+        Hence $h(\beta)\in
+            \graphNeighbourhood{E}{h(\alpha)}{X}$ by
+            \auto{graph_neighbourhood_iff}.
+        Hence $h(\beta)\in
+            \edmForbiddenSet{E}{X}{\restrl{h}{\beta}}$ by
+            \auto{edm_forbidden_set_iff}.
+        Contradiction.
+    \end{subproof}
+\end{proof}
+
+\begin{theorem}\label{regular_small_degree_independent}
+    Let $\kappa$ be a regular cardinal.
+    Suppose $X\approx\kappa$.
+    Suppose $E$ is a simple graph on $X$.
+    Suppose for every $x\in X$ we have
+        $\cardLt{\graphNeighbourhood{E}{x}{X}}{\kappa}$.
+    Then $E$ has an independent set in $X$ equinumerous with $\kappa$.
+\end{theorem}
+\begin{proof}
+    Hence $\kappa$ is a cardinal and $\kappa$ is infinite by definition.
+    Hence $\kappa$ is an ordinal by \auto{cardinal,initial_ordinal}.
+    $\kappa$ is inhabited by \obv{infinite_is_inhabited}.
+    Hence $X$ is inhabited by \obv{equinum_inhabited}.
+    $\ordinalRecursion{\kappa}{X}{\edmGreedyStep{E}{X}{\kappa}}
+        \in\funs{\kappa}{X}$ by
+        \obv{edm_greedy_recursion_type}.
+    Let $h=\ordinalRecursion{\kappa}{X}
+        {\edmGreedyStep{E}{X}{\kappa}}$.
+    $h\in\funs{\kappa}{X}$.
+    Hence $h$ is a function and $\dom{h}=\kappa$ by
+        \obv{funs_is_function,funs}.
+    Show that $h$ is injective.
+    \begin{subproof}
+        Show that for all $\alpha,\beta\in\dom{h}$ such that
+            $h(\alpha)=h(\beta)$ we have $\alpha=\beta$.
+        \begin{subproof}
+            Fix $\alpha,\beta\in\dom{h}$.
+            Assume $h(\alpha)=h(\beta)$.
+            Hence $\alpha,\beta\in\kappa$.
+            \begin{byCase}
+                \caseOf{$\alpha=\beta$.}
+                    Follows.
+                \caseOf{$\alpha\neq\beta$.}
+                    $\alpha$ and $\beta$ are ordinals by
+                        \obv{elem_of_ordinal_is_ordinal}.
+                    $\alpha\in\beta$ or $\beta\in\alpha$ by
+                        \obv{ordinal_elem_connex}.
+                    \begin{byCase}
+                        \caseOf{$\alpha\in\beta$.}
+                            $h(\alpha)\neq h(\beta)$ by
+                                \auto{edm_greedy_later_separated}.
+                            Contradiction.
+                        \caseOf{$\alpha\notin\beta$.}
+                            Hence $\beta\in\alpha$.
+                            $h(\beta)\neq h(\alpha)$ by
+                                \auto{edm_greedy_later_separated}.
+                            Contradiction.
+                    \end{byCase}
+            \end{byCase}
+        \end{subproof}
+        Follows by \obv{injective_function}.
+    \end{subproof}
+    Hence $h\in\bijections{\dom{h}}{\ran{h}}$ by
+        \obv{injective_function_bijection_to_range}.
+    Hence $h\in\bijections{\kappa}{\ran{h}}$.
+    Let $H=\ran{h}$.
+    $\kappa\approx H$ by \obv{equinum}.
+    Hence $H\approx\kappa$ by \obv{equinum_sym}.
+    $H\subseteq X$ by \auto{funs_ran}.
+    Show that for all $x,y\in H$ such that $x\neq y$ we have
+        $x\not\mathrel{E}y$.
+    \begin{subproof}
+        Fix $x,y\in H$.
+        Assume $x\neq y$.
+        Take $\alpha\in\dom{h}$ such that $h(\alpha)=x$ by
+            \obv{fun_ran_iff}.
+        Take $\beta\in\dom{h}$ such that $h(\beta)=y$ by
+            \obv{fun_ran_iff}.
+        Hence $\alpha,\beta\in\kappa$ and $\alpha\neq\beta$.
+        $\alpha$ and $\beta$ are ordinals by
+            \obv{elem_of_ordinal_is_ordinal}.
+        $\alpha\in\beta$ or $\beta\in\alpha$ by
+            \obv{ordinal_elem_connex}.
+        \begin{byCase}
+            \caseOf{$\alpha\in\beta$.}
+                $h(\alpha)\not\mathrel{E}h(\beta)$ by
+                    \auto{edm_greedy_later_separated}.
+            \caseOf{$\alpha\notin\beta$.}
+                Hence $\beta\in\alpha$.
+                $h(\beta)\not\mathrel{E}h(\alpha)$ by
+                    \auto{edm_greedy_later_separated}.
+                Show that $h(\alpha)\not\mathrel{E}h(\beta)$.
+                \begin{subproof}
+                    Suppose $h(\alpha)\mathrel{E}h(\beta)$.
+                    Hence $h(\beta)\mathrel{E}h(\alpha)$ by
+                        \obv{simple_graph_edge_symmetric}.
+                    Contradiction.
+                \end{subproof}
+        \end{byCase}
+    \end{subproof}
+    Hence $H$ is an independent set in $X$ with respect to $E$ by
+        \obv{independent_in_graph}.
+\end{proof}

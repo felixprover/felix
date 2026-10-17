@@ -1,0 +1,449 @@
+\import{algebra/group/action.tex}
+\import{algebra/group/homomorphism.tex}
+\import{algebra/group/permutation.tex}
+\import{set/logical-graph.tex}
+
+\section{Permutation representations}
+
+Every element of a group acting on a set determines a permutation of that
+set.  We first expose this permutation as an ordinary graph, and then collect
+the graphs into the representation homomorphism.
+
+\begin{definition}\label{action_permutation_value}
+    $\actionPermutationValue{p}{X}{a}=
+        \Apply{\graphOnDomainOp}{
+            X,\fun{x:\Set}{\actionApply{p}{a}{x}}}$.
+\end{definition}
+
+\begin{proposition}\label{action_permutation_value_apply}
+    Suppose $x\in X$.
+    Then
+        $\apply{\actionPermutationValue{p}{X}{a}}{x}
+            =\actionApply{p}{a}{x}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{action_permutation_value,logical_graph_on_domain_apply}.
+\end{proof}
+
+\begin{theorem}\label{action_permutation_value_bijection}
+    Suppose $\groupAction{p}{G}{X}$ and $a\in\carrier[G]$.
+    Then $\actionPermutationValue{p}{X}{a}\in\bijections{X}{X}$.
+\end{theorem}
+\begin{proof}
+    Let $f=\actionPermutationValue{p}{X}{a}$.
+    Show that $f\in\funs{X}{X}$.
+    \begin{subproof}
+        Show that $\forall x:\Set. x\in X\implies
+            \actionApply{p}{a}{x}\in X$.
+        \begin{subproof}
+            Fix $x:\Set$.
+            Assume $x\in X$.
+            Follows by \obv{group_action_apply_type}.
+        \end{subproof}
+        Follows by
+            \auto{action_permutation_value,
+                logical_graph_on_domain_type}.
+    \end{subproof}
+    Show that $f\in\surj{X}{X}$.
+    \begin{subproof}
+        Show that for every $y\in X$ there exists $x\in X$ such that
+            $f(x)=y$.
+        \begin{subproof}
+            Fix $y\in X$.
+            Let $b=\groupInv[G](a)$ and
+                $x=\actionApply{p}{b}{y}$.
+            $G$ is a group by \obv{group_action_group}.
+            Hence $b\in\carrier[G]$ by \auto{group_inverse_type}.
+            Hence $x\in X$ by \auto{group_action_apply_type}.
+            $f(x)=\actionApply{p}{a}{x}$ by
+                \auto{action_permutation_value_apply}.
+            $\actionApply{p}{a}{\actionApply{p}{b}{y}}=
+                \actionApply{p}{\mul[G](a,b)}{y}$ by
+                \obv{group_action_mul}.
+            $\mul[G](a,b)=\neutral[G]$ by
+                \auto{group_inverse_right}.
+            $\actionApply{p}{\neutral[G]}{y}=y$ by
+                \obv{group_action_neutral}.
+            Hence $f(x)=y$.
+        \end{subproof}
+        Follows by \obv{surj}.
+    \end{subproof}
+    Show that $f$ is injective.
+    \begin{subproof}
+        $f$ is a function and $\dom{f}=X$ by \auto{funs_elim}.
+        Show that for all $x,y\in\dom{f}$ we have
+            $f(x)=f(y)\implies x=y$.
+        \begin{subproof}
+            Fix $x,y\in\dom{f}$.
+            Assume $f(x)=f(y)$.
+            Hence $x,y\in X$.
+            Let $b=\groupInv[G](a)$.
+            $G$ is a group by \obv{group_action_group}.
+            Hence $b\in\carrier[G]$ by \auto{group_inverse_type}.
+            $f(x)=\actionApply{p}{a}{x}$ and
+                $f(y)=\actionApply{p}{a}{y}$ by
+                \auto{action_permutation_value_apply}.
+            Hence
+                $\actionApply{p}{b}{\actionApply{p}{a}{x}}=
+                 \actionApply{p}{b}{\actionApply{p}{a}{y}}$.
+            $\actionApply{p}{b}{\actionApply{p}{a}{x}}=
+                \actionApply{p}{\mul[G](b,a)}{x}$ and
+                $\actionApply{p}{b}{\actionApply{p}{a}{y}}=
+                \actionApply{p}{\mul[G](b,a)}{y}$ by
+                \obv{group_action_mul}.
+            $\mul[G](b,a)=\neutral[G]$ by
+                \auto{group_inverse_left}.
+            $\actionApply{p}{\neutral[G]}{x}=x$ and
+                $\actionApply{p}{\neutral[G]}{y}=y$ by
+                \obv{group_action_neutral}.
+        \end{subproof}
+        Follows by \obv{injective_function}.
+    \end{subproof}
+    Follows by \obv{bijections}.
+\end{proof}
+
+\begin{definition}\label{action_permutation_map}
+    $\actionPermutationMap{p}{G}{X}=
+        \Apply{\graphOnDomainOp}{
+            \carrier[G],
+            \fun{a:\Set}{\actionPermutationValue{p}{X}{a}}}$.
+\end{definition}
+
+\begin{proposition}\label{action_permutation_map_apply}
+    Suppose $a\in\carrier[G]$.
+    Then
+        $\apply{\actionPermutationMap{p}{G}{X}}{a}=
+            \actionPermutationValue{p}{X}{a}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{action_permutation_map,logical_graph_on_domain_apply}.
+\end{proof}
+
+\begin{proposition}\label{action_permutation_map_value}
+    Suppose $a\in\carrier[G]$ and $x\in X$.
+    Then
+        $\apply{\apply{\actionPermutationMap{p}{G}{X}}{a}}{x}
+            =\actionApply{p}{a}{x}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{action_permutation_map_apply,
+            action_permutation_value_apply}.
+\end{proof}
+
+\begin{proposition}\label{action_permutation_map_type}
+    Suppose $\groupAction{p}{G}{X}$.
+    Then $\actionPermutationMap{p}{G}{X}\in
+        \funs{\carrier[G]}{\carrier[\PermutationGroup{X}]}$.
+\end{proposition}
+\begin{proof}
+    $\carrier[\PermutationGroup{X}]=\bijections{X}{X}$ by
+        \obv{permutation_group_carrier}.
+    Show that $\forall a:\Set. a\in\carrier[G]\implies
+        \actionPermutationValue{p}{X}{a}
+            \in\bijections{X}{X}$.
+    \begin{subproof}
+        Fix $a:\Set$.
+        Assume $a\in\carrier[G]$.
+        Follows by \obv{action_permutation_value_bijection}.
+    \end{subproof}
+    Follows by
+        \auto{action_permutation_map,logical_graph_on_domain_type}.
+\end{proof}
+
+\begin{theorem}\label{action_permutation_map_group_hom}
+    Suppose $\groupAction{p}{G}{X}$.
+    Then
+        $\groupHom
+            {\actionPermutationMap{p}{G}{X}}
+            {G}{\PermutationGroup{X}}$.
+\end{theorem}
+\begin{proof}
+    Let $F=\actionPermutationMap{p}{G}{X}$ and
+        $P=\PermutationGroup{X}$.
+    $G$ is a group by \obv{group_action_group}.
+    $P$ is a group by \obv{permutation_group_is_group}.
+    $F\in\funs{\carrier[G]}{\carrier[P]}$ by
+        \auto{action_permutation_map_type}.
+    Show that for all $a,b\in\carrier[G]$ we have
+        $F(\mul[G](a,b))=\mul[P](F(a),F(b))$.
+    \begin{subproof}
+        Fix $a,b\in\carrier[G]$.
+        Let $c=\mul[G](a,b)$.
+        $c\in\carrier[G]$ by
+            \auto{group_is_monoid,monoid_is_magma,magma_welldef}.
+        Let $f=\actionPermutationValue{p}{X}{a}$ and
+            $g=\actionPermutationValue{p}{X}{b}$.
+        Let $h=\actionPermutationValue{p}{X}{c}$.
+        $f,g,h\in\bijections{X}{X}$ by
+            \auto{action_permutation_value_bijection}.
+        Hence $f,g,h\in\funs{X}{X}$ by
+            \obv{bijections_to_funs}.
+        $f\circ g\in\funs{X}{X}$ by \obv{funs_circ}.
+        Show that $h=f\circ g$.
+        \begin{subproof}
+            $h$ is a function and $f\circ g$ is a function and
+                $\dom{h}=X=\dom{f\circ g}$ by
+                \auto{funs_elim,funs_is_function}.
+            Show that for every $x\in\dom{h}$ we have
+                $h(x)=(f\circ g)(x)$.
+            \begin{subproof}
+                Fix $x\in\dom{h}$.
+                Hence $x\in X$.
+                $g(x)\in X$ by \obv{funs_type_apply}.
+                $h(x)=\actionApply{p}{c}{x}$ and
+                    $f(g(x))=
+                        \actionApply{p}{a}{\actionApply{p}{b}{x}}$ by
+                    \auto{action_permutation_value_apply}.
+                $\actionApply{p}{c}{x}=
+                    \actionApply{p}{a}{\actionApply{p}{b}{x}}$ by
+                    \auto{group_action_mul}.
+                $f$ is composable with $g$ by
+                    \auto{funs,funs_ran,subseteq}.
+                $(f\circ g)(x)=f(g(x))$ by
+                    \auto{circ_apply,funs_is_function,funs}.
+            \end{subproof}
+            Follows by \obv{funext_on_domain}.
+        \end{subproof}
+        $F(a)=f$ and $F(b)=g$ and $F(c)=h$ by
+            \auto{action_permutation_map_apply}.
+        $\mul[P](f,g)=f\circ g$ by
+            \auto{permutation_group_mul_apply}.
+    \end{subproof}
+    Follows by \auto{group_hom}.
+\end{proof}
+
+\begin{proposition}\label{action_permutation_value_identity_iff}
+    Suppose $\groupAction{p}{G}{X}$ and $a\in\carrier[G]$.
+    Then
+        $\actionPermutationValue{p}{X}{a}=\identity{X}$ iff
+        for every $x\in X$ we have $\actionApply{p}{a}{x}=x$.
+\end{proposition}
+\begin{proof}
+    Let $f=\actionPermutationValue{p}{X}{a}$.
+    $f\in\funs{X}{X}$ by
+        \auto{action_permutation_value_bijection,bijections_to_funs}.
+    $\identity{X}\in\funs{X}{X}$ by \obv{id_elem_funs}.
+    Show that if $f=\identity{X}$, then for every $x\in X$ we have
+        $\actionApply{p}{a}{x}=x$.
+    \begin{subproof}
+        Assume $f=\identity{X}$.
+        Fix $x\in X$.
+        $f(x)=\actionApply{p}{a}{x}$ by
+            \auto{action_permutation_value_apply}.
+        $(\identity{X})(x)=x$ by \obv{id_apply}.
+    \end{subproof}
+    Show that if for every $x\in X$ we have
+        $\actionApply{p}{a}{x}=x$, then $f=\identity{X}$.
+    \begin{subproof}
+        Assume that for every $x\in X$ we have
+            $\actionApply{p}{a}{x}=x$.
+        $f$ is a function and $\identity{X}$ is a function and
+            $\dom{f}=X=\dom{\identity{X}}$ by
+            \obv{funs_elim,funs_is_function}.
+        For every $x\in\dom{f}$ we have
+            $f(x)=(\identity{X})(x)$ by
+            \auto{action_permutation_value_apply,id_apply}.
+        Follows by \obv{funext_on_domain}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{proposition}\label{action_permutation_map_kernel_iff}
+    Suppose $\groupAction{p}{G}{X}$.
+    Then
+        $a\in\groupKernel{\actionPermutationMap{p}{G}{X}}{G}$ iff
+        $a\in\carrier[G]$ and
+            for every $x\in X$ we have $\actionApply{p}{a}{x}=x$.
+\end{proposition}
+\begin{proof}
+    Let $F=\actionPermutationMap{p}{G}{X}$ and
+        $P=\PermutationGroup{X}$.
+    $\groupHom{F}{G}{P}$ by
+        \auto{action_permutation_map_group_hom}.
+    $\neutral[P]=\identity{X}$ by
+        \auto{permutation_group_neutral}.
+    Show that if $a\in\groupKernel{F}{G}$, then
+        $a\in\carrier[G]$ and for every $x\in X$ we have
+            $\actionApply{p}{a}{x}=x$.
+    \begin{subproof}
+        Assume $a\in\groupKernel{F}{G}$.
+        Hence $a\in\carrier[G]$ and $F(a)=\neutral[P]$ by
+            \obv{group_kernel_iff}.
+        $F(a)=\actionPermutationValue{p}{X}{a}$ by
+            \auto{action_permutation_map_apply}.
+        Follows by
+            \auto{action_permutation_value_identity_iff}.
+    \end{subproof}
+    Show that if $a\in\carrier[G]$ and for every $x\in X$ we have
+        $\actionApply{p}{a}{x}=x$, then
+        $a\in\groupKernel{F}{G}$.
+    \begin{subproof}
+        Assume $a\in\carrier[G]$ and for every $x\in X$ we have
+            $\actionApply{p}{a}{x}=x$.
+        $F(a)=\actionPermutationValue{p}{X}{a}$ by
+            \auto{action_permutation_map_apply}.
+        $\actionPermutationValue{p}{X}{a}=\identity{X}$ by
+            \obv{action_permutation_value_identity_iff}.
+        Hence $F(a)=\neutral[P]$.
+        Follows by \auto{group_kernel_iff}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{action_permutation_map_kernel}
+    Suppose $\groupAction{p}{G}{X}$.
+    Then
+        $\groupKernel{\actionPermutationMap{p}{G}{X}}{G}
+        =\{a\in\carrier[G]\mid
+            \text{for every $x\in X$ we have
+                $\actionApply{p}{a}{x}=x$}\}$.
+\end{theorem}
+\begin{proof}
+    Follows by
+        \auto{setext,action_permutation_map_kernel_iff}.
+\end{proof}
+
+\begin{theorem}\label{action_permutation_map_faithful_iff}
+    Suppose $\groupAction{p}{G}{X}$.
+    Then
+        $\groupEmbedding
+            {\actionPermutationMap{p}{G}{X}}
+            {G}{\PermutationGroup{X}}$ iff
+        for every $a\in\carrier[G]$ we have
+            (if for every $x\in X$ we have
+                $\actionApply{p}{a}{x}=x$, then
+                $a=\neutral[G]$).
+\end{theorem}
+\begin{proof}
+    Let $F=\actionPermutationMap{p}{G}{X}$ and
+        $P=\PermutationGroup{X}$.
+    Let $K=\groupKernel{F}{G}$.
+    $\groupHom{F}{G}{P}$ by
+        \auto{action_permutation_map_group_hom}.
+    Show that if $\groupEmbedding{F}{G}{P}$, then
+        for every $a\in\carrier[G]$ we have
+            (if for every $x\in X$ we have
+                $\actionApply{p}{a}{x}=x$, then
+                $a=\neutral[G]$).
+    \begin{subproof}
+        Assume $\groupEmbedding{F}{G}{P}$.
+        $K=\trivialSubgroupCarrier{G}$ by
+            \obv{group_embedding_iff_kernel_trivial}.
+        Fix $a\in\carrier[G]$.
+        Assume that for every $x\in X$ we have
+            $\actionApply{p}{a}{x}=x$.
+        Hence $a\in K$ by
+            \auto{action_permutation_map_kernel_iff}.
+        Follows by
+            \auto{trivial_subgroup_carrier,singleton_iff}.
+    \end{subproof}
+    Show that if for every $a\in\carrier[G]$ we have
+        (if for every $x\in X$ we have
+            $\actionApply{p}{a}{x}=x$, then
+            $a=\neutral[G]$), then
+        $\groupEmbedding{F}{G}{P}$.
+    \begin{subproof}
+        Assume that for every $a\in\carrier[G]$ we have
+            (if for every $x\in X$ we have
+                $\actionApply{p}{a}{x}=x$, then
+                $a=\neutral[G]$).
+        Show that $K=\trivialSubgroupCarrier{G}$.
+        \begin{subproof}
+            Show that $K\subseteq\trivialSubgroupCarrier{G}$.
+            \begin{subproof}
+                Show that for every $a\in K$ we have
+                    $a\in\trivialSubgroupCarrier{G}$.
+                \begin{subproof}
+                    Fix $a\in K$.
+                    Hence $a\in\carrier[G]$ and for every $x\in X$
+                        we have $\actionApply{p}{a}{x}=x$ by
+                        \auto{action_permutation_map_kernel_iff}.
+                    Hence $a=\neutral[G]$.
+                    Follows by
+                        \obv{trivial_subgroup_carrier,singleton_iff}.
+                \end{subproof}
+                Follows by \obv{subseteq}.
+            \end{subproof}
+            Show that $\trivialSubgroupCarrier{G}\subseteq K$.
+            \begin{subproof}
+                Show that for every $a\in\trivialSubgroupCarrier{G}$
+                    we have $a\in K$.
+                \begin{subproof}
+                    Fix $a\in\trivialSubgroupCarrier{G}$.
+                    Hence $a=\neutral[G]$ by
+                        \obv{trivial_subgroup_carrier,singleton_iff}.
+                    $\neutral[G]\in\carrier[G]$ by
+                        \obv{group_action_group,group_is_monoid,
+                            monoid_is_unital_magma,unitalmagma_type}.
+                    For every $x\in X$ we have
+                        $\actionApply{p}{\neutral[G]}{x}=x$ by
+                        \obv{group_action_neutral}.
+                    Follows by
+                        \obv{action_permutation_map_kernel_iff}.
+                \end{subproof}
+                Follows by \obv{subseteq}.
+            \end{subproof}
+            Follows by \obv{subseteq_antisymmetric}.
+        \end{subproof}
+        Follows by \obv{group_embedding_iff_kernel_trivial}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\subsection{The left regular action}
+
+\begin{theorem}\label{group_multiplication_action}
+    Let $G$ be a group.
+    Then $\groupAction{\mul[G]}{G}{\carrier[G]}$.
+\end{theorem}
+\begin{proof}
+    $G$ is a monoid by \obv{group_is_monoid}.
+    $\mul[G]\in
+        \funs{\carrier[G]\times\carrier[G]}{\carrier[G]}$ by
+        \obv{magma_mul_graph}.
+    For every $x\in\carrier[G]$ we have
+        $\actionApply{\mul[G]}{\neutral[G]}{x}=x$ by
+        \obv{unitalmagma_left}.
+    For all $a,b\in\carrier[G]$ we have for every
+        $x\in\carrier[G]$
+        $\actionApply{\mul[G]}{\mul[G](a,b)}{x}=
+            \actionApply{\mul[G]}{a}{
+                \actionApply{\mul[G]}{b}{x}}$ by
+        \obv{monoid_assoc}.
+    Hence $\monoidAction{\mul[G]}{G}{\carrier[G]}$ by
+        \obv{monoid_action}.
+    Follows by \obv{group_action}.
+\end{proof}
+
+\begin{theorem}[Cayley's theorem]\label{cayley_theorem}
+    Let $G$ be a group.
+    Then
+        $\groupEmbedding
+            {\actionPermutationMap{\mul[G]}{G}{\carrier[G]}}
+            {G}{\PermutationGroup{\carrier[G]}}$.
+\end{theorem}
+\begin{proof}
+    $\groupAction{\mul[G]}{G}{\carrier[G]}$ by
+        \obv{group_multiplication_action}.
+    Show that for every $a\in\carrier[G]$ we have
+        (if for every $x\in\carrier[G]$ we have
+            $\actionApply{\mul[G]}{a}{x}=x$, then
+            $a=\neutral[G]$).
+    \begin{subproof}
+        Fix $a\in\carrier[G]$.
+        Assume that for every $x\in\carrier[G]$ we have
+            $\actionApply{\mul[G]}{a}{x}=x$.
+        $\neutral[G]\in\carrier[G]$ by
+            \obv{group_is_monoid,monoid_is_unital_magma,
+                unitalmagma_type}.
+        Hence
+            $\actionApply{\mul[G]}{a}{\neutral[G]}=\neutral[G]$.
+        $\mul[G](a,\neutral[G])=a$ by
+            \obv{group_is_monoid,monoid_is_unital_magma,
+                unitalmagma_right}.
+    \end{subproof}
+    Follows by \obv{action_permutation_map_faithful_iff}.
+\end{proof}

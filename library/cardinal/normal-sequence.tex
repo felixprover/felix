@@ -1,0 +1,901 @@
+\section{Normal cofinal cardinal sequences at singular cardinals}
+
+\import{ordinal.tex}
+\import{cardinal/comparison.tex}
+\import{cardinal/normal-map.tex}
+\import{cardinal/regularity.tex}
+\import{recursion/transfinite.tex}
+
+The bounded recursion below constructs a normal cofinal cardinal sequence at
+every singular cardinal.  Its values are in fact infinite cardinals, and the
+sequence is index-dominating; these are separate properties supplied by the
+construction rather than parts of normality.
+
+\begin{definition}\label{cardinal_sequence_envelope}
+    $\cardinalSequenceEnvelope{\kappa}{d}
+        =\cofinalEnvelope{d}{\cofinality{\kappa}}{\kappa}$.
+\end{definition}
+
+\begin{definition}\label{cardinal_sequence_next}
+    $\cardinalSequenceNext{q}{\lambda}{\beta}{g}
+        =\cardSucc{\card{(\lambda\union q(\beta))
+            \union\unions{\ran{g}}}}$.
+\end{definition}
+
+\begin{definition}\label{cardinal_sequence_limit_stage}
+    $\cardinalSequenceLimitStage{\beta}$ iff
+        $\beta$ is a limit ordinal.
+\end{definition}
+
+\begin{definition}\label{cardinal_sequence_stage_property}
+    $\cardinalSequenceStageProperty{c}{\beta}$ iff
+        $c(\beta)$ is an infinite cardinal and
+        for every $j\in\beta$ we have $c(j)\in c(\beta)$.
+\end{definition}
+
+\begin{definition}\label{cardinal_sequence_step}
+    $\cardinalSequenceStep{q}{\lambda}{\kappa}
+        =\{v\in((\lambda\times\pow{\lambda\times\kappa})\times\kappa)
+            \mid
+            (\cardinalSequenceLimitStage{\fst{\fst{v}}}\land
+             \unions{\ran{\snd{\fst{v}}}}\in\kappa\land
+             \snd{v}=\unions{\ran{\snd{\fst{v}}}})\lor
+            (\cardinalSequenceLimitStage{\fst{\fst{v}}}\land
+             \unions{\ran{\snd{\fst{v}}}}\notin\kappa\land
+             \snd{v}=\emptyset)\lor
+            (\lnot\cardinalSequenceLimitStage{\fst{\fst{v}}}\land
+             \cardinalSequenceNext{q}{\lambda}{\fst{\fst{v}}}
+                {\snd{\fst{v}}}\in\kappa\land
+             \snd{v}=\cardinalSequenceNext{q}{\lambda}{\fst{\fst{v}}}
+                {\snd{\fst{v}}})\lor
+            (\lnot\cardinalSequenceLimitStage{\fst{\fst{v}}}\land
+             \cardinalSequenceNext{q}{\lambda}{\fst{\fst{v}}}
+                {\snd{\fst{v}}}\notin\kappa\land
+             \snd{v}=\emptyset)
+        \}$.
+\end{definition}
+
+\begin{definition}\label{cardinal_sequence}
+    $\cardinalSequence{\kappa}{d}
+        =\ordinalRecursion{\cofinality{\kappa}}{\kappa}
+            {\cardinalSequenceStep{\cardinalSequenceEnvelope{\kappa}{d}}
+                {\cofinality{\kappa}}{\kappa}}$.
+\end{definition}
+
+\begin{proposition}\label{cardinal_sequence_step_type}
+    Let $\kappa$ be an infinite cardinal.
+    Then $\cardinalSequenceStep{q}{\lambda}{\kappa}
+        \in\funs{\lambda\times\pow{\lambda\times\kappa}}{\kappa}$.
+\end{proposition}
+\begin{proof}
+    Let $D=\lambda\times\pow{\lambda\times\kappa}$.
+    Let $H=\cardinalSequenceStep{q}{\lambda}{\kappa}$.
+    $H\subseteq D\times\kappa$
+        by \auto{cardinal_sequence_step,subseteq}.
+    Hence $H$ is a relation
+        by \auto{relation,subseteq,times_elem_is_tuple}.
+    Show that $H$ is right-unique.
+    \begin{subproof}
+        Show that for all $u,b,c$ such that $(u,b),(u,c)\in H$
+            we have $b=c$.
+        \begin{subproof}
+            Fix $u,b,c$.
+            Assume $(u,b),(u,c)\in H$.
+            Let $\beta=\fst{u}$.
+            Let $g=\snd{u}$.
+            \begin{byCase}
+                \caseOf{$\cardinalSequenceLimitStage{\beta}$.}
+                    \begin{byCase}
+                        \caseOf{$\unions{\ran{g}}\in\kappa$.}
+                            $b=\unions{\ran{g}}$ by
+                                \auto{cardinal_sequence_step,fst_eq,snd_eq,pair_eq_iff}.
+                            $c=\unions{\ran{g}}$ by
+                                \auto{cardinal_sequence_step,fst_eq,snd_eq,pair_eq_iff}.
+                        \caseOf{$\unions{\ran{g}}\notin\kappa$.}
+                            $b=\emptyset$ by
+                                \auto{cardinal_sequence_step,fst_eq,snd_eq,pair_eq_iff}.
+                            $c=\emptyset$ by
+                                \auto{cardinal_sequence_step,fst_eq,snd_eq,pair_eq_iff}.
+                    \end{byCase}
+                \caseOf{$\lnot\cardinalSequenceLimitStage{\beta}$.}
+                    \begin{byCase}
+                        \caseOf{$\cardinalSequenceNext{q}{\lambda}{\beta}{g}
+                            \in\kappa$.}
+                            $b=\cardinalSequenceNext{q}{\lambda}{\beta}{g}$ by
+                                \auto{cardinal_sequence_step,fst_eq,snd_eq,pair_eq_iff}.
+                            $c=\cardinalSequenceNext{q}{\lambda}{\beta}{g}$ by
+                                \auto{cardinal_sequence_step,fst_eq,snd_eq,pair_eq_iff}.
+                        \caseOf{$\cardinalSequenceNext{q}{\lambda}{\beta}{g}
+                            \notin\kappa$.}
+                            $b=\emptyset$ by
+                                \auto{cardinal_sequence_step,fst_eq,snd_eq,pair_eq_iff}.
+                            $c=\emptyset$ by
+                                \auto{cardinal_sequence_step,fst_eq,snd_eq,pair_eq_iff}.
+                    \end{byCase}
+            \end{byCase}
+        \end{subproof}
+        Follows by \obv{rightunique}.
+    \end{subproof}
+    Show that $\dom{H}=D$.
+    \begin{subproof}
+        $\dom{H}\subseteq D$
+            by \auto{subseteq,dom_iff,cardinal_sequence_step,times_tuple_elim,pair_eq_iff}.
+        Show that every element of $D$ is an element of $\dom{H}$.
+        \begin{subproof}
+            Fix $u\in D$.
+            Let $\beta=\fst{u}$.
+            Let $g=\snd{u}$.
+            $u=(\beta,g)$ by \auto{times_elem_is_tuple,pair_eq_pair_of_proj}.
+            $\emptyset\in\kappa$
+                by \obv{zero_one_in_infinite_cardinal}.
+            \begin{byCase}
+                \caseOf{$\cardinalSequenceLimitStage{\beta}$.}
+                    \begin{byCase}
+                        \caseOf{$\unions{\ran{g}}\in\kappa$.}
+                            $(u,\unions{\ran{g}})\in H$
+                                by \auto{cardinal_sequence_step,fst_eq,snd_eq,times_tuple_intro}.
+                            Follows by \obv{dom_intro}.
+                        \caseOf{$\unions{\ran{g}}\notin\kappa$.}
+                            $(u,\emptyset)\in H$
+                                by \auto{cardinal_sequence_step,fst_eq,snd_eq,times_tuple_intro}.
+                            Follows by \obv{dom_intro}.
+                    \end{byCase}
+                \caseOf{$\lnot\cardinalSequenceLimitStage{\beta}$.}
+                    \begin{byCase}
+                        \caseOf{$\cardinalSequenceNext{q}{\lambda}{\beta}{g}
+                            \in\kappa$.}
+                            $(u,\cardinalSequenceNext{q}{\lambda}{\beta}{g})
+                                \in H$
+                                by \auto{cardinal_sequence_step,fst_eq,snd_eq,times_tuple_intro}.
+                            Follows by \obv{dom_intro}.
+                        \caseOf{$\cardinalSequenceNext{q}{\lambda}{\beta}{g}
+                            \notin\kappa$.}
+                            $(u,\emptyset)\in H$
+                                by \auto{cardinal_sequence_step,fst_eq,snd_eq,times_tuple_intro}.
+                            Follows by \obv{dom_intro}.
+                    \end{byCase}
+            \end{byCase}
+        \end{subproof}
+        Hence $D\subseteq\dom{H}$ by \obv{subseteq}.
+        Follows by \obv{subseteq_antisymmetric}.
+    \end{subproof}
+    For every $u\in D$ we have $H(u)\in\kappa$
+        by \auto{function_apply_elim,subseteq,times_tuple_elim}.
+    Hence $H$ is a function to $\kappa$.
+    Follows by \auto{funs_intro}.
+\end{proof}
+
+\begin{proposition}\label{cardinal_sequence_step_limit}
+    Let $\kappa$ be an infinite cardinal.
+    Let $\beta\in\lambda$.
+    Suppose $\beta$ is a limit ordinal.
+    Let $g\in\pow{\lambda\times\kappa}$.
+    Suppose $\unions{\ran{g}}\in\kappa$.
+    Then $(\cardinalSequenceStep{q}{\lambda}{\kappa})((\beta,g))
+        =\unions{\ran{g}}$.
+\end{proposition}
+\begin{proof}
+    $(\beta,g)\in\lambda\times\pow{\lambda\times\kappa}$
+        by \obv{times_tuple_intro}.
+    $((\beta,g),\unions{\ran{g}})
+        \in\cardinalSequenceStep{q}{\lambda}{\kappa}$
+        by \auto{cardinal_sequence_step,fst_eq,snd_eq,cardinal_sequence_limit_stage,times_tuple_intro}.
+    $\cardinalSequenceStep{q}{\lambda}{\kappa}$ is a function
+        by \auto{cardinal_sequence_step_type,funs_is_function}.
+    Follows by \obv{function_apply_intro}.
+\end{proof}
+
+\begin{proposition}\label{cardinal_sequence_step_next}
+    Let $\kappa$ be an infinite cardinal.
+    Let $\beta\in\lambda$.
+    Suppose $\beta$ is not a limit ordinal.
+    Let $g\in\pow{\lambda\times\kappa}$.
+    Suppose $\cardinalSequenceNext{q}{\lambda}{\beta}{g}\in\kappa$.
+    Then $(\cardinalSequenceStep{q}{\lambda}{\kappa})((\beta,g))
+        =\cardinalSequenceNext{q}{\lambda}{\beta}{g}$.
+\end{proposition}
+\begin{proof}
+    $(\beta,g)\in\lambda\times\pow{\lambda\times\kappa}$
+        by \obv{times_tuple_intro}.
+    $((\beta,g),\cardinalSequenceNext{q}{\lambda}{\beta}{g})
+        \in\cardinalSequenceStep{q}{\lambda}{\kappa}$
+        by \auto{cardinal_sequence_step,fst_eq,snd_eq,cardinal_sequence_limit_stage,times_tuple_intro}.
+    $\cardinalSequenceStep{q}{\lambda}{\kappa}$ is a function
+        by \auto{cardinal_sequence_step_type,funs_is_function}.
+    Follows by \obv{function_apply_intro}.
+\end{proof}
+
+\begin{proposition}\label{cardinal_sequence_type}
+    Let $\kappa$ be a singular cardinal.
+    Let $\lambda=\cofinality{\kappa}$.
+    Suppose $\cofinalMap{d}{\lambda}{\kappa}$.
+    Then $\cardinalSequence{\kappa}{d}\in\funs{\lambda}{\kappa}$.
+\end{proposition}
+\begin{proof}
+    $\lambda$ is a cardinal by \obv{cofinality_is_cardinal}.
+    Hence $\lambda$ is an ordinal by \auto{cardinal,initial_ordinal}.
+    $\cardinalSequenceStep{\cardinalSequenceEnvelope{\kappa}{d}}
+        {\lambda}{\kappa}
+        \in\funs{\lambda\times\pow{\lambda\times\kappa}}{\kappa}$
+        by \obv{cardinal_sequence_step_type}.
+    Follows by
+        \auto{cardinal_sequence,ordinal_recursion_type}.
+\end{proof}
+
+\begin{proposition}\label{cardinal_sequence_equation}
+    Let $\kappa$ be a singular cardinal.
+    Let $\lambda=\cofinality{\kappa}$.
+    Suppose $\cofinalMap{d}{\lambda}{\kappa}$.
+    Let $\beta\in\lambda$.
+    Let $c=\cardinalSequence{\kappa}{d}$.
+    Then $c(\beta)=
+        (\cardinalSequenceStep{\cardinalSequenceEnvelope{\kappa}{d}}
+            {\lambda}{\kappa})((\beta,\restrl{c}{\beta}))$.
+\end{proposition}
+\begin{proof}
+    $\lambda$ is a cardinal by \obv{cofinality_is_cardinal}.
+    Hence $\lambda$ is an ordinal by \auto{cardinal,initial_ordinal}.
+    $\cardinalSequenceStep{\cardinalSequenceEnvelope{\kappa}{d}}
+        {\lambda}{\kappa}
+        \in\funs{\lambda\times\pow{\lambda\times\kappa}}{\kappa}$
+        by \obv{cardinal_sequence_step_type}.
+    Follows by
+        \auto{cardinal_sequence,ordinal_recursion_equation}.
+\end{proof}
+
+\begin{proposition}\label{cardinal_sequence_envelope_type}
+    Let $\kappa$ be a singular cardinal.
+    Let $\lambda=\cofinality{\kappa}$.
+    Suppose $\cofinalMap{d}{\lambda}{\kappa}$.
+    Then $\cardinalSequenceEnvelope{\kappa}{d}
+        \in\funs{\lambda}{\kappa}$.
+\end{proposition}
+\begin{proof}
+    Hence $\kappa$ is a limit ordinal
+        by \obv{infinite_cardinal_is_limit_ordinal}.
+    Hence $\kappa$ is an ordinal by \obv{limit_ordinal}.
+    Follows by
+        \auto{cardinal_sequence_envelope,cofinal_envelope_type}.
+\end{proof}
+
+\begin{proposition}\label{cardinal_sequence_envelope_dominates}
+    Let $\kappa$ be a singular cardinal.
+    Let $\lambda=\cofinality{\kappa}$.
+    Suppose $\cofinalMap{d}{\lambda}{\kappa}$.
+    Let $\beta\in\lambda$.
+    Let $j\in\suc{\beta}$.
+    Then $d(j)\in(\cardinalSequenceEnvelope{\kappa}{d})(\beta)$.
+\end{proposition}
+\begin{proof}
+    Hence $\kappa$ is a limit ordinal
+        by \obv{infinite_cardinal_is_limit_ordinal}.
+    Follows by
+        \auto{cardinal_sequence_envelope,cofinal_envelope_dominates_prefix}.
+\end{proof}
+
+\begin{proposition}\label{union_of_cardinals_is_cardinal}
+    Suppose every element of $C$ is a cardinal.
+    Then $\unions{C}$ is a cardinal.
+\end{proposition}
+\begin{proof}
+    Let $U=\unions{C}$.
+    Every element of $C$ is an ordinal
+        by \auto{cardinal,initial_ordinal}.
+    Hence $U$ is an ordinal by \obv{union_of_ordinals_is_ordinal}.
+    Show that for every $\alpha\in U$ we have $\lnot(\alpha\approx U)$.
+    \begin{subproof}
+        Fix $\alpha\in U$.
+        Take $\kappa\in C$ such that $\alpha\in\kappa$
+            by \obv{unions_iff}.
+        Hence $\kappa$ is an initial ordinal by \obv{cardinal}.
+        Suppose $\alpha\approx U$.
+        $\kappa\subseteq U$ by \auto{subseteq,unions_iff}.
+        Hence $\cardLe{\kappa}{U}$ by \obv{subseteq_cardinal_le}.
+        Hence $\cardLe{U}{\alpha}$ by \auto{equinum_cardinal_le}.
+        Hence $\cardLe{\kappa}{\alpha}$
+            by \obv{cardinal_le_transitive}.
+        $\alpha$ and $\kappa$ are ordinals
+            by \obv{initial_ordinal,elem_of_ordinal_is_ordinal}.
+        Hence $\alpha\subseteq\kappa$
+            by \obv{ordinal_elem_implies_subseteq}.
+        Hence $\cardLe{\alpha}{\kappa}$
+            by \obv{subseteq_cardinal_le}.
+        Hence $\kappa\approx\alpha$
+            by \obv{cardinal_le_antisymmetric_up_to_equinum}.
+        Hence $\alpha\approx\kappa$ by \obv{equinum_sym}.
+        Contradiction by \obv{initial_ordinal}.
+    \end{subproof}
+    Hence $U$ is an initial ordinal by \obv{initial_ordinal}.
+    Follows by \obv{cardinal}.
+\end{proof}
+
+\begin{proposition}\label{successor_cardinal_below_limit_cardinal}
+    Let $\kappa$ be a limit cardinal.
+    Let $\mu\in\kappa$.
+    Suppose $\mu$ is a cardinal.
+    Then $\cardSucc{\mu}\in\kappa$.
+\end{proposition}
+\begin{proof}
+    $\card{\mu}=\mu$ and $\card{\kappa}=\kappa$
+        by \obv{card_of_cardinal}.
+    Hence $\cardLt{\mu}{\kappa}$
+        by \auto{card_elem_iff_cardinal_lt}.
+    Hence $\cardSucc{\mu}\subseteq\kappa$
+        by \obv{cardinal_successor_minimal}.
+    $\cardSucc{\mu}$ and $\kappa$ are ordinals
+        by \auto{cardinal_successor_is_cardinal,cardinal,initial_ordinal}.
+    $\cardSucc{\mu}\neq\kappa$ by \auto{limit_cardinal}.
+    Follows by \obv{ordinal_subseteq_implies_elem_or_eq}.
+\end{proof}
+
+\begin{proposition}\label{cardinal_sequence_next_below}
+    Let $\kappa$ be a singular cardinal.
+    Let $\lambda=\cofinality{\kappa}$.
+    Let $q\in\funs{\lambda}{\kappa}$.
+    Let $\beta\in\lambda$.
+    Let $g\in\funs{\beta}{\kappa}$.
+    Then $\cardinalSequenceNext{q}{\lambda}{\beta}{g}\in\kappa$.
+\end{proposition}
+\begin{proof}
+    $\kappa$ is a limit cardinal
+        by \obv{singular_cardinal_is_limit_cardinal}.
+    Hence $\kappa$ is a limit ordinal
+        by \obv{infinite_cardinal_is_limit_ordinal}.
+    Hence $\kappa$ is an ordinal by \obv{limit_ordinal}.
+    $\lambda\in\kappa$
+        by \auto{cofinality_belongs_to_singular_cardinal}.
+    $q(\beta)\in\kappa$ by \obv{funs_type_apply}.
+    $\unions{\ran{g}}\in\kappa$
+        by \obv{small_domain_range_union_below}.
+    $(\lambda\union q(\beta))\union\unions{\ran{g}}\in\kappa$
+        by \obv{three_ordinal_union_below}.
+    Let $B=(\lambda\union q(\beta))\union\unions{\ran{g}}$.
+    $B\in\kappa$.
+    $\card{B}\in\kappa$ by \obv{card_of_ordinal_below}.
+    $\card{B}$ is a cardinal by \obv{card_is_cardinal}.
+    Hence $\cardSucc{\card{B}}\in\kappa$
+        by \obv{successor_cardinal_below_limit_cardinal}.
+    Follows by \auto{cardinal_sequence_next}.
+\end{proof}
+
+\begin{proposition}\label{cardinal_sequence_restriction_type}
+    Let $\kappa$ be a singular cardinal.
+    Let $\lambda=\cofinality{\kappa}$.
+    Suppose $\cofinalMap{d}{\lambda}{\kappa}$.
+    Let $\beta\in\lambda$.
+    Let $c=\cardinalSequence{\kappa}{d}$.
+    Then $\restrl{c}{\beta}\in\funs{\beta}{\kappa}$.
+\end{proposition}
+\begin{proof}
+    $c\in\funs{\lambda}{\kappa}$ by \auto{cardinal_sequence_type}.
+    $\lambda$ is an ordinal
+        by \auto{cofinality_is_cardinal,cardinal,initial_ordinal}.
+    Hence $\beta$ is an ordinal and $\beta\subseteq\lambda$
+        by \obv{elem_of_ordinal_is_ordinal,ordinal_elem_implies_subseteq}.
+    Follows by \obv{funs_restrl}.
+\end{proof}
+
+\begin{proposition}\label{cardinal_sequence_at_limit}
+    Let $\kappa$ be a singular cardinal.
+    Let $\lambda=\cofinality{\kappa}$.
+    Suppose $\cofinalMap{d}{\lambda}{\kappa}$.
+    Let $\beta\in\lambda$.
+    Suppose $\beta$ is a limit ordinal.
+    Let $c=\cardinalSequence{\kappa}{d}$.
+    Then $c(\beta)=\unions{\ran{\restrl{c}{\beta}}}$.
+\end{proposition}
+\begin{proof}
+    Let $g=\restrl{c}{\beta}$.
+    $g\in\funs{\beta}{\kappa}$
+        by \auto{cardinal_sequence_restriction_type}.
+    Hence $g\in\rels{\beta}{\kappa}$
+        by \obv{funs_subseteq_rels,subseteq}.
+    Hence $g\subseteq\beta\times\kappa$ by \obv{rels_elim}.
+    $\lambda$ is an ordinal
+        by \auto{cofinality_is_cardinal,cardinal,initial_ordinal}.
+    Hence $\beta\subseteq\lambda$
+        by \obv{elem_of_ordinal_is_ordinal,ordinal_elem_implies_subseteq}.
+    Hence $\beta\times\kappa\subseteq\lambda\times\kappa$
+        by \obv{times_subseteq_left}.
+    Hence $g\subseteq\lambda\times\kappa$
+        by \obv{subseteq_transitive}.
+    Hence $g\in\pow{\lambda\times\kappa}$ by \obv{powerset_intro}.
+    $\kappa$ is an infinite cardinal by \obv{singular_cardinal}.
+    Hence $\kappa$ is a limit ordinal
+        by \obv{infinite_cardinal_is_limit_ordinal}.
+    $\unions{\ran{g}}\in\kappa$
+        by \obv{small_domain_range_union_below}.
+    $c(\beta)=
+        (\cardinalSequenceStep{\cardinalSequenceEnvelope{\kappa}{d}}
+            {\lambda}{\kappa})((\beta,g))$
+        by \auto{cardinal_sequence_equation}.
+    Hence $c(\beta)=\unions{\ran{g}}$
+        by \auto{cardinal_sequence_step_limit}.
+\end{proof}
+
+\begin{proposition}\label{cardinal_sequence_at_nonlimit}
+    Let $\kappa$ be a singular cardinal.
+    Let $\lambda=\cofinality{\kappa}$.
+    Suppose $\cofinalMap{d}{\lambda}{\kappa}$.
+    Let $\beta\in\lambda$.
+    Suppose $\beta$ is not a limit ordinal.
+    Let $c=\cardinalSequence{\kappa}{d}$.
+    Let $q=\cardinalSequenceEnvelope{\kappa}{d}$.
+    Then $c(\beta)=
+        \cardinalSequenceNext{q}{\lambda}{\beta}{\restrl{c}{\beta}}$.
+\end{proposition}
+\begin{proof}
+    Let $g=\restrl{c}{\beta}$.
+    $g\in\funs{\beta}{\kappa}$
+        by \auto{cardinal_sequence_restriction_type}.
+    Hence $g\in\rels{\beta}{\kappa}$
+        by \obv{funs_subseteq_rels,subseteq}.
+    Hence $g\subseteq\beta\times\kappa$ by \obv{rels_elim}.
+    $\lambda$ is an ordinal
+        by \auto{cofinality_is_cardinal,cardinal,initial_ordinal}.
+    Hence $\beta\subseteq\lambda$
+        by \obv{elem_of_ordinal_is_ordinal,ordinal_elem_implies_subseteq}.
+    Hence $\beta\times\kappa\subseteq\lambda\times\kappa$
+        by \obv{times_subseteq_left}.
+    Hence $g\subseteq\lambda\times\kappa$
+        by \obv{subseteq_transitive}.
+    Hence $g\in\pow{\lambda\times\kappa}$ by \obv{powerset_intro}.
+    $q\in\funs{\lambda}{\kappa}$
+        by \auto{cardinal_sequence_envelope_type}.
+    $\cardinalSequenceNext{q}{\lambda}{\beta}{g}\in\kappa$
+        by \obv{cardinal_sequence_next_below}.
+    \begin{align*}
+        c(\beta)
+            &= (\cardinalSequenceStep{q}{\lambda}{\kappa})((\beta,g))
+                \explanation{by \auto{cardinal_sequence_equation}}
+            \\
+            &= \cardinalSequenceNext{q}{\lambda}{\beta}{g}
+                \explanation{by \obv{cardinal_sequence_step_next}}
+            \\
+            &= \cardinalSequenceNext{q}{\lambda}{\beta}{\restrl{c}{\beta}}
+    \end{align*}
+\end{proof}
+
+\begin{proposition}\label{cardinal_sequence_next_properties}
+    Let $\kappa$ be a singular cardinal.
+    Let $\lambda=\cofinality{\kappa}$.
+    Let $q\in\funs{\lambda}{\kappa}$.
+    Let $\beta\in\lambda$.
+    Let $g\in\funs{\beta}{\kappa}$.
+    Let $h=\cardinalSequenceNext{q}{\lambda}{\beta}{g}$.
+    Then $h$ is an infinite cardinal and $\lambda\in h$ and
+        $q(\beta)\in h$ and
+        for every $j\in\beta$ such that $g(j)$ is a cardinal
+            we have $g(j)\in h$.
+\end{proposition}
+\begin{proof}
+    $\kappa$ is a limit cardinal
+        by \obv{singular_cardinal_is_limit_cardinal}.
+    Hence $\kappa$ is a limit ordinal
+        by \obv{infinite_cardinal_is_limit_ordinal}.
+    Hence $\kappa$ is an ordinal by \obv{limit_ordinal}.
+    $\lambda\in\kappa$
+        by \auto{cofinality_belongs_to_singular_cardinal}.
+    $q(\beta)\in\kappa$ by \obv{funs_type_apply}.
+    Let $U=\unions{\ran{g}}$.
+    $U\in\kappa$ by \auto{small_domain_range_union_below}.
+    Let $B=(\lambda\union q(\beta))\union U$.
+    $(\lambda\union q(\beta))\union U\in\kappa$
+        by \obv{three_ordinal_union_below}.
+    Hence $B\in\kappa$.
+    $\card{B}$ is a cardinal by \obv{card_is_cardinal}.
+    Let $H=\cardSucc{\card{B}}$.
+    $\cardSucc{\card{B}}$ is a cardinal
+        by \obv{cardinal_successor_is_cardinal}.
+    $\lambda\subseteq B$
+        by \auto{union_upper_left,subseteq_transitive}.
+    Hence $\cardLe{\lambda}{B}$ by \obv{subseteq_cardinal_le}.
+    Hence $\card{\lambda}\subseteq\card{B}$
+        by \obv{card_subseteq_iff_cardinal_le}.
+    $\lambda$ is a cardinal by \obv{cofinality_is_cardinal}.
+    Hence $\lambda$ is an ordinal and $\card{\lambda}=\lambda$
+        by \obv{cardinal_is_ordinal,card_of_cardinal}.
+    Hence $\lambda\in H$
+        by \obv{ordinal_below_cardinal_successor_iff}.
+    $q(\beta)\subseteq B$
+        by \auto{union_upper_right,union_upper_left,subseteq_transitive}.
+    Hence $\cardLe{q(\beta)}{B}$ by \obv{subseteq_cardinal_le}.
+    Hence $\card{q(\beta)}\subseteq\card{B}$
+        by \obv{card_subseteq_iff_cardinal_le}.
+    $q(\beta)$ is an ordinal by \obv{elem_of_ordinal_is_ordinal}.
+    Hence $q(\beta)\in H$
+        by \obv{ordinal_below_cardinal_successor_iff}.
+    $\lambda$ is an infinite cardinal
+        by \obv{cofinality_of_limit_is_infinite_cardinal}.
+    Show that $H$ is infinite.
+    \begin{subproof}
+        Suppose not.
+        Hence $H$ is finite.
+        $H$ is an ordinal by \auto{cardinal,initial_ordinal}.
+        Hence $\lambda\subseteq H$
+            by \obv{ordinal_elem_implies_subseteq}.
+        Hence $\lambda$ is finite by \obv{subseteq_finite_is_finite}.
+        Contradiction.
+    \end{subproof}
+    Show that for every $j\in\beta$ such that $g(j)$ is a cardinal
+        we have $g(j)\in H$.
+    \begin{subproof}
+        Fix $j$.
+        Assume $j\in\beta$ and $g(j)$ is a cardinal.
+        $g$ is a function and $\dom{g}=\beta$
+            by \obv{funs_is_function,funs}.
+        Hence $g(j)\in\ran{g}$ by \auto{fun_ran_iff}.
+        Hence $g(j)\subseteq U$ by \auto{subseteq,unions_iff}.
+        $U\subseteq B$ by \obv{union_upper_right}.
+        Hence $g(j)\subseteq B$ by \obv{subseteq_transitive}.
+        Hence $\cardLe{g(j)}{B}$ by \obv{subseteq_cardinal_le}.
+        Hence $\card{g(j)}\subseteq\card{B}$
+            by \obv{card_subseteq_iff_cardinal_le}.
+        $g(j)$ is an ordinal by \auto{cardinal,initial_ordinal}.
+        Follows by \obv{ordinal_below_cardinal_successor_iff}.
+    \end{subproof}
+    $h=H$ by \auto{cardinal_sequence_next}.
+\end{proof}
+
+\begin{proposition}\label{cardinal_sequence_stage_step}
+    Let $\kappa$ be a singular cardinal.
+    Let $\lambda=\cofinality{\kappa}$.
+    Suppose $\cofinalMap{d}{\lambda}{\kappa}$.
+    Let $c=\cardinalSequence{\kappa}{d}$.
+    Let $\beta\in\lambda$.
+    Suppose for every $\gamma\in\beta$ we have
+        $\cardinalSequenceStageProperty{c}{\gamma}$.
+    Then $\cardinalSequenceStageProperty{c}{\beta}$.
+\end{proposition}
+\begin{proof}
+    $c\in\funs{\lambda}{\kappa}$ by \auto{cardinal_sequence_type}.
+    Hence $c$ is a function and $\dom{c}=\lambda$
+        by \obv{funs_is_function,funs}.
+    $\lambda$ is an ordinal
+        by \auto{cofinality_is_cardinal,cardinal,initial_ordinal}.
+    Hence $\beta$ is an ordinal and $\beta\subseteq\lambda$
+        by \obv{elem_of_ordinal_is_ordinal,ordinal_elem_implies_subseteq}.
+    Let $g=\restrl{c}{\beta}$.
+    $g\in\funs{\beta}{\kappa}$
+        by \auto{cardinal_sequence_restriction_type}.
+    Hence $g$ is a function and $\dom{g}=\beta$
+        by \obv{funs_is_function,funs}.
+    For every $j\in\beta$ we have $g(j)=c(j)$
+        by \auto{restrl_of_function_apply}.
+    \begin{byCase}
+        \caseOf{$\beta$ is a limit ordinal.}
+            Let $U=\unions{\ran{g}}$.
+            $c(\beta)=U$ by \auto{cardinal_sequence_at_limit}.
+            Show that every element of $\ran{g}$ is a cardinal.
+            \begin{subproof}
+                Fix $y\in\ran{g}$.
+                Take $\gamma\in\dom{g}$ such that $g(\gamma)=y$
+                    by \obv{fun_ran_iff}.
+                Hence $\gamma\in\beta$.
+                Hence $\cardinalSequenceStageProperty{c}{\gamma}$.
+                Hence $c(\gamma)$ is an infinite cardinal
+                    by \obv{cardinal_sequence_stage_property}.
+                $g(\gamma)=c(\gamma)$.
+                Hence $y$ is an infinite cardinal.
+            \end{subproof}
+            Hence $U$ is a cardinal
+                by \obv{union_of_cardinals_is_cardinal}.
+            $\emptyset\in\beta$
+                by \obv{limit_ordinal}.
+            Hence $\cardinalSequenceStageProperty{c}{\emptyset}$.
+            $g(\emptyset)=c(\emptyset)$.
+            $g(\emptyset)\in\ran{g}$ by \auto{fun_ran_iff}.
+            Hence $c(\emptyset)\in\ran{g}$.
+            Hence $c(\emptyset)\subseteq U$
+                by \auto{subseteq,unions_iff}.
+            Show that $U$ is infinite.
+            \begin{subproof}
+                Suppose not.
+                Hence $U$ is finite.
+                Hence $c(\emptyset)$ is finite
+                    by \obv{subseteq_finite_is_finite}.
+                Contradiction.
+            \end{subproof}
+            Hence $c(\beta)$ is an infinite cardinal.
+            Show that for every $j\in\beta$ we have $c(j)\in c(\beta)$.
+            \begin{subproof}
+                Fix $j\in\beta$.
+                $\suc{j}\in\beta$ by \obv{suc_elem_limitordinal}.
+                Hence $\cardinalSequenceStageProperty{c}{\suc{j}}$.
+                $j\in\suc{j}$ by \obv{suc_intro_self}.
+                Hence $c(j)\in c(\suc{j})$
+                    by \obv{cardinal_sequence_stage_property}.
+                $g(\suc{j})=c(\suc{j})$.
+                $g(\suc{j})\in\ran{g}$ by \auto{fun_ran_iff}.
+                Hence $c(\suc{j})\in\ran{g}$.
+                Hence $c(j)\in U$ by \auto{unions_iff}.
+            \end{subproof}
+            Follows by \obv{cardinal_sequence_stage_property}.
+        \caseOf{$\beta$ is not a limit ordinal.}
+            Let $q=\cardinalSequenceEnvelope{\kappa}{d}$.
+            $q\in\funs{\lambda}{\kappa}$
+                by \auto{cardinal_sequence_envelope_type}.
+            Let $h=\cardinalSequenceNext{q}{\lambda}{\beta}{g}$.
+            $h$ is an infinite cardinal and $\lambda\in h$ and
+                for every $j\in\beta$ such that $g(j)$ is a cardinal
+                    we have $g(j)\in h$
+                by \auto{cardinal_sequence_next_properties}.
+            $c(\beta)=h$ by \auto{cardinal_sequence_at_nonlimit}.
+            Hence $c(\beta)$ is an infinite cardinal by \auto.
+            Show that for every $j\in\beta$ we have $c(j)\in c(\beta)$.
+            \begin{subproof}
+                Fix $j\in\beta$.
+                Hence $\cardinalSequenceStageProperty{c}{j}$.
+                Hence $c(j)$ is an infinite cardinal
+                    by \obv{cardinal_sequence_stage_property}.
+                $g(j)=c(j)$.
+                Hence $g(j)$ is a cardinal by \auto.
+                Hence $g(j)\in h$.
+            \end{subproof}
+            Follows by \obv{cardinal_sequence_stage_property}.
+    \end{byCase}
+\end{proof}
+
+\begin{theorem}\label{cardinal_sequence_stage_properties}
+    Let $\kappa$ be a singular cardinal.
+    Let $\lambda=\cofinality{\kappa}$.
+    Suppose $\cofinalMap{d}{\lambda}{\kappa}$.
+    Let $c=\cardinalSequence{\kappa}{d}$.
+    Then for every $\beta\in\lambda$ we have
+        $\cardinalSequenceStageProperty{c}{\beta}$.
+\end{theorem}
+\begin{proof}[Proof by \in-induction on $\beta$]
+    Assume $\beta\in\lambda$.
+    $\lambda$ is an ordinal
+        by \auto{cofinality_is_cardinal,cardinal,initial_ordinal}.
+    For every $\gamma\in\beta$ we have $\gamma\in\lambda$
+        by \auto{ordinal_transitivity}.
+    Hence for every $\gamma\in\beta$ we have
+        $\cardinalSequenceStageProperty{c}{\gamma}$.
+    Follows by \obv{cardinal_sequence_stage_step}.
+\end{proof}
+
+\begin{proposition}\label{cardinal_sequence_contains_cofinality_at_zero}
+    Let $\kappa$ be a singular cardinal.
+    Let $\lambda=\cofinality{\kappa}$.
+    Suppose $\cofinalMap{d}{\lambda}{\kappa}$.
+    Let $c=\cardinalSequence{\kappa}{d}$.
+    Then $\lambda\in c(\emptyset)$.
+\end{proposition}
+\begin{proof}
+    Hence $\kappa$ is a limit ordinal
+        by \obv{infinite_cardinal_is_limit_ordinal}.
+    $\lambda$ is an infinite cardinal
+        by \obv{cofinality_of_limit_is_infinite_cardinal}.
+    Hence $\lambda$ is a limit ordinal
+        by \obv{infinite_cardinal_is_limit_ordinal}.
+    Hence $\emptyset\in\lambda$ by \obv{limit_ordinal}.
+    $\emptyset$ is not a limit ordinal by \obv{zero_not_limitordinal}.
+    Let $q=\cardinalSequenceEnvelope{\kappa}{d}$.
+    $q\in\funs{\lambda}{\kappa}$
+        by \auto{cardinal_sequence_envelope_type}.
+    Let $g=\restrl{c}{\emptyset}$.
+    $g\in\funs{\emptyset}{\kappa}$
+        by \auto{cardinal_sequence_restriction_type}.
+    Let $h=\cardinalSequenceNext{q}{\lambda}{\emptyset}{g}$.
+    $h$ is an infinite cardinal and $\lambda\in h$
+        by \auto{cardinal_sequence_next_properties}.
+    $c(\emptyset)=h$ by \auto{cardinal_sequence_at_nonlimit}.
+\end{proof}
+
+\begin{lemma}\label{nonlimit_index_above}
+    Let $\lambda$ be a limit ordinal.
+    Let $j\in\lambda$.
+    Then there exists $i\in\lambda$ such that
+        $i$ is not a limit ordinal and $j\in\suc{i}$.
+\end{lemma}
+\begin{proof}
+    \begin{byCase}
+        \caseOf{$j$ is a limit ordinal.}
+            Let $i=\suc{j}$.
+            $i\in\lambda$ by \auto{suc_elem_limitordinal}.
+            $\suc{j}$ is not a limit ordinal
+                by \obv{successor_ordinal_is_not_limit_ordinal}.
+            Hence $i$ is not a limit ordinal.
+            $j\in i$ by \obv{suc_intro_self}.
+            Hence $j\in\suc{i}$ by \auto{suc_iff}.
+            Follows by \auto.
+        \caseOf{$j$ is not a limit ordinal.}
+            $j\in\suc{j}$ by \obv{suc_intro_self}.
+            Follows by \auto.
+    \end{byCase}
+\end{proof}
+
+\begin{proposition}\label{cardinal_sequence_dominates_envelope_at_nonlimit}
+    Let $\kappa$ be a singular cardinal.
+    Let $\lambda=\cofinality{\kappa}$.
+    Suppose $\cofinalMap{d}{\lambda}{\kappa}$.
+    Let $c=\cardinalSequence{\kappa}{d}$.
+    Let $q=\cardinalSequenceEnvelope{\kappa}{d}$.
+    Let $i\in\lambda$.
+    Suppose $i$ is not a limit ordinal.
+    Then $q(i)\in c(i)$.
+\end{proposition}
+\begin{proof}
+    $q\in\funs{\lambda}{\kappa}$
+        by \auto{cardinal_sequence_envelope_type}.
+    Let $g=\restrl{c}{i}$.
+    $g\in\funs{i}{\kappa}$
+        by \auto{cardinal_sequence_restriction_type}.
+    Let $h=\cardinalSequenceNext{q}{\lambda}{i}{g}$.
+    $q(i)\in h$ by \auto{cardinal_sequence_next_properties}.
+    $c(i)=h$ by \auto{cardinal_sequence_at_nonlimit}.
+\end{proof}
+
+\begin{proposition}\label{cardinal_sequence_is_cofinal}
+    Let $\kappa$ be a singular cardinal.
+    Let $\lambda=\cofinality{\kappa}$.
+    Suppose $\cofinalMap{d}{\lambda}{\kappa}$.
+    Let $c=\cardinalSequence{\kappa}{d}$.
+    Then $\cofinalMap{c}{\lambda}{\kappa}$.
+\end{proposition}
+\begin{proof}
+    $c\in\funs{\lambda}{\kappa}$ by \auto{cardinal_sequence_type}.
+    Hence $c$ is a function and $\dom{c}=\lambda$
+        by \obv{funs_is_function,funs}.
+    $\ran{c}\subseteq\kappa$ by \obv{funs_ran}.
+    Hence $\kappa$ is a limit ordinal
+        by \obv{infinite_cardinal_is_limit_ordinal}.
+    $\lambda$ is an infinite cardinal
+        by \obv{cofinality_of_limit_is_infinite_cardinal}.
+    Hence $\lambda$ is a limit ordinal
+        by \obv{infinite_cardinal_is_limit_ordinal}.
+    Show that for every $\alpha\in\kappa$ there exists $\gamma\in\ran{c}$
+        such that $\alpha\subseteq\gamma$.
+    \begin{subproof}
+        Fix $\alpha\in\kappa$.
+        $\cofinalIn{\ran{d}}{\kappa}$ by \obv{cofinal_map}.
+        Take $j\in\ran{d}$ such that $\alpha\subseteq j$
+            by \obv{cofinal_in}.
+        $d\in\funs{\lambda}{\kappa}$ by \obv{cofinal_map}.
+        Hence $d$ is a function and $\dom{d}=\lambda$
+            by \obv{funs_is_function,funs}.
+        Take $r\in\lambda$ such that $d(r)=j$
+            by \auto{fun_ran_iff}.
+        Take $i\in\lambda$ such that $i$ is not a limit ordinal and
+            $r\in\suc{i}$ by \obv{nonlimit_index_above}.
+        $d(r)\in(\cardinalSequenceEnvelope{\kappa}{d})(i)$
+            by \obv{cardinal_sequence_envelope_dominates}.
+        $(\cardinalSequenceEnvelope{\kappa}{d})(i)\in c(i)$
+            by \obv{cardinal_sequence_dominates_envelope_at_nonlimit}.
+        Hence $d(r)\in c(i)$
+            by \auto{ordinal_transitivity,cardinal_sequence_stage_properties,cardinal_sequence_stage_property,cardinal,initial_ordinal}.
+        Hence $j\in c(i)$.
+        $c(i)$ is an ordinal
+            by \auto{cardinal_sequence_stage_properties,cardinal_sequence_stage_property,cardinal,initial_ordinal}.
+        Hence $j\subseteq c(i)$
+            by \obv{elem_of_ordinal_is_ordinal,ordinal_elem_implies_subseteq}.
+        Hence $\alpha\subseteq c(i)$ by \obv{subseteq_transitive}.
+        $c(i)\in\ran{c}$ by \auto{fun_ran_iff}.
+        Follows by \auto.
+    \end{subproof}
+    Hence $\cofinalIn{\ran{c}}{\kappa}$ by \obv{cofinal_in}.
+    Follows by \obv{cofinal_map}.
+\end{proof}
+
+\begin{proposition}\label{cardinal_sequence_is_index_dominating}
+    Let $\kappa$ be a singular cardinal.
+    Let $\lambda=\cofinality{\kappa}$.
+    Suppose $\cofinalMap{d}{\lambda}{\kappa}$.
+    Let $c=\cardinalSequence{\kappa}{d}$.
+    Then $c$ is index-dominating on $\lambda$.
+\end{proposition}
+\begin{proof}
+    Hence $\kappa$ is a limit ordinal
+        by \obv{infinite_cardinal_is_limit_ordinal}.
+    Hence $\lambda$ is an infinite cardinal
+        by \obv{cofinality_of_limit_is_infinite_cardinal}.
+    Hence $\lambda$ is a limit ordinal
+        by \obv{infinite_cardinal_is_limit_ordinal}.
+    Hence $\lambda$ is an ordinal by \obv{limit_ordinal}.
+    $\lambda\in c(\emptyset)$
+        by \obv{cardinal_sequence_contains_cofinality_at_zero}.
+    Show that for every $i\in\lambda$ we have $\card{i}\in c(i)$.
+    \begin{subproof}
+        Fix $i\in\lambda$.
+        Hence $i$ is an ordinal by \obv{elem_of_ordinal_is_ordinal}.
+        $\card{i}\in\lambda$ by \obv{card_of_ordinal_below}.
+        Show that $\lambda\in c(i)$.
+        \begin{subproof}
+            \begin{byCase}
+                \caseOf{$i=\emptyset$.}
+                    Follows.
+                \caseOf{$i\neq\emptyset$.}
+                    Hence $\emptyset\in i$
+                        by \obv{ordinal_empty_or_emptyset_elem}.
+                    Hence $c(\emptyset)\in c(i)$
+                        by \auto{cardinal_sequence_stage_properties,cardinal_sequence_stage_property}.
+                    $c(i)$ is an infinite cardinal
+                        by \auto{cardinal_sequence_stage_properties,cardinal_sequence_stage_property}.
+                    Hence $c(i)$ is an ordinal
+                        by \auto{cardinal,initial_ordinal}.
+                    Follows by \auto{ordinal_transitivity}.
+            \end{byCase}
+        \end{subproof}
+        $c(i)$ is an infinite cardinal
+            by \auto{cardinal_sequence_stage_properties,cardinal_sequence_stage_property}.
+        Hence $c(i)$ is an ordinal by \auto{cardinal,initial_ordinal}.
+        Follows by \auto{ordinal_transitivity}.
+    \end{subproof}
+    Follows by \obv{index_dominating}.
+\end{proof}
+
+\begin{theorem}\label{cardinal_sequence_is_normal_cofinal}
+    Let $\kappa$ be a singular cardinal.
+    Let $\lambda=\cofinality{\kappa}$.
+    Suppose $\cofinalMap{d}{\lambda}{\kappa}$.
+    Let $c=\cardinalSequence{\kappa}{d}$.
+    Then $\normalCofinalCardinalSequence{c}{\lambda}{\kappa}$ and
+        $c$ is index-dominating on $\lambda$ and
+        $\infiniteCardinalSequenceValues{c}{\lambda}$.
+\end{theorem}
+\begin{proof}
+    $c\in\funs{\lambda}{\kappa}$ by \auto{cardinal_sequence_type}.
+    $\lambda$ is a cardinal by \auto{cofinality_is_cardinal}.
+    Hence $\lambda$ is an ordinal by \auto{cardinal,initial_ordinal}.
+    Hence $\kappa$ is an ordinal by \auto{cardinal,initial_ordinal}.
+    Hence $\ordinalMap{c}{\lambda}{\kappa}$ by \obv{ordinal_map}.
+    $\cofinalMap{c}{\lambda}{\kappa}$
+        by \obv{cardinal_sequence_is_cofinal}.
+    For every $i\in\lambda$ we have $c(i)$ is an infinite cardinal
+        by \auto{cardinal_sequence_stage_properties,cardinal_sequence_stage_property}.
+    Hence $\infiniteCardinalSequenceValues{c}{\lambda}$
+        by \obv{infinite_cardinal_sequence_values}.
+    Hence $\cardinalSequenceValues{c}{\lambda}$
+        by \auto{cardinal_sequence_values}.
+    For all $j,k$ such that $j\in k\in\lambda$ we have $c(j)\in c(k)$
+        by \auto{cardinal_sequence_stage_properties,cardinal_sequence_stage_property}.
+    Hence $\normalMapIncreasing{c}{\lambda}$
+        by \obv{normal_map_increasing}.
+    For every limit ordinal $l\in\lambda$ we have
+        $c(l)=\unions{\ran{\restrl{c}{l}}}$
+        by \obv{cardinal_sequence_at_limit}.
+    Hence $\normalMapContinuous{c}{\lambda}$
+        by \obv{normal_map_continuous}.
+    Hence $\normalMap{c}{\lambda}{\kappa}$ by \obv{normal_map}.
+    Hence $\normalCofinalMap{c}{\lambda}{\kappa}$
+        by \obv{normal_cofinal_map}.
+    Hence $\normalCofinalCardinalSequence{c}{\lambda}{\kappa}$
+        by \obv{normal_cofinal_cardinal_sequence}.
+    $c$ is index-dominating on $\lambda$
+        by \obv{cardinal_sequence_is_index_dominating}.
+\end{proof}
+
+\begin{theorem}\label{normal_cofinal_cardinal_sequence_exists}
+    Let $\kappa$ be a singular cardinal.
+    Let $\lambda=\cofinality{\kappa}$.
+    Then there exists $c$ such that
+        $\normalCofinalCardinalSequence{c}{\lambda}{\kappa}$.
+\end{theorem}
+\begin{proof}
+    Take $d$ such that $\cofinalMap{d}{\lambda}{\kappa}$
+        by \auto{cofinality_map_exists}.
+    Let $c=\cardinalSequence{\kappa}{d}$.
+    $\normalCofinalCardinalSequence{c}{\lambda}{\kappa}$
+        by \auto{cardinal_sequence_is_normal_cofinal}.
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{index_dominating_normal_cofinal_cardinal_sequence_exists}
+    Let $\kappa$ be a singular cardinal.
+    Let $\lambda=\cofinality{\kappa}$.
+    Then there exists $c$ such that
+        $\normalCofinalCardinalSequence{c}{\lambda}{\kappa}$ and
+        $c$ is index-dominating on $\lambda$ and
+        $\infiniteCardinalSequenceValues{c}{\lambda}$.
+\end{theorem}
+\begin{proof}
+    Take $d$ such that $\cofinalMap{d}{\lambda}{\kappa}$
+        by \auto{cofinality_map_exists}.
+    Let $c=\cardinalSequence{\kappa}{d}$.
+    $\normalCofinalCardinalSequence{c}{\lambda}{\kappa}$ and
+        $c$ is index-dominating on $\lambda$ and
+        $\infiniteCardinalSequenceValues{c}{\lambda}$
+        by \obv{cardinal_sequence_is_normal_cofinal}.
+    Follows by \auto.
+\end{proof}

@@ -1,0 +1,276 @@
+\import{algebra/group.tex}
+\import{set/logical-graph.tex}
+
+\section{Permutation groups}
+
+A permutation of a set is an ordinary self-bijection graph.  Composition is
+read in the same order as function application:
+$(f\circ g)(x)=f(g(x))$.
+
+\begin{definition}\label{permutation_composition_op}
+    $\permutationCompositionOp:\Set\to\Set\to\Set
+        =\fun{f,g:\Set}{f\circ g}$.
+\end{definition}
+
+\begin{definition}\label{permutation_inverse_op}
+    $\permutationInverseOp:\Set\to\Set
+        =\fun{f:\Set}{\converse{f}}$.
+\end{definition}
+
+\begin{definition}\label{permutation_multiplication_graph}
+    $\permutationMultiplicationGraph{X}=
+        \Apply{\binaryGraphOnOp}{
+            \bijections{X}{X},\bijections{X}{X},
+            \permutationCompositionOp}$.
+\end{definition}
+
+\begin{definition}\label{permutation_inverse_graph}
+    $\permutationInverseGraph{X}=
+        \Apply{\graphOnOp}{
+            \bijections{X}{X},\bijections{X}{X},
+            \permutationInverseOp}$.
+\end{definition}
+
+\begin{proposition}\label{permutation_composition_closed}
+    Suppose $f,g\in\bijections{X}{X}$.
+    Then $f\circ g\in\bijections{X}{X}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{bijection_circ}.
+\end{proof}
+
+\begin{proposition}\label{permutation_inverse_closed}
+    Suppose $f\in\bijections{X}{X}$.
+    Then $\converse{f}\in\bijections{X}{X}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{bijection_converse_is_bijection}.
+\end{proof}
+
+\begin{proposition}\label{permutation_multiplication_graph_type}
+    $\permutationMultiplicationGraph{X}\in
+        \funs{\bijections{X}{X}\times\bijections{X}{X}}
+            {\bijections{X}{X}}$.
+\end{proposition}
+\begin{proof}
+    Show that $\forall f,g:\Set.
+        (f\in\bijections{X}{X}\land g\in\bijections{X}{X})
+        \implies
+        \Apply{\permutationCompositionOp}{f,g}
+            \in\bijections{X}{X}$.
+    \begin{subproof}
+        Fix $f,g:\Set$.
+        Assume $f,g\in\bijections{X}{X}$.
+        Follows by
+            \auto{permutation_composition_op,
+                permutation_composition_closed}.
+    \end{subproof}
+    Follows by
+        \auto{permutation_multiplication_graph,
+            logical_binary_graph_on_function}.
+\end{proof}
+
+\begin{proposition}\label{permutation_multiplication_graph_apply}
+    Suppose $f,g\in\bijections{X}{X}$.
+    Then
+        $\apply{\permutationMultiplicationGraph{X}}{(f,g)}=f\circ g$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{permutation_multiplication_graph,
+            permutation_composition_op,logical_binary_graph_on_apply}.
+\end{proof}
+
+\begin{proposition}\label{permutation_inverse_graph_type}
+    $\permutationInverseGraph{X}\in
+        \funs{\bijections{X}{X}}{\bijections{X}{X}}$.
+\end{proposition}
+\begin{proof}
+    Show that $\forall f:\Set.
+        f\in\bijections{X}{X}\implies
+        \Apply{\permutationInverseOp}{f}\in\bijections{X}{X}$.
+    \begin{subproof}
+        Fix $f:\Set$.
+        Assume $f\in\bijections{X}{X}$.
+        Follows by
+            \auto{permutation_inverse_op,permutation_inverse_closed}.
+    \end{subproof}
+    Follows by
+        \auto{permutation_inverse_graph,logical_graph_on_function}.
+\end{proof}
+
+\begin{proposition}\label{permutation_inverse_graph_apply}
+    Suppose $f\in\bijections{X}{X}$.
+    Then $\apply{\permutationInverseGraph{X}}{f}=\converse{f}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{permutation_inverse_graph,permutation_inverse_op,
+            logical_graph_on_apply}.
+\end{proof}
+
+\begin{definition}\label{permutation_group}
+    $\PermutationGroup{X}=
+        \structure[group]{
+            \carrier=\bijections{X}{X},
+            \mul=\permutationMultiplicationGraph{X},
+            \neutral=\identity{X},
+            \groupInv=\permutationInverseGraph{X}
+        }$.
+\end{definition}
+
+\begin{proposition}\label{permutation_group_carrier}
+    $\carrier[\PermutationGroup{X}]=\bijections{X}{X}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{permutation_group,groupaggregateprojection_carrier}.
+\end{proof}
+
+\begin{proposition}\label{permutation_group_mul_graph}
+    $\mul[\PermutationGroup{X}]=\permutationMultiplicationGraph{X}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{permutation_group,groupaggregateprojection_mul}.
+\end{proof}
+
+\begin{proposition}\label{permutation_group_neutral}
+    $\neutral[\PermutationGroup{X}]=\identity{X}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{permutation_group,groupaggregateprojection_neutral}.
+\end{proof}
+
+\begin{proposition}\label{permutation_group_inv_graph}
+    $\groupInv[\PermutationGroup{X}]=\permutationInverseGraph{X}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{permutation_group,groupaggregateprojection_groupInv}.
+\end{proof}
+
+\begin{proposition}\label{permutation_group_mul_apply}
+    Suppose $f,g\in\bijections{X}{X}$.
+    Then $\mul[\PermutationGroup{X}](f,g)=f\circ g$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{permutation_group_mul_graph,
+            permutation_multiplication_graph_apply}.
+\end{proof}
+
+\begin{proposition}\label{permutation_group_mul_value}
+    Suppose $f,g\in\bijections{X}{X}$ and $x\in X$.
+    Then
+        $\apply{\apply{\mul[\PermutationGroup{X}]}{(f,g)}}{x}
+            =f(g(x))$.
+\end{proposition}
+\begin{proof}
+    $f,g\in\funs{X}{X}$ by \obv{bijections_to_funs}.
+    $f$ is a function and $g$ is a function by \obv{funs_is_function}.
+    Hence $g(x)\in X$ by \obv{funs_type_apply}.
+    $x\in\dom{g}$ by \obv{funs}.
+    $f$ is composable with $g$ by \auto{funs,funs_ran,subseteq}.
+    $(f\circ g)(x)=f(g(x))$ by \obv{circ_apply}.
+    Follows by \obv{permutation_group_mul_apply}.
+\end{proof}
+
+\begin{proposition}\label{permutation_group_inv_apply}
+    Suppose $f\in\bijections{X}{X}$.
+    Then $\groupInv[\PermutationGroup{X}](f)=\converse{f}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{permutation_group_inv_graph,permutation_inverse_graph_apply}.
+\end{proof}
+
+\begin{theorem}\label{permutation_group_is_exact_group}
+    $\PermutationGroup{X}$ is an exact group.
+\end{theorem}
+\begin{proof}
+    Let $A=\bijections{X}{X}$ and $K=\PermutationGroup{X}$.
+    $\carrier[K]=A$ by \auto{permutation_group_carrier}.
+    $\mul[K]=\permutationMultiplicationGraph{X}$ by
+        \auto{permutation_group_mul_graph}.
+    $\neutral[K]=\identity{X}$ by
+        \auto{permutation_group_neutral}.
+    $\groupInv[K]=\permutationInverseGraph{X}$ by
+        \auto{permutation_group_inv_graph}.
+    $\mul[K]\in\funs{\carrier[K]\times\carrier[K]}{\carrier[K]}$ by
+        \auto{permutation_multiplication_graph_type}.
+    $\identity{X}\in\bijections{X}{X}$ by
+        \obv{id_elem_bijections}.
+    Hence $\neutral[K]\in\carrier[K]$.
+    $\groupInv[K]\in\funs{\carrier[K]}{\carrier[K]}$ by
+        \auto{permutation_inverse_graph_type}.
+    Show that for every $f\in\carrier[K]$ we have
+        $\mul[K](f,\neutral[K])=f$.
+    \begin{subproof}
+        Fix $f\in\carrier[K]$.
+        Hence $f\in A$.
+        $f\in\funs{X}{X}$ by \obv{bijections_to_funs}.
+        $\mul[K](f,\neutral[K])=f\circ\identity{X}$ by
+            \auto{permutation_group_mul_apply}.
+        Follows by \obv{funs_circ_identity_right}.
+    \end{subproof}
+    Show that for every $f\in\carrier[K]$ we have
+        $\mul[K](\neutral[K],f)=f$.
+    \begin{subproof}
+        Fix $f\in\carrier[K]$.
+        Hence $f\in A$.
+        $f\in\funs{X}{X}$ by \obv{bijections_to_funs}.
+        $\mul[K](\neutral[K],f)=\identity{X}\circ f$ by
+            \auto{permutation_group_mul_apply}.
+        Follows by \obv{funs_identity_circ_left}.
+    \end{subproof}
+    Show that for all $f,g,h\in\carrier[K]$ we have
+        $\mul[K](f,\mul[K](g,h))=
+            \mul[K](\mul[K](f,g),h)$.
+    \begin{subproof}
+        Fix $f,g,h\in\carrier[K]$.
+        Hence $f,g,h\in A$.
+        $f\circ g\in A$ and $g\circ h\in A$ by
+            \obv{permutation_composition_closed}.
+        $\mul[K](f,\mul[K](g,h))=f\circ(g\circ h)$ by
+            \auto{permutation_group_mul_apply}.
+        $\mul[K](\mul[K](f,g),h)=(f\circ g)\circ h$ by
+            \auto{permutation_group_mul_apply}.
+        Follows by \auto{circ_assoc}.
+    \end{subproof}
+    Show that for every $f\in\carrier[K]$ we have
+        $\mul[K](f,\groupInv[K](f))=\neutral[K]$.
+    \begin{subproof}
+        Fix $f\in\carrier[K]$.
+        Hence $f\in A$.
+        $\converse{f}\in A$ by \obv{permutation_inverse_closed}.
+        $\mul[K](f,\groupInv[K](f))=f\circ\converse{f}$ by
+            \auto{permutation_group_mul_apply,
+                permutation_group_inv_apply}.
+        Follows by \obv{bijection_circ_converse}.
+    \end{subproof}
+    Show that for every $f\in\carrier[K]$ we have
+        $\mul[K](\groupInv[K](f),f)=\neutral[K]$.
+    \begin{subproof}
+        Fix $f\in\carrier[K]$.
+        Hence $f\in A$.
+        $\converse{f}\in A$ by \obv{permutation_inverse_closed}.
+        $\mul[K](\groupInv[K](f),f)=\converse{f}\circ f$ by
+            \auto{permutation_group_mul_apply,
+                permutation_group_inv_apply}.
+        Follows by \obv{bijection_converse_circ}.
+    \end{subproof}
+    Hence $K$ is a group by
+        \auto{group,permutation_group,groupaggregateexact,
+            groupaggregateprojection_carrier,groupaggregateprojection_mul,
+            groupaggregateprojection_neutral,groupaggregateprojection_groupInv}.
+    Follows by \auto{permutation_group,groupaggregateexact}.
+\end{proof}
+
+\begin{proposition}\label{permutation_group_is_group}
+    $\PermutationGroup{X}$ is a group.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{permutation_group_is_exact_group}.
+\end{proof}

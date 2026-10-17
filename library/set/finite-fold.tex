@@ -1,0 +1,169 @@
+\section{Folds of finite sequences}
+
+\import{set/finite-sequence.tex}
+\import{recursion/natural.tex}
+
+A fold consumes a set-coded finite sequence from left to right.  Its binary
+operation is likewise a set-coded function, so the construction composes
+directly with Felix's bundled algebraic structures.  Logical natural
+recursion supplies the implementation without adding a recursion axiom.
+
+\begin{definition}\label{sequence_fold_step}
+    $\sequenceFoldStepOp:
+        \Set\to\Set\to\Set\to\Set\to\Set
+        =\fun{F,s,n,b:\Set}{
+                        \apply{F}{(b,s(n))}}$.
+\end{definition}
+
+\begin{definition}\label{sequence_fold_at}
+    $\sequenceFoldAt{F}{z}{s}{n}=
+        \Apply{\naturalRecOp}{z,
+                    \Apply{\sequenceFoldStepOp}{F,s},n}$.
+\end{definition}
+
+\begin{definition}\label{sequence_fold}
+    $\sequenceFold{F}{z}{s}=
+        \sequenceFoldAt{F}{z}{s}{\dom{s}}$.
+\end{definition}
+
+\begin{proposition}\label{sequence_fold_at_zero}
+    $\sequenceFoldAt{F}{z}{s}{\emptyset}=z$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \obv{sequence_fold_at,natural_recursion_zero}.
+\end{proof}
+
+\begin{proposition}\label{sequence_fold_at_successor}
+    Suppose $n$ is a natural number.
+    Then
+        $\sequenceFoldAt{F}{z}{s}{\suc{n}}
+            =F((\sequenceFoldAt{F}{z}{s}{n},s(n)))$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{sequence_fold_at,sequence_fold_step,natural_recursion_successor}.
+\end{proof}
+
+\begin{proposition}\label{sequence_fold_empty}
+    $\sequenceFold{F}{z}{\emptyset}=z$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{sequence_fold,dom_emptyset,sequence_fold_at_zero}.
+\end{proof}
+
+\begin{proposition}\label{sequence_fold_at_prefix_extensional}
+    Suppose $s$ is a function and $t$ is a function.
+    Suppose $n$ is a natural number.
+    Suppose $n\subseteq\dom{s}$ and $n\subseteq\dom{t}$.
+    Suppose $\restrl{s}{n}=\restrl{t}{n}$.
+    Then $\sequenceFoldAt{F}{z}{s}{n}
+        =\sequenceFoldAt{F}{z}{t}{n}$.
+\end{proposition}
+\begin{proof}
+    Let $C=\{k\in\naturals\mid
+        \text{if $k\subseteq n$, then
+            $\sequenceFoldAt{F}{z}{s}{k}
+                =\sequenceFoldAt{F}{z}{t}{k}$}\}$.
+
+    $\emptyset\in C$
+        by \auto{omega_empty,emptyset,subseteq,sequence_fold_at_zero}.
+    Show that for every $k\in C$ we have $\suc{k}\in C$.
+    \begin{subproof}
+        Fix $k\in C$.
+        $\suc{k}$ is a natural number by \obv{omega_successor}.
+        Show that if $\suc{k}\subseteq n$, then
+            $\sequenceFoldAt{F}{z}{s}{\suc{k}}
+                =\sequenceFoldAt{F}{z}{t}{\suc{k}}$.
+        \begin{subproof}
+            Assume $\suc{k}\subseteq n$.
+            $k\subseteq\suc{k}$ by \obv{subseteq_self_suc_intro}.
+            Hence $k\subseteq n$ by \obv{subseteq_transitive}.
+            Thus $\sequenceFoldAt{F}{z}{s}{k}
+                =\sequenceFoldAt{F}{z}{t}{k}$.
+            $k\in\suc{k}$ by \obv{suc_intro_self}.
+            Hence $k\in n$ by \obv{subseteq}.
+            Thus $k\in\dom{s}$ and $k\in\dom{t}$
+                by \obv{subseteq}.
+            $\apply{\restrl{s}{n}}{k}=s(k)$ and
+                $\apply{\restrl{t}{n}}{k}=t(k)$
+                by \obv{restrl_of_function_apply}.
+            Hence $s(k)=t(k)$.
+            Follows by \auto{sequence_fold_at_successor}.
+        \end{subproof}
+    \end{subproof}
+    Hence $C$ is an inductive set by \obv{inductive_set}.
+    Hence $\naturals\subseteq C$ by \obv{omega_minimal,subseteq}.
+    Thus $n\in C$ by \obv{subseteq}.
+    $n\subseteq n$ by \obv{subseteq_refl}.
+\end{proof}
+
+\begin{theorem}\label{sequence_fold_append}
+    Suppose $s$ is a finite sequence in $A$ and $x\in A$.
+    Then
+        $\sequenceFold{F}{z}{\sequenceAppend{s}{x}}
+            =F((\sequenceFold{F}{z}{s},x))$.
+\end{theorem}
+\begin{proof}
+    Let $n=\dom{s}$.
+    Let $t=\sequenceAppend{s}{x}$.
+    $n$ is a natural number and $s\in\funs{n}{A}$
+        by \auto{finite_sequence_domain}.
+    Thus $s$ is a function by \obv{funs_is_function}.
+    $t$ is a finite sequence in $A$
+        by \auto{sequence_append_finite_sequence}.
+    Hence $t$ is a function by
+        \auto{finite_sequence_domain,funs_is_function}.
+    $\dom{t}=\suc{n}$ by \auto{sequence_append_domain}.
+    $n\subseteq\dom{s}$ by \obv{subseteq_refl}.
+    $n\subseteq\dom{t}$
+        by \obv{subseteq_self_suc_intro}.
+    $\restrl{t}{n}=s$ by \auto{sequence_append_restriction}.
+    Hence $\restrl{s}{n}=\restrl{t}{n}$
+        by \auto{restrl_by_dom}.
+    Thus $\sequenceFoldAt{F}{z}{s}{n}
+        =\sequenceFoldAt{F}{z}{t}{n}$
+        by \obv{sequence_fold_at_prefix_extensional}.
+    $t(n)=x$ by \auto{sequence_append_last_value}.
+    $\sequenceFoldAt{F}{z}{t}{\suc{n}}
+        =F((\sequenceFoldAt{F}{z}{t}{n},t(n)))$
+        by \obv{sequence_fold_at_successor}.
+    Hence $\sequenceFoldAt{F}{z}{t}{\suc{n}}
+        =F((\sequenceFoldAt{F}{z}{s}{n},x))$.
+    Follows by \auto{sequence_fold}.
+\end{proof}
+
+\begin{theorem}\label{sequence_fold_typed}
+    Suppose $s$ is a finite sequence in $A$.
+    Suppose $z\in B$ and $F\in\funs{B\times A}{B}$.
+    Then $\sequenceFold{F}{z}{s}\in B$.
+\end{theorem}
+\begin{proof}
+    Let $C=\{r\in\finiteSequences{A}\mid
+        \sequenceFold{F}{z}{r}\in B\}$.
+    $\emptyset\in\finiteSequences{A}$
+        by \auto{finite_sequences_iff,emptyset_finite_sequence}.
+    Hence $\emptyset\in C$
+        by \obv{sequence_fold_empty}.
+    Show that for every $r,x$ such that $r\in C$ and $x\in A$ and
+        $r$ is a finite sequence in $A$ we have
+        $\sequenceAppend{r}{x}\in C$.
+    \begin{subproof}
+        Fix $r,x$.
+        Assume $r\in C$ and $x\in A$ and
+            $r$ is a finite sequence in $A$.
+        Then $\sequenceFold{F}{z}{r}\in B$.
+        Hence $(\sequenceFold{F}{z}{r},x)\in B\times A$
+            by \obv{times_tuple_intro}.
+        Thus $F((\sequenceFold{F}{z}{r},x))\in B$
+            by \obv{funs_type_apply}.
+        Hence $\sequenceFold{F}{z}{\sequenceAppend{r}{x}}\in B$
+            by \auto{sequence_fold_append}.
+        $\sequenceAppend{r}{x}$ is a finite sequence in $A$
+            by \obv{sequence_append_finite_sequence}.
+        Thus $\sequenceAppend{r}{x}\in\finiteSequences{A}$
+            by \obv{finite_sequences_iff}.
+    \end{subproof}
+    Hence $s\in C$ by \obv{finite_sequence_induction}.
+\end{proof}

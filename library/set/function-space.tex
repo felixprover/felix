@@ -1,0 +1,894 @@
+\import{function.tex}
+\import{set/powerset.tex}
+\import{set/equinumerosity.tex}
+
+\section{Elementary function spaces}
+
+\begin{proposition}\label{constant_graph_type}
+    $A\times\{c\}\in\funs{A}{\{c\}}$.
+\end{proposition}
+\begin{proof}
+    $A\times\{c\}$ is a relation by \auto{relation,times_elem_is_tuple}.
+    $A\times\{c\}$ is right-unique
+        by \auto{rightunique,times_tuple_elim,singleton_iff}.
+    $\dom{A\times\{c\}}=A$
+        by
+        \auto{setext,dom_iff,times_tuple_intro,times_tuple_elim,singleton_iff}.
+    For every $x\in\dom{A\times\{c\}}$ we have
+        $(A\times\{c\})(x)\in\{c\}$
+        by \auto{function_apply_elim,times_tuple_elim}.
+    Follows by \obv{funs_intro}.
+\end{proof}
+
+\begin{proposition}\label{constant_graph_application}
+    Let $x\in A$.
+    Then $(A\times\{c\})(x)=c$.
+\end{proposition}
+\begin{proof}
+    $(x,c)\in A\times\{c\}$
+        by \auto{times_tuple_intro,singleton_iff}.
+    $A\times\{c\}$ is a function by
+        \auto{constant_graph_type,funs_is_function}.
+    Follows by \obv{function_apply_intro}.
+\end{proof}
+
+\begin{proposition}\label{empty_domain_function_space}
+    $\funs{\emptyset}{A}=\{\emptyset\}$.
+\end{proposition}
+\begin{proof}
+    Show that every element of $\funs{\emptyset}{A}$ is an element of
+        $\{\emptyset\}$.
+    \begin{subproof}
+        Fix $f\in\funs{\emptyset}{A}$.
+        Hence $f$ is a function and $\dom{f}=\emptyset$
+            by \obv{funs_is_function,funs}.
+        Show that every element of $f$ is an element of $\emptyset$.
+        \begin{subproof}
+            Fix $w\in f$.
+            Take $x,y$ such that $w=(x,y)$ by \obv{relation}.
+            Hence $x\in\dom{f}$ by \auto{dom_iff}.
+            Contradiction by \obv{emptyset}.
+        \end{subproof}
+        Hence $f\subseteq\emptyset$ by \obv{subseteq}.
+        Hence $f=\emptyset$ by \obv{subseteq_emptyset_iff}.
+        Follows by \obv{singleton_iff}.
+    \end{subproof}
+    Show that every element of $\{\emptyset\}$ is an element of
+        $\funs{\emptyset}{A}$.
+    \begin{subproof}
+        Fix $f\in\{\emptyset\}$.
+        Hence $f=\emptyset$ by \obv{singleton_iff}.
+        $\emptyset$ is a function to $A$
+            by \obv{codom_of_emptyset_can_be_anything}.
+        $\dom{\emptyset}=\emptyset$ by \obv{dom_emptyset}.
+        Hence $\emptyset\in\funs{\emptyset}{A}$ by \obv{funs_intro}.
+    \end{subproof}
+    Follows by set extensionality.
+\end{proof}
+
+\begin{proposition}\label{singleton_codom_function_space}
+    $\funs{A}{\{c\}}=\{A\times\{c\}\}$.
+\end{proposition}
+\begin{proof}
+    $A\times\{c\}\in\funs{A}{\{c\}}$
+        by \obv{constant_graph_type}.
+    Show that every element of $\funs{A}{\{c\}}$ is equal to
+        $A\times\{c\}$.
+    \begin{subproof}
+        Fix $f\in\funs{A}{\{c\}}$.
+        $f$ and $A\times\{c\}$ are functions and
+            $\dom{f}=A=\dom{A\times\{c\}}$
+            by
+            \obv{funs_is_function,funs,constant_graph_type}.
+        Show that for every $x$ we have $f(x)=(A\times\{c\})(x)$.
+        \begin{subproof}
+            Fix $x$.
+            \begin{byCase}
+                \caseOf{$x\in A$.}
+                    $f(x)\in\{c\}$ by \obv{funs_type_apply}.
+                    Hence $f(x)=c$ by \obv{singleton_iff}.
+                    $(A\times\{c\})(x)=c$
+                        by \obv{constant_graph_application}.
+                \caseOf{$x\notin A$.}
+                    $f(x)=\emptyset$ and
+                        $(A\times\{c\})(x)=\emptyset$
+                        by \obv{function_apply_default}.
+            \end{byCase}
+        \end{subproof}
+        Follows by \obv{funext}.
+    \end{subproof}
+    Follows by \auto{setext,singleton_iff}.
+\end{proof}
+
+\begin{proposition}\label{singleton_domain_function_space_equinum}
+    $\funs{\{a\}}{B}\approx B$.
+\end{proposition}
+\begin{proof}
+    Let $e=\{(f,f(a))\mid f\in\funs{\{a\}}{B}\}$.
+    $e$ is a relation by \auto{relation}.
+    $e$ is right-unique by \auto{rightunique,pair_eq_iff}.
+    $\dom{e}=\funs{\{a\}}{B}$
+        by \auto{setext,dom_iff,pair_eq_iff}.
+    For every $f\in\funs{\{a\}}{B}$ we have $e(f)\in B$
+        by \auto{function_apply_intro,funs_type_apply,singleton_iff}.
+    Hence $e\in\funs{\funs{\{a\}}{B}}{B}$ by \obv{funs_intro}.
+    Show that $e$ is injective.
+    \begin{subproof}
+        Show that for all $f,g$ such that $f\in\dom{e}$ and
+            $g\in\dom{e}$ and $e(f)=e(g)$ we have $f=g$.
+        \begin{subproof}
+            Fix $f,g$.
+            Assume $f\in\dom{e}$ and $g\in\dom{e}$ and $e(f)=e(g)$.
+            Hence $f,g\in\funs{\{a\}}{B}$.
+            Hence $f$ and $g$ are functions and
+                $\dom{f}=\{a\}=\dom{g}$
+                by \obv{funs_is_function,funs}.
+            $e(f)=f(a)$ and $e(g)=g(a)$
+                by \auto{function_apply_intro}.
+            Hence $f(a)=g(a)$.
+            Show that for every $x$ we have $f(x)=g(x)$.
+            \begin{subproof}
+                Fix $x$.
+                \begin{byCase}
+                    \caseOf{$x\in\{a\}$.}
+                        Hence $x=a$ by \obv{singleton_iff}.
+                    \caseOf{$x\notin\{a\}$.}
+                        $f(x)=\emptyset$ and $g(x)=\emptyset$
+                            by \obv{function_apply_default}.
+                \end{byCase}
+            \end{subproof}
+            Follows by \obv{funext}.
+        \end{subproof}
+        Follows by \auto{injective_function}.
+    \end{subproof}
+    Show that for every $b\in B$ there exists
+        $f\in\funs{\{a\}}{B}$ such that $e(f)=b$.
+    \begin{subproof}
+        Fix $b\in B$.
+        $\{a\}\times\{b\}\in\funs{\{a\}}{\{b\}}$
+            by \obv{constant_graph_type}.
+        Hence $\{a\}\times\{b\}\in\funs{\{a\}}{B}$
+            by \obv{singleton_subset_intro,funs_weaken_codom}.
+        $e(\{a\}\times\{b\})=(\{a\}\times\{b\})(a)$
+            by \obv{function_apply_intro}.
+        $(\{a\}\times\{b\})(a)=b$
+            by \auto{constant_graph_application,singleton_iff}.
+    \end{subproof}
+    Hence $e\in\surj{\funs{\{a\}}{B}}{B}$ by \obv{surj}.
+    Hence $e\in\bijections{\funs{\{a\}}{B}}{B}$
+        by \obv{bijections}.
+    Follows by \obv{equinum}.
+\end{proof}
+
+\begin{definition}\label{characteristic_graph}
+    $\characteristicGraph{A}{S}{z}{o}
+        =(S\times\{o\})\union((A\setminus S)\times\{z\})$.
+\end{definition}
+
+\begin{proposition}\label{characteristic_graph_type}
+    Suppose $S\subseteq A$ and $z\neq o$.
+    Then $\characteristicGraph{A}{S}{z}{o}\in\funs{A}{\{z,o\}}$.
+\end{proposition}
+\begin{proof}
+    Let $f=\characteristicGraph{A}{S}{z}{o}$.
+    $S\times\{o\}$ and $(A\setminus S)\times\{z\}$ are relations
+        by \auto{relation,times_elem_is_tuple}.
+    Hence $f$ is a relation
+        by \auto{characteristic_graph,union_relations_is_relation}.
+    Show that $f$ is right-unique.
+    \begin{subproof}
+        Show that for all $x,u,v$ such that $(x,u),(x,v)\in f$
+            we have $u=v$.
+        \begin{subproof}
+            Fix $x,u,v$.
+            Assume $(x,u),(x,v)\in f$.
+            $(x,u)\in S\times\{o\}$ or
+                $(x,u)\in(A\setminus S)\times\{z\}$
+                by \auto{characteristic_graph,union_iff}.
+            $(x,v)\in S\times\{o\}$ or
+                $(x,v)\in(A\setminus S)\times\{z\}$
+                by \auto{characteristic_graph,union_iff}.
+            Follows by
+                \auto{times_tuple_elim,singleton_iff,setminus}.
+        \end{subproof}
+        Follows by \obv{rightunique}.
+    \end{subproof}
+    $\dom{S\times\{o\}}=S$ and
+        $\dom{(A\setminus S)\times\{z\}}=A\setminus S$
+        by
+        \auto{setext,dom_iff,times_tuple_intro,times_tuple_elim,singleton_iff}.
+    Hence $\dom{f}=S\union(A\setminus S)$
+        by \auto{characteristic_graph,dom_union}.
+    Hence $\dom{f}=A$ by \obv{setminus_partition}.
+    Show that for every $x\in\dom{f}$ we have $f(x)\in\{z,o\}$.
+    \begin{subproof}
+        Fix $x\in\dom{f}$.
+        $(x,f(x))\in f$ by \obv{function_apply_elim}.
+        $(x,f(x))\in S\times\{o\}$ or
+            $(x,f(x))\in(A\setminus S)\times\{z\}$
+            by \auto{characteristic_graph,union_iff}.
+        Follows by \auto{times_tuple_elim,singleton_iff,cons_iff}.
+    \end{subproof}
+    Follows by \auto{funs_intro}.
+\end{proof}
+
+\begin{proposition}\label{characteristic_graph_one}
+    Suppose $S\subseteq A$ and $z\neq o$.
+    Let $x\in S$.
+    Then $\apply{\characteristicGraph{A}{S}{z}{o}}{x}=o$.
+\end{proposition}
+\begin{proof}
+    $(x,o)\in S\times\{o\}$
+        by \auto{times_tuple_intro,singleton_iff}.
+    Hence $(x,o)\in\characteristicGraph{A}{S}{z}{o}$
+        by \auto{characteristic_graph,union_iff}.
+    $\characteristicGraph{A}{S}{z}{o}$ is a function
+        by \auto{characteristic_graph_type,funs_is_function}.
+    Follows by \obv{function_apply_intro}.
+\end{proof}
+
+\begin{proposition}\label{characteristic_graph_zero}
+    Suppose $S\subseteq A$ and $z\neq o$.
+    Let $x\in A\setminus S$.
+    Then $\apply{\characteristicGraph{A}{S}{z}{o}}{x}=z$.
+\end{proposition}
+\begin{proof}
+    $(x,z)\in(A\setminus S)\times\{z\}$
+        by \auto{times_tuple_intro,singleton_iff}.
+    Hence $(x,z)\in\characteristicGraph{A}{S}{z}{o}$
+        by \auto{characteristic_graph,union_iff}.
+    $\characteristicGraph{A}{S}{z}{o}$ is a function
+        by \auto{characteristic_graph_type,funs_is_function}.
+    Follows by \obv{function_apply_intro}.
+\end{proof}
+
+\begin{theorem}\label{powerset_equinum_binary_function_space}
+    Suppose $z\neq o$.
+    Then $\pow{A}\approx\funs{A}{\{z,o\}}$.
+\end{theorem}
+\begin{proof}
+    Let $e=\{(S,\characteristicGraph{A}{S}{z}{o})\mid S\in\pow{A}\}$.
+    $e$ is a relation by \auto{relation}.
+    $e$ is right-unique by \auto{rightunique,pair_eq_iff}.
+    $\dom{e}=\pow{A}$ by \auto{setext,dom_iff,pair_eq_iff}.
+    For every $S\in\pow{A}$ we have
+        $e(S)=\characteristicGraph{A}{S}{z}{o}$
+        by \obv{function_apply_intro}.
+    For every $S\in\pow{A}$ we have
+        $e(S)\in\funs{A}{\{z,o\}}$
+        by \auto{powerset_elim,characteristic_graph_type}.
+    Hence $e\in\funs{\pow{A}}{\funs{A}{\{z,o\}}}$
+        by \obv{funs_intro}.
+    Show that $e$ is injective.
+    \begin{subproof}
+        Show that for all $S,T$ such that $S\in\dom{e}$ and
+            $T\in\dom{e}$ and $e(S)=e(T)$ we have $S=T$.
+        \begin{subproof}
+            Fix $S,T$.
+            Assume $S\in\dom{e}$ and $T\in\dom{e}$ and $e(S)=e(T)$.
+            Hence $S,T\in\pow{A}$.
+            Hence $S\subseteq A$ and $T\subseteq A$
+                by \obv{powerset_elim}.
+            $e(S)=\characteristicGraph{A}{S}{z}{o}$ and
+                $e(T)=\characteristicGraph{A}{T}{z}{o}$
+                by \obv{function_apply_intro}.
+            Show that every element of $S$ is an element of $T$.
+            \begin{subproof}
+                Fix $x\in S$.
+                Suppose not.
+                Hence $x\in A\setminus T$ by \obv{subseteq,setminus}.
+                $\apply{\characteristicGraph{A}{S}{z}{o}}{x}=o$
+                    by \obv{characteristic_graph_one}.
+                $\apply{\characteristicGraph{A}{T}{z}{o}}{x}=z$
+                    by \obv{characteristic_graph_zero}.
+                Contradiction.
+            \end{subproof}
+            Hence $S\subseteq T$ by \obv{subseteq}.
+            Show that every element of $T$ is an element of $S$.
+            \begin{subproof}
+                Fix $x\in T$.
+                Suppose not.
+                Hence $x\in A\setminus S$ by \obv{subseteq,setminus}.
+                $\apply{\characteristicGraph{A}{T}{z}{o}}{x}=o$
+                    by \obv{characteristic_graph_one}.
+                $\apply{\characteristicGraph{A}{S}{z}{o}}{x}=z$
+                    by \obv{characteristic_graph_zero}.
+                Contradiction.
+            \end{subproof}
+            Hence $T\subseteq S$ by \obv{subseteq}.
+            Follows by \obv{subseteq_antisymmetric}.
+        \end{subproof}
+        Follows by \auto{injective_function}.
+    \end{subproof}
+    Show that for every $f\in\funs{A}{\{z,o\}}$ there exists
+        $S\in\pow{A}$ such that $e(S)=f$.
+    \begin{subproof}
+        Fix $f\in\funs{A}{\{z,o\}}$.
+        Let $S=\{x\in A\mid f(x)=o\}$.
+        $S\subseteq A$ by \obv{subseteq}.
+        Hence $S\in\pow{A}$ by \obv{powerset_intro}.
+        Let $g=\characteristicGraph{A}{S}{z}{o}$.
+        $f$ and $g$ are functions and $\dom{f}=A=\dom{g}$
+            by
+            \auto{funs_is_function,funs,characteristic_graph_type}.
+        Show that for every $x$ we have $f(x)=g(x)$.
+        \begin{subproof}
+            Fix $x$.
+            \begin{byCase}
+                \caseOf{$x\in A$.}
+                    $f(x)\in\{z,o\}$ by \obv{funs_type_apply}.
+                    \begin{byCase}
+                        \caseOf{$f(x)=o$.}
+                            Hence $x\in S$.
+                            $g(x)=o$ by \auto{characteristic_graph_one}.
+                        \caseOf{$f(x)\neq o$.}
+                            Hence $f(x)=z$ by
+                                \auto{cons_iff,singleton_iff}.
+                            $x\in A\setminus S$ by \obv{setminus}.
+                            $g(x)=z$ by \auto{characteristic_graph_zero}.
+                    \end{byCase}
+                \caseOf{$x\notin A$.}
+                    $f(x)=\emptyset$ and $g(x)=\emptyset$
+                        by \obv{function_apply_default}.
+            \end{byCase}
+        \end{subproof}
+        Hence $f=g$ by \obv{funext}.
+        $e(S)=g$ by \obv{function_apply_intro}.
+    \end{subproof}
+    Hence $e\in\surj{\pow{A}}{\funs{A}{\{z,o\}}}$ by \obv{surj}.
+    Hence $e\in\bijections{\pow{A}}{\funs{A}{\{z,o\}}}$
+        by \obv{bijections}.
+    Follows by \obv{equinum}.
+\end{proof}
+
+\begin{theorem}\label{function_space_codom_injection}
+    Let $f\in\inj{B}{D}$.
+    Then there exists $H\in\inj{\funs{A}{B}}{\funs{A}{D}}$.
+\end{theorem}
+\begin{proof}
+    $f\in\funs{B}{D}$ by \obv{inj}.
+    Hence $f$ is a function and $\dom{f}=B$
+        by \obv{funs_is_function,funs}.
+    $f$ is injective by \auto{inj,injective_function}.
+    Let $H=\{(h,f\circ h)\mid h\in\funs{A}{B}\}$.
+    $H$ is a relation by \auto{relation}.
+    $H$ is right-unique by \auto{rightunique,pair_eq_iff}.
+    $\dom{H}=\funs{A}{B}$ by \auto{setext,dom_iff,pair_eq_iff}.
+    For every $h\in\funs{A}{B}$ we have $f\circ h\in\funs{A}{D}$
+        by \obv{funs_circ}.
+    For every $h\in\funs{A}{B}$ we have $H(h)=f\circ h$
+        by \obv{function_apply_intro}.
+    Hence $H\in\funs{\funs{A}{B}}{\funs{A}{D}}$
+        by \auto{funs_intro}.
+    Show that $H$ is injective.
+    \begin{subproof}
+        Show that for all $h,k$ such that $h\in\dom{H}$ and
+            $k\in\dom{H}$ and $H(h)=H(k)$ we have $h=k$.
+        \begin{subproof}
+            Fix $h,k$.
+            Assume $h\in\dom{H}$ and $k\in\dom{H}$ and $H(h)=H(k)$.
+            Hence $h,k\in\funs{A}{B}$.
+            Hence $h$ and $k$ are functions and $\dom{h}=A=\dom{k}$
+                by \obv{funs_is_function,funs}.
+            $H(h)=f\circ h$ and $H(k)=f\circ k$
+                by \obv{function_apply_intro}.
+            Hence $f\circ h=f\circ k$.
+            Show that for every $x$ we have $h(x)=k(x)$.
+            \begin{subproof}
+                Fix $x$.
+                \begin{byCase}
+                    \caseOf{$x\in A$.}
+                        $h(x),k(x)\in B$ by \obv{funs_type_apply}.
+                        $\ran{h}\subseteq B$ and $\ran{k}\subseteq B$
+                            by \obv{funs_ran}.
+                        Hence $\ran{h}\subseteq\dom{f}$ and
+                            $\ran{k}\subseteq\dom{f}$.
+                        $(f\circ h)(x)=f(h(x))$ and
+                            $(f\circ k)(x)=f(k(x))$
+                            by \obv{circ_apply}.
+                        Hence $f(h(x))=f(k(x))$.
+                        Follows by \obv{injective_function}.
+                    \caseOf{$x\notin A$.}
+                        $h(x)=\emptyset$ and $k(x)=\emptyset$
+                            by \auto{function_apply_default}.
+                \end{byCase}
+            \end{subproof}
+            Follows by \obv{funext}.
+        \end{subproof}
+        Follows by \auto{injective_function}.
+    \end{subproof}
+    Hence $H\in\inj{\funs{A}{B}}{\funs{A}{D}}$
+        by \auto{inj,injective_function}.
+\end{proof}
+
+\subsection{Changing the domain of a function space}
+
+An injection from $A$ into $C$ lets us extend a function on $A$ to $C$ once
+a default codomain value has been specified.  Keeping the default explicit
+isolates the exact nonemptiness requirement used by exponent monotonicity.
+
+\begin{definition}\label{function_domain_extension}
+    $\functionDomainExtension{e}{h}{C}{b}
+        =\{(e(a),h(a))\mid a\in\dom{e}\}
+            \union((C\setminus\ran{e})\times\{b\})$.
+\end{definition}
+
+\begin{proposition}\label{function_domain_extension_type}
+    Let $e\in\inj{A}{C}$.
+    Let $h\in\funs{A}{B}$.
+    Let $b\in B$.
+    Then $\functionDomainExtension{e}{h}{C}{b}\in\funs{C}{B}$.
+\end{proposition}
+\begin{proof}
+    $e\in\funs{A}{C}$ by \obv{inj}.
+    Hence $e$ is a function by \obv{funs_is_function}.
+    $\dom{e}=A$ by \obv{funs}.
+    Hence $e$ is injective by \auto{inj,injective_function}.
+    $\dom{h}=A$ by \obv{funs}.
+    Let $p=\{(e(a),h(a))\mid a\in\dom{e}\}$.
+    Let $q=(C\setminus\ran{e})\times\{b\}$.
+    Let $g=\functionDomainExtension{e}{h}{C}{b}$.
+    $g=p\union q$ by \obv{function_domain_extension}.
+    $p$ and $q$ are relations by \auto{relation,times_elem_is_tuple}.
+    Hence $g$ is a relation by \obv{union_relations_is_relation}.
+    Show that $g$ is right-unique.
+    \begin{subproof}
+        Show that for all $x,y,z$ such that $(x,y),(x,z)\in g$
+            we have $y=z$.
+        \begin{subproof}
+            Fix $x,y,z$.
+            Assume $(x,y),(x,z)\in g$.
+            $(x,y)\in p$ or $(x,y)\in q$ by \auto{union_iff}.
+            $(x,z)\in p$ or $(x,z)\in q$ by \auto{union_iff}.
+            \begin{byCase}
+                \caseOf{$(x,y)\in p$ and $(x,z)\in p$.}
+                    Take $a,a'\in\dom{e}$ such that
+                        $(x,y)=(e(a),h(a))$ and
+                        $(x,z)=(e(a'),h(a'))$ by \auto.
+                    $e(a)=e(a')$ and $y=h(a)$ and $z=h(a')$
+                        by \auto{pair_eq_iff}.
+                    Hence $a=a'$ by \obv{injective_function}.
+                \caseOf{$(x,y)\in p$ and $(x,z)\in q$.}
+                    Take $a\in\dom{e}$ such that
+                        $(x,y)=(e(a),h(a))$.
+                    $x=e(a)$ by \auto{pair_eq_iff}.
+                    Hence $x\in\ran{e}$ by \auto{fun_ran_iff}.
+                    $x\in C\setminus\ran{e}$
+                        by \auto{times_tuple_elim}.
+                    Contradiction by \obv{setminus}.
+                \caseOf{$(x,y)\in q$ and $(x,z)\in p$.}
+                    Take $a\in\dom{e}$ such that
+                        $(x,z)=(e(a),h(a))$.
+                    $x=e(a)$ by \auto{pair_eq_iff}.
+                    Hence $x\in\ran{e}$ by \auto{fun_ran_iff}.
+                    $x\in C\setminus\ran{e}$
+                        by \auto{times_tuple_elim}.
+                    Contradiction by \obv{setminus}.
+                \caseOf{$(x,y)\in q$ and $(x,z)\in q$.}
+                    $y=b$ and $z=b$
+                        by \auto{times_tuple_elim,singleton_iff}.
+            \end{byCase}
+        \end{subproof}
+        Follows by \obv{rightunique}.
+    \end{subproof}
+    $\dom{p}=\ran{e}$
+        by \auto{setext,dom_iff,fun_ran_iff,pair_eq_iff}.
+    $\dom{q}=C\setminus\ran{e}$
+        by
+        \auto{setext,dom_iff,times_tuple_intro,times_tuple_elim,singleton_iff}.
+    Hence $\dom{g}=\ran{e}\union(C\setminus\ran{e})$
+        by \auto{dom_union}.
+    $\ran{e}\subseteq C$ by \obv{funs_ran}.
+    Hence $\dom{g}=C$ by \obv{setminus_partition}.
+    Show that for every $x\in\dom{g}$ we have $g(x)\in B$.
+    \begin{subproof}
+        Fix $x\in\dom{g}$.
+        $(x,g(x))\in g$ by \obv{function_apply_elim}.
+        $(x,g(x))\in p$ or $(x,g(x))\in q$ by \auto{union_iff}.
+        \begin{byCase}
+            \caseOf{$(x,g(x))\in p$.}
+                Take $a\in\dom{e}$ such that
+                    $(x,g(x))=(e(a),h(a))$.
+                Hence $a\in A$.
+                $g(x)=h(a)$ by \auto{pair_eq_iff}.
+                $h(a)\in B$ by \obv{funs_type_apply}.
+            \caseOf{$(x,g(x))\in q$.}
+                $g(x)=b$ by \auto{times_tuple_elim,singleton_iff}.
+        \end{byCase}
+    \end{subproof}
+    Hence $g$ is a function to $B$.
+    Follows by \auto{funs_intro}.
+\end{proof}
+
+\begin{proposition}\label{function_domain_extension_on_range}
+    Let $e\in\inj{A}{C}$.
+    Let $h\in\funs{A}{B}$.
+    Let $b\in B$.
+    Let $a\in A$.
+    Then $(\functionDomainExtension{e}{h}{C}{b})(e(a))=h(a)$.
+\end{proposition}
+\begin{proof}
+    $e$ is a function and $\dom{e}=A$ by \auto{inj,funs_is_function,funs}.
+    Hence $(e(a),h(a))\in\functionDomainExtension{e}{h}{C}{b}$
+        by \auto{function_domain_extension,union_iff}.
+    $\functionDomainExtension{e}{h}{C}{b}$ is a function
+        by \auto{function_domain_extension_type,funs_is_function}.
+    Follows by \obv{function_apply_intro}.
+\end{proof}
+
+\begin{proposition}\label{function_domain_extension_off_range}
+    Let $e\in\inj{A}{C}$.
+    Let $h\in\funs{A}{B}$.
+    Let $b\in B$.
+    Let $x\in C\setminus\ran{e}$.
+    Then $(\functionDomainExtension{e}{h}{C}{b})(x)=b$.
+\end{proposition}
+\begin{proof}
+    $(x,b)\in(C\setminus\ran{e})\times\{b\}$
+        by \auto{times_tuple_intro,singleton_iff}.
+    Hence $(x,b)\in\functionDomainExtension{e}{h}{C}{b}$
+        by \auto{function_domain_extension,union_iff}.
+    $\functionDomainExtension{e}{h}{C}{b}$ is a function
+        by \auto{function_domain_extension_type,funs_is_function}.
+    Follows by \obv{function_apply_intro}.
+\end{proof}
+
+\begin{theorem}\label{function_space_domain_injection_with_default}
+    Let $e\in\inj{A}{C}$.
+    Let $b\in B$.
+    Then there exists $H\in\inj{\funs{A}{B}}{\funs{C}{B}}$.
+\end{theorem}
+\begin{proof}
+    Let $H=\{(h,\functionDomainExtension{e}{h}{C}{b})
+        \mid h\in\funs{A}{B}\}$.
+    $H$ is a relation by \auto{relation}.
+    $H$ is right-unique by \auto{rightunique,pair_eq_iff}.
+    $\dom{H}=\funs{A}{B}$ by \auto{setext,dom_iff,pair_eq_iff}.
+    For every $h\in\funs{A}{B}$ we have
+        $\functionDomainExtension{e}{h}{C}{b}\in\funs{C}{B}$
+        by \obv{function_domain_extension_type}.
+    For every $h\in\funs{A}{B}$ we have
+        $H(h)=\functionDomainExtension{e}{h}{C}{b}$
+        by \obv{function_apply_intro}.
+    Hence $H\in\funs{\funs{A}{B}}{\funs{C}{B}}$
+        by \auto{funs_intro}.
+    Show that $H$ is injective.
+    \begin{subproof}
+        Show that for all $h,k$ such that $h\in\dom{H}$ and
+            $k\in\dom{H}$ and $H(h)=H(k)$ we have $h=k$.
+        \begin{subproof}
+            Fix $h,k$.
+            Assume $h\in\dom{H}$ and $k\in\dom{H}$ and $H(h)=H(k)$.
+            Hence $h,k\in\funs{A}{B}$.
+            Hence $h$ and $k$ are functions and $\dom{h}=A=\dom{k}$
+                by \obv{funs_is_function,funs}.
+            $H(h)=\functionDomainExtension{e}{h}{C}{b}$ and
+                $H(k)=\functionDomainExtension{e}{k}{C}{b}$
+                by \obv{function_apply_intro}.
+            Hence $\functionDomainExtension{e}{h}{C}{b}
+                =\functionDomainExtension{e}{k}{C}{b}$.
+            Show that for every $a$ we have $h(a)=k(a)$.
+            \begin{subproof}
+                Fix $a$.
+                \begin{byCase}
+                    \caseOf{$a\in A$.}
+                        $(\functionDomainExtension{e}{h}{C}{b})(e(a))
+                            =h(a)$ and
+                            $(\functionDomainExtension{e}{k}{C}{b})(e(a))
+                            =k(a)$
+                            by \obv{function_domain_extension_on_range}.
+                        \begin{align*}
+                            h(a)
+                                &= (\functionDomainExtension{e}{h}{C}{b})(e(a))
+                                \\
+                                &= (\functionDomainExtension{e}{k}{C}{b})(e(a))
+                                \\
+                                &= k(a)
+                        \end{align*}
+                    \caseOf{$a\notin A$.}
+                        $h(a)=\emptyset$ and $k(a)=\emptyset$
+                            by \auto{function_apply_default}.
+                \end{byCase}
+            \end{subproof}
+            Follows by \obv{funext}.
+        \end{subproof}
+        Follows by \auto{injective_function}.
+    \end{subproof}
+    Hence $H\in\inj{\funs{A}{B}}{\funs{C}{B}}$
+        by \auto{inj,injective_function}.
+\end{proof}
+
+\begin{corollary}\label{function_space_domain_injection}
+    Let $e\in\inj{A}{C}$.
+    Suppose $B$ is inhabited.
+    Then there exists $H\in\inj{\funs{A}{B}}{\funs{C}{B}}$.
+\end{corollary}
+\begin{proof}
+    Take $b$ such that $b\in B$.
+    Follows by \obv{function_space_domain_injection_with_default}.
+\end{proof}
+
+
+\subsection{Currying}
+
+\begin{definition}\label{function_section}
+    $\functionSection{f}{a}{B}
+        =\{(b,f((a,b)))\mid b\in B\}$.
+\end{definition}
+
+\begin{proposition}\label{function_section_type}
+    Let $f\in\funs{A\times B}{C}$.
+    Let $a\in A$.
+    Then $\functionSection{f}{a}{B}\in\funs{B}{C}$.
+\end{proposition}
+\begin{proof}
+    Let $s=\functionSection{f}{a}{B}$.
+    $s$ is a relation by \auto{function_section,relation}.
+    $s$ is right-unique
+        by \auto{function_section,rightunique,pair_eq_iff}.
+    $\dom{s}=B$ by \auto{function_section,setext,dom_iff,pair_eq_iff}.
+    For every $b\in B$ we have $(a,b)\in A\times B$
+        by \obv{times_tuple_intro}.
+    Hence for every $b\in B$ we have $f((a,b))\in C$
+        by \obv{funs_type_apply}.
+    For every $b\in B$ we have $s(b)=f((a,b))$
+        by \obv{function_section,function_apply_intro}.
+    Hence $s$ is a function to $C$ by \auto.
+    Follows by \auto{funs_intro}.
+\end{proof}
+
+\begin{proposition}\label{function_section_application}
+    Let $f\in\funs{A\times B}{C}$.
+    Let $a\in A$.
+    Let $b\in B$.
+    Then $(\functionSection{f}{a}{B})(b)=f((a,b))$.
+\end{proposition}
+\begin{proof}
+    $(b,f((a,b)))\in\functionSection{f}{a}{B}$
+        by \obv{function_section}.
+    $\functionSection{f}{a}{B}$ is a function
+        by \auto{function_section_type,funs_is_function}.
+    Follows by \obv{function_apply_intro}.
+\end{proof}
+
+\begin{definition}\label{function_curry}
+    $\functionCurry{f}{A}{B}
+        =\{(a,\functionSection{f}{a}{B})\mid a\in A\}$.
+\end{definition}
+
+\begin{proposition}\label{function_curry_type}
+    Let $f\in\funs{A\times B}{C}$.
+    Then $\functionCurry{f}{A}{B}\in\funs{A}{\funs{B}{C}}$.
+\end{proposition}
+\begin{proof}
+    Let $g=\functionCurry{f}{A}{B}$.
+    $g$ is a relation by \auto{function_curry,relation}.
+    $g$ is right-unique
+        by \auto{function_curry,rightunique,pair_eq_iff}.
+    $\dom{g}=A$ by \auto{function_curry,setext,dom_iff,pair_eq_iff}.
+    For every $a\in A$ we have
+        $\functionSection{f}{a}{B}\in\funs{B}{C}$
+        by \obv{function_section_type}.
+    For every $a\in A$ we have
+        $g(a)=\functionSection{f}{a}{B}$
+        by \obv{function_curry,function_apply_intro}.
+    Hence $g$ is a function to $\funs{B}{C}$ by \auto.
+    Follows by \auto{funs_intro}.
+\end{proof}
+
+\begin{proposition}\label{function_curry_application}
+    Let $f\in\funs{A\times B}{C}$.
+    Let $a\in A$.
+    Then $(\functionCurry{f}{A}{B})(a)=\functionSection{f}{a}{B}$.
+\end{proposition}
+\begin{proof}
+    $(a,\functionSection{f}{a}{B})\in\functionCurry{f}{A}{B}$
+        by \obv{function_curry}.
+    $\functionCurry{f}{A}{B}$ is a function
+        by \auto{function_curry_type,funs_is_function}.
+    Follows by \obv{function_apply_intro}.
+\end{proof}
+
+\begin{definition}\label{function_uncurry}
+    $\functionUncurry{g}{A}{B}
+        =\{((a,b),(g(a))(b))\mid a\in A,b\in B\}$.
+\end{definition}
+
+\begin{proposition}\label{function_uncurry_type}
+    Let $g\in\funs{A}{\funs{B}{C}}$.
+    Then $\functionUncurry{g}{A}{B}\in\funs{A\times B}{C}$.
+\end{proposition}
+\begin{proof}
+    Let $f=\functionUncurry{g}{A}{B}$.
+    $f$ is a relation by \auto{function_uncurry,relation}.
+    $f$ is right-unique
+        by \auto{function_uncurry,rightunique,pair_eq_iff}.
+    Show that every element of $\dom{f}$ is an element of $A\times B$.
+    \begin{subproof}
+        Fix $x\in\dom{f}$.
+        Take $y$ such that $(x,y)\in f$ by \obv{dom_iff}.
+        Take $a,b$ such that $a\in A$ and $b\in B$ and
+            $(x,y)=((a,b),(g(a))(b))$ by \auto{function_uncurry}.
+        Hence $x=(a,b)$ by \auto{pair_eq_iff}.
+        Follows by \auto{times_tuple_intro}.
+    \end{subproof}
+    Hence $\dom{f}\subseteq A\times B$ by \obv{subseteq}.
+    Show that every element of $A\times B$ is an element of $\dom{f}$.
+    \begin{subproof}
+        Fix $x\in A\times B$.
+        Take $a,b$ such that $x=(a,b)$ by \auto{times_elem_is_tuple}.
+        Hence $a\in A$ and $b\in B$ by \obv{times_tuple_elim}.
+        $((a,b),(g(a))(b))\in f$ by \obv{function_uncurry}.
+        Follows by \auto{dom_iff}.
+    \end{subproof}
+    Hence $A\times B\subseteq\dom{f}$ by \obv{subseteq}.
+    Hence $\dom{f}=A\times B$ by \obv{setext}.
+    Show that for every $x\in\dom{f}$ we have $f(x)\in C$.
+    \begin{subproof}
+        Fix $x\in\dom{f}$.
+        Hence $x\in A\times B$.
+        Take $a,b$ such that $x=(a,b)$ by \auto{times_elem_is_tuple}.
+        Hence $a\in A$ and $b\in B$ by \obv{times_tuple_elim}.
+        $g(a)\in\funs{B}{C}$ by \obv{funs_type_apply}.
+        Hence $(g(a))(b)\in C$ by \obv{funs_type_apply}.
+        $f((a,b))=(g(a))(b)$
+            by \auto{function_uncurry,function_apply_intro}.
+    \end{subproof}
+    Hence $f$ is a function to $C$.
+    Follows by \auto{funs_intro}.
+\end{proof}
+
+\begin{proposition}\label{function_uncurry_application}
+    Let $g\in\funs{A}{\funs{B}{C}}$.
+    Let $a\in A$.
+    Let $b\in B$.
+    Then $(\functionUncurry{g}{A}{B})((a,b))=(g(a))(b)$.
+\end{proposition}
+\begin{proof}
+    $((a,b),(g(a))(b))\in\functionUncurry{g}{A}{B}$
+        by \obv{function_uncurry}.
+    $\functionUncurry{g}{A}{B}$ is a function
+        by \auto{function_uncurry_type,funs_is_function}.
+    Follows by \obv{function_apply_intro}.
+\end{proof}
+
+\begin{proposition}\label{function_uncurry_curry}
+    Let $f\in\funs{A\times B}{C}$.
+    Then $\functionUncurry{\functionCurry{f}{A}{B}}{A}{B}=f$.
+\end{proposition}
+\begin{proof}
+    Let $g=\functionCurry{f}{A}{B}$.
+    Let $u=\functionUncurry{g}{A}{B}$.
+    $g\in\funs{A}{\funs{B}{C}}$ by \auto{function_curry_type}.
+    Hence $u\in\funs{A\times B}{C}$ by \auto{function_uncurry_type}.
+    Hence $u$ and $f$ are functions by \obv{funs_is_function}.
+    $\dom{u}=A\times B=\dom{f}$ by \obv{funs}.
+    Show that for every $x$ we have $u(x)=f(x)$.
+    \begin{subproof}
+        Fix $x$.
+        \begin{byCase}
+            \caseOf{$x\in A\times B$.}
+                Take $a,b$ such that $x=(a,b)$
+                    by \auto{times_elem_is_tuple}.
+                Hence $a\in A$ and $b\in B$ by \obv{times_tuple_elim}.
+                $u((a,b))=(g(a))(b)$
+                    by \auto{function_uncurry_application}.
+                $g(a)=\functionSection{f}{a}{B}$
+                    by \auto{function_curry_application}.
+                $(\functionSection{f}{a}{B})(b)=f((a,b))$
+                    by \obv{function_section_application}.
+            \caseOf{$x\notin A\times B$.}
+                $x\notin\dom{u}$ and $x\notin\dom{f}$.
+                $u(x)=\emptyset$ and $f(x)=\emptyset$
+                    by \obv{function_apply_default}.
+        \end{byCase}
+    \end{subproof}
+    Hence $u=f$ by \obv{funext}.
+\end{proof}
+
+\begin{proposition}\label{function_curry_uncurry}
+    Let $g\in\funs{A}{\funs{B}{C}}$.
+    Then $\functionCurry{\functionUncurry{g}{A}{B}}{A}{B}=g$.
+\end{proposition}
+\begin{proof}
+    Let $f=\functionUncurry{g}{A}{B}$.
+    Let $h=\functionCurry{f}{A}{B}$.
+    $f\in\funs{A\times B}{C}$ by \auto{function_uncurry_type}.
+    Hence $h\in\funs{A}{\funs{B}{C}}$ by \auto{function_curry_type}.
+    Hence $h$ and $g$ are functions by \obv{funs_is_function}.
+    $\dom{h}=A=\dom{g}$ by \obv{funs}.
+    Show that for every $a$ we have $h(a)=g(a)$.
+    \begin{subproof}
+        Fix $a$.
+        \begin{byCase}
+            \caseOf{$a\in A$.}
+                $h(a)=\functionSection{f}{a}{B}$
+                    by \auto{function_curry_application}.
+                $\functionSection{f}{a}{B}\in\funs{B}{C}$
+                    by \obv{function_section_type}.
+                $g(a)\in\funs{B}{C}$ by \obv{funs_type_apply}.
+                Hence $\functionSection{f}{a}{B}$ and $g(a)$ are functions
+                    by \obv{funs_is_function}.
+                $\dom{\functionSection{f}{a}{B}}=B=\dom{g(a)}$
+                    by \obv{funs}.
+                Show that for every $b$ we have
+                    $(\functionSection{f}{a}{B})(b)=(g(a))(b)$.
+                \begin{subproof}
+                    Fix $b$.
+                    \begin{byCase}
+                        \caseOf{$b\in B$.}
+                            $(\functionSection{f}{a}{B})(b)=f((a,b))$
+                                by \obv{function_section_application}.
+                            $f((a,b))=(g(a))(b)$
+                                by \auto{function_uncurry_application}.
+                        \caseOf{$b\notin B$.}
+                            $b\notin\dom{\functionSection{f}{a}{B}}$ and
+                                $b\notin\dom{g(a)}$.
+                            $(\functionSection{f}{a}{B})(b)=\emptyset$ and
+                                $(g(a))(b)=\emptyset$
+                                by \obv{function_apply_default}.
+                    \end{byCase}
+                \end{subproof}
+                Hence $\functionSection{f}{a}{B}=g(a)$
+                    by \obv{funext}.
+            \caseOf{$a\notin A$.}
+                $a\notin\dom{h}$ and $a\notin\dom{g}$.
+                $h(a)=\emptyset$ and $g(a)=\emptyset$
+                    by \obv{function_apply_default}.
+        \end{byCase}
+    \end{subproof}
+    Hence $h=g$ by \obv{funext}.
+\end{proof}
+
+\begin{theorem}\label{function_space_currying_equinumerous}
+    $\funs{A\times B}{C}\approx\funs{A}{\funs{B}{C}}$.
+\end{theorem}
+\begin{proof}
+    Let $H=\{(f,\functionCurry{f}{A}{B})
+        \mid f\in\funs{A\times B}{C}\}$.
+    $H$ is a relation by \auto{relation}.
+    $H$ is right-unique by \auto{rightunique,pair_eq_iff}.
+    $\dom{H}=\funs{A\times B}{C}$
+        by \auto{setext,dom_iff,pair_eq_iff}.
+    For every $f\in\funs{A\times B}{C}$ we have
+        $\functionCurry{f}{A}{B}\in\funs{A}{\funs{B}{C}}$
+        by \obv{function_curry_type}.
+    For every $f\in\funs{A\times B}{C}$ we have
+        $H(f)=\functionCurry{f}{A}{B}$
+        by \obv{function_apply_intro}.
+    Hence $H\in\funs{\funs{A\times B}{C}}{\funs{A}{\funs{B}{C}}}$
+        by \auto{funs_intro}.
+    Show that $H$ is injective.
+    \begin{subproof}
+        Show that for all $f,k$ such that $f\in\dom{H}$ and
+            $k\in\dom{H}$ and $H(f)=H(k)$ we have $f=k$.
+        \begin{subproof}
+            Fix $f,k$.
+            Assume $f\in\dom{H}$ and $k\in\dom{H}$ and $H(f)=H(k)$.
+            Hence $f,k\in\funs{A\times B}{C}$.
+            $H(f)=\functionCurry{f}{A}{B}$ and
+                $H(k)=\functionCurry{k}{A}{B}$
+                by \obv{function_apply_intro}.
+            Hence $\functionCurry{f}{A}{B}=\functionCurry{k}{A}{B}$.
+            $\functionUncurry{\functionCurry{f}{A}{B}}{A}{B}=f$ and
+                $\functionUncurry{\functionCurry{k}{A}{B}}{A}{B}=k$
+                by \obv{function_uncurry_curry}.
+        \end{subproof}
+        Follows by \auto{injective_function}.
+    \end{subproof}
+    Show that for every $g\in\funs{A}{\funs{B}{C}}$ there exists
+        $f\in\funs{A\times B}{C}$ such that $H(f)=g$.
+    \begin{subproof}
+        Fix $g\in\funs{A}{\funs{B}{C}}$.
+        Let $f=\functionUncurry{g}{A}{B}$.
+        $f\in\funs{A\times B}{C}$ by \auto{function_uncurry_type}.
+        Hence $H(f)=\functionCurry{f}{A}{B}$
+            by \obv{function_apply_intro}.
+        $\functionCurry{f}{A}{B}=g$ by \auto{function_curry_uncurry}.
+    \end{subproof}
+    Hence $H\in\surj{\funs{A\times B}{C}}{\funs{A}{\funs{B}{C}}}$
+        by \obv{surj}.
+    Hence $H\in\bijections{\funs{A\times B}{C}}{\funs{A}{\funs{B}{C}}}$
+        by \obv{bijections}.
+    Follows by \obv{equinum}.
+\end{proof}

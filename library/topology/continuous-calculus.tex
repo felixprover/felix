@@ -1,0 +1,254 @@
+\section{The continuous local calculus}
+
+\import{topology/local-map-calculus.tex}
+
+The models form a set. Their carriers therefore have a set-sized union, which
+bounds every admissible graph and keeps the construction independent of an
+additional universe parameter.
+
+\begin{definition}\label{model_carrier_union}
+    $\modelCarrierUnion{M}=\unions{\{\carrier[E]\mid E\in M\}}$.
+\end{definition}
+
+\begin{proposition}\label{model_carrier_subset_union}
+    Let $E\in M$.
+    Then $\carrier[E]\subseteq\modelCarrierUnion{M}$.
+\end{proposition}
+\begin{proof}
+    $\carrier[E]\in\{\carrier[F]\mid F\in M\}$ by \auto{logical_replacement_iff}.
+    Follows by \auto{model_carrier_union,unions_iff,subseteq}.
+\end{proof}
+
+\begin{definition}\label{continuous_admissibility}
+    $\continuousAdmissibility{M}=\{t\in
+        (M\times M)\times\pow{\modelCarrierUnion{M}\times\modelCarrierUnion{M}}
+        \mid\text{there exist $E,F\in M$ such that there exists $f$ such that
+            $t=((E,F),f)$ and $f$ is a continuous partial map from $E$ to $F$}\}$.
+\end{definition}
+
+\begin{theorem}\label{continuous_admissibility_iff}
+    Then $((E,F),f)\in\continuousAdmissibility{M}$ iff
+        $E,F\in M$ and $f$ is a continuous partial map from $E$ to $F$.
+\end{theorem}
+\begin{proof}
+    If $((E,F),f)\in\continuousAdmissibility{M}$, then
+        $E,F\in M$ and $f$ is a continuous partial map from $E$ to $F$ by
+        \auto{continuous_admissibility,pair_eq_iff}.
+    Show that if $E,F\in M$ and $f$ is a continuous partial map from $E$ to $F$,
+        then $((E,F),f)\in\continuousAdmissibility{M}$.
+    \begin{subproof}
+        Assume $E,F\in M$ and $f$ is a continuous partial map from $E$ to $F$.
+        Let $U=\modelCarrierUnion{M}$.
+        $\carrier[E]\subseteq U$ and $\carrier[F]\subseteq U$ by
+            \auto{model_carrier_subset_union}.
+        $f\subseteq\carrier[E]\times\carrier[F]$ by
+            \obv{continuous_partial_map_graph_bound}.
+        $f\in\rels{\carrier[E]}{\carrier[F]}$ by \obv{rels_intro}.
+        $f\in\rels{U}{\carrier[F]}$ by \obv{rels_weaken_dom}.
+        $f\in\rels{U}{U}$ by \obv{rels_weaken_codom}.
+        $f\in\pow{U\times U}$ by \obv{rels}.
+        $((E,F),f)\in(M\times M)\times\pow{U\times U}$ by
+            \obv{times_tuple_intro}.
+        Follows by \auto{continuous_admissibility}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{proposition}\label{continuous_admissibility_is_relation}
+    Then $\continuousAdmissibility{M}$ is a relation.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{continuous_admissibility,relation}.
+\end{proof}
+
+\subsection{The canonical continuous calculus}
+
+\begin{construction}\label{continuous_calculus}
+    Let $M$ be a topological model family.
+    The local-map calculus $\ContinuousCalculus{M}=
+        \structure{\models=M,\admissible=\continuousAdmissibility{M}}$.
+\end{construction}
+\begin{proof}
+    Let $C=\ContinuousCalculus{M}$.
+    Every element of $M$ is a topological space by \obv{topological_model_family}.
+    $\models[C]=M$ and $\admissible[C]=\continuousAdmissibility{M}$ by
+        \auto{local_map_calculusaggregateprojection_models,
+            local_map_calculusaggregateprojection_admissible}.
+    $C$ is a local-map datum by
+        \auto{local_map_datum,local_map_calculusaggregateexact,
+            local_map_calculusaggregateprojection_models,
+            local_map_calculusaggregateprojection_admissible}.
+    Every element of $\models[C]$ is a topological space.
+    For every $t\in\admissible[C]$ there exist $E,F\in\models[C]$ such that
+        there exists $f$ such that $t=((E,F),f)$ and
+            $f$ is a continuous partial map from $E$ to $F$ by
+        \auto{continuous_admissibility}.
+
+    Show that for every $E\in\models[C]$ we have
+        $\identity{\carrier[E]}$ is admissible from $E$ to $E$ in $C$.
+    \begin{subproof}
+        Fix $E\in\models[C]$.
+        $E\in M$.
+        $\carrier[E]\in\opens[E]$ by \obv{carrier_open}.
+        $\identity{\carrier[E]}$ is a continuous partial map from $E$ to $E$ by
+            \obv{identity_continuous_partial_map}.
+        Follows by \auto{map_admissible,continuous_admissibility_iff}.
+    \end{subproof}
+
+    Show that for all $E,F\in\models[C]$ we have for every $f$ such that
+        $f$ is admissible from $E$ to $F$ in $C$ we have
+        for every $U\in\opens[E]$ we have
+            $\restrl{f}{U}$ is admissible from $E$ to $F$ in $C$.
+    \begin{subproof}
+        Fix $E,F\in\models[C]$.
+        Fix $f$.
+        Assume $f$ is admissible from $E$ to $F$ in $C$.
+        Fix $U\in\opens[E]$.
+        $f$ is a continuous partial map from $E$ to $F$ by
+            \auto{map_admissible,continuous_admissibility_iff}.
+        $\restrl{f}{U}$ is a continuous partial map from $E$ to $F$ by
+            \obv{continuous_partial_map_restriction}.
+        Follows by \auto{map_admissible,continuous_admissibility_iff}.
+    \end{subproof}
+
+    Show that for all $E,F,H\in\models[C]$ we have for all $f,g$ such that
+        $f$ is admissible from $E$ to $F$ in $C$ and
+        $g$ is admissible from $F$ to $H$ in $C$ we have
+        $g\circ f$ is admissible from $E$ to $H$ in $C$.
+    \begin{subproof}
+        Fix $E,F,H\in\models[C]$.
+        Fix $f,g$.
+        Assume $f$ is admissible from $E$ to $F$ in $C$ and
+            $g$ is admissible from $F$ to $H$ in $C$.
+        $f$ is a continuous partial map from $E$ to $F$ and
+            $g$ is a continuous partial map from $F$ to $H$ by
+            \auto{map_admissible,continuous_admissibility_iff}.
+        $g\circ f$ is a continuous partial map from $E$ to $H$ by
+            \obv{continuous_partial_map_composition}.
+        Follows by \auto{map_admissible,continuous_admissibility_iff}.
+    \end{subproof}
+
+    Show that for all $E,F\in\models[C]$ we have for every $f$ such that
+        $f\in\funs{\dom{f}}{\carrier[F]}$ and $\dom{f}\in\opens[E]$ we have
+        for every $B\subseteq\opens[E]$ such that
+            (for every $x\in\dom{f}$ there exists $U\in B$ such that $x\in U$) and
+            (for every $U\in B$ we have
+                $\restrl{f}{U}$ is admissible from $E$ to $F$ in $C$)
+        we have $f$ is admissible from $E$ to $F$ in $C$.
+    \begin{subproof}
+        Fix $E,F\in\models[C]$.
+        Fix $f$.
+        Assume $f\in\funs{\dom{f}}{\carrier[F]}$ and $\dom{f}\in\opens[E]$.
+        Fix $B\subseteq\opens[E]$.
+        Assume for every $x\in\dom{f}$ there exists $U\in B$ such that $x\in U$.
+        Assume for every $U\in B$ we have
+            $\restrl{f}{U}$ is admissible from $E$ to $F$ in $C$.
+        For every $U\in B$ we have
+            $\restrl{f}{U}$ is a continuous partial map from $E$ to $F$ by
+            \auto{map_admissible,continuous_admissibility_iff}.
+        $f$ is a continuous partial map from $E$ to $F$ by
+            \obv{continuous_partial_map_locality}.
+        Follows by \auto{map_admissible,continuous_admissibility_iff}.
+    \end{subproof}
+    $C$ is a local-map calculus by \obv{local_map_calculus}.
+    Follows by \auto{local_map_calculus}.
+\end{proof}
+
+\begin{proposition}\label{continuous_calculus_models}
+    Let $M$ be a topological model family.
+    Then $\models[\ContinuousCalculus{M}]=M$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{continuous_calculusprojection_models}.
+\end{proof}
+
+\begin{classification}\label{continuous_calculus_model}
+    Let $M$ be a topological model family.
+    Let $E\in M$.
+    Then $E$ is a model of $\ContinuousCalculus{M}$.
+\end{classification}
+\begin{proof}
+    Follows by \auto{calculus_model,continuous_calculus,continuous_calculus_models}.
+\end{proof}
+
+\begin{classification}\label{singleton_continuous_calculus_model}
+    Let $E$ be a topological space.
+    Then $E$ is a model of $\ContinuousCalculus{\{E\}}$.
+\end{classification}
+\begin{proof}
+    $\{E\}$ is a topological model family by \obv{singleton_topological_model_family}.
+    $E\in\{E\}$ by \obv{singleton_intro}.
+    Follows by \obv{continuous_calculus_model}.
+\end{proof}
+
+\begin{theorem}\label{continuous_calculus_is_exact}
+    Let $M$ be a topological model family.
+    Then $\ContinuousCalculus{M}$ is an exact local-map calculus.
+\end{theorem}
+\begin{proof}
+    Follows by \obv{continuous_calculus,continuous_calculusshape}.
+\end{proof}
+
+\begin{theorem}\label{continuous_calculus_admissible_iff}
+    Let $M$ be a topological model family.
+    Then $f$ is admissible from $E$ to $F$ in $\ContinuousCalculus{M}$ iff
+        $E,F\in M$ and $f$ is a continuous partial map from $E$ to $F$.
+\end{theorem}
+\begin{proof}
+    $\ContinuousCalculus{M}$ is a local-map calculus by \obv{continuous_calculus}.
+    $\ContinuousCalculus{M}$ is a local-map datum.
+    $\admissible[\ContinuousCalculus{M}]=\continuousAdmissibility{M}$ by
+        \obv{continuous_calculusprojection_admissible}.
+    Follows by \auto{map_admissible,continuous_admissibility_iff}.
+\end{proof}
+
+\subsection{Maximality and small model families}
+
+\begin{theorem}\label{continuous_calculus_maximal}
+    Let $C$ be a local-map calculus.
+    Let $M$ be a topological model family.
+    Suppose $\models[C]\subseteq M$.
+    Then $C$ is a subcalculus of $\ContinuousCalculus{M}$.
+\end{theorem}
+\begin{proof}
+    $\ContinuousCalculus{M}$ is a local-map calculus by \obv{continuous_calculus}.
+    $\models[\ContinuousCalculus{M}]=M$ by \obv{continuous_calculus_models}.
+    $\admissible[\ContinuousCalculus{M}]=\continuousAdmissibility{M}$ by
+        \obv{continuous_calculusprojection_admissible}.
+    Show that every element of $\admissible[C]$ is an element of
+        $\admissible[\ContinuousCalculus{M}]$.
+    \begin{subproof}
+        Fix $t\in\admissible[C]$.
+        Take $E,F\in\models[C]$ such that there exists $f$ such that
+            $t=((E,F),f)$ and $f$ is a continuous partial map from $E$ to $F$
+            by \obv{calculus_admissible_triples}.
+        Take $f$ such that $t=((E,F),f)$ and
+            $f$ is a continuous partial map from $E$ to $F$.
+        $E,F\in M$ by \obv{subseteq}.
+        $((E,F),f)\in\continuousAdmissibility{M}$ by
+            \auto{continuous_admissibility_iff}.
+    \end{subproof}
+    $\admissible[C]\subseteq\admissible[\ContinuousCalculus{M}]$ by
+        \obv{subseteq}.
+    Follows by \obv{subcalculus}.
+\end{proof}
+
+\begin{theorem}\label{continuous_single_model_admissibility}
+    Let $E$ be a topological space.
+    Then $f$ is admissible from $E$ to $E$ in $\ContinuousCalculus{\{E\}}$ iff
+        $f$ is a continuous partial map from $E$ to $E$.
+\end{theorem}
+\begin{proof}
+    $\{E\}$ is a topological model family by \obv{singleton_topological_model_family}.
+    Follows by \auto{continuous_calculus_admissible_iff,singleton_iff}.
+\end{proof}
+
+\begin{theorem}\label{continuous_two_model_admissibility}
+    Let $E,F$ be topological spaces.
+    Then $f$ is admissible from $E$ to $F$ in $\ContinuousCalculus{\{E,F\}}$ iff
+        $f$ is a continuous partial map from $E$ to $F$.
+\end{theorem}
+\begin{proof}
+    $\{E,F\}$ is a topological model family by \obv{pair_topological_model_family}.
+    Follows by \auto{continuous_calculus_admissible_iff,cons_iff}.
+\end{proof}

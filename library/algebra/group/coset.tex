@@ -1,0 +1,365 @@
+\import{algebra/group/subgroup.tex}
+\import{algebra/group/normal.tex}
+\import{relation/equivalence.tex}
+
+\section{Cosets}
+
+Cosets are subsets of an explicit ambient group carrier.  The quotient
+relation below is oriented so that the equivalence class of $a$ is literally
+the left coset $aH$.
+
+\begin{definition}\label{left_coset}
+    $\leftCoset{G}{a}{H}=\img{\LeftTranslation{G}{a}}{H}$.
+\end{definition}
+
+\begin{definition}\label{right_coset}
+    $\rightCoset{G}{H}{a}=\img{\RightTranslation{G}{a}}{H}$.
+\end{definition}
+
+\begin{proposition}\label{left_coset_iff}
+    Suppose $\subgroup{H}{G}$.
+    Let $a\in\carrier[G]$.
+    Then $x\in\leftCoset{G}{a}{H}$ iff
+        there exists $h\in H$ such that $x=\mul[G](a,h)$.
+\end{proposition}
+\begin{proof}
+    $G$ is a group and $H\subseteq\carrier[G]$ by
+        \obv{subgroup_ambient_group,subgroup_subseteq}.
+    Show that if $x\in\leftCoset{G}{a}{H}$, then
+        there exists $h\in H$ such that $x=\mul[G](a,h)$.
+    \begin{subproof}
+        Assume $x\in\leftCoset{G}{a}{H}$.
+        Take $h\in H$ such that
+            $(h,x)\in\LeftTranslation{G}{a}$ by
+            \auto{left_coset,img_iff}.
+        $h\in\carrier[G]$ by \obv{subseteq}.
+        $x=\mul[G](a,h)$ by \auto{left_translation_iff}.
+    \end{subproof}
+    Show that if there exists $h\in H$ such that
+        $x=\mul[G](a,h)$, then $x\in\leftCoset{G}{a}{H}$.
+    \begin{subproof}
+        Assume there exists $h\in H$ such that $x=\mul[G](a,h)$.
+        Take $h\in H$ such that $x=\mul[G](a,h)$.
+        $h\in\carrier[G]$ by \obv{subseteq}.
+        $(h,x)\in\LeftTranslation{G}{a}$ by
+            \obv{left_translation_iff}.
+        Follows by \auto{left_coset,img_iff}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{proposition}\label{right_coset_iff}
+    Suppose $\subgroup{H}{G}$.
+    Let $a\in\carrier[G]$.
+    Then $x\in\rightCoset{G}{H}{a}$ iff
+        there exists $h\in H$ such that $x=\mul[G](h,a)$.
+\end{proposition}
+\begin{proof}
+    $G$ is a group and $H\subseteq\carrier[G]$ by
+        \obv{subgroup_ambient_group,subgroup_subseteq}.
+    Show that if $x\in\rightCoset{G}{H}{a}$, then
+        there exists $h\in H$ such that $x=\mul[G](h,a)$.
+    \begin{subproof}
+        Assume $x\in\rightCoset{G}{H}{a}$.
+        Take $h\in H$ such that
+            $(h,x)\in\RightTranslation{G}{a}$ by
+            \auto{right_coset,img_iff}.
+        $h\in\carrier[G]$ by \obv{subseteq}.
+        $x=\mul[G](h,a)$ by \auto{right_translation_iff}.
+    \end{subproof}
+    Show that if there exists $h\in H$ such that
+        $x=\mul[G](h,a)$, then $x\in\rightCoset{G}{H}{a}$.
+    \begin{subproof}
+        Assume there exists $h\in H$ such that $x=\mul[G](h,a)$.
+        Take $h\in H$ such that $x=\mul[G](h,a)$.
+        $h\in\carrier[G]$ by \obv{subseteq}.
+        $(h,x)\in\RightTranslation{G}{a}$ by
+            \obv{right_translation_iff}.
+        Follows by \auto{right_coset,img_iff}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{proposition}\label{left_coset_subseteq}
+    Suppose $\subgroup{H}{G}$.
+    Let $a\in\carrier[G]$.
+    Then $\leftCoset{G}{a}{H}\subseteq\carrier[G]$.
+\end{proposition}
+\begin{proof}
+    $G$ is a group and $H\subseteq\carrier[G]$ by
+        \obv{subgroup_ambient_group,subgroup_subseteq}.
+    For every $x\in\leftCoset{G}{a}{H}$ there exists $h\in H$ such that
+        $x=\mul[G](a,h)$ by \auto{left_coset_iff}.
+    Follows by
+        \auto{subseteq,group_is_monoid,monoid_is_magma,magma_welldef}.
+\end{proof}
+
+\begin{definition}\label{subgroup_coset_relation}
+    $\subgroupCosetRelation{G}{H}=
+        \{(a,b)\mid a\in\carrier[G],b\in\carrier[G]\mid
+            \mul[G](\groupInv[G](a),b)\in H\}$.
+\end{definition}
+
+\begin{proposition}\label{subgroup_coset_relation_iff}
+    $a\mathrel{\subgroupCosetRelation{G}{H}}b$ iff
+        $a,b\in\carrier[G]$ and
+        $\mul[G](\groupInv[G](a),b)\in H$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{subgroup_coset_relation,pair_eq_iff}.
+\end{proof}
+
+\begin{theorem}\label{subgroup_coset_relation_equivalence}
+    Suppose $\subgroup{H}{G}$.
+    Then $\subgroupCosetRelation{G}{H}$ is an equivalence on
+        $\carrier[G]$.
+\end{theorem}
+\begin{proof}
+    Let $E=\subgroupCosetRelation{G}{H}$.
+    $G$ is a group and $H\subseteq\carrier[G]$ by
+        \obv{subgroup_ambient_group,subgroup_subseteq}.
+    Show that $E$ is reflexive on $\carrier[G]$.
+    \begin{subproof}
+        Show that for every $a\in\carrier[G]$ we have $a\mathrel{E}a$.
+        \begin{subproof}
+            Fix $a\in\carrier[G]$.
+            $\mul[G](\groupInv[G](a),a)=\neutral[G]$ by
+                \obv{group_inverse_left}.
+            Hence $\mul[G](\groupInv[G](a),a)\in H$ by
+                \obv{subgroup_neutral}.
+            Follows by \obv{subgroup_coset_relation_iff}.
+        \end{subproof}
+        Follows by \obv{reflexive_on}.
+    \end{subproof}
+    Show that $E$ is symmetric.
+    \begin{subproof}
+        Show that for all $a,b$ such that $a\mathrel{E}b$ we have
+            $b\mathrel{E}a$.
+        \begin{subproof}
+            Fix $a,b$.
+            Assume $a\mathrel{E}b$.
+            $a,b\in\carrier[G]$ and
+                $\mul[G](\groupInv[G](a),b)\in H$ by
+                \obv{subgroup_coset_relation_iff}.
+            Hence
+                $\groupInv[G](\mul[G](\groupInv[G](a),b))\in H$ by
+                \obv{subgroup_inv}.
+            $\groupInv[G](a),\groupInv[G](b)\in\carrier[G]$ by
+                \obv{group_inverse_type}.
+            $\groupInv[G](\groupInv[G](a))=a$ by
+                \obv{group_inverse_involutive}.
+            $\groupInv[G](\mul[G](\groupInv[G](a),b))
+                =\mul[G]
+                    (\groupInv[G](b),
+                     \groupInv[G](\groupInv[G](a)))$ by
+                \obv{group_inverse_product}.
+            $\groupInv[G](\mul[G](\groupInv[G](a),b))
+                =\mul[G](\groupInv[G](b),a)$.
+            Hence $\mul[G](\groupInv[G](b),a)\in H$.
+            Follows by \obv{subgroup_coset_relation_iff}.
+        \end{subproof}
+        Follows by \auto{symmetric}.
+    \end{subproof}
+    Show that $E$ is transitive.
+    \begin{subproof}
+        Show that for all $a,b,c$ such that $a\mathrel{E}b$ and
+            $b\mathrel{E}c$ we have $a\mathrel{E}c$.
+        \begin{subproof}
+            Fix $a,b,c$.
+            Assume $a\mathrel{E}b$ and $b\mathrel{E}c$.
+            $a,b,c\in\carrier[G]$ and
+                $\mul[G](\groupInv[G](a),b)\in H$ and
+                $\mul[G](\groupInv[G](b),c)\in H$ by
+                \auto{subgroup_coset_relation_iff}.
+            Hence
+                $\mul[G]
+                    (\mul[G](\groupInv[G](a),b),
+                     \mul[G](\groupInv[G](b),c))\in H$ by
+                \obv{subgroup_mul}.
+            $\groupInv[G](a),\groupInv[G](b)\in\carrier[G]$ by
+                \obv{group_inverse_type}.
+            $\mul[G](b,\groupInv[G](b))=\neutral[G]$ by
+                \obv{group_inverse_right}.
+            $\mul[G](\neutral[G],c)=c$ by
+                \obv{group_is_monoid,monoid_is_unital_magma,unitalmagma_left}.
+            $\mul[G](b,\mul[G](\groupInv[G](b),c))
+                =\mul[G](\mul[G](b,\groupInv[G](b)),c)$ by
+                \obv{group_is_monoid,monoid_assoc}.
+            Hence
+                $\mul[G](b,\mul[G](\groupInv[G](b),c))=c$.
+            $\mul[G]
+                (\mul[G](\groupInv[G](a),b),
+                 \mul[G](\groupInv[G](b),c))
+                =\mul[G]
+                    (\groupInv[G](a),
+                     \mul[G](b,\mul[G](\groupInv[G](b),c)))$ by
+                \obv{group_is_monoid,monoid_assoc,monoid_is_magma,magma_welldef}.
+            Hence
+                $\mul[G]
+                    (\mul[G](\groupInv[G](a),b),
+                     \mul[G](\groupInv[G](b),c))
+                =\mul[G](\groupInv[G](a),c)$.
+            Hence $\mul[G](\groupInv[G](a),c)\in H$.
+            Follows by \auto{subgroup_coset_relation_iff}.
+        \end{subproof}
+        Follows by \obv{transitive}.
+    \end{subproof}
+    Show that for every $w\in E$ we have
+        $w\in\carrier[G]\times\carrier[G]$.
+    \begin{subproof}
+        Fix $w\in E$.
+        Take $a,b\in\carrier[G]$ such that $w=(a,b)$ by
+            \auto{subgroup_coset_relation,pair_eq_iff}.
+        Follows by \auto{times_tuple_intro}.
+    \end{subproof}
+    Hence $E\subseteq\carrier[G]\times\carrier[G]$ by
+        \obv{subseteq}.
+    Hence $E$ is a quasiorder on $\carrier[G]$.
+    $E$ is a symmetric quasiorder on $\carrier[G]$.
+\end{proof}
+
+\begin{theorem}\label{subgroup_coset_equivalence_class}
+    Suppose $\subgroup{H}{G}$.
+    Let $a\in\carrier[G]$.
+    Then
+        $\equivalenceClass{\subgroupCosetRelation{G}{H}}{a}
+            =\leftCoset{G}{a}{H}$.
+\end{theorem}
+\begin{proof}
+    Let $E=\subgroupCosetRelation{G}{H}$.
+    $G$ is a group and $H\subseteq\carrier[G]$ by
+        \obv{subgroup_ambient_group,subgroup_subseteq}.
+    Show that for every $x\in\equivalenceClass{E}{a}$ we have
+        $x\in\leftCoset{G}{a}{H}$.
+    \begin{subproof}
+        Fix $x\in\equivalenceClass{E}{a}$.
+        $x\mathrel{E}a$ by \obv{downward_closure_iff}.
+        Let $n=\mul[G](\groupInv[G](x),a)$.
+        Hence $x\in\carrier[G]$ and
+            $n\in H$ by
+            \auto{subgroup_coset_relation_iff}.
+        $\groupInv[G](n)\in H$ by \obv{subgroup_inv}.
+        $n\in\carrier[G]$ by \obv{subseteq}.
+        $\groupInv[G](n)=
+            \mul[G](\groupInv[G](a),x)$ by
+            \auto{group_inverse_type,group_inverse_product,group_inverse_involutive}.
+        $\mul[G](a,\groupInv[G](n))=x$ by
+            \auto{group_inverse_type,group_is_monoid,monoid_assoc,monoid_is_magma,magma_welldef,group_inverse_right,monoid_is_unital_magma,unitalmagma_left}.
+        Follows by \auto{left_coset_iff}.
+    \end{subproof}
+    Show that for every $x\in\leftCoset{G}{a}{H}$ we have
+        $x\in\equivalenceClass{E}{a}$.
+    \begin{subproof}
+        Fix $x\in\leftCoset{G}{a}{H}$.
+        Take $h\in H$ such that $x=\mul[G](a,h)$ by
+            \obv{left_coset_iff}.
+        $h\in\carrier[G]$ by \obv{subseteq}.
+        $\groupInv[G](h)\in H$ by \obv{subgroup_inv}.
+        $x\in\carrier[G]$ by \auto{left_coset_subseteq,subseteq}.
+        $\groupInv[G](x)=
+            \mul[G](\groupInv[G](h),\groupInv[G](a))$ by
+            \auto{group_inverse_product}.
+        $\mul[G](\groupInv[G](x),a)=\groupInv[G](h)$ by
+            \auto{group_inverse_type,group_is_monoid,monoid_assoc,monoid_is_magma,magma_welldef,group_inverse_left,monoid_is_unital_magma,unitalmagma_right}.
+        Hence $x\mathrel{E}a$ by
+            \auto{subgroup_coset_relation_iff}.
+        Follows by \obv{downward_closure_iff}.
+    \end{subproof}
+    Follows by \auto{setext}.
+\end{proof}
+
+\begin{theorem}\label{left_cosets_partition}
+    Suppose $\subgroup{H}{G}$.
+    Then
+        $\quotient{\carrier[G]}{\subgroupCosetRelation{G}{H}}$
+        is a partition of $\carrier[G]$.
+\end{theorem}
+\begin{proof}
+    $\subgroupCosetRelation{G}{H}$ is an equivalence on
+        $\carrier[G]$ by \obv{subgroup_coset_relation_equivalence}.
+    Follows by \obv{quotient_partition_of}.
+\end{proof}
+
+\begin{theorem}\label{left_coset_eq_or_disjoint}
+    Suppose $\subgroup{H}{G}$.
+    Let $a,b\in\carrier[G]$.
+    Then $\leftCoset{G}{a}{H}=\leftCoset{G}{b}{H}$ or
+        $\leftCoset{G}{a}{H}$ is disjoint from
+            $\leftCoset{G}{b}{H}$.
+\end{theorem}
+\begin{proof}
+    Let $E=\subgroupCosetRelation{G}{H}$.
+    $E$ is an equivalence on $\carrier[G]$ by
+        \auto{subgroup_coset_relation_equivalence}.
+    $\leftCoset{G}{a}{H}=\equivalenceClass{E}{a}$ and
+        $\leftCoset{G}{b}{H}=\equivalenceClass{E}{b}$ by
+        \auto{subgroup_coset_equivalence_class}.
+    Follows by \auto{equivalenceon_equivclasses_diseq_implies_disjoint}.
+\end{proof}
+
+\begin{theorem}\label{left_coset_eq_iff}
+    Suppose $\subgroup{H}{G}$.
+    Let $a,b\in\carrier[G]$.
+    Then $\leftCoset{G}{a}{H}=\leftCoset{G}{b}{H}$ iff
+        $a\mathrel{\subgroupCosetRelation{G}{H}}b$.
+\end{theorem}
+\begin{proof}
+    Let $E=\subgroupCosetRelation{G}{H}$.
+    $E$ is an equivalence on $\carrier[G]$ by
+        \auto{subgroup_coset_relation_equivalence}.
+    $\leftCoset{G}{a}{H}=\equivalenceClass{E}{a}$ and
+        $\leftCoset{G}{b}{H}=\equivalenceClass{E}{b}$ by
+        \auto{subgroup_coset_equivalence_class}.
+    Follows by \auto{equiv_iff_equivclasses_eq}.
+\end{proof}
+
+\begin{theorem}\label{normal_left_coset_eq_right_coset}
+    Suppose $\normalSubgroup{N}{G}$.
+    Let $a\in\carrier[G]$.
+    Then $\leftCoset{G}{a}{N}=\rightCoset{G}{N}{a}$.
+\end{theorem}
+\begin{proof}
+    $G$ is a group by \obv{normal_subgroup_ambient_group}.
+    $\subgroup{N}{G}$ by \obv{normal_subgroup_is_subgroup}.
+    Show that for every $x\in\leftCoset{G}{a}{N}$ we have
+        $x\in\rightCoset{G}{N}{a}$.
+    \begin{subproof}
+        Fix $x\in\leftCoset{G}{a}{N}$.
+        Take $h\in N$ such that $x=\mul[G](a,h)$ by
+            \auto{left_coset_iff}.
+        $h\in\carrier[G]$ by
+            \auto{normal_subgroup_subseteq,subseteq}.
+        Let $n=\conjugate{G}{a}{h}$.
+        $n\in N$ by \auto{normal_subgroup_closed_under_conjugation}.
+        $\groupInv[G](a)\in\carrier[G]$ by
+            \obv{group_inverse_type}.
+        $n=\mul[G](\mul[G](a,h),\groupInv[G](a))$ by
+            \obv{group_conjugate}.
+        $\mul[G](n,a)=\mul[G](a,h)$ by
+            \auto{group_is_monoid,monoid_assoc,monoid_is_magma,magma_welldef,group_inverse_left,monoid_is_unital_magma,unitalmagma_right}.
+        Hence $x=\mul[G](n,a)$.
+        Follows by \auto{right_coset_iff}.
+    \end{subproof}
+    Show that for every $x\in\rightCoset{G}{N}{a}$ we have
+        $x\in\leftCoset{G}{a}{N}$.
+    \begin{subproof}
+        Fix $x\in\rightCoset{G}{N}{a}$.
+        Take $h\in N$ such that $x=\mul[G](h,a)$ by
+            \auto{right_coset_iff}.
+        $h\in\carrier[G]$ by
+            \auto{normal_subgroup_subseteq,subseteq}.
+        $\groupInv[G](a)\in\carrier[G]$ by
+            \obv{group_inverse_type}.
+        Let $n=\conjugate{G}{\groupInv[G](a)}{h}$.
+        $n\in N$ by \auto{normal_subgroup_closed_under_conjugation}.
+        $\groupInv[G](\groupInv[G](a))=a$ by
+            \obv{group_inverse_involutive}.
+        $n=\mul[G](\mul[G](\groupInv[G](a),h),a)$ by
+            \obv{group_conjugate}.
+        $\mul[G](a,n)=\mul[G](h,a)$ by
+            \auto{group_is_monoid,monoid_assoc,monoid_is_magma,magma_welldef,group_inverse_right,monoid_is_unital_magma,unitalmagma_left}.
+        Hence $x=\mul[G](a,n)$.
+        Follows by \auto{left_coset_iff}.
+    \end{subproof}
+    Follows by set extensionality.
+\end{proof}

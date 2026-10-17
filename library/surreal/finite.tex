@@ -1,0 +1,199 @@
+\import{surreal/multiplicative.tex}
+\import{set/finite-ordinal.tex}
+
+\section{Finite surreal stages and extrema}
+
+Finite birthdays support the finite-option arguments used by the dyadic,
+reciprocal, and square-root constructions.  The results here concern the
+function-graph representation directly; no cardinality assertion is hidden
+in the definition of a surreal number.
+
+\begin{proposition}\label{surreal_signs_finite}
+    $\surrealSigns$ is finite.
+\end{proposition}
+\begin{proof}
+    $\emptyset$ is finite by \obv{emptyset_is_finite}.
+    $\suc{\emptyset}=\cons{\emptyset}{\emptyset}$
+        by \obv{suc,cons_iff,setext}.
+    Hence $\suc{\emptyset}$ is finite by \auto{finite_cons}.
+    $\suc{\suc{\emptyset}}
+        =\cons{\suc{\emptyset}}{\suc{\emptyset}}$
+        by \obv{suc,cons_iff,setext}.
+    Hence $\suc{\suc{\emptyset}}$ is finite by \auto{finite_cons}.
+    Follows by \obv{surreal_signs}.
+\end{proof}
+
+\begin{theorem}\label{finite_surreal_stage}
+    Let $n$ be a natural number.
+    Then $\surrealStage{n}$ is finite.
+\end{theorem}
+\begin{proof}
+    $n$ is finite by \obv{natural_number_is_finite}.
+    Hence $n\times\surrealSigns$ is finite
+        by \obv{finite_times,surreal_signs_finite}.
+    Hence $\pow{n\times\surrealSigns}$ is finite
+        by \obv{finite_powerset}.
+    $\surrealStage{n}\subseteq\pow{n\times\surrealSigns}$
+        by \obv{surreal_stage,subseteq}.
+    Follows by \obv{subseteq_finite_is_finite}.
+\end{proof}
+
+\begin{corollary}\label{finite_surreal_birthday_level}
+    Let $n$ be a natural number.
+    Then
+        $\{x\in\surrealStage{\suc{n}}\mid\birthday{x}=n\}$
+        is finite.
+\end{corollary}
+\begin{proof}
+    $\suc{n}$ is a natural number by \obv{omega_successor}.
+    Hence $\surrealStage{\suc{n}}$ is finite
+        by \obv{finite_surreal_stage}.
+    $\{x\in\surrealStage{\suc{n}}\mid\birthday{x}=n\}
+        \subseteq\surrealStage{\suc{n}}$
+        by \auto{subseteq}.
+    Follows by \obv{subseteq_finite_is_finite}.
+\end{proof}
+
+\begin{theorem}\label{finite_surreal_options}
+    Suppose $x\in\surrealStage{\naturals}$.
+    Then $\surrealLeft{x}$ and $\surrealRight{x}$ are finite.
+\end{theorem}
+\begin{proof}
+    $\naturals$ is an ordinal by \obv{omega_is_ordinal}.
+    Hence $\surreal{x}$ and $\birthday{x}\in\naturals$
+        by \auto{surreal_stage_characterization}.
+    Hence $\surrealStage{\birthday{x}}$ is finite
+        by \obv{finite_surreal_stage}.
+    $\surrealLeft{x},\surrealRight{x}
+        \subseteq\surrealStage{\birthday{x}}$
+        by \obv{surreal_left,surreal_right,subseteq}.
+    Follows by \obv{subseteq_finite_is_finite}.
+\end{proof}
+
+\begin{theorem}\label{finite_surreal_maximum}
+    Suppose for every $x\in X$ we have $\surreal{x}$.
+    Suppose $X$ is finite and inhabited.
+    Then there exists $m\in X$ such that $\surreal{m}$ and
+        for every $x\in X$ we have $\surrealLe{x}{m}$.
+\end{theorem}
+\begin{proof}
+    Let $R=\{p\in X\times X\mid
+        \surrealLt{\fst{p}}{\snd{p}}\}$.
+    Show that $R$ is transitive.
+    \begin{subproof}
+        Show that for all $x,y,z$ such that
+            $(x,y),(y,z)\in R$ we have $(x,z)\in R$.
+        \begin{subproof}
+            Fix $x,y,z$.
+            Assume $(x,y),(y,z)\in R$.
+            $x,y,z\in X$ and
+                $\surrealLt{x}{y}$ and $\surrealLt{y}{z}$
+                by \obv{times_tuple_elim,fst_eq,snd_eq}.
+            Hence $\surreal{x}$ and $\surreal{y}$ and $\surreal{z}$.
+            Hence $\surrealLt{x}{z}$
+                by \obv{surreal_lt_transitive}.
+            Follows by \obv{times_tuple_intro,fst_eq,snd_eq}.
+        \end{subproof}
+        Follows by \obv{transitive}.
+    \end{subproof}
+    Show that $R$ is connex on $X$.
+    \begin{subproof}
+        It suffices to show that for all $x,y$ such that
+            $x\in X$ and $y\in X$ and $x\neq y$ we have
+            $(x,y)\in R$ or $(y,x)\in R$ by \obv{connex}.
+        Fix $x,y$.
+        Assume $x\in X$ and $y\in X$ and $x\neq y$.
+        $\surreal{x}$ and $\surreal{y}$.
+        $\surrealLt{x}{y}$ or $x=y$ or $\surrealLt{y}{x}$
+            by \obv{surreal_lt_trichotomy}.
+        Follows by \auto{times_tuple_intro,fst_eq,snd_eq}.
+    \end{subproof}
+    $X\subseteq X$ by \obv{subseteq_refl}.
+    Take $m\in X$ such that
+        $m$ is a greatest element of $X$ with respect to $R$
+        by \obv{finite_greatest_element}.
+    $\surreal{m}$.
+    For every $x\in X$ we have $x=m$ or $\surrealLt{x}{m}$
+        by \auto{greatest_element}.
+    Hence for every $x\in X$ we have $\surrealLe{x}{m}$
+        by \obv{surreal_le}.
+\end{proof}
+
+\begin{theorem}\label{finite_surreal_minimum}
+    Suppose for every $x\in X$ we have $\surreal{x}$.
+    Suppose $X$ is finite and inhabited.
+    Then there exists $m\in X$ such that $\surreal{m}$ and
+        for every $x\in X$ we have $\surrealLe{m}{x}$.
+\end{theorem}
+\begin{proof}
+    Let $R=\{p\in X\times X\mid
+        \surrealLt{\fst{p}}{\snd{p}}\}$.
+    Show that $R$ is transitive.
+    \begin{subproof}
+        Show that for all $x,y,z$ such that
+            $(x,y),(y,z)\in R$ we have $(x,z)\in R$.
+        \begin{subproof}
+            Fix $x,y,z$.
+            Assume $(x,y),(y,z)\in R$.
+            $x,y,z\in X$ and
+                $\surrealLt{x}{y}$ and $\surrealLt{y}{z}$
+                by \obv{times_tuple_elim,fst_eq,snd_eq}.
+            Hence $\surreal{x}$ and $\surreal{y}$ and $\surreal{z}$.
+            Hence $\surrealLt{x}{z}$
+                by \obv{surreal_lt_transitive}.
+            Follows by \obv{times_tuple_intro,fst_eq,snd_eq}.
+        \end{subproof}
+        Follows by \obv{transitive}.
+    \end{subproof}
+    Show that $R$ is connex on $X$.
+    \begin{subproof}
+        It suffices to show that for all $x,y$ such that
+            $x\in X$ and $y\in X$ and $x\neq y$ we have
+            $(x,y)\in R$ or $(y,x)\in R$ by \obv{connex}.
+        Fix $x,y$.
+        Assume $x\in X$ and $y\in X$ and $x\neq y$.
+        $\surreal{x}$ and $\surreal{y}$.
+        $\surrealLt{x}{y}$ or $x=y$ or $\surrealLt{y}{x}$
+            by \obv{surreal_lt_trichotomy}.
+        Follows by \auto{times_tuple_intro,fst_eq,snd_eq}.
+    \end{subproof}
+    $X\subseteq X$ by \obv{subseteq_refl}.
+    Take $m\in X$ such that
+        $m$ is a least element of $X$ with respect to $R$
+        by \obv{finite_least_element}.
+    $\surreal{m}$.
+    For every $x\in X$ we have $m=x$ or $\surrealLt{m}{x}$
+        by \auto{least_element}.
+    Hence for every $x\in X$ we have $\surrealLe{m}{x}$
+        by \obv{surreal_le}.
+\end{proof}
+
+\begin{corollary}\label{finite_surreal_left_maximum}
+    Suppose $x\in\surrealStage{\naturals}$.
+    Suppose $\surrealLeft{x}$ is inhabited.
+    Then there exists $m\in\surrealLeft{x}$ such that $\surreal{m}$ and
+        for every $u\in\surrealLeft{x}$ we have $\surrealLe{u}{m}$.
+\end{corollary}
+\begin{proof}
+    $\naturals$ is an ordinal by \obv{omega_is_ordinal}.
+    Hence $\surreal{x}$ by \auto{surreal_stage_characterization}.
+    For every $u\in\surrealLeft{x}$ we have $\surreal{u}$
+        by \auto{surreal_left_elim}.
+    $\surrealLeft{x}$ is finite by \auto{finite_surreal_options}.
+    Follows by \obv{finite_surreal_maximum}.
+\end{proof}
+
+\begin{corollary}\label{finite_surreal_right_minimum}
+    Suppose $x\in\surrealStage{\naturals}$.
+    Suppose $\surrealRight{x}$ is inhabited.
+    Then there exists $m\in\surrealRight{x}$ such that $\surreal{m}$ and
+        for every $u\in\surrealRight{x}$ we have $\surrealLe{m}{u}$.
+\end{corollary}
+\begin{proof}
+    $\naturals$ is an ordinal by \obv{omega_is_ordinal}.
+    Hence $\surreal{x}$ by \auto{surreal_stage_characterization}.
+    For every $u\in\surrealRight{x}$ we have $\surreal{u}$
+        by \auto{surreal_right_elim}.
+    $\surrealRight{x}$ is finite by \auto{finite_surreal_options}.
+    Follows by \obv{finite_surreal_minimum}.
+\end{proof}

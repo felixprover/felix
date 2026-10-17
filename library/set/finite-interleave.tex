@@ -1,0 +1,390 @@
+\section{Finite interleaving}
+
+\import{set/finite-sequence.tex}
+
+This module interleaves a sequence of entries with a sequence of values to be
+inserted between them.  The indexing results are stated separately so that
+later finite-chain arguments can use the exact even and odd positions without
+introducing division or parity arithmetic.
+
+\begin{lemma}\label{natural_double_injective}
+    Let $i,j$ be natural numbers.
+    Suppose $i+i=j+j$.
+    Then $i=j$.
+\end{lemma}
+\begin{proof}
+    Let $C=\{k\in\naturals\mid
+        \text{for every $l\in\naturals$ such that $k+k=l+l$
+        we have $k=l$}\}$.
+    Show that $\emptyset\in C$.
+    \begin{subproof}
+        $\emptyset$ is a natural number by \obv{omega_empty}.
+        Show that for every $l\in\naturals$ such that
+            $\emptyset+\emptyset=l+l$ we have $\emptyset=l$.
+        \begin{subproof}
+            Fix $l$.
+            Assume $l\in\naturals$ and $\emptyset+\emptyset=l+l$.
+            Suppose not.
+            Then $l\neq\emptyset$.
+            Take a natural number $q$ such that $l=\suc{q}$
+                by \obv{natural_zero_or_successor}.
+            $l+l=\suc{\suc{q+q}}$
+                by \auto{num_addition_successor_left,num_addition_successor_right}.
+            $\emptyset+\emptyset=\emptyset$
+                by \obv{num_addition_zero_right}.
+            Contradiction by \obv{suc_neq_emptyset}.
+        \end{subproof}
+    \end{subproof}
+    Show that for every $k\in C$ we have $\suc{k}\in C$.
+    \begin{subproof}
+        Fix $k\in C$.
+        Hence $\suc{k}$ is a natural number by \obv{omega_successor}.
+        Show that for every $l\in\naturals$ such that
+            $\suc{k}+\suc{k}=l+l$ we have $\suc{k}=l$.
+        \begin{subproof}
+            Fix $l$.
+            Assume $l\in\naturals$ and $\suc{k}+\suc{k}=l+l$.
+            $l\neq\emptyset$
+                by \auto{num_addition_zero_right,num_addition_successor_left,num_addition_successor_right,suc_neq_emptyset}.
+            Take a natural number $q$ such that $l=\suc{q}$
+                by \obv{natural_zero_or_successor}.
+            $\suc{k}+\suc{k}=\suc{\suc{k+k}}$ and
+                $l+l=\suc{\suc{q+q}}$
+                by \auto{num_addition_successor_left,num_addition_successor_right}.
+            Hence $k+k=q+q$ by \obv{suc_injective}.
+            Hence $k=q$.
+        \end{subproof}
+    \end{subproof}
+    Hence $C$ is an inductive set by \obv{inductive_set}.
+    Hence every natural number is an element of $C$
+        by \obv{omega_minimal}.
+    Thus $i\in C$.
+\end{proof}
+
+\begin{lemma}\label{natural_double_not_successor_double}
+    Let $i,j$ be natural numbers.
+    Then $i+i\neq\suc{j+j}$.
+\end{lemma}
+\begin{proof}
+    Let $C=\{k\in\naturals\mid
+        \text{for every $l\in\naturals$ we have
+        $k+k\neq\suc{l+l}$}\}$.
+    Show that $\emptyset\in C$.
+    \begin{subproof}
+        $\emptyset$ is a natural number by \obv{omega_empty}.
+        For every $l\in\naturals$ we have
+            $\emptyset+\emptyset\neq\suc{l+l}$
+            by \auto{num_addition_zero_right,suc_neq_emptyset}.
+    \end{subproof}
+    Show that for every $k\in C$ we have $\suc{k}\in C$.
+    \begin{subproof}
+        Fix $k\in C$.
+        Hence $\suc{k}$ is a natural number by \obv{omega_successor}.
+        Show that for every $l\in\naturals$ we have
+            $\suc{k}+\suc{k}\neq\suc{l+l}$.
+        \begin{subproof}
+            Fix $l\in\naturals$.
+            Suppose $\suc{k}+\suc{k}=\suc{l+l}$.
+            $l\neq\emptyset$
+                by \auto{num_addition_zero_right,num_addition_successor_left,num_addition_successor_right,suc_injective,suc_neq_emptyset}.
+            Take a natural number $q$ such that $l=\suc{q}$
+                by \obv{natural_zero_or_successor}.
+            $\suc{k}+\suc{k}=\suc{\suc{k+k}}$ and
+                $\suc{l+l}=\suc{\suc{\suc{q+q}}}$
+                by \auto{num_addition_successor_left,num_addition_successor_right}.
+            Hence $k+k=\suc{q+q}$ by \obv{suc_injective}.
+            $k+k\neq\suc{q+q}$.
+            Contradiction.
+        \end{subproof}
+    \end{subproof}
+    Hence $C$ is an inductive set by \obv{inductive_set}.
+    Hence every natural number is an element of $C$
+        by \obv{omega_minimal}.
+    Thus $i\in C$.
+\end{proof}
+
+\begin{definition}\label{finite_even_indices}
+    $\finiteEvenIndices{r}=\{i+i\mid i\in\suc{r}\}$.
+\end{definition}
+
+\begin{definition}\label{finite_odd_indices}
+    $\finiteOddIndices{r}=\{\suc{i+i}\mid i\in r\}$.
+\end{definition}
+
+\begin{theorem}\label{finite_double_index_partition}
+    Let $r$ be a natural number.
+    Then $\suc{r+r}=\finiteEvenIndices{r}\union\finiteOddIndices{r}$.
+\end{theorem}
+\begin{proof}
+    Let $C=\{n\in\naturals\mid
+        \suc{n+n}=\finiteEvenIndices{n}\union\finiteOddIndices{n}\}$.
+    Show that $\emptyset\in C$.
+    \begin{subproof}
+        $\emptyset$ is a natural number by \obv{omega_empty}.
+        $\emptyset+\emptyset=\emptyset$
+            by \obv{num_addition_zero_right}.
+        $\suc{\emptyset+\emptyset}=\{\emptyset+\emptyset\}$
+            by \obv{suc,singleton_iff,cons_iff,setext}.
+        $\emptyset\in\suc{\emptyset}$ by \obv{suc_intro_self}.
+        $\finiteEvenIndices{\emptyset}
+            =\{\emptyset+\emptyset\}$
+            by \auto{finite_even_indices,suc_iff,emptyset,setext}.
+        $\finiteOddIndices{\emptyset}=\emptyset$
+            by \auto{finite_odd_indices,emptyset,setext}.
+        Follows by \auto{union_emptyset}.
+    \end{subproof}
+    Show that for every $n\in C$ we have $\suc{n}\in C$.
+    \begin{subproof}
+        Fix $n\in C$.
+        Hence $\suc{n}$ is a natural number by \obv{omega_successor}.
+        $\suc{n}+\suc{n}=\suc{\suc{n+n}}$
+            by \auto{num_addition_successor_left,num_addition_successor_right}.
+        Show that
+            $\suc{\suc{n}+\suc{n}}
+                =\finiteEvenIndices{\suc{n}}
+                    \union\finiteOddIndices{\suc{n}}$.
+        \begin{subproof}
+            Show that every element of
+                $\suc{\suc{n}+\suc{n}}$ is an element of
+                $\finiteEvenIndices{\suc{n}}
+                    \union\finiteOddIndices{\suc{n}}$.
+            \begin{subproof}
+                Fix $q\in\suc{\suc{n}+\suc{n}}$.
+                We have $q\in\suc{n+n}$ or $q=\suc{n+n}$ or
+                    $q=\suc{\suc{n+n}}$
+                    by \auto{suc_iff}.
+                $\suc{n+n}
+                    =\finiteEvenIndices{n}\union\finiteOddIndices{n}$.
+                $\finiteEvenIndices{n}\subseteq
+                    \finiteEvenIndices{\suc{n}}$ and
+                    $\finiteOddIndices{n}\subseteq
+                    \finiteOddIndices{\suc{n}}$
+                    by \auto{finite_even_indices,finite_odd_indices,suc_iff,subseteq}.
+                $\suc{n+n}\in\finiteOddIndices{\suc{n}}$
+                    by \obv{finite_odd_indices,suc_intro_self}.
+                $\suc{\suc{n+n}}=\suc{n}+\suc{n}$ and
+                    $\suc{n}\in\suc{\suc{n}}$ by \obv{suc_intro_self}.
+                Hence $\suc{\suc{n+n}}
+                    \in\finiteEvenIndices{\suc{n}}$
+                    by \auto{finite_even_indices}.
+                Follows by \auto{union_iff,subseteq}.
+            \end{subproof}
+            Show that every element of
+                $\finiteEvenIndices{\suc{n}}
+                    \union\finiteOddIndices{\suc{n}}$ is an element of
+                $\suc{\suc{n}+\suc{n}}$.
+            \begin{subproof}
+                Follows by
+                    \auto{finite_even_indices,finite_odd_indices,union_iff,suc_iff,ordinal_elem_implies_subseteq,natural_number_is_ordinal,ordinal_subseteq_implies_elem_or_eq,num_addition_on_naturals,num_addition_successor_left,num_addition_successor_right}.
+            \end{subproof}
+            Follows by set extensionality.
+        \end{subproof}
+    \end{subproof}
+    Hence $C$ is an inductive set by \obv{inductive_set}.
+    Hence every natural number is an element of $C$
+        by \obv{omega_minimal}.
+    Thus $r\in C$.
+\end{proof}
+
+\begin{definition}\label{finite_interleave}
+    $\finiteInterleave{c}{m}=
+        \{(i+i,c(i))\mid i\in\dom{c}\}\union
+        \{(\suc{i+i},m(i))\mid i\in\dom{m}\}$.
+\end{definition}
+
+\begin{proposition}\label{finite_interleave_function}
+    Let $r$ be a natural number.
+    Suppose $\dom{c}=\suc{r}$ and $\dom{m}=r$.
+    Then $\finiteInterleave{c}{m}\in
+        \funs{\suc{r+r}}{\ran{\finiteInterleave{c}{m}}}$.
+\end{proposition}
+\begin{proof}
+    Let $d=\finiteInterleave{c}{m}$.
+    Let $E=\{(i+i,c(i))\mid i\in\dom{c}\}$.
+    Let $O=\{(\suc{i+i},m(i))\mid i\in\dom{m}\}$.
+    Then $d=E\union O$ by \obv{finite_interleave}.
+    $d$ is a relation
+        by \auto{finite_interleave,relation,union_iff,pair_eq_iff}.
+    Show that $d$ is right-unique.
+    \begin{subproof}
+        Show for all $j,x,y$ such that $(j,x),(j,y)\in d$ we have $x=y$.
+        \begin{subproof}
+            Fix $j,x,y$.
+            Assume $(j,x),(j,y)\in d$.
+            $(j,x)\in E$ or $(j,x)\in O$ by \auto{union_iff}.
+            $(j,y)\in E$ or $(j,y)\in O$ by \auto{union_iff}.
+            \begin{byCase}
+            \caseOf{$(j,x)\in E$.}
+                Take $i\in\dom{c}$ such that
+                    $(j,x)=(i+i,c(i))$.
+                Hence $i\in\suc{r}$.
+                Thus $i$ is a natural number
+                    by \auto{omega_successor,naturals_is_transitive_set,transitiveset_iff_subseteq,subseteq}.
+                \begin{byCase}
+                \caseOf{$(j,y)\in E$.}
+                    Take $k\in\dom{c}$ such that
+                        $(j,y)=(k+k,c(k))$.
+                    Hence $k\in\suc{r}$.
+                    Thus $k$ is a natural number
+                        by \auto{omega_successor,naturals_is_transitive_set,transitiveset_iff_subseteq,subseteq}.
+                    $i+i=k+k$ by \auto{pair_eq_iff}.
+                    Hence $i=k$ by \obv{natural_double_injective}.
+                    Follows by \auto{pair_eq_iff}.
+                \caseOf{$(j,y)\notin E$.}
+                    Then $(j,y)\in O$.
+                    Take $k\in\dom{m}$ such that
+                        $(j,y)=(\suc{k+k},m(k))$.
+                    Hence $k\in r$.
+                    Thus $k$ is a natural number
+                        by \obv{naturals_is_transitive_set,transitiveset_iff_subseteq,subseteq}.
+                    $i+i=\suc{k+k}$ by \auto{pair_eq_iff}.
+                    Contradiction by \obv{natural_double_not_successor_double}.
+                \end{byCase}
+            \caseOf{$(j,x)\notin E$.}
+                Then $(j,x)\in O$.
+                Take $i\in\dom{m}$ such that
+                    $(j,x)=(\suc{i+i},m(i))$.
+                Hence $i\in r$.
+                Thus $i$ is a natural number
+                    by \obv{naturals_is_transitive_set,transitiveset_iff_subseteq,subseteq}.
+                \begin{byCase}
+                \caseOf{$(j,y)\in E$.}
+                    Take $k\in\dom{c}$ such that
+                        $(j,y)=(k+k,c(k))$.
+                    Hence $k\in\suc{r}$.
+                    Thus $k$ is a natural number
+                        by \auto{omega_successor,naturals_is_transitive_set,transitiveset_iff_subseteq,subseteq}.
+                    $k+k=\suc{i+i}$ by \auto{pair_eq_iff}.
+                    Contradiction by \obv{natural_double_not_successor_double}.
+                \caseOf{$(j,y)\notin E$.}
+                    Then $(j,y)\in O$.
+                    Take $k\in\dom{m}$ such that
+                        $(j,y)=(\suc{k+k},m(k))$.
+                    Hence $k\in r$.
+                    Thus $k$ is a natural number
+                        by \obv{naturals_is_transitive_set,transitiveset_iff_subseteq,subseteq}.
+                    $i+i=k+k$ by \auto{pair_eq_iff,suc_injective}.
+                    Hence $i=k$ by \obv{natural_double_injective}.
+                    Follows by \auto{pair_eq_iff}.
+                \end{byCase}
+            \end{byCase}
+        \end{subproof}
+        Follows by \obv{rightunique}.
+    \end{subproof}
+    Show that $\dom{d}=\suc{r+r}$.
+    \begin{subproof}
+        Show that $\dom{d}\subseteq\suc{r+r}$.
+        \begin{subproof}
+            It suffices to show that every element of $\dom{d}$ is an element
+                of $\suc{r+r}$ by \obv{subseteq}.
+            Fix $j\in\dom{d}$.
+            Take $x$ such that $(j,x)\in d$ by \obv{dom_iff}.
+            $(j,x)\in E$ or $(j,x)\in O$ by \auto{union_iff}.
+            Hence $j\in\finiteEvenIndices{r}$ or
+                $j\in\finiteOddIndices{r}$
+                by \auto{finite_even_indices,finite_odd_indices,pair_eq_iff}.
+            Thus $j\in\finiteEvenIndices{r}\union\finiteOddIndices{r}$
+                by \obv{union_iff}.
+            Follows by \obv{finite_double_index_partition}.
+        \end{subproof}
+        Show that $\suc{r+r}\subseteq\dom{d}$.
+        \begin{subproof}
+            It suffices to show that every element of $\suc{r+r}$ is an
+                element of $\dom{d}$ by \obv{subseteq}.
+            Fix $j\in\suc{r+r}$.
+            $j\in\finiteEvenIndices{r}\union\finiteOddIndices{r}$
+                by \obv{finite_double_index_partition}.
+            Follows by
+                \auto{finite_even_indices,finite_odd_indices,finite_interleave,union_iff,dom_iff}.
+        \end{subproof}
+        Follows by \obv{subseteq_antisymmetric}.
+    \end{subproof}
+    Hence $d\in\funs{\suc{r+r}}{\ran{d}}$
+        by \auto{function_exact_type_to_range}.
+\end{proof}
+
+\begin{proposition}\label{finite_interleave_domain}
+    Let $r$ be a natural number.
+    Suppose $\dom{c}=\suc{r}$ and $\dom{m}=r$.
+    Then $\dom{\finiteInterleave{c}{m}}=\suc{r+r}$.
+\end{proposition}
+\begin{proof}
+    $\finiteInterleave{c}{m}\in
+        \funs{\suc{r+r}}{\ran{\finiteInterleave{c}{m}}}$
+        by \obv{finite_interleave_function}.
+    Follows by \obv{funs}.
+\end{proof}
+
+\begin{proposition}\label{finite_interleave_even}
+    Let $r$ be a natural number.
+    Suppose $\dom{c}=\suc{r}$ and $\dom{m}=r$.
+    Let $i\in\suc{r}$.
+    Then $\apply{\finiteInterleave{c}{m}}{i+i}=c(i)$.
+\end{proposition}
+\begin{proof}
+    Hence $i\in\dom{c}$.
+    $(i+i,c(i))\in\{(j+j,c(j))\mid j\in\dom{c}\}$
+        by \auto.
+    Hence $(i+i,c(i))\in\finiteInterleave{c}{m}$
+        by \auto{finite_interleave,union_iff}.
+    $\finiteInterleave{c}{m}$ is a function
+        by \auto{finite_interleave_function,funs_is_function}.
+    Follows by \obv{function_apply_intro}.
+\end{proof}
+
+\begin{proposition}\label{finite_interleave_odd}
+    Let $r$ be a natural number.
+    Suppose $\dom{c}=\suc{r}$ and $\dom{m}=r$.
+    Let $i\in r$.
+    Then $\apply{\finiteInterleave{c}{m}}{\suc{i+i}}=m(i)$.
+\end{proposition}
+\begin{proof}
+    Hence $i\in\dom{m}$.
+    $(\suc{i+i},m(i))
+        \in\{(\suc{j+j},m(j))\mid j\in\dom{m}\}$
+        by \auto.
+    Hence $(\suc{i+i},m(i))\in\finiteInterleave{c}{m}$
+        by \auto{finite_interleave,union_iff}.
+    $\finiteInterleave{c}{m}$ is a function
+        by \auto{finite_interleave_function,funs_is_function}.
+    Follows by \obv{function_apply_intro}.
+\end{proof}
+
+\begin{proposition}\label{finite_interleave_typed}
+    Let $r$ be a natural number.
+    Suppose $c\in\funs{\suc{r}}{A}$ and $m\in\funs{r}{A}$.
+    Then $\finiteInterleave{c}{m}\in\funs{\suc{r+r}}{A}$.
+\end{proposition}
+\begin{proof}
+    $\dom{c}=\suc{r}$ and $\dom{m}=r$ and
+        $c$ and $m$ are functions by \obv{funs_elim,funs_is_function}.
+    Let $d=\finiteInterleave{c}{m}$.
+    $d\in\funs{\suc{r+r}}{\ran{d}}$
+        by \auto{finite_interleave_function}.
+    $\ran{c}\subseteq A$ and $\ran{m}\subseteq A$ by \obv{funs_ran}.
+    Show that for every $y\in\ran{d}$ we have
+        $y\in\ran{c}$ or $y\in\ran{m}$.
+    \begin{subproof}
+        Fix $y\in\ran{d}$.
+        Take $j$ such that $(j,y)\in d$ by \obv{ran_iff}.
+        $(j,y)\in\{(i+i,c(i))\mid i\in\dom{c}\}$ or
+            $(j,y)\in\{(\suc{i+i},m(i))\mid i\in\dom{m}\}$
+            by \auto{finite_interleave,union_iff}.
+        \begin{byCase}
+        \caseOf{$(j,y)\in\{(i+i,c(i))\mid i\in\dom{c}\}$.}
+            Take $i\in\dom{c}$ such that $(j,y)=(i+i,c(i))$
+                by \auto.
+            Hence $y=c(i)$ by \auto{pair_eq_iff}.
+            Thus $y\in\ran{c}$ by \auto{fun_ran_iff}.
+        \caseOf{$(j,y)\notin\{(i+i,c(i))\mid i\in\dom{c}\}$.}
+            Then $(j,y)\in
+                \{(\suc{i+i},m(i))\mid i\in\dom{m}\}$.
+            Take $i\in\dom{m}$ such that
+                $(j,y)=(\suc{i+i},m(i))$ by \auto.
+            Hence $y=m(i)$ by \auto{pair_eq_iff}.
+            Thus $y\in\ran{m}$ by \auto{fun_ran_iff}.
+        \end{byCase}
+    \end{subproof}
+    Hence $\ran{d}\subseteq A$ by \obv{subseteq}.
+    Hence $d\in\funs{\suc{r+r}}{A}$ by \obv{funs_weaken_codom}.
+\end{proof}

@@ -1,0 +1,160 @@
+\section{Extension of lattice filters}
+
+\import{order/lattice-filter.tex}
+\import{order/zorn.tex}
+
+\begin{definition}\label{lattice_filter_extensions}
+    $\latticeFilterExtensions{F}{L}=
+        \{G\in\pow{\carrier[L]}\mid
+            \text{$\latticeFilter{G}{L}$ and $F\subseteq G$}\}$.
+\end{definition}
+
+\begin{proposition}\label{lattice_filter_extensions_iff}
+    $G\in\latticeFilterExtensions{F}{L}$ iff
+        $G\in\pow{\carrier[L]}$ and
+        $\latticeFilter{G}{L}$ and $F\subseteq G$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{lattice_filter_extensions}.
+\end{proof}
+
+\begin{proposition}\label{lattice_filter_extensions_subseteq_powerset}
+    $\latticeFilterExtensions{F}{L}
+        \subseteq\pow{\carrier[L]}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \obv{subseteq,lattice_filter_extensions_iff}.
+\end{proof}
+
+\begin{proposition}\label{lattice_filter_extensions_inhabited}
+    Suppose $\latticeFilter{F}{L}$.
+    Then $\latticeFilterExtensions{F}{L}$ is inhabited.
+\end{proposition}
+\begin{proof}
+    $F\subseteq\carrier[L]$ by
+        \obv{lattice_filter_subseteq_carrier}.
+    Hence $F\in\pow{\carrier[L]}$ by \obv{powerset_intro}.
+    $F\subseteq F$ by \obv{subseteq_refl}.
+    Hence $F\in\latticeFilterExtensions{F}{L}$ by
+        \obv{lattice_filter_extensions_iff}.
+\end{proof}
+
+\begin{theorem}\label{inhabited_chain_union_is_lattice_filter}
+    Suppose $C$ is inhabited and $C$ is an inclusion chain.
+    Suppose for every $G\in C$ we have $\latticeFilter{G}{L}$.
+    Then $\latticeFilter{\unions{C}}{L}$.
+\end{theorem}
+\begin{proof}
+    Take $G_0$ such that $G_0\in C$.
+    $\latticeFilter{G_0}{L}$.
+    Show that $\unions{C}\subseteq\carrier[L]$.
+    \begin{subproof}
+        Show that for every $x\in\unions{C}$ we have
+            $x\in\carrier[L]$.
+        \begin{subproof}
+            Fix $x\in\unions{C}$.
+            Take $G\in C$ such that $x\in G$ by \obv{unions_iff}.
+            $G\subseteq\carrier[L]$ by
+                \obv{lattice_filter_subseteq_carrier}.
+            Follows by \obv{subseteq}.
+        \end{subproof}
+        Follows by \obv{subseteq}.
+    \end{subproof}
+    $\latticeTop[L]\in G_0$ by \obv{lattice_filter_top}.
+    Hence $\latticeTop[L]\in\unions{C}$ by \auto{unions_iff}.
+    Show that $\latticeBottom[L]\notin\unions{C}$.
+    \begin{subproof}
+        Assume $\latticeBottom[L]\in\unions{C}$.
+        Take $G\in C$ such that $\latticeBottom[L]\in G$ by
+            \obv{unions_iff}.
+        $\latticeBottom[L]\notin G$ by
+            \obv{lattice_filter_bottom_notin}.
+        Contradiction.
+    \end{subproof}
+    Show that for all $x,y\in\unions{C}$ we have
+        $\meet[L](x,y)\in\unions{C}$.
+    \begin{subproof}
+        Fix $x,y\in\unions{C}$.
+        Take $G\in C$ such that $x\in G$ by \obv{unions_iff}.
+        Take $H\in C$ such that $y\in H$ by \obv{unions_iff}.
+        $G\subseteq H$ or $H\subseteq G$ by \obv{inclusion_chain}.
+        Hence there exists $K\in C$ such that $x,y\in K$ by
+            \auto{subseteq}.
+        Take $M\in C$ such that $x,y\in M$ by \auto.
+        $\meet[L](x,y)\in M$ by \obv{lattice_filter_meet}.
+        Follows by \auto{unions_iff}.
+    \end{subproof}
+    Show that for every $x\in\unions{C}$ we have
+        for every $y\in\carrier[L]$ such that
+            $x\mathrel{\leq[L]}y$ we have $y\in\unions{C}$.
+    \begin{subproof}
+        Fix $x\in\unions{C}$ and $y\in\carrier[L]$.
+        Assume $x\mathrel{\leq[L]}y$.
+        Take $G\in C$ such that $x\in G$ by \obv{unions_iff}.
+        $y\in G$ by \auto{lattice_filter_upward}.
+        Follows by \auto{unions_iff}.
+    \end{subproof}
+    Follows by \obv{lattice_filter}.
+\end{proof}
+
+\begin{theorem}\label{lattice_filter_extensions_chain_union}
+    Suppose $\latticeFilter{F}{L}$.
+    Suppose $C\subseteq\latticeFilterExtensions{F}{L}$ and
+        $C$ is inhabited and $C$ is an inclusion chain.
+    Then $\unions{C}\in\latticeFilterExtensions{F}{L}$.
+\end{theorem}
+\begin{proof}
+    For every $G\in C$ we have $\latticeFilter{G}{L}$ by
+        \auto{subseteq,lattice_filter_extensions_iff}.
+    Hence $\latticeFilter{\unions{C}}{L}$ by
+        \obv{inhabited_chain_union_is_lattice_filter}.
+    Hence $\unions{C}\subseteq\carrier[L]$ by
+        \obv{lattice_filter_subseteq_carrier}.
+    Hence $\unions{C}\in\pow{\carrier[L]}$ by
+        \obv{powerset_intro}.
+    Take $G_0$ such that $G_0\in C$.
+    Hence $G_0\in\latticeFilterExtensions{F}{L}$ by \obv{subseteq}.
+    Hence $F\subseteq G_0$ by
+        \obv{lattice_filter_extensions_iff}.
+    Show that $F\subseteq\unions{C}$.
+    \begin{subproof}
+        Follows by \auto{subseteq,unions_iff}.
+    \end{subproof}
+    Follows by \obv{lattice_filter_extensions_iff}.
+\end{proof}
+
+\begin{theorem}\label{lattice_filter_extension}
+    Suppose $\latticeFilter{F}{L}$.
+    Then there exists $U$ such that $F\subseteq U$ and
+        $\maximalLatticeFilter{U}{L}$.
+\end{theorem}
+\begin{proof}
+    Let $E=\latticeFilterExtensions{F}{L}$.
+    $E$ is inhabited by
+        \auto{lattice_filter_extensions_inhabited}.
+    For every $C$ such that $C\subseteq E$ and $C$ is inhabited and
+        $C$ is an inclusion chain we have $\unions{C}\in E$ by
+        \obv{lattice_filter_extensions_chain_union}.
+    Take $U\in E$ such that for every $G\in E$ such that
+        $U\subseteq G$ we have $G=U$ by \obv{zorn_subset_family}.
+    $\latticeFilter{U}{L}$ and $F\subseteq U$ by
+        \auto{lattice_filter_extensions_iff}.
+    Show that there exists no $G$ such that
+        $\latticeFilter{G}{L}$ and $U\subset G$.
+    \begin{subproof}
+        Assume that there exists $G$ such that
+            $\latticeFilter{G}{L}$ and $U\subset G$.
+        Take $G$ such that $\latticeFilter{G}{L}$ and $U\subset G$.
+        $G\subseteq\carrier[L]$ by
+            \obv{lattice_filter_subseteq_carrier}.
+        Hence $G\in\pow{\carrier[L]}$ by \obv{powerset_intro}.
+        $U\subseteq G$ by \obv{subset}.
+        Hence $F\subseteq G$ by \obv{subseteq_transitive}.
+        Hence $G\in E$ by \obv{lattice_filter_extensions_iff}.
+        Hence $G=U$.
+        Contradiction by \obv{subset}.
+    \end{subproof}
+    Hence $\maximalLatticeFilter{U}{L}$ by
+        \obv{maximal_lattice_filter}.
+\end{proof}

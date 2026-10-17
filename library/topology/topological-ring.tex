@@ -1,0 +1,822 @@
+\import{topology/topological-group.tex}
+\import{algebra/ring/reducts.tex}
+\import{algebra/ring/unit.tex}
+\import{algebra/ring/subring.tex}
+\import{algebra/magma/subset.tex}
+\import{topology/neighbourhood-basis.tex}
+
+\section{Topological rings}
+
+The additive topological group of a ring reuses the ring's exact additive
+group and its stored topology.  In particular, it introduces no second
+addition or topology.
+
+\begin{definition}\label{additive_topological_group}
+    $\AdditiveTopologicalGroup{R}=
+        \structure[topological group]{
+            \carrier=\carrier[R],
+            \mul=\ringAdd[R],
+            \neutral=\ringZero[R],
+            \groupInv=\ringNeg[R],
+            \opens=\opens[R]
+        }$.
+\end{definition}
+
+\begin{proposition}\label{additive_topological_group_fields}
+    $\carrier[\AdditiveTopologicalGroup{R}]=\carrier[R]$ and
+    $\mul[\AdditiveTopologicalGroup{R}]=\ringAdd[R]$ and
+    $\neutral[\AdditiveTopologicalGroup{R}]=\ringZero[R]$ and
+    $\groupInv[\AdditiveTopologicalGroup{R}]=\ringNeg[R]$ and
+    $\opens[\AdditiveTopologicalGroup{R}]=\opens[R]$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{additive_topological_group,
+            topological_groupaggregateprojection_carrier,
+            topological_groupaggregateprojection_mul,
+            topological_groupaggregateprojection_neutral,
+            topological_groupaggregateprojection_groupInv,
+            topological_groupaggregateprojection_opens}.
+\end{proof}
+
+The multiplication axiom is the ordinary joint continuity condition in the
+same local-open form used for topological groups.
+
+\begin{struct}\label{topological_ring}
+    A topological ring $R$ is a ring and a topological space such that
+    \begin{enumerate}
+        \item\label{topological_ring_additive_group}
+            $\AdditiveTopologicalGroup{R}$ is a topological group.
+        \item\label{topological_ring_multiplication}
+            for all $x,y,U$ such that $x,y\in\carrier[R]$ and
+                $U\in\opens[R]$ and $\ringMul[R](x,y)\in U$ there exist
+                $V,W\in\opens[R]$ such that $x\in V$ and $y\in W$ and
+                for all $v,w$ such that $v\in V$ and $w\in W$ we have
+                    $\ringMul[R](v,w)\in U$.
+    \end{enumerate}
+\end{struct}
+
+\begin{classification}\label{topological_ring_is_ring}
+    Let $R$ be a topological ring.
+    Then $R$ is a ring.
+\end{classification}
+\begin{proof}
+    Follows by \obv{topological_ring}.
+\end{proof}
+
+\begin{classification}\label{topological_ring_is_topological_space}
+    Let $R$ be a topological ring.
+    Then $R$ is a topological space.
+\end{classification}
+\begin{proof}
+    Follows by \obv{topological_ring}.
+\end{proof}
+
+\begin{theorem}\label{additive_topological_group_is_exact}
+    Let $R$ be a topological ring.
+    Then $\AdditiveTopologicalGroup{R}$ is an exact topological group.
+\end{theorem}
+\begin{proof}
+    $\AdditiveTopologicalGroup{R}$ is a topological group
+        by \obv{topological_ring_additive_group}.
+    Follows by
+        \auto{additive_topological_group,
+            topological_groupaggregateexact}.
+\end{proof}
+
+\begin{theorem}\label{additive_topological_group_group_reduct}
+    Let $R$ be a topological ring.
+    Then
+        $\reduct[group]{\AdditiveTopologicalGroup{R}}
+            =\AdditiveGroup{R}$.
+\end{theorem}
+\begin{proof}
+    $R$ is a ring by \obv{topological_ring_is_ring}.
+    $\AdditiveTopologicalGroup{R}$ is an exact topological group
+        by \obv{additive_topological_group_is_exact}.
+    Hence $\reduct[group]{\AdditiveTopologicalGroup{R}}$ is an exact group
+        by \obv{group_reduct_is_exact_group}.
+    $\AdditiveGroup{R}$ is an exact commutative group
+        by \obv{additive_group_is_exact_commutative_group}.
+    Hence $\AdditiveGroup{R}$ is an exact group
+        by \obv{commutative_group}.
+    $\carrier[\reduct[group]{\AdditiveTopologicalGroup{R}}]
+        =\carrier[\AdditiveTopologicalGroup{R}]$ and
+    $\mul[\reduct[group]{\AdditiveTopologicalGroup{R}}]
+        =\mul[\AdditiveTopologicalGroup{R}]$ and
+    $\neutral[\reduct[group]{\AdditiveTopologicalGroup{R}}]
+        =\neutral[\AdditiveTopologicalGroup{R}]$ and
+    $\groupInv[\reduct[group]{\AdditiveTopologicalGroup{R}}]
+        =\groupInv[\AdditiveTopologicalGroup{R}]$ by
+        \obv{groupreductprojection_carrier,groupreductprojection_mul,
+            groupreductprojection_neutral,groupreductprojection_groupInv}.
+    $\carrier[\AdditiveTopologicalGroup{R}]=\carrier[R]$
+        by \obv{additive_topological_group_fields}.
+    $\mul[\AdditiveTopologicalGroup{R}]=\ringAdd[R]$
+        by \obv{additive_topological_group_fields}.
+    $\neutral[\AdditiveTopologicalGroup{R}]=\ringZero[R]$
+        by \obv{additive_topological_group_fields}.
+    $\groupInv[\AdditiveTopologicalGroup{R}]=\ringNeg[R]$
+        by \obv{additive_topological_group_fields}.
+    $\carrier[\AdditiveGroup{R}]=\carrier[R]$
+        by \obv{additive_group_fields}.
+    $\mul[\AdditiveGroup{R}]=\ringAdd[R]$
+        by \obv{additive_group_fields}.
+    $\neutral[\AdditiveGroup{R}]=\ringZero[R]$
+        by \obv{additive_group_fields}.
+    $\groupInv[\AdditiveGroup{R}]=\ringNeg[R]$
+        by \obv{additive_group_fields}.
+    $\carrier[\reduct[group]{\AdditiveTopologicalGroup{R}}]
+        =\carrier[\AdditiveGroup{R}]$.
+    $\mul[\reduct[group]{\AdditiveTopologicalGroup{R}}]
+        =\mul[\AdditiveGroup{R}]$.
+    $\neutral[\reduct[group]{\AdditiveTopologicalGroup{R}}]
+        =\neutral[\AdditiveGroup{R}]$.
+    $\groupInv[\reduct[group]{\AdditiveTopologicalGroup{R}}]
+        =\groupInv[\AdditiveGroup{R}]$.
+    Follows by \obv{exact_group_extensionality}.
+\end{proof}
+
+\begin{struct}\label{commutative_topological_ring}
+    A commutative topological ring $R$ is a commutative ring and a
+    topological ring.
+\end{struct}
+
+\begin{classification}\label{commutative_topological_ring_is_commutative_ring}
+    Let $R$ be a commutative topological ring.
+    Then $R$ is a commutative ring.
+\end{classification}
+\begin{proof}
+    Follows by \obv{commutative_topological_ring}.
+\end{proof}
+
+\begin{classification}\label{commutative_topological_ring_is_topological_ring}
+    Let $R$ be a commutative topological ring.
+    Then $R$ is a topological ring.
+\end{classification}
+\begin{proof}
+    Follows by \obv{commutative_topological_ring}.
+\end{proof}
+
+\subsection{Fixed multiplication}
+
+The ordinary translation graphs of the multiplicative monoid are the fixed
+multiplication maps of a ring.  Joint continuity immediately gives their
+continuity.
+
+\begin{theorem}\label{topological_ring_left_multiplication_continuous}
+    Let $R$ be a topological ring.
+    Let $a\in\carrier[R]$.
+    Then $\LeftTranslation{\MultiplicativeMonoid{R}}{a}$ is continuous
+        from $R$ to $R$.
+\end{theorem}
+\begin{proof}
+    Let $M=\MultiplicativeMonoid{R}$ and
+        $f=\LeftTranslation{M}{a}$.
+    $R$ is a ring by \obv{topological_ring_is_ring}.
+    $R$ is a topological space by
+        \obv{topological_ring_is_topological_space}.
+    $M$ is a monoid by \obv{multiplicative_monoid_is_exact_monoid}.
+    $\carrier[M]=\carrier[R]$ and $\mul[M]=\ringMul[R]$
+        by \auto{multiplicative_monoid_fields}.
+    Hence $a\in\carrier[M]$.
+    $f\in\funs{\carrier[R]}{\carrier[R]}$ by
+        \auto{left_translation_monoid_function}.
+    Show that for every $x\in\carrier[R]$ we have
+        for every $U\in\opens[R]$ we have if $f(x)\in U$, then there exists
+            $W\in\opens[R]$ such that $x\in W$ and
+            for every $y\in W$ we have $f(y)\in U$.
+    \begin{subproof}
+        Fix $x\in\carrier[R]$.
+        Fix $U\in\opens[R]$.
+        Assume $f(x)\in U$.
+        $x\in\carrier[M]$.
+        $f(x)=\ringMul[R](a,x)$ by
+            \auto{left_translation_monoid_apply}.
+        Hence $\ringMul[R](a,x)\in U$.
+        Take $V,W\in\opens[R]$ such that $a\in V$ and $x\in W$ and
+            for all $v,w$ such that $v\in V$ and $w\in W$ we have
+                $\ringMul[R](v,w)\in U$
+            by \obv{topological_ring_multiplication}.
+        Show that for every $y\in W$ we have $f(y)\in U$.
+        \begin{subproof}
+            Fix $y\in W$.
+            $y\in\carrier[R]$ by
+                \auto{opens_type,pow_iff,subseteq}.
+            Hence $y\in\carrier[M]$.
+            $f(y)=\ringMul[R](a,y)$ by
+                \auto{left_translation_monoid_apply}.
+            Follows by \auto.
+        \end{subproof}
+        Follows by \auto.
+    \end{subproof}
+    Follows by \auto{continuous_iff_open_local}.
+\end{proof}
+
+\begin{theorem}\label{topological_ring_right_multiplication_continuous}
+    Let $R$ be a topological ring.
+    Let $a\in\carrier[R]$.
+    Then $\RightTranslation{\MultiplicativeMonoid{R}}{a}$ is continuous
+        from $R$ to $R$.
+\end{theorem}
+\begin{proof}
+    Let $M=\MultiplicativeMonoid{R}$ and
+        $f=\RightTranslation{M}{a}$.
+    $R$ is a ring by \obv{topological_ring_is_ring}.
+    $R$ is a topological space by
+        \obv{topological_ring_is_topological_space}.
+    $M$ is a monoid by \obv{multiplicative_monoid_is_exact_monoid}.
+    $\carrier[M]=\carrier[R]$ and $\mul[M]=\ringMul[R]$
+        by \auto{multiplicative_monoid_fields}.
+    Hence $a\in\carrier[M]$.
+    $f\in\funs{\carrier[R]}{\carrier[R]}$ by
+        \auto{right_translation_monoid_function}.
+    Show that for every $x\in\carrier[R]$ we have
+        for every $U\in\opens[R]$ we have if $f(x)\in U$, then there exists
+            $V\in\opens[R]$ such that $x\in V$ and
+            for every $y\in V$ we have $f(y)\in U$.
+    \begin{subproof}
+        Fix $x\in\carrier[R]$.
+        Fix $U\in\opens[R]$.
+        Assume $f(x)\in U$.
+        $x\in\carrier[M]$.
+        $f(x)=\ringMul[R](x,a)$ by
+            \auto{right_translation_monoid_apply}.
+        Hence $\ringMul[R](x,a)\in U$.
+        Take $V,W\in\opens[R]$ such that $x\in V$ and $a\in W$ and
+            for all $v,w$ such that $v\in V$ and $w\in W$ we have
+                $\ringMul[R](v,w)\in U$
+            by \obv{topological_ring_multiplication}.
+        Show that for every $y\in V$ we have $f(y)\in U$.
+        \begin{subproof}
+            Fix $y\in V$.
+            $y\in\carrier[R]$ by
+                \auto{opens_type,pow_iff,subseteq}.
+            Hence $y\in\carrier[M]$.
+            $f(y)=\ringMul[R](y,a)$ by
+                \auto{right_translation_monoid_apply}.
+            Follows by \auto.
+        \end{subproof}
+        Follows by \auto.
+    \end{subproof}
+    Follows by \auto{continuous_iff_open_local}.
+\end{proof}
+
+\begin{theorem}\label{topological_ring_unit_left_multiplication_homeomorphism}
+    Let $R$ be a topological ring.
+    Suppose $u$ is a unit of $\MultiplicativeMonoid{R}$.
+    Then $\LeftTranslation{\MultiplicativeMonoid{R}}{u}$ is a
+        homeomorphism from $R$ to $R$.
+\end{theorem}
+\begin{proof}
+    Let $M=\MultiplicativeMonoid{R}$.
+    $M$ is a monoid by \obv{multiplicative_monoid_is_exact_monoid}.
+    $\carrier[M]=\carrier[R]$ by \auto{multiplicative_monoid_fields}.
+    $u\in\carrier[M]$ by \obv{monoid_unit_in_carrier}.
+    Take $v\in\carrier[M]$ such that
+        $\mul[M](u,v)=\neutral[M]$ and
+        $\mul[M](v,u)=\neutral[M]$ by
+        \obv{monoid_unit_has_inverse}.
+    $u,v\in\carrier[R]$.
+    $\LeftTranslation{M}{u}$ is continuous from $R$ to $R$
+        by \auto{topological_ring_left_multiplication_continuous}.
+    $\LeftTranslation{M}{u}\in
+        \bijections{\carrier[R]}{\carrier[R]}$ by
+        \auto{monoid_unit_left_translation_bijection}.
+    $\LeftTranslation{M}{v}$ is continuous from $R$ to $R$
+        by \auto{topological_ring_left_multiplication_continuous}.
+    $\converse{\LeftTranslation{M}{u}}=\LeftTranslation{M}{v}$
+        by \obv{monoid_unit_left_translation_converse}.
+    Follows by \obv{homeomorphism}.
+\end{proof}
+
+\begin{theorem}\label{topological_ring_unit_right_multiplication_homeomorphism}
+    Let $R$ be a topological ring.
+    Suppose $u$ is a unit of $\MultiplicativeMonoid{R}$.
+    Then $\RightTranslation{\MultiplicativeMonoid{R}}{u}$ is a
+        homeomorphism from $R$ to $R$.
+\end{theorem}
+\begin{proof}
+    Let $M=\MultiplicativeMonoid{R}$.
+    $M$ is a monoid by \obv{multiplicative_monoid_is_exact_monoid}.
+    $\carrier[M]=\carrier[R]$ by \auto{multiplicative_monoid_fields}.
+    $u\in\carrier[M]$ by \obv{monoid_unit_in_carrier}.
+    Take $v\in\carrier[M]$ such that
+        $\mul[M](u,v)=\neutral[M]$ and
+        $\mul[M](v,u)=\neutral[M]$ by
+        \obv{monoid_unit_has_inverse}.
+    $u,v\in\carrier[R]$.
+    $\RightTranslation{M}{u}$ is continuous from $R$ to $R$
+        by \auto{topological_ring_right_multiplication_continuous}.
+    $\RightTranslation{M}{u}\in
+        \bijections{\carrier[R]}{\carrier[R]}$ by
+        \auto{monoid_unit_right_translation_bijection}.
+    $\RightTranslation{M}{v}$ is continuous from $R$ to $R$
+        by \auto{topological_ring_right_multiplication_continuous}.
+    $\converse{\RightTranslation{M}{u}}=\RightTranslation{M}{v}$
+        by \obv{monoid_unit_right_translation_converse}.
+    Follows by \obv{homeomorphism}.
+\end{proof}
+
+\begin{theorem}\label{topological_ring_unit_left_multiple_open}
+    Let $R$ be a topological ring.
+    Suppose $u$ is a unit of $\MultiplicativeMonoid{R}$.
+    Suppose $B$ is open in $R$.
+    Then $\pointwiseProduct{\MultiplicativeMonoid{R}}{\{u\}}{B}$ is
+        open in $R$.
+\end{theorem}
+\begin{proof}
+    Let $M=\MultiplicativeMonoid{R}$.
+    Let $f=\LeftTranslation{M}{u}$.
+    $\carrier[M]=\carrier[R]$ and $\mul[M]=\ringMul[R]$ by
+        \auto{multiplicative_monoid_fields}.
+    $u\in\carrier[\MultiplicativeMonoid{R}]$ by
+        \obv{monoid_unit_in_carrier}.
+    Hence $u\in\carrier[M]$.
+    $B\in\opens[R]$ by \obv{is_open}.
+    Hence $B\subseteq\carrier[R]$ by \obv{opens_type}.
+    $\LeftTranslation{\MultiplicativeMonoid{R}}{u}$ is a
+        homeomorphism from $R$ to $R$ by
+        \obv{topological_ring_unit_left_multiplication_homeomorphism}.
+    Hence $f$ is a homeomorphism from $R$ to $R$.
+    Hence $f$ is continuous from $R$ to $R$ by \obv{homeomorphism}.
+    Hence $f\in\funs{\carrier[R]}{\carrier[R]}$ by
+        \obv{continuous_map}.
+    Hence $\img{f}{B}\in\opens[R]$ by
+        \obv{homeomorphism_image_open}.
+
+    Show that $\img{f}{B}=\pointwiseProduct{M}{\{u\}}{B}$.
+    \begin{subproof}
+        Show that every element of $\img{f}{B}$ is an element of
+            $\pointwiseProduct{M}{\{u\}}{B}$.
+        \begin{subproof}
+            Fix $z\in\img{f}{B}$.
+            Take $b\in B$ such that $(b,z)\in f$ by \obv{img_iff}.
+            $b\in\carrier[R]$ by \obv{subseteq}.
+            Hence $b\in\carrier[M]$.
+            Hence $b\in\carrier[\MultiplicativeMonoid{R}]$.
+            $z=f(b)$ by
+                \auto{funs_is_function,function_apply_iff}.
+            $(\LeftTranslation{\MultiplicativeMonoid{R}}{u})(b)
+                =\mul[\MultiplicativeMonoid{R}](u,b)$ by
+                \obv{left_translation_monoid_apply}.
+            Hence $f(b)=\mul[M](u,b)$.
+            Follows by
+                \auto{pointwise_product_iff,singleton_iff}.
+        \end{subproof}
+        Show that every element of $\pointwiseProduct{M}{\{u\}}{B}$ is
+            an element of $\img{f}{B}$.
+        \begin{subproof}
+            Fix $z\in\pointwiseProduct{M}{\{u\}}{B}$.
+            Take $b\in B$ such that $z=\mul[M](u,b)$ by
+                \auto{pointwise_product_iff,singleton_iff}.
+            $b\in\carrier[R]$ by \obv{subseteq}.
+            Hence $b\in\carrier[M]$.
+            Hence $b\in\carrier[\MultiplicativeMonoid{R}]$.
+            $(\LeftTranslation{\MultiplicativeMonoid{R}}{u})(b)
+                =\mul[\MultiplicativeMonoid{R}](u,b)$ by
+                \obv{left_translation_monoid_apply}.
+            Hence $f(b)=\mul[M](u,b)$.
+            $(b,f(b))\in f$ by
+                \obv{funs_elim,function_apply_iff}.
+            Follows by \auto{img_iff}.
+        \end{subproof}
+        Follows by set extensionality.
+    \end{subproof}
+    Hence $\pointwiseProduct{M}{\{u\}}{B}\in\opens[R]$.
+    Hence $\pointwiseProduct{\MultiplicativeMonoid{R}}{\{u\}}{B}
+        \in\opens[R]$.
+    Follows by \obv{is_open}.
+\end{proof}
+
+\begin{corollary}\label{topological_ring_unit_left_multiple_subring_neighbourhood}
+    Let $R$ be a topological ring and $B$ be a subring of $R$.
+    Suppose $u$ is a unit of $\MultiplicativeMonoid{R}$.
+    Suppose $B$ is open in $R$.
+    Then $\pointwiseProduct{\MultiplicativeMonoid{R}}{\{u\}}{B}
+        \in\neighbourhoods{\ringZero[R]}{R}$.
+\end{corollary}
+\begin{proof}
+    Let $M=\MultiplicativeMonoid{R}$.
+    $u\in\carrier[R]$ by
+        \auto{monoid_unit_in_carrier,multiplicative_monoid_fields}.
+    $\ringZero[R]\in B$ by
+        \auto{subring_additive_subgroup,subgroup_neutral,
+            additive_group_fields}.
+    $\ringMul[R](u,\ringZero[R])=\ringZero[R]$ by
+        \obv{ring_mul_zero_right}.
+    Hence $\ringZero[R]\in
+        \pointwiseProduct{M}{\{u\}}{B}$ by
+        \auto{pointwise_product_iff,singleton_iff,
+            multiplicative_monoid_fields}.
+    Hence $\ringZero[R]\in
+        \pointwiseProduct{\MultiplicativeMonoid{R}}{\{u\}}{B}$.
+    $\pointwiseProduct{\MultiplicativeMonoid{R}}{\{u\}}{B}$ is
+        open in $R$ by \obv{topological_ring_unit_left_multiple_open}.
+    Hence $\pointwiseProduct{\MultiplicativeMonoid{R}}{\{u\}}{B}
+        \in\opens[R]$ by \obv{is_open}.
+    $\ringZero[R]\in\carrier[R]$ by \obv{ring_zero_type}.
+    Follows by \obv{open_set_containing_point_is_neighbourhood}.
+\end{proof}
+
+\begin{proposition}\label{commutative_topological_ring_multiplication_maps_agree}
+    Let $R$ be a commutative topological ring.
+    Let $a\in\carrier[R]$.
+    Then $\LeftTranslation{\MultiplicativeMonoid{R}}{a}
+        =\RightTranslation{\MultiplicativeMonoid{R}}{a}$.
+\end{proposition}
+\begin{proof}
+    $R$ is a commutative ring by
+        \obv{commutative_topological_ring_is_commutative_ring}.
+    Let $M=\MultiplicativeMonoid{R}$.
+    $\carrier[M]=\carrier[R]$ and $\mul[M]=\ringMul[R]$ by
+        \auto{multiplicative_monoid_fields}.
+    Show that for all $x,y$ we have
+        $x\mathrel{\LeftTranslation{M}{a}}y$ iff
+        $x\mathrel{\RightTranslation{M}{a}}y$.
+    \begin{subproof}
+        Fix $x,y$.
+        Follows by
+            \auto{left_translation_iff,right_translation_iff,
+                commutative_ring_mul_commutative}.
+    \end{subproof}
+    Follows by \auto{relext,left_translation,right_translation,relation}.
+\end{proof}
+
+\subsection{Open subrings and nonarchimedean rings}
+
+\begin{proposition}\label{additive_topological_group_neighbourhoods}
+    Let $R$ be a topological ring.
+    Then
+        $\neighbourhoods{\neutral[\AdditiveTopologicalGroup{R}]}{
+            \AdditiveTopologicalGroup{R}}
+        =\neighbourhoods{\ringZero[R]}{R}$.
+\end{proposition}
+\begin{proof}
+    Hence $\AdditiveTopologicalGroup{R}$ is a topological space by
+        \obv{topological_group_is_topological_space}.
+    Follows by
+        \auto{setext,neighbourhoods,additive_topological_group_fields}.
+\end{proof}
+
+\begin{lemma}\label{additive_subgroup_of_additive_topological_group}
+    Let $R$ be a topological ring.
+    Suppose $\subgroup{H}{\AdditiveGroup{R}}$.
+    Then $\subgroup{H}{\AdditiveTopologicalGroup{R}}$.
+\end{lemma}
+\begin{proof}
+    Hence $\AdditiveTopologicalGroup{R}$ is a group by
+        \obv{topological_group_is_group}.
+    Follows by
+        \auto{subgroup,additive_group_fields,
+            additive_topological_group_fields}.
+\end{proof}
+
+\begin{theorem}\label{additive_subgroup_open_iff_neighbourhood_of_zero}
+    Let $R$ be a topological ring.
+    Suppose $\subgroup{H}{\AdditiveGroup{R}}$.
+    Then $H$ is open in $R$ iff
+        $H\in\neighbourhoods{\ringZero[R]}{R}$.
+\end{theorem}
+\begin{proof}
+    Let $G=\AdditiveTopologicalGroup{R}$.
+    $G$ is a topological group by
+        \auto{additive_topological_group_is_exact}.
+    $G$ is a topological space by
+        \obv{topological_group_is_topological_space}.
+    $\subgroup{H}{G}$ by
+        \auto{additive_subgroup_of_additive_topological_group}.
+    $\opens[G]=\opens[R]$ by
+        \auto{additive_topological_group_fields}.
+    $\neighbourhoods{\neutral[G]}{G}
+        =\neighbourhoods{\ringZero[R]}{R}$ by
+        \auto{additive_topological_group_neighbourhoods}.
+    Show that if $H$ is open in $R$, then
+        $H\in\neighbourhoods{\ringZero[R]}{R}$.
+    \begin{subproof}
+        Assume $H$ is open in $R$.
+        Hence $H\in\opens[R]$ by \obv{is_open}.
+        Hence $H\in\opens[G]$.
+        Hence $H$ is open in $G$ by \obv{is_open}.
+        Hence $H\in\neighbourhoods{\neutral[G]}{G}$ by
+            \auto{subgroup_open_iff_neighbourhood_of_neutral}.
+    \end{subproof}
+    Show that if $H\in\neighbourhoods{\ringZero[R]}{R}$, then
+        $H$ is open in $R$.
+    \begin{subproof}
+        Assume $H\in\neighbourhoods{\ringZero[R]}{R}$.
+        Hence $H\in\neighbourhoods{\neutral[G]}{G}$.
+        Hence $H$ is open in $G$ by
+            \auto{subgroup_open_iff_neighbourhood_of_neutral}.
+        Hence $H\in\opens[G]$ by \obv{is_open}.
+        Hence $H\in\opens[R]$.
+        Follows by \obv{is_open}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{definition}\label{open_subrings}
+    Let $R$ be a topological ring.
+    $\OpenSubrings{R}=\{H\in\pow{\carrier[R]}\mid
+        \text{$H$ is a subring of $R$ and $H$ is open in $R$}\}$.
+\end{definition}
+
+\begin{proposition}\label{open_subrings_iff}
+    Let $R$ be a topological ring.
+    Then $H\in\OpenSubrings{R}$ iff
+        $H$ is a subring of $R$ and $H$ is open in $R$.
+\end{proposition}
+\begin{proof}
+    Show that if $H\in\OpenSubrings{R}$, then
+        $H$ is a subring of $R$ and $H$ is open in $R$.
+    \begin{subproof}
+        Assume $H\in\OpenSubrings{R}$.
+        Follows by \auto{open_subrings}.
+    \end{subproof}
+    Show that if $H$ is a subring of $R$ and $H$ is open in $R$, then
+        $H\in\OpenSubrings{R}$.
+    \begin{subproof}
+        Assume $H$ is a subring of $R$ and $H$ is open in $R$.
+        $H\subseteq\carrier[R]$ by \obv{subring_subseteq_carrier}.
+        Hence $H\in\pow{\carrier[R]}$ by \obv{powerset_intro}.
+        Follows by \auto{open_subrings}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{open_subring_iff_neighbourhood_of_zero}
+    Let $R$ be a topological ring.
+    Suppose $H$ is a subring of $R$.
+    Then $H\in\OpenSubrings{R}$ iff
+        $H\in\neighbourhoods{\ringZero[R]}{R}$.
+\end{theorem}
+\begin{proof}
+    Show that if $H\in\OpenSubrings{R}$, then
+        $H\in\neighbourhoods{\ringZero[R]}{R}$.
+    \begin{subproof}
+        Assume $H\in\OpenSubrings{R}$.
+        $\subgroup{H}{\AdditiveGroup{R}}$ by
+            \obv{subring_additive_subgroup}.
+        $H$ is open in $R$ by \obv{open_subrings_iff}.
+        Hence $H\in\neighbourhoods{\ringZero[R]}{R}$ by
+            \auto{additive_subgroup_open_iff_neighbourhood_of_zero}.
+    \end{subproof}
+    Show that if $H\in\neighbourhoods{\ringZero[R]}{R}$, then
+        $H\in\OpenSubrings{R}$.
+    \begin{subproof}
+        Assume $H\in\neighbourhoods{\ringZero[R]}{R}$.
+        $\subgroup{H}{\AdditiveGroup{R}}$ by
+            \obv{subring_additive_subgroup}.
+        Hence $H$ is open in $R$ by
+            \auto{additive_subgroup_open_iff_neighbourhood_of_zero}.
+        Follows by \auto{open_subrings_iff}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{classification}\label{topological_ring_zero_neighbourhoods_is_filter}
+    Let $R$ be a topological ring.
+    Then $\neighbourhoods{\ringZero[R]}{R}$ is a filter on $\carrier[R]$.
+\end{classification}
+\begin{proof}
+    $\ringZero[R]\in\carrier[R]$ by \obv{ring_zero_type}.
+    Follows by \obv{neighbourhoods_is_filter}.
+\end{proof}
+
+\begin{classification}\label{topological_ring_zero_type}
+    Let $R$ be a topological ring.
+    Then $\ringZero[R]\in\carrier[R]$.
+\end{classification}
+\begin{proof}
+    $R$ is a ring by \obv{topological_ring_is_ring}.
+    Follows by \obv{ring_zero_type}.
+\end{proof}
+
+\begin{struct}\label{nonarchimedean_topological_ring}
+    A nonarchimedean topological ring $R$ is a topological ring such that
+        \begin{enumerate}
+        \item\label{nonarchimedean_topological_ring_subgroup_basis}
+        there exists $B$ such that
+            $B$ is a basis of
+                $\neighbourhoods{\ringZero[R]}{R}$ on $\carrier[R]$ and
+            (for every $H\in B$ we have
+                $\subgroup{H}{\AdditiveGroup{R}}$).
+        \end{enumerate}
+\end{struct}
+
+\begin{classification}\label{nonarchimedean_topological_ring_is_topological_ring}
+    Let $R$ be a nonarchimedean topological ring.
+    Then $R$ is a topological ring.
+\end{classification}
+\begin{proof}
+    Follows by \obv{nonarchimedean_topological_ring}.
+\end{proof}
+
+\begin{proposition}\label{topological_ring_with_subgroup_basis_is_nonarchimedean}
+    Let $R$ be a topological ring.
+    Let $B$ be a basis of
+        $\neighbourhoods{\ringZero[R]}{R}$ on $\carrier[R]$.
+    Suppose that for every $H\in B$ we have
+        $\subgroup{H}{\AdditiveGroup{R}}$.
+    Then $R$ is a nonarchimedean topological ring.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{topological_ring,nonarchimedean_topological_ring}.
+\end{proof}
+
+\begin{proposition}\label{nonarchimedean_topological_ring_has_subgroup_basis}
+    Let $R$ be a nonarchimedean topological ring.
+    Then there exists $B$ such that
+        $B$ is a basis of
+            $\neighbourhoods{\ringZero[R]}{R}$ on $\carrier[R]$ and
+        (for every $H\in B$ we have
+            $\subgroup{H}{\AdditiveGroup{R}}$).
+\end{proposition}
+\begin{proof}
+    Follows by \obv{nonarchimedean_topological_ring}.
+\end{proof}
+
+\begin{theorem}\label{nonarchimedean_topological_ring_has_open_subgroup_basis}
+    Let $R$ be a nonarchimedean topological ring.
+    Then there exists $B$ such that
+        $B$ is a basis of
+            $\neighbourhoods{\ringZero[R]}{R}$ on $\carrier[R]$ and
+        (for every $H\in B$ we have
+            $\subgroup{H}{\AdditiveGroup{R}}$ and $H$ is open in $R$).
+\end{theorem}
+\begin{proof}
+    $R$ is a topological ring by
+        \obv{nonarchimedean_topological_ring_is_topological_ring}.
+    Take $B$ such that $B$ is a basis of
+        $\neighbourhoods{\ringZero[R]}{R}$ on $\carrier[R]$ and
+        (for every $H\in B$ we have
+            $\subgroup{H}{\AdditiveGroup{R}}$) by
+        \obv{nonarchimedean_topological_ring_has_subgroup_basis}.
+    Show that for every $H\in B$ we have
+        $\subgroup{H}{\AdditiveGroup{R}}$ and $H$ is open in $R$.
+    \begin{subproof}
+        Fix $H\in B$.
+        $\subgroup{H}{\AdditiveGroup{R}}$.
+        $B\subseteq\neighbourhoods{\ringZero[R]}{R}$ by
+            \obv{filter_basis_of}.
+        Hence $H\in\neighbourhoods{\ringZero[R]}{R}$ by \obv{subseteq}.
+        Hence $H$ is open in $R$ by
+            \auto{additive_subgroup_open_iff_neighbourhood_of_zero}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{nonarchimedean_topological_ring_iff_open_local_basis}
+    Let $R$ be a topological ring.
+    $R$ is a nonarchimedean topological ring iff
+        there exists $B$ such that
+            $B$ is a local basis at $\ringZero[R]$ in $R$ and
+            (for every $H\in B$ we have
+                $\subgroup{H}{\AdditiveGroup{R}}$).
+\end{theorem}
+\begin{proof}
+    Show that if $R$ is a nonarchimedean topological ring, then
+        there exists $B$ such that
+            $B$ is a local basis at $\ringZero[R]$ in $R$ and
+            (for every $H\in B$ we have
+                $\subgroup{H}{\AdditiveGroup{R}}$).
+    \begin{subproof}
+        Assume $R$ is a nonarchimedean topological ring.
+        $R$ is a topological space by
+            \obv{topological_ring_is_topological_space}.
+        $\ringZero[R]\in\carrier[R]$ by \obv{ring_zero_type}.
+        Take $B$ such that $B$ is a basis of
+            $\neighbourhoods{\ringZero[R]}{R}$ on $\carrier[R]$ and
+            (for every $H\in B$ we have
+                $\subgroup{H}{\AdditiveGroup{R}}$ and $H$ is open in $R$)
+            by \obv{nonarchimedean_topological_ring_has_open_subgroup_basis}.
+        Show that $B\subseteq\opens[R]$.
+        \begin{subproof}
+            It suffices to show that every element of $B$ is an element of
+                $\opens[R]$ by \obv{subseteq}.
+            Fix $H\in B$.
+            $H$ is open in $R$ by \auto.
+            Follows by \obv{is_open}.
+        \end{subproof}
+        Hence $B$ is a local basis at $\ringZero[R]$ in $R$ by
+            \auto{local_basis_iff_neighbourhood_filter_basis}.
+        Follows by \auto.
+    \end{subproof}
+    Show that if there exists $B$ such that
+        $B$ is a local basis at $\ringZero[R]$ in $R$ and
+        for every $H\in B$ we have
+            $\subgroup{H}{\AdditiveGroup{R}}$, then
+        $R$ is a nonarchimedean topological ring.
+    \begin{subproof}
+        Assume there exists $B$ such that
+            $B$ is a local basis at $\ringZero[R]$ in $R$ and
+            for every $H\in B$ we have
+                $\subgroup{H}{\AdditiveGroup{R}}$.
+        Take $B$ such that
+            $B$ is a local basis at $\ringZero[R]$ in $R$ and
+            (for every $H\in B$ we have
+                $\subgroup{H}{\AdditiveGroup{R}}$).
+        $R$ is a topological space by
+            \obv{topological_ring_is_topological_space}.
+        $\ringZero[R]\in\carrier[R]$ by \obv{ring_zero_type}.
+        $B$ is a basis of
+            $\neighbourhoods{\ringZero[R]}{R}$ on $\carrier[R]$ by
+            \auto{local_basis_iff_neighbourhood_filter_basis}.
+        Follows by
+            \auto{topological_ring_with_subgroup_basis_is_nonarchimedean}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{nonarchimedean_topological_ring_iff_open_subgroup_refinement}
+    Let $R$ be a topological ring.
+    $R$ is a nonarchimedean topological ring iff
+        for every $U\in\neighbourhoods{\ringZero[R]}{R}$ there exists $H$
+            such that $\subgroup{H}{\AdditiveGroup{R}}$ and
+                $H$ is open in $R$ and $H\subseteq U$.
+\end{theorem}
+\begin{proof}
+    Show that if $R$ is a nonarchimedean topological ring, then
+        for every $U\in\neighbourhoods{\ringZero[R]}{R}$ there exists $H$
+            such that $\subgroup{H}{\AdditiveGroup{R}}$ and
+                $H$ is open in $R$ and $H\subseteq U$.
+    \begin{subproof}
+        Assume $R$ is a nonarchimedean topological ring.
+        Take $B$ such that $B$ is a basis of
+            $\neighbourhoods{\ringZero[R]}{R}$ on $\carrier[R]$ and
+            (for every $H\in B$ we have
+                $\subgroup{H}{\AdditiveGroup{R}}$ and $H$ is open in $R$)
+            by \obv{nonarchimedean_topological_ring_has_open_subgroup_basis}.
+        Show that for every $U\in\neighbourhoods{\ringZero[R]}{R}$
+            there exists $H$ such that
+                $\subgroup{H}{\AdditiveGroup{R}}$ and
+                $H$ is open in $R$ and $H\subseteq U$.
+        \begin{subproof}
+            Fix $U\in\neighbourhoods{\ringZero[R]}{R}$.
+            $B$ refines $\neighbourhoods{\ringZero[R]}{R}$
+                as filter families on $\carrier[R]$ by
+                \obv{filter_basis_of}.
+            Take $H\in B$ such that $H\subseteq U$ by
+                \obv{filter_family_refinement}.
+            $\subgroup{H}{\AdditiveGroup{R}}$ and $H$ is open in $R$
+                by \auto.
+            Follows by \auto.
+        \end{subproof}
+    \end{subproof}
+    Show that if for every $U\in\neighbourhoods{\ringZero[R]}{R}$
+        there exists $H$
+            such that $\subgroup{H}{\AdditiveGroup{R}}$ and
+                $H$ is open in $R$ and $H\subseteq U$, then
+        $R$ is a nonarchimedean topological ring.
+    \begin{subproof}
+        Assume for every $U\in\neighbourhoods{\ringZero[R]}{R}$
+            there exists $H$
+                such that $\subgroup{H}{\AdditiveGroup{R}}$ and
+                    $H$ is open in $R$ and $H\subseteq U$.
+        Let $B=\{H\in\opens[R]\mid
+            \subgroup{H}{\AdditiveGroup{R}}\}$.
+        $R$ is a topological space by
+            \obv{topological_ring_is_topological_space}.
+        $\ringZero[R]\in\carrier[R]$ by \obv{ring_zero_type}.
+        $\neighbourhoods{\ringZero[R]}{R}$ is a filter on $\carrier[R]$
+            by \obv{neighbourhoods_is_filter}.
+        Show that $B\subseteq\neighbourhoods{\ringZero[R]}{R}$.
+        \begin{subproof}
+            It suffices to show that every element of $B$ is an element of
+                $\neighbourhoods{\ringZero[R]}{R}$ by \obv{subseteq}.
+            Fix $H\in B$.
+            $\subgroup{H}{\AdditiveGroup{R}}$ and $H\in\opens[R]$
+                by \auto.
+            Hence $H$ is open in $R$ by \obv{is_open}.
+            Follows by
+                \auto{additive_subgroup_open_iff_neighbourhood_of_zero}.
+        \end{subproof}
+        Show that $B$ refines $\neighbourhoods{\ringZero[R]}{R}$
+            as filter families on $\carrier[R]$.
+        \begin{subproof}
+            $B$ is a family of subsets of $\carrier[R]$ by
+                \auto{opens_type,subseteq}.
+            $\neighbourhoods{\ringZero[R]}{R}$ is a family of subsets of
+                $\carrier[R]$ by \obv{filter}.
+            Show that for every $U\in\neighbourhoods{\ringZero[R]}{R}$
+                there exists $H\in B$ such that $H\subseteq U$.
+            \begin{subproof}
+                Fix $U\in\neighbourhoods{\ringZero[R]}{R}$.
+                Take $H$ such that $\subgroup{H}{\AdditiveGroup{R}}$ and
+                    $H$ is open in $R$ and $H\subseteq U$ by \auto.
+                Hence $H\in\opens[R]$ by \obv{is_open}.
+                Hence $H\in B$ by \auto.
+                Follows by \auto.
+            \end{subproof}
+            Follows by \obv{filter_family_refinement}.
+        \end{subproof}
+        Hence $B$ is a basis of
+            $\neighbourhoods{\ringZero[R]}{R}$ on $\carrier[R]$ by
+            \obv{filter_basis_of}.
+        For every $H\in B$ we have
+            $\subgroup{H}{\AdditiveGroup{R}}$.
+        Follows by
+            \auto{topological_ring_with_subgroup_basis_is_nonarchimedean}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}

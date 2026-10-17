@@ -1,0 +1,1102 @@
+\import{surreal/proto.tex}
+\import{function.tex}
+\import{set/product.tex}
+
+\section{Set-coded surreal sign sequences}
+
+We represent a sign sequence by its set-coded function graph.  Its domain is
+its birthday and its values lie in the two-element ordinal.  This is
+extensionally equivalent to the tagged-subset representation used in
+Megalodon's Part 3, but makes birthday uniqueness immediate from the ordinary
+function interface and keeps every bounded collection visibly set-sized.
+
+\begin{definition}\label{surreal_signs}
+    $\surrealSigns=\suc{\suc{\emptyset}}$.
+\end{definition}
+
+\begin{definition}\label{surreal_at}
+    $\surrealAt{\alpha}{x}$ iff
+        $\alpha$ is an ordinal and
+        $x\in\funs{\alpha}{\surrealSigns}$.
+\end{definition}
+
+\begin{definition}\label{surreal}
+    $\surreal{x}$ iff $\surrealAt{\dom{x}}{x}$.
+\end{definition}
+
+\begin{definition}\label{surreal_birthday}
+    $\birthday{x}=\dom{x}$.
+\end{definition}
+
+\begin{proposition}\label{surreal_at_implies_surreal}
+    Suppose $\surrealAt{\alpha}{x}$.
+    Then $\surreal{x}$ and $\birthday{x}=\alpha$.
+\end{proposition}
+\begin{proof}
+    $\alpha=\dom{x}$ by \auto{surreal_at,funs_elim}.
+    Follows by \obv{surreal,surreal_birthday}.
+\end{proof}
+
+\begin{proposition}\label{surreal_birthday_ordinal}
+    Suppose $\surreal{x}$.
+    Then $\birthday{x}$ is an ordinal.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{surreal,surreal_at,surreal_birthday}.
+\end{proof}
+
+\begin{proposition}\label{surreal_at_birthday}
+    Suppose $\surreal{x}$.
+    Then $\surrealAt{\birthday{x}}{x}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{surreal,surreal_birthday}.
+\end{proof}
+
+\begin{proposition}\label{surreal_birthday_unique}
+    Suppose $\surrealAt{\alpha}{x}$ and $\surrealAt{\beta}{x}$.
+    Then $\alpha=\beta$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{surreal_at,funs_elim}.
+\end{proof}
+
+\begin{definition}\label{surreal_stage}
+    $\surrealStage{\alpha}=
+        \{x\in\pow{\alpha\times\surrealSigns}\mid
+            \text{there exists $\beta\in\alpha$ such that
+                $\surrealAt{\beta}{x}$}\}$.
+\end{definition}
+
+The set $\surrealStage{\alpha}$ is cumulative: it contains the surreals whose
+birthday is strictly below $\alpha$.  It is not the layer of surreals born
+exactly at $\alpha$.
+
+\begin{proposition}\label{surreal_stage_elim}
+    Let $\alpha$ be an ordinal.
+    Let $x\in\surrealStage{\alpha}$.
+    Then there exists $\beta\in\alpha$ such that
+        $\surrealAt{\beta}{x}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{surreal_stage}.
+\end{proof}
+
+\begin{proposition}\label{surreal_stage_intro}
+    Let $\alpha$ be an ordinal.
+    Let $\beta\in\alpha$.
+    Suppose $\surrealAt{\beta}{x}$.
+    Then $x\in\surrealStage{\alpha}$.
+\end{proposition}
+\begin{proof}
+    $\beta\subseteq\alpha$ by \obv{ordinal_elem_implies_subseteq}.
+    $x\in\rels{\beta}{\surrealSigns}$
+        by \auto{surreal_at,funs_subseteq_rels,subseteq}.
+    Hence $x\in\rels{\alpha}{\surrealSigns}$
+        by \obv{rels_weaken_dom}.
+    Hence $x\in\pow{\alpha\times\surrealSigns}$
+        by \obv{rels,subseteq}.
+    Follows by \obv{surreal_stage}.
+\end{proof}
+
+\begin{proposition}\label{surreal_stage_characterization}
+    Let $\alpha$ be an ordinal.
+    Then $x\in\surrealStage{\alpha}$ iff
+        $\surreal{x}$ and $\birthday{x}\in\alpha$.
+\end{proposition}
+\begin{proof}
+    If $x\in\surrealStage{\alpha}$, then there exists
+        $\beta\in\alpha$ such that $\surrealAt{\beta}{x}$
+        by \obv{surreal_stage_elim}.
+    If $x\in\surrealStage{\alpha}$, then
+        $\surreal{x}$ and $\birthday{x}\in\alpha$
+        by \auto{surreal_at_implies_surreal}.
+    If $\surreal{x}$ and $\birthday{x}\in\alpha$, then
+        $x\in\surrealStage{\alpha}$
+        by \obv{surreal_at_birthday,surreal_stage_intro}.
+    Follows by \auto.
+\end{proof}
+
+\begin{proposition}\label{surreal_stage_monotone}
+    Let $\alpha,\beta$ be ordinals.
+    Suppose $\alpha\subseteq\beta$.
+    Then $\surrealStage{\alpha}\subseteq\surrealStage{\beta}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{subseteq,surreal_stage_characterization}.
+\end{proof}
+
+\begin{proposition}\label{surreal_in_successor_stage}
+    Suppose $\surreal{x}$.
+    Then $x\in\surrealStage{\suc{\birthday{x}}}$.
+\end{proposition}
+\begin{proof}
+    $\birthday{x}$ is an ordinal
+        by \obv{surreal_birthday_ordinal}.
+    $\birthday{x}\in\suc{\birthday{x}}$
+        by \obv{suc_intro_self}.
+    Follows by \auto{surreal_stage_characterization,suc_ordinal}.
+\end{proof}
+
+\subsection{Agreement and order}
+
+\begin{definition}\label{surreal_eq_initial}
+    $\surrealEq{\alpha}{x}{y}$ iff
+        for every $\delta\in\alpha$ we have $x(\delta)=y(\delta)$.
+\end{definition}
+
+\begin{proposition}\label{surreal_eq_initial_reflexive}
+    $\surrealEq{\alpha}{x}{x}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{surreal_eq_initial}.
+\end{proof}
+
+\begin{proposition}\label{surreal_eq_initial_symmetric}
+    Suppose $\surrealEq{\alpha}{x}{y}$.
+    Then $\surrealEq{\alpha}{y}{x}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{surreal_eq_initial}.
+\end{proof}
+
+\begin{proposition}\label{surreal_eq_initial_transitive}
+    Suppose $\surrealEq{\alpha}{x}{y}$ and
+        $\surrealEq{\alpha}{y}{z}$.
+    Then $\surrealEq{\alpha}{x}{z}$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{surreal_eq_initial}.
+\end{proof}
+
+\begin{proposition}\label{surreal_eq_initial_restrict}
+    Suppose $\beta\subseteq\alpha$.
+    Suppose $\surrealEq{\alpha}{x}{y}$.
+    Then $\surrealEq{\beta}{x}{y}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{surreal_eq_initial,subseteq}.
+\end{proof}
+
+\begin{proposition}\label{surreal_eq_birthday_implies_eq}
+    Suppose $\surrealAt{\alpha}{x}$ and $\surrealAt{\alpha}{y}$.
+    Suppose $\surrealEq{\alpha}{x}{y}$.
+    Then $x=y$.
+\end{proposition}
+\begin{proof}
+    $x$ is a function and $\dom{x}=\alpha$
+        by \auto{surreal_at,funs_elim}.
+    $y$ is a function and $\dom{y}=\alpha$
+        by \auto{surreal_at,funs_elim}.
+    $\dom{x}=\dom{y}$.
+    $\dom{x}\subseteq\dom{y}$ by \obv{subseteq}.
+    $\dom{y}\subseteq\dom{x}$ by \obv{subseteq}.
+    $x\subseteq y$ by \obv{fun_subseteq,surreal_eq_initial}.
+    $\surrealEq{\alpha}{y}{x}$
+        by \obv{surreal_eq_initial_symmetric}.
+    $y\subseteq x$ by \obv{fun_subseteq,surreal_eq_initial}.
+    Follows by \obv{subseteq_antisymmetric}.
+\end{proof}
+
+\begin{definition}\label{surreal_lt_common}
+    $\surrealLtCommon{\delta}{x}{y}$ iff
+        $\delta\in\birthday{x}\inter\birthday{y}$ and
+        $\surrealEq{\delta}{x}{y}$ and
+        $x(\delta)=\emptyset$ and
+        $y(\delta)=\suc{\emptyset}$.
+\end{definition}
+
+\begin{definition}\label{surreal_lt_left_short}
+    $\surrealLtLeftShort{x}{y}$ iff
+        $\birthday{x}\in\birthday{y}$ and
+        $\surrealEq{\birthday{x}}{x}{y}$ and
+        $y(\birthday{x})=\suc{\emptyset}$.
+\end{definition}
+
+\begin{definition}\label{surreal_lt_right_short}
+    $\surrealLtRightShort{x}{y}$ iff
+        $\birthday{y}\in\birthday{x}$ and
+        $\surrealEq{\birthday{y}}{x}{y}$ and
+        $x(\birthday{y})=\emptyset$.
+\end{definition}
+
+\begin{definition}\label{surreal_lt}
+    $\surrealLt{x}{y}$ iff
+        (there exists $\delta$ such that
+            $\surrealLtCommon{\delta}{x}{y}$) or
+        $\surrealLtLeftShort{x}{y}$ or
+        $\surrealLtRightShort{x}{y}$.
+\end{definition}
+
+\begin{definition}\label{surreal_le}
+    $\surrealLe{x}{y}$ iff $\surrealLt{x}{y}$ or $x=y$.
+\end{definition}
+
+\begin{proposition}\label{surreal_lt_irreflexive}
+    Suppose $\surreal{x}$.
+    Then not $\surrealLt{x}{x}$.
+\end{proposition}
+\begin{proof}
+    $\emptyset\in\suc{\emptyset}$ by \obv{suc_intro_self}.
+    Hence $\emptyset\neq\suc{\emptyset}$
+        by \obv{in_irrefl}.
+    Follows by
+        \auto{surreal_lt,surreal_lt_common,surreal_lt_left_short,surreal_lt_right_short,surreal_eq_initial,in_irrefl}.
+\end{proof}
+
+\begin{proposition}\label{surreal_le_reflexive}
+    Suppose $\surreal{x}$.
+    Then $\surrealLe{x}{x}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{surreal_le}.
+\end{proof}
+
+\begin{proposition}\label{surreal_value_cases}
+    Suppose $\surreal{x}$.
+    Let $\delta\in\birthday{x}$.
+    Then $x(\delta)=\emptyset$ or
+        $x(\delta)=\suc{\emptyset}$.
+\end{proposition}
+\begin{proof}
+    $x\in\funs{\birthday{x}}{\surrealSigns}$
+        by \auto{surreal_at_birthday,surreal_at}.
+    Hence $x(\delta)\in\surrealSigns$
+        by \obv{funs_type_apply}.
+    Follows by \auto{surreal_signs,suc_iff,emptyset}.
+\end{proof}
+
+\begin{proposition}\label{surreal_signs_distinct}
+    $\emptyset\neq\suc{\emptyset}$.
+\end{proposition}
+\begin{proof}
+    $\emptyset\in\suc{\emptyset}$ by \obv{suc_intro_self}.
+    Follows by \obv{in_irrefl}.
+\end{proof}
+
+\begin{proposition}\label{surreal_unequal_value_cases}
+    Suppose $\surreal{x}$ and $\surreal{y}$.
+    Let $\delta\in\birthday{x}\inter\birthday{y}$.
+    Suppose $x(\delta)\neq y(\delta)$.
+    Then
+        ($x(\delta)=\emptyset$ and
+            $y(\delta)=\suc{\emptyset}$) or
+        ($y(\delta)=\emptyset$ and
+            $x(\delta)=\suc{\emptyset}$).
+\end{proposition}
+\begin{proof}
+    $\delta\in\birthday{x}$ and $\delta\in\birthday{y}$
+        by \obv{inter}.
+    $x(\delta)=\emptyset$ or
+        $x(\delta)=\suc{\emptyset}$
+        by \obv{surreal_value_cases}.
+    $y(\delta)=\emptyset$ or
+        $y(\delta)=\suc{\emptyset}$
+        by \obv{surreal_value_cases}.
+\end{proof}
+
+\begin{definition}\label{surreal_differences}
+    $\surrealDifferences{\alpha}{x}{y}=
+        \{\delta\in\alpha\mid x(\delta)\neq y(\delta)\}$.
+\end{definition}
+
+\begin{lemma}\label{surreal_first_difference}
+    Let $\alpha$ be an ordinal.
+    Suppose $\surrealDifferences{\alpha}{x}{y}$ is inhabited.
+    Then there exists $\delta\in\alpha$ such that
+        $\surrealEq{\delta}{x}{y}$ and
+        $x(\delta)\neq y(\delta)$.
+\end{lemma}
+\begin{proof}
+    Take $\delta$ such that $\delta$ is an \in-minimal element of
+        $\surrealDifferences{\alpha}{x}{y}$
+        by \obv{regularity}.
+    $\delta\in\surrealDifferences{\alpha}{x}{y}$ and
+        $\delta\notmeets\surrealDifferences{\alpha}{x}{y}$.
+    Hence $\delta\in\alpha$ and $x(\delta)\neq y(\delta)$
+        by \obv{surreal_differences}.
+    Show that $\surrealEq{\delta}{x}{y}$.
+    \begin{subproof}
+        Show that for every $\gamma\in\delta$ we have
+            $x(\gamma)=y(\gamma)$.
+        \begin{subproof}
+            Fix $\gamma\in\delta$.
+            $\gamma\in\alpha$ by \obv{ordinal_transitivity}.
+            Suppose not.
+            Hence $\gamma\in\surrealDifferences{\alpha}{x}{y}$
+                by \obv{surreal_differences}.
+            Contradiction by \auto{disjoint}.
+        \end{subproof}
+        Follows by \obv{surreal_eq_initial}.
+    \end{subproof}
+\end{proof}
+
+\begin{lemma}\label{surreal_order_from_first_difference}
+    Suppose $\surreal{x}$ and $\surreal{y}$.
+    Let $\delta\in\birthday{x}\inter\birthday{y}$.
+    Suppose $\surrealEq{\delta}{x}{y}$ and
+        $x(\delta)\neq y(\delta)$.
+    Then $\surrealLt{x}{y}$ or $\surrealLt{y}{x}$.
+\end{lemma}
+\begin{proof}
+    ($x(\delta)=\emptyset$ and
+        $y(\delta)=\suc{\emptyset}$) or
+    ($y(\delta)=\emptyset$ and
+        $x(\delta)=\suc{\emptyset}$)
+        by \obv{surreal_unequal_value_cases}.
+    Follows by
+        \auto{surreal_lt,surreal_lt_common,surreal_eq_initial_symmetric,inter_comm}.
+\end{proof}
+
+\begin{lemma}\label{surreal_order_after_common_prefix}
+    Suppose $\surreal{x}$ and $\surreal{y}$.
+    Suppose
+        $\surrealEq{\birthday{x}\inter\birthday{y}}{x}{y}$.
+    Then $\surrealLt{x}{y}$ or $x=y$ or $\surrealLt{y}{x}$.
+\end{lemma}
+\begin{proof}
+    $\birthday{x}$ and $\birthday{y}$ are ordinals
+        by \obv{surreal_birthday_ordinal}.
+    \begin{byCase}
+        \caseOf{$\birthday{x}=\birthday{y}$.}
+            $\birthday{x}\inter\birthday{y}=\birthday{x}$
+                by \auto{inter_idempotent}.
+            Hence $\surrealEq{\birthday{x}}{x}{y}$.
+            $\surrealAt{\birthday{x}}{x}$
+                by \obv{surreal_at_birthday}.
+            $\surrealAt{\birthday{x}}{y}$
+                by \auto{surreal_at_birthday}.
+            Hence $x=y$
+                by \obv{surreal_eq_birthday_implies_eq}.
+        \caseOf{$\birthday{x}\neq\birthday{y}$.}
+            \begin{byCase}
+                \caseOf{$\birthday{x}\in\birthday{y}$.}
+                    $\birthday{x}\inter\birthday{y}=\birthday{x}$
+                        by \obv{ordinal_elem_implies_subseteq,inter_absorb_supseteq_right}.
+                    Hence $\surrealEq{\birthday{x}}{x}{y}$.
+                    $y(\birthday{x})=\emptyset$ or
+                        $y(\birthday{x})=\suc{\emptyset}$
+                        by \obv{surreal_value_cases}.
+                    Follows by
+                        \auto{surreal_lt,surreal_lt_left_short,surreal_lt_right_short,surreal_eq_initial_symmetric}.
+                \caseOf{$\birthday{x}\notin\birthday{y}$.}
+                    $\birthday{y}\in\birthday{x}$
+                        by \obv{ordinal_in_trichotomy}.
+                    $\birthday{x}\inter\birthday{y}=\birthday{y}$
+                        by \obv{ordinal_elem_implies_subseteq,inter_absorb_supseteq_left}.
+                    Hence $\surrealEq{\birthday{y}}{x}{y}$.
+                    $x(\birthday{y})=\emptyset$ or
+                        $x(\birthday{y})=\suc{\emptyset}$
+                        by \obv{surreal_value_cases}.
+                    Follows by
+                        \auto{surreal_lt,surreal_lt_left_short,surreal_lt_right_short,surreal_eq_initial_symmetric}.
+            \end{byCase}
+    \end{byCase}
+\end{proof}
+
+\begin{theorem}\label{surreal_lt_trichotomy}
+    Suppose $\surreal{x}$ and $\surreal{y}$.
+    Then $\surrealLt{x}{y}$ or $x=y$ or $\surrealLt{y}{x}$.
+\end{theorem}
+\begin{proof}
+    $\birthday{x}$ and $\birthday{y}$ are ordinals
+        by \obv{surreal_birthday_ordinal}.
+    Hence $\birthday{x}\inter\birthday{y}$ is an ordinal
+        by \obv{inter_of_two_ordinals_is_ordinal}.
+    Let $D=\surrealDifferences
+        {\birthday{x}\inter\birthday{y}}{x}{y}$.
+    \begin{byCase}
+        \caseOf{$D=\emptyset$.}
+            $\surrealEq{\birthday{x}\inter\birthday{y}}{x}{y}$
+                by \auto{surreal_eq_initial,surreal_differences,emptyset}.
+            Follows by \obv{surreal_order_after_common_prefix}.
+        \caseOf{$D\neq\emptyset$.}
+            $D$ is inhabited by \auto{setext,emptyset}.
+            Take $\delta\in\birthday{x}\inter\birthday{y}$ such that
+                $\surrealEq{\delta}{x}{y}$ and
+                $x(\delta)\neq y(\delta)$
+                by \auto{surreal_first_difference}.
+            Follows by \auto{surreal_order_from_first_difference}.
+    \end{byCase}
+\end{proof}
+
+\begin{lemma}\label{surreal_lt_common_common}
+    Suppose $\surreal{x}$ and $\surreal{y}$ and $\surreal{z}$.
+    Suppose $\surrealLtCommon{\delta}{x}{y}$ and
+        $\surrealLtCommon{\epsilon}{y}{z}$.
+    Then $\surrealLt{x}{z}$.
+\end{lemma}
+\begin{proof}
+    $\birthday{x}$ is an ordinal by \obv{surreal_birthday_ordinal}.
+    $\birthday{z}$ is an ordinal by \obv{surreal_birthday_ordinal}.
+    $\delta$ and $\epsilon$ are ordinals
+        by \auto{surreal_lt_common,inter,elem_of_ordinal_is_ordinal}.
+    Follows by
+        \auto{surreal_lt,surreal_lt_common,surreal_eq_initial,surreal_eq_initial_restrict,surreal_eq_initial_transitive,ordinal_in_trichotomy,ordinal_transitivity,ordinal_elem_implies_subseteq,inter,surreal_signs_distinct}.
+\end{proof}
+
+\begin{lemma}\label{surreal_lt_common_left_short}
+    Suppose $\surreal{x}$ and $\surreal{y}$ and $\surreal{z}$.
+    Suppose $\surrealLtCommon{\delta}{x}{y}$ and
+        $\surrealLtLeftShort{y}{z}$.
+    Then $\surrealLt{x}{z}$.
+\end{lemma}
+\begin{proof}
+    $\birthday{y}$ is an ordinal by \obv{surreal_birthday_ordinal}.
+    $\birthday{z}$ is an ordinal by \obv{surreal_birthday_ordinal}.
+    Follows by
+        \auto{surreal_lt,surreal_lt_common,surreal_lt_left_short,surreal_eq_initial,surreal_eq_initial_restrict,surreal_eq_initial_transitive,ordinal_transitivity,ordinal_elem_implies_subseteq,inter}.
+\end{proof}
+
+\begin{lemma}\label{surreal_lt_common_right_short}
+    Suppose $\surreal{x}$ and $\surreal{y}$ and $\surreal{z}$.
+    Suppose $\surrealLtCommon{\delta}{x}{y}$ and
+        $\surrealLtRightShort{y}{z}$.
+    Then $\surrealLt{x}{z}$.
+\end{lemma}
+\begin{proof}
+    $\birthday{x}$ is an ordinal by \obv{surreal_birthday_ordinal}.
+    $\birthday{z}$ is an ordinal by \obv{surreal_birthday_ordinal}.
+    $\delta$ is an ordinal
+        by \auto{surreal_lt_common,inter,elem_of_ordinal_is_ordinal}.
+    Follows by
+        \auto{surreal_lt,surreal_lt_common,surreal_lt_right_short,surreal_eq_initial,surreal_eq_initial_restrict,surreal_eq_initial_transitive,ordinal_in_trichotomy,ordinal_transitivity,ordinal_elem_implies_subseteq,inter,surreal_signs_distinct}.
+\end{proof}
+
+\begin{lemma}\label{surreal_lt_left_short_common}
+    Suppose $\surreal{x}$ and $\surreal{y}$ and $\surreal{z}$.
+    Suppose $\surrealLtLeftShort{x}{y}$ and
+        $\surrealLtCommon{\epsilon}{y}{z}$.
+    Then $\surrealLt{x}{z}$.
+\end{lemma}
+\begin{proof}
+    $\birthday{x}$ is an ordinal by \obv{surreal_birthday_ordinal}.
+    $\birthday{z}$ is an ordinal by \obv{surreal_birthday_ordinal}.
+    $\epsilon$ is an ordinal
+        by \auto{surreal_lt_common,inter,elem_of_ordinal_is_ordinal}.
+    Follows by
+        \auto{surreal_lt,surreal_lt_common,surreal_lt_left_short,surreal_eq_initial,surreal_eq_initial_restrict,surreal_eq_initial_transitive,ordinal_in_trichotomy,ordinal_transitivity,ordinal_elem_implies_subseteq,inter,surreal_signs_distinct}.
+\end{proof}
+
+\begin{lemma}\label{surreal_lt_left_short_left_short}
+    Suppose $\surreal{x}$ and $\surreal{y}$ and $\surreal{z}$.
+    Suppose $\surrealLtLeftShort{x}{y}$ and
+        $\surrealLtLeftShort{y}{z}$.
+    Then $\surrealLt{x}{z}$.
+\end{lemma}
+\begin{proof}
+    $\birthday{y}$ is an ordinal by \obv{surreal_birthday_ordinal}.
+    $\birthday{z}$ is an ordinal by \obv{surreal_birthday_ordinal}.
+    Follows by
+        \auto{surreal_lt,surreal_lt_left_short,surreal_eq_initial,surreal_eq_initial_restrict,surreal_eq_initial_transitive,ordinal_transitivity,ordinal_elem_implies_subseteq}.
+\end{proof}
+
+\begin{lemma}\label{surreal_lt_left_short_right_short}
+    Suppose $\surreal{x}$ and $\surreal{y}$ and $\surreal{z}$.
+    Suppose $\surrealLtLeftShort{x}{y}$ and
+        $\surrealLtRightShort{y}{z}$.
+    Then $\surrealLt{x}{z}$.
+\end{lemma}
+\begin{proof}
+    $\birthday{x}$ is an ordinal by \obv{surreal_birthday_ordinal}.
+    $\birthday{z}$ is an ordinal by \obv{surreal_birthday_ordinal}.
+    Follows by
+        \auto{surreal_lt,surreal_lt_common,surreal_lt_left_short,surreal_lt_right_short,surreal_eq_initial,surreal_eq_initial_restrict,surreal_eq_initial_transitive,ordinal_in_trichotomy,ordinal_transitivity,ordinal_elem_implies_subseteq,inter,surreal_signs_distinct}.
+\end{proof}
+
+\begin{lemma}\label{surreal_lt_right_short_common}
+    Suppose $\surreal{x}$ and $\surreal{y}$ and $\surreal{z}$.
+    Suppose $\surrealLtRightShort{x}{y}$ and
+        $\surrealLtCommon{\epsilon}{y}{z}$.
+    Then $\surrealLt{x}{z}$.
+\end{lemma}
+\begin{proof}
+    $\birthday{x}$ is an ordinal by \obv{surreal_birthday_ordinal}.
+    $\birthday{y}$ is an ordinal by \obv{surreal_birthday_ordinal}.
+    $\birthday{z}$ is an ordinal by \obv{surreal_birthday_ordinal}.
+    Follows by
+        \auto{surreal_lt,surreal_lt_common,surreal_lt_right_short,surreal_eq_initial,surreal_eq_initial_restrict,surreal_eq_initial_transitive,ordinal_transitivity,ordinal_elem_implies_subseteq,inter}.
+\end{proof}
+
+\begin{lemma}\label{surreal_lt_right_short_left_short}
+    Suppose $\surreal{x}$ and $\surreal{y}$ and $\surreal{z}$.
+    Suppose $\surrealLtRightShort{x}{y}$ and
+        $\surrealLtLeftShort{y}{z}$.
+    Then $\surrealLt{x}{z}$.
+\end{lemma}
+\begin{proof}
+    $\birthday{z}$ is an ordinal by \obv{surreal_birthday_ordinal}.
+    Follows by
+        \auto{surreal_lt,surreal_lt_common,surreal_lt_left_short,surreal_lt_right_short,surreal_eq_initial_transitive,inter}.
+\end{proof}
+
+\begin{lemma}\label{surreal_lt_right_short_right_short}
+    Suppose $\surreal{x}$ and $\surreal{y}$ and $\surreal{z}$.
+    Suppose $\surrealLtRightShort{x}{y}$ and
+        $\surrealLtRightShort{y}{z}$.
+    Then $\surrealLt{x}{z}$.
+\end{lemma}
+\begin{proof}
+    $\birthday{x}$ is an ordinal by \obv{surreal_birthday_ordinal}.
+    $\birthday{y}$ is an ordinal by \obv{surreal_birthday_ordinal}.
+    $\birthday{z}$ is an ordinal by \obv{surreal_birthday_ordinal}.
+    Follows by
+        \auto{surreal_lt,surreal_lt_right_short,surreal_eq_initial,surreal_eq_initial_restrict,surreal_eq_initial_transitive,ordinal_transitivity,ordinal_elem_implies_subseteq}.
+\end{proof}
+
+\begin{theorem}\label{surreal_lt_transitive}
+    Suppose $\surreal{x}$ and $\surreal{y}$ and $\surreal{z}$.
+    Suppose $\surrealLt{x}{y}$ and $\surrealLt{y}{z}$.
+    Then $\surrealLt{x}{z}$.
+\end{theorem}
+\begin{proof}
+    $\birthday{z}$ is an ordinal
+        by \obv{surreal_birthday_ordinal}.
+    Follows by
+        \auto{surreal_lt,surreal_lt_common,surreal_lt_left_short,surreal_lt_right_short,surreal_lt_common_common,surreal_lt_common_left_short,surreal_lt_common_right_short,surreal_lt_left_short_common,surreal_lt_left_short_left_short,surreal_lt_left_short_right_short,surreal_lt_right_short_common,surreal_lt_right_short_left_short,surreal_lt_right_short_right_short}.
+\end{proof}
+
+\begin{corollary}\label{surreal_lt_asymmetric}
+    Suppose $\surreal{x}$ and $\surreal{y}$.
+    Suppose $\surrealLt{x}{y}$.
+    Then not $\surrealLt{y}{x}$.
+\end{corollary}
+\begin{proof}
+    Suppose $\surrealLt{y}{x}$.
+    Then $\surrealLt{x}{x}$ by \obv{surreal_lt_transitive}.
+    Contradiction by \obv{surreal_lt_irreflexive}.
+\end{proof}
+
+\begin{theorem}\label{surreal_le_antisymmetric}
+    Suppose $\surreal{x}$ and $\surreal{y}$.
+    Suppose $\surrealLe{x}{y}$ and $\surrealLe{y}{x}$.
+    Then $x=y$.
+\end{theorem}
+\begin{proof}
+    Follows by \auto{surreal_le,surreal_lt_asymmetric}.
+\end{proof}
+
+\begin{theorem}\label{surreal_le_transitive}
+    Suppose $\surreal{x}$ and $\surreal{y}$ and $\surreal{z}$.
+    Suppose $\surrealLe{x}{y}$ and $\surrealLe{y}{z}$.
+    Then $\surrealLe{x}{z}$.
+\end{theorem}
+\begin{proof}
+    Follows by \auto{surreal_le,surreal_lt_transitive}.
+\end{proof}
+
+\begin{corollary}\label{surreal_lt_le_transitive}
+    Suppose $\surreal{x}$ and $\surreal{y}$ and $\surreal{z}$.
+    Suppose $\surrealLt{x}{y}$ and $\surrealLe{y}{z}$.
+    Then $\surrealLt{x}{z}$.
+\end{corollary}
+\begin{proof}
+    Follows by \auto{surreal_le,surreal_lt_transitive}.
+\end{proof}
+
+\begin{corollary}\label{surreal_le_lt_transitive}
+    Suppose $\surreal{x}$ and $\surreal{y}$ and $\surreal{z}$.
+    Suppose $\surrealLe{x}{y}$ and $\surrealLt{y}{z}$.
+    Then $\surrealLt{x}{z}$.
+\end{corollary}
+\begin{proof}
+    Follows by \obv{surreal_le,surreal_lt_transitive}.
+\end{proof}
+
+\begin{theorem}\label{surreal_le_total}
+    Suppose $\surreal{x}$ and $\surreal{y}$.
+    Then $\surrealLe{x}{y}$ or $\surrealLe{y}{x}$.
+\end{theorem}
+\begin{proof}
+    Follows by \auto{surreal_lt_trichotomy,surreal_le}.
+\end{proof}
+
+\subsection{Ordinal sign sequences}
+
+\begin{definition}\label{ordinal_surreal}
+    $\ordinalSurreal{\alpha}=\alpha\times\{\suc{\emptyset}\}$.
+\end{definition}
+
+\begin{lemma}\label{ordinal_surreal_function}
+    $\ordinalSurreal{\alpha}\in
+        \funs{\alpha}{\surrealSigns}$.
+\end{lemma}
+\begin{proof}
+    $\suc{\emptyset}\in\surrealSigns$
+        by \obv{surreal_signs,suc_intro_self}.
+    Hence $\{\suc{\emptyset}\}\subseteq\surrealSigns$
+        by \obv{singleton_subset_intro}.
+    Hence $\ordinalSurreal{\alpha}\subseteq
+        \alpha\times\surrealSigns$
+        by \auto{ordinal_surreal,times_subseteq_right}.
+    Hence $\ordinalSurreal{\alpha}\in
+        \rels{\alpha}{\surrealSigns}$
+        by \obv{rels_intro}.
+    $\suc{\emptyset}\in\{\suc{\emptyset}\}$
+        by \auto{singleton_iff}.
+    Hence $\dom{\ordinalSurreal{\alpha}}=\alpha$
+        by \auto{ordinal_surreal,dom_times_inhabited}.
+    Show that $\ordinalSurreal{\alpha}$ is right-unique.
+    \begin{subproof}
+        Show that for all $a,b,c$ such that
+            $(a,b),(a,c)\in\ordinalSurreal{\alpha}$ we have $b=c$.
+        \begin{subproof}
+            Fix $a,b,c$ such that
+                $(a,b),(a,c)\in\ordinalSurreal{\alpha}$.
+            $b,c\in\{\suc{\emptyset}\}$
+                by \auto{ordinal_surreal,times_tuple_elim}.
+            Follows by \auto{singleton_iff}.
+        \end{subproof}
+        Follows by \obv{rightunique}.
+    \end{subproof}
+    Follows by \obv{funs}.
+\end{proof}
+
+\begin{proposition}\label{ordinal_surreal_at}
+    Let $\alpha$ be an ordinal.
+    Then $\surrealAt{\alpha}{\ordinalSurreal{\alpha}}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{surreal_at,ordinal_surreal_function}.
+\end{proof}
+
+\begin{proposition}\label{ordinal_surreal_is_surreal}
+    Let $\alpha$ be an ordinal.
+    Then $\surreal{\ordinalSurreal{\alpha}}$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{ordinal_surreal_at,surreal_at_implies_surreal}.
+\end{proof}
+
+\begin{proposition}\label{ordinal_surreal_birthday}
+    Let $\alpha$ be an ordinal.
+    Then $\birthday{\ordinalSurreal{\alpha}}=\alpha$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{ordinal_surreal_at,surreal_at_implies_surreal}.
+\end{proof}
+
+\begin{proposition}\label{ordinal_surreal_value}
+    Let $\delta\in\alpha$.
+    Then $\apply{\ordinalSurreal{\alpha}}{\delta}=\suc{\emptyset}$.
+\end{proposition}
+\begin{proof}
+    $(\delta,\suc{\emptyset})\in\ordinalSurreal{\alpha}$
+        by \auto{ordinal_surreal,times_tuple_intro,singleton_iff}.
+    $\ordinalSurreal{\alpha}$ is a function
+        by \auto{ordinal_surreal_function,funs_is_function}.
+    Follows by \obv{function_apply_intro}.
+\end{proof}
+
+\begin{proposition}\label{ordinal_surreal_agree}
+    Suppose $\gamma\subseteq\alpha$ and $\gamma\subseteq\beta$.
+    Then $\surrealEq{\gamma}
+        {\ordinalSurreal{\alpha}}{\ordinalSurreal{\beta}}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \obv{surreal_eq_initial,ordinal_surreal_value,subseteq}.
+\end{proof}
+
+\begin{proposition}\label{ordinal_surreal_injective}
+    Let $\alpha,\beta$ be ordinals.
+    Suppose $\ordinalSurreal{\alpha}=\ordinalSurreal{\beta}$.
+    Then $\alpha=\beta$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{ordinal_surreal_birthday}.
+\end{proof}
+
+\begin{theorem}\label{ordinal_surreal_lt_iff}
+    Let $\alpha,\beta$ be ordinals.
+    Then $\surrealLt{\ordinalSurreal{\alpha}}{\ordinalSurreal{\beta}}$
+        iff $\alpha\in\beta$.
+\end{theorem}
+\begin{proof}
+    $\surreal{\ordinalSurreal{\alpha}}$ and
+        $\surreal{\ordinalSurreal{\beta}}$
+        by \obv{ordinal_surreal_is_surreal}.
+    $\birthday{\ordinalSurreal{\alpha}}=\alpha$ and
+        $\birthday{\ordinalSurreal{\beta}}=\beta$
+        by \obv{ordinal_surreal_birthday}.
+    If $\alpha\in\beta$, then $\alpha\subseteq\beta$
+        by \obv{ordinal_elem_implies_subseteq}.
+    If $\alpha\in\beta$, then
+        $\surrealEq{\alpha}
+            {\ordinalSurreal{\alpha}}{\ordinalSurreal{\beta}}$
+        by \obv{ordinal_surreal_agree,subseteq_refl}.
+    If $\alpha\in\beta$, then
+        $\apply{\ordinalSurreal{\beta}}{\alpha}=\suc{\emptyset}$
+        by \obv{ordinal_surreal_value}.
+    If $\alpha\in\beta$, then
+        $\surrealLt{\ordinalSurreal{\alpha}}{\ordinalSurreal{\beta}}$
+        by \obv{surreal_lt,surreal_lt_left_short}.
+    If $\surrealLt{\ordinalSurreal{\alpha}}{\ordinalSurreal{\beta}}$,
+        then $\alpha\in\beta$
+        by \auto{surreal_lt,surreal_lt_common,surreal_lt_left_short,surreal_lt_right_short,ordinal_surreal_value,surreal_signs_distinct,inter}.
+    Follows by \auto.
+\end{proof}
+
+\subsection{Earlier left and right options}
+
+\begin{definition}\label{surreal_left}
+    $\surrealLeft{z}=\{x\in\surrealStage{\birthday{z}}\mid
+        \surrealLt{x}{z}\}$.
+\end{definition}
+
+\begin{definition}\label{surreal_right}
+    $\surrealRight{z}=\{y\in\surrealStage{\birthday{z}}\mid
+        \surrealLt{z}{y}\}$.
+\end{definition}
+
+\begin{proposition}\label{surreal_left_elim}
+    Suppose $\surreal{z}$.
+    Let $x\in\surrealLeft{z}$.
+    Then $\surreal{x}$ and $\birthday{x}\in\birthday{z}$ and
+        $\surrealLt{x}{z}$.
+\end{proposition}
+\begin{proof}
+    $x\in\surrealStage{\birthday{z}}$ and $\surrealLt{x}{z}$
+        by \obv{surreal_left}.
+    Follows by
+        \auto{surreal_stage_characterization,surreal_birthday_ordinal}.
+\end{proof}
+
+\begin{proposition}\label{surreal_right_elim}
+    Suppose $\surreal{z}$.
+    Let $y\in\surrealRight{z}$.
+    Then $\surreal{y}$ and $\birthday{y}\in\birthday{z}$ and
+        $\surrealLt{z}{y}$.
+\end{proposition}
+\begin{proof}
+    $y\in\surrealStage{\birthday{z}}$ and $\surrealLt{z}{y}$
+        by \obv{surreal_right}.
+    Follows by
+        \auto{surreal_stage_characterization,surreal_birthday_ordinal}.
+\end{proof}
+
+\begin{proposition}\label{surreal_left_intro}
+    Suppose $\surreal{z}$ and $\surreal{x}$.
+    Suppose $\birthday{x}\in\birthday{z}$ and $\surrealLt{x}{z}$.
+    Then $x\in\surrealLeft{z}$.
+\end{proposition}
+\begin{proof}
+    $\birthday{z}$ is an ordinal
+        by \obv{surreal_birthday_ordinal}.
+    $x\in\surrealStage{\birthday{z}}$
+        by \auto{surreal_stage_characterization}.
+    Follows by \obv{surreal_left}.
+\end{proof}
+
+\begin{proposition}\label{surreal_right_intro}
+    Suppose $\surreal{z}$ and $\surreal{y}$.
+    Suppose $\birthday{y}\in\birthday{z}$ and $\surrealLt{z}{y}$.
+    Then $y\in\surrealRight{z}$.
+\end{proposition}
+\begin{proof}
+    $\birthday{z}$ is an ordinal
+        by \obv{surreal_birthday_ordinal}.
+    $y\in\surrealStage{\birthday{z}}$
+        by \auto{surreal_stage_characterization}.
+    Follows by \obv{surreal_right}.
+\end{proof}
+
+\subsection{Cuts}
+
+\begin{definition}\label{surreal_cut_pair}
+    $\surrealCutPair{L}{R}$ iff
+        (for every $l\in L$ we have $\surreal{l}$) and
+        (for every $r\in R$ we have $\surreal{r}$) and
+        (for all $a,b$ such that $a\in L$ and $b\in R$ we have
+            $\surrealLt{a}{b}$).
+\end{definition}
+
+\begin{definition}\label{surreal_cut_candidate}
+    $\surrealCutCandidate{L}{R}{z}$ iff
+        $\surrealCutPair{L}{R}$ and $\surreal{z}$ and
+        (for every $l\in L$ we have $\surrealLt{l}{z}$) and
+        (for every $r\in R$ we have $\surrealLt{z}{r}$) and
+        (for every $w$ such that $\surreal{w}$ and
+            (for every $a\in L$ we have $\surrealLt{a}{w}$) and
+            (for every $b\in R$ we have $\surrealLt{w}{b}$)
+        we have $\birthday{z}\subseteq\birthday{w}$ and
+            $\surrealEq{\birthday{z}}{z}{w}$).
+\end{definition}
+
+\begin{definition}\label{surreal_cut_admissible}
+    $\surrealCutAdmissible{L}{R}$ iff
+        there exists $z$ such that $\surrealCutCandidate{L}{R}{z}$.
+\end{definition}
+
+\begin{proposition}\label{surreal_cut_candidate_unique}
+    Suppose $\surrealCutCandidate{L}{R}{z}$ and
+        $\surrealCutCandidate{L}{R}{w}$.
+    Then $z=w$.
+\end{proposition}
+\begin{proof}
+    $\surreal{z}$ and $\surreal{w}$
+        by \obv{surreal_cut_candidate}.
+    $\birthday{z}\subseteq\birthday{w}$ and
+        $\surrealEq{\birthday{z}}{z}{w}$
+        by \obv{surreal_cut_candidate}.
+    $\birthday{w}\subseteq\birthday{z}$
+        by \auto{surreal_cut_candidate}.
+    Hence $\birthday{z}=\birthday{w}$
+        by \obv{subseteq_antisymmetric}.
+    $\surrealAt{\birthday{z}}{z}$
+        by \obv{surreal_at_birthday}.
+    $\surrealAt{\birthday{z}}{w}$
+        by \auto{surreal_at_birthday}.
+    Follows by \obv{surreal_eq_birthday_implies_eq}.
+\end{proof}
+
+\begin{definition}\label{surreal_cut}
+    $\surrealCut{L}{R}=
+        \Select[\Set]{\fun{z:\Set}{\surrealCutCandidate{L}{R}{z}}}$.
+\end{definition}
+
+\begin{theorem}\label{surreal_cut_specification}
+    Suppose $\surrealCutAdmissible{L}{R}$.
+    Then $\surrealCutCandidate{L}{R}{\surrealCut{L}{R}}$.
+\end{theorem}
+\begin{proof}
+    There exists $z$ such that $\surrealCutCandidate{L}{R}{z}$
+        by \obv{surreal_cut_admissible}.
+    Follows by \auto{surreal_cut}.
+\end{proof}
+
+\begin{corollary}\label{surreal_cut_is_surreal}
+    Suppose $\surrealCutAdmissible{L}{R}$.
+    Then $\surreal{\surrealCut{L}{R}}$.
+\end{corollary}
+\begin{proof}
+    Follows by
+        \auto{surreal_cut_specification,surreal_cut_candidate}.
+\end{proof}
+
+\begin{corollary}\label{surreal_cut_left}
+    Suppose $\surrealCutAdmissible{L}{R}$.
+    Then for every $x\in L$ we have
+        $\surrealLt{x}{\surrealCut{L}{R}}$.
+\end{corollary}
+\begin{proof}
+    Follows by
+        \auto{surreal_cut_specification,surreal_cut_candidate}.
+\end{proof}
+
+\begin{corollary}\label{surreal_cut_right}
+    Suppose $\surrealCutAdmissible{L}{R}$.
+    Then for every $y\in R$ we have
+        $\surrealLt{\surrealCut{L}{R}}{y}$.
+\end{corollary}
+\begin{proof}
+    Follows by
+        \auto{surreal_cut_specification,surreal_cut_candidate}.
+\end{proof}
+
+\begin{corollary}\label{surreal_cut_simplest}
+    Suppose $\surrealCutAdmissible{L}{R}$.
+    Let $w$ be a set.
+    Suppose $\surreal{w}$.
+    Suppose for every $x\in L$ we have $\surrealLt{x}{w}$.
+    Suppose for every $y\in R$ we have $\surrealLt{w}{y}$.
+    Then $\birthday{\surrealCut{L}{R}}\subseteq\birthday{w}$ and
+        $\surrealEq{\birthday{\surrealCut{L}{R}}}
+            {\surrealCut{L}{R}}{w}$.
+\end{corollary}
+\begin{proof}
+    Follows by
+        \auto{surreal_cut_specification,surreal_cut_candidate}.
+\end{proof}
+
+\begin{proposition}\label{surreal_options_form_cut_pair}
+    Suppose $\surreal{z}$.
+    Then $\surrealCutPair{\surrealLeft{z}}{\surrealRight{z}}$.
+\end{proposition}
+\begin{proof}
+    For every $x\in\surrealLeft{z}$ we have $\surreal{x}$
+        by \auto{surreal_left_elim}.
+    For every $y\in\surrealRight{z}$ we have $\surreal{y}$
+        by \auto{surreal_right_elim}.
+    For all $x\in\surrealLeft{z}$ we have for all
+        $y\in\surrealRight{z}$ we have $\surrealLt{x}{y}$
+        by \obv{surreal_left_elim,surreal_right_elim,surreal_lt_transitive}.
+    Follows by \obv{surreal_cut_pair}.
+\end{proof}
+
+\begin{proposition}\label{empty_surreal_at}
+    $\surrealAt{\emptyset}{\emptyset}$.
+\end{proposition}
+\begin{proof}
+    $\emptyset$ is an ordinal by \obv{emptyset_is_ordinal}.
+    $\emptyset$ is a function to $\surrealSigns$
+        by \obv{codom_of_emptyset_can_be_anything}.
+    $\dom{\emptyset}=\emptyset$ by \obv{dom_emptyset}.
+    Hence $\emptyset\in\funs{\emptyset}{\surrealSigns}$
+        by \obv{funs_intro}.
+    Follows by \obv{surreal_at}.
+\end{proof}
+
+\begin{proposition}\label{empty_surreal}
+    $\surreal{\emptyset}$ and $\birthday{\emptyset}=\emptyset$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{empty_surreal_at,surreal_at_implies_surreal}.
+\end{proof}
+
+\begin{proposition}\label{empty_surreal_cut_candidate}
+    $\surrealCutCandidate{\emptyset}{\emptyset}{\emptyset}$.
+\end{proposition}
+\begin{proof}
+    $\surrealCutPair{\emptyset}{\emptyset}$
+        by \auto{surreal_cut_pair,emptyset}.
+    For every $w$ such that $\surreal{w}$ we have
+        $\birthday{\emptyset}\subseteq\birthday{w}$ and
+        $\surrealEq{\birthday{\emptyset}}{\emptyset}{w}$
+        by \auto{empty_surreal,emptyset,subseteq,surreal_eq_initial}.
+    Follows by
+        \auto{surreal_cut_candidate,empty_surreal,emptyset}.
+\end{proof}
+
+\begin{proposition}\label{empty_surreal_cut_admissible}
+    $\surrealCutAdmissible{\emptyset}{\emptyset}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{surreal_cut_admissible,empty_surreal_cut_candidate}.
+\end{proof}
+
+\begin{proposition}\label{empty_surreal_cut}
+    $\surrealCut{\emptyset}{\emptyset}=\emptyset$.
+\end{proposition}
+\begin{proof}
+    $\surrealCutCandidate{\emptyset}{\emptyset}
+        {\surrealCut{\emptyset}{\emptyset}}$
+        by \obv{surreal_cut_specification,empty_surreal_cut_admissible}.
+    Follows by
+        \obv{surreal_cut_candidate_unique,empty_surreal_cut_candidate}.
+\end{proof}
+
+\subsection{Initial restrictions}
+
+\begin{proposition}\label{surreal_restriction_at}
+    Suppose $\surreal{x}$.
+    Let $\beta\in\birthday{x}$.
+    Then $\surrealAt{\beta}{\restrl{x}{\beta}}$.
+\end{proposition}
+\begin{proof}
+    $\birthday{x}$ is an ordinal
+        by \obv{surreal_birthday_ordinal}.
+    Hence $\beta$ is an ordinal
+        by \obv{elem_of_ordinal_is_ordinal}.
+    $\beta\subseteq\birthday{x}$
+        by \obv{ordinal_elem_implies_subseteq}.
+    $x\in\funs{\birthday{x}}{\surrealSigns}$
+        by \auto{surreal_at_birthday,surreal_at}.
+    Hence $x$ is a function and $\dom{x}=\birthday{x}$
+        by \auto{funs_elim}.
+    Thus $\restrl{x}{\beta}$ is a function
+        by \obv{restrl_of_function_is_function}.
+    $\dom{\restrl{x}{\beta}}=\beta$
+        by \auto{dom_of_restrl_eq_inter,inter_absorb_supseteq_left}.
+    For every $\delta\in\dom{\restrl{x}{\beta}}$ we have
+        $(\restrl{x}{\beta})(\delta)=x(\delta)$
+        by \auto{restrl_of_function_apply}.
+    For every $\delta\in\dom{\restrl{x}{\beta}}$ we have
+        $x(\delta)\in\surrealSigns$
+        by \auto{funs_type_apply,subseteq}.
+    Hence $\restrl{x}{\beta}$ is a function to $\surrealSigns$
+        by \auto.
+    Hence $\restrl{x}{\beta}\in\funs{\beta}{\surrealSigns}$
+        by \obv{funs_intro}.
+    Follows by \obv{surreal_at}.
+\end{proof}
+
+\begin{proposition}\label{surreal_restriction_birthday}
+    Suppose $\surreal{x}$.
+    Let $\beta\in\birthday{x}$.
+    Then $\surreal{\restrl{x}{\beta}}$ and
+        $\birthday{\restrl{x}{\beta}}=\beta$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \obv{surreal_restriction_at,surreal_at_implies_surreal}.
+\end{proof}
+
+\begin{proposition}\label{surreal_restriction_agrees}
+    Suppose $\surreal{x}$.
+    Let $\beta\in\birthday{x}$.
+    Then $\surrealEq{\beta}{\restrl{x}{\beta}}{x}$.
+\end{proposition}
+\begin{proof}
+    $\beta\subseteq\birthday{x}$
+        by \obv{surreal_birthday_ordinal,elem_of_ordinal_is_ordinal,ordinal_elem_implies_subseteq}.
+    $x$ is a function and $\dom{x}=\birthday{x}$
+        by \auto{surreal_at_birthday,surreal_at,funs_elim}.
+    Follows by
+        \auto{surreal_eq_initial,restrl_of_function_apply,subseteq}.
+\end{proof}
+
+\begin{theorem}\label{surreal_restriction_option}
+    Suppose $\surreal{x}$.
+    Let $\beta\in\birthday{x}$.
+    Then $\surrealLt{\restrl{x}{\beta}}{x}$ or
+        $\surrealLt{x}{\restrl{x}{\beta}}$.
+\end{theorem}
+\begin{proof}
+    $\surreal{\restrl{x}{\beta}}$ and
+        $\birthday{\restrl{x}{\beta}}=\beta$
+        by \obv{surreal_restriction_birthday}.
+    $\surrealEq{\beta}{\restrl{x}{\beta}}{x}$
+        by \obv{surreal_restriction_agrees}.
+    $x(\beta)=\emptyset$ or $x(\beta)=\suc{\emptyset}$
+        by \obv{surreal_value_cases}.
+    Follows by
+        \auto{surreal_lt,surreal_lt_left_short,surreal_lt_right_short,surreal_eq_initial_symmetric}.
+\end{proof}
+
+\begin{theorem}\label{surreal_lt_elimination}
+    Suppose $\surreal{x}$ and $\surreal{y}$ and $\surrealLt{x}{y}$.
+    Then $(\exists q:\Set.\ \surreal{q}\land
+            \birthday{q}\in\birthday{x}\inter\birthday{y}\land
+            \surrealLt{x}{q}\land\surrealLt{q}{y})
+        \lor x\in\surrealLeft{y}
+        \lor y\in\surrealRight{x}$.
+\end{theorem}
+\begin{proof}
+    Show that if $\exists\delta:\Set.\ \surrealLtCommon{\delta}{x}{y}$, then
+        $\exists q:\Set.\ \surreal{q}\land
+            \birthday{q}\in\birthday{x}\inter\birthday{y}\land
+            \surrealLt{x}{q}\land\surrealLt{q}{y}$.
+    \begin{subproof}
+        Assume $\exists\delta:\Set.\ \surrealLtCommon{\delta}{x}{y}$.
+        Take $\delta$ such that $\surrealLtCommon{\delta}{x}{y}$.
+        Let $q=\restrl{x}{\delta}$.
+        $\delta\in\birthday{x}\inter\birthday{y}$ and
+            $\surrealEq{\delta}{x}{y}$ and
+            $x(\delta)=\emptyset$ and
+            $y(\delta)=\suc{\emptyset}$
+            by \obv{surreal_lt_common}.
+        $\surreal{q}$ and $\birthday{q}=\delta$
+            by \auto{surreal_restriction_birthday,inter}.
+        $\surrealEq{\delta}{q}{x}$
+            by \auto{surreal_restriction_agrees,inter}.
+        $\surrealEq{\delta}{x}{q}$
+            by \obv{surreal_eq_initial_symmetric}.
+        Hence $\surrealLt{x}{q}$
+            by \auto{surreal_lt,surreal_lt_right_short,inter}.
+        $\surrealEq{\delta}{q}{y}$
+            by \obv{surreal_eq_initial_transitive}.
+        Hence $\surrealLt{q}{y}$
+            by \auto{surreal_lt,surreal_lt_left_short,inter}.
+        Follows by \auto.
+    \end{subproof}
+    If $\surrealLtLeftShort{x}{y}$, then
+        $x\in\surrealLeft{y}$
+        by \obv{surreal_left_intro,surreal_lt,surreal_lt_left_short}.
+    If $\surrealLtRightShort{x}{y}$, then
+        $y\in\surrealRight{x}$
+        by \obv{surreal_right_intro,surreal_lt,surreal_lt_right_short}.
+    Follows by \auto{surreal_lt}.
+\end{proof}

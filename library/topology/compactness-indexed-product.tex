@@ -1,0 +1,121 @@
+\section{Compactness of finite indexed products}
+
+\import{topology/compactness-filter.tex}
+\import{topology/indexed-product-filter.tex}
+\import{set/finite-choice.tex}
+
+For a finite family, coordinatewise ultrafilter limits can be selected by
+finite choice and assembled into a point of the dependent product.  The
+coordinatewise convergence theorem then gives a limit in the product
+topology.
+
+\begin{theorem}\label{finite_indexed_product_of_compact_spaces_is_compact}
+    Suppose $I$ is finite and $X$ is a function on $I$.
+    Suppose for every $i\in I$ we have
+        $X(i)$ is a compact topological space.
+    Then $\IndexedProductTopology{I}{X}$ is compact.
+\end{theorem}
+\begin{proof}
+    Let $A=\indexedTopologicalCarrierFamily{I}{X}$.
+    Let $S=\dependentProduct{I}{A}$.
+    Let $P=\IndexedProductTopology{I}{X}$.
+
+    $\indexedTopologicalCarrierFamily{I}{X}$ is a function on $I$ by
+        \obv{indexed_topological_carrier_family_type}.
+    Hence $A$ is a function on $I$.
+    $P$ is a topological space by
+        \obv{indexed_product_topology_is_topological_space}.
+    $\carrier[P]=S$ by
+        \auto{indexed_product_topology_carrier}.
+
+    Show that for every $U$ such that
+        $U$ is an ultrafilter on $\carrier[P]$ there exists
+        $x\in\carrier[P]$ such that $\filterConverges{U}{x}{P}$.
+    \begin{subproof}
+        Fix $U$.
+        Assume $U$ is an ultrafilter on $\carrier[P]$.
+        Hence $U$ is an ultrafilter on $S$.
+        Hence $U$ is a proper filter on $S$ by
+            \auto{ultrafilter,maximalfilter}.
+        Hence $U$ is a filter on $S$ by
+            \obv{proper_filter_is_filter}.
+
+        Let $R=\{q\in I\times\unions{\ran{A}}\mid
+            \text{$\snd{q}\in A(\fst{q})$ and
+            $\filterConverges{
+                \filterPushforward{S}{\carrier[X(\fst{q})]}{
+                    \dependentProjection{I}{A}{\fst{q}}}{U}
+            }{\snd{q}}{X(\fst{q})}$}\}$.
+        $R$ is a relation by
+            \auto{relation,times_elem_is_tuple}.
+
+        Show that for every $i\in I$ there exists $y$ such that
+            $i\mathrel{R}y$.
+        \begin{subproof}
+            Fix $i\in I$.
+            Let $p=\dependentProjection{I}{A}{i}$.
+            $p\in\funs{S}{\carrier[X(i)]}$ by
+                \auto{dependent_projection_type,
+                    indexed_topological_carrier_family_apply}.
+            Let $U_i=\filterPushforward{S}{\carrier[X(i)]}{p}{U}$.
+            $U_i$ is an ultrafilter on $\carrier[X(i)]$ by
+                \auto{filter_pushforward_preserves_ultrafilters}.
+            Take $y\in\carrier[X(i)]$ such that
+                $\filterConverges{U_i}{y}{X(i)}$ by
+                \auto{compact_iff_every_ultrafilter_converges}.
+            $A(i)=\carrier[X(i)]$ by
+                \auto{indexed_topological_carrier_family_apply}.
+            Hence $y\in A(i)$.
+            Thus $y\in\unions{\ran{A}}$ by
+                \obv{indexed_family_member_union}.
+            Hence $(i,y)\in I\times\unions{\ran{A}}$ by
+                \obv{times_tuple_intro}.
+            $\fst{(i,y)}=i$ and $\snd{(i,y)}=y$ by
+                \obv{fst_eq,snd_eq}.
+            Hence $(i,y)\in R$ by \auto.
+        \end{subproof}
+
+        Take $x$ such that $x$ is a function on $I$ and
+            for every $i\in I$ we have $i\mathrel{R}x(i)$ by
+            \obv{finite_choice}.
+        $x$ is a function and $\dom{x}=I$.
+        Show that $x$ is a function to $\unions{\ran{A}}$.
+        \begin{subproof}
+            Show that for every $i\in\dom{x}$ we have
+                $x(i)\in\unions{\ran{A}}$.
+            \begin{subproof}
+                Fix $i\in\dom{x}$.
+                Hence $i\in I$.
+                $(i,x(i))\in R$.
+                Hence $(i,x(i))\in I\times\unions{\ran{A}}$.
+                Follows by \obv{times_tuple_elim}.
+            \end{subproof}
+        \end{subproof}
+        Hence $x\in\funs{I}{\unions{\ran{A}}}$ by
+            \obv{funs_intro}.
+        Show that for every $i\in I$ we have $x(i)\in A(i)$.
+        \begin{subproof}
+            Fix $i\in I$.
+            $(i,x(i))\in R$.
+            $\fst{(i,x(i))}=i$ and $\snd{(i,x(i))}=x(i)$ by
+                \obv{fst_eq,snd_eq}.
+        \end{subproof}
+        Hence $x\in S$ by \obv{dependent_product_iff}.
+        Thus $x\in\carrier[P]$.
+
+        Show that for every $i\in I$ we have
+            $\filterConverges{
+                \filterPushforward{S}{\carrier[X(i)]}{
+                    \dependentProjection{I}{A}{i}}{U}
+            }{x(i)}{X(i)}$.
+        \begin{subproof}
+            Fix $i\in I$.
+            $(i,x(i))\in R$.
+            $\fst{(i,x(i))}=i$ and $\snd{(i,x(i))}=x(i)$ by
+                \obv{fst_eq,snd_eq}.
+        \end{subproof}
+        Hence $\filterConverges{U}{x}{P}$ by
+            \auto{filter_converges_in_indexed_product_iff_coordinates}.
+    \end{subproof}
+    Follows by \obv{compact_iff_every_ultrafilter_converges}.
+\end{proof}

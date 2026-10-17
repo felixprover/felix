@@ -1,0 +1,581 @@
+\import{test/algebra-spike/01-ring-reducts.tex}
+\import{test/algebra-spike/02-module-reduct.tex}
+\import{set/logical-graph.tex}
+
+\section{Opposite rings and regular modules}
+
+\begin{definition}\label{spike_opposite_multiplication_op}
+    $\spikeOppositeMultiplicationOp:
+        \Set\to\Set\to\Set\to\Set
+        =\fun{R,x,y:\Set}{\ringMul[R](y,x)}$.
+\end{definition}
+
+\begin{definition}\label{spike_opposite_multiplication_graph}
+    $\spikeOppositeMultiplicationGraph{R}=
+        \Apply{\binaryGraphOnOp}{
+            \carrier[R],\carrier[R],
+            \Apply{\spikeOppositeMultiplicationOp}{R}}$.
+\end{definition}
+
+\begin{proposition}\label{spike_opposite_multiplication_graph_type}
+    Let $R$ be a ring.
+    Then
+        $\spikeOppositeMultiplicationGraph{R}
+            \in\funs{
+                \carrier[R]\times\carrier[R]}{\carrier[R]}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{spike_opposite_multiplication_graph,
+            spike_opposite_multiplication_op,
+            logical_binary_graph_on_function,ring_mul_type}.
+\end{proof}
+
+\begin{proposition}\label{spike_opposite_multiplication_graph_apply}
+    Let $R$ be a ring and $x,y\in\carrier[R]$.
+    Then
+        $\apply{\spikeOppositeMultiplicationGraph{R}}{(x,y)}
+            =\ringMul[R](y,x)$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{spike_opposite_multiplication_graph,
+            spike_opposite_multiplication_op,
+            logical_binary_graph_on_apply}.
+\end{proof}
+
+\begin{definition}\label{spike_opposite_ring}
+    $\OppositeRing{R}=
+        \structure[ring]{
+            \carrier=\carrier[R],
+            \ringAdd=\ringAdd[R],
+            \ringZero=\ringZero[R],
+            \ringNeg=\ringNeg[R],
+            \ringMul=\spikeOppositeMultiplicationGraph{R},
+            \ringOne=\ringOne[R]
+        }$.
+\end{definition}
+
+\begin{proposition}\label{spike_opposite_ring_fields}
+    $\carrier[\OppositeRing{R}]=\carrier[R]$ and
+    $\ringAdd[\OppositeRing{R}]=\ringAdd[R]$ and
+    $\ringZero[\OppositeRing{R}]=\ringZero[R]$ and
+    $\ringNeg[\OppositeRing{R}]=\ringNeg[R]$ and
+    $\ringMul[\OppositeRing{R}]
+        =\spikeOppositeMultiplicationGraph{R}$ and
+    $\ringOne[\OppositeRing{R}]=\ringOne[R]$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{spike_opposite_ring,
+            ringaggregateprojection_carrier,ringaggregateprojection_ringAdd,
+            ringaggregateprojection_ringZero,ringaggregateprojection_ringNeg,
+            ringaggregateprojection_ringMul,ringaggregateprojection_ringOne}.
+\end{proof}
+
+\begin{proposition}\label{spike_opposite_ring_mul_apply}
+    Let $R$ be a ring and $x,y\in\carrier[R]$.
+    Then
+        $\ringMul[\OppositeRing{R}](x,y)=\ringMul[R](y,x)$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{spike_opposite_ring_fields,
+            spike_opposite_multiplication_graph_apply}.
+\end{proof}
+
+\begin{theorem}\label{spike_opposite_ring_is_exact}
+    Let $R$ be a ring.
+    Then $\OppositeRing{R}$ is an exact ring.
+\end{theorem}
+\begin{proof}
+    Let $S=\OppositeRing{R}$.
+    $\carrier[S]=\carrier[R]$ and
+        $\ringAdd[S]=\ringAdd[R]$ and
+        $\ringZero[S]=\ringZero[R]$ and
+        $\ringNeg[S]=\ringNeg[R]$ and
+        $\ringMul[S]=\spikeOppositeMultiplicationGraph{R}$ and
+        $\ringOne[S]=\ringOne[R]$ by
+        \auto{spike_opposite_ring_fields}.
+    $\ringAdd[S]\in
+        \funs{\carrier[S]\times\carrier[S]}{\carrier[S]}$ by
+        \auto{ring_add_graph}.
+    $\ringZero[S]\in\carrier[S]$ by \auto{ring_zero_type}.
+    $\ringNeg[S]\in\funs{\carrier[S]}{\carrier[S]}$ by
+        \auto{ring_neg_graph}.
+    $\ringMul[S]\in
+        \funs{\carrier[S]\times\carrier[S]}{\carrier[S]}$ by
+        \auto{spike_opposite_multiplication_graph_type}.
+    $\ringOne[S]\in\carrier[S]$ by \auto{ring_one_type}.
+    For all $x,y,z\in\carrier[S]$ we have
+        $\ringAdd[S](x,\ringAdd[S](y,z))
+            =\ringAdd[S](\ringAdd[S](x,y),z)$ by
+        \auto{ring_add_associative}.
+    For all $x,y\in\carrier[S]$ we have
+        $\ringAdd[S](x,y)=\ringAdd[S](y,x)$ by
+        \auto{ring_add_commutative}.
+    For every $x\in\carrier[S]$ we have
+        $\ringAdd[S](\ringZero[S],x)=x$ by
+        \auto{ring_add_zero_left}.
+    For every $x\in\carrier[S]$ we have
+        $\ringAdd[S](\ringNeg[S](x),x)=\ringZero[S]$ by
+        \auto{ring_add_inverse_left}.
+    Show that for all $x,y,z\in\carrier[S]$ we have
+        $\ringMul[S](x,\ringMul[S](y,z))
+            =\ringMul[S](\ringMul[S](x,y),z)$.
+    \begin{subproof}
+        Fix $x,y,z\in\carrier[S]$.
+        Hence $x,y,z\in\carrier[R]$ by \auto.
+        $\ringMul[R](z,y),\ringMul[R](y,x)\in\carrier[R]$ by
+            \auto{ring_mul_type}.
+        $\ringMul[S](y,z)=\ringMul[R](z,y)$ and
+            $\ringMul[S](x,y)=\ringMul[R](y,x)$ by
+            \auto{spike_opposite_ring_mul_apply}.
+        Hence
+            $\ringMul[S](x,\ringMul[S](y,z))
+                =\ringMul[R](\ringMul[R](z,y),x)$ and
+            $\ringMul[S](\ringMul[S](x,y),z)
+                =\ringMul[R](z,\ringMul[R](y,x))$ by
+            \auto{spike_opposite_ring_mul_apply}.
+        Follows by \auto{ring_mul_associative}.
+    \end{subproof}
+    Show that for every $x\in\carrier[S]$ we have
+        $\ringMul[S](\ringOne[S],x)=x$ and
+        $\ringMul[S](x,\ringOne[S])=x$.
+    \begin{subproof}
+        Fix $x\in\carrier[S]$.
+        Hence $x\in\carrier[R]$ by \auto.
+        Follows by
+            \auto{spike_opposite_ring_mul_apply,
+                ring_mul_one_left,ring_mul_one_right}.
+    \end{subproof}
+    Show that for all $x,y,z\in\carrier[S]$ we have
+        $\ringMul[S](x,\ringAdd[S](y,z))
+            =\ringAdd[S](\ringMul[S](x,y),\ringMul[S](x,z))$.
+    \begin{subproof}
+        Fix $x,y,z\in\carrier[S]$.
+        Hence $x,y,z\in\carrier[R]$ by \auto.
+        $\ringAdd[R](y,z)\in\carrier[R]$ by
+            \auto{ring_add_type}.
+        $\ringMul[S](x,\ringAdd[S](y,z))
+            =\ringMul[R](\ringAdd[R](y,z),x)$ by
+            \auto{spike_opposite_ring_mul_apply}.
+        $\ringMul[S](x,y)=\ringMul[R](y,x)$ and
+            $\ringMul[S](x,z)=\ringMul[R](z,x)$ by
+            \auto{spike_opposite_ring_mul_apply}.
+        Follows by \auto{ring_distributive_right}.
+    \end{subproof}
+    Show that for all $x,y,z\in\carrier[S]$ we have
+        $\ringMul[S](\ringAdd[S](x,y),z)
+            =\ringAdd[S](\ringMul[S](x,z),\ringMul[S](y,z))$.
+    \begin{subproof}
+        Fix $x,y,z\in\carrier[S]$.
+        Hence $x,y,z\in\carrier[R]$ by \auto.
+        $\ringAdd[R](x,y)\in\carrier[R]$ by
+            \auto{ring_add_type}.
+        $\ringMul[S](\ringAdd[S](x,y),z)
+            =\ringMul[R](z,\ringAdd[R](x,y))$ by
+            \auto{spike_opposite_ring_mul_apply}.
+        $\ringMul[S](x,z)=\ringMul[R](z,x)$ and
+            $\ringMul[S](y,z)=\ringMul[R](z,y)$ by
+            \auto{spike_opposite_ring_mul_apply}.
+        Follows by \auto{ring_distributive_left}.
+    \end{subproof}
+    Hence $S$ is a ring by
+        \auto{spike_opposite_ring,ringaggregateexact,ring}.
+    Follows by \auto{spike_opposite_ring,ringaggregateexact}.
+\end{proof}
+
+\begin{theorem}\label{spike_opposite_ring_involutive}
+    Let $R$ be a set.
+    Suppose $R$ is an exact ring.
+    Then $\OppositeRing{\OppositeRing{R}}=R$.
+\end{theorem}
+\begin{proof}
+    Let $S=\OppositeRing{R}$ and $T=\OppositeRing{S}$.
+    $R$ is a ring by \auto.
+    $S$ is an exact ring by \auto{spike_opposite_ring_is_exact}.
+    Hence $S$ is a ring by \auto.
+    $T$ is an exact ring by \auto{spike_opposite_ring_is_exact}.
+    $\carrier[T]=\carrier[R]$ and
+        $\ringAdd[T]=\ringAdd[R]$ and
+        $\ringZero[T]=\ringZero[R]$ and
+        $\ringNeg[T]=\ringNeg[R]$ and
+        $\ringOne[T]=\ringOne[R]$ by
+        \auto{spike_opposite_ring_fields}.
+    $\ringMul[T]$ and $\ringMul[R]$ are functions and
+        $\dom{\ringMul[T]}=\carrier[R]\times\carrier[R]$ and
+        $\dom{\ringMul[R]}=\carrier[R]\times\carrier[R]$ by
+        \auto{ring_mul_graph,funs_elim}.
+    Show that for every $p\in\dom{\ringMul[T]}$ we have
+        $\ringMul[T](p)=\ringMul[R](p)$.
+    \begin{subproof}
+        Fix $p\in\dom{\ringMul[T]}$.
+        Hence $p\in\carrier[R]\times\carrier[R]$ by \auto.
+        Take $x,y\in\carrier[R]$ such that $p=(x,y)$ by
+            \auto{times_elem_is_tuple}.
+        Hence $x,y\in\carrier[S]$ by
+            \auto{spike_opposite_ring_fields}.
+        $\ringMul[T](x,y)=\ringMul[S](y,x)$ by
+            \auto{spike_opposite_ring_mul_apply}.
+        $\ringMul[S](y,x)=\ringMul[R](x,y)$ by
+            \auto{spike_opposite_ring_mul_apply}.
+        Follows by \auto.
+    \end{subproof}
+    Hence $\ringMul[T]=\ringMul[R]$ by \auto{funext_on_domain}.
+    $\carrier[R]=\carrier[T]$ by \auto.
+    $\ringAdd[R]=\ringAdd[T]$ by \auto.
+    $\ringZero[R]=\ringZero[T]$ by \auto.
+    $\ringNeg[R]=\ringNeg[T]$ by \auto.
+    $\ringMul[R]=\ringMul[T]$ by \auto.
+    $\ringOne[R]=\ringOne[T]$ by \auto.
+    $R=T$ by structure extensionality.
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{spike_opposite_ring_additive_reduct}
+    Let $R$ be a ring.
+    Then $\AdditiveGroup{\OppositeRing{R}}=\AdditiveGroup{R}$.
+\end{theorem}
+\begin{proof}
+    Let $S=\OppositeRing{R}$.
+    $S$ is an exact ring by \auto{spike_opposite_ring_is_exact}.
+    Hence $\AdditiveGroup{S}$ is an exact group by
+        \auto{spike_additive_group_is_exact,
+            commutative_group_is_group,
+            spike_additive_group,groupaggregateexact}.
+    $\AdditiveGroup{R}$ is an exact group by
+        \auto{spike_additive_group_is_exact,
+            commutative_group_is_group,
+            spike_additive_group,groupaggregateexact}.
+    $\carrier[\AdditiveGroup{S}]=\carrier[\AdditiveGroup{R}]$ and
+        $\mul[\AdditiveGroup{S}]=\mul[\AdditiveGroup{R}]$ and
+        $\neutral[\AdditiveGroup{S}]=\neutral[\AdditiveGroup{R}]$ and
+        $\groupInv[\AdditiveGroup{S}]=\groupInv[\AdditiveGroup{R}]$ by
+        \auto{spike_additive_group_fields,
+            spike_opposite_ring_fields}.
+    Follows by \auto{exact_group_extensionality}.
+\end{proof}
+
+\subsection{Right modules}
+
+\begin{definition}\label{spike_prototype_right_module}
+    $\prototypeRightModule{M}{R}$ iff
+        $R$ is a ring and
+        $M$ is a left module over $\OppositeRing{R}$.
+\end{definition}
+
+\begin{proposition}\label{spike_right_module_ring_guard}
+    Suppose $\prototypeRightModule{M}{R}$.
+    Then $R$ is a ring.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{spike_prototype_right_module}.
+\end{proof}
+
+\begin{definition}\label{spike_right_scalar_multiplication}
+    $\rightScalarMul{M}{x}{a}=\scalarMul[M](a,x)$.
+\end{definition}
+
+\begin{proposition}\label{spike_right_scalar_type}
+    Suppose $\prototypeRightModule{M}{R}$.
+    Let $x\in\carrier[M]$ and $a\in\carrier[R]$.
+    Then $\rightScalarMul{M}{x}{a}\in\carrier[M]$.
+\end{proposition}
+\begin{proof}
+    $M$ is a left module over $\OppositeRing{R}$ by
+        \auto{spike_prototype_right_module}.
+    $\OppositeRing{R}$ is a ring by \auto{module_scalar_ring}.
+    $a\in\carrier[\OppositeRing{R}]$ by
+        \auto{spike_opposite_ring_fields}.
+    $\scalarMul[M](a,x)\in\carrier[M]$ by
+        \auto{module_scalar_type}.
+    Follows by \auto{spike_right_scalar_multiplication}.
+\end{proof}
+
+\begin{proposition}\label{spike_right_scalar_vector_distributive}
+    Suppose $\prototypeRightModule{M}{R}$.
+    Let $x,y\in\carrier[M]$ and $a\in\carrier[R]$.
+    Then
+        $\rightScalarMul{M}{\mul[M](x,y)}{a}
+            =\mul[M]
+                (\rightScalarMul{M}{x}{a},
+                 \rightScalarMul{M}{y}{a})$.
+\end{proposition}
+\begin{proof}
+    $M$ is a left module over $\OppositeRing{R}$ by
+        \auto{spike_prototype_right_module}.
+    $a\in\carrier[\OppositeRing{R}]$ by
+        \auto{spike_opposite_ring_fields}.
+    Follows by
+        \auto{spike_right_scalar_multiplication,
+            module_scalar_vector_distributive}.
+\end{proof}
+
+\begin{proposition}\label{spike_right_scalar_add_distributive}
+    Suppose $\prototypeRightModule{M}{R}$.
+    Let $x\in\carrier[M]$ and $a,b\in\carrier[R]$.
+    Then
+        $\rightScalarMul{M}{x}{\ringAdd[R](a,b)}
+            =\mul[M]
+                (\rightScalarMul{M}{x}{a},
+                 \rightScalarMul{M}{x}{b})$.
+\end{proposition}
+\begin{proof}
+    Let $S=\OppositeRing{R}$.
+    $R$ is a ring by \auto{spike_prototype_right_module}.
+    $M$ is a left module over $S$ by
+        \auto{spike_prototype_right_module}.
+    $a,b\in\carrier[S]$ and
+        $\ringAdd[S](a,b)=\ringAdd[R](a,b)$ by
+        \auto{spike_opposite_ring_fields}.
+    Follows by
+        \auto{spike_right_scalar_multiplication,
+            module_scalar_add_distributive}.
+\end{proof}
+
+\begin{proposition}\label{spike_right_scalar_associative}
+    Suppose $\prototypeRightModule{M}{R}$.
+    Let $x\in\carrier[M]$ and $a,b\in\carrier[R]$.
+    Then
+        $\rightScalarMul{M}{\rightScalarMul{M}{x}{a}}{b}
+            =\rightScalarMul{M}{x}{\ringMul[R](a,b)}$.
+\end{proposition}
+\begin{proof}
+    Let $S=\OppositeRing{R}$.
+    $R$ is a ring by \auto{spike_prototype_right_module}.
+    $M$ is a left module over $S$ by
+        \auto{spike_prototype_right_module}.
+    $a,b\in\carrier[S]$ by
+        \auto{spike_opposite_ring_fields}.
+    $\ringMul[S](b,a)=\ringMul[R](a,b)$ by
+        \auto{spike_opposite_ring_mul_apply}.
+    Follows by
+        \auto{spike_right_scalar_multiplication,
+            module_scalar_associative}.
+\end{proof}
+
+\begin{proposition}\label{spike_right_scalar_one}
+    Suppose $\prototypeRightModule{M}{R}$.
+    Let $x\in\carrier[M]$.
+    Then $\rightScalarMul{M}{x}{\ringOne[R]}=x$.
+\end{proposition}
+\begin{proof}
+    Let $S=\OppositeRing{R}$.
+    $M$ is a left module over $S$ by
+        \auto{spike_prototype_right_module}.
+    $\ringOne[S]=\ringOne[R]$ by
+        \auto{spike_opposite_ring_fields}.
+    Follows by
+        \auto{spike_right_scalar_multiplication,module_scalar_one}.
+\end{proof}
+
+\subsection{Regular modules}
+
+\begin{definition}\label{spike_left_regular_module}
+    $\LeftRegularModule{R}=
+        \structure[left module over R]{
+            \carrier=\carrier[\AdditiveGroup{R}],
+            \mul=\mul[\AdditiveGroup{R}],
+            \neutral=\neutral[\AdditiveGroup{R}],
+            \groupInv=\groupInv[\AdditiveGroup{R}],
+            \scalarMul=\ringMul[R]
+        }$.
+\end{definition}
+
+\begin{proposition}\label{spike_left_regular_module_fields}
+    Let $G=\AdditiveGroup{R}$.
+    $\carrier[\LeftRegularModule{R}]=\carrier[G]$ and
+    $\mul[\LeftRegularModule{R}]=\mul[G]$ and
+    $\neutral[\LeftRegularModule{R}]=\neutral[G]$ and
+    $\groupInv[\LeftRegularModule{R}]=\groupInv[G]$ and
+    $\scalarMul[\LeftRegularModule{R}]=\ringMul[R]$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{spike_left_regular_module,
+            left_moduleaggregateprojection_carrier,
+            left_moduleaggregateprojection_mul,
+            left_moduleaggregateprojection_neutral,
+            left_moduleaggregateprojection_groupInv,
+            left_moduleaggregateprojection_scalarMul}.
+\end{proof}
+
+\begin{proposition}\label{spike_left_regular_scalar_apply}
+    Let $R$ be a ring and $a,x\in\carrier[R]$.
+    Then
+        $\scalarMul[\LeftRegularModule{R}](a,x)
+            =\ringMul[R](a,x)$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{spike_left_regular_module_fields}.
+\end{proof}
+
+\begin{theorem}\label{spike_left_regular_module_is_exact}
+    Let $R$ be a ring.
+    Then $\LeftRegularModule{R}$ is an exact left module over $R$.
+\end{theorem}
+\begin{proof}
+    Let $G=\AdditiveGroup{R}$ and $M=\LeftRegularModule{R}$.
+    $G$ is an exact commutative group by
+        \auto{spike_additive_group_is_exact}.
+    Hence $G$ is a group and $G$ is a monoid and
+        $G$ is a unital magma and $G$ is a magma by
+        \auto{commutative_group_is_group,group_is_monoid,
+            monoid_is_unital_magma,monoid_is_magma}.
+    $\carrier[M]=\carrier[G]$ and $\mul[M]=\mul[G]$ and
+        $\neutral[M]=\neutral[G]$ and
+        $\groupInv[M]=\groupInv[G]$ and
+        $\scalarMul[M]=\ringMul[R]$ by
+        \auto{spike_left_regular_module_fields}.
+    $\mul[M]\in
+        \funs{\carrier[M]\times\carrier[M]}{\carrier[M]}$ by
+        \auto{magma_mul_graph}.
+    $\neutral[M]\in\carrier[M]$ by \auto{unitalmagma_type}.
+    $\groupInv[M]\in\funs{\carrier[M]}{\carrier[M]}$ by
+        \auto{group_inverse_graph}.
+    For all $x,y,z\in\carrier[M]$ we have
+        $\mul[M](x,\mul[M](y,z))=\mul[M](\mul[M](x,y),z)$ by
+        \auto{monoid_assoc}.
+    For every $x\in\carrier[M]$ we have
+        $\mul[M](x,\neutral[M])=x$ and
+        $\mul[M](\neutral[M],x)=x$ by
+        \auto{unitalmagma_right,unitalmagma_left}.
+    For every $x\in\carrier[M]$ we have
+        $\mul[M](x,\groupInv[M](x))=\neutral[M]$ and
+        $\mul[M](\groupInv[M](x),x)=\neutral[M]$ by
+        \auto{group_inverse_right,group_inverse_left}.
+    Hence $M$ is a group by
+        \auto{spike_left_regular_module,left_moduleaggregateexact,
+            magma,unitalmagma,monoid,group}.
+    For all $x,y\in\carrier[M]$ we have
+        $\mul[M](x,y)=\mul[M](y,x)$ by
+        \auto{commutative_group_commutative}.
+    Hence $M$ is a commutative group by
+        \auto{group,commutative_group}.
+    $\scalarMul[M]\in
+        \funs{\carrier[R]\times\carrier[M]}{\carrier[M]}$ by
+        \auto{ring_mul_graph,spike_additive_group_fields}.
+    For all $a,x,y$ such that
+        $a\in\carrier[R]$ and $x,y\in\carrier[M]$ we have
+        $\scalarMul[M](a,\mul[M](x,y))
+            =\mul[M](\scalarMul[M](a,x),\scalarMul[M](a,y))$ by
+        \auto{spike_additive_group_fields,
+            ring_distributive_left}.
+    For all $a,b,x$ such that
+        $a,b\in\carrier[R]$ and $x\in\carrier[M]$ we have
+        $\scalarMul[M](\ringAdd[R](a,b),x)
+            =\mul[M](\scalarMul[M](a,x),\scalarMul[M](b,x))$ by
+        \auto{spike_additive_group_fields,
+            ring_distributive_right}.
+    For all $a,b,x$ such that
+        $a,b\in\carrier[R]$ and $x\in\carrier[M]$ we have
+        $\scalarMul[M](a,\scalarMul[M](b,x))
+            =\scalarMul[M](\ringMul[R](a,b),x)$ by
+        \auto{spike_additive_group_fields,ring_mul_associative}.
+    For every $x\in\carrier[M]$ we have
+        $\scalarMul[M](\ringOne[R],x)=x$ by
+        \auto{spike_additive_group_fields,ring_mul_one_left}.
+    It is not the case that it is not the case that
+        $M$ is a left module over $R$ by
+        \auto{spike_left_regular_module,left_moduleaggregateexact,
+            left_module}.
+    Hence $M$ is a left module over $R$ by \auto.
+    Follows by
+        \auto{spike_left_regular_module,left_moduleaggregateexact}.
+\end{proof}
+
+\begin{theorem}\label{spike_left_regular_module_additive_reduct}
+    Let $R$ be a ring.
+    Then
+        $\ModuleAdditiveGroup{\LeftRegularModule{R}}
+            =\AdditiveGroup{R}$.
+\end{theorem}
+\begin{proof}
+    Let $M=\LeftRegularModule{R}$ and $G=\AdditiveGroup{R}$.
+    $M$ is an exact left module over $R$ by
+        \auto{spike_left_regular_module_is_exact}.
+    Hence $\ModuleAdditiveGroup{M}$ is an exact group by
+        \auto{spike_module_additive_group_is_exact,
+            commutative_group_is_group,
+            spike_module_additive_group,groupaggregateexact}.
+    $G$ is an exact group by
+        \auto{spike_additive_group_is_exact,
+            commutative_group_is_group,
+            spike_additive_group,groupaggregateexact}.
+    $\carrier[\ModuleAdditiveGroup{M}]=\carrier[G]$ and
+        $\mul[\ModuleAdditiveGroup{M}]=\mul[G]$ and
+        $\neutral[\ModuleAdditiveGroup{M}]=\neutral[G]$ and
+        $\groupInv[\ModuleAdditiveGroup{M}]=\groupInv[G]$ by
+        \auto{spike_module_additive_group_fields,
+            spike_left_regular_module_fields}.
+    Follows by \auto{exact_group_extensionality}.
+\end{proof}
+
+\begin{definition}\label{spike_right_regular_module}
+    $\RightRegularModule{R}=\LeftRegularModule{\OppositeRing{R}}$.
+\end{definition}
+
+\begin{theorem}\label{spike_right_regular_module_is_exact}
+    Let $R$ be a ring.
+    Then
+        $\RightRegularModule{R}$ is an exact left module over
+            $\OppositeRing{R}$.
+\end{theorem}
+\begin{proof}
+    $\OppositeRing{R}$ is an exact ring by
+        \auto{spike_opposite_ring_is_exact}.
+    Hence $\OppositeRing{R}$ is a ring by \auto.
+    Follows by
+        \auto{spike_right_scalar_multiplication,
+            spike_right_regular_module,
+            spike_left_regular_module_is_exact}.
+\end{proof}
+
+\begin{proposition}\label{spike_right_regular_module_is_right_module}
+    Let $R$ be a ring.
+    Then $\prototypeRightModule{\RightRegularModule{R}}{R}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{spike_prototype_right_module,
+            spike_right_regular_module_is_exact}.
+\end{proof}
+
+\begin{proposition}\label{spike_right_regular_scalar_apply}
+    Let $R$ be a ring and $x,a\in\carrier[R]$.
+    Then
+        $\rightScalarMul{\RightRegularModule{R}}{x}{a}
+            =\ringMul[R](x,a)$.
+\end{proposition}
+\begin{proof}
+    Let $S=\OppositeRing{R}$.
+    $S$ is an exact ring by \auto{spike_opposite_ring_is_exact}.
+    Hence $S$ is a ring by \auto.
+    $a,x\in\carrier[S]$ by
+        \auto{spike_opposite_ring_fields}.
+    Follows by
+        \auto{spike_right_scalar_multiplication,
+            spike_right_regular_module,
+            spike_left_regular_scalar_apply,
+            spike_opposite_ring_mul_apply}.
+\end{proof}
+
+\begin{theorem}\label{spike_right_regular_module_additive_reduct}
+    Let $R$ be a ring.
+    Then
+        $\ModuleAdditiveGroup{\RightRegularModule{R}}
+            =\AdditiveGroup{R}$.
+\end{theorem}
+\begin{proof}
+    Let $S=\OppositeRing{R}$.
+    $S$ is an exact ring by \auto{spike_opposite_ring_is_exact}.
+    Hence $S$ is a ring by \auto.
+    $\ModuleAdditiveGroup{\RightRegularModule{R}}
+        =\AdditiveGroup{S}$ by
+        \auto{spike_right_regular_module,
+            spike_left_regular_module_additive_reduct}.
+    $\AdditiveGroup{S}=\AdditiveGroup{R}$ by
+        \auto{spike_opposite_ring_additive_reduct}.
+    Follows by \auto.
+\end{proof}

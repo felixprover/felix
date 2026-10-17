@@ -1,0 +1,284 @@
+\section{Generated topologies}
+
+\import{topology/topological-space.tex}
+\import{set/closure-system.tex}
+
+The topologies on a fixed carrier form a closure system inside the powerset
+of its powerset.  Its hull operation therefore generates a topology from any
+hosted family of subsets, without a separate basis or covering hypothesis.
+
+\begin{definition}\label{topologies_on}
+    $\topologiesOn{S}=\{T\in\pow{\pow{S}}\mid
+        \text{$T$ is a topology on $S$}\}$.
+\end{definition}
+
+\begin{proposition}\label{topologies_on_iff}
+    $T\in\topologiesOn{S}$ iff $T$ is a topology on $S$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{topologies_on,topology_family,pow_iff,subseteq}.
+\end{proof}
+
+\begin{classification}\label{topologies_on_member_is_topology}
+    Let $T\in\topologiesOn{S}$.
+    Then $T$ is a topology on $S$.
+\end{classification}
+\begin{proof}
+    Follows by \obv{topologies_on_iff}.
+\end{proof}
+
+\begin{proposition}\label{topology_in_topologies_on}
+    Suppose $T$ is a topology on $S$.
+    Then $T\in\topologiesOn{S}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{topologies_on_iff}.
+\end{proof}
+
+\begin{theorem}\label{topologies_on_is_closure_system}
+    $\topologiesOn{S}$ is a closure system on $\pow{S}$.
+\end{theorem}
+\begin{proof}
+    $\topologiesOn{S}\subseteq\pow{\pow{S}}$ by
+        \obv{topologies_on,subseteq}.
+    Show that for every $C\subseteq\topologiesOn{S}$ we have
+        $\boundedIntersection{\pow{S}}{C}\in\topologiesOn{S}$.
+    \begin{subproof}
+        Fix $C\subseteq\topologiesOn{S}$.
+        Let $I=\boundedIntersection{\pow{S}}{C}$.
+        $I\subseteq\pow{S}$ by
+            \auto{bounded_intersection_subseteq}.
+
+        Show that $S\in I$.
+        \begin{subproof}
+            $S\in\pow{S}$ by \obv{powerset_top}.
+            Show that for every $T\in C$ we have $S\in T$.
+            \begin{subproof}
+                Fix $T\in C$.
+                $T\in\topologiesOn{S}$ by \obv{subseteq}.
+                Hence $T$ is a topology on $S$ by
+                    \obv{topologies_on_member_is_topology}.
+                Follows by \obv{topology_family}.
+            \end{subproof}
+            Follows by \obv{bounded_intersection_iff}.
+        \end{subproof}
+
+        Show that for all $A,B\in I$ we have $A\inter B\in I$.
+        \begin{subproof}
+            Fix $A,B\in I$.
+            $A,B\subseteq S$ by \auto{pow_iff,subseteq}.
+            Hence $A\inter B\subseteq S$ by \obv{inter_subseteq}.
+            Thus $A\inter B\in\pow{S}$ by \obv{powerset_intro}.
+            Show that for every $T\in C$ we have $A\inter B\in T$.
+            \begin{subproof}
+                Fix $T\in C$.
+                $T\in\topologiesOn{S}$ by \obv{subseteq}.
+                Hence $T$ is a topology on $S$ by
+                    \obv{topologies_on_member_is_topology}.
+                $A,B\in T$ by \auto{bounded_intersection_iff}.
+                Follows by \obv{topology_family}.
+            \end{subproof}
+            Follows by \obv{bounded_intersection_iff}.
+        \end{subproof}
+
+        Show that for every $F\subseteq I$ we have $\unions{F}\in I$.
+        \begin{subproof}
+            Fix $F\subseteq I$.
+            For every $A\in F$ we have $A\subseteq S$ by
+                \auto{pow_iff,subseteq}.
+            Hence $\unions{F}\subseteq S$ by \obv{unions_family}.
+            Thus $\unions{F}\in\pow{S}$ by \obv{powerset_intro}.
+            Show that for every $T\in C$ we have $\unions{F}\in T$.
+            \begin{subproof}
+                Fix $T\in C$.
+                $T\in\topologiesOn{S}$ by \obv{subseteq}.
+                Hence $T$ is a topology on $S$ by
+                    \obv{topologies_on_member_is_topology}.
+                For every $A\in F$ we have $A\in T$ by
+                    \auto{bounded_intersection_iff,subseteq}.
+                Hence $F\subseteq T$ by \obv{subseteq}.
+                Follows by \obv{topology_family}.
+            \end{subproof}
+            Follows by \obv{bounded_intersection_iff}.
+        \end{subproof}
+        Hence $I$ is a topology on $S$ by \obv{topology_family}.
+        Thus $\boundedIntersection{\pow{S}}{C}$ is a topology on $S$.
+        Follows by \obv{topology_in_topologies_on}.
+    \end{subproof}
+    Follows by \obv{closure_system}.
+\end{proof}
+
+\begin{proposition}\label{bounded_intersection_of_topologies_is_topology}
+    Suppose $C\subseteq\topologiesOn{S}$.
+    Then $\boundedIntersection{\pow{S}}{C}$ is a topology on $S$.
+\end{proposition}
+\begin{proof}
+    $\boundedIntersection{\pow{S}}{C}\in\topologiesOn{S}$ by
+        \obv{topologies_on_is_closure_system,closure_system_intersection}.
+    Follows by \obv{topologies_on_member_is_topology}.
+\end{proof}
+
+\begin{definition}\label{generated_opens}
+    $\generatedOpens{S}{B}
+        =\closureHull{\pow{S}}{\topologiesOn{S}}{B}$.
+\end{definition}
+
+\begin{proposition}\label{generated_opens_type}
+    $\generatedOpens{S}{B}$ is a family of subsets of $S$.
+\end{proposition}
+\begin{proof}
+    $\generatedOpens{S}{B}\subseteq\pow{S}$ by
+        \auto{generated_opens,closure_hull_subseteq}.
+    Follows by \auto{pow_iff,subseteq}.
+\end{proof}
+
+\begin{proposition}\label{generated_opens_contains}
+    Suppose $B$ is a family of subsets of $S$.
+    Then $B\subseteq\generatedOpens{S}{B}$.
+\end{proposition}
+\begin{proof}
+    $\topologiesOn{S}$ is a closure system on $\pow{S}$ by
+        \obv{topologies_on_is_closure_system}.
+    $B\subseteq\pow{S}$ by \auto{pow_iff,subseteq}.
+    Follows by \auto{generated_opens,closure_hull_extensive}.
+\end{proof}
+
+\begin{classification}\label{generated_opens_is_topology}
+    Suppose $B$ is a family of subsets of $S$.
+    Then $\generatedOpens{S}{B}$ is a topology on $S$.
+\end{classification}
+\begin{proof}
+    $\topologiesOn{S}$ is a closure system on $\pow{S}$ by
+        \obv{topologies_on_is_closure_system}.
+    $B\subseteq\pow{S}$ by \auto{pow_iff,subseteq}.
+    $\generatedOpens{S}{B}\in\topologiesOn{S}$ by
+        \auto{generated_opens,closure_hull_closed}.
+    Follows by \obv{topologies_on_member_is_topology}.
+\end{proof}
+
+\begin{theorem}\label{generated_opens_least}
+    Suppose $B$ is a family of subsets of $S$.
+    Suppose $T$ is a topology on $S$ and $B\subseteq T$.
+    Then $\generatedOpens{S}{B}\subseteq T$.
+\end{theorem}
+\begin{proof}
+    $\topologiesOn{S}$ is a closure system on $\pow{S}$ by
+        \obv{topologies_on_is_closure_system}.
+    $B\subseteq\pow{S}$ by \auto{pow_iff,subseteq}.
+    $T\in\topologiesOn{S}$ by \obv{topology_in_topologies_on}.
+    Follows by \auto{generated_opens,closure_hull_least}.
+\end{proof}
+
+\begin{proposition}\label{generated_opens_monotone}
+    Suppose $B$ is a family of subsets of $S$ and
+        $C$ is a family of subsets of $S$ and $B\subseteq C$.
+    Then $\generatedOpens{S}{B}\subseteq\generatedOpens{S}{C}$.
+\end{proposition}
+\begin{proof}
+    $\topologiesOn{S}$ is a closure system on $\pow{S}$ by
+        \obv{topologies_on_is_closure_system}.
+    $C\subseteq\pow{S}$ by \auto{pow_iff,subseteq}.
+    Follows by \auto{generated_opens,closure_hull_monotone}.
+\end{proof}
+
+\begin{proposition}\label{generated_opens_idempotent}
+    Suppose $B$ is a family of subsets of $S$.
+    Then $\generatedOpens{S}{\generatedOpens{S}{B}}
+        =\generatedOpens{S}{B}$.
+\end{proposition}
+\begin{proof}
+    $\topologiesOn{S}$ is a closure system on $\pow{S}$ by
+        \obv{topologies_on_is_closure_system}.
+    $B\subseteq\pow{S}$ by \auto{pow_iff,subseteq}.
+    Follows by \auto{generated_opens,closure_hull_idempotent}.
+\end{proof}
+
+\begin{theorem}\label{topology_generates_itself}
+    Suppose $T$ is a topology on $S$.
+    Then $\generatedOpens{S}{T}=T$.
+\end{theorem}
+\begin{proof}
+    $T\in\topologiesOn{S}$ by \obv{topology_in_topologies_on}.
+    Follows by
+        \obv{generated_opens,topologies_on_is_closure_system,
+            closure_hull_already_closed}.
+\end{proof}
+
+\begin{definition}\label{generated_topology}
+    $\GeneratedTopology{S}{B}
+        =\TopologicalSpaceOn{S}{\generatedOpens{S}{B}}$.
+\end{definition}
+
+\begin{classification}\label{generated_topology_is_topological_space}
+    Suppose $B$ is a family of subsets of $S$.
+    Then $\GeneratedTopology{S}{B}$ is a topological space.
+\end{classification}
+\begin{proof}
+    $\generatedOpens{S}{B}$ is a topology on $S$ by
+        \obv{generated_opens_is_topology}.
+    Follows by
+        \auto{generated_topology,topological_space_on_is_topological_space}.
+\end{proof}
+
+\begin{theorem}\label{generated_topology_is_exact}
+    Suppose $B$ is a family of subsets of $S$.
+    Then $\GeneratedTopology{S}{B}$ is an exact topological space.
+\end{theorem}
+\begin{proof}
+    $\generatedOpens{S}{B}$ is a topology on $S$ by
+        \obv{generated_opens_is_topology}.
+    Follows by \auto{generated_topology,topological_space_on_is_exact}.
+\end{proof}
+
+\begin{proposition}\label{generated_topology_carrier}
+    $\carrier[\GeneratedTopology{S}{B}]=S$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{generated_topology,topological_space_on_carrier}.
+\end{proof}
+
+\begin{proposition}\label{generated_topology_opens}
+    $\opens[\GeneratedTopology{S}{B}]=\generatedOpens{S}{B}$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{generated_topology,topological_space_on_opens}.
+\end{proof}
+
+\begin{theorem}\label{empty_family_generates_indiscrete_opens}
+    $\generatedOpens{S}{\emptyset}=\indiscreteOpens{S}$.
+\end{theorem}
+\begin{proof}
+    $\emptyset$ is a family of subsets of $S$ by
+        \auto{emptyset_subseteq}.
+    $S\in\indiscreteOpens{S}$ by
+        \auto{indiscrete_opens,cons_iff,singleton_iff}.
+    $\indiscreteOpens{S}$ is a topology on $S$ by
+        \obv{topology_family,indiscrete_opens_type,
+            indiscrete_opens_intersection,indiscrete_opens_unions}.
+    $\emptyset\subseteq\indiscreteOpens{S}$ by
+        \obv{emptyset_subseteq}.
+    Hence $\generatedOpens{S}{\emptyset}\subseteq\indiscreteOpens{S}$ by
+        \obv{generated_opens_least}.
+    $\generatedOpens{S}{\emptyset}$ is a topology on $S$ by
+        \obv{generated_opens_is_topology}.
+    Hence $\emptyset,S\in\generatedOpens{S}{\emptyset}$ by
+        \obv{topology_family,topology_family_empty}.
+    Thus $\indiscreteOpens{S}\subseteq\generatedOpens{S}{\emptyset}$ by
+        \auto{indiscrete_opens,cons_iff,singleton_iff,subseteq}.
+    Follows by \obv{subseteq_antisymmetric}.
+\end{proof}
+
+\begin{theorem}\label{powerset_generates_discrete_opens}
+    $\generatedOpens{S}{\pow{S}}=\pow{S}$.
+\end{theorem}
+\begin{proof}
+    For every $A\in\pow{S}$ we have $A\subseteq S$ by
+        \obv{powerset_elim}.
+    Hence $\pow{S}$ is a family of subsets of $S$.
+    $\pow{S}\subseteq\generatedOpens{S}{\pow{S}}$ by
+        \obv{generated_opens_contains}.
+    $\generatedOpens{S}{\pow{S}}\subseteq\pow{S}$ by
+        \auto{generated_opens_type,subseteq}.
+    Follows by \obv{subseteq_antisymmetric}.
+\end{proof}

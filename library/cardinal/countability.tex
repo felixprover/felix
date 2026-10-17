@@ -1,0 +1,210 @@
+\section{Countability}
+
+\import{cardinal/reconciliation.tex}
+\import{cardinal/infinite.tex}
+\import{function.tex}
+\import{set/equinumerosity.tex}
+\import{set/logical-graph.tex}
+\import{set/choice.tex}
+
+\begin{proposition}\label{naturals_is_countable}
+    $\naturals$ is countable.
+\end{proposition}
+\begin{proof}
+    $\cardLe{\naturals}{\naturals}$ by \obv{cardinal_le_refl}.
+    Follows by \obv{cardinal_le,at_most_countable}.
+\end{proof}
+
+\begin{theorem}\label{countable_equinumerous}
+    Suppose $X\approx Y$.
+    Then $X$ is countable iff $Y$ is countable.
+\end{theorem}
+\begin{proof}
+    Show that if $X$ is countable, then $Y$ is countable.
+    \begin{subproof}
+        Assume $X$ is countable.
+        $\cardLe{X}{\naturals}$
+            by \obv{at_most_countable,cardinal_le}.
+        $\cardLe{Y}{X}$ by \obv{equinum_cardinal_le}.
+        Hence $\cardLe{Y}{\naturals}$ by \obv{cardinal_le_transitive}.
+        Follows by \obv{cardinal_le,at_most_countable}.
+    \end{subproof}
+    Show that if $Y$ is countable, then $X$ is countable.
+    \begin{subproof}
+        Assume $Y$ is countable.
+        $\cardLe{Y}{\naturals}$
+            by \obv{at_most_countable,cardinal_le}.
+        $\cardLe{X}{Y}$ by \obv{equinum_cardinal_le}.
+        Hence $\cardLe{X}{\naturals}$ by \obv{cardinal_le_transitive}.
+        Follows by \obv{cardinal_le,at_most_countable}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{countable_function_image}
+    Let $f$ be a function.
+    Suppose $A\subseteq\dom{f}$ and $A$ is countable.
+    Then $\img{f}{A}$ is countable.
+\end{theorem}
+\begin{proof}
+    Let $g=\restrl{f}{A}$.
+    $g$ is a function by \obv{restrl_of_function_is_function}.
+    $\dom{g}=\dom{f}\inter A$ by \auto{dom_of_restrl_eq_inter}.
+    Hence $\dom{g}=A$ by \obv{inter_absorb_supseteq_left}.
+    $\ran{g}=\img{f}{A}$ by \auto{restrl_ran}.
+    $g\in\funs{\dom{g}}{\ran{g}}$
+        by \obv{function_exact_type_to_range}.
+    Hence $g\in\funs{A}{\img{f}{A}}$.
+    Hence $g\in\surj{A}{\img{f}{A}}$ by \auto{fun_to_surj}.
+    Take $h$ such that $h\in\inj{\img{f}{A}}{A}$
+        by \auto{surjection_has_injective_section}.
+    Take $i$ such that $i\in\inj{A}{\naturals}$
+        by \auto{at_most_countable}.
+    $i\circ h\in\inj{\img{f}{A}}{\naturals}$ by \obv{inj_circ}.
+    Follows by \obv{at_most_countable}.
+\end{proof}
+
+\begin{corollary}\label{countable_function_range}
+    Let $f$ be a function.
+    Suppose $\dom{f}$ is countable.
+    Then $\ran{f}$ is countable.
+\end{corollary}
+\begin{proof}
+    $\img{f}{\dom{f}}$ is countable by \auto{countable_function_image,subseteq_refl}.
+    Follows by \obv{img_dom}.
+\end{proof}
+
+\begin{theorem}\label{product_of_countable_sets_is_countable}
+    Suppose $A$ and $B$ are countable.
+    Then $A\times B$ is countable.
+\end{theorem}
+\begin{proof}
+    $\naturals$ is an infinite cardinal by \obv{naturals_is_cardinal,naturals_is_infinite}.
+    Hence $\naturals\times\naturals\approx\naturals$ by \obv{infinite_cardinal_square}.
+    $\naturals\times\naturals$ is countable by \obv{countable_equinumerous,naturals_is_countable}.
+    Take $f$ such that $f\in\inj{A}{\naturals}$ by \auto{at_most_countable}.
+    Take $g$ such that $g\in\inj{B}{\naturals}$ by \auto{at_most_countable}.
+    Take $h$ such that $h\in\inj{A\times B}{\naturals\times\naturals}$
+        by \auto{times_injection_congruent}.
+    Take $e$ such that $e\in\inj{\naturals\times\naturals}{\naturals}$
+        by \auto{at_most_countable}.
+    $e\circ h\in\inj{A\times B}{\naturals}$ by \obv{inj_circ}.
+    Follows by \obv{at_most_countable}.
+\end{proof}
+
+\begin{theorem}\label{countable_replacement}
+    Suppose $A$ is countable.
+    Then $\forall F:\Set\to\Set.\ \cardLe{\repl{A}{F}}{\naturals}$.
+\end{theorem}
+\begin{proof}
+    Fix $F$.
+    Let $g=\Apply{\graphOnDomainOp}{A,F}$.
+    $g$ is a function and $\dom{g}=A$ by
+        \auto{logical_graph_on_domain_function,funs_is_function,logical_graph_on_domain_dom}.
+    Hence $\ran{g}$ is countable by \obv{countable_function_range}.
+    $\ran{g}=\repl{A}{F}$ by
+        \auto{setext,logical_replacement_iff,logical_graph_on_domain_range}.
+    Follows by \auto{at_most_countable,cardinal_le}.
+\end{proof}
+
+\begin{theorem}\label{countable_union_of_countable_sets}
+    Suppose $F$ is countable and every element of $F$ is countable.
+    Then $\unions{F}$ is countable.
+\end{theorem}
+\begin{proof}
+    Let $G=\{A\in F\mid A\neq\emptyset\}$.
+    $G\subseteq F$ by \obv{subseteq}.
+    Hence $G$ is countable by \obv{subseteq_countable_is_countable}.
+    $G\times\naturals$ is countable by
+        \obv{product_of_countable_sets_is_countable,naturals_is_countable}.
+    Let $D=\{\apply{\choice{\surj{\naturals}{\fst{p}}}}{\snd{p}}
+        \mid p\in G\times\naturals\}$.
+    $\cardLe{D}{\naturals}$ by \auto{countable_replacement}.
+    Hence $D$ is countable by \obv{cardinal_le,at_most_countable}.
+    Show that every element of $\unions{F}$ is an element of $D$.
+    \begin{subproof}
+        Fix $x\in\unions{F}$.
+        Take $A\in F$ such that $x\in A$ by \obv{unions_iff}.
+        $A\neq\emptyset$ by \auto{emptyset}.
+        Hence $A\in G$.
+        $A$ is enumerable by \obv{countable_implies_enumerable}.
+        $\surj{\naturals}{A}$ is inhabited by \auto{enumerable}.
+        Let $e=\choice{\surj{\naturals}{A}}$.
+        $e\in\surj{\naturals}{A}$ by \auto{choice_in}.
+        Take $n\in\naturals$ such that $e(n)=x$ by \obv{surj}.
+        $(A,n)\in G\times\naturals$ by \obv{times_tuple_intro}.
+        Follows by \auto{fst_eq,snd_eq}.
+    \end{subproof}
+    $\unions{F}\subseteq D$ by \obv{subseteq}.
+    Follows by \obv{subseteq_countable_is_countable}.
+\end{proof}
+
+\begin{proposition}\label{countable_cons}
+    Suppose $A$ is countable.
+    Then $\cons{x}{A}$ is countable.
+\end{proposition}
+\begin{proof}
+    \begin{byCase}
+        \caseOf{$A$ is finite.}
+            $\cons{x}{A}$ is finite by \obv{finite_cons}.
+            Follows by \obv{finite_is_countable}.
+        \caseOf{$A$ is not finite.}
+            Hence $A$ is countably infinite
+                by \obv{countable_iff_finite_or_countably_infinite}.
+            Hence $A$ is infinite by \obv{countably_infinite}.
+            $\cons{x}{A}\approx A$ by \obv{infinite_cons_equinumerous}.
+            Follows by \obv{countable_equinumerous}.
+    \end{byCase}
+\end{proof}
+
+\begin{theorem}\label{countably_infinite_iff_natural_bijection}
+    $X$ is countably infinite iff
+        there exists $e\in\bijections{\naturals}{X}$.
+\end{theorem}
+\begin{proof}
+    Follows by
+        \auto{countably_infinite_iff_card_naturals,card_of_naturals,
+            card_eq_iff_equinumerous,equinum}.
+\end{proof}
+
+\begin{theorem}\label{infinite_subset_of_naturals_is_countably_infinite}
+    Suppose $B\subseteq\naturals$ and $B$ is infinite.
+    Then $B$ is countably infinite.
+\end{theorem}
+\begin{proof}
+    $B$ is countable
+        by \obv{naturals_is_countable,subseteq_countable_is_countable}.
+    Follows by \obv{countably_infinite}.
+\end{proof}
+
+\begin{theorem}\label{infinite_set_has_countably_infinite_subset}
+    Suppose $X$ is infinite.
+    Then there exists $C\subseteq X$ such that $C$ is countably infinite.
+\end{theorem}
+\begin{proof}
+    Let $\kappa=\card{X}$.
+    $\kappa$ is an infinite cardinal
+        by \obv{card_of_infinite_set_is_infinite_cardinal}.
+    Hence $\naturals\subseteq\kappa$
+        by \obv{naturals_subseteq_infinite_cardinal}.
+    $\kappa\approx X$ by \auto{card_equinumerous}.
+    Take $e$ such that $e\in\bijections{\kappa}{X}$ by \obv{equinum}.
+    $e\in\funs{\kappa}{X}$ and $e$ is injective
+        by \obv{bijections_to_funs,bijections}.
+    Hence $e$ is a function and $\dom{e}=\kappa$
+        by \obv{funs_is_function,funs}.
+    For all $x,y\in\kappa$ such that $e(x)=e(y)$ we have $x=y$
+        by \auto{injective_function}.
+    Hence $e\in\inj{\kappa}{X}$ by \obv{inj}.
+    Let $r=\restrl{e}{\naturals}$.
+    $r\in\inj{\naturals}{X}$ by \auto{inj_restrl}.
+    Let $C=\ran{r}$.
+    $C\subseteq X$ by \auto{inj,funs_ran}.
+    $r\in\surj{\naturals}{C}$ by \auto{inj,fun_to_surj}.
+    $r$ is a function and $\dom{r}=\naturals$
+        by \auto{inj,funs_is_function,funs}.
+    $r$ is injective by \auto{inj,injective_function}.
+    Hence $r\in\bijections{\naturals}{C}$ by \obv{bijections}.
+    Hence $C$ is countably infinite
+        by \auto{countably_infinite_iff_natural_bijection}.
+\end{proof}

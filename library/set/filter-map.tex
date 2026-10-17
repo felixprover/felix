@@ -1,0 +1,368 @@
+\section{Maps of filters}
+
+\import{set/filter-eventual.tex}
+\import{function.tex}
+
+\subsection{Eventual equality}
+
+\begin{definition}\label{filter_eventual_equality_set}
+    $\filterEventualEqualitySet{S}{f}{g}
+        =\{x\in S\mid f(x)=g(x)\}$.
+\end{definition}
+
+\begin{proposition}\label{filter_eventual_equality_set_iff}
+    $x\in\filterEventualEqualitySet{S}{f}{g}$ iff
+        $x\in S$ and $f(x)=g(x)$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{filter_eventual_equality_set}.
+\end{proof}
+
+\begin{definition}\label{filter_eventually_equal}
+    $f$ is eventually equal to $g$ along $F$ from $S$ to $T$ iff
+        $F$ is a filter on $S$ and $f,g\in\funs{S}{T}$ and
+        $\filterEventualEqualitySet{S}{f}{g}\in F$.
+\end{definition}
+
+\begin{proposition}\label{filter_eventually_equal_reflexive}
+    Let $F$ be a filter on $S$ and $f\in\funs{S}{T}$.
+    Then $f$ is eventually equal to $f$ along $F$ from $S$ to $T$.
+\end{proposition}
+\begin{proof}
+    $\filterEventualEqualitySet{S}{f}{f}=S$ by
+        \obv{filter_eventual_equality_set_iff,setext}.
+    $S\in F$ by \obv{filter}.
+    Follows by \obv{filter_eventually_equal}.
+\end{proof}
+
+\begin{proposition}\label{filter_eventually_equal_symmetric}
+    Let $F$ be a filter on $S$ and $f,g\in\funs{S}{T}$.
+    Suppose $f$ is eventually equal to $g$ along $F$ from $S$ to $T$.
+    Then $g$ is eventually equal to $f$ along $F$ from $S$ to $T$.
+\end{proposition}
+\begin{proof}
+    $\filterEventualEqualitySet{S}{f}{g}\in F$ by
+        \obv{filter_eventually_equal}.
+    $\filterEventualEqualitySet{S}{f}{g}
+        =\filterEventualEqualitySet{S}{g}{f}$ by
+        \obv{filter_eventual_equality_set_iff,setext}.
+    Hence $\filterEventualEqualitySet{S}{g}{f}\in F$.
+    Follows by \obv{filter_eventually_equal}.
+\end{proof}
+
+\begin{proposition}\label{filter_eventually_equal_transitive}
+    Let $F$ be a filter on $S$ and $f,g,h\in\funs{S}{T}$.
+    Suppose $f$ is eventually equal to $g$ along $F$ from $S$ to $T$.
+    Suppose $g$ is eventually equal to $h$ along $F$ from $S$ to $T$.
+    Then $f$ is eventually equal to $h$ along $F$ from $S$ to $T$.
+\end{proposition}
+\begin{proof}
+    Let $A=\filterEventualEqualitySet{S}{f}{g}$.
+    Let $B=\filterEventualEqualitySet{S}{g}{h}$.
+    Let $C=\filterEventualEqualitySet{S}{f}{h}$.
+    $A,B\in F$ by \obv{filter_eventually_equal}.
+    Hence $A\inter B\in F$ by \obv{filter}.
+    $A\inter B\subseteq C$ by
+        \auto{filter_eventual_equality_set_iff,inter,subseteq}.
+    $C\subseteq S$ by
+        \auto{filter_eventual_equality_set_iff,subseteq}.
+    Hence $C\in F$ by \obv{filter}.
+    Follows by \obv{filter_eventually_equal}.
+\end{proof}
+
+\subsection{Preimages under functions}
+
+\begin{proposition}\label{function_preimage_intersection}
+    Let $f$ be a function.
+    Then $\preimg{f}{A\inter B}
+        =\preimg{f}{A}\inter\preimg{f}{B}$.
+\end{proposition}
+\begin{proof}
+    Show that for every $x\in\preimg{f}{A\inter B}$ we have
+        $x\in\preimg{f}{A}\inter\preimg{f}{B}$.
+    \begin{subproof}
+        Fix $x\in\preimg{f}{A\inter B}$.
+        Take $y\in A\inter B$ such that $(x,y)\in f$ by
+            \obv{preimg_iff}.
+        $y\in A$ and $y\in B$ by \obv{inter}.
+        Hence $x\in\preimg{f}{A}$ and $x\in\preimg{f}{B}$ by
+            \auto{preimg_iff}.
+        Follows by \obv{inter_intro}.
+    \end{subproof}
+    Show that for every $x\in\preimg{f}{A}\inter\preimg{f}{B}$ we have
+        $x\in\preimg{f}{A\inter B}$.
+    \begin{subproof}
+        Fix $x\in\preimg{f}{A}\inter\preimg{f}{B}$.
+        $x\in\preimg{f}{A}$ and $x\in\preimg{f}{B}$ by \obv{inter}.
+        Take $a\in A$ such that $(x,a)\in f$ by \obv{preimg_iff}.
+        Take $b\in B$ such that $(x,b)\in f$ by \obv{preimg_iff}.
+        $f(x)=a$ and $f(x)=b$ by \obv{function_apply_intro}.
+        Hence $a=b$.
+        Hence $a\in A\inter B$ by \obv{inter_intro}.
+        Follows by \obv{preimg_iff}.
+    \end{subproof}
+    Follows by set extensionality.
+\end{proof}
+
+\begin{proposition}\label{preimage_emptyset}
+    $\preimg{R}{\emptyset}=\emptyset$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{preimg_iff,emptyset,setext}.
+\end{proof}
+
+\begin{proposition}\label{function_preimage_identity}
+    Suppose $B\subseteq S$.
+    Then $\preimg{\identity{S}}{B}=B$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{preimg_iff,id_iff,subseteq,setext}.
+\end{proof}
+
+\begin{theorem}\label{image_subseteq_iff_subseteq_preimage}
+    Let $f\in\funs{S}{T}$.
+    Suppose $A\subseteq S$.
+    Then $\img{f}{A}\subseteq B$ iff $A\subseteq\preimg{f}{B}$.
+\end{theorem}
+\begin{proof}
+    Show that if $\img{f}{A}\subseteq B$, then
+        $A\subseteq\preimg{f}{B}$.
+    \begin{subproof}
+        Assume $\img{f}{A}\subseteq B$.
+        Show that every element of $A$ is an element of $\preimg{f}{B}$.
+        \begin{subproof}
+            Fix $x\in A$.
+            $x\in S$ by \obv{subseteq}.
+            $S=\dom{f}$ by \obv{funs}.
+            Hence $x\in\dom{f}$.
+            $f(x)\in\img{f}{A}$ by
+                \obv{img_of_function_intro,funs_is_function,inter_intro}.
+            Hence $f(x)\in B$ by \obv{subseteq}.
+            $(x,f(x))\in f$ by
+                \obv{funs_is_function,function_apply_elim}.
+            Follows by \obv{preimg_iff}.
+        \end{subproof}
+        Follows by \obv{subseteq}.
+    \end{subproof}
+    Show that if $A\subseteq\preimg{f}{B}$, then
+        $\img{f}{A}\subseteq B$.
+    \begin{subproof}
+        Assume $A\subseteq\preimg{f}{B}$.
+        Show that every element of $\img{f}{A}$ is an element of $B$.
+        \begin{subproof}
+            Fix $y\in\img{f}{A}$.
+            Take $x\in\dom{f}\inter A$ such that $y=f(x)$ by
+                \obv{img_of_function_elim,funs_is_function}.
+            $x\in A$ by \obv{inter}.
+            Hence $x\in\preimg{f}{B}$ by \obv{subseteq}.
+            Take $b\in B$ such that $(x,b)\in f$ by \obv{preimg_iff}.
+            $f(x)=b$ by \obv{funs_is_function,function_apply_intro}.
+        \end{subproof}
+        Follows by \obv{subseteq}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\subsection{Pushforward filters}
+
+\begin{definition}\label{filter_pushforward}
+    $\filterPushforward{S}{T}{f}{F}
+        =\{B\in\pow{T}\mid\preimg{f}{B}\in F\}$.
+\end{definition}
+
+\begin{proposition}\label{filter_pushforward_iff}
+    $B\in\filterPushforward{S}{T}{f}{F}$ iff
+        $B\subseteq T$ and $\preimg{f}{B}\in F$.
+\end{proposition}
+\begin{proof}
+    Show that if $B\in\filterPushforward{S}{T}{f}{F}$, then
+        $B\subseteq T$ and $\preimg{f}{B}\in F$.
+    \begin{subproof}
+        Assume $B\in\filterPushforward{S}{T}{f}{F}$.
+        Hence $B\in\pow{T}$ and $\preimg{f}{B}\in F$ by
+            \obv{filter_pushforward}.
+        Thus $B\subseteq T$ by \obv{powerset_elim}.
+    \end{subproof}
+    Show that if $B\subseteq T$ and $\preimg{f}{B}\in F$, then
+        $B\in\filterPushforward{S}{T}{f}{F}$.
+    \begin{subproof}
+        Assume $B\subseteq T$ and $\preimg{f}{B}\in F$.
+        Hence $B\in\pow{T}$ by \obv{powerset_intro}.
+        Follows by \obv{filter_pushforward}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{classification}\label{filter_pushforward_is_filter}
+    Let $f\in\funs{S}{T}$ and $F$ be a filter on $S$.
+    Then $\filterPushforward{S}{T}{f}{F}$ is a filter on $T$.
+\end{classification}
+\begin{proof}
+    $\filterPushforward{S}{T}{f}{F}$ is a family of subsets of $T$ by
+        \auto{filter_pushforward_iff,subseteq}.
+    $\preimg{f}{T}=S$ by \obv{preimg_codom_of_function}.
+    $S\in F$ by \obv{filter}.
+    Hence $T\in\filterPushforward{S}{T}{f}{F}$ by
+        \auto{filter_pushforward_iff,subseteq_refl}.
+
+    Show that $\filterPushforward{S}{T}{f}{F}$ is closed under binary
+        intersections.
+    \begin{subproof}
+        Fix $A,B\in\filterPushforward{S}{T}{f}{F}$.
+        $A,B\subseteq T$ and $\preimg{f}{A},\preimg{f}{B}\in F$ by
+            \obv{filter_pushforward_iff}.
+        Hence $\preimg{f}{A}\inter\preimg{f}{B}\in F$ by \obv{filter}.
+        $f$ is a function by \obv{funs_is_function}.
+        $\preimg{f}{A\inter B}
+            =\preimg{f}{A}\inter\preimg{f}{B}$ by
+            \obv{function_preimage_intersection}.
+        Hence $\preimg{f}{A\inter B}\in F$.
+        $A\inter B\subseteq T$ by \obv{inter_subseteq}.
+        Follows by \auto{filter_pushforward_iff}.
+    \end{subproof}
+
+    Show that $\filterPushforward{S}{T}{f}{F}$ is upward-closed in $T$.
+    \begin{subproof}
+        Fix $A,B$.
+        Assume $A\subseteq B\subseteq T$ and
+            $A\in\filterPushforward{S}{T}{f}{F}$.
+        $\preimg{f}{A}\in F$ by \obv{filter_pushforward_iff}.
+        $\preimg{f}{A}\subseteq\preimg{f}{B}$ by \obv{preimg_subseteq}.
+        $\preimg{f}{B}\subseteq S$ by
+            \auto{preimg_subseteq_dom,funs}.
+        Hence $\preimg{f}{B}\in F$ by \obv{filter}.
+        $B\in\pow{T}$ by \obv{powerset_intro}.
+        Follows by \obv{filter_pushforward}.
+    \end{subproof}
+    Follows by \obv{filter}.
+\end{proof}
+
+\begin{theorem}\label{filter_pushforward_preserves_properness}
+    Let $f\in\funs{S}{T}$ and $F$ be a proper filter on $S$.
+    Then $\filterPushforward{S}{T}{f}{F}$ is a proper filter on $T$.
+\end{theorem}
+\begin{proof}
+    $F$ is a filter on $S$ by \obv{proper_filter}.
+    Hence $\filterPushforward{S}{T}{f}{F}$ is a filter on $T$ by notion.
+    $\preimg{f}{\emptyset}=\emptyset$ by
+        \obv{preimage_emptyset}.
+    $\emptyset\notin F$ by \obv{proper_filter}.
+    Hence $\emptyset\notin\filterPushforward{S}{T}{f}{F}$ by
+        \auto{filter_pushforward_iff,emptyset_subseteq}.
+    Follows by \obv{proper_filter}.
+\end{proof}
+
+\begin{theorem}\label{identity_filter_pushforward}
+    Let $F$ be a filter on $S$.
+    Then $\filterPushforward{S}{S}{\identity{S}}{F}=F$.
+\end{theorem}
+\begin{proof}
+    Show that for every $B$ we have
+        $B\in\filterPushforward{S}{S}{\identity{S}}{F}$ iff $B\in F$.
+    \begin{subproof}
+        Fix $B$.
+        If $B\in F$, then $B\subseteq S$ by \obv{filter}.
+        If $B\subseteq S$, then
+            $\preimg{\identity{S}}{B}=B$ by
+            \obv{function_preimage_identity}.
+        Follows by \auto{filter_pushforward_iff,filter}.
+    \end{subproof}
+    Follows by set extensionality.
+\end{proof}
+
+\begin{theorem}\label{composition_filter_pushforward}
+    Let $f\in\funs{S}{T}$ and $g\in\funs{T}{U}$.
+    Let $F$ be a filter on $S$.
+    Then $\filterPushforward{S}{U}{g\circ f}{F}
+        =\filterPushforward{T}{U}{g}{\filterPushforward{S}{T}{f}{F}}$.
+\end{theorem}
+\begin{proof}
+    $g\circ f\in\funs{S}{U}$ by \obv{funs_circ}.
+    $\filterPushforward{S}{T}{f}{F}$ is a filter on $T$ by notion.
+    Show that for every $B$ we have
+        $B\in\filterPushforward{S}{U}{g\circ f}{F}$ iff
+        $B\in\filterPushforward{T}{U}{g}{
+            \filterPushforward{S}{T}{f}{F}}$.
+    \begin{subproof}
+        Fix $B$.
+        $\preimg{g\circ f}{B}=\preimg{f}{\preimg{g}{B}}$ by
+            \obv{preimg_circ}.
+        If $B\subseteq U$, then $\preimg{g}{B}\subseteq T$ by
+            \auto{preimg_subseteq_dom,funs}.
+        Follows by \auto{filter_pushforward_iff}.
+    \end{subproof}
+    Follows by set extensionality.
+\end{proof}
+
+\begin{theorem}\label{principal_filter_pushforward}
+    Let $f\in\funs{S}{T}$.
+    Suppose $A\subseteq S$.
+    Then $\filterPushforward{S}{T}{f}{\principalfilter{S}{A}}
+        =\principalfilter{T}{\img{f}{A}}$.
+\end{theorem}
+\begin{proof}
+    $\img{f}{A}\subseteq T$ by \obv{funs_image_subseteq}.
+    Show that $\filterPushforward{S}{T}{f}{\principalfilter{S}{A}}
+        \subseteq\principalfilter{T}{\img{f}{A}}$.
+    \begin{subproof}
+        It suffices to show that every element of
+            $\filterPushforward{S}{T}{f}{\principalfilter{S}{A}}$ is an
+            element of $\principalfilter{T}{\img{f}{A}}$ by \obv{subseteq}.
+        Fix $B\in\filterPushforward{S}{T}{f}{\principalfilter{S}{A}}$.
+        $B\in\pow{T}$ and $\preimg{f}{B}\in\principalfilter{S}{A}$ by
+            \obv{filter_pushforward}.
+        Hence $B\subseteq T$ by \obv{powerset_elim}.
+        $\preimg{f}{B}\subseteq S$ by
+            \obv{preimg_subseteq_dom,funs}.
+        Hence $A\subseteq\preimg{f}{B}$ by \obv{principalfilter_iff}.
+        Thus $\img{f}{A}\subseteq B$ by
+            \auto{image_subseteq_iff_subseteq_preimage}.
+        Follows by \obv{principalfilter_iff}.
+    \end{subproof}
+    Show that $\principalfilter{T}{\img{f}{A}}
+        \subseteq\filterPushforward{S}{T}{f}{\principalfilter{S}{A}}$.
+    \begin{subproof}
+        It suffices to show that every element of
+            $\principalfilter{T}{\img{f}{A}}$ is an element of
+            $\filterPushforward{S}{T}{f}{\principalfilter{S}{A}}$ by
+            \obv{subseteq}.
+        Fix $B\in\principalfilter{T}{\img{f}{A}}$.
+        $B\subseteq T$ and $\img{f}{A}\subseteq B$ by
+            \auto{principalfilter,pow_iff,subseteq}.
+        Hence $A\subseteq\preimg{f}{B}$ by
+            \auto{image_subseteq_iff_subseteq_preimage}.
+        $\preimg{f}{B}\subseteq S$ by
+            \obv{preimg_subseteq_dom,funs}.
+        Hence $\preimg{f}{B}\in\pow{S}$ by \obv{powerset_intro}.
+        Hence $\preimg{f}{B}\in\principalfilter{S}{A}$ by
+            \obv{principalfilter}.
+        $B\in\pow{T}$ by \obv{powerset_intro}.
+        Follows by \obv{filter_pushforward}.
+    \end{subproof}
+    Follows by \obv{subseteq_antisymmetric}.
+\end{proof}
+
+\begin{proposition}\label{function_image_singleton}
+    Let $f\in\funs{S}{T}$ and $a\in S$.
+    Then $\img{f}{\{a\}}=\{f(a)\}$.
+\end{proposition}
+\begin{proof}
+    $f$ is a function and $S=\dom{f}$ by
+        \obv{funs_is_function,funs}.
+    Follows by
+        \auto{setext,img_singleton_iff,singleton_iff,function_apply_iff}.
+\end{proof}
+
+\begin{corollary}\label{pure_filter_pushforward}
+    Let $f\in\funs{S}{T}$ and $a\in S$.
+    Then $\filterPushforward{S}{T}{f}{\pureFilter{S}{a}}
+        =\pureFilter{T}{f(a)}$.
+\end{corollary}
+\begin{proof}
+    $\{a\}\subseteq S$ by \obv{singleton_subset_intro}.
+    $\filterPushforward{S}{T}{f}{\principalfilter{S}{\{a\}}}
+        =\principalfilter{T}{\img{f}{\{a\}}}$ by
+        \obv{principal_filter_pushforward}.
+    $\img{f}{\{a\}}=\{f(a)\}$ by \obv{function_image_singleton}.
+    Follows by \auto{pure_filter}.
+\end{proof}

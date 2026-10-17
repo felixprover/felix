@@ -1,0 +1,982 @@
+\import{algebra/group/coset.tex}
+\import{algebra/group/normal.tex}
+\import{relation/quotient-lift.tex}
+
+\section{Quotient groups}
+
+For a normal subgroup carrier $N$ of $G$, the carrier below is the set of
+left cosets, presented canonically as equivalence classes.  All operation
+graphs are obtained through the representative-free quotient-descent API.
+
+\subsection{Congruence of the coset relation}
+
+\begin{lemma}\label{subgroup_coset_relation_left_mul}
+    Suppose $\subgroup{N}{G}$.
+    Let $a,b,b'\in\carrier[G]$.
+    Suppose
+        $b\mathrel{\subgroupCosetRelation{G}{N}}b'$.
+    Then
+        $\mul[G](a,b)
+            \mathrel{\subgroupCosetRelation{G}{N}}
+        \mul[G](a,b')$.
+\end{lemma}
+\begin{proof}
+    Let $E=\subgroupCosetRelation{G}{N}$.
+    $G$ is a group by \obv{subgroup_ambient_group}.
+    $\mul[G](a,b),\mul[G](a,b')\in\carrier[G]$ by
+        \obv{group_is_monoid,monoid_is_magma,magma_welldef}.
+    $\mul[G](\groupInv[G](b),b')\in N$ by
+        \auto{subgroup_coset_relation_iff}.
+    $\groupInv[G](a),\groupInv[G](b)\in\carrier[G]$ by
+        \obv{group_inverse_type}.
+    $\groupInv[G](\mul[G](a,b))=
+        \mul[G](\groupInv[G](b),\groupInv[G](a))$ by
+        \obv{group_inverse_product}.
+    $\mul[G]
+        (\groupInv[G](\mul[G](a,b)),\mul[G](a,b'))
+        =\mul[G](\groupInv[G](b),b')$ by
+        \auto{group_is_monoid,monoid_assoc,monoid_is_magma,magma_welldef,group_inverse_left,monoid_is_unital_magma,unitalmagma_left}.
+    Hence
+        $\mul[G]
+            (\groupInv[G](\mul[G](a,b)),\mul[G](a,b'))\in N$.
+    Follows by \auto{subgroup_coset_relation_iff}.
+\end{proof}
+
+\begin{lemma}\label{normal_coset_relation_right_mul}
+    Suppose $\normalSubgroup{N}{G}$.
+    Let $a,a',b\in\carrier[G]$.
+    Suppose
+        $a\mathrel{\subgroupCosetRelation{G}{N}}a'$.
+    Then
+        $\mul[G](a,b)
+            \mathrel{\subgroupCosetRelation{G}{N}}
+        \mul[G](a',b)$.
+\end{lemma}
+\begin{proof}
+    Let $E=\subgroupCosetRelation{G}{N}$.
+    $G$ is a group by \obv{normal_subgroup_ambient_group}.
+    Hence $G$ is a monoid by \obv{group_is_monoid}.
+    $\mul[G](a,b),\mul[G](a',b)\in\carrier[G]$ by
+        \obv{monoid_is_magma,magma_welldef}.
+    Let $n=\mul[G](\groupInv[G](a),a')$.
+    $n\in N$ by \auto{subgroup_coset_relation_iff}.
+    Hence $n\in\carrier[G]$ by
+        \auto{normal_subgroup_subseteq,subseteq}.
+    $\groupInv[G](b)\in\carrier[G]$ by \obv{group_inverse_type}.
+    $\conjugate{G}{\groupInv[G](b)}{n}\in N$ by
+        \obv{normal_subgroup_closed_under_conjugation}.
+    $\groupInv[G](\groupInv[G](b))=b$ by
+        \obv{group_inverse_involutive}.
+    $\conjugate{G}{\groupInv[G](b)}{n}
+        =\mul[G]
+            (\mul[G](\groupInv[G](b),n),
+             \groupInv[G](\groupInv[G](b)))$ by
+        \obv{group_conjugate}.
+    Hence
+        $\conjugate{G}{\groupInv[G](b)}{n}
+            =\mul[G](\mul[G](\groupInv[G](b),n),b)$.
+    $\mul[G](\mul[G](\groupInv[G](b),n),b)
+        =\mul[G](\groupInv[G](b),\mul[G](n,b))$ by
+        \obv{monoid_assoc}.
+    Hence
+        $\conjugate{G}{\groupInv[G](b)}{n}
+            =\mul[G](\groupInv[G](b),\mul[G](n,b))$.
+    $\groupInv[G](\mul[G](a,b))=
+        \mul[G](\groupInv[G](b),\groupInv[G](a))$ by
+        \obv{group_inverse_product}.
+    $\groupInv[G](a)\in\carrier[G]$ by
+        \obv{group_inverse_type}.
+    $\mul[G](a',b)\in\carrier[G]$ and
+        $\mul[G](\groupInv[G](a),\mul[G](a',b))\in\carrier[G]$ by
+        \obv{monoid_is_magma,magma_welldef}.
+    $\mul[G]
+        (\mul[G](\groupInv[G](b),\groupInv[G](a)),
+         \mul[G](a',b))
+        =\mul[G]
+            (\groupInv[G](b),
+             \mul[G](\groupInv[G](a),\mul[G](a',b)))$ by
+        \obv{monoid_assoc}.
+    $\mul[G](\groupInv[G](a),\mul[G](a',b))
+        =\mul[G](\mul[G](\groupInv[G](a),a'),b)$ by
+        \obv{monoid_assoc}.
+    \begin{align*}
+        \mul[G](\groupInv[G](\mul[G](a,b)),\mul[G](a',b))
+            &= \mul[G]
+                (\mul[G](\groupInv[G](b),\groupInv[G](a)),
+                 \mul[G](a',b))
+            \\
+            &= \mul[G]
+                (\groupInv[G](b),
+                 \mul[G](\groupInv[G](a),\mul[G](a',b)))
+            \\
+            &= \mul[G]
+                (\groupInv[G](b),
+                 \mul[G](\mul[G](\groupInv[G](a),a'),b))
+            \\
+            &= \mul[G](\groupInv[G](b),\mul[G](n,b))
+            \\
+            &= \conjugate{G}{\groupInv[G](b)}{n}
+    \end{align*}
+    Hence
+        $\mul[G]
+            (\groupInv[G](\mul[G](a,b)),\mul[G](a',b))\in N$.
+    Follows by \auto{subgroup_coset_relation_iff}.
+\end{proof}
+
+\begin{theorem}\label{normal_coset_relation_mul_congruent}
+    Suppose $\normalSubgroup{N}{G}$.
+    Let $a,a',b,b'\in\carrier[G]$.
+    Suppose
+        $a\mathrel{\subgroupCosetRelation{G}{N}}a'$ and
+        $b\mathrel{\subgroupCosetRelation{G}{N}}b'$.
+    Then
+        $\mul[G](a,b)
+            \mathrel{\subgroupCosetRelation{G}{N}}
+        \mul[G](a',b')$.
+\end{theorem}
+\begin{proof}
+    Let $E=\subgroupCosetRelation{G}{N}$.
+    $\subgroup{N}{G}$ by \obv{normal_subgroup_is_subgroup}.
+    $\mul[G](a,b)\mathrel{E}\mul[G](a',b)$ by
+        \obv{normal_coset_relation_right_mul}.
+    $\mul[G](a',b)\mathrel{E}\mul[G](a',b')$ by
+        \obv{subgroup_coset_relation_left_mul}.
+    $E$ is transitive by
+        \auto{subgroup_coset_relation_equivalence}.
+    Follows by \auto{transitive}.
+\end{proof}
+
+\begin{theorem}\label{normal_coset_relation_inverse_congruent}
+    Suppose $\normalSubgroup{N}{G}$.
+    Let $a,a'\in\carrier[G]$.
+    Suppose
+        $a\mathrel{\subgroupCosetRelation{G}{N}}a'$.
+    Then
+        $\groupInv[G](a)
+            \mathrel{\subgroupCosetRelation{G}{N}}
+        \groupInv[G](a')$.
+\end{theorem}
+\begin{proof}
+    Let $E=\subgroupCosetRelation{G}{N}$.
+    $G$ is a group by \obv{normal_subgroup_ambient_group}.
+    $\subgroup{N}{G}$ by \obv{normal_subgroup_is_subgroup}.
+    $\groupInv[G](a'),\neutral[G]\in\carrier[G]$ by
+        \obv{group_inverse_type,group_is_monoid,monoid_is_unital_magma,unitalmagma_type}.
+    $\mul[G](a,\groupInv[G](a'))
+        \mathrel{E}
+        \mul[G](a',\groupInv[G](a'))$ by
+        \obv{normal_coset_relation_right_mul}.
+    $\mul[G](a',\groupInv[G](a'))=\neutral[G]$ by
+        \obv{group_inverse_right}.
+    Hence
+        $\mul[G](a,\groupInv[G](a'))\mathrel{E}\neutral[G]$.
+    $\groupInv[G](a)\in\carrier[G]$ by \obv{group_inverse_type}.
+    $\mul[G](a,\groupInv[G](a'))\in\carrier[G]$ by
+        \obv{group_is_monoid,monoid_is_magma,magma_welldef}.
+    Hence
+        $\mul[G](\groupInv[G](a),
+                 \mul[G](a,\groupInv[G](a')))
+            \mathrel{E}
+        \mul[G](\groupInv[G](a),\neutral[G])$ by
+        \obv{subgroup_coset_relation_left_mul}.
+    $\mul[G](\groupInv[G](a),
+             \mul[G](a,\groupInv[G](a')))
+        =\groupInv[G](a')$ by
+        \auto{group_is_monoid,monoid_assoc,group_inverse_left,monoid_is_unital_magma,unitalmagma_left}.
+    $\mul[G](\groupInv[G](a),\neutral[G])=\groupInv[G](a)$ by
+        \obv{group_is_monoid,monoid_is_unital_magma,unitalmagma_right}.
+    Hence $\groupInv[G](a')\mathrel{E}\groupInv[G](a)$.
+    $E$ is symmetric by
+        \auto{subgroup_coset_relation_equivalence}.
+    Follows by \auto{symmetric}.
+\end{proof}
+
+\subsection{The descended operation graphs}
+
+\begin{definition}\label{group_quotient_carrier}
+    $\groupQuotientCarrier{G}{N}=
+        \quotient{\carrier[G]}{\subgroupCosetRelation{G}{N}}$.
+\end{definition}
+
+\begin{definition}\label{group_quotient_projection}
+    $\groupQuotientProjection{G}{N}=
+        \quotientProjection{\carrier[G]}{\subgroupCosetRelation{G}{N}}$.
+\end{definition}
+
+\begin{proposition}\label{group_quotient_projection_type}
+    Suppose $\normalSubgroup{N}{G}$.
+    Then $\groupQuotientProjection{G}{N}\in
+        \funs{\carrier[G]}{\groupQuotientCarrier{G}{N}}$.
+\end{proposition}
+\begin{proof}
+    $\subgroup{N}{G}$ by \obv{normal_subgroup_is_subgroup}.
+    $\subgroupCosetRelation{G}{N}$ is an equivalence on
+        $\carrier[G]$ by \obv{subgroup_coset_relation_equivalence}.
+    Follows by
+        \auto{group_quotient_projection,group_quotient_carrier,quotient_projection_type}.
+\end{proof}
+
+\begin{proposition}\label{group_quotient_projection_apply}
+    Suppose $\normalSubgroup{N}{G}$.
+    Let $a\in\carrier[G]$.
+    Then
+        $\apply{\groupQuotientProjection{G}{N}}{a}=
+            \equivalenceClass{\subgroupCosetRelation{G}{N}}{a}$.
+\end{proposition}
+\begin{proof}
+    $\subgroup{N}{G}$ by \obv{normal_subgroup_is_subgroup}.
+    $\subgroupCosetRelation{G}{N}$ is an equivalence on
+        $\carrier[G]$ by \obv{subgroup_coset_relation_equivalence}.
+    Follows by
+        \auto{group_quotient_projection,quotient_projection_apply}.
+\end{proof}
+
+\begin{proposition}\label{group_quotient_carrier_iff_left_coset}
+    Suppose $\normalSubgroup{N}{G}$.
+    Then $U\in\groupQuotientCarrier{G}{N}$ iff
+        there exists $a\in\carrier[G]$ such that
+            $U=\leftCoset{G}{a}{N}$.
+\end{proposition}
+\begin{proof}
+    Let $E=\subgroupCosetRelation{G}{N}$.
+    $\subgroup{N}{G}$ by \obv{normal_subgroup_is_subgroup}.
+    Show that if $U\in\groupQuotientCarrier{G}{N}$, then
+        there exists $a\in\carrier[G]$ such that
+            $U=\leftCoset{G}{a}{N}$.
+    \begin{subproof}
+        Assume $U\in\groupQuotientCarrier{G}{N}$.
+        Take $a\in\carrier[G]$ such that
+            $U=\equivalenceClass{E}{a}$ by
+            \auto{group_quotient_carrier,quotient}.
+        $\equivalenceClass{E}{a}=\leftCoset{G}{a}{N}$ by
+            \auto{subgroup_coset_equivalence_class}.
+        Follows by \auto.
+    \end{subproof}
+    Show that if there exists $a\in\carrier[G]$ such that
+        $U=\leftCoset{G}{a}{N}$, then
+        $U\in\groupQuotientCarrier{G}{N}$.
+    \begin{subproof}
+        Assume there exists $a\in\carrier[G]$ such that
+            $U=\leftCoset{G}{a}{N}$.
+        Take $a\in\carrier[G]$ such that
+            $U=\leftCoset{G}{a}{N}$.
+        $\leftCoset{G}{a}{N}=\equivalenceClass{E}{a}$ by
+            \auto{subgroup_coset_equivalence_class}.
+        Follows by \auto{group_quotient_carrier,quotient}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{definition}\label{quotient_representative_multiplication}
+    $\quotientRepresentativeMultiplication{G}{N}=
+        \groupQuotientProjection{G}{N}\circ\mul[G]$.
+\end{definition}
+
+\begin{definition}\label{quotient_representative_inverse}
+    $\quotientRepresentativeInverse{G}{N}=
+        \groupQuotientProjection{G}{N}\circ\groupInv[G]$.
+\end{definition}
+
+\begin{proposition}\label{quotient_representative_multiplication_type}
+    Suppose $\normalSubgroup{N}{G}$.
+    Then $\quotientRepresentativeMultiplication{G}{N}\in
+        \funs{
+            \carrier[G]\times\carrier[G]}
+            {\groupQuotientCarrier{G}{N}}$.
+\end{proposition}
+\begin{proof}
+    $G$ is a group by \obv{normal_subgroup_ambient_group}.
+    $\mul[G]\in
+        \funs{\carrier[G]\times\carrier[G]}{\carrier[G]}$ by
+        \obv{group_is_monoid,monoid_is_magma,magma_mul_graph}.
+    $\groupQuotientProjection{G}{N}\in
+        \funs{\carrier[G]}{\groupQuotientCarrier{G}{N}}$ by
+        \obv{group_quotient_projection_type}.
+    Follows by \auto{quotient_representative_multiplication,funs_circ}.
+\end{proof}
+
+\begin{proposition}\label{quotient_representative_multiplication_apply}
+    Suppose $\normalSubgroup{N}{G}$.
+    Let $a,b\in\carrier[G]$.
+    Then
+        $\apply{\quotientRepresentativeMultiplication{G}{N}}{(a,b)}=
+            \equivalenceClass
+                {\subgroupCosetRelation{G}{N}}
+                {\mul[G](a,b)}$.
+\end{proposition}
+\begin{proof}
+    Let $q=\groupQuotientProjection{G}{N}$.
+    $G$ is a group by \obv{normal_subgroup_ambient_group}.
+    $\mul[G]$ is a function and $\dom{\mul[G]}=
+        \carrier[G]\times\carrier[G]$ by
+        \auto{group_is_monoid,monoid_is_magma,magma_mul_graph,funs_elim}.
+    $q$ is a function and $\dom{q}=\carrier[G]$ by
+        \auto{group_quotient_projection_type,funs_elim}.
+    $\ran{\mul[G]}\subseteq\carrier[G]$ by
+        \auto{group_is_monoid,monoid_is_magma,magma_mul_graph,funs_ran}.
+    Hence $q$ is composable with $\mul[G]$.
+    $\mul[G](a,b)\in\carrier[G]$ by
+        \obv{group_is_monoid,monoid_is_magma,magma_welldef}.
+    $(q\circ\mul[G])((a,b))=q(\mul[G](a,b))$ by
+        \auto{circ_apply,times_tuple_intro}.
+    $q(\mul[G](a,b))=
+        \equivalenceClass
+            {\subgroupCosetRelation{G}{N}}
+            {\mul[G](a,b)}$ by
+        \auto{group_quotient_projection_apply}.
+    Follows by \auto{quotient_representative_multiplication}.
+\end{proof}
+
+\begin{proposition}\label{quotient_representative_inverse_type}
+    Suppose $\normalSubgroup{N}{G}$.
+    Then $\quotientRepresentativeInverse{G}{N}\in
+        \funs{\carrier[G]}{\groupQuotientCarrier{G}{N}}$.
+\end{proposition}
+\begin{proof}
+    $G$ is a group by \obv{normal_subgroup_ambient_group}.
+    $\groupInv[G]\in\funs{\carrier[G]}{\carrier[G]}$ by
+        \obv{group_inverse_graph}.
+    $\groupQuotientProjection{G}{N}\in
+        \funs{\carrier[G]}{\groupQuotientCarrier{G}{N}}$ by
+        \obv{group_quotient_projection_type}.
+    Follows by \auto{quotient_representative_inverse,funs_circ}.
+\end{proof}
+
+\begin{proposition}\label{quotient_representative_inverse_apply}
+    Suppose $\normalSubgroup{N}{G}$.
+    Let $a\in\carrier[G]$.
+    Then
+        $\apply{\quotientRepresentativeInverse{G}{N}}{a}=
+            \equivalenceClass
+                {\subgroupCosetRelation{G}{N}}
+                {\groupInv[G](a)}$.
+\end{proposition}
+\begin{proof}
+    Let $q=\groupQuotientProjection{G}{N}$.
+    $G$ is a group by \obv{normal_subgroup_ambient_group}.
+    $\groupInv[G]$ is a function and
+        $\dom{\groupInv[G]}=\carrier[G]$ by
+        \auto{group_inverse_graph,funs_elim}.
+    $q$ is a function and $\dom{q}=\carrier[G]$ by
+        \auto{group_quotient_projection_type,funs_elim}.
+    $\ran{\groupInv[G]}\subseteq\carrier[G]$ by
+        \auto{group_inverse_graph,funs_ran}.
+    Hence $q$ is composable with $\groupInv[G]$.
+    $\groupInv[G](a)\in\carrier[G]$ by \obv{group_inverse_type}.
+    $(q\circ\groupInv[G])(a)=q(\groupInv[G](a))$ by
+        \obv{circ_apply}.
+    $q(\groupInv[G](a))=
+        \equivalenceClass
+            {\subgroupCosetRelation{G}{N}}
+            {\groupInv[G](a)}$ by
+        \auto{group_quotient_projection_apply}.
+    Follows by \auto{quotient_representative_inverse}.
+\end{proof}
+
+\begin{proposition}\label{quotient_representative_multiplication_compatible}
+    Suppose $\normalSubgroup{N}{G}$.
+    Then
+        $\quotientBinaryCompatible
+            {\quotientRepresentativeMultiplication{G}{N}}
+            {\carrier[G]}{\subgroupCosetRelation{G}{N}}
+            {\carrier[G]}{\subgroupCosetRelation{G}{N}}$.
+\end{proposition}
+\begin{proof}
+    Let $E=\subgroupCosetRelation{G}{N}$.
+    Let $f=\quotientRepresentativeMultiplication{G}{N}$.
+    $\subgroup{N}{G}$ by \obv{normal_subgroup_is_subgroup}.
+    $E$ is an equivalence on $\carrier[G]$ by
+        \auto{subgroup_coset_relation_equivalence}.
+    Show that for all $x,u\in\carrier[G]$ such that
+        $x\mathrel{E}u$ we have for all $y,v\in\carrier[G]$ such that
+        $y\mathrel{E}v$ we have $f((x,y))=f((u,v))$.
+    \begin{subproof}
+        Fix $x,u\in\carrier[G]$ such that $x\mathrel{E}u$.
+        Show that for all $y,v\in\carrier[G]$ such that
+            $y\mathrel{E}v$ we have
+            $f((x,y))=f((u,v))$.
+        \begin{subproof}
+            Fix $y,v\in\carrier[G]$ such that $y\mathrel{E}v$.
+            $\mul[G](x,y)\mathrel{E}\mul[G](u,v)$ by
+                \obv{normal_coset_relation_mul_congruent}.
+            $G$ is a group by \obv{normal_subgroup_ambient_group}.
+            $\mul[G](x,y),\mul[G](u,v)\in\carrier[G]$ by
+                \obv{group_is_monoid,monoid_is_magma,magma_welldef}.
+            Hence
+                $\equivalenceClass{E}{\mul[G](x,y)}=
+                    \equivalenceClass{E}{\mul[G](u,v)}$ by
+                \obv{equiv_implies_equivanlence_classes_eq}.
+            $f((x,y))=\equivalenceClass{E}{\mul[G](x,y)}$ and
+                $f((u,v))=\equivalenceClass{E}{\mul[G](u,v)}$ by
+                \auto{quotient_representative_multiplication_apply}.
+        \end{subproof}
+    \end{subproof}
+    Follows by \auto{quotient_binary_compatible}.
+\end{proof}
+
+\begin{proposition}\label{quotient_representative_inverse_compatible}
+    Suppose $\normalSubgroup{N}{G}$.
+    Then
+        $\quotientCompatible
+            {\quotientRepresentativeInverse{G}{N}}
+            {\carrier[G]}{\subgroupCosetRelation{G}{N}}$.
+\end{proposition}
+\begin{proof}
+    Let $E=\subgroupCosetRelation{G}{N}$.
+    Let $f=\quotientRepresentativeInverse{G}{N}$.
+    $\subgroup{N}{G}$ by \obv{normal_subgroup_is_subgroup}.
+    $E$ is an equivalence on $\carrier[G]$ by
+        \auto{subgroup_coset_relation_equivalence}.
+    Show that for all $a,a'\in\carrier[G]$ such that
+        $a\mathrel{E}a'$ we have $f(a)=f(a')$.
+    \begin{subproof}
+        Fix $a,a'\in\carrier[G]$ such that $a\mathrel{E}a'$.
+        $\groupInv[G](a)\mathrel{E}\groupInv[G](a')$ by
+            \obv{normal_coset_relation_inverse_congruent}.
+        $\groupInv[G](a),\groupInv[G](a')\in\carrier[G]$ by
+            \obv{group_inverse_type}.
+        Hence
+            $\equivalenceClass{E}{\groupInv[G](a)}=
+                \equivalenceClass{E}{\groupInv[G](a')}$ by
+            \obv{equiv_implies_equivanlence_classes_eq}.
+        $f(a)=\equivalenceClass{E}{\groupInv[G](a)}$ and
+            $f(a')=\equivalenceClass{E}{\groupInv[G](a')}$ by
+            \auto{quotient_representative_inverse_apply}.
+    \end{subproof}
+    Follows by \auto{quotient_compatible}.
+\end{proof}
+
+\begin{definition}\label{quotient_multiplication_graph}
+    $\quotientMultiplicationGraph{G}{N}=
+        \quotientBinaryDescent
+            {\quotientRepresentativeMultiplication{G}{N}}
+            {\carrier[G]}{\subgroupCosetRelation{G}{N}}
+            {\carrier[G]}{\subgroupCosetRelation{G}{N}}$.
+\end{definition}
+
+\begin{definition}\label{quotient_inverse_graph}
+    $\quotientInverseGraph{G}{N}=
+        \quotientDescent
+            {\quotientRepresentativeInverse{G}{N}}
+            {\carrier[G]}{\subgroupCosetRelation{G}{N}}$.
+\end{definition}
+
+\begin{proposition}\label{quotient_multiplication_graph_type}
+    Suppose $\normalSubgroup{N}{G}$.
+    Then $\quotientMultiplicationGraph{G}{N}\in
+        \funs{
+            \groupQuotientCarrier{G}{N}\times
+            \groupQuotientCarrier{G}{N}}
+            {\groupQuotientCarrier{G}{N}}$.
+\end{proposition}
+\begin{proof}
+    Let $E=\subgroupCosetRelation{G}{N}$.
+    $\subgroup{N}{G}$ by \obv{normal_subgroup_is_subgroup}.
+    $E$ is an equivalence on $\carrier[G]$ by
+        \auto{subgroup_coset_relation_equivalence}.
+    $\quotientRepresentativeMultiplication{G}{N}\in
+        \funs{\carrier[G]\times\carrier[G]}
+            {\groupQuotientCarrier{G}{N}}$ by
+        \obv{quotient_representative_multiplication_type}.
+    $\quotientBinaryCompatible
+        {\quotientRepresentativeMultiplication{G}{N}}
+        {\carrier[G]}{E}{\carrier[G]}{E}$ by
+        \auto{quotient_representative_multiplication_compatible}.
+    Follows by
+        \auto{quotient_multiplication_graph,group_quotient_carrier,quotient_binary_descent_type}.
+\end{proof}
+
+\begin{proposition}\label{quotient_multiplication_graph_apply}
+    Suppose $\normalSubgroup{N}{G}$.
+    Let $a,b\in\carrier[G]$.
+    Then
+        $\apply{\quotientMultiplicationGraph{G}{N}}
+            {(\equivalenceClass{\subgroupCosetRelation{G}{N}}{a},
+              \equivalenceClass{\subgroupCosetRelation{G}{N}}{b})}
+        =\equivalenceClass
+            {\subgroupCosetRelation{G}{N}}
+            {\mul[G](a,b)}$.
+\end{proposition}
+\begin{proof}
+    Let $E=\subgroupCosetRelation{G}{N}$.
+    Let $f=\quotientRepresentativeMultiplication{G}{N}$.
+    $\subgroup{N}{G}$ by \obv{normal_subgroup_is_subgroup}.
+    $E$ is an equivalence on $\carrier[G]$ by
+        \auto{subgroup_coset_relation_equivalence}.
+    $f\in\funs{\carrier[G]\times\carrier[G]}
+        {\groupQuotientCarrier{G}{N}}$ by
+        \auto{quotient_representative_multiplication_type}.
+    $\quotientBinaryCompatible
+        {f}{\carrier[G]}{E}{\carrier[G]}{E}$ by
+        \auto{quotient_representative_multiplication_compatible}.
+    $\apply{
+        \quotientBinaryDescent{f}{\carrier[G]}{E}{\carrier[G]}{E}}
+        {(\equivalenceClass{E}{a},\equivalenceClass{E}{b})}
+        =f((a,b))$ by \obv{quotient_binary_descent_apply}.
+    $f((a,b))=\equivalenceClass{E}{\mul[G](a,b)}$ by
+        \auto{quotient_representative_multiplication_apply}.
+    Follows by \auto{quotient_multiplication_graph}.
+\end{proof}
+
+\begin{proposition}\label{quotient_inverse_graph_type}
+    Suppose $\normalSubgroup{N}{G}$.
+    Then $\quotientInverseGraph{G}{N}\in
+        \funs{
+            \groupQuotientCarrier{G}{N}}
+            {\groupQuotientCarrier{G}{N}}$.
+\end{proposition}
+\begin{proof}
+    Let $E=\subgroupCosetRelation{G}{N}$.
+    $\subgroup{N}{G}$ by \obv{normal_subgroup_is_subgroup}.
+    $E$ is an equivalence on $\carrier[G]$ by
+        \auto{subgroup_coset_relation_equivalence}.
+    $\quotientRepresentativeInverse{G}{N}\in
+        \funs{\carrier[G]}{\groupQuotientCarrier{G}{N}}$ by
+        \obv{quotient_representative_inverse_type}.
+    $\quotientCompatible
+        {\quotientRepresentativeInverse{G}{N}}
+        {\carrier[G]}{E}$ by
+        \obv{quotient_representative_inverse_compatible}.
+    Follows by
+        \auto{quotient_inverse_graph,group_quotient_carrier,quotient_descent_type}.
+\end{proof}
+
+\begin{proposition}\label{quotient_inverse_graph_apply}
+    Suppose $\normalSubgroup{N}{G}$.
+    Let $a\in\carrier[G]$.
+    Then
+        $\apply{\quotientInverseGraph{G}{N}}
+            {\equivalenceClass{\subgroupCosetRelation{G}{N}}{a}}
+        =\equivalenceClass
+            {\subgroupCosetRelation{G}{N}}
+            {\groupInv[G](a)}$.
+\end{proposition}
+\begin{proof}
+    Let $E=\subgroupCosetRelation{G}{N}$.
+    Let $f=\quotientRepresentativeInverse{G}{N}$.
+    $\subgroup{N}{G}$ by \obv{normal_subgroup_is_subgroup}.
+    $E$ is an equivalence on $\carrier[G]$ by
+        \auto{subgroup_coset_relation_equivalence}.
+    $f\in\funs{\carrier[G]}{\groupQuotientCarrier{G}{N}}$ by
+        \auto{quotient_representative_inverse_type}.
+    $\quotientCompatible{f}{\carrier[G]}{E}$ by
+        \auto{quotient_representative_inverse_compatible}.
+    $\apply{\quotientDescent{f}{\carrier[G]}{E}}
+        {\equivalenceClass{E}{a}}=f(a)$ by
+        \obv{quotient_descent_apply}.
+    $f(a)=\equivalenceClass{E}{\groupInv[G](a)}$ by
+        \auto{quotient_representative_inverse_apply}.
+    Follows by \auto{quotient_inverse_graph}.
+\end{proof}
+
+\subsection{The exact quotient group}
+
+\begin{definition}\label{quotient_group}
+    $\quotientGroup{G}{N}=
+        \structure[group]{
+            \carrier=\groupQuotientCarrier{G}{N},
+            \mul=\quotientMultiplicationGraph{G}{N},
+            \neutral=\equivalenceClass
+                {\subgroupCosetRelation{G}{N}}{\neutral[G]},
+            \groupInv=\quotientInverseGraph{G}{N}
+        }$.
+\end{definition}
+
+\begin{proposition}\label{quotient_group_carrier}
+    $\carrier[\quotientGroup{G}{N}]=\groupQuotientCarrier{G}{N}$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{quotient_group,groupaggregateprojection_carrier}.
+\end{proof}
+
+\begin{proposition}\label{quotient_group_mul_graph}
+    $\mul[\quotientGroup{G}{N}]=\quotientMultiplicationGraph{G}{N}$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{quotient_group,groupaggregateprojection_mul}.
+\end{proof}
+
+\begin{proposition}\label{quotient_group_neutral}
+    $\neutral[\quotientGroup{G}{N}]=
+        \equivalenceClass
+            {\subgroupCosetRelation{G}{N}}{\neutral[G]}$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{quotient_group,groupaggregateprojection_neutral}.
+\end{proof}
+
+\begin{proposition}\label{quotient_group_inv_graph}
+    $\groupInv[\quotientGroup{G}{N}]=\quotientInverseGraph{G}{N}$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{quotient_group,groupaggregateprojection_groupInv}.
+\end{proof}
+
+\begin{proposition}\label{quotient_group_mul_apply}
+    Suppose $\normalSubgroup{N}{G}$.
+    Let $a,b\in\carrier[G]$.
+    Then
+        $\mul[\quotientGroup{G}{N}]
+            (\equivalenceClass{\subgroupCosetRelation{G}{N}}{a},
+             \equivalenceClass{\subgroupCosetRelation{G}{N}}{b})
+        =\equivalenceClass
+            {\subgroupCosetRelation{G}{N}}
+            {\mul[G](a,b)}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{quotient_group_mul_graph,quotient_multiplication_graph_apply}.
+\end{proof}
+
+\begin{proposition}\label{quotient_group_inv_apply}
+    Suppose $\normalSubgroup{N}{G}$.
+    Let $a\in\carrier[G]$.
+    Then
+        $\groupInv[\quotientGroup{G}{N}]
+            (\equivalenceClass{\subgroupCosetRelation{G}{N}}{a})
+        =\equivalenceClass
+            {\subgroupCosetRelation{G}{N}}
+            {\groupInv[G](a)}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{quotient_group_inv_graph,quotient_inverse_graph_apply}.
+\end{proof}
+
+\begin{theorem}\label{quotient_group_is_exact_group}
+    Suppose $\normalSubgroup{N}{G}$.
+    Then $\quotientGroup{G}{N}$ is an exact group.
+\end{theorem}
+\begin{proof}
+    Let $E=\subgroupCosetRelation{G}{N}$.
+    Let $Q=\groupQuotientCarrier{G}{N}$.
+    Let $K=\quotientGroup{G}{N}$.
+    $G$ is a group by \obv{normal_subgroup_ambient_group}.
+    $\subgroup{N}{G}$ by \obv{normal_subgroup_is_subgroup}.
+    $E$ is an equivalence on $\carrier[G]$ by
+        \auto{subgroup_coset_relation_equivalence}.
+    $\carrier[K]=Q$ by \auto{quotient_group_carrier}.
+    $\mul[K]=\quotientMultiplicationGraph{G}{N}$ by
+        \auto{quotient_group_mul_graph}.
+    $\neutral[K]=\equivalenceClass{E}{\neutral[G]}$ by
+        \auto{quotient_group_neutral}.
+    $\groupInv[K]=\quotientInverseGraph{G}{N}$ by
+        \auto{quotient_group_inv_graph}.
+    $\mul[K]\in\funs{\carrier[K]\times\carrier[K]}{\carrier[K]}$ by
+        \auto{quotient_multiplication_graph_type}.
+    $\neutral[G]\in\carrier[G]$ by
+        \obv{group_is_monoid,monoid_is_unital_magma,unitalmagma_type}.
+    Hence $\neutral[K]\in\carrier[K]$ by
+        \auto{group_quotient_carrier,quotient}.
+    $\groupInv[K]\in\funs{\carrier[K]}{\carrier[K]}$ by
+        \auto{quotient_inverse_graph_type}.
+    Show that for every $U\in\carrier[K]$ we have
+        $\mul[K](U,\neutral[K])=U$.
+    \begin{subproof}
+        Fix $U\in\carrier[K]$.
+        Take $a\in\carrier[G]$ such that
+            $U=\equivalenceClass{E}{a}$ by
+            \auto{group_quotient_carrier,quotient_group_carrier,quotient}.
+        $\mul[K](U,\neutral[K])=
+            \equivalenceClass{E}{\mul[G](a,\neutral[G])}$ by
+            \auto{quotient_group_mul_apply}.
+        $\mul[G](a,\neutral[G])=a$ by
+            \obv{group_is_monoid,monoid_is_unital_magma,unitalmagma_right}.
+    \end{subproof}
+    Show that for every $U\in\carrier[K]$ we have
+        $\mul[K](\neutral[K],U)=U$.
+    \begin{subproof}
+        Fix $U\in\carrier[K]$.
+        Take $a\in\carrier[G]$ such that
+            $U=\equivalenceClass{E}{a}$ by
+            \auto{group_quotient_carrier,quotient_group_carrier,quotient}.
+        $\mul[K](\neutral[K],U)=
+            \equivalenceClass{E}{\mul[G](\neutral[G],a)}$ by
+            \auto{quotient_group_mul_apply}.
+        $\mul[G](\neutral[G],a)=a$ by
+            \obv{group_is_monoid,monoid_is_unital_magma,unitalmagma_left}.
+    \end{subproof}
+    Show that for all $U,V,W\in\carrier[K]$ we have
+        $\mul[K](U,\mul[K](V,W))=
+            \mul[K](\mul[K](U,V),W)$.
+    \begin{subproof}
+        Fix $U,V,W\in\carrier[K]$.
+        Take $a\in\carrier[G]$ such that
+            $U=\equivalenceClass{E}{a}$ by
+            \auto{group_quotient_carrier,quotient_group_carrier,quotient}.
+        Take $b\in\carrier[G]$ such that
+            $V=\equivalenceClass{E}{b}$ by
+            \auto{group_quotient_carrier,quotient_group_carrier,quotient}.
+        Take $c\in\carrier[G]$ such that
+            $W=\equivalenceClass{E}{c}$ by
+            \auto{group_quotient_carrier,quotient_group_carrier,quotient}.
+        $\mul[G](a,b),\mul[G](b,c)\in\carrier[G]$ by
+            \obv{group_is_monoid,monoid_is_magma,magma_welldef}.
+        $\mul[K](V,W)=\equivalenceClass{E}{\mul[G](b,c)}$ and
+            $\mul[K](U,V)=\equivalenceClass{E}{\mul[G](a,b)}$ by
+            \auto{quotient_group_mul_apply}.
+        Hence
+            $\mul[K](U,\mul[K](V,W))=
+                \equivalenceClass{E}{\mul[G](a,\mul[G](b,c))}$ by
+            \auto{quotient_group_mul_apply}.
+        $\mul[K](\mul[K](U,V),W)=
+            \equivalenceClass{E}{\mul[G](\mul[G](a,b),c)}$ by
+            \auto{quotient_group_mul_apply}.
+        $\mul[G](a,\mul[G](b,c))=
+            \mul[G](\mul[G](a,b),c)$ by
+            \obv{group_is_monoid,monoid_assoc}.
+        \begin{align*}
+            \mul[K](U,\mul[K](V,W))
+                &= \equivalenceClass{E}{\mul[G](a,\mul[G](b,c))}
+                \\
+                &= \equivalenceClass{E}{\mul[G](\mul[G](a,b),c)}
+                \\
+                &= \mul[K](\mul[K](U,V),W)
+        \end{align*}
+    \end{subproof}
+    Show that for every $U\in\carrier[K]$ we have
+        $\mul[K](U,\groupInv[K](U))=\neutral[K]$.
+    \begin{subproof}
+        Fix $U\in\carrier[K]$.
+        Take $a\in\carrier[G]$ such that
+            $U=\equivalenceClass{E}{a}$ by
+            \auto{group_quotient_carrier,quotient_group_carrier,quotient}.
+        $\groupInv[G](a)\in\carrier[G]$ by
+            \obv{group_inverse_type}.
+        $\groupInv[K](U)=\equivalenceClass{E}{\groupInv[G](a)}$ by
+            \auto{quotient_group_inv_apply}.
+        Hence
+            $\mul[K](U,\groupInv[K](U))=
+                \equivalenceClass
+                    {E}{\mul[G](a,\groupInv[G](a))}$ by
+            \auto{quotient_group_mul_apply}.
+        $\mul[G](a,\groupInv[G](a))=\neutral[G]$ by
+            \obv{group_inverse_right}.
+        \begin{align*}
+            \mul[K](U,\groupInv[K](U))
+                &= \equivalenceClass
+                    {E}{\mul[G](a,\groupInv[G](a))}
+                \\
+                &= \equivalenceClass{E}{\neutral[G]}
+                \\
+                &= \neutral[K]
+        \end{align*}
+    \end{subproof}
+    Show that for every $U\in\carrier[K]$ we have
+        $\mul[K](\groupInv[K](U),U)=\neutral[K]$.
+    \begin{subproof}
+        Fix $U\in\carrier[K]$.
+        Take $a\in\carrier[G]$ such that
+            $U=\equivalenceClass{E}{a}$ by
+            \auto{group_quotient_carrier,quotient_group_carrier,quotient}.
+        $\groupInv[G](a)\in\carrier[G]$ by
+            \obv{group_inverse_type}.
+        $\groupInv[K](U)=\equivalenceClass{E}{\groupInv[G](a)}$ by
+            \auto{quotient_group_inv_apply}.
+        Hence
+            $\mul[K](\groupInv[K](U),U)=
+                \equivalenceClass
+                    {E}{\mul[G](\groupInv[G](a),a)}$ by
+            \auto{quotient_group_mul_apply}.
+        $\mul[G](\groupInv[G](a),a)=\neutral[G]$ by
+            \obv{group_inverse_left}.
+        \begin{align*}
+            \mul[K](\groupInv[K](U),U)
+                &= \equivalenceClass
+                    {E}{\mul[G](\groupInv[G](a),a)}
+                \\
+                &= \equivalenceClass{E}{\neutral[G]}
+                \\
+                &= \neutral[K]
+        \end{align*}
+    \end{subproof}
+    Hence $K$ is a group by
+        \auto{group,quotient_group,groupaggregateexact,groupaggregateprojection_carrier,groupaggregateprojection_mul,groupaggregateprojection_neutral,groupaggregateprojection_groupInv}.
+    Follows by \auto{quotient_group,groupaggregateexact}.
+\end{proof}
+
+\begin{corollary}\label{quotient_group_is_group}
+    Suppose $\normalSubgroup{N}{G}$.
+    Then $\quotientGroup{G}{N}$ is a group.
+\end{corollary}
+\begin{proof}
+    Follows by \obv{quotient_group_is_exact_group}.
+\end{proof}
+
+\begin{theorem}\label{commutative_quotient_group_is_exact}
+    Let $G$ be a commutative group.
+    Suppose $\subgroup{N}{G}$.
+    Then $\quotientGroup{G}{N}$ is an exact commutative group.
+\end{theorem}
+\begin{proof}
+    Let $Q=\quotientGroup{G}{N}$ and
+        $E=\subgroupCosetRelation{G}{N}$.
+    $\normalSubgroup{N}{G}$ by
+        \obv{commutative_group_subgroup_is_normal}.
+    Hence $Q$ is an exact group by
+        \auto{quotient_group_is_exact_group}.
+    Show that for all $U,V\in\carrier[Q]$ we have
+        $\mul[Q](U,V)=\mul[Q](V,U)$.
+    \begin{subproof}
+        Fix $U,V\in\carrier[Q]$.
+        Take $x\in\carrier[G]$ such that
+            $U=\equivalenceClass{E}{x}$ by
+            \auto{quotient_group_carrier,group_quotient_carrier,quotient}.
+        Take $y\in\carrier[G]$ such that
+            $V=\equivalenceClass{E}{y}$ by
+            \auto{quotient_group_carrier,group_quotient_carrier,quotient}.
+        $\mul[Q](U,V)=\equivalenceClass{E}{\mul[G](x,y)}$ and
+            $\mul[Q](V,U)=\equivalenceClass{E}{\mul[G](y,x)}$ by
+            \auto{quotient_group_mul_apply}.
+        $\mul[G](x,y)=\mul[G](y,x)$ by
+            \obv{commutative_group_commutative}.
+    \end{subproof}
+    Hence $Q$ is a commutative group by
+        \obv{group,commutative_group}.
+    Follows by \auto.
+\end{proof}
+
+\subsection{The canonical quotient homomorphism}
+
+\begin{theorem}\label{group_quotient_projection_hom}
+    Suppose $\normalSubgroup{N}{G}$.
+    Then
+        $\groupHom
+            {\groupQuotientProjection{G}{N}}
+            {G}{\quotientGroup{G}{N}}$.
+\end{theorem}
+\begin{proof}
+    Let $q=\groupQuotientProjection{G}{N}$.
+    Let $K=\quotientGroup{G}{N}$.
+    $G$ is a group by \obv{normal_subgroup_ambient_group}.
+    $K$ is a group by \obv{quotient_group_is_group}.
+    $\carrier[K]=\groupQuotientCarrier{G}{N}$ by
+        \auto{quotient_group_carrier}.
+    Hence $q\in\funs{\carrier[G]}{\carrier[K]}$ by
+        \auto{group_quotient_projection_type}.
+    Show that for all $a,b\in\carrier[G]$ we have
+        $q(\mul[G](a,b))=\mul[K](q(a),q(b))$.
+    \begin{subproof}
+        Fix $a,b\in\carrier[G]$.
+        $\mul[G](a,b)\in\carrier[G]$ by
+            \obv{group_is_monoid,monoid_is_magma,magma_welldef}.
+        $q(a)=\equivalenceClass{\subgroupCosetRelation{G}{N}}{a}$ and
+            $q(b)=\equivalenceClass{\subgroupCosetRelation{G}{N}}{b}$ and
+            $q(\mul[G](a,b))=
+                \equivalenceClass
+                    {\subgroupCosetRelation{G}{N}}{\mul[G](a,b)}$ by
+            \auto{group_quotient_projection_apply}.
+        $\mul[K](q(a),q(b))=
+            \equivalenceClass
+                {\subgroupCosetRelation{G}{N}}{\mul[G](a,b)}$ by
+            \auto{quotient_group_mul_apply}.
+    \end{subproof}
+    Follows by \auto{group_hom}.
+\end{proof}
+
+\begin{theorem}\label{group_quotient_projection_surjective}
+    Suppose $\normalSubgroup{N}{G}$.
+    Then $\groupQuotientProjection{G}{N}\in
+        \surj{\carrier[G]}{\groupQuotientCarrier{G}{N}}$.
+\end{theorem}
+\begin{proof}
+    Let $q=\groupQuotientProjection{G}{N}$.
+    Let $E=\subgroupCosetRelation{G}{N}$.
+    $q\in\funs{\carrier[G]}{\groupQuotientCarrier{G}{N}}$ by
+        \auto{group_quotient_projection_type}.
+    Show that for every $U\in\groupQuotientCarrier{G}{N}$ there exists
+        $a\in\carrier[G]$ such that $q(a)=U$.
+    \begin{subproof}
+        Fix $U\in\groupQuotientCarrier{G}{N}$.
+        Take $a\in\carrier[G]$ such that
+            $U=\equivalenceClass{E}{a}$ by
+            \auto{group_quotient_carrier,quotient}.
+        $q(a)=\equivalenceClass{E}{a}$ by
+            \auto{group_quotient_projection_apply}.
+        Follows by \auto.
+    \end{subproof}
+    Follows by \auto{surj}.
+\end{proof}
+
+\begin{corollary}\label{group_quotient_projection_group_surjection}
+    Suppose $\normalSubgroup{N}{G}$.
+    Then
+        $\groupSurjection
+            {\groupQuotientProjection{G}{N}}
+            {G}{\quotientGroup{G}{N}}$.
+\end{corollary}
+\begin{proof}
+    $\carrier[\quotientGroup{G}{N}]=
+        \groupQuotientCarrier{G}{N}$ by
+        \obv{quotient_group_carrier}.
+    Follows by
+        \auto{group_surjection,group_quotient_projection_hom,group_quotient_projection_surjective}.
+\end{proof}
+
+\begin{theorem}\label{group_quotient_projection_kernel}
+    Suppose $\normalSubgroup{N}{G}$.
+    Then
+        $\groupKernel{\groupQuotientProjection{G}{N}}{G}=N$.
+\end{theorem}
+\begin{proof}
+    Let $q=\groupQuotientProjection{G}{N}$.
+    Let $K=\quotientGroup{G}{N}$.
+    Let $E=\subgroupCosetRelation{G}{N}$.
+    $G$ is a group by \obv{normal_subgroup_ambient_group}.
+    $\subgroup{N}{G}$ by \obv{normal_subgroup_is_subgroup}.
+    $E$ is an equivalence on $\carrier[G]$ by
+        \auto{subgroup_coset_relation_equivalence}.
+    $\groupHom{q}{G}{K}$ by \auto{group_quotient_projection_hom}.
+    $\neutral[K]=\equivalenceClass{E}{\neutral[G]}$ by
+        \auto{quotient_group_neutral}.
+    Show that for every $x\in
+        \groupKernel{q}{G}$ we have $x\in N$.
+    \begin{subproof}
+        Fix $x\in\groupKernel{q}{G}$.
+        Hence $x\in\carrier[G]$ and $q(x)=\neutral[K]$ by
+            \obv{group_kernel_iff}.
+        $q(x)=\equivalenceClass{E}{x}$ by
+            \auto{group_quotient_projection_apply}.
+        Hence
+            $\equivalenceClass{E}{x}=
+                \equivalenceClass{E}{\neutral[G]}$.
+        $\neutral[G]\in\carrier[G]$ by
+            \obv{group_is_monoid,monoid_is_unital_magma,unitalmagma_type}.
+        Hence $x\mathrel{E}\neutral[G]$ by
+            \obv{equivclasses_eq_implies_equiv}.
+        Hence
+            $\mul[G](\groupInv[G](x),\neutral[G])\in N$ by
+            \auto{subgroup_coset_relation_iff}.
+        $\mul[G](\groupInv[G](x),\neutral[G])=
+            \groupInv[G](x)$ by
+            \obv{group_inverse_type,group_is_monoid,monoid_is_unital_magma,unitalmagma_right}.
+        Hence $\groupInv[G](x)\in N$.
+        Hence $\groupInv[G](\groupInv[G](x))\in N$ by
+            \obv{subgroup_inv}.
+        Follows by \obv{group_inverse_involutive}.
+    \end{subproof}
+    Show that for every $x\in N$ we have
+        $x\in\groupKernel{q}{G}$.
+    \begin{subproof}
+        Fix $x\in N$.
+        Hence $x\in\carrier[G]$ by
+            \auto{normal_subgroup_subseteq,subseteq}.
+        $\groupInv[G](x)\in N$ by \obv{subgroup_inv}.
+        $\neutral[G]\in\carrier[G]$ by
+            \obv{group_is_monoid,monoid_is_unital_magma,unitalmagma_type}.
+        $\mul[G](\groupInv[G](x),\neutral[G])=
+            \groupInv[G](x)$ by
+            \obv{group_inverse_type,group_is_monoid,monoid_is_unital_magma,unitalmagma_right}.
+        Hence $x\mathrel{E}\neutral[G]$ by
+            \auto{subgroup_coset_relation_iff,group_is_monoid,monoid_is_unital_magma,unitalmagma_type}.
+        Hence
+            $\equivalenceClass{E}{x}=
+                \equivalenceClass{E}{\neutral[G]}$ by
+            \obv{equiv_implies_equivanlence_classes_eq}.
+        $q(x)=\equivalenceClass{E}{x}$ by
+            \auto{group_quotient_projection_apply}.
+        Hence $q(x)=\neutral[K]$.
+        Follows by \auto{group_kernel_iff}.
+    \end{subproof}
+    Follows by \auto{setext}.
+\end{proof}

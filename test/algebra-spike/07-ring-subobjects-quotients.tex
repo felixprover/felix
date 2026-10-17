@@ -1,0 +1,930 @@
+\import{test/algebra-spike/01-ring-reducts.tex}
+\import{algebra/group/subgroup.tex}
+\import{algebra/group/quotient.tex}
+\import{relation/quotient-lift.tex}
+
+\section{Subrings and quotient rings}
+
+\begin{definition}\label{spike_prototype_subring}
+    $\prototypeSubring{A}{R}$ iff
+        $R$ is a ring and
+        $\subgroup{A}{\AdditiveGroup{R}}$ and
+        $\ringOne[R]\in A$ and
+        for all $x,y\in A$ we have $\ringMul[R](x,y)\in A$.
+\end{definition}
+
+\begin{proposition}\label{spike_subring_ring_guard}
+    Suppose $\prototypeSubring{A}{R}$.
+    Then $R$ is a ring.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{spike_prototype_subring}.
+\end{proof}
+
+\begin{proposition}\label{spike_subring_mul_restriction_type}
+    Suppose $\prototypeSubring{A}{R}$.
+    Then
+        $\restrl{\ringMul[R]}{A\times A}\in\funs{A\times A}{A}$.
+\end{proposition}
+\begin{proof}
+    Let $f=\ringMul[R]$.
+    Let $m=\restrl{f}{A\times A}$.
+    $R$ is a ring by \auto{spike_subring_ring_guard}.
+    $A\subseteq\carrier[\AdditiveGroup{R}]$ by
+        \auto{spike_prototype_subring,subgroup_subseteq}.
+    Hence $A\subseteq\carrier[R]$ by
+        \auto{spike_additive_group_fields}.
+    $A\times A\subseteq\carrier[R]\times A$ by
+        \auto{times_subseteq_left}.
+    $\carrier[R]\times A
+        \subseteq\carrier[R]\times\carrier[R]$ by
+        \auto{times_subseteq_right}.
+    Hence $A\times A\subseteq\carrier[R]\times\carrier[R]$ by
+        \auto{subseteq_transitive}.
+    $f\in\funs{\carrier[R]\times\carrier[R]}{\carrier[R]}$ by
+        \auto{ring_mul_graph}.
+    Hence $A\times A\subseteq\dom{f}$ by \auto{funs}.
+    $m\in\funs{A\times A}{\carrier[R]}$ by \auto{funs_restrl}.
+    Hence $m$ is a function and $\dom{m}=A\times A$ by
+        \auto{funs_elim}.
+    Show that $m$ is a function to $A$.
+    \begin{subproof}
+        Show that for every $p\in\dom{m}$ we have $m(p)\in A$.
+        \begin{subproof}
+            Fix $p\in\dom{m}$.
+            Hence $p\in A\times A$ by \auto.
+            Take $x,y$ such that $x,y\in A$ and $p=(x,y)$ by
+                \auto{times_elem_is_tuple}.
+            $f$ is a function by \auto{funs_is_function}.
+            $m(p)=f(p)$ by \auto{restrl_of_function_apply}.
+            Hence $m(p)=\ringMul[R](x,y)$ by \auto.
+            Follows by \auto{spike_prototype_subring}.
+        \end{subproof}
+        Follows.
+    \end{subproof}
+    Follows by \auto{funs_intro}.
+\end{proof}
+
+\begin{proposition}\label{spike_subring_mul_restriction_apply}
+    Suppose $\prototypeSubring{A}{R}$.
+    Let $x,y\in A$.
+    Then
+        $(\restrl{\ringMul[R]}{A\times A})(x,y)=\ringMul[R](x,y)$.
+\end{proposition}
+\begin{proof}
+    $R$ is a ring by \auto{spike_subring_ring_guard}.
+    $A\subseteq\carrier[R]$ by
+        \auto{spike_prototype_subring,subgroup_subseteq,
+            spike_additive_group_fields}.
+    $A\times A\subseteq\carrier[R]\times A$ by
+        \auto{times_subseteq_left}.
+    $\carrier[R]\times A
+        \subseteq\carrier[R]\times\carrier[R]$ by
+        \auto{times_subseteq_right}.
+    Hence $A\times A\subseteq\dom{\ringMul[R]}$ by
+        \auto{subseteq_transitive,ring_mul_graph,funs}.
+    $\ringMul[R]$ is a function by
+        \auto{ring_mul_graph,funs_is_function}.
+    $(x,y)\in A\times A$ by \auto{times_tuple_intro}.
+    Follows by \auto{restrl_of_function_apply}.
+\end{proof}
+
+\begin{definition}\label{spike_induced_subring}
+    $\InducedSubring{R}{A}=
+        \structure[ring]{
+            \carrier=\carrier[\subgroupStructure{\AdditiveGroup{R}}{A}],
+            \ringAdd=\mul[\subgroupStructure{\AdditiveGroup{R}}{A}],
+            \ringZero=\neutral[\subgroupStructure{\AdditiveGroup{R}}{A}],
+            \ringNeg=\groupInv[\subgroupStructure{\AdditiveGroup{R}}{A}],
+            \ringMul=\restrl{\ringMul[R]}{A\times A},
+            \ringOne=\ringOne[R]
+        }$.
+\end{definition}
+
+\begin{proposition}\label{spike_induced_subring_fields}
+    Let $G=\subgroupStructure{\AdditiveGroup{R}}{A}$.
+    $\carrier[\InducedSubring{R}{A}]=\carrier[G]$ and
+    $\ringAdd[\InducedSubring{R}{A}]=\mul[G]$ and
+    $\ringZero[\InducedSubring{R}{A}]=\neutral[G]$ and
+    $\ringNeg[\InducedSubring{R}{A}]=\groupInv[G]$ and
+    $\ringMul[\InducedSubring{R}{A}]
+        =\restrl{\ringMul[R]}{A\times A}$ and
+    $\ringOne[\InducedSubring{R}{A}]=\ringOne[R]$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{spike_induced_subring,
+            ringaggregateprojection_carrier,ringaggregateprojection_ringAdd,
+            ringaggregateprojection_ringZero,ringaggregateprojection_ringNeg,
+            ringaggregateprojection_ringMul,ringaggregateprojection_ringOne}.
+\end{proof}
+
+\begin{theorem}\label{spike_induced_subring_is_exact}
+    Suppose $\prototypeSubring{A}{R}$.
+    Then $\InducedSubring{R}{A}$ is an exact ring.
+\end{theorem}
+\begin{proof}
+    Let $G=\AdditiveGroup{R}$.
+    Let $H=\subgroupStructure{G}{A}$.
+    Let $S=\InducedSubring{R}{A}$.
+    $R$ is a ring and $\subgroup{A}{G}$ by
+        \auto{spike_prototype_subring}.
+    $A\subseteq\carrier[R]$ by
+        \auto{subgroup_subseteq,spike_additive_group_fields}.
+    $G$ is an exact commutative group by
+        \auto{spike_additive_group_is_exact}.
+    Hence $G$ is a group by \auto{commutative_group_is_group}.
+    $H$ is an exact group by
+        \auto{subgroup_structure_is_exact_group}.
+    Hence $H$ is a group and $H$ is a monoid and
+        $H$ is a unital magma and $H$ is a magma by
+        \auto{group_is_monoid,monoid_is_unital_magma,
+            monoid_is_magma}.
+    Show that for all $x,y\in\carrier[H]$ we have
+        $\mul[H](x,y)=\mul[H](y,x)$.
+    \begin{subproof}
+        Fix $x,y\in\carrier[H]$.
+        Hence $x,y\in A$ by \auto{subgroup_structure_carrier}.
+        Hence $x,y\in\carrier[G]$ by
+            \auto{subgroup_subseteq,subseteq}.
+        $\mul[H](x,y)=\mul[G](x,y)$ and
+            $\mul[H](y,x)=\mul[G](y,x)$ by
+            \auto{subgroup_structure_mul_apply}.
+        $\mul[G](x,y)=\mul[G](y,x)$ by
+            \auto{commutative_group_commutative}.
+        Follows by \auto.
+    \end{subproof}
+    $\carrier[S]=\carrier[H]$ and $\ringAdd[S]=\mul[H]$ and
+        $\ringZero[S]=\neutral[H]$ and
+        $\ringNeg[S]=\groupInv[H]$ and
+        $\ringMul[S]=\restrl{\ringMul[R]}{A\times A}$ and
+        $\ringOne[S]=\ringOne[R]$ by
+        \auto{spike_induced_subring_fields}.
+    $\ringAdd[S]\in
+        \funs{\carrier[S]\times\carrier[S]}{\carrier[S]}$ by
+        \auto{magma_mul_graph}.
+    $\ringZero[S]\in\carrier[S]$ by \auto{unitalmagma_type}.
+    $\ringNeg[S]\in\funs{\carrier[S]}{\carrier[S]}$ by
+        \auto{group_inverse_graph}.
+    $\ringMul[S]\in
+        \funs{\carrier[S]\times\carrier[S]}{\carrier[S]}$ by
+        \auto{subgroup_structure_carrier,
+            spike_subring_mul_restriction_type}.
+    $\ringOne[S]\in\carrier[S]$ by
+        \auto{spike_prototype_subring,subgroup_structure_carrier}.
+    For all $x,y,z\in\carrier[S]$ we have
+        $\ringAdd[S](x,\ringAdd[S](y,z))
+            =\ringAdd[S](\ringAdd[S](x,y),z)$ by
+        \auto{monoid_assoc}.
+    For all $x,y\in\carrier[S]$ we have
+        $\ringAdd[S](x,y)=\ringAdd[S](y,x)$ by \auto.
+    For every $x\in\carrier[S]$ we have
+        $\ringAdd[S](\ringZero[S],x)=x$ by
+        \auto{unitalmagma_left}.
+    For every $x\in\carrier[S]$ we have
+        $\ringAdd[S](\ringNeg[S](x),x)=\ringZero[S]$ by
+        \auto{group_inverse_left}.
+    Show that for all $x,y,z\in\carrier[S]$ we have
+        $\ringMul[S](x,\ringMul[S](y,z))
+            =\ringMul[S](\ringMul[S](x,y),z)$.
+    \begin{subproof}
+        Fix $x,y,z\in\carrier[S]$.
+        Hence $x,y,z\in A$ by \auto{subgroup_structure_carrier}.
+        Hence $x,y,z\in\carrier[R]$ by \auto{subseteq}.
+        $\ringMul[R](x,y),\ringMul[R](y,z)\in A$ by
+            \auto{spike_prototype_subring}.
+        $\ringMul[S](x,y)=\ringMul[R](x,y)$ and
+            $\ringMul[S](y,z)=\ringMul[R](y,z)$ by
+            \auto{spike_induced_subring_fields,
+                spike_subring_mul_restriction_apply}.
+        Hence
+            $\ringMul[S](x,\ringMul[S](y,z))
+                =\ringMul[R](x,\ringMul[R](y,z))$ and
+            $\ringMul[S](\ringMul[S](x,y),z)
+                =\ringMul[R](\ringMul[R](x,y),z)$ by
+            \auto{spike_induced_subring_fields,
+                spike_subring_mul_restriction_apply}.
+        Follows by \auto{ring_mul_associative}.
+    \end{subproof}
+    Show that for every $x\in\carrier[S]$ we have
+        $\ringMul[S](\ringOne[S],x)=x$ and
+        $\ringMul[S](x,\ringOne[S])=x$.
+    \begin{subproof}
+        Fix $x\in\carrier[S]$.
+        Hence $x\in A$ by \auto{subgroup_structure_carrier}.
+        Hence $x\in\carrier[R]$ by \auto{subseteq}.
+        $\ringOne[R]\in A$ by \auto{spike_prototype_subring}.
+        Follows by
+            \auto{spike_induced_subring_fields,
+                spike_subring_mul_restriction_apply,
+                ring_mul_one_left,ring_mul_one_right}.
+    \end{subproof}
+    Show that for all $x,y,z\in\carrier[S]$ we have
+        $\ringMul[S](x,\ringAdd[S](y,z))
+            =\ringAdd[S](\ringMul[S](x,y),\ringMul[S](x,z))$.
+    \begin{subproof}
+        Fix $x,y,z\in\carrier[S]$.
+        Hence $x,y,z\in A$ by \auto{subgroup_structure_carrier}.
+        Hence $x,y,z\in\carrier[R]$ by \auto{subseteq}.
+        $\ringAdd[S](y,z)=\ringAdd[R](y,z)$ by
+            \auto{subgroup_structure_mul_apply,
+                spike_additive_group_fields}.
+        Hence $\ringAdd[S](y,z)\in A$ by
+            \auto{subgroup_mul,spike_additive_group_fields}.
+        $\ringMul[S](x,y)=\ringMul[R](x,y)$ and
+            $\ringMul[S](x,z)=\ringMul[R](x,z)$ by
+            \auto{spike_subring_mul_restriction_apply}.
+        Hence $\ringMul[S](x,y),\ringMul[S](x,z)\in A$ by
+            \auto{spike_prototype_subring}.
+        Follows by
+            \auto{spike_induced_subring_fields,
+                spike_subring_mul_restriction_apply,
+                subgroup_structure_mul_apply,
+                spike_additive_group_fields,
+                ring_distributive_left}.
+    \end{subproof}
+    Show that for all $x,y,z\in\carrier[S]$ we have
+        $\ringMul[S](\ringAdd[S](x,y),z)
+            =\ringAdd[S](\ringMul[S](x,z),\ringMul[S](y,z))$.
+    \begin{subproof}
+        Fix $x,y,z\in\carrier[S]$.
+        Hence $x,y,z\in A$ by \auto{subgroup_structure_carrier}.
+        Hence $x,y,z\in\carrier[R]$ by \auto{subseteq}.
+        $\ringAdd[S](x,y)=\ringAdd[R](x,y)$ by
+            \auto{subgroup_structure_mul_apply,
+                spike_additive_group_fields}.
+        Hence $\ringAdd[S](x,y)\in A$ by
+            \auto{subgroup_mul,spike_additive_group_fields}.
+        $\ringMul[S](x,z)=\ringMul[R](x,z)$ and
+            $\ringMul[S](y,z)=\ringMul[R](y,z)$ by
+            \auto{spike_subring_mul_restriction_apply}.
+        Hence $\ringMul[S](x,z),\ringMul[S](y,z)\in A$ by
+            \auto{spike_prototype_subring}.
+        Follows by
+            \auto{spike_induced_subring_fields,
+                spike_subring_mul_restriction_apply,
+                subgroup_structure_mul_apply,
+                spike_additive_group_fields,
+                ring_distributive_right}.
+    \end{subproof}
+    Hence $S$ is a ring by
+        \auto{spike_induced_subring,ringaggregateexact,ring}.
+    Follows by \auto{spike_induced_subring,ringaggregateexact}.
+\end{proof}
+
+\begin{theorem}\label{spike_induced_subring_additive_reduct}
+    Suppose $\prototypeSubring{A}{R}$.
+    Then
+        $\AdditiveGroup{\InducedSubring{R}{A}}
+            =\subgroupStructure{\AdditiveGroup{R}}{A}$.
+\end{theorem}
+\begin{proof}
+    Let $S=\InducedSubring{R}{A}$.
+    Let $H=\subgroupStructure{\AdditiveGroup{R}}{A}$.
+    $S$ is an exact ring by \auto{spike_induced_subring_is_exact}.
+    Hence $\AdditiveGroup{S}$ is an exact commutative group by
+        \auto{spike_additive_group_is_exact}.
+    Hence $\AdditiveGroup{S}$ is a group by
+        \auto{commutative_group_is_group}.
+    Hence $\AdditiveGroup{S}$ is an exact group by
+        \auto{spike_additive_group,groupaggregateexact}.
+    $\subgroup{A}{\AdditiveGroup{R}}$ by
+        \auto{spike_prototype_subring}.
+    Hence $H$ is an exact group by
+        \auto{subgroup_structure_is_exact_group}.
+    $\carrier[\AdditiveGroup{S}]=\carrier[H]$ and
+        $\mul[\AdditiveGroup{S}]=\mul[H]$ and
+        $\neutral[\AdditiveGroup{S}]=\neutral[H]$ and
+        $\groupInv[\AdditiveGroup{S}]=\groupInv[H]$ by
+        \auto{spike_additive_group_fields,
+            spike_induced_subring_fields}.
+    Follows by \auto{exact_group_extensionality}.
+\end{proof}
+
+\begin{proposition}\label{spike_induced_subring_inclusion_reused}
+    Suppose $\prototypeSubring{A}{R}$.
+    Then
+        $\subgroupInclusion{\AdditiveGroup{R}}{A}
+            \in\funs{\carrier[\InducedSubring{R}{A}]}{\carrier[R]}$.
+\end{proposition}
+\begin{proof}
+    $\subgroup{A}{\AdditiveGroup{R}}$ by
+        \auto{spike_prototype_subring}.
+    Follows by
+        \auto{subgroup_inclusion_type,subgroup_structure_carrier,
+            spike_additive_group_fields,
+            spike_induced_subring_fields}.
+\end{proof}
+
+\subsection{Quotient multiplication}
+
+\begin{definition}\label{spike_prototype_two_sided_ideal}
+    $\prototypeTwoSidedIdeal{I}{R}$ iff
+        $R$ is a ring and
+        $\subgroup{I}{\AdditiveGroup{R}}$ and
+        for all $a\in\carrier[R]$ we have for every $x\in I$ we have
+            $\ringMul[R](a,x)\in I$ and $\ringMul[R](x,a)\in I$.
+\end{definition}
+
+\begin{proposition}\label{spike_two_sided_ideal_is_normal}
+    Suppose $\prototypeTwoSidedIdeal{I}{R}$.
+    Then $\normalSubgroup{I}{\AdditiveGroup{R}}$.
+\end{proposition}
+\begin{proof}
+    Let $G=\AdditiveGroup{R}$.
+    $R$ is a ring and $\subgroup{I}{G}$ by
+        \auto{spike_prototype_two_sided_ideal}.
+    $G$ is an exact commutative group by
+        \auto{spike_additive_group_is_exact}.
+    Hence $G$ is a group by \auto{commutative_group_is_group}.
+    Show that for all $a\in\carrier[G]$ we have for every $x\in I$ we have
+        $\conjugate{G}{a}{x}\in I$.
+    \begin{subproof}
+        Fix $a\in\carrier[G]$ and $x\in I$.
+        Hence $x\in\carrier[G]$ by
+            \auto{subgroup_subseteq,subseteq}.
+        $\commutesIn{G}{a}{x}$ by
+            \auto{commutes_in,commutative_group_commutative}.
+        Hence $\conjugate{G}{a}{x}=x$ by
+            \auto{commutes_in_iff_conjugate_fixed}.
+        Follows by \auto.
+    \end{subproof}
+    Follows by \auto{normal_subgroup_iff_closed_under_conjugation}.
+\end{proof}
+
+\begin{definition}\label{spike_quotient_ring_representative_mul}
+    $\spikeQuotientRingRepresentativeMul{R}{I}=
+        \groupQuotientProjection{\AdditiveGroup{R}}{I}
+            \circ\ringMul[R]$.
+\end{definition}
+
+\begin{proposition}\label{spike_quotient_ring_representative_mul_type}
+    Suppose $\prototypeTwoSidedIdeal{I}{R}$.
+    Then
+        $\spikeQuotientRingRepresentativeMul{R}{I}
+            \in\funs{\carrier[R]\times\carrier[R]}{
+                \groupQuotientCarrier{\AdditiveGroup{R}}{I}}$.
+\end{proposition}
+\begin{proof}
+    Let $G=\AdditiveGroup{R}$.
+    $R$ is a ring by \auto{spike_prototype_two_sided_ideal}.
+    $\normalSubgroup{I}{G}$ by
+        \auto{spike_two_sided_ideal_is_normal}.
+    $\ringMul[R]\in
+        \funs{\carrier[R]\times\carrier[R]}{\carrier[R]}$ by
+        \auto{ring_mul_graph}.
+    $\groupQuotientProjection{G}{I}\in
+        \funs{\carrier[R]}{\groupQuotientCarrier{G}{I}}$ by
+        \auto{group_quotient_projection_type,
+            spike_additive_group_fields}.
+    Follows by
+        \auto{spike_quotient_ring_representative_mul,funs_circ}.
+\end{proof}
+
+\begin{proposition}\label{spike_quotient_ring_representative_mul_apply}
+    Suppose $\prototypeTwoSidedIdeal{I}{R}$.
+    Let $x,y\in\carrier[R]$.
+    Then
+        $\apply{\spikeQuotientRingRepresentativeMul{R}{I}}{(x,y)}
+            =\equivalenceClass{
+                \subgroupCosetRelation{\AdditiveGroup{R}}{I}}
+                {\ringMul[R](x,y)}$.
+\end{proposition}
+\begin{proof}
+    Let $G=\AdditiveGroup{R}$.
+    Let $q=\groupQuotientProjection{G}{I}$.
+    $R$ is a ring by \auto{spike_prototype_two_sided_ideal}.
+    $\normalSubgroup{I}{G}$ by
+        \auto{spike_two_sided_ideal_is_normal}.
+    $\ringMul[R]$ is a function and
+        $\dom{\ringMul[R]}=\carrier[R]\times\carrier[R]$ by
+        \auto{ring_mul_graph,funs_elim}.
+    $q$ is a function and $\dom{q}=\carrier[R]$ by
+        \auto{group_quotient_projection_type,
+            spike_additive_group_fields,funs_elim}.
+    $\ran{\ringMul[R]}\subseteq\carrier[R]$ by
+        \auto{ring_mul_graph,funs_ran}.
+    Hence $q$ is composable with $\ringMul[R]$ by \auto.
+    $\ringMul[R](x,y)\in\carrier[R]$ by \auto{ring_mul_type}.
+    $(q\circ\ringMul[R])((x,y))=q(\ringMul[R](x,y))$ by
+        \auto{circ_apply,times_tuple_intro}.
+    $q(\ringMul[R](x,y))=
+        \equivalenceClass{
+            \subgroupCosetRelation{G}{I}}{\ringMul[R](x,y)}$ by
+        \auto{group_quotient_projection_apply,
+            spike_additive_group_fields}.
+    Follows by \auto{spike_quotient_ring_representative_mul}.
+\end{proof}
+
+\begin{proposition}\label{spike_quotient_ring_mul_respects_cosets}
+    Suppose $\prototypeTwoSidedIdeal{I}{R}$.
+    Let $x,x',y,y'\in\carrier[R]$.
+    Suppose
+        $x\mathrel{\subgroupCosetRelation{\AdditiveGroup{R}}{I}}x'$ and
+        $y\mathrel{\subgroupCosetRelation{\AdditiveGroup{R}}{I}}y'$.
+    Then
+        $\ringMul[R](x,y)
+            \mathrel{\subgroupCosetRelation{\AdditiveGroup{R}}{I}}
+            \ringMul[R](x',y')$.
+\end{proposition}
+\begin{proof}
+    Let $G=\AdditiveGroup{R}$.
+    Let $d=\ringAdd[R](\ringNeg[R](x),x')$.
+    Let $e=\ringAdd[R](\ringNeg[R](y),y')$.
+    Let $u=\ringMul[R](d,y)$.
+    Let $v=\ringMul[R](x',e)$.
+    $R$ is a ring and $\subgroup{I}{G}$ by
+        \auto{spike_prototype_two_sided_ideal}.
+    $\ringNeg[R](x),\ringNeg[R](y)\in\carrier[R]$ by
+        \auto{ring_neg_type}.
+    $\mul[G](\groupInv[G](x),x')\in I$ and
+        $\mul[G](\groupInv[G](y),y')\in I$ by
+        \auto{subgroup_coset_relation_iff,
+            spike_additive_group_fields}.
+    Hence $d,e\in I$ by
+        \auto{spike_additive_group_fields}.
+    $u,v\in I$ by \auto{spike_prototype_two_sided_ideal}.
+    $I\subseteq\carrier[R]$ by
+        \auto{subgroup_subseteq,spike_additive_group_fields}.
+    Hence $u,v\in\carrier[R]$ by \auto{subseteq}.
+    Hence $\ringAdd[R](u,v)\in I$ by
+        \auto{subgroup_mul,spike_additive_group_fields}.
+    $u=\ringAdd[R]
+        (\ringMul[R](\ringNeg[R](x),y),\ringMul[R](x',y))$ by
+        \auto{ring_distributive_right}.
+    $\ringMul[R](\ringNeg[R](x),y)
+        =\ringNeg[R](\ringMul[R](x,y))$ by
+        \auto{ring_neg_product_left}.
+    Hence $u=\ringAdd[R]
+        (\ringNeg[R](\ringMul[R](x,y)),\ringMul[R](x',y))$ by
+        \auto.
+    $v=\ringAdd[R]
+        (\ringMul[R](x',\ringNeg[R](y)),\ringMul[R](x',y'))$ by
+        \auto{ring_distributive_left}.
+    $\ringMul[R](x',\ringNeg[R](y))
+        =\ringNeg[R](\ringMul[R](x',y))$ by
+        \auto{ring_neg_product_right}.
+    Hence $v=\ringAdd[R]
+        (\ringNeg[R](\ringMul[R](x',y)),\ringMul[R](x',y'))$ by
+        \auto.
+    $\ringMul[R](x,y),\ringMul[R](x',y),
+        \ringMul[R](x',y')\in\carrier[R]$ by
+        \auto{ring_mul_type}.
+    $\ringNeg[R](\ringMul[R](x,y)),
+        \ringNeg[R](\ringMul[R](x',y))\in\carrier[R]$ by
+        \auto{ring_neg_type}.
+    $\ringAdd[R]
+        (\ringMul[R](x',y),\ringNeg[R](\ringMul[R](x',y)))
+        =\ringZero[R]$ by \auto{ring_add_inverse_right}.
+    Hence
+        $\ringAdd[R]
+            (\ringMul[R](x',y),
+             \ringAdd[R]
+                (\ringNeg[R](\ringMul[R](x',y)),
+                 \ringMul[R](x',y')))
+            =\ringMul[R](x',y')$ by
+        \auto{ring_add_associative,ring_add_zero_left}.
+    $\ringAdd[R](u,v)=
+        \ringAdd[R]
+            (\ringAdd[R]
+                (\ringNeg[R](\ringMul[R](x,y)),
+                 \ringMul[R](x',y)),v)$ by \auto.
+    Hence $\ringAdd[R](u,v)=
+        \ringAdd[R]
+            (\ringNeg[R](\ringMul[R](x,y)),
+             \ringAdd[R](\ringMul[R](x',y),v))$ by
+        \auto{ring_add_associative}.
+    Hence $\ringAdd[R](u,v)=
+        \ringAdd[R]
+            (\ringNeg[R](\ringMul[R](x,y)),
+             \ringAdd[R]
+                (\ringMul[R](x',y),
+                 \ringAdd[R]
+                    (\ringNeg[R](\ringMul[R](x',y)),
+                     \ringMul[R](x',y'))))$ by \auto.
+    Hence
+        $\ringAdd[R](u,v)=
+            \ringAdd[R]
+                (\ringNeg[R](\ringMul[R](x,y)),
+                 \ringMul[R](x',y'))$ by \auto.
+    Hence
+        $\ringAdd[R]
+            (\ringNeg[R](\ringMul[R](x,y)),
+             \ringMul[R](x',y'))\in I$ by \auto.
+    Follows by
+        \auto{subgroup_coset_relation_iff,
+            spike_additive_group_fields}.
+\end{proof}
+
+\begin{proposition}\label{spike_quotient_ring_representative_mul_compatible}
+    Suppose $\prototypeTwoSidedIdeal{I}{R}$.
+    Then
+        $\quotientBinaryCompatible{
+            \spikeQuotientRingRepresentativeMul{R}{I}}
+            {\carrier[R]}
+            {\subgroupCosetRelation{\AdditiveGroup{R}}{I}}
+            {\carrier[R]}
+            {\subgroupCosetRelation{\AdditiveGroup{R}}{I}}$.
+\end{proposition}
+\begin{proof}
+    Let $G=\AdditiveGroup{R}$.
+    Let $E=\subgroupCosetRelation{G}{I}$.
+    $R$ is a ring and $\subgroup{I}{G}$ by
+        \auto{spike_prototype_two_sided_ideal}.
+    Hence $E$ is an equivalence on $\carrier[G]$ by
+        \auto{subgroup_coset_relation_equivalence}.
+    $\carrier[G]=\carrier[R]$ by
+        \auto{spike_additive_group_fields}.
+    Show that for all $x,x'\in\carrier[R]$ we have
+        for all $y,y'\in\carrier[R]$ such that
+            $x\mathrel{E}x'$ and $y\mathrel{E}y'$ we have
+        $\apply{\spikeQuotientRingRepresentativeMul{R}{I}}{(x,y)}
+            =\apply{\spikeQuotientRingRepresentativeMul{R}{I}}{(x',y')}$.
+    \begin{subproof}
+        Fix $x,x'\in\carrier[R]$ and $y,y'\in\carrier[R]$.
+        Assume $x\mathrel{E}x'$ and $y\mathrel{E}y'$.
+        Hence
+            $\ringMul[R](x,y)\mathrel{E}\ringMul[R](x',y')$ by
+            \auto{spike_quotient_ring_mul_respects_cosets}.
+        Hence
+            $\equivalenceClass{E}{\ringMul[R](x,y)}
+                =\equivalenceClass{E}{\ringMul[R](x',y')}$ by
+            \auto{ring_mul_type,
+                equiv_implies_equivanlence_classes_eq}.
+        Follows by
+            \auto{spike_quotient_ring_representative_mul_apply}.
+    \end{subproof}
+    Follows by \auto{quotient_binary_compatible}.
+\end{proof}
+
+\begin{definition}\label{spike_quotient_ring_multiplication_graph}
+    $\spikeQuotientRingMultiplicationGraph{R}{I}=
+        \quotientBinaryDescent{
+            \spikeQuotientRingRepresentativeMul{R}{I}}
+            {\carrier[R]}
+            {\subgroupCosetRelation{\AdditiveGroup{R}}{I}}
+            {\carrier[R]}
+            {\subgroupCosetRelation{\AdditiveGroup{R}}{I}}$.
+\end{definition}
+
+\begin{proposition}\label{spike_quotient_ring_multiplication_graph_type}
+    Suppose $\prototypeTwoSidedIdeal{I}{R}$.
+    Then
+        $\spikeQuotientRingMultiplicationGraph{R}{I}
+            \in\funs{
+                \groupQuotientCarrier{\AdditiveGroup{R}}{I}\times
+                \groupQuotientCarrier{\AdditiveGroup{R}}{I}}{
+                \groupQuotientCarrier{\AdditiveGroup{R}}{I}}$.
+\end{proposition}
+\begin{proof}
+    Let $G=\AdditiveGroup{R}$.
+    Let $E=\subgroupCosetRelation{G}{I}$.
+    $\subgroup{I}{G}$ by \auto{spike_prototype_two_sided_ideal}.
+    Hence $E$ is an equivalence on $\carrier[G]$ by
+        \auto{subgroup_coset_relation_equivalence}.
+    $\carrier[G]=\carrier[R]$ by
+        \auto{spike_additive_group_fields}.
+    Follows by
+        \auto{spike_quotient_ring_multiplication_graph,
+            spike_quotient_ring_representative_mul_type,
+            spike_quotient_ring_representative_mul_compatible,
+            quotient_binary_descent_type,group_quotient_carrier}.
+\end{proof}
+
+\begin{proposition}\label{spike_quotient_ring_multiplication_graph_apply}
+    Suppose $\prototypeTwoSidedIdeal{I}{R}$.
+    Let $x,y\in\carrier[R]$.
+    Then
+        $\apply{\spikeQuotientRingMultiplicationGraph{R}{I}}{
+            (\equivalenceClass{
+                \subgroupCosetRelation{\AdditiveGroup{R}}{I}}{x},
+              \equivalenceClass{
+                \subgroupCosetRelation{\AdditiveGroup{R}}{I}}{y})}
+        =\equivalenceClass{
+            \subgroupCosetRelation{\AdditiveGroup{R}}{I}}
+            {\ringMul[R](x,y)}$.
+\end{proposition}
+\begin{proof}
+    Let $G=\AdditiveGroup{R}$.
+    Let $E=\subgroupCosetRelation{G}{I}$.
+    $\subgroup{I}{G}$ by \auto{spike_prototype_two_sided_ideal}.
+    Hence $E$ is an equivalence on $\carrier[G]$ by
+        \auto{subgroup_coset_relation_equivalence}.
+    $\carrier[G]=\carrier[R]$ by
+        \auto{spike_additive_group_fields}.
+    Follows by
+        \auto{spike_quotient_ring_multiplication_graph,
+            spike_quotient_ring_representative_mul_type,
+            spike_quotient_ring_representative_mul_compatible,
+            spike_quotient_ring_representative_mul_apply,
+            quotient_binary_descent_apply}.
+\end{proof}
+
+\begin{definition}\label{spike_quotient_ring}
+    $\QuotientRing{R}{I}=
+        \structure[ring]{
+            \carrier=\carrier[\quotientGroup{\AdditiveGroup{R}}{I}],
+            \ringAdd=\mul[\quotientGroup{\AdditiveGroup{R}}{I}],
+            \ringZero=\neutral[\quotientGroup{\AdditiveGroup{R}}{I}],
+            \ringNeg=\groupInv[\quotientGroup{\AdditiveGroup{R}}{I}],
+            \ringMul=\spikeQuotientRingMultiplicationGraph{R}{I},
+            \ringOne=\equivalenceClass{
+                \subgroupCosetRelation{\AdditiveGroup{R}}{I}}{\ringOne[R]}
+        }$.
+\end{definition}
+
+\begin{proposition}\label{spike_quotient_ring_fields}
+    Let $G=\AdditiveGroup{R}$ and $Q=\quotientGroup{G}{I}$.
+    $\carrier[\QuotientRing{R}{I}]=\carrier[Q]$ and
+    $\ringAdd[\QuotientRing{R}{I}]=\mul[Q]$ and
+    $\ringZero[\QuotientRing{R}{I}]=\neutral[Q]$ and
+    $\ringNeg[\QuotientRing{R}{I}]=\groupInv[Q]$ and
+    $\ringMul[\QuotientRing{R}{I}]
+        =\spikeQuotientRingMultiplicationGraph{R}{I}$ and
+    $\ringOne[\QuotientRing{R}{I}]
+        =\equivalenceClass{
+            \subgroupCosetRelation{G}{I}}{\ringOne[R]}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{spike_quotient_ring,
+            ringaggregateprojection_carrier,ringaggregateprojection_ringAdd,
+            ringaggregateprojection_ringZero,ringaggregateprojection_ringNeg,
+            ringaggregateprojection_ringMul,ringaggregateprojection_ringOne}.
+\end{proof}
+
+\begin{proposition}\label{spike_quotient_ring_mul_apply}
+    Suppose $\prototypeTwoSidedIdeal{I}{R}$.
+    Let $x,y\in\carrier[R]$.
+    Let $E=\subgroupCosetRelation{\AdditiveGroup{R}}{I}$.
+    Then
+        $\ringMul[\QuotientRing{R}{I}]
+            (\equivalenceClass{E}{x},\equivalenceClass{E}{y})
+        =\equivalenceClass{E}{\ringMul[R](x,y)}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{spike_quotient_ring_fields,
+            spike_quotient_ring_multiplication_graph_apply}.
+\end{proof}
+
+\begin{theorem}\label{spike_quotient_ring_is_exact}
+    Suppose $\prototypeTwoSidedIdeal{I}{R}$.
+    Then $\QuotientRing{R}{I}$ is an exact ring.
+\end{theorem}
+\begin{proof}
+    Let $G=\AdditiveGroup{R}$.
+    Let $E=\subgroupCosetRelation{G}{I}$.
+    Let $Q=\quotientGroup{G}{I}$.
+    Let $S=\QuotientRing{R}{I}$.
+    $R$ is a ring and $\subgroup{I}{G}$ by
+        \auto{spike_prototype_two_sided_ideal}.
+    $G$ is an exact commutative group by
+        \auto{spike_additive_group_is_exact}.
+    Hence $G$ is a group by \auto{commutative_group_is_group}.
+    $\normalSubgroup{I}{G}$ by
+        \auto{spike_two_sided_ideal_is_normal}.
+    Hence $E$ is an equivalence on $\carrier[G]$ by
+        \auto{normal_subgroup_is_subgroup,
+            subgroup_coset_relation_equivalence}.
+    $Q$ is an exact group by \auto{quotient_group_is_exact_group}.
+    Hence $Q$ is a group and $Q$ is a monoid and
+        $Q$ is a unital magma and $Q$ is a magma by
+        \auto{group_is_monoid,monoid_is_unital_magma,
+            monoid_is_magma}.
+    Show that for all $U,V\in\carrier[Q]$ we have
+        $\mul[Q](U,V)=\mul[Q](V,U)$.
+    \begin{subproof}
+        Fix $U,V\in\carrier[Q]$.
+        Take $x\in\carrier[G]$ such that
+            $U=\equivalenceClass{E}{x}$ by
+            \auto{quotient_group_carrier,group_quotient_carrier,quotient}.
+        Take $y\in\carrier[G]$ such that
+            $V=\equivalenceClass{E}{y}$ by
+            \auto{quotient_group_carrier,group_quotient_carrier,quotient}.
+        $\mul[Q](U,V)=\equivalenceClass{E}{\mul[G](x,y)}$ and
+            $\mul[Q](V,U)=\equivalenceClass{E}{\mul[G](y,x)}$ by
+            \auto{quotient_group_mul_apply}.
+        $\mul[G](x,y)=\mul[G](y,x)$ by
+            \auto{commutative_group_commutative}.
+        Follows by \auto.
+    \end{subproof}
+    Hence $Q$ is a commutative group by
+        \auto{group,commutative_group}.
+
+    $\carrier[S]=\carrier[Q]$ and $\ringAdd[S]=\mul[Q]$ and
+        $\ringZero[S]=\neutral[Q]$ and
+        $\ringNeg[S]=\groupInv[Q]$ and
+        $\ringMul[S]=\spikeQuotientRingMultiplicationGraph{R}{I}$ and
+        $\ringOne[S]=\equivalenceClass{E}{\ringOne[R]}$ by
+        \auto{spike_quotient_ring_fields}.
+    $\ringAdd[S]\in
+        \funs{\carrier[S]\times\carrier[S]}{\carrier[S]}$ by
+        \auto{magma_mul_graph}.
+    $\ringZero[S]\in\carrier[S]$ by \auto{unitalmagma_type}.
+    $\ringNeg[S]\in\funs{\carrier[S]}{\carrier[S]}$ by
+        \auto{group_inverse_graph}.
+    $\ringMul[S]\in
+        \funs{\carrier[S]\times\carrier[S]}{\carrier[S]}$ by
+        \auto{spike_quotient_ring_multiplication_graph_type,
+            quotient_group_carrier}.
+    $\ringOne[R]\in\carrier[R]$ by \auto{ring_one_type}.
+    Hence $\ringOne[R]\in\carrier[G]$ by
+        \auto{spike_additive_group_fields}.
+    Hence $\ringOne[S]\in\carrier[S]$ by
+        \auto{group_quotient_carrier,quotient_group_carrier,quotient}.
+    For all $U,V,W\in\carrier[S]$ we have
+        $\ringAdd[S](U,\ringAdd[S](V,W))
+            =\ringAdd[S](\ringAdd[S](U,V),W)$ by
+        \auto{monoid_assoc}.
+    For all $U,V\in\carrier[S]$ we have
+        $\ringAdd[S](U,V)=\ringAdd[S](V,U)$ by \auto.
+    For every $U\in\carrier[S]$ we have
+        $\ringAdd[S](\ringZero[S],U)=U$ by
+        \auto{unitalmagma_left}.
+    For every $U\in\carrier[S]$ we have
+        $\ringAdd[S](\ringNeg[S](U),U)=\ringZero[S]$ by
+        \auto{group_inverse_left}.
+
+    Show that for all $U,V,W\in\carrier[S]$ we have
+        $\ringMul[S](U,\ringMul[S](V,W))
+            =\ringMul[S](\ringMul[S](U,V),W)$.
+    \begin{subproof}
+        Fix $U,V,W\in\carrier[S]$.
+        Take $x\in\carrier[G]$ such that
+            $U=\equivalenceClass{E}{x}$ by
+            \auto{quotient_group_carrier,group_quotient_carrier,quotient}.
+        Take $y\in\carrier[G]$ such that
+            $V=\equivalenceClass{E}{y}$ by
+            \auto{quotient_group_carrier,group_quotient_carrier,quotient}.
+        Take $z\in\carrier[G]$ such that
+            $W=\equivalenceClass{E}{z}$ by
+            \auto{quotient_group_carrier,group_quotient_carrier,quotient}.
+        Hence $x,y,z\in\carrier[R]$ by
+            \auto{spike_additive_group_fields}.
+        $\ringMul[R](x,y),\ringMul[R](y,z)\in\carrier[R]$ by
+            \auto{ring_mul_type}.
+        $\ringMul[S](V,W)=
+            \equivalenceClass{E}{\ringMul[R](y,z)}$ and
+            $\ringMul[S](U,V)=
+            \equivalenceClass{E}{\ringMul[R](x,y)}$ by
+            \auto{spike_quotient_ring_mul_apply}.
+        Hence
+            $\ringMul[S](U,\ringMul[S](V,W))=
+                \equivalenceClass{E}{
+                    \ringMul[R](x,\ringMul[R](y,z))}$ by
+            \auto{spike_quotient_ring_mul_apply}.
+        $\ringMul[S](\ringMul[S](U,V),W)=
+            \equivalenceClass{E}{
+                \ringMul[R](\ringMul[R](x,y),z)}$ by
+            \auto{spike_quotient_ring_mul_apply}.
+        Follows by \auto{ring_mul_associative}.
+    \end{subproof}
+    Show that for every $U\in\carrier[S]$ we have
+        $\ringMul[S](\ringOne[S],U)=U$ and
+        $\ringMul[S](U,\ringOne[S])=U$.
+    \begin{subproof}
+        Fix $U\in\carrier[S]$.
+        Take $x\in\carrier[G]$ such that
+            $U=\equivalenceClass{E}{x}$ by
+            \auto{quotient_group_carrier,group_quotient_carrier,quotient}.
+        Hence $x\in\carrier[R]$ by
+            \auto{spike_additive_group_fields}.
+        $\ringMul[S](\ringOne[S],U)=
+            \equivalenceClass{E}{\ringMul[R](\ringOne[R],x)}$ and
+            $\ringMul[S](U,\ringOne[S])=
+            \equivalenceClass{E}{\ringMul[R](x,\ringOne[R])}$ by
+            \auto{spike_quotient_ring_mul_apply}.
+        Follows by \auto{ring_mul_one_left,ring_mul_one_right}.
+    \end{subproof}
+    Show that for all $U,V,W\in\carrier[S]$ we have
+        $\ringMul[S](U,\ringAdd[S](V,W))
+            =\ringAdd[S](\ringMul[S](U,V),\ringMul[S](U,W))$.
+    \begin{subproof}
+        Fix $U,V,W\in\carrier[S]$.
+        Take $x\in\carrier[G]$ such that
+            $U=\equivalenceClass{E}{x}$ by
+            \auto{quotient_group_carrier,group_quotient_carrier,quotient}.
+        Take $y\in\carrier[G]$ such that
+            $V=\equivalenceClass{E}{y}$ by
+            \auto{quotient_group_carrier,group_quotient_carrier,quotient}.
+        Take $z\in\carrier[G]$ such that
+            $W=\equivalenceClass{E}{z}$ by
+            \auto{quotient_group_carrier,group_quotient_carrier,quotient}.
+        Hence $x,y,z\in\carrier[R]$ by
+            \auto{spike_additive_group_fields}.
+        $\ringAdd[R](y,z),\ringMul[R](x,y),
+            \ringMul[R](x,z)\in\carrier[R]$ by
+            \auto{ring_add_type,ring_mul_type}.
+        $\ringAdd[S](V,W)=
+            \equivalenceClass{E}{\ringAdd[R](y,z)}$ by
+            \auto{spike_quotient_ring_fields,quotient_group_mul_apply,
+                spike_additive_group_fields}.
+        Hence $\ringMul[S](U,\ringAdd[S](V,W))=
+            \equivalenceClass{E}{
+                \ringMul[R](x,\ringAdd[R](y,z))}$ by
+            \auto{spike_quotient_ring_mul_apply}.
+        $\ringMul[S](U,V)=
+            \equivalenceClass{E}{\ringMul[R](x,y)}$ and
+            $\ringMul[S](U,W)=
+            \equivalenceClass{E}{\ringMul[R](x,z)}$ by
+            \auto{spike_quotient_ring_mul_apply}.
+        Hence
+            $\ringAdd[S](\ringMul[S](U,V),\ringMul[S](U,W))=
+                \equivalenceClass{E}{
+                    \ringAdd[R](\ringMul[R](x,y),
+                                \ringMul[R](x,z))}$ by
+            \auto{spike_quotient_ring_fields,quotient_group_mul_apply,
+                spike_additive_group_fields}.
+        Follows by \auto{ring_distributive_left}.
+    \end{subproof}
+    Show that for all $U,V,W\in\carrier[S]$ we have
+        $\ringMul[S](\ringAdd[S](U,V),W)
+            =\ringAdd[S](\ringMul[S](U,W),\ringMul[S](V,W))$.
+    \begin{subproof}
+        Fix $U,V,W\in\carrier[S]$.
+        Take $x\in\carrier[G]$ such that
+            $U=\equivalenceClass{E}{x}$ by
+            \auto{quotient_group_carrier,group_quotient_carrier,quotient}.
+        Take $y\in\carrier[G]$ such that
+            $V=\equivalenceClass{E}{y}$ by
+            \auto{quotient_group_carrier,group_quotient_carrier,quotient}.
+        Take $z\in\carrier[G]$ such that
+            $W=\equivalenceClass{E}{z}$ by
+            \auto{quotient_group_carrier,group_quotient_carrier,quotient}.
+        Hence $x,y,z\in\carrier[R]$ by
+            \auto{spike_additive_group_fields}.
+        $\ringAdd[R](x,y),\ringMul[R](x,z),
+            \ringMul[R](y,z)\in\carrier[R]$ by
+            \auto{ring_add_type,ring_mul_type}.
+        $\ringAdd[S](U,V)=
+            \equivalenceClass{E}{\ringAdd[R](x,y)}$ by
+            \auto{spike_quotient_ring_fields,quotient_group_mul_apply,
+                spike_additive_group_fields}.
+        Hence $\ringMul[S](\ringAdd[S](U,V),W)=
+            \equivalenceClass{E}{
+                \ringMul[R](\ringAdd[R](x,y),z)}$ by
+            \auto{spike_quotient_ring_mul_apply}.
+        $\ringMul[S](U,W)=
+            \equivalenceClass{E}{\ringMul[R](x,z)}$ and
+            $\ringMul[S](V,W)=
+            \equivalenceClass{E}{\ringMul[R](y,z)}$ by
+            \auto{spike_quotient_ring_mul_apply}.
+        Hence
+            $\ringAdd[S](\ringMul[S](U,W),\ringMul[S](V,W))=
+                \equivalenceClass{E}{
+                    \ringAdd[R](\ringMul[R](x,z),
+                                \ringMul[R](y,z))}$ by
+            \auto{spike_quotient_ring_fields,quotient_group_mul_apply,
+                spike_additive_group_fields}.
+        Follows by \auto{ring_distributive_right}.
+    \end{subproof}
+    Hence $S$ is a ring by
+        \auto{spike_quotient_ring,ringaggregateexact,ring}.
+    Follows by \auto{spike_quotient_ring,ringaggregateexact}.
+\end{proof}
+
+\begin{theorem}\label{spike_quotient_ring_additive_reduct}
+    Suppose $\prototypeTwoSidedIdeal{I}{R}$.
+    Then
+        $\AdditiveGroup{\QuotientRing{R}{I}}
+            =\quotientGroup{\AdditiveGroup{R}}{I}$.
+\end{theorem}
+\begin{proof}
+    Let $S=\QuotientRing{R}{I}$.
+    Let $Q=\quotientGroup{\AdditiveGroup{R}}{I}$.
+    $S$ is an exact ring by \auto{spike_quotient_ring_is_exact}.
+    Hence $\AdditiveGroup{S}$ is an exact commutative group by
+        \auto{spike_additive_group_is_exact}.
+    Hence $\AdditiveGroup{S}$ is a group by
+        \auto{commutative_group_is_group}.
+    Hence $\AdditiveGroup{S}$ is an exact group by
+        \auto{spike_additive_group,groupaggregateexact}.
+    $\normalSubgroup{I}{\AdditiveGroup{R}}$ by
+        \auto{spike_two_sided_ideal_is_normal}.
+    Hence $Q$ is an exact group by
+        \auto{quotient_group_is_exact_group}.
+    $\carrier[\AdditiveGroup{S}]=\carrier[Q]$ and
+        $\mul[\AdditiveGroup{S}]=\mul[Q]$ and
+        $\neutral[\AdditiveGroup{S}]=\neutral[Q]$ and
+        $\groupInv[\AdditiveGroup{S}]=\groupInv[Q]$ by
+        \auto{spike_additive_group_fields,
+            spike_quotient_ring_fields}.
+    Follows by \auto{exact_group_extensionality}.
+\end{proof}
+
+\begin{proposition}\label{spike_quotient_ring_projection_reused}
+    Suppose $\prototypeTwoSidedIdeal{I}{R}$.
+    Then
+        $\groupQuotientProjection{\AdditiveGroup{R}}{I}
+            \in\funs{\carrier[R]}{
+                \carrier[\QuotientRing{R}{I}]}$.
+\end{proposition}
+\begin{proof}
+    $\normalSubgroup{I}{\AdditiveGroup{R}}$ by
+        \auto{spike_two_sided_ideal_is_normal}.
+    Follows by
+        \auto{group_quotient_projection_type,
+            spike_additive_group_fields,
+            quotient_group_carrier,spike_quotient_ring_fields}.
+\end{proof}

@@ -1,0 +1,479 @@
+\section{Ultrafilter calculus}
+
+\import{set/filter-extension.tex}
+\import{set/filter-map.tex}
+\import{set/filter-within.tex}
+\import{set/finite.tex}
+
+The maximal-filter definition is convenient for construction.  The decision
+law below is the more useful elimination principle: an ultrafilter contains
+exactly one of every subset and its relative complement.
+
+\begin{definition}\label{filter_adjoin}
+    $\filterAdjoin{F}{S}{A}=
+        \{B\in\pow{S}\mid
+            \exists C\in F. C\inter A\subseteq B\}$.
+\end{definition}
+
+\begin{proposition}\label{filter_adjoin_contains_filter}
+    Suppose $F$ is a filter on $S$ and $A\subseteq S$.
+    Then $F\subseteq\filterAdjoin{F}{S}{A}$.
+\end{proposition}
+\begin{proof}
+    It suffices to show that every element of $F$ is an element of
+        $\filterAdjoin{F}{S}{A}$ by \obv{subseteq}.
+    Fix $B\in F$.
+    $B\subseteq S$ by \obv{filter}.
+    Hence $B\in\pow{S}$ by \obv{pow_iff,subseteq}.
+    $B\inter A\subseteq B$ by \obv{inter_lower_left}.
+    Follows by \obv{filter_adjoin}.
+\end{proof}
+
+\begin{proposition}\label{filter_adjoin_contains_set}
+    Suppose $F$ is a filter on $S$ and $A\subseteq S$.
+    Then $A\in\filterAdjoin{F}{S}{A}$.
+\end{proposition}
+\begin{proof}
+    $A\in\pow{S}$ by \obv{pow_iff,subseteq}.
+    $S\in F$ by \obv{filter}.
+    $S\inter A=A$ by \obv{inter_absorb_supseteq_left}.
+    Follows by \obv{filter_adjoin,subseteq_refl}.
+\end{proof}
+
+\begin{proposition}\label{filter_adjoin_is_proper_filter}
+    Suppose $F$ is a filter on $S$ and $A\subseteq S$.
+    Suppose for every $C\in F$ we have $C\inter A$ is inhabited.
+    Then $\filterAdjoin{F}{S}{A}$ is a proper filter on $S$.
+\end{proposition}
+\begin{proof}
+    Let $G=\filterAdjoin{F}{S}{A}$.
+    $G$ is a family of subsets of $S$
+        by \auto{filter_adjoin,pow_iff,subseteq}.
+    $S\in F$ by \obv{filter}.
+    $S\in\pow{S}$ by \auto{pow_iff,subseteq_refl}.
+    $S\inter A\subseteq S$ by \obv{inter_lower_left}.
+    Hence $S\in G$ by \obv{filter_adjoin}.
+
+    Show that $\emptyset\notin G$.
+    \begin{subproof}
+        Suppose not.
+        Take $C\in F$ such that $C\inter A\subseteq\emptyset$
+            by \auto{filter_adjoin}.
+        Hence $C\inter A=\emptyset$
+            by \obv{subseteq_emptyset_iff}.
+        $C\inter A$ is inhabited.
+        Contradiction by \obv{emptyset}.
+    \end{subproof}
+
+    Show that $G$ is closed under binary intersections.
+    \begin{subproof}
+        Fix $B,D\in G$.
+        Take $C\in F$ such that $C\inter A\subseteq B$
+            by \auto{filter_adjoin}.
+        Take $E\in F$ such that $E\inter A\subseteq D$
+            by \auto{filter_adjoin}.
+        $C\inter E\in F$ by \obv{filter}.
+        Show that $(C\inter E)\inter A\subseteq B\inter D$.
+        \begin{subproof}
+            It suffices to show that every element of $(C\inter E)\inter A$
+                is an element of $B\inter D$ by \obv{subseteq}.
+            Fix $x\in(C\inter E)\inter A$.
+            $x\in C,E,A$ by \auto{inter}.
+            Hence $x\in C\inter A$ and $x\in E\inter A$
+                by \obv{inter_intro}.
+            Thus $x\in B,D$ by \obv{subseteq}.
+            Follows by \obv{inter_intro}.
+        \end{subproof}
+        $B,D\subseteq S$ by \obv{filter_adjoin,pow_iff,subseteq}.
+        Hence $B\inter D\in\pow{S}$
+            by \auto{inter_subseteq,pow_iff,subseteq}.
+        Follows by \obv{filter_adjoin}.
+    \end{subproof}
+
+    Show that $G$ is upward-closed in $S$.
+    \begin{subproof}
+        Fix $B,D$.
+        Assume $B\subseteq D\subseteq S$ and $B\in G$.
+        Take $C\in F$ such that $C\inter A\subseteq B$
+            by \auto{filter_adjoin}.
+        $C\inter A\subseteq D$ by \obv{subseteq_transitive}.
+        $D\in\pow{S}$ by \obv{pow_iff,subseteq}.
+        Follows by \obv{filter_adjoin}.
+    \end{subproof}
+    Hence $G$ is a filter on $S$ by \obv{filter}.
+    Hence $G$ is a proper filter on $S$ by \obv{proper_filter}.
+\end{proof}
+
+\begin{theorem}\label{ultrafilter_decides_subset}
+    Suppose $U$ is an ultrafilter on $S$ and $A\subseteq S$.
+    Then $A\in U$ or $S\setminus A\in U$.
+\end{theorem}
+\begin{proof}
+    $U$ is a maximal proper filter on $S$ by \obv{ultrafilter}.
+    Hence $U$ is a proper filter on $S$ by \obv{maximalfilter}.
+    Hence $U$ is a filter on $S$ by \obv{proper_filter}.
+    Suppose $A\notin U$.
+    Show that $S\setminus A\in U$.
+    \begin{subproof}
+        Suppose not.
+        Show that for every $C\in U$ we have $C\inter A$ is inhabited.
+        \begin{subproof}
+            Fix $C\in U$.
+            Suppose not.
+            Hence $C\inter A=\emptyset$
+                by \obv{nonempty_inhabited}.
+            $C\subseteq S$ by \obv{filter}.
+            Thus $C\subseteq S\setminus A$
+                by \obv{subseteq_setminus}.
+            Hence $S\setminus A\in U$
+                by \auto{filter,setminus_subseteq}.
+            Contradiction.
+        \end{subproof}
+        Let $G=\filterAdjoin{U}{S}{A}$.
+        $G$ is a proper filter on $S$
+            by \auto{filter_adjoin_is_proper_filter}.
+        $U\subseteq G$ by \obv{filter_adjoin_contains_filter}.
+        Hence $G=U$ by \auto{maximalfilter,subset}.
+        $A\in G$ by \obv{filter_adjoin_contains_set}.
+        Hence $A\in U$.
+        Contradiction.
+    \end{subproof}
+\end{proof}
+
+\begin{proposition}\label{filter_excludes_complement}
+    Suppose $F$ is a proper filter on $S$ and
+        $A\subseteq S$ and $A\in F$.
+    Then $S\setminus A\notin F$.
+\end{proposition}
+\begin{proof}
+    $F$ is a filter on $S$ by \obv{proper_filter}.
+    Suppose not.
+    $A\inter(S\setminus A)\in F$
+        by \obv{filter_inter_in_iff,setminus_subseteq}.
+    $A\inter(S\setminus A)=\emptyset$
+        by \auto{inter,setminus,setext}.
+    Thus $\emptyset\in F$.
+    Contradiction by \obv{proper_filter}.
+\end{proof}
+
+\begin{corollary}\label{ultrafilter_exactly_one_subset_or_complement}
+    Suppose $U$ is an ultrafilter on $S$ and $A\subseteq S$.
+    Then $A\in U$ iff $S\setminus A\notin U$.
+\end{corollary}
+\begin{proof}
+    $U$ is a proper filter on $S$ by \auto{ultrafilter,maximalfilter}.
+    Hence $U$ is a filter on $S$ by \obv{proper_filter}.
+    $A\in U$ or $S\setminus A\in U$
+        by \obv{ultrafilter_decides_subset}.
+    If $A\in U$, then $S\setminus A\notin U$
+        by \obv{filter_excludes_complement}.
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{filter_decision_implies_ultrafilter}
+    Suppose $F$ is a proper filter on $S$.
+    Suppose for every $A\subseteq S$ we have
+        $A\in F$ or $S\setminus A\in F$.
+    Then $F$ is an ultrafilter on $S$.
+\end{theorem}
+\begin{proof}
+    $F$ is a filter on $S$ by \obv{proper_filter}.
+    Show that for every $G$ such that $G$ is a proper filter on $S$ and
+        $F\subseteq G$ we have $G=F$.
+    \begin{subproof}
+        Fix $G$.
+        Assume $G$ is a proper filter on $S$ and $F\subseteq G$.
+        Hence $G$ is a filter on $S$ by \obv{proper_filter}.
+        Show that $G\subseteq F$.
+        \begin{subproof}
+            It suffices to show that every element of $G$ is an element of
+                $F$ by \obv{subseteq}.
+            Fix $A\in G$.
+            $A\subseteq S$ by \obv{filter}.
+            Suppose not.
+            Hence $S\setminus A\in F$.
+            Thus $S\setminus A\in G$ by \obv{subseteq}.
+            Contradiction by \obv{filter_excludes_complement}.
+        \end{subproof}
+        Hence $G=F$ by \obv{subseteq_antisymmetric}.
+    \end{subproof}
+    Hence $F$ is a maximal proper filter on $S$
+        by \obv{maximalfilter,subset}.
+    Follows by \obv{ultrafilter,maximalfilter,subset}.
+\end{proof}
+
+\begin{theorem}\label{filter_pushforward_preserves_ultrafilters}
+    Let $f\in\funs{S}{T}$ and $U$ be an ultrafilter on $S$.
+    Then $\filterPushforward{S}{T}{f}{U}$ is an ultrafilter on $T$.
+\end{theorem}
+\begin{proof}
+    $U$ is a proper filter on $S$ by
+        \auto{ultrafilter,maximalfilter}.
+    Hence $\filterPushforward{S}{T}{f}{U}$ is a proper filter on $T$ by
+        \obv{filter_pushforward_preserves_properness}.
+    Show that for every $B\subseteq T$ we have
+        $B\in\filterPushforward{S}{T}{f}{U}$ or
+        $T\setminus B\in\filterPushforward{S}{T}{f}{U}$.
+    \begin{subproof}
+        Fix $B\subseteq T$.
+        $\preimg{f}{B}\subseteq S$ by
+            \obv{preimg_subseteq_dom,funs}.
+        $\preimg{f}{B}\in U$ or
+            $S\setminus\preimg{f}{B}\in U$ by
+            \obv{ultrafilter_decides_subset}.
+        \begin{byCase}
+        \caseOf{$\preimg{f}{B}\in U$.}
+            Hence $B\in\filterPushforward{S}{T}{f}{U}$ by
+                \auto{filter_pushforward_iff}.
+        \caseOf{$S\setminus\preimg{f}{B}\in U$.}
+            $S\setminus\preimg{f}{B}=\preimg{f}{T\setminus B}$ by
+                \obv{preimg_relative_complement_of_function}.
+            Hence $\preimg{f}{T\setminus B}\in U$.
+            $T\setminus B\subseteq T$ by \obv{setminus_subseteq}.
+            Thus $T\setminus B\in
+                \filterPushforward{S}{T}{f}{U}$ by
+                \auto{filter_pushforward_iff}.
+        \end{byCase}
+    \end{subproof}
+    Follows by \obv{filter_decision_implies_ultrafilter}.
+\end{proof}
+
+\begin{theorem}\label{filter_trace_of_ultrafilter_to_member}
+    Suppose $U$ is an ultrafilter on $S$ and $A\in U$.
+    Then $\filterTrace{S}{U}{A}$ is an ultrafilter on $A$.
+\end{theorem}
+\begin{proof}
+    $U$ is a proper filter on $S$ by
+        \auto{ultrafilter,maximalfilter}.
+    Hence $U$ is a filter on $S$ by \obv{proper_filter_is_filter}.
+    $A\subseteq S$ by \obv{filter}.
+    $S\setminus A\notin U$ by \obv{filter_excludes_complement}.
+    Hence $A$ is frequent along $U$ on $S$ by
+        \obv{filter_frequent}.
+    Thus $\filterTrace{S}{U}{A}$ is a proper filter on $A$ by
+        \obv{filter_trace_is_proper_iff_frequent}.
+
+    Show that for every $B\subseteq A$ we have
+        $B\in\filterTrace{S}{U}{A}$ or
+        $A\setminus B\in\filterTrace{S}{U}{A}$.
+    \begin{subproof}
+        Fix $B\subseteq A$.
+        Hence $B\subseteq S$ by \obv{subseteq_transitive}.
+        $B\in U$ or $S\setminus B\in U$ by
+            \obv{ultrafilter_decides_subset}.
+        \begin{byCase}
+        \caseOf{$B\in U$.}
+            $A\inter B=B$ by
+                \obv{inter_absorb_supseteq_left}.
+            Hence $A\inter B\subseteq B$ by \obv{subseteq_refl}.
+            Thus $B\in\filterTrace{S}{U}{A}$ by
+                \auto{filter_trace_iff}.
+        \caseOf{$S\setminus B\in U$.}
+            $A\setminus B\subseteq A$ by \obv{setminus_subseteq}.
+            $A\inter(S\setminus B)=A\setminus B$ by
+                \auto{setext,inter,setminus,subseteq}.
+            Hence $A\inter(S\setminus B)\subseteq A\setminus B$ by
+                \obv{subseteq_refl}.
+            Thus $A\setminus B\in\filterTrace{S}{U}{A}$ by
+                \auto{filter_trace_iff}.
+        \end{byCase}
+    \end{subproof}
+    Follows by \obv{filter_decision_implies_ultrafilter}.
+\end{proof}
+
+\begin{proposition}\label{ultrafilter_union_in_iff}
+    Suppose $U$ is an ultrafilter on $S$.
+    Suppose $A,B\subseteq S$.
+    Then $A\union B\in U$ iff $A\in U$ or $B\in U$.
+\end{proposition}
+\begin{proof}
+    $U$ is a proper filter on $S$ by \auto{ultrafilter,maximalfilter}.
+    Hence $U$ is a filter on $S$ by \obv{proper_filter}.
+    If $A\in U$ or $B\in U$, then $A\union B\in U$
+        by \auto{filter,union_upper_left,union_upper_right,subseteq,union_iff}.
+    Show that if $A\union B\in U$, then $A\in U$ or $B\in U$.
+    \begin{subproof}
+        Assume $A\union B\in U$.
+        Suppose not.
+        Then $A\notin U$ and $B\notin U$.
+        Hence $S\setminus A\in U$ and $S\setminus B\in U$
+            by \obv{ultrafilter_decides_subset}.
+        Thus $(S\setminus A)\inter(S\setminus B)\in U$
+            by \obv{filter_inter_in_iff,setminus_subseteq}.
+        $(S\setminus A)\inter(S\setminus B)=S\setminus(A\union B)$
+            by \obv{setminus_union}.
+        Hence $S\setminus(A\union B)\in U$.
+        $A\union B\subseteq S$ by \obv{subseteq,union_iff}.
+        Contradiction by \obv{filter_excludes_complement}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{finite_ultrafilter_member_contains_singleton}
+    Suppose $U$ is an ultrafilter on $S$.
+    Suppose $A\in U$ and $A$ is finite.
+    Then there exists $a\in A$ such that $\{a\}\in U$.
+\end{theorem}
+\begin{proof}
+    $U$ is a proper filter on $S$ by \auto{ultrafilter,maximalfilter}.
+    Hence $U$ is a filter on $S$ by \obv{proper_filter}.
+    Hence $A\subseteq S$ by \obv{filter}.
+    Let $C=\{B\in\pow{A}\mid
+        \text{$B\notin U$ or there exists $b\in B$ such that
+            $\{b\}\in U$}\}$.
+    $\emptyset\in\pow{A}$ by \obv{powerset_bottom}.
+    $\emptyset\notin U$ by \obv{proper_filter}.
+    Hence $\emptyset\in C$.
+    Show that for every $B,b$ such that $B\in C$ and $b\in A$ we have
+        $\cons{b}{B}\in C$.
+    \begin{subproof}
+        Fix $B,b$.
+        Assume $B\in C$ and $b\in A$.
+        $B\subseteq A$ by \obv{pow_iff,subseteq}.
+        Hence $\cons{b}{B}\subseteq A$
+            by \obv{cons_subseteq_intro}.
+        Thus $\cons{b}{B}\in\pow{A}$
+            by \obv{pow_iff,subseteq}.
+        \begin{byCase}
+        \caseOf{$\cons{b}{B}\notin U$.}
+            Follows.
+        \caseOf{$\cons{b}{B}\in U$.}
+            $\{b\}\subseteq S$ by
+                \auto{subseteq,singleton_iff}.
+            $B\subseteq S$ by \obv{subseteq_transitive}.
+            $\{b\}\union B=\cons{b}{B}$
+                by \auto{setext,singleton_iff,union_iff,cons_iff}.
+            Hence $\{b\}\in U$ or $B\in U$
+                by \auto{ultrafilter_union_in_iff}.
+            \begin{byCase}
+            \caseOf{$\{b\}\in U$.}
+                $b\in\cons{b}{B}$ by \obv{cons_left}.
+                Hence there exists $a\in\cons{b}{B}$ such that
+                    $\{a\}\in U$.
+            \caseOf{$\{b\}\notin U$.}
+                Then $B\in U$.
+                Take $a\in B$ such that $\{a\}\in U$.
+                $a\in\cons{b}{B}$ by \auto{cons_iff}.
+                Hence there exists $c\in\cons{b}{B}$ such that
+                    $\{c\}\in U$.
+            \end{byCase}
+        \end{byCase}
+    \end{subproof}
+    Hence $A\in C$ by \obv{finite_induction}.
+\end{proof}
+
+\begin{theorem}\label{ultrafilter_on_finite_set_is_principal}
+    Suppose $U$ is an ultrafilter on $S$ and $S$ is finite.
+    Then there exists $a\in S$ such that
+        $U=\principalfilter{S}{\{a\}}$.
+\end{theorem}
+\begin{proof}
+    $U$ is a proper filter on $S$ by \auto{ultrafilter,maximalfilter}.
+    Hence $U$ is a filter on $S$ by \obv{proper_filter}.
+    Hence $S\in U$ by \obv{filter}.
+    Take $a\in S$ such that $\{a\}\in U$
+        by \obv{finite_ultrafilter_member_contains_singleton}.
+    $\principalfilter{S}{\{a\}}$ is a maximal proper filter on $S$
+        by \obv{principalfilter_singleton_is_maximal_proper_filter}.
+    Show that $\principalfilter{S}{\{a\}}\subseteq U$.
+    \begin{subproof}
+        It suffices to show that every element of
+            $\principalfilter{S}{\{a\}}$ is an element of $U$
+            by \obv{subseteq}.
+        Fix $B\in\principalfilter{S}{\{a\}}$.
+        $B\subseteq S$ and $\{a\}\subseteq B$
+            by \auto{principalfilter,pow_iff,subseteq}.
+        Follows by \obv{filter}.
+    \end{subproof}
+    Hence $U=\principalfilter{S}{\{a\}}$
+        by \auto{maximalfilter,subset}.
+\end{proof}
+
+\begin{definition}\label{cofinite_filter}
+    $\cofiniteFilter{S}=\{A\in\pow{S}\mid
+        \text{$S\setminus A$ is finite}\}$.
+\end{definition}
+
+\begin{theorem}\label{cofinite_filter_is_proper_filter}
+    Suppose $S$ is infinite.
+    Then $\cofiniteFilter{S}$ is a proper filter on $S$.
+\end{theorem}
+\begin{proof}
+    Let $F=\cofiniteFilter{S}$.
+    $F$ is a family of subsets of $S$
+        by \auto{cofinite_filter,pow_iff,subseteq}.
+    $S\in\pow{S}$ by \auto{pow_iff,subseteq_refl}.
+    $S\setminus S=\emptyset$ by \obv{setminus_self}.
+    Hence $S\in F$ by \obv{cofinite_filter,emptyset_is_finite}.
+    Show that $\emptyset\notin F$.
+    \begin{subproof}
+        Suppose not.
+        Then $S\setminus\emptyset$ is finite by \auto{cofinite_filter}.
+        $S\setminus\emptyset=S$ by \obv{setminus_emptyset}.
+        Hence $S$ is finite.
+        Contradiction.
+    \end{subproof}
+    Show that $F$ is closed under binary intersections.
+    \begin{subproof}
+        Fix $A,B\in F$.
+        $A,B\subseteq S$ by \obv{cofinite_filter,pow_iff,subseteq}.
+        $S\setminus A$ and $S\setminus B$ are finite
+            by \auto{cofinite_filter}.
+        Hence $(S\setminus A)\union(S\setminus B)$ is finite
+            by \obv{union_of_finite_is_finite}.
+        $S\setminus(A\inter B)
+            =(S\setminus A)\union(S\setminus B)$
+            by \obv{setminus_inter}.
+        Thus $S\setminus(A\inter B)$ is finite.
+        $A\inter B\subseteq S$ by \obv{inter_subseteq}.
+        Hence $A\inter B\in\pow{S}$ by \obv{pow_iff,subseteq}.
+        Follows by \obv{cofinite_filter}.
+    \end{subproof}
+    Show that $F$ is upward-closed in $S$.
+    \begin{subproof}
+        Fix $A,B$.
+        Assume $A\subseteq B\subseteq S$ and $A\in F$.
+        $S\setminus A$ is finite by \auto{cofinite_filter}.
+        $S\setminus B\subseteq S\setminus A$
+            by \obv{subseteq_implies_setminus_supseteq}.
+        Hence $S\setminus B$ is finite
+            by \obv{subseteq_finite_is_finite}.
+        $B\in\pow{S}$ by \obv{pow_iff,subseteq}.
+        Follows by \obv{cofinite_filter}.
+    \end{subproof}
+    Hence $F$ is a filter on $S$ by \obv{filter}.
+    Hence $F$ is a proper filter on $S$ by \obv{proper_filter}.
+\end{proof}
+
+\begin{definition}\label{free_ultrafilter}
+    $U$ is a free ultrafilter on $S$ iff
+        $U$ is an ultrafilter on $S$ and every element of $U$ is infinite.
+\end{definition}
+
+\begin{theorem}\label{free_ultrafilter_exists}
+    Suppose $S$ is infinite.
+    Then there exists $U$ such that $U$ is a free ultrafilter on $S$ and
+        $\cofiniteFilter{S}\subseteq U$.
+\end{theorem}
+\begin{proof}
+    $\cofiniteFilter{S}$ is a proper filter on $S$
+        by \obv{cofinite_filter_is_proper_filter}.
+    Take $U$ such that $\cofiniteFilter{S}\subseteq U$ and
+        $U$ is an ultrafilter on $S$
+        by \obv{filter_extension_to_ultrafilter}.
+    $U$ is a proper filter on $S$ by \auto{ultrafilter,maximalfilter}.
+    Hence $U$ is a filter on $S$ by \obv{proper_filter}.
+    Show that every element of $U$ is infinite.
+    \begin{subproof}
+        Fix $A\in U$.
+        $A\subseteq S$ by \obv{filter}.
+        Suppose $A$ is finite.
+        $S\setminus(S\setminus A)=A$
+            by \obv{double_relative_complement}.
+        Hence $S\setminus A\in\cofiniteFilter{S}$
+            by \auto{cofinite_filter,setminus_subseteq,pow_iff,subseteq}.
+        Thus $S\setminus A\in U$ by \obv{subseteq}.
+        Contradiction by \obv{filter_excludes_complement}.
+    \end{subproof}
+    Hence $U$ is a free ultrafilter on $S$ by \obv{free_ultrafilter}.
+\end{proof}

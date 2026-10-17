@@ -1,0 +1,232 @@
+\import{recursion/logical-membership.tex}
+
+\section{Binary-valued logical membership recursion}
+
+This is the concrete instance whose values have type
+$\Set\to\Set\to\Set$.  It is kept separate from the preceding
+$\Set\to\Set$ instance because Felix deliberately has no type polymorphism.
+
+\begin{definition}\label{membership_rec_two_closure}
+    $\membershipRecTwoClosureOp :
+        (\Set\to(\Set\to(\Set\to\Set\to\Set))\to(\Set\to\Set\to\Set))\to
+        \Set\to(\Set\to\Set\to\Set)\to\Prop
+        =\fun{F:\Set\to(\Set\to(\Set\to\Set\to\Set))\to(\Set\to\Set\to\Set)}{
+            \fun{X:\Set}{
+                \fun{Y:\Set\to\Set\to\Set}{
+                    \forall R:\Set\to(\Set\to\Set\to\Set)\to\Prop.
+                    (\forall Z:\Set.\ \forall f:\Set\to(\Set\to\Set\to\Set).
+                        (\forall z:\Set.\ z\in Z\implies
+                            \Apply{R}{z,\Apply{f}{z}})
+                        \implies
+                        \Apply{R}{Z,\Apply{F}{Z,f}})
+                    \implies\Apply{R}{X,Y}}}}$.
+\end{definition}
+
+\begin{theorem}\label{membership_rec_two_closure_intro}
+    $\forall F:\Set\to(\Set\to(\Set\to\Set\to\Set))\to(\Set\to\Set\to\Set).
+     \forall X:\Set.\ \forall f:\Set\to(\Set\to\Set\to\Set).
+        (\forall x:\Set.\ x\in X\implies
+            \Apply{\membershipRecTwoClosureOp}
+                {F,x,\Apply{f}{x}})
+        \implies
+        \Apply{\membershipRecTwoClosureOp}
+            {F,X,\Apply{F}{X,f}}$.
+\end{theorem}
+\begin{proof}
+    Follows by \auto{membership_rec_two_closure}.
+\end{proof}
+
+\begin{definition}\label{membership_rec_two_inversion}
+    $\membershipRecTwoInversionOp :
+        (\Set\to(\Set\to(\Set\to\Set\to\Set))\to(\Set\to\Set\to\Set))\to
+        \Set\to(\Set\to\Set\to\Set)\to\Prop
+        =\fun{F:\Set\to(\Set\to(\Set\to\Set\to\Set))\to(\Set\to\Set\to\Set)}{
+            \fun{X:\Set}{
+                \fun{Y:\Set\to\Set\to\Set}{
+                    \exists f:\Set\to(\Set\to\Set\to\Set).
+                        (\forall x:\Set.\ x\in X\implies
+                            \Apply{\membershipRecTwoClosureOp}
+                                {F,x,\Apply{f}{x}})
+                        \land Y=\Apply{F}{X,f}}}}$.
+\end{definition}
+
+\begin{theorem}\label{membership_rec_two_inversion_closed}
+    $\forall F:\Set\to(\Set\to(\Set\to\Set\to\Set))\to(\Set\to\Set\to\Set).
+     \forall X:\Set.\ \forall g:\Set\to(\Set\to\Set\to\Set).
+        (\forall x:\Set.\ x\in X\implies
+            \Apply{\membershipRecTwoInversionOp}
+                {F,x,\Apply{g}{x}})
+        \implies
+        \Apply{\membershipRecTwoInversionOp}
+            {F,X,\Apply{F}{X,g}}$.
+\end{theorem}
+\begin{proof}
+    Fix $F,X,g$.
+    Assume $\forall x:\Set.\ x\in X\implies
+        \Apply{\membershipRecTwoInversionOp}
+            {F,x,\Apply{g}{x}}$.
+    Show that $\forall x:\Set.\ x\in X\implies
+        \Apply{\membershipRecTwoClosureOp}
+            {F,x,\Apply{g}{x}}$.
+    \begin{subproof}
+        Fix $x\in X$.
+        Take $f:\Set\to(\Set\to\Set\to\Set)$ such that
+            $(\forall z:\Set.\ z\in x\implies
+                \Apply{\membershipRecTwoClosureOp}
+                    {F,z,\Apply{f}{z}})
+            \land \Apply{g}{x}=\Apply{F}{x,f}$
+            by \auto{membership_rec_two_inversion}.
+        $\Apply{\membershipRecTwoClosureOp}
+            {F,x,\Apply{F}{x,f}}$
+            by \obv{membership_rec_two_closure_intro}.
+    \end{subproof}
+    Follows by \obv{membership_rec_two_inversion}.
+\end{proof}
+
+\begin{theorem}\label{membership_rec_two_closure_inversion}
+    $\forall F:\Set\to(\Set\to(\Set\to\Set\to\Set))\to(\Set\to\Set\to\Set).
+     \forall X:\Set.\ \forall Y:\Set\to\Set\to\Set.
+        \Apply{\membershipRecTwoClosureOp}{F,X,Y}
+        \implies
+        (\exists f:\Set\to(\Set\to\Set\to\Set).
+            (\forall x:\Set.\ x\in X\implies
+                \Apply{\membershipRecTwoClosureOp}
+                    {F,x,\Apply{f}{x}})
+            \land Y=\Apply{F}{X,f})$.
+\end{theorem}
+\begin{proof}
+    Fix $F,X,Y$.
+    Assume
+        $\Apply{\membershipRecTwoClosureOp}{F,X,Y}$.
+    Follows by \auto{membership_rec_two_closure,membership_rec_two_inversion,membership_rec_two_inversion_closed}.
+\end{proof}
+
+\begin{definition}\label{membership_rec_two_functional}
+    $\membershipRecTwoFunctionalOp :
+        (\Set\to(\Set\to(\Set\to\Set\to\Set))\to(\Set\to\Set\to\Set))\to\Prop
+        =\fun{F:\Set\to(\Set\to(\Set\to\Set\to\Set))\to(\Set\to\Set\to\Set)}{
+            \forall X:\Set.\ \forall g,h:\Set\to(\Set\to\Set\to\Set).
+                (\forall x:\Set.\ x\in X\implies
+                    \Apply{g}{x}=\Apply{h}{x})
+                \implies
+                \Apply{F}{X,g}=\Apply{F}{X,h}}$.
+\end{definition}
+
+\begin{lemma}\label{membership_rec_two_closure_unique_step}
+    $\forall F:\Set\to(\Set\to(\Set\to\Set\to\Set))\to(\Set\to\Set\to\Set).
+     \forall X:\Set.
+        \Apply{\membershipRecTwoFunctionalOp}{F}
+        \land
+        (\forall x:\Set.\ x\in X\implies
+            (\forall Y,Z:\Set\to\Set\to\Set.
+                \Apply{\membershipRecTwoClosureOp}{F,x,Y}
+                \land
+                \Apply{\membershipRecTwoClosureOp}{F,x,Z}
+                \implies Y=Z))
+        \implies
+        (\forall Y,Z:\Set\to\Set\to\Set.
+            \Apply{\membershipRecTwoClosureOp}{F,X,Y}
+            \land
+            \Apply{\membershipRecTwoClosureOp}{F,X,Z}
+            \implies Y=Z)$.
+\end{lemma}
+\begin{proof}
+    Fix $F,X$.
+    Assume $\Apply{\membershipRecTwoFunctionalOp}{F}$.
+    Assume $\forall x:\Set.\ x\in X\implies
+        (\forall Y,Z:\Set\to\Set\to\Set.
+            \Apply{\membershipRecTwoClosureOp}{F,x,Y}
+            \land
+            \Apply{\membershipRecTwoClosureOp}{F,x,Z}
+            \implies Y=Z)$.
+    Fix $Y,Z$.
+    Assume
+        $\Apply{\membershipRecTwoClosureOp}{F,X,Y}
+        \land
+        \Apply{\membershipRecTwoClosureOp}{F,X,Z}$.
+    Take $g:\Set\to(\Set\to\Set\to\Set)$ such that
+        $(\forall x:\Set.\ x\in X\implies
+            \Apply{\membershipRecTwoClosureOp}
+                {F,x,\Apply{g}{x}})
+        \land Y=\Apply{F}{X,g}$
+        by \obv{membership_rec_two_closure_inversion}.
+    Take $h:\Set\to(\Set\to\Set\to\Set)$ such that
+        $(\forall x:\Set.\ x\in X\implies
+            \Apply{\membershipRecTwoClosureOp}
+                {F,x,\Apply{h}{x}})
+        \land Z=\Apply{F}{X,h}$
+        by \obv{membership_rec_two_closure_inversion}.
+    Show that $\forall x:\Set.\ x\in X\implies
+        \Apply{g}{x}=\Apply{h}{x}$.
+    \begin{subproof}
+        Fix $x\in X$.
+    \end{subproof}
+    $\Apply{F}{X,g}=\Apply{F}{X,h}$
+        by \obv{membership_rec_two_functional}.
+\end{proof}
+
+\begin{theorem}\label{membership_rec_two_closure_unique}
+    $\forall X:\Set.
+     \forall F:\Set\to(\Set\to(\Set\to\Set\to\Set))\to(\Set\to\Set\to\Set).
+        \Apply{\membershipRecTwoFunctionalOp}{F}
+        \implies
+        (\forall Y,Z:\Set\to\Set\to\Set.
+            \Apply{\membershipRecTwoClosureOp}{F,X,Y}
+            \land
+            \Apply{\membershipRecTwoClosureOp}{F,X,Z}
+            \implies Y=Z)$.
+\end{theorem}
+\begin{proof}[Proof by \in-induction on $X$]
+    Follows by \auto{membership_rec_two_closure_unique_step}.
+\end{proof}
+
+\begin{definition}\label{membership_rec_two}
+    $\membershipRecTwoOp :
+        (\Set\to(\Set\to(\Set\to\Set\to\Set))\to(\Set\to\Set\to\Set))\to
+        \Set\to(\Set\to\Set\to\Set)
+        =\fun{F:\Set\to(\Set\to(\Set\to\Set\to\Set))\to(\Set\to\Set\to\Set)}{
+            \fun{X:\Set}{
+                \Select[\Set\to\Set\to\Set]{
+                    \fun{Y:\Set\to\Set\to\Set}{
+                        \Apply{\membershipRecTwoClosureOp}{F,X,Y}}}}}$.
+\end{definition}
+
+\begin{theorem}\label{membership_rec_two_is_closed}
+    $\forall X:\Set.
+     \forall F:\Set\to(\Set\to(\Set\to\Set\to\Set))\to(\Set\to\Set\to\Set).
+        \Apply{\membershipRecTwoFunctionalOp}{F}
+        \implies
+            \Apply{\membershipRecTwoClosureOp}
+                {F,X,\Apply{\membershipRecTwoOp}{F,X}}$.
+\end{theorem}
+\begin{proof}[Proof by \in-induction on $X$]
+    Fix $F$.
+    Assume $\Apply{\membershipRecTwoFunctionalOp}{F}$.
+    $\Apply{\membershipRecTwoClosureOp}
+        {F,X,\Apply{F}{X,\Apply{\membershipRecTwoOp}{F}}}$
+        by \obv{membership_rec_two_closure_intro}.
+    Hence $\exists Y:\Set\to\Set\to\Set.
+        \Apply{\membershipRecTwoClosureOp}{F,X,Y}$.
+    Follows by \auto{membership_rec_two}.
+\end{proof}
+
+\begin{theorem}\label{membership_rec_two_equation}
+    $\forall F:\Set\to(\Set\to(\Set\to\Set\to\Set))\to(\Set\to\Set\to\Set).
+        \Apply{\membershipRecTwoFunctionalOp}{F}
+        \implies
+        (\forall X:\Set.
+            \Apply{\membershipRecTwoOp}{F,X}
+            =\Apply{F}{X,\Apply{\membershipRecTwoOp}{F}})$.
+\end{theorem}
+\begin{proof}
+    Fix $F$.
+    Assume $\Apply{\membershipRecTwoFunctionalOp}{F}$.
+    Fix $X$.
+    $\Apply{\membershipRecTwoClosureOp}
+        {F,X,\Apply{\membershipRecTwoOp}{F,X}}$
+        by \obv{membership_rec_two_is_closed}.
+    $\Apply{\membershipRecTwoClosureOp}
+        {F,X,\Apply{F}{X,\Apply{\membershipRecTwoOp}{F}}}$
+        by \obv{membership_rec_two_closure_intro,membership_rec_two_is_closed}.
+    Follows by \obv{membership_rec_two_closure_unique}.
+\end{proof}

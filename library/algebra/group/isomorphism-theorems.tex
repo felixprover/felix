@@ -1,0 +1,1484 @@
+\import{algebra/group/first-isomorphism.tex}
+\import{algebra/group/subgroup-product.tex}
+\import{relation/quotient-lift.tex}
+\import{set/logical-graph.tex}
+
+\section{Further isomorphism theorems for groups}
+
+\subsection{Surjective homomorphisms}
+
+\begin{proposition}\label{surjective_group_hom_image_full}
+    Suppose $\groupHom{f}{G}{H}$ and
+        $f\in\surj{\carrier[G]}{\carrier[H]}$.
+    Then $\img{f}{\carrier[G]}=\carrier[H]$.
+\end{proposition}
+\begin{proof}
+    Show that $\img{f}{\carrier[G]}\subseteq\carrier[H]$.
+    \begin{subproof}
+        Follows by
+            \auto{group_hom_type,funs_ran,img_subseteq_ran,
+                subseteq_transitive}.
+    \end{subproof}
+    Show that $\carrier[H]\subseteq\img{f}{\carrier[G]}$.
+    \begin{subproof}
+        Show that for every $y\in\carrier[H]$ we have
+            $y\in\img{f}{\carrier[G]}$.
+        \begin{subproof}
+            Fix $y\in\carrier[H]$.
+            Take $x\in\carrier[G]$ such that $f(x)=y$ by
+                \obv{surj}.
+            Follows by
+                \auto{group_hom_image_iff,subseteq_refl}.
+        \end{subproof}
+        Follows by \obv{subseteq}.
+    \end{subproof}
+    Follows by \obv{subseteq_antisymmetric}.
+\end{proof}
+
+\begin{corollary}\label{group_surjection_normal_image}
+    Suppose $\groupSurjection{f}{G}{H}$ and
+        $\normalSubgroup{N}{G}$.
+    Then $\normalSubgroup{\img{f}{N}}{H}$.
+\end{corollary}
+\begin{proof}
+    $\groupHom{f}{G}{H}$ by \obv{group_surjection_is_hom}.
+    $f\in\surj{\carrier[G]}{\carrier[H]}$ by
+        \obv{group_surjection_is_surj}.
+    Let $J=\img{f}{N}$.
+    $\subgroup{N}{G}$ by \obv{normal_subgroup_is_subgroup}.
+    Hence $\subgroup{J}{H}$ by
+        \auto{group_hom_subgroup_image}.
+    Show that for all $a\in\carrier[H]$ we have for every $x\in J$
+        we have $\conjugate{H}{a}{x}\in J$.
+    \begin{subproof}
+        Fix $a\in\carrier[H]$.
+        Fix $x\in J$.
+        Take $b\in\carrier[G]$ such that $f(b)=a$ by
+            \obv{surj}.
+        Take $y\in N$ such that $f(y)=x$ by
+            \auto{group_hom_image_iff,normal_subgroup_subseteq}.
+        $y\in\carrier[G]$ by
+            \auto{normal_subgroup_subseteq,subseteq}.
+        $\conjugate{G}{b}{y}\in N$ by
+            \obv{normal_subgroup_closed_under_conjugation}.
+        Hence $f(\conjugate{G}{b}{y})\in J$ by
+            \auto{group_hom_image_iff,normal_subgroup_subseteq}.
+        $f(\conjugate{G}{b}{y})=
+            \conjugate{H}{f(b)}{f(y)}$ by
+            \obv{group_hom_conjugate}.
+    \end{subproof}
+    Follows by \auto{normal_subgroup_iff_closed_under_conjugation}.
+\end{proof}
+
+\subsection{The second isomorphism theorem}
+
+\begin{theorem}\label{group_second_isomorphism_intersection_normal}
+    Suppose $\subgroup{H}{G}$ and $\normalSubgroup{N}{G}$.
+    Let $K=H\inter N$ and $A=\subgroupStructure{G}{H}$.
+    Then $\normalSubgroup{K}{A}$.
+\end{theorem}
+\begin{proof}
+    $\subgroup{N}{G}$ by \obv{normal_subgroup_is_subgroup}.
+    Hence $\subgroup{K}{G}$ by \auto{subgroup_intersection}.
+    $K\subseteq H$ by \auto{inter_lower_left}.
+    Hence $\subgroup{K}{A}$ by
+        \obv{subgroup_of_induced_group_iff}.
+    Show that for all $a\in\carrier[A]$ we have for every $x\in K$
+        we have $\conjugate{A}{a}{x}\in K$.
+    \begin{subproof}
+        Fix $a\in\carrier[A]$.
+        Fix $x\in K$.
+        $\carrier[A]=H$ by \auto{subgroup_structure_carrier}.
+        Hence $a\in H$.
+        $x\in H$ and $x\in N$ by
+            \auto{inter_elim_left,inter_elim_right}.
+        $a,x\in\carrier[G]$ by
+            \auto{subgroup_subseteq,subseteq}.
+        $\groupInv[G](a)\in H$ by \obv{subgroup_inv}.
+        $\mul[G](a,x)\in H$ by \obv{subgroup_mul}.
+        Hence $\conjugate{G}{a}{x}\in H$ by
+            \auto{group_conjugate,subgroup_mul}.
+        $\conjugate{G}{a}{x}\in N$ by
+            \obv{normal_subgroup_closed_under_conjugation}.
+        Hence $\conjugate{G}{a}{x}\in K$ by \obv{inter_intro}.
+        Follows by \auto{subgroup_structure_conjugate_apply}.
+    \end{subproof}
+    Follows by \obv{normal_subgroup_iff_closed_under_conjugation}.
+\end{proof}
+
+\begin{theorem}\label{group_second_isomorphism_product_normal}
+    Suppose $\subgroup{H}{G}$ and $\normalSubgroup{N}{G}$.
+    Let $P=\subgroupProduct{G}{H}{N}$ and
+        $B=\subgroupStructure{G}{P}$.
+    Then $\normalSubgroup{N}{B}$.
+\end{theorem}
+\begin{proof}
+    Follows by \obv{subgroup_product_right_factor_normal}.
+\end{proof}
+
+\begin{theorem}\label{group_second_isomorphism_restriction_hom}
+    Suppose $\subgroup{H}{G}$ and $\normalSubgroup{N}{G}$.
+    Let $P=\subgroupProduct{G}{H}{N}$.
+    Let $A=\subgroupStructure{G}{H}$ and
+        $B=\subgroupStructure{G}{P}$.
+    Let $C=\quotientGroup{B}{N}$ and
+        $q=\groupQuotientProjection{B}{N}$.
+    Let $r=\restrl{q}{H}$.
+    Then $\groupHom{r}{A}{C}$.
+\end{theorem}
+\begin{proof}
+    $\subgroup{N}{G}$ by \obv{normal_subgroup_is_subgroup}.
+    $\subgroup{P}{G}$ by \auto{subgroup_product_subgroup}.
+    $H\subseteq P$ by \obv{subgroup_product_contains_left}.
+    Hence $\subgroup{H}{B}$ by
+        \obv{subgroup_of_induced_group_iff}.
+    $\normalSubgroup{N}{B}$ by
+        \obv{group_second_isomorphism_product_normal}.
+    Hence $\groupHom{q}{B}{C}$ by
+        \auto{group_quotient_projection_hom}.
+    Hence
+        $\groupHom{r}{\subgroupStructure{B}{H}}{C}$ by
+        \auto{group_hom_domain_restriction}.
+    $\subgroupStructure{B}{H}=A$ by
+        \auto{iterated_subgroup_structure}.
+\end{proof}
+
+\begin{theorem}\label{group_second_isomorphism_restriction_kernel}
+    Suppose $\subgroup{H}{G}$ and $\normalSubgroup{N}{G}$.
+    Let $K=H\inter N$ and $P=\subgroupProduct{G}{H}{N}$.
+    Let $A=\subgroupStructure{G}{H}$ and
+        $B=\subgroupStructure{G}{P}$.
+    Let $C=\quotientGroup{B}{N}$ and
+        $q=\groupQuotientProjection{B}{N}$.
+    Let $r=\restrl{q}{H}$.
+    Then $\groupKernel{r}{A}=K$.
+\end{theorem}
+\begin{proof}
+    $\subgroup{N}{G}$ by \obv{normal_subgroup_is_subgroup}.
+    $\subgroup{P}{G}$ by \auto{subgroup_product_subgroup}.
+    $H\subseteq P$ and $N\subseteq P$ by
+        \obv{subgroup_product_contains_left,
+            subgroup_product_contains_right}.
+    $\normalSubgroup{N}{B}$ by
+        \obv{group_second_isomorphism_product_normal}.
+    $\groupHom{q}{B}{C}$ by
+        \auto{group_quotient_projection_hom}.
+    $\groupKernel{q}{B}=N$ by
+        \auto{group_quotient_projection_kernel}.
+    $\groupHom{r}{A}{C}$ by
+        \obv{group_second_isomorphism_restriction_hom}.
+    $q$ is a function and $H\subseteq\dom{q}$ by
+        \auto{group_hom_type,funs_is_function,funs,
+            subgroup_structure_carrier}.
+    Show that $\groupKernel{r}{A}\subseteq K$.
+    \begin{subproof}
+        Show that for every $x\in\groupKernel{r}{A}$ we have
+            $x\in K$.
+        \begin{subproof}
+            Fix $x\in\groupKernel{r}{A}$.
+            Hence $x\in\carrier[A]$ and $r(x)=\neutral[C]$ by
+                \obv{group_kernel_iff}.
+            Hence $x\in H$ by \auto{subgroup_structure_carrier}.
+            Hence $r(x)=q(x)$ by
+                \auto{restrl_of_function_apply}.
+            $x\in P$ by \obv{subseteq}.
+            Hence $x\in\carrier[B]$ by
+                \auto{subgroup_structure_carrier}.
+            Hence $x\in\groupKernel{q}{B}$ by
+                \auto{group_kernel_iff}.
+            Hence $x\in N$.
+            Follows by \obv{inter_intro}.
+        \end{subproof}
+        Follows by \obv{subseteq}.
+    \end{subproof}
+    Show that $K\subseteq\groupKernel{r}{A}$.
+    \begin{subproof}
+        Show that for every $x\in K$ we have
+            $x\in\groupKernel{r}{A}$.
+        \begin{subproof}
+            Fix $x\in K$.
+            Hence $x\in H$ and $x\in N$ by
+                \auto{inter_elim_left,inter_elim_right}.
+            Hence $x\in\carrier[A]$ by
+                \auto{subgroup_structure_carrier}.
+            $x\in P$ by \obv{subseteq}.
+            Hence $x\in\carrier[B]$ by
+                \auto{subgroup_structure_carrier}.
+            Hence $x\in\groupKernel{q}{B}$.
+            Hence $q(x)=\neutral[C]$ by
+                \auto{group_kernel_iff}.
+            $r(x)=q(x)$ by \auto{restrl_of_function_apply}.
+            Follows by \auto{group_kernel_iff}.
+        \end{subproof}
+        Follows by \obv{subseteq}.
+    \end{subproof}
+    Follows by \obv{subseteq_antisymmetric}.
+\end{proof}
+
+\begin{theorem}\label{group_second_isomorphism_restriction_surjective}
+    Suppose $\subgroup{H}{G}$ and $\normalSubgroup{N}{G}$.
+    Let $P=\subgroupProduct{G}{H}{N}$.
+    Let $A=\subgroupStructure{G}{H}$ and
+        $B=\subgroupStructure{G}{P}$.
+    Let $C=\quotientGroup{B}{N}$ and
+        $q=\groupQuotientProjection{B}{N}$.
+    Let $r=\restrl{q}{H}$.
+    Then $r\in\surj{\carrier[A]}{\carrier[C]}$.
+\end{theorem}
+\begin{proof}
+    $\subgroup{N}{G}$ by \obv{normal_subgroup_is_subgroup}.
+    $\subgroup{P}{G}$ by \auto{subgroup_product_subgroup}.
+    $H\subseteq P$ and $N\subseteq P$ by
+        \obv{subgroup_product_contains_left,
+            subgroup_product_contains_right}.
+    $\normalSubgroup{N}{B}$ by
+        \obv{group_second_isomorphism_product_normal}.
+    $C$ is a group by \obv{quotient_group_is_group}.
+    $\groupHom{q}{B}{C}$ by
+        \auto{group_quotient_projection_hom}.
+    $\groupKernel{q}{B}=N$ by
+        \auto{group_quotient_projection_kernel}.
+    $q$ is a function and $\dom{q}=\carrier[B]$ by
+        \auto{group_hom_type,funs_is_function,funs}.
+    $\carrier[A]=H$ and $\carrier[B]=P$ by
+        \auto{subgroup_structure_carrier}.
+    $H\subseteq\dom{q}$.
+    $r\in\funs{H}{\carrier[C]}$ by
+        \auto{group_hom_type,funs_restrl}.
+    $\carrier[C]=\groupQuotientCarrier{B}{N}$ by
+        \auto{quotient_group_carrier}.
+    $q\in\surj{\carrier[B]}{\groupQuotientCarrier{B}{N}}$ by
+        \auto{group_quotient_projection_surjective}.
+    Hence $q\in\surj{\carrier[B]}{\carrier[C]}$.
+    Show that for every $U\in\carrier[C]$ there exists $h\in H$
+        such that $r(h)=U$.
+    \begin{subproof}
+        Fix $U\in\carrier[C]$.
+        Take $x\in\carrier[B]$ such that $q(x)=U$ by
+            \obv{surj}.
+        Hence $x\in P$.
+        Take $h\in H$ such that there exists $n\in N$ such that
+            $x=\mul[G](h,n)$ by
+            \auto{subgroup_product_iff_for_subgroups}.
+        Take $n\in N$ such that $x=\mul[G](h,n)$.
+        $h,n\in P$ by \obv{subseteq}.
+        Hence $h,n\in\carrier[B]$ by
+            \obv{subgroup_structure_carrier}.
+        $\mul[B](h,n)=\mul[G](h,n)$ by
+            \auto{subgroup_structure_mul_apply}.
+        Hence $x=\mul[B](h,n)$.
+        Hence $q(x)=\mul[C](q(h),q(n))$ by
+            \auto{group_hom_mul}.
+        $n\in\groupKernel{q}{B}$.
+        Hence $q(n)=\neutral[C]$ by \auto{group_kernel_iff}.
+        $q(h)\in\carrier[C]$ by \obv{group_hom_apply_type}.
+        Hence $q(x)=q(h)$ by
+            \auto{group_is_monoid,monoid_is_unital_magma,
+                unitalmagma_right}.
+        $r(h)=q(h)$ by \auto{restrl_of_function_apply}.
+        Follows by \auto.
+    \end{subproof}
+    Hence $r\in\surj{H}{\carrier[C]}$ by \obv{surj}.
+\end{proof}
+
+\begin{theorem}\label{group_second_isomorphism_theorem}
+    Suppose $\subgroup{H}{G}$ and $\normalSubgroup{N}{G}$.
+    Let $K=H\inter N$ and $P=\subgroupProduct{G}{H}{N}$.
+    Let $A=\subgroupStructure{G}{H}$ and
+        $B=\subgroupStructure{G}{P}$.
+    Let $C=\quotientGroup{B}{N}$ and
+        $q=\groupQuotientProjection{B}{N}$.
+    Let $r=\restrl{q}{H}$.
+    Then
+        $\groupIsomorphism
+            {\firstIsomorphismMap{r}{A}{C}}
+            {\quotientGroup{A}{K}}{C}$.
+\end{theorem}
+\begin{proof}
+    Let $f=\firstIsomorphismMap{r}{A}{C}$.
+    $\normalSubgroup{K}{A}$ by
+        \obv{group_second_isomorphism_intersection_normal}.
+    $\normalSubgroup{N}{B}$ by
+        \obv{group_second_isomorphism_product_normal}.
+    Hence $C$ is an exact group by
+        \auto{quotient_group_is_exact_group}.
+    $\groupHom{r}{A}{C}$ by
+        \obv{group_second_isomorphism_restriction_hom}.
+    $\groupKernel{r}{A}=K$ by
+        \obv{group_second_isomorphism_restriction_kernel}.
+    $r\in\surj{\carrier[A]}{\carrier[C]}$ by
+        \obv{group_second_isomorphism_restriction_surjective}.
+    Hence $\img{r}{\carrier[A]}=\carrier[C]$ by
+        \obv{surjective_group_hom_image_full}.
+    $\groupIsomorphism
+        {f}
+        {\quotientGroup{A}{\groupKernel{r}{A}}}
+        {\subgroupStructure{C}{\img{r}{\carrier[A]}}}$ by
+        \auto{first_isomorphism_theorem}.
+    $\subgroupStructure{C}{\carrier[C]}=\reduct[group]{C}$ by
+        \obv{full_subgroup_structure_eq_group_reduct}.
+    $\reduct[group]{C}=C$ by \obv{exact_group_reduct_eq}.
+\end{proof}
+
+\begin{proposition}\label{group_second_isomorphism_map_apply}
+    Suppose $\subgroup{H}{G}$ and $\normalSubgroup{N}{G}$.
+    Let $K=H\inter N$ and $P=\subgroupProduct{G}{H}{N}$.
+    Let $A=\subgroupStructure{G}{H}$ and
+        $B=\subgroupStructure{G}{P}$.
+    Let $C=\quotientGroup{B}{N}$ and
+        $q=\groupQuotientProjection{B}{N}$.
+    Let $r=\restrl{q}{H}$.
+    Let $x\in H$.
+    Then
+        $\apply{\firstIsomorphismMap{r}{A}{C}}{
+            \equivalenceClass{\subgroupCosetRelation{A}{K}}{x}}
+        =q(x)$.
+\end{proposition}
+\begin{proof}
+    $\groupHom{r}{A}{C}$ by
+        \obv{group_second_isomorphism_restriction_hom}.
+    $\groupKernel{r}{A}=K$ by
+        \obv{group_second_isomorphism_restriction_kernel}.
+    $x\in\carrier[A]$ by \auto{subgroup_structure_carrier}.
+    Hence
+        $\apply{\firstIsomorphismMap{r}{A}{C}}{
+            \equivalenceClass{\subgroupCosetRelation{A}{K}}{x}}
+        =r(x)$ by \auto{first_isomorphism_map_apply}.
+    $\subgroup{P}{G}$ by \auto{subgroup_product_subgroup}.
+    $H\subseteq P$ by \obv{subgroup_product_contains_left,
+        normal_subgroup_is_subgroup}.
+    $\normalSubgroup{N}{B}$ by
+        \obv{group_second_isomorphism_product_normal}.
+    $q$ is a function and $H\subseteq\dom{q}$ by
+        \auto{group_quotient_projection_type,funs_is_function,
+            funs,subgroup_structure_carrier}.
+    $r(x)=q(x)$ by \auto{restrl_of_function_apply}.
+\end{proof}
+
+\begin{theorem}\label{group_second_isomorphism_factorization}
+    Suppose $\subgroup{H}{G}$ and $\normalSubgroup{N}{G}$.
+    Let $K=H\inter N$ and $P=\subgroupProduct{G}{H}{N}$.
+    Let $A=\subgroupStructure{G}{H}$ and
+        $B=\subgroupStructure{G}{P}$.
+    Let $C=\quotientGroup{B}{N}$ and
+        $q=\groupQuotientProjection{B}{N}$.
+    Let $r=\restrl{q}{H}$.
+    Then
+        $\firstIsomorphismMap{r}{A}{C}\circ
+            \groupQuotientProjection{A}{K}=r$.
+\end{theorem}
+\begin{proof}
+    $\groupHom{r}{A}{C}$ by
+        \obv{group_second_isomorphism_restriction_hom}.
+    $\groupKernel{r}{A}=K$ by
+        \obv{group_second_isomorphism_restriction_kernel}.
+    Follows by \auto{first_isomorphism_map_factorization}.
+\end{proof}
+
+\subsubsection{The image in the ambient quotient}
+
+\begin{theorem}\label{group_second_isomorphism_ambient_restriction_hom}
+    Suppose $\subgroup{H}{G}$ and $\normalSubgroup{N}{G}$.
+    Let $P=\subgroupProduct{G}{H}{N}$ and
+        $B=\subgroupStructure{G}{P}$.
+    Let $Q=\quotientGroup{G}{N}$ and
+        $q=\groupQuotientProjection{G}{N}$.
+    Let $s=\restrl{q}{P}$.
+    Then $\groupHom{s}{B}{Q}$.
+\end{theorem}
+\begin{proof}
+    $\subgroup{P}{G}$ by \auto{subgroup_product_subgroup}.
+    $\groupHom{q}{G}{Q}$ by
+        \auto{group_quotient_projection_hom}.
+    Follows by \auto{group_hom_domain_restriction}.
+\end{proof}
+
+\begin{theorem}\label{group_second_isomorphism_ambient_restriction_kernel}
+    Suppose $\subgroup{H}{G}$ and $\normalSubgroup{N}{G}$.
+    Let $P=\subgroupProduct{G}{H}{N}$ and
+        $B=\subgroupStructure{G}{P}$.
+    Let $Q=\quotientGroup{G}{N}$ and
+        $q=\groupQuotientProjection{G}{N}$.
+    Let $s=\restrl{q}{P}$.
+    Then $\groupKernel{s}{B}=N$.
+\end{theorem}
+\begin{proof}
+    $\subgroup{N}{G}$ by \obv{normal_subgroup_is_subgroup}.
+    $\subgroup{P}{G}$ by \auto{subgroup_product_subgroup}.
+    $N\subseteq P$ by
+        \obv{subgroup_product_contains_right}.
+    $\groupHom{q}{G}{Q}$ by
+        \auto{group_quotient_projection_hom}.
+    $\groupKernel{q}{G}=N$ by
+        \auto{group_quotient_projection_kernel}.
+    $\groupHom{s}{B}{Q}$ by
+        \obv{group_second_isomorphism_ambient_restriction_hom}.
+    $q$ is a function and $P\subseteq\dom{q}$ by
+        \auto{group_hom_type,funs_is_function,funs,
+            subgroup_product_subseteq_carrier}.
+    Show that for every $x$ we have
+        $x\in\groupKernel{s}{B}$ iff $x\in N$.
+    \begin{subproof}
+        Fix $x$.
+        Show that if $x\in\groupKernel{s}{B}$, then $x\in N$.
+        \begin{subproof}
+            Assume $x\in\groupKernel{s}{B}$.
+            Hence $x\in\carrier[B]$ and $s(x)=\neutral[Q]$ by
+                \auto{group_kernel_iff}.
+            Hence $x\in P$ by \auto{subgroup_structure_carrier}.
+            $s(x)=q(x)$ by \auto{restrl_of_function_apply}.
+            Hence $x\in\carrier[G]$ and $q(x)=\neutral[Q]$ by
+                \auto{subgroup_product_subseteq_carrier,subseteq}.
+            Hence $x\in\groupKernel{q}{G}$ by
+                \auto{group_kernel_iff}.
+        \end{subproof}
+        Show that if $x\in N$, then $x\in\groupKernel{s}{B}$.
+        \begin{subproof}
+            Assume $x\in N$.
+            Hence $x\in P$ by \obv{subseteq}.
+            Hence $x\in\carrier[B]$ by
+                \auto{subgroup_structure_carrier}.
+            $x\in\groupKernel{q}{G}$.
+            Hence $q(x)=\neutral[Q]$ by
+                \auto{group_kernel_iff}.
+            $s(x)=q(x)$ by \auto{restrl_of_function_apply}.
+            Follows by \auto{group_kernel_iff}.
+        \end{subproof}
+        Follows by \auto.
+    \end{subproof}
+    Follows by \auto{setext}.
+\end{proof}
+
+\begin{theorem}\label{group_second_isomorphism_ambient_restriction_image}
+    Suppose $\subgroup{H}{G}$ and $\normalSubgroup{N}{G}$.
+    Let $P=\subgroupProduct{G}{H}{N}$ and
+        $B=\subgroupStructure{G}{P}$.
+    Let $q=\groupQuotientProjection{G}{N}$ and
+        $s=\restrl{q}{P}$.
+    Then $\img{s}{\carrier[B]}=\img{q}{H}$.
+\end{theorem}
+\begin{proof}
+    $\subgroup{N}{G}$ by \obv{normal_subgroup_is_subgroup}.
+    $\subgroup{P}{G}$ by \auto{subgroup_product_subgroup}.
+    $H\subseteq P$ and $N\subseteq P$ by
+        \obv{subgroup_product_contains_left,
+            subgroup_product_contains_right}.
+    $\carrier[B]=P$ by \auto{subgroup_structure_carrier}.
+    $q$ is a function and $P\subseteq\dom{q}$ by
+        \auto{group_quotient_projection_type,funs_is_function,
+            funs,subgroup_product_subseteq_carrier}.
+    $\img{s}{\carrier[B]}=\img{q}{P\inter P}$ by
+        \auto{restrl_img}.
+    Hence $\img{s}{\carrier[B]}=\img{q}{P}$ by
+        \auto{inter_idempotent}.
+    Show that $\img{q}{P}=\img{q}{H}$.
+    \begin{subproof}
+        Show that $\img{q}{P}\subseteq\img{q}{H}$.
+        \begin{subproof}
+            Show that for every $U\in\img{q}{P}$ we have
+                $U\in\img{q}{H}$.
+            \begin{subproof}
+                Fix $U\in\img{q}{P}$.
+                Take $x\in P$ such that $q(x)=U$ by
+                    \auto{img_iff,function_apply_intro}.
+                Take $h\in H$ such that there exists $n\in N$ such that
+                    $x=\mul[G](h,n)$ by
+                    \auto{subgroup_product_iff_for_subgroups}.
+                Take $n\in N$ such that $x=\mul[G](h,n)$.
+                $h,n\in\carrier[G]$ by
+                    \auto{subgroup_subseteq,
+                        normal_subgroup_subseteq,subseteq}.
+                Let $Q=\quotientGroup{G}{N}$.
+                $Q$ is a group by \obv{quotient_group_is_group}.
+                $\groupHom{q}{G}{Q}$ by
+                    \auto{group_quotient_projection_hom}.
+                $\groupKernel{q}{G}=N$ by
+                    \auto{group_quotient_projection_kernel}.
+                $q(x)=\mul[Q](q(h),q(n))$ by
+                    \auto{group_hom_mul}.
+                $q(n)=\neutral[Q]$ by
+                    \auto{group_kernel_iff}.
+                $q(h)\in\carrier[Q]$ by
+                    \obv{group_hom_apply_type}.
+                Hence $q(x)=q(h)$ by
+                    \auto{group_is_monoid,monoid_is_unital_magma,
+                        unitalmagma_right}.
+                Hence $q(h)=U$.
+                Follows by
+                    \auto{group_hom_image_iff,subgroup_subseteq}.
+            \end{subproof}
+            Follows by \obv{subseteq}.
+        \end{subproof}
+        Show that $\img{q}{H}\subseteq\img{q}{P}$.
+        \begin{subproof}
+            Follows by \obv{img_subseteq}.
+        \end{subproof}
+        Follows by \obv{subseteq_antisymmetric}.
+    \end{subproof}
+\end{proof}
+
+\begin{theorem}\label{group_second_isomorphism_image_form}
+    Suppose $\subgroup{H}{G}$ and $\normalSubgroup{N}{G}$.
+    Let $P=\subgroupProduct{G}{H}{N}$ and
+        $B=\subgroupStructure{G}{P}$.
+    Let $C=\quotientGroup{B}{N}$ and
+        $Q=\quotientGroup{G}{N}$.
+    Let $q=\groupQuotientProjection{G}{N}$ and
+        $s=\restrl{q}{P}$.
+    Then
+        $\groupIsomorphism
+            {\firstIsomorphismMap{s}{B}{Q}}
+            {C}{\subgroupStructure{Q}{\img{q}{H}}}$.
+\end{theorem}
+\begin{proof}
+    $\groupHom{s}{B}{Q}$ by
+        \obv{group_second_isomorphism_ambient_restriction_hom}.
+    $\groupKernel{s}{B}=N$ by
+        \obv{group_second_isomorphism_ambient_restriction_kernel}.
+    $\img{s}{\carrier[B]}=\img{q}{H}$ by
+        \obv{group_second_isomorphism_ambient_restriction_image}.
+    Follows by \auto{first_isomorphism_theorem}.
+\end{proof}
+
+\begin{proposition}\label{group_second_isomorphism_image_form_apply}
+    Suppose $\subgroup{H}{G}$ and $\normalSubgroup{N}{G}$.
+    Let $P=\subgroupProduct{G}{H}{N}$ and
+        $B=\subgroupStructure{G}{P}$.
+    Let $Q=\quotientGroup{G}{N}$.
+    Let $q=\groupQuotientProjection{G}{N}$ and
+        $s=\restrl{q}{P}$.
+    Let $x\in P$.
+    Then
+        $\apply{\firstIsomorphismMap{s}{B}{Q}}{
+            \equivalenceClass{\subgroupCosetRelation{B}{N}}{x}}
+        =q(x)$.
+\end{proposition}
+\begin{proof}
+    $\groupHom{s}{B}{Q}$ by
+        \obv{group_second_isomorphism_ambient_restriction_hom}.
+    $\groupKernel{s}{B}=N$ by
+        \obv{group_second_isomorphism_ambient_restriction_kernel}.
+    $x\in\carrier[B]$ by \auto{subgroup_structure_carrier}.
+    Hence
+        $\apply{\firstIsomorphismMap{s}{B}{Q}}{
+            \equivalenceClass{\subgroupCosetRelation{B}{N}}{x}}
+        =s(x)$ by \auto{first_isomorphism_map_apply}.
+    $q$ is a function and $P\subseteq\dom{q}$ by
+        \auto{group_quotient_projection_type,funs_is_function,
+            funs,subgroup_product_subseteq_carrier}.
+    $s(x)=q(x)$ by \auto{restrl_of_function_apply}.
+\end{proof}
+
+\subsection{The third isomorphism theorem}
+
+\begin{theorem}\label{group_third_isomorphism_image_normal}
+    Suppose $\normalSubgroup{N}{G}$ and $\normalSubgroup{K}{G}$.
+    Suppose $N\subseteq K$.
+    Let $q_N=\groupQuotientProjection{G}{N}$ and
+        $A=\quotientGroup{G}{N}$.
+    Then $\normalSubgroup{\img{q_N}{K}}{A}$.
+\end{theorem}
+\begin{proof}
+    $\groupSurjection{q_N}{G}{A}$ by
+        \auto{group_quotient_projection_group_surjection}.
+    Follows by \obv{group_surjection_normal_image}.
+\end{proof}
+
+\begin{proposition}\label{group_quotient_comparison_eq_group_quotient_lift}
+    Suppose $\normalSubgroup{N}{G}$ and $\normalSubgroup{K}{G}$.
+    Suppose $N\subseteq K$.
+    Let $q_K=\groupQuotientProjection{G}{K}$ and
+        $E_N=\subgroupCosetRelation{G}{N}$.
+    Let $d=\quotientDescent{q_K}{\carrier[G]}{E_N}$.
+    Then $d=\groupQuotientLift{q_K}{G}{N}$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{group_quotient_lift}.
+\end{proof}
+
+\begin{theorem}\label{group_quotient_comparison_compatible}
+    Suppose $\normalSubgroup{N}{G}$ and $\normalSubgroup{K}{G}$.
+    Suppose $N\subseteq K$.
+    Let $q_K=\groupQuotientProjection{G}{K}$ and
+        $E_N=\subgroupCosetRelation{G}{N}$.
+    Then $\quotientCompatible{q_K}{\carrier[G]}{E_N}$.
+\end{theorem}
+\begin{proof}
+    Let $B=\quotientGroup{G}{K}$.
+    $\groupHom{q_K}{G}{B}$ by
+        \auto{group_quotient_projection_hom}.
+    $\groupKernel{q_K}{G}=K$ by
+        \auto{group_quotient_projection_kernel}.
+    Hence $N\subseteq\groupKernel{q_K}{G}$.
+    Follows by \auto{group_quotient_lift_compatible}.
+\end{proof}
+
+\begin{proposition}\label{group_quotient_comparison_type}
+    Suppose $\normalSubgroup{N}{G}$ and $\normalSubgroup{K}{G}$.
+    Suppose $N\subseteq K$.
+    Let $q_K=\groupQuotientProjection{G}{K}$ and
+        $E_N=\subgroupCosetRelation{G}{N}$.
+    Let $d=\quotientDescent{q_K}{\carrier[G]}{E_N}$.
+    Then $d\in\funs{\carrier[\quotientGroup{G}{N}]}{
+        \carrier[\quotientGroup{G}{K}]}$.
+\end{proposition}
+\begin{proof}
+    Let $B=\quotientGroup{G}{K}$.
+    $\groupHom{q_K}{G}{B}$ by
+        \auto{group_quotient_projection_hom}.
+    $\groupKernel{q_K}{G}=K$ by
+        \auto{group_quotient_projection_kernel}.
+    Hence $N\subseteq\groupKernel{q_K}{G}$.
+    $\groupQuotientLift{q_K}{G}{N}\in
+        \funs{\carrier[\quotientGroup{G}{N}]}{\carrier[B]}$ by
+        \auto{group_quotient_lift_type}.
+    $d=\groupQuotientLift{q_K}{G}{N}$ by
+        \obv{group_quotient_comparison_eq_group_quotient_lift}.
+    Follows by \auto.
+\end{proof}
+
+\begin{proposition}\label{group_quotient_comparison_apply}
+    Suppose $\normalSubgroup{N}{G}$ and $\normalSubgroup{K}{G}$.
+    Suppose $N\subseteq K$.
+    Let $q_K=\groupQuotientProjection{G}{K}$ and
+        $E_N=\subgroupCosetRelation{G}{N}$.
+    Let $d=\quotientDescent{q_K}{\carrier[G]}{E_N}$.
+    Let $x\in\carrier[G]$.
+    Then $d(\equivalenceClass{E_N}{x})=q_K(x)$.
+\end{proposition}
+\begin{proof}
+    Let $B=\quotientGroup{G}{K}$.
+    $\groupHom{q_K}{G}{B}$ by
+        \auto{group_quotient_projection_hom}.
+    $\groupKernel{q_K}{G}=K$ by
+        \auto{group_quotient_projection_kernel}.
+    Hence $N\subseteq\groupKernel{q_K}{G}$.
+    $\apply{\groupQuotientLift{q_K}{G}{N}}
+        {\equivalenceClass{E_N}{x}}=q_K(x)$ by
+        \auto{group_quotient_lift_apply}.
+    $d=\groupQuotientLift{q_K}{G}{N}$ by
+        \obv{group_quotient_comparison_eq_group_quotient_lift}.
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{group_quotient_comparison_factorization}
+    Suppose $\normalSubgroup{N}{G}$ and $\normalSubgroup{K}{G}$.
+    Suppose $N\subseteq K$.
+    Let $q_N=\groupQuotientProjection{G}{N}$ and
+        $q_K=\groupQuotientProjection{G}{K}$.
+    Let $E_N=\subgroupCosetRelation{G}{N}$ and
+        $d=\quotientDescent{q_K}{\carrier[G]}{E_N}$.
+    Then $d\circ q_N=q_K$.
+\end{theorem}
+\begin{proof}
+    Let $B=\quotientGroup{G}{K}$.
+    $\groupHom{q_K}{G}{B}$ by
+        \auto{group_quotient_projection_hom}.
+    $\groupKernel{q_K}{G}=K$ by
+        \auto{group_quotient_projection_kernel}.
+    Hence $N\subseteq\groupKernel{q_K}{G}$.
+    $\groupQuotientLift{q_K}{G}{N}\circ q_N=q_K$ by
+        \auto{group_quotient_lift_factorization}.
+    $d=\groupQuotientLift{q_K}{G}{N}$ by
+        \obv{group_quotient_comparison_eq_group_quotient_lift}.
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{group_quotient_comparison_hom}
+    Suppose $\normalSubgroup{N}{G}$ and $\normalSubgroup{K}{G}$.
+    Suppose $N\subseteq K$.
+    Let $q_K=\groupQuotientProjection{G}{K}$ and
+        $E_N=\subgroupCosetRelation{G}{N}$.
+    Let $d=\quotientDescent{q_K}{\carrier[G]}{E_N}$.
+    Let $A=\quotientGroup{G}{N}$ and $B=\quotientGroup{G}{K}$.
+    Then $\groupHom{d}{A}{B}$.
+\end{theorem}
+\begin{proof}
+    $\groupHom{q_K}{G}{B}$ by
+        \auto{group_quotient_projection_hom}.
+    $\groupKernel{q_K}{G}=K$ by
+        \auto{group_quotient_projection_kernel}.
+    Hence $N\subseteq\groupKernel{q_K}{G}$.
+    $\groupHom{\groupQuotientLift{q_K}{G}{N}}{A}{B}$ by
+        \auto{group_quotient_lift_hom}.
+    $d=\groupQuotientLift{q_K}{G}{N}$ by
+        \obv{group_quotient_comparison_eq_group_quotient_lift}.
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{group_quotient_comparison_kernel}
+    Suppose $\normalSubgroup{N}{G}$ and $\normalSubgroup{K}{G}$.
+    Suppose $N\subseteq K$.
+    Let $q_N=\groupQuotientProjection{G}{N}$ and
+        $q_K=\groupQuotientProjection{G}{K}$.
+    Let $E_N=\subgroupCosetRelation{G}{N}$ and
+        $d=\quotientDescent{q_K}{\carrier[G]}{E_N}$.
+    Let $A=\quotientGroup{G}{N}$ and $B=\quotientGroup{G}{K}$.
+    Then $\groupKernel{d}{A}=\img{q_N}{K}$.
+\end{theorem}
+\begin{proof}
+    $\groupHom{q_K}{G}{B}$ by
+        \auto{group_quotient_projection_hom}.
+    $\groupKernel{q_K}{G}=K$ by
+        \auto{group_quotient_projection_kernel}.
+    Hence $N\subseteq\groupKernel{q_K}{G}$.
+    $\groupKernel{\groupQuotientLift{q_K}{G}{N}}{A}=
+        \img{q_N}{\groupKernel{q_K}{G}}$ by
+        \auto{group_quotient_lift_kernel}.
+    $d=\groupQuotientLift{q_K}{G}{N}$ by
+        \obv{group_quotient_comparison_eq_group_quotient_lift}.
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{group_quotient_comparison_surjective}
+    Suppose $\normalSubgroup{N}{G}$ and $\normalSubgroup{K}{G}$.
+    Suppose $N\subseteq K$.
+    Let $q_N=\groupQuotientProjection{G}{N}$ and
+        $q_K=\groupQuotientProjection{G}{K}$.
+    Let $E_N=\subgroupCosetRelation{G}{N}$ and
+        $d=\quotientDescent{q_K}{\carrier[G]}{E_N}$.
+    Let $A=\quotientGroup{G}{N}$ and $B=\quotientGroup{G}{K}$.
+    Then $d\in\surj{\carrier[A]}{\carrier[B]}$.
+\end{theorem}
+\begin{proof}
+    $\groupHom{q_K}{G}{B}$ by
+        \auto{group_quotient_projection_hom}.
+    $\groupKernel{q_K}{G}=K$ by
+        \auto{group_quotient_projection_kernel}.
+    Hence $N\subseteq\groupKernel{q_K}{G}$.
+    $q_K\in\surj{\carrier[G]}{\carrier[B]}$ by
+        \auto{group_quotient_projection_surjective,
+            quotient_group_carrier}.
+    Hence $\groupQuotientLift{q_K}{G}{N}\in
+        \surj{\carrier[A]}{\carrier[B]}$ by
+        \auto{group_quotient_lift_surjective_iff}.
+    $d=\groupQuotientLift{q_K}{G}{N}$ by
+        \obv{group_quotient_comparison_eq_group_quotient_lift}.
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{group_third_isomorphism_theorem}
+    Suppose $\normalSubgroup{N}{G}$ and $\normalSubgroup{K}{G}$.
+    Suppose $N\subseteq K$.
+    Let $q_N=\groupQuotientProjection{G}{N}$ and
+        $q_K=\groupQuotientProjection{G}{K}$.
+    Let $E_N=\subgroupCosetRelation{G}{N}$ and
+        $d=\quotientDescent{q_K}{\carrier[G]}{E_N}$.
+    Let $A=\quotientGroup{G}{N}$ and $B=\quotientGroup{G}{K}$.
+    Let $S=\img{q_N}{K}$.
+    Then
+        $\groupIsomorphism
+            {\firstIsomorphismMap{d}{A}{B}}
+            {\quotientGroup{A}{S}}{B}$.
+\end{theorem}
+\begin{proof}
+    $\normalSubgroup{S}{A}$ by
+        \auto{group_third_isomorphism_image_normal}.
+    $\groupHom{d}{A}{B}$ by
+        \obv{group_quotient_comparison_hom}.
+    $\groupKernel{d}{A}=S$ by
+        \obv{group_quotient_comparison_kernel}.
+    $d\in\surj{\carrier[A]}{\carrier[B]}$ by
+        \obv{group_quotient_comparison_surjective}.
+    Hence $\img{d}{\carrier[A]}=\carrier[B]$ by
+        \obv{surjective_group_hom_image_full}.
+    $\groupIsomorphism
+        {\firstIsomorphismMap{d}{A}{B}}
+        {\quotientGroup{A}{\groupKernel{d}{A}}}
+        {\subgroupStructure{B}{\img{d}{\carrier[A]}}}$ by
+        \obv{first_isomorphism_theorem}.
+    $B$ is an exact group by
+        \auto{quotient_group_is_exact_group}.
+    $\subgroupStructure{B}{\carrier[B]}=\reduct[group]{B}$ by
+        \obv{full_subgroup_structure_eq_group_reduct}.
+    $\reduct[group]{B}=B$ by \obv{exact_group_reduct_eq}.
+    Follows by \auto.
+\end{proof}
+
+\begin{proposition}\label{group_third_isomorphism_map_apply}
+    Suppose $\normalSubgroup{N}{G}$ and $\normalSubgroup{K}{G}$.
+    Suppose $N\subseteq K$.
+    Let $q_N=\groupQuotientProjection{G}{N}$ and
+        $q_K=\groupQuotientProjection{G}{K}$.
+    Let $E_N=\subgroupCosetRelation{G}{N}$ and
+        $d=\quotientDescent{q_K}{\carrier[G]}{E_N}$.
+    Let $A=\quotientGroup{G}{N}$ and $B=\quotientGroup{G}{K}$.
+    Let $S=\img{q_N}{K}$ and
+        $F=\subgroupCosetRelation{A}{S}$.
+    Let $x\in\carrier[G]$.
+    Then
+        $\apply{\firstIsomorphismMap{d}{A}{B}}{
+            \equivalenceClass{F}{q_N(x)}}=q_K(x)$.
+\end{proposition}
+\begin{proof}
+    $\groupHom{d}{A}{B}$ by
+        \obv{group_quotient_comparison_hom}.
+    $\groupKernel{d}{A}=S$ by
+        \obv{group_quotient_comparison_kernel}.
+    $q_N(x)\in\carrier[A]$ by
+        \auto{group_quotient_projection_hom,group_hom_apply_type}.
+    Hence
+        $\apply{\firstIsomorphismMap{d}{A}{B}}{
+            \equivalenceClass{F}{q_N(x)}}=d(q_N(x))$ by
+        \auto{first_isomorphism_map_apply}.
+    $q_N(x)=\equivalenceClass{E_N}{x}$ by
+        \auto{group_quotient_projection_apply}.
+    Hence $d(q_N(x))=q_K(x)$ by
+        \auto{group_quotient_comparison_apply}.
+\end{proof}
+
+\begin{theorem}\label{group_third_isomorphism_factorization}
+    Suppose $\normalSubgroup{N}{G}$ and $\normalSubgroup{K}{G}$.
+    Suppose $N\subseteq K$.
+    Let $q_N=\groupQuotientProjection{G}{N}$ and
+        $q_K=\groupQuotientProjection{G}{K}$.
+    Let $E_N=\subgroupCosetRelation{G}{N}$ and
+        $d=\quotientDescent{q_K}{\carrier[G]}{E_N}$.
+    Let $A=\quotientGroup{G}{N}$ and $B=\quotientGroup{G}{K}$.
+    Let $S=\img{q_N}{K}$.
+    Then
+        $\firstIsomorphismMap{d}{A}{B}\circ
+            \groupQuotientProjection{A}{S}=d$ and
+        $d\circ q_N=q_K$.
+\end{theorem}
+\begin{proof}
+    $\groupHom{d}{A}{B}$ by
+        \obv{group_quotient_comparison_hom}.
+    $\groupKernel{d}{A}=S$ by
+        \obv{group_quotient_comparison_kernel}.
+    Hence
+        $\firstIsomorphismMap{d}{A}{B}\circ
+            \groupQuotientProjection{A}{S}=d$ by
+        \auto{first_isomorphism_map_factorization}.
+    $d\circ q_N=q_K$ by
+        \obv{group_quotient_comparison_factorization}.
+\end{proof}
+
+\subsection{The subgroup correspondence theorem}
+
+\begin{theorem}\label{group_quotient_correspondence_preimage_subgroup}
+    Suppose $\normalSubgroup{N}{G}$.
+    Let $q=\groupQuotientProjection{G}{N}$ and
+        $Q=\quotientGroup{G}{N}$.
+    Suppose $\subgroup{T}{Q}$.
+    Then $\subgroup{\preimg{q}{T}}{G}$.
+\end{theorem}
+\begin{proof}
+    $\groupHom{q}{G}{Q}$ by
+        \auto{group_quotient_projection_hom}.
+    Follows by \obv{group_hom_subgroup_preimage}.
+\end{proof}
+
+\begin{theorem}\label{group_quotient_correspondence_preimage_contains_kernel}
+    Suppose $\normalSubgroup{N}{G}$.
+    Let $q=\groupQuotientProjection{G}{N}$ and
+        $Q=\quotientGroup{G}{N}$.
+    Suppose $\subgroup{T}{Q}$.
+    Then $N\subseteq\preimg{q}{T}$.
+\end{theorem}
+\begin{proof}
+    $\groupHom{q}{G}{Q}$ by
+        \auto{group_quotient_projection_hom}.
+    $\groupKernel{q}{G}=N$ by
+        \auto{group_quotient_projection_kernel}.
+    $\neutral[Q]\in T$ by \obv{subgroup_neutral}.
+    Show that for every $x\in N$ we have $x\in\preimg{q}{T}$.
+    \begin{subproof}
+        Fix $x\in N$.
+        Hence $x\in\carrier[G]$ and $q(x)=\neutral[Q]$ by
+            \auto{group_kernel_iff}.
+        Follows by \auto{group_hom_preimage_iff}.
+    \end{subproof}
+    Follows by \obv{subseteq}.
+\end{proof}
+
+\begin{theorem}\label{group_quotient_correspondence_image_subgroup}
+    Suppose $\normalSubgroup{N}{G}$ and $\subgroup{H}{G}$.
+    Suppose $N\subseteq H$.
+    Let $q=\groupQuotientProjection{G}{N}$ and
+        $Q=\quotientGroup{G}{N}$.
+    Then $\subgroup{\img{q}{H}}{Q}$.
+\end{theorem}
+\begin{proof}
+    $\groupHom{q}{G}{Q}$ by
+        \auto{group_quotient_projection_hom}.
+    Follows by \obv{group_hom_subgroup_image}.
+\end{proof}
+
+\begin{theorem}\label{group_quotient_correspondence_preimage_image}
+    Suppose $\normalSubgroup{N}{G}$ and $\subgroup{H}{G}$.
+    Suppose $N\subseteq H$.
+    Let $q=\groupQuotientProjection{G}{N}$ and
+        $Q=\quotientGroup{G}{N}$.
+    Then $\preimg{q}{\img{q}{H}}=H$.
+\end{theorem}
+\begin{proof}
+    $\groupHom{q}{G}{Q}$ by
+        \auto{group_quotient_projection_hom}.
+    $\groupKernel{q}{G}=N$ by
+        \auto{group_quotient_projection_kernel}.
+    Hence $\groupKernel{q}{G}\subseteq H$.
+    Follows by \obv{group_hom_preimage_image_eq}.
+\end{proof}
+
+\begin{theorem}\label{group_quotient_correspondence_image_preimage}
+    Suppose $\normalSubgroup{N}{G}$.
+    Let $q=\groupQuotientProjection{G}{N}$ and
+        $Q=\quotientGroup{G}{N}$.
+    Suppose $\subgroup{T}{Q}$.
+    Then $\img{q}{\preimg{q}{T}}=T$.
+\end{theorem}
+\begin{proof}
+    $\groupHom{q}{G}{Q}$ by
+        \auto{group_quotient_projection_hom}.
+    $q\in\surj{\carrier[G]}{\carrier[Q]}$ by
+        \auto{group_quotient_projection_group_surjection,
+            group_surjection_is_surj}.
+    $T\subseteq\carrier[Q]$ by \obv{subgroup_subseteq}.
+    Follows by \obv{surjective_group_hom_image_preimage_eq}.
+\end{proof}
+
+\begin{theorem}\label{group_quotient_correspondence_image_inclusion}
+    Suppose $\normalSubgroup{N}{G}$.
+    Suppose $\subgroup{H}{G}$ and $\subgroup{K}{G}$.
+    Suppose $N\subseteq H$ and $N\subseteq K$.
+    Let $q=\groupQuotientProjection{G}{N}$.
+    Then $H\subseteq K$ iff $\img{q}{H}\subseteq\img{q}{K}$.
+\end{theorem}
+\begin{proof}
+    Show that if $H\subseteq K$, then
+        $\img{q}{H}\subseteq\img{q}{K}$.
+    \begin{subproof}
+        Assume $H\subseteq K$.
+        Follows by \obv{img_subseteq}.
+    \end{subproof}
+    Show that if $\img{q}{H}\subseteq\img{q}{K}$, then
+        $H\subseteq K$.
+    \begin{subproof}
+        Assume $\img{q}{H}\subseteq\img{q}{K}$.
+        Hence $\preimg{q}{\img{q}{H}}\subseteq
+            \preimg{q}{\img{q}{K}}$ by \obv{preimg_subseteq}.
+        $\preimg{q}{\img{q}{H}}=H$ and
+            $\preimg{q}{\img{q}{K}}=K$ by
+            \auto{group_quotient_correspondence_preimage_image}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{group_quotient_correspondence_preimage_inclusion}
+    Suppose $\normalSubgroup{N}{G}$.
+    Let $q=\groupQuotientProjection{G}{N}$ and
+        $Q=\quotientGroup{G}{N}$.
+    Suppose $\subgroup{S}{Q}$ and $\subgroup{T}{Q}$.
+    Then $S\subseteq T$ iff
+        $\preimg{q}{S}\subseteq\preimg{q}{T}$.
+\end{theorem}
+\begin{proof}
+    Show that if $S\subseteq T$, then
+        $\preimg{q}{S}\subseteq\preimg{q}{T}$.
+    \begin{subproof}
+        Assume $S\subseteq T$.
+        Follows by \obv{preimg_subseteq}.
+    \end{subproof}
+    Show that if $\preimg{q}{S}\subseteq\preimg{q}{T}$, then
+        $S\subseteq T$.
+    \begin{subproof}
+        Assume $\preimg{q}{S}\subseteq\preimg{q}{T}$.
+        Hence $\img{q}{\preimg{q}{S}}\subseteq
+            \img{q}{\preimg{q}{T}}$ by \obv{img_subseteq}.
+        $\img{q}{\preimg{q}{S}}=S$ and
+            $\img{q}{\preimg{q}{T}}=T$ by
+            \obv{group_quotient_correspondence_image_preimage}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{group_quotient_correspondence_normal_image}
+    Suppose $\normalSubgroup{N}{G}$ and $\normalSubgroup{H}{G}$.
+    Suppose $N\subseteq H$.
+    Let $q=\groupQuotientProjection{G}{N}$ and
+        $Q=\quotientGroup{G}{N}$.
+    Then $\normalSubgroup{\img{q}{H}}{Q}$.
+\end{theorem}
+\begin{proof}
+    $\groupSurjection{q}{G}{Q}$ by
+        \auto{group_quotient_projection_group_surjection}.
+    Follows by \obv{group_surjection_normal_image}.
+\end{proof}
+
+\begin{theorem}\label{group_quotient_correspondence_normal_preimage}
+    Suppose $\normalSubgroup{N}{G}$.
+    Let $q=\groupQuotientProjection{G}{N}$ and
+        $Q=\quotientGroup{G}{N}$.
+    Suppose $\normalSubgroup{T}{Q}$.
+    Then $\normalSubgroup{\preimg{q}{T}}{G}$.
+\end{theorem}
+\begin{proof}
+    $\groupHom{q}{G}{Q}$ by
+        \auto{group_quotient_projection_hom}.
+    Follows by \obv{group_hom_normal_preimage}.
+\end{proof}
+
+\begin{corollary}\label{group_quotient_correspondence_normal_iff}
+    Suppose $\normalSubgroup{N}{G}$ and $\subgroup{H}{G}$.
+    Suppose $N\subseteq H$.
+    Let $q=\groupQuotientProjection{G}{N}$ and
+        $Q=\quotientGroup{G}{N}$.
+    Then $\normalSubgroup{H}{G}$ iff
+        $\normalSubgroup{\img{q}{H}}{Q}$.
+\end{corollary}
+\begin{proof}
+    Show that if $\normalSubgroup{H}{G}$, then
+        $\normalSubgroup{\img{q}{H}}{Q}$.
+    \begin{subproof}
+        Assume $\normalSubgroup{H}{G}$.
+        Follows by \obv{group_quotient_correspondence_normal_image}.
+    \end{subproof}
+    Show that if $\normalSubgroup{\img{q}{H}}{Q}$, then
+        $\normalSubgroup{H}{G}$.
+    \begin{subproof}
+        Assume $\normalSubgroup{\img{q}{H}}{Q}$.
+        $\normalSubgroup{\preimg{q}{\img{q}{H}}}{G}$ by
+            \obv{group_quotient_correspondence_normal_preimage}.
+        $\preimg{q}{\img{q}{H}}=H$ by
+            \obv{group_quotient_correspondence_preimage_image}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{group_quotient_correspondence_restriction_surjection}
+    Suppose $\normalSubgroup{N}{G}$ and $\subgroup{H}{G}$.
+    Suppose $N\subseteq H$.
+    Let $q=\groupQuotientProjection{G}{N}$ and
+        $Q=\quotientGroup{G}{N}$.
+    Let $A=\subgroupStructure{G}{H}$ and
+        $B=\subgroupStructure{Q}{\img{q}{H}}$.
+    Let $r=\restrl{q}{H}$.
+    Then $\groupSurjection{r}{A}{B}$.
+\end{theorem}
+\begin{proof}
+    $\groupHom{q}{G}{Q}$ by
+        \auto{group_quotient_projection_hom}.
+    Hence $\groupHom{r}{A}{Q}$ by
+        \auto{group_hom_domain_restriction}.
+    $\subgroup{\img{q}{H}}{Q}$ by
+        \obv{group_quotient_correspondence_image_subgroup}.
+    $\carrier[A]=H$ and $\carrier[B]=\img{q}{H}$ by
+        \auto{subgroup_structure_carrier}.
+    $q$ is a function and $H\subseteq\dom{q}$ by
+        \auto{group_hom_type,funs_is_function,funs,
+            subgroup_subseteq}.
+    $\img{r}{\carrier[A]}=\img{q}{H\inter H}$ by
+        \auto{restrl_img}.
+    Hence $\img{r}{\carrier[A]}=\img{q}{H}$ by
+        \auto{inter_idempotent}.
+    Hence $\groupHom{r}{A}{B}$ by
+        \auto{group_hom_codomain_corestriction,subseteq_refl}.
+    $\img{r}{\carrier[A]}=\carrier[B]$.
+    Show that for every $y\in\carrier[B]$ there exists
+        $x\in\carrier[A]$ such that $r(x)=y$.
+    \begin{subproof}
+        Fix $y\in\carrier[B]$.
+        Hence $y\in\img{r}{\carrier[A]}$.
+        Follows by \auto{group_hom_image_iff,subseteq_refl}.
+    \end{subproof}
+    Hence $r\in\surj{\carrier[A]}{\carrier[B]}$ by
+        \obv{group_hom_type,surj}.
+    Follows by \obv{group_surjection}.
+\end{proof}
+
+\begin{theorem}\label{group_quotient_correspondence_restriction_kernel}
+    Suppose $\normalSubgroup{N}{G}$ and $\subgroup{H}{G}$.
+    Suppose $N\subseteq H$.
+    Let $q=\groupQuotientProjection{G}{N}$ and
+        $Q=\quotientGroup{G}{N}$.
+    Let $A=\subgroupStructure{G}{H}$ and
+        $B=\subgroupStructure{Q}{\img{q}{H}}$.
+    Let $r=\restrl{q}{H}$.
+    Then $\groupKernel{r}{A}=N$.
+\end{theorem}
+\begin{proof}
+    $\groupSurjection{r}{A}{B}$ by
+        \obv{group_quotient_correspondence_restriction_surjection}.
+    Hence $\groupHom{r}{A}{B}$ by \obv{group_surjection_is_hom}.
+    $\groupHom{q}{G}{Q}$ by
+        \auto{group_quotient_projection_hom}.
+    $\groupKernel{q}{G}=N$ by
+        \auto{group_quotient_projection_kernel}.
+    $q$ is a function and $H\subseteq\dom{q}$ by
+        \auto{group_hom_type,funs_is_function,funs,
+            subgroup_subseteq}.
+    $\neutral[B]=\neutral[Q]$ by
+        \auto{subgroup_structure_neutral}.
+    Show that for every $x$ we have
+        $x\in\groupKernel{r}{A}$ iff $x\in N$.
+    \begin{subproof}
+        Fix $x$.
+        Show that if $x\in\groupKernel{r}{A}$, then $x\in N$.
+        \begin{subproof}
+            Assume $x\in\groupKernel{r}{A}$.
+            Hence $x\in\carrier[A]$ and $r(x)=\neutral[B]$ by
+                \auto{group_kernel_iff}.
+            Hence $x\in H$ by \auto{subgroup_structure_carrier}.
+            $r(x)=q(x)$ by \auto{restrl_of_function_apply}.
+            Hence $x\in\carrier[G]$ and $q(x)=\neutral[Q]$ by
+                \auto{subgroup_subseteq,subseteq}.
+            Hence $x\in\groupKernel{q}{G}$ by
+                \auto{group_kernel_iff}.
+        \end{subproof}
+        Show that if $x\in N$, then $x\in\groupKernel{r}{A}$.
+        \begin{subproof}
+            Assume $x\in N$.
+            Hence $x\in H$ by \obv{subseteq}.
+            Hence $x\in\carrier[A]$ by
+                \auto{subgroup_structure_carrier}.
+            $x\in\groupKernel{q}{G}$.
+            Hence $q(x)=\neutral[Q]$ by \auto{group_kernel_iff}.
+            $r(x)=q(x)$ by \auto{restrl_of_function_apply}.
+            Hence $r(x)=\neutral[B]$.
+            Follows by \auto{group_kernel_iff}.
+        \end{subproof}
+        Follows by \auto.
+    \end{subproof}
+    Follows by \auto{setext}.
+\end{proof}
+
+\begin{theorem}\label{group_quotient_correspondence_induced_isomorphism}
+    Suppose $\normalSubgroup{N}{G}$ and $\subgroup{H}{G}$.
+    Suppose $N\subseteq H$.
+    Let $q=\groupQuotientProjection{G}{N}$ and
+        $Q=\quotientGroup{G}{N}$.
+    Let $A=\subgroupStructure{G}{H}$ and
+        $B=\subgroupStructure{Q}{\img{q}{H}}$.
+    Let $r=\restrl{q}{H}$.
+    Then
+        $\groupIsomorphism
+            {\firstIsomorphismMap{r}{A}{B}}
+            {\quotientGroup{A}{N}}{B}$.
+\end{theorem}
+\begin{proof}
+    $\groupSurjection{r}{A}{B}$ by
+        \obv{group_quotient_correspondence_restriction_surjection}.
+    Hence $\groupHom{r}{A}{B}$ by \obv{group_surjection_is_hom}.
+    $\groupKernel{r}{A}=N$ by
+        \obv{group_quotient_correspondence_restriction_kernel}.
+    $r\in\surj{\carrier[A]}{\carrier[B]}$ by
+        \obv{group_surjection_is_surj}.
+    Hence $\img{r}{\carrier[A]}=\carrier[B]$ by
+        \obv{surjective_group_hom_image_full}.
+    $\groupIsomorphism
+        {\firstIsomorphismMap{r}{A}{B}}
+        {\quotientGroup{A}{\groupKernel{r}{A}}}
+        {\subgroupStructure{B}{\img{r}{\carrier[A]}}}$ by
+        \obv{first_isomorphism_theorem}.
+    $B$ is an exact group by
+        \auto{group_quotient_correspondence_image_subgroup,
+            subgroup_structure_is_exact_group}.
+    $\subgroupStructure{B}{\carrier[B]}=\reduct[group]{B}$ by
+        \obv{full_subgroup_structure_eq_group_reduct}.
+    $\reduct[group]{B}=B$ by \obv{exact_group_reduct_eq}.
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{group_subgroup_correspondence_bijection}
+    Suppose $\normalSubgroup{N}{G}$.
+    Let $q=\groupQuotientProjection{G}{N}$ and
+        $Q=\quotientGroup{G}{N}$.
+    Let
+        $C=\{H\in\pow{\carrier[G]}\mid
+            \text{$\subgroup{H}{G}$ and $N\subseteq H$}\}$.
+    Let
+        $D=\{T\in\pow{\carrier[Q]}\mid
+            \text{$\subgroup{T}{Q}$}\}$.
+    Let
+        $F=\Apply{\graphOnDomainOp}{
+            C,\fun{H:\Set}{\img{q}{H}}}$.
+    Then $F\in\bijections{C}{D}$.
+\end{theorem}
+\begin{proof}
+    Show that for every $H\in C$ we have $\img{q}{H}\in D$.
+    \begin{subproof}
+        Fix $H\in C$.
+        Hence $\subgroup{H}{G}$ and $N\subseteq H$ by \auto.
+        $\subgroup{\img{q}{H}}{Q}$ by
+            \obv{group_quotient_correspondence_image_subgroup}.
+        Hence $\img{q}{H}\subseteq\carrier[Q]$ by
+            \obv{subgroup_subseteq}.
+        Hence $\img{q}{H}\in\pow{\carrier[Q]}$ by
+            \obv{powerset_intro}.
+        Follows by \auto.
+    \end{subproof}
+    Hence $F\in\funs{C}{D}$ by
+        \auto{logical_graph_on_domain_type}.
+    Hence $F$ is a function and $\dom{F}=C$ by \auto{funs_elim}.
+    Show that $F\in\surj{C}{D}$.
+    \begin{subproof}
+        Show that for every $T\in D$ there exists $H\in C$ such that
+            $F(H)=T$.
+        \begin{subproof}
+            Fix $T\in D$.
+            Hence $\subgroup{T}{Q}$ by \auto.
+            Let $H=\preimg{q}{T}$.
+            $\subgroup{H}{G}$ by
+                \auto{group_quotient_correspondence_preimage_subgroup}.
+            Hence $H\subseteq\carrier[G]$ by \obv{subgroup_subseteq}.
+            Hence $H\in\pow{\carrier[G]}$ by \obv{powerset_intro}.
+            $N\subseteq H$ by
+                \obv{group_quotient_correspondence_preimage_contains_kernel}.
+            Hence $H\in C$ by \auto.
+            $F(H)=\img{q}{H}$ by
+                \auto{logical_graph_on_domain_apply}.
+            $\img{q}{H}=T$ by
+                \auto{group_quotient_correspondence_image_preimage}.
+            Follows by \auto.
+        \end{subproof}
+        Follows by \obv{surj}.
+    \end{subproof}
+    Show that $F$ is injective.
+    \begin{subproof}
+        Show that for all $H,K\in\dom{F}$ such that $F(H)=F(K)$
+            we have $H=K$.
+        \begin{subproof}
+            Fix $H,K\in\dom{F}$.
+            Assume $F(H)=F(K)$.
+            Hence $H,K\in C$.
+            Hence $\subgroup{H}{G}$ and $N\subseteq H$ by \auto.
+            Hence $\subgroup{K}{G}$ and $N\subseteq K$ by \auto.
+            $F(H)=\img{q}{H}$ and $F(K)=\img{q}{K}$ by
+                \auto{logical_graph_on_domain_apply}.
+            Hence $\img{q}{H}=\img{q}{K}$.
+            $\preimg{q}{\img{q}{H}}=H$ and
+                $\preimg{q}{\img{q}{K}}=K$ by
+                \obv{group_quotient_correspondence_preimage_image}.
+        \end{subproof}
+        Follows by \auto{injective_function}.
+    \end{subproof}
+    Follows by \obv{bijections}.
+\end{proof}
+
+\begin{theorem}\label{group_subgroup_correspondence_inverse_graph}
+    Suppose $\normalSubgroup{N}{G}$.
+    Let $q=\groupQuotientProjection{G}{N}$ and
+        $Q=\quotientGroup{G}{N}$.
+    Let
+        $C=\{H\in\pow{\carrier[G]}\mid
+            \text{$\subgroup{H}{G}$ and $N\subseteq H$}\}$.
+    Let
+        $D=\{T\in\pow{\carrier[Q]}\mid
+            \text{$\subgroup{T}{Q}$}\}$.
+    Let
+        $F=\Apply{\graphOnDomainOp}{
+            C,\fun{H:\Set}{\img{q}{H}}}$.
+    Let
+        $J=\Apply{\graphOnDomainOp}{
+            D,\fun{T:\Set}{\preimg{q}{T}}}$.
+    Then $\converse{F}=J$ and $J\in\bijections{D}{C}$.
+\end{theorem}
+\begin{proof}
+    $F\in\bijections{C}{D}$ by
+        \obv{group_subgroup_correspondence_bijection}.
+    Hence $\converse{F}\in\funs{D}{C}$ by
+        \obv{bijective_converse_are_funs}.
+    Show that for every $T\in D$ we have $\preimg{q}{T}\in C$.
+    \begin{subproof}
+        Fix $T\in D$.
+        Hence $\subgroup{T}{Q}$ by \auto.
+        $\subgroup{\preimg{q}{T}}{G}$ by
+            \obv{group_quotient_correspondence_preimage_subgroup}.
+        Hence $\preimg{q}{T}\subseteq\carrier[G]$ by
+            \obv{subgroup_subseteq}.
+        Hence $\preimg{q}{T}\in\pow{\carrier[G]}$ by
+            \obv{powerset_intro}.
+        $N\subseteq\preimg{q}{T}$ by
+            \obv{group_quotient_correspondence_preimage_contains_kernel}.
+        Follows by \auto.
+    \end{subproof}
+    Hence $J\in\funs{D}{C}$ by
+        \auto{logical_graph_on_domain_type}.
+    Hence $\converse{F}$ and $J$ are functions and
+        $\dom{\converse{F}}=D=\dom{J}$ by \auto{funs_elim}.
+    Show that for every $T\in\dom{\converse{F}}$ we have
+        $(\converse{F})(T)=J(T)$.
+    \begin{subproof}
+        Fix $T\in\dom{\converse{F}}$.
+        Hence $T\in D$.
+        Hence $\subgroup{T}{Q}$ by \auto.
+        Let $H=\preimg{q}{T}$.
+        Hence $H\in C$ by \auto.
+        $F(H)=\img{q}{H}$ and $J(T)=H$ by
+            \auto{logical_graph_on_domain_apply}.
+        $\img{q}{H}=T$ by
+            \auto{group_quotient_correspondence_image_preimage}.
+        Hence $F(H)=T$.
+        Hence $(H,T)\in F$ by
+            \auto{function_apply_elim,bijection_is_function,
+                bijections_dom}.
+        Hence $(T,H)\in\converse{F}$ by \auto{converse_iff}.
+        Hence $(\converse{F})(T)=H$ by
+            \obv{function_apply_intro}.
+    \end{subproof}
+    Hence $\converse{F}=J$ by \obv{funext_on_domain}.
+    $\converse{F}\in\bijections{D}{C}$ by
+        \obv{bijection_converse_is_bijection}.
+\end{proof}
+
+\subsection{Normal subgroups under an isomorphism}
+
+\begin{theorem}\label{group_isomorphism_normal_correspondence_bijection}
+    Suppose $\groupIsomorphism{f}{G}{H}$.
+    Let
+        $C=\{N\in\pow{\carrier[G]}\mid
+            \text{$\normalSubgroup{N}{G}$}\}$.
+    Let
+        $D=\{K\in\pow{\carrier[H]}\mid
+            \text{$\normalSubgroup{K}{H}$}\}$.
+    Let
+        $F=\Apply{\graphOnDomainOp}{
+            C,\fun{N:\Set}{\img{f}{N}}}$.
+    Then $F\in\bijections{C}{D}$.
+\end{theorem}
+\begin{proof}
+    $\groupHom{f}{G}{H}$ by
+        \obv{group_isomorphism_is_hom}.
+    $f\in\bijections{\carrier[G]}{\carrier[H]}$ by
+        \obv{group_isomorphism_is_bijection}.
+    Hence $f\in\surj{\carrier[G]}{\carrier[H]}$ by
+        \obv{bijections,surj}.
+    Show that for every $N\in C$ we have $\img{f}{N}\in D$.
+    \begin{subproof}
+        Fix $N\in C$.
+        Hence $\normalSubgroup{N}{G}$ by \auto.
+        $\normalSubgroup{\img{f}{N}}{H}$ by
+            \obv{group_isomorphism_normal_image}.
+        Hence $\img{f}{N}\subseteq\carrier[H]$ by
+            \obv{normal_subgroup_subseteq}.
+        Hence $\img{f}{N}\in\pow{\carrier[H]}$ by
+            \obv{powerset_intro}.
+        Follows by \auto.
+    \end{subproof}
+    Hence $F\in\funs{C}{D}$ by
+        \auto{logical_graph_on_domain_type}.
+    Hence $F$ is a function and $\dom{F}=C$ by \auto{funs_elim}.
+    Show that $F\in\surj{C}{D}$.
+    \begin{subproof}
+        Show that for every $K\in D$ there exists $N\in C$ such that
+            $F(N)=K$.
+        \begin{subproof}
+            Fix $K\in D$.
+            Hence $\normalSubgroup{K}{H}$ by \auto.
+            Let $N=\preimg{f}{K}$.
+            $\normalSubgroup{N}{G}$ by
+                \auto{group_hom_normal_preimage}.
+            Hence $N\subseteq\carrier[G]$ by
+                \obv{normal_subgroup_subseteq}.
+            Hence $N\in\pow{\carrier[G]}$ by \obv{powerset_intro}.
+            Hence $N\in C$ by \auto.
+            $F(N)=\img{f}{N}$ by
+                \auto{logical_graph_on_domain_apply}.
+            $K\subseteq\carrier[H]$ by
+                \obv{normal_subgroup_subseteq}.
+            $\img{f}{N}=K$ by
+                \auto{surjective_group_hom_image_preimage_eq}.
+            Follows by \auto.
+        \end{subproof}
+        Follows by \obv{surj}.
+    \end{subproof}
+    Show that $F$ is injective.
+    \begin{subproof}
+        Show that for all $N,P\in\dom{F}$ such that $F(N)=F(P)$
+            we have $N=P$.
+        \begin{subproof}
+            Fix $N,P\in\dom{F}$.
+            Assume $F(N)=F(P)$.
+            Hence $N,P\in C$.
+            Hence $\normalSubgroup{N}{G}$ and
+                $\normalSubgroup{P}{G}$ by \auto.
+            $F(N)=\img{f}{N}$ and $F(P)=\img{f}{P}$ by
+                \auto{logical_graph_on_domain_apply}.
+            Hence $\img{f}{N}=\img{f}{P}$.
+            $\groupKernel{f}{G}=\trivialSubgroupCarrier{G}$ by
+                \auto{group_isomorphism_is_bijection,bijections,
+                    group_hom_injective_iff_kernel_trivial}.
+            $\trivialSubgroupCarrier{G}\subseteq N$ and
+                $\trivialSubgroupCarrier{G}\subseteq P$ by
+                \auto{normal_subgroup_is_subgroup,subgroup_neutral,
+                    trivial_subgroup_carrier,singleton_subset_intro}.
+            Hence $\groupKernel{f}{G}\subseteq N$ and
+                $\groupKernel{f}{G}\subseteq P$.
+            $\preimg{f}{\img{f}{N}}=N$ and
+                $\preimg{f}{\img{f}{P}}=P$ by
+                \obv{group_hom_preimage_image_eq,
+                    normal_subgroup_is_subgroup}.
+        \end{subproof}
+        Follows by \auto{injective_function}.
+    \end{subproof}
+    Follows by \obv{bijections}.
+\end{proof}
+
+\begin{theorem}\label{group_isomorphism_normal_correspondence_inverse_graph}
+    Suppose $\groupIsomorphism{f}{G}{H}$.
+    Let
+        $C=\{N\in\pow{\carrier[G]}\mid
+            \text{$\normalSubgroup{N}{G}$}\}$.
+    Let
+        $D=\{K\in\pow{\carrier[H]}\mid
+            \text{$\normalSubgroup{K}{H}$}\}$.
+    Let
+        $F=\Apply{\graphOnDomainOp}{
+            C,\fun{N:\Set}{\img{f}{N}}}$.
+    Let
+        $J=\Apply{\graphOnDomainOp}{
+            D,\fun{K:\Set}{\preimg{f}{K}}}$.
+    Then $\converse{F}=J$ and $J\in\bijections{D}{C}$.
+\end{theorem}
+\begin{proof}
+    $F\in\bijections{C}{D}$ by
+        \obv{group_isomorphism_normal_correspondence_bijection}.
+    Hence $\converse{F}\in\funs{D}{C}$ by
+        \obv{bijective_converse_are_funs}.
+    $\groupHom{f}{G}{H}$ by
+        \obv{group_isomorphism_is_hom}.
+    $f\in\surj{\carrier[G]}{\carrier[H]}$ by
+        \auto{group_isomorphism_is_bijection,bijections,surj}.
+    Show that for every $K\in D$ we have $\preimg{f}{K}\in C$.
+    \begin{subproof}
+        Fix $K\in D$.
+        Hence $\normalSubgroup{K}{H}$ by \auto.
+        $\normalSubgroup{\preimg{f}{K}}{G}$ by
+            \obv{group_hom_normal_preimage}.
+        Hence $\preimg{f}{K}\subseteq\carrier[G]$ by
+            \obv{normal_subgroup_subseteq}.
+        Hence $\preimg{f}{K}\in\pow{\carrier[G]}$ by
+            \obv{powerset_intro}.
+        Follows by \auto.
+    \end{subproof}
+    Hence $J\in\funs{D}{C}$ by
+        \auto{logical_graph_on_domain_type}.
+    Hence $\converse{F}$ and $J$ are functions and
+        $\dom{\converse{F}}=D=\dom{J}$ by \auto{funs_elim}.
+    Show that for every $K\in\dom{\converse{F}}$ we have
+        $(\converse{F})(K)=J(K)$.
+    \begin{subproof}
+        Fix $K\in\dom{\converse{F}}$.
+        Hence $K\in D$.
+        Hence $\normalSubgroup{K}{H}$ by \auto.
+        Let $N=\preimg{f}{K}$.
+        Hence $N\in C$ by \auto.
+        $F(N)=\img{f}{N}$ and $J(K)=N$ by
+            \auto{logical_graph_on_domain_apply}.
+        $K\subseteq\carrier[H]$ by
+            \obv{normal_subgroup_subseteq}.
+        $\img{f}{N}=K$ by
+            \auto{surjective_group_hom_image_preimage_eq}.
+        Hence $F(N)=K$.
+        Hence $(N,K)\in F$ by
+            \auto{function_apply_elim,bijection_is_function,
+                bijections_dom}.
+        Hence $(K,N)\in\converse{F}$ by \auto{converse_iff}.
+        Hence $(\converse{F})(K)=N$ by
+            \obv{function_apply_intro}.
+    \end{subproof}
+    Hence $\converse{F}=J$ by \obv{funext_on_domain}.
+    $\converse{F}\in\bijections{D}{C}$ by
+        \obv{bijection_converse_is_bijection}.
+\end{proof}

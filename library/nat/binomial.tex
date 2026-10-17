@@ -1,0 +1,673 @@
+\import{nat/divisibility.tex}
+\import{set/logical-graph.tex}
+
+\section{Binomial coefficients}
+
+Pascal's triangle is built one finite row at a time.  The row at height $n$
+is a function on $\suc{n}$; no infinite row is introduced.
+
+\begin{definition}\label{pascal_row_step}
+    $\pascalRowStepOp:\Set\to\Set\to\Set
+        =\fun{n,p:\Set}{
+            \Apply{\graphOnOp}{
+                \suc{\suc{n}},\naturals,
+                \fun{k:\Set}{
+                    \Apply{\logicalIfSetOp}{
+                        (k=\emptyset),\naturalOne,
+                        \Apply{\logicalIfSetOp}{
+                            (k\in\suc{n}),
+                            \apply{p}{\unions{k}}+\apply{p}{k},
+                            \naturalOne}}}}}$.
+\end{definition}
+
+\begin{definition}\label{pascal_row}
+    $\pascalRow{n}=\Apply{\naturalRecOp}{
+        \Apply{\graphOnOp}{
+            \suc{\emptyset},\naturals,
+            \fun{k:\Set}{\naturalOne}},
+        \pascalRowStepOp,n}$.
+\end{definition}
+
+\begin{proposition}\label{pascal_row_zero}
+    $\pascalRow{\emptyset}
+        =\Apply{\graphOnOp}{
+            \suc{\emptyset},\naturals,
+            \fun{k:\Set}{\naturalOne}}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{pascal_row,natural_recursion_zero}.
+\end{proof}
+
+\begin{proposition}\label{pascal_row_successor}
+    Let $n$ be a natural number.
+    Then $\pascalRow{\suc{n}}
+        =\Apply{\pascalRowStepOp}{n,\pascalRow{n}}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{pascal_row,natural_recursion_successor}.
+\end{proof}
+
+\begin{lemma}\label{pascal_row_step_type}
+    Let $n$ be a natural number.
+    Let $p\in\funs{\suc{n}}{\naturals}$.
+    Then $\Apply{\pascalRowStepOp}{n,p}
+        \in\funs{\suc{\suc{n}}}{\naturals}$.
+\end{lemma}
+\begin{proof}
+    Show that for every $k\in\suc{\suc{n}}$ we have
+        $\Apply{\logicalIfSetOp}{
+            (k=\emptyset),\naturalOne,
+            \Apply{\logicalIfSetOp}{
+                (k\in\suc{n}),
+                \apply{p}{\unions{k}}+\apply{p}{k},
+                \naturalOne}}\in\naturals$.
+    \begin{subproof}
+        Fix $k\in\suc{\suc{n}}$.
+        \begin{byCase}
+            \caseOf{$k=\emptyset$.}
+                $\naturalOne$ is a natural number by
+                    \auto{natural_one,omega_empty,omega_successor}.
+                Follows by \obv{logical_if_set_true}.
+            \caseOf{$k\neq\emptyset$.}
+                \begin{byCase}
+                    \caseOf{$k\in\suc{n}$.}
+                        $k$ is a natural number by
+                            \auto{omega_successor,
+                                naturals_is_transitive_set,
+                                transitiveset_iff_subseteq,subseteq}.
+                        Take a natural number $j$ such that $k=\suc{j}$
+                            by \obv{natural_zero_or_successor}.
+                        $j$ is \in-transitive by
+                            \obv{natural_number_is_ordinal,
+                                ordinal_is_transitiveset}.
+                        Hence $\unions{k}=j$ by
+                            \auto{transitiveset_iff_unions_suc}.
+                        $j\in k$ by \obv{suc_intro_self}.
+                        Hence $j\in\suc{n}$ by
+                            \obv{omega_successor,
+                                natural_number_is_ordinal,
+                                ordinal_transitivity}.
+                        $p(j),p(k)\in\naturals$ by
+                            \obv{funs_type_apply}.
+                        Hence $p(j)+p(k)$ is a natural number by
+                            \obv{num_addition_on_naturals}.
+                        Follows by
+                            \auto{logical_if_set_false,
+                                logical_if_set_true}.
+                    \caseOf{$k\notin\suc{n}$.}
+                        $\naturalOne$ is a natural number by
+                            \auto{natural_one,omega_empty,
+                                omega_successor}.
+                        Follows by
+                            \auto{logical_if_set_false}.
+                \end{byCase}
+        \end{byCase}
+    \end{subproof}
+    Follows by
+        \auto{pascal_row_step,logical_graph_on_function}.
+\end{proof}
+
+\begin{lemma}\label{pascal_row_step_first}
+    Let $n$ be a natural number and $p$ be a set.
+    Then $\apply{\Apply{\pascalRowStepOp}{n,p}}{\emptyset}
+        =\naturalOne$.
+\end{lemma}
+\begin{proof}
+    $\suc{\suc{n}}$ is a natural number and
+        $\suc{\suc{n}}\neq\emptyset$ by
+        \obv{omega_successor,suc_neq_emptyset}.
+    Hence $\emptyset\in\suc{\suc{n}}$ by
+        \obv{natural_nonzero_contains_zero}.
+    Follows by
+        \auto{pascal_row_step,logical_graph_on_apply,
+            logical_if_set_true}.
+\end{proof}
+
+\begin{lemma}\label{pascal_row_step_last}
+    Let $n$ be a natural number and $p$ be a set.
+    Then $\apply{\Apply{\pascalRowStepOp}{n,p}}{\suc{n}}
+        =\naturalOne$.
+\end{lemma}
+\begin{proof}
+    $\suc{n}\in\suc{\suc{n}}$ by \obv{suc_intro_self}.
+    $\suc{n}\neq\emptyset$ by \obv{suc_neq_emptyset}.
+    $\suc{n}\notin\suc{n}$ by \obv{in_irrefl}.
+    Follows by
+        \auto{pascal_row_step,logical_graph_on_apply,
+            logical_if_set_false}.
+\end{proof}
+
+\begin{lemma}\label{pascal_row_step_interior}
+    Let $n$ be a natural number.
+    Let $p\in\funs{\suc{n}}{\naturals}$.
+    Let $k\in n$.
+    Then
+        $\apply{\Apply{\pascalRowStepOp}{n,p}}{\suc{k}}
+            =p(k)+p(\suc{k})$.
+\end{lemma}
+\begin{proof}
+    $k$ is a natural number by
+        \obv{naturals_is_transitive_set,
+            transitiveset_iff_subseteq,subseteq}.
+    $\suc{k}$ is a natural number by \obv{omega_successor}.
+    Hence $\suc{k}$ and $n$ are ordinals by
+        \obv{natural_number_is_ordinal}.
+    Hence $\suc{k}\subseteq n$ by \obv{ordinal_suc_subseteq}.
+    Hence $\suc{k}\in n$ or $\suc{k}=n$ by
+        \obv{ordinal_subseteq_implies_elem_or_eq}.
+    Hence $\suc{k}\in\suc{n}$ by \auto{suc_iff}.
+    Hence $\suc{k}\in\suc{\suc{n}}$ by
+        \auto{suc_iff}.
+    $k$ is \in-transitive by
+        \obv{natural_number_is_ordinal,ordinal_is_transitiveset}.
+    Hence $\unions{\suc{k}}=k$ by
+        \obv{transitiveset_iff_unions_suc}.
+    $\suc{k}\neq\emptyset$ by \obv{suc_neq_emptyset}.
+    Follows by
+        \auto{pascal_row_step,logical_graph_on_apply,
+            logical_if_set_false,logical_if_set_true}.
+\end{proof}
+
+\begin{theorem}\label{pascal_row_type}
+    Let $n$ be a natural number.
+    Then $\pascalRow{n}\in\funs{\suc{n}}{\naturals}$.
+\end{theorem}
+\begin{proof}
+    Let $C=\{m\in\naturals\mid
+        \pascalRow{m}\in\funs{\suc{m}}{\naturals}\}$.
+    $\naturalOne$ is a natural number by
+        \auto{natural_one,omega_empty,omega_successor}.
+    $\pascalRow{\emptyset}\in
+        \funs{\suc{\emptyset}}{\naturals}$ by
+        \auto{pascal_row_zero,logical_graph_on_function}.
+    Hence $\emptyset\in C$ by \obv{omega_empty}.
+    Show that for every $m\in C$ we have $\suc{m}\in C$.
+    \begin{subproof}
+        Fix $m\in C$.
+        Hence $m$ is a natural number and
+            $\pascalRow{m}\in\funs{\suc{m}}{\naturals}$.
+        $\Apply{\pascalRowStepOp}{m,\pascalRow{m}}
+            \in\funs{\suc{\suc{m}}}{\naturals}$ by
+            \obv{pascal_row_step_type}.
+        Hence $\pascalRow{\suc{m}}
+            \in\funs{\suc{\suc{m}}}{\naturals}$ by
+            \obv{pascal_row_successor}.
+        $\suc{m}$ is a natural number by \obv{omega_successor}.
+    \end{subproof}
+    Hence $C$ is an inductive set by \obv{inductive_set}.
+    Hence every natural number is an element of $C$ by
+        \obv{omega_minimal}.
+    Thus $n\in C$.
+\end{proof}
+
+\begin{proposition}\label{pascal_row_first}
+    Let $n$ be a natural number.
+    Then $\apply{\pascalRow{n}}{\emptyset}=\naturalOne$.
+\end{proposition}
+\begin{proof}
+    Let $C=\{m\in\naturals\mid
+        \apply{\pascalRow{m}}{\emptyset}=\naturalOne\}$.
+    $\emptyset\in\suc{\emptyset}$ by \obv{suc_intro_self}.
+    $\apply{\pascalRow{\emptyset}}{\emptyset}=\naturalOne$ by
+        \auto{pascal_row_zero,logical_graph_on_apply}.
+    Hence $\emptyset\in C$ by \obv{omega_empty}.
+    Show that for every $m\in C$ we have $\suc{m}\in C$.
+    \begin{subproof}
+        Fix $m\in C$.
+        $\pascalRow{\suc{m}}
+            =\Apply{\pascalRowStepOp}{m,\pascalRow{m}}$ by
+            \obv{pascal_row_successor}.
+        Hence $\apply{\pascalRow{\suc{m}}}{\emptyset}=\naturalOne$ by
+            \auto{pascal_row_step_first}.
+        $\suc{m}$ is a natural number by \obv{omega_successor}.
+    \end{subproof}
+    Hence $C$ is an inductive set by \obv{inductive_set}.
+    Hence every natural number is an element of $C$ by
+        \obv{omega_minimal}.
+    Thus $n\in C$.
+\end{proof}
+
+\begin{proposition}\label{pascal_row_last}
+    Let $n$ be a natural number.
+    Then $\apply{\pascalRow{n}}{n}=\naturalOne$.
+\end{proposition}
+\begin{proof}
+    Let $C=\{m\in\naturals\mid
+        \apply{\pascalRow{m}}{m}=\naturalOne\}$.
+    $\emptyset\in\suc{\emptyset}$ by \obv{suc_intro_self}.
+    $\apply{\pascalRow{\emptyset}}{\emptyset}=\naturalOne$ by
+        \auto{pascal_row_zero,logical_graph_on_apply}.
+    Hence $\emptyset\in C$ by \obv{omega_empty}.
+    Show that for every $m\in C$ we have $\suc{m}\in C$.
+    \begin{subproof}
+        Fix $m\in C$.
+        $\pascalRow{\suc{m}}
+            =\Apply{\pascalRowStepOp}{m,\pascalRow{m}}$ by
+            \obv{pascal_row_successor}.
+        Hence $\apply{\pascalRow{\suc{m}}}{\suc{m}}=\naturalOne$ by
+            \auto{pascal_row_step_last}.
+        $\suc{m}$ is a natural number by \obv{omega_successor}.
+    \end{subproof}
+    Hence $C$ is an inductive set by \obv{inductive_set}.
+    Hence every natural number is an element of $C$ by
+        \obv{omega_minimal}.
+    Thus $n\in C$.
+\end{proof}
+
+\begin{proposition}\label{pascal_row_interior}
+    Let $n$ be a natural number and $k\in n$.
+    Then
+        $\apply{\pascalRow{\suc{n}}}{\suc{k}}
+            =\apply{\pascalRow{n}}{k}
+                +\apply{\pascalRow{n}}{\suc{k}}$.
+\end{proposition}
+\begin{proof}
+    $\pascalRow{n}\in\funs{\suc{n}}{\naturals}$ by
+        \obv{pascal_row_type}.
+    $\pascalRow{\suc{n}}
+        =\Apply{\pascalRowStepOp}{n,\pascalRow{n}}$ by
+        \obv{pascal_row_successor}.
+    Follows by \auto{pascal_row_step_interior}.
+\end{proof}
+
+\subsection{Total binomial coefficients}
+
+\begin{definition}\label{natural_choose}
+    $\naturalChoose{n}{k}=\Apply{\logicalIfSetOp}{
+        (n\in\naturals\land k\in\naturals\land k\in\suc{n}),
+        \apply{\pascalRow{n}}{k},\emptyset}$.
+\end{definition}
+
+\begin{proposition}\label{natural_choose_in_range}
+    Let $n,k$ be natural numbers and $k\in\suc{n}$.
+    Then $\naturalChoose{n}{k}=\apply{\pascalRow{n}}{k}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{natural_choose,logical_if_set_true}.
+\end{proof}
+
+\begin{proposition}\label{natural_choose_off_domain}
+    Suppose $n\notin\naturals$ or $k\notin\naturals$ or
+        $k\notin\suc{n}$.
+    Then $\naturalChoose{n}{k}=\emptyset$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{natural_choose,logical_if_set_false}.
+\end{proof}
+
+\begin{proposition}\label{natural_choose_type}
+    $\naturalChoose{n}{k}$ is a natural number.
+\end{proposition}
+\begin{proof}
+    \begin{byCase}
+        \caseOf{$n\in\naturals\land k\in\naturals\land
+                k\in\suc{n}$.}
+            $\pascalRow{n}\in\funs{\suc{n}}{\naturals}$ by
+                \obv{pascal_row_type}.
+            Hence $\apply{\pascalRow{n}}{k}\in\naturals$ by
+                \obv{funs_type_apply}.
+            Follows by \obv{natural_choose_in_range}.
+        \caseOf{$\lnot(n\in\naturals\land k\in\naturals\land
+                k\in\suc{n})$.}
+            $\naturalChoose{n}{k}=\emptyset$ by
+                \obv{natural_choose,logical_if_set_false}.
+            Follows by \obv{omega_empty}.
+    \end{byCase}
+\end{proof}
+
+\begin{proposition}\label{natural_choose_first}
+    Let $n$ be a natural number.
+    Then $\naturalChoose{n}{\emptyset}=\naturalOne$.
+\end{proposition}
+\begin{proof}
+    $\emptyset$ is a natural number by \obv{omega_empty}.
+    $\suc{n}$ is a natural number and $\suc{n}\neq\emptyset$ by
+        \obv{omega_successor,suc_neq_emptyset}.
+    Hence $\emptyset\in\suc{n}$ by
+        \obv{natural_nonzero_contains_zero}.
+    $\naturalChoose{n}{\emptyset}
+        =\apply{\pascalRow{n}}{\emptyset}$ by
+        \obv{natural_choose_in_range}.
+    $\apply{\pascalRow{n}}{\emptyset}=\naturalOne$ by
+        \obv{pascal_row_first}.
+\end{proof}
+
+\begin{proposition}\label{natural_choose_last}
+    Let $n$ be a natural number.
+    Then $\naturalChoose{n}{n}=\naturalOne$.
+\end{proposition}
+\begin{proof}
+    $n\in\suc{n}$ by \obv{suc_intro_self}.
+    $\naturalChoose{n}{n}=\apply{\pascalRow{n}}{n}$ by
+        \obv{natural_choose_in_range}.
+    $\apply{\pascalRow{n}}{n}=\naturalOne$ by
+        \obv{pascal_row_last}.
+\end{proof}
+
+\begin{theorem}\label{natural_choose_pascal}
+    Let $n,k$ be natural numbers.
+    Then
+        $\naturalChoose{\suc{n}}{\suc{k}}
+            =\naturalChoose{n}{k}+\naturalChoose{n}{\suc{k}}$.
+\end{theorem}
+\begin{proof}
+    $n$ and $k$ are ordinals by \obv{natural_number_is_ordinal}.
+    \begin{byCase}
+        \caseOf{$k\in n$.}
+            $\suc{k}$ is a natural number by \obv{omega_successor}.
+            $\suc{k}$ and $n$ are ordinals by
+                \obv{natural_number_is_ordinal}.
+            $\suc{k}\subseteq n$ by \obv{ordinal_suc_subseteq}.
+            Hence $\suc{k}\in n$ or $\suc{k}=n$ by
+                \obv{ordinal_subseteq_implies_elem_or_eq}.
+            Hence $k,\suc{k}\in\suc{n}$ by \auto{suc_iff}.
+            Hence $\suc{k}\in\suc{\suc{n}}$ by \auto{suc_iff}.
+            $\naturalChoose{\suc{n}}{\suc{k}}
+                =\apply{\pascalRow{\suc{n}}}{\suc{k}}$ and
+                $\naturalChoose{n}{k}=\apply{\pascalRow{n}}{k}$ and
+                $\naturalChoose{n}{\suc{k}}
+                    =\apply{\pascalRow{n}}{\suc{k}}$ by
+                \obv{omega_successor,natural_choose_in_range}.
+            $\apply{\pascalRow{\suc{n}}}{\suc{k}}
+                =\apply{\pascalRow{n}}{k}
+                    +\apply{\pascalRow{n}}{\suc{k}}$ by
+                \obv{pascal_row_interior}.
+
+        \caseOf{$k\notin n$.}
+            \begin{byCase}
+                \caseOf{$k=n$.}
+                    $\suc{n}$ is a natural number by
+                        \obv{omega_successor}.
+                    $\suc{n}\notin\suc{n}$ by \obv{in_irrefl}.
+                    $\naturalChoose{\suc{n}}{\suc{k}}=\naturalOne$
+                        by \auto{natural_choose_last}.
+                    $\naturalChoose{n}{k}=\naturalOne$ by
+                        \auto{natural_choose_last}.
+                    $\naturalChoose{n}{\suc{k}}=\emptyset$ by
+                        \auto{natural_choose_off_domain}.
+                    $\naturalOne+\emptyset=\naturalOne$ by
+                        \auto{natural_one,omega_empty,
+                            omega_successor,num_addition_zero_right}.
+
+                \caseOf{$k\neq n$.}
+                    Hence $n\in k$ by
+                        \obv{ordinal_in_trichotomy}.
+                    Show that $k\notin\suc{n}$.
+                    \begin{subproof}
+                        Suppose $k\in\suc{n}$.
+                        Then $k=n$ or $k\in n$ by \obv{suc_elim}.
+                        Contradiction.
+                    \end{subproof}
+                    Show that $\suc{k}\notin\suc{n}$.
+                    \begin{subproof}
+                        Suppose $\suc{k}\in\suc{n}$.
+                        Then $\suc{k}=n$ or $\suc{k}\in n$ by
+                            \obv{suc_elim}.
+                        $k\in\suc{k}$ by \obv{suc_intro_self}.
+                        Hence $k\in n$ by
+                            \obv{natural_number_is_ordinal,
+                                ordinal_transitivity}.
+                        Contradiction by \obv{in_asymmetric}.
+                    \end{subproof}
+                    Show that $\suc{k}\notin\suc{\suc{n}}$.
+                    \begin{subproof}
+                        Suppose $\suc{k}\in\suc{\suc{n}}$.
+                        Then $\suc{k}=\suc{n}$ or
+                            $\suc{k}\in\suc{n}$ by \obv{suc_elim}.
+                        Hence $k=n$ or $\suc{k}\in\suc{n}$ by
+                            \obv{suc_injective}.
+                        Contradiction.
+                    \end{subproof}
+                    $\naturalChoose{\suc{n}}{\suc{k}}=\emptyset$ and
+                        $\naturalChoose{n}{k}=\emptyset$ and
+                        $\naturalChoose{n}{\suc{k}}=\emptyset$ by
+                        \obv{natural_choose_off_domain}.
+                    $\emptyset+\emptyset=\emptyset$ by
+                        \obv{omega_empty,num_addition_zero_right}.
+            \end{byCase}
+    \end{byCase}
+\end{proof}
+
+\begin{proposition}\label{natural_choose_one}
+    Let $n$ be a natural number.
+    Then $\naturalChoose{\suc{n}}{\naturalOne}=\suc{n}$.
+\end{proposition}
+\begin{proof}
+    Let $C=\{m\in\naturals\mid
+        \naturalChoose{\suc{m}}{\naturalOne}=\suc{m}\}$.
+    $\naturalOne=\suc{\emptyset}$ by \obv{natural_one}.
+    $\suc{\emptyset}$ is a natural number by
+        \obv{omega_empty,omega_successor}.
+    $\naturalChoose{\suc{\emptyset}}{\suc{\emptyset}}
+        =\naturalOne$ by \obv{natural_choose_last}.
+    Hence $\naturalChoose{\suc{\emptyset}}{\naturalOne}
+        =\naturalOne$.
+    Hence $\naturalChoose{\suc{\emptyset}}{\naturalOne}
+        =\suc{\emptyset}$.
+    Thus $\emptyset\in C$ by \obv{omega_empty}.
+    Show that for every $m\in C$ we have $\suc{m}\in C$.
+    \begin{subproof}
+        Fix $m\in C$.
+        Hence $m$ is a natural number and
+            $\naturalChoose{\suc{m}}{\naturalOne}=\suc{m}$.
+        $\naturalChoose{\suc{\suc{m}}}{\suc{\emptyset}}
+            =\naturalChoose{\suc{m}}{\emptyset}
+                +\naturalChoose{\suc{m}}{\suc{\emptyset}}$ by
+            \obv{natural_choose_pascal,omega_empty,omega_successor}.
+        $\naturalChoose{\suc{m}}{\emptyset}=\naturalOne$ by
+            \obv{natural_choose_first,omega_successor}.
+        Hence $\naturalChoose{\suc{\suc{m}}}{\naturalOne}
+            =\naturalOne+\suc{m}$.
+        $\naturalOne+\suc{m}=\suc{\suc{m}}$ by
+            \auto{natural_one,num_addition_successor_left,
+                num_addition_zero_left,omega_successor}.
+        Hence $\naturalChoose{\suc{\suc{m}}}{\naturalOne}
+            =\suc{\suc{m}}$.
+        $\suc{m}$ is a natural number by \obv{omega_successor}.
+    \end{subproof}
+    Hence $C$ is an inductive set by \obv{inductive_set}.
+    Hence every natural number is an element of $C$ by
+        \obv{omega_minimal}.
+    Thus $n\in C$.
+\end{proof}
+
+\begin{theorem}\label{natural_choose_weighted}
+    Let $m,k$ be natural numbers and $k\in\suc{m}$.
+    Then
+        $\naturalMul{\suc{k}}{\naturalChoose{\suc{m}}{\suc{k}}}
+            =\naturalMul{\suc{m}}{\naturalChoose{m}{k}}$.
+\end{theorem}
+\begin{proof}
+    Let $C=\{r\in\naturals\mid
+        \text{for every $i\in\suc{r}$ we have
+            $\naturalMul{\suc{i}}{
+                \naturalChoose{\suc{r}}{\suc{i}}}
+                =\naturalMul{\suc{r}}{\naturalChoose{r}{i}}$}\}$.
+
+    Show that $\emptyset\in C$.
+    \begin{subproof}
+        Show that for every $i\in\suc{\emptyset}$ we have
+            $\naturalMul{\suc{i}}{
+                \naturalChoose{\suc{\emptyset}}{\suc{i}}}
+                =\naturalMul{\suc{\emptyset}}{
+                    \naturalChoose{\emptyset}{i}}$.
+        \begin{subproof}
+            Fix $i\in\suc{\emptyset}$.
+            Hence $i=\emptyset$ by \auto{suc_iff,emptyset}.
+            $\suc{\emptyset}$ is a natural number by
+                \obv{omega_empty,omega_successor}.
+            $\naturalChoose{\suc{\emptyset}}{\suc{\emptyset}}
+                =\naturalOne$ and
+                $\naturalChoose{\emptyset}{\emptyset}=\naturalOne$ by
+                \obv{natural_choose_last,omega_empty}.
+            $\naturalOne=\suc{\emptyset}$ by \obv{natural_one}.
+            $\naturalMul{\naturalOne}{\naturalOne}=\naturalOne$ by
+                \auto{natural_multiplication_one_left}.
+        \end{subproof}
+        Follows by \obv{omega_empty}.
+    \end{subproof}
+
+    Show that for every $r\in C$ we have $\suc{r}\in C$.
+    \begin{subproof}
+        Fix $r\in C$.
+        Hence $r$ is a natural number and for every $i\in\suc{r}$ we have
+            $\naturalMul{\suc{i}}{
+                \naturalChoose{\suc{r}}{\suc{i}}}
+                =\naturalMul{\suc{r}}{\naturalChoose{r}{i}}$.
+        Show that for every $i\in\suc{\suc{r}}$ we have
+            $\naturalMul{\suc{i}}{
+                \naturalChoose{\suc{\suc{r}}}{\suc{i}}}
+                =\naturalMul{\suc{\suc{r}}}{
+                    \naturalChoose{\suc{r}}{i}}$.
+        \begin{subproof}
+            Fix $i\in\suc{\suc{r}}$.
+            $i$ is a natural number by
+                \auto{omega_successor,naturals_is_transitive_set,
+                    transitiveset_iff_subseteq,subseteq}.
+            \begin{byCase}
+                \caseOf{$i=\suc{r}$.}
+                    $\suc{r}$ and $\suc{\suc{r}}$ are natural numbers by
+                        \obv{omega_successor}.
+                    $\naturalChoose{\suc{\suc{r}}}{\suc{i}}
+                        =\naturalOne$ and
+                        $\naturalChoose{\suc{r}}{i}=\naturalOne$ by
+                        \auto{natural_choose_last}.
+                    Follows by
+                        \obv{natural_one,
+                            natural_multiplication_one_right}.
+
+                \caseOf{$i\neq\suc{r}$.}
+                    Hence $i\in\suc{r}$ by \obv{suc_elim}.
+                    \begin{byCase}
+                        \caseOf{$i=\emptyset$.}
+                            $\suc{r}$ and $\suc{\suc{r}}$ are natural
+                                numbers by \obv{omega_successor}.
+                            $\naturalChoose{\suc{\suc{r}}}{\naturalOne}
+                                =\suc{\suc{r}}$ by
+                                \obv{natural_choose_one}.
+                            $\naturalChoose{\suc{r}}{\emptyset}
+                                =\naturalOne$ by
+                                \obv{natural_choose_first}.
+                            $\naturalOne=\suc{\emptyset}$ by
+                                \obv{natural_one}.
+                            Follows by
+                                \auto{natural_multiplication_one_left,
+                                    natural_multiplication_one_right}.
+
+                        \caseOf{$i\neq\emptyset$.}
+                            Take a natural number $j$ such that
+                                $i=\suc{j}$ by
+                                \obv{natural_zero_or_successor}.
+                            $\suc{r}$ is an ordinal by
+                                \obv{omega_successor,
+                                    natural_number_is_ordinal}.
+                            $j\in i$ by \obv{suc_intro_self}.
+                            Hence $j\in\suc{r}$ by
+                                \obv{ordinal_transitivity}.
+
+                            Let $A=\naturalChoose{\suc{r}}{i}$.
+                            Let $B=\naturalChoose{\suc{r}}{\suc{i}}$.
+                            Let $D=\naturalChoose{r}{j}$.
+                            Let $E=\naturalChoose{r}{i}$.
+                            $\suc{i}$ and $\suc{r}$ are natural numbers by
+                                \obv{omega_successor}.
+                            $A,B,D,E\in\naturals$ by
+                                \auto{natural_choose_type}.
+                            $\naturalChoose{\suc{\suc{r}}}{\suc{i}}
+                                =\naturalChoose{\suc{r}}{i}
+                                    +\naturalChoose{\suc{r}}{\suc{i}}$ by
+                                \obv{natural_choose_pascal,
+                                    omega_successor}.
+                            Hence $\naturalChoose{\suc{\suc{r}}}{\suc{i}}
+                                =A+B$.
+                            $\naturalChoose{\suc{r}}{\suc{j}}
+                                =\naturalChoose{r}{j}
+                                    +\naturalChoose{r}{\suc{j}}$ by
+                                \obv{natural_choose_pascal}.
+                            Hence $A=D+E$.
+                            $\naturalMul{i}{A}
+                                =\naturalMul{\suc{r}}{D}$ and
+                                $\naturalMul{\suc{i}}{B}
+                                    =\naturalMul{\suc{r}}{E}$ by
+                                \auto.
+
+                            $\naturalMul{\suc{i}}{A+B}
+                                =\naturalMul{\suc{i}}{A}
+                                    +\naturalMul{\suc{i}}{B}$ by
+                                \obv{natural_multiplication_distributive_left}.
+                            $\naturalMul{\suc{i}}{A}
+                                =\naturalMul{i}{A}+A$ by
+                                \obv{natural_multiplication_successor_left}.
+                            Hence $\naturalMul{\suc{i}}{A+B}
+                                =(\naturalMul{\suc{r}}{D}+A)
+                                    +\naturalMul{\suc{r}}{E}$.
+                            $(\naturalMul{\suc{r}}{D}+A)
+                                    +\naturalMul{\suc{r}}{E}
+                                =(\naturalMul{\suc{r}}{D}
+                                    +\naturalMul{\suc{r}}{E})+A$ by
+                                \auto{natural_addition_associative,
+                                    natural_addition_commutative,
+                                    natural_multiplication_closed}.
+                            $\naturalMul{\suc{r}}{D}
+                                    +\naturalMul{\suc{r}}{E}
+                                =\naturalMul{\suc{r}}{D+E}$ by
+                                \auto{natural_multiplication_distributive_left}.
+                            Hence $\naturalMul{\suc{i}}{A+B}
+                                =\naturalMul{\suc{r}}{A}+A$.
+                            $\naturalMul{\suc{\suc{r}}}{A}
+                                =\naturalMul{\suc{r}}{A}+A$ by
+                                \obv{natural_multiplication_successor_left}.
+                            Hence $\naturalMul{\suc{i}}{A+B}
+                                =\naturalMul{\suc{\suc{r}}}{A}$.
+                    \end{byCase}
+            \end{byCase}
+        \end{subproof}
+        $\suc{r}$ is a natural number by \obv{omega_successor}.
+    \end{subproof}
+    Hence $C$ is an inductive set by \obv{inductive_set}.
+    Hence every natural number is an element of $C$ by
+        \obv{omega_minimal}.
+    Hence $m\in C$.
+\end{proof}
+
+\begin{theorem}\label{prime_divides_interior_natural_choose}
+    Let $p,k$ be natural numbers.
+    Suppose $p$ is a prime natural number and
+        $\emptyset\in k$ and $k\in p$.
+    Then $p$ divides $\naturalChoose{p}{k}$ as natural numbers.
+\end{theorem}
+\begin{proof}
+    $p\neq\emptyset$ by \obv{emptyset}.
+    Take a natural number $m$ such that $p=\suc{m}$ by
+        \obv{natural_zero_or_successor}.
+    $k\neq\emptyset$ by \obv{emptyset}.
+    Take a natural number $j$ such that $k=\suc{j}$ by
+        \obv{natural_zero_or_successor}.
+    $p$ is an ordinal by \obv{natural_number_is_ordinal}.
+    $j\in k$ by \obv{suc_intro_self}.
+    Hence $j\in p$ by \obv{ordinal_transitivity}.
+    Hence $j\in\suc{m}$.
+
+    $\naturalMul{\suc{j}}{
+            \naturalChoose{\suc{m}}{\suc{j}}}
+        =\naturalMul{\suc{m}}{\naturalChoose{m}{j}}$ by
+        \obv{natural_choose_weighted}.
+    Hence $\naturalMul{k}{\naturalChoose{p}{k}}
+        =\naturalMul{p}{\naturalChoose{m}{j}}$.
+
+    $\naturalChoose{m}{j}$ is a natural number by
+        \obv{natural_choose_type}.
+    $p$ divides $p$ as natural numbers by
+        \obv{natural_divides_itself}.
+    Hence $p$ divides
+        $\naturalMul{p}{\naturalChoose{m}{j}}$ as natural numbers by
+        \obv{divisor_divides_multiple}.
+    Hence $p$ divides
+        $\naturalMul{k}{\naturalChoose{p}{k}}$ as natural numbers.
+    Hence $p$ divides $k$ as natural numbers or
+        $p$ divides $\naturalChoose{p}{k}$ as natural numbers by
+        \obv{prime_divides_natural_product,natural_choose_type}.
+    $p$ does not divide $k$ as natural numbers by
+        \obv{larger_natural_does_not_divide_positive_smaller}.
+\end{proof}

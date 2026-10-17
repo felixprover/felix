@@ -1,0 +1,121 @@
+\section{Coherence of finite coordinate blocks}
+
+\import{set/finite-function-split.tex}
+\import{set/product-associator.tex}
+
+Joining three blocks commutes with the canonical reassociation of Cartesian
+products. Taking inverses gives the corresponding law for iterated splitting.
+The equations are between explicit function graphs, including when a block
+is empty.
+
+\begin{theorem}\label{finite_function_join_coherence}
+    Let $m,n,k$ be natural numbers.
+    Then $\finiteFunctionJoin{m+n}{k}{A}\circ
+        \productMap{\funs{m}{A}\times\funs{n}{A}}{\funs{k}{A}}{
+            \finiteFunctionJoin{m}{n}{A}}{\identity{\funs{k}{A}}}
+        =(\finiteFunctionJoin{m}{n+k}{A}\circ
+            \productMap{\funs{m}{A}}{\funs{n}{A}\times\funs{k}{A}}{
+                \identity{\funs{m}{A}}}{\finiteFunctionJoin{n}{k}{A}})
+            \circ\productAssociator{\funs{m}{A}}{\funs{n}{A}}{\funs{k}{A}}$.
+\end{theorem}
+\begin{proof}
+    Let $U=\funs{m}{A}$ and $V=\funs{n}{A}$.
+    Let $W=\funs{k}{A}$.
+    Let $a=\productAssociator{U}{V}{W}$.
+    Let $P=\productMap{U\times V}{W}{\finiteFunctionJoin{m}{n}{A}}{\identity{W}}$ and
+        $Q=\productMap{U}{V\times W}{\identity{U}}{\finiteFunctionJoin{n}{k}{A}}$.
+    Let $L=\finiteFunctionJoin{m+n}{k}{A}\circ P$ and
+        $R=\finiteFunctionJoin{m}{n+k}{A}\circ Q$.
+    $m+n$ and $n+k$ are natural numbers by \obv{num_addition_on_naturals}.
+    $(m+n)+k=m+(n+k)$ by \obv{natural_addition_associative}.
+    $\finiteFunctionJoin{m}{n}{A}\in\funs{U\times V}{\funs{m+n}{A}}$ and
+        $\finiteFunctionJoin{n}{k}{A}\in\funs{V\times W}{\funs{n+k}{A}}$ by
+        \auto{finite_function_join_bijection,bijections_to_funs}.
+    $\identity{U}\in\funs{U}{U}$ and $\identity{W}\in\funs{W}{W}$ by \obv{id_elem_funs}.
+    $P\in\funs{(U\times V)\times W}{\funs{m+n}{A}\times W}$ and
+        $Q\in\funs{U\times(V\times W)}{U\times\funs{n+k}{A}}$ by
+        \auto{product_map_type}.
+    $\finiteFunctionJoin{m+n}{k}{A}\in
+        \funs{\funs{m+n}{A}\times W}{\funs{m+(n+k)}{A}}$ and
+        $\finiteFunctionJoin{m}{n+k}{A}\in
+        \funs{U\times\funs{n+k}{A}}{\funs{m+(n+k)}{A}}$ by
+        \auto{finite_function_join_bijection,bijections_to_funs}.
+    $L\in\funs{(U\times V)\times W}{\funs{m+(n+k)}{A}}$ and
+        $R\in\funs{U\times(V\times W)}{\funs{m+(n+k)}{A}}$ by \auto{funs_circ}.
+    $a\in\funs{(U\times V)\times W}{U\times(V\times W)}$ by \auto{product_associator_type}.
+    Hence $R\circ a\in\funs{(U\times V)\times W}{\funs{m+(n+k)}{A}}$ by \obv{funs_circ}.
+    Show that for every $p\in(U\times V)\times W$ we have $L(p)=(R\circ a)(p)$.
+    \begin{subproof}
+        Fix $p\in(U\times V)\times W$.
+        Let $f=\fst{\fst{p}}$ and $g=\snd{\fst{p}}$.
+        Let $h=\snd{p}$.
+        $\fst{p}\in U\times V$ and $h\in W$ by \auto{fst_type,snd_type}.
+        $f\in U$ and $g\in V$ by \auto{fst_type,snd_type}.
+        $\fst{p}=(f,g)$ by \auto{times_elem_is_tuple,pair_eq_pair_of_proj}.
+        $P(p)=((\finiteFunctionJoin{m}{n}{A})((f,g)),h)$ by
+            \auto{product_map_apply,id_apply}.
+        $a(p)=(f,(g,h))$ by \auto{product_associator_apply}.
+        $a(p)\in U\times(V\times W)$ by \obv{funs_type_apply}.
+        Hence $Q(a(p))=(f,(\finiteFunctionJoin{n}{k}{A})((g,h)))$ by
+            \auto{product_map_apply,id_apply,fst_eq,snd_eq}.
+        $L(p)=(\finiteFunctionJoin{m+n}{k}{A})(P(p))$ by
+            \auto{circ_apply,funs_is_function,funs,funs_ran}.
+        $(R\circ a)(p)=R(a(p))$ by \auto{circ_apply,funs_is_function,funs,funs_ran}.
+        $R(a(p))=(\finiteFunctionJoin{m}{n+k}{A})(Q(a(p)))$ by
+            \auto{circ_apply,funs_is_function,funs,funs_ran}.
+        Follows by \auto{finite_function_join_associative}.
+    \end{subproof}
+    Follows by \auto{typed_functions_equal_from_agreement}.
+\end{proof}
+
+\begin{theorem}\label{finite_function_split_coherence}
+    Let $m,n,k$ be natural numbers.
+    Then $\productAssociator{\funs{m}{A}}{\funs{n}{A}}{\funs{k}{A}}\circ
+        (\productMap{\funs{m+n}{A}}{\funs{k}{A}}{
+            \finiteFunctionSplit{m}{n}{A}}{\identity{\funs{k}{A}}}
+            \circ\finiteFunctionSplit{m+n}{k}{A})
+        =\productMap{\funs{m}{A}}{\funs{n+k}{A}}{
+            \identity{\funs{m}{A}}}{\finiteFunctionSplit{n}{k}{A}}
+            \circ\finiteFunctionSplit{m}{n+k}{A}$.
+\end{theorem}
+\begin{proof}
+    Let $U=\funs{m}{A}$ and $V=\funs{n}{A}$.
+    Let $W=\funs{k}{A}$ and $a=\productAssociator{U}{V}{W}$.
+    Let $P=\productMap{U\times V}{W}{\finiteFunctionJoin{m}{n}{A}}{\identity{W}}$ and
+        $Q=\productMap{U}{V\times W}{\identity{U}}{\finiteFunctionJoin{n}{k}{A}}$.
+    Let $L=\finiteFunctionJoin{m+n}{k}{A}\circ P$ and
+        $R=\finiteFunctionJoin{m}{n+k}{A}\circ Q$.
+    $m+n$ and $n+k$ are natural numbers by \obv{num_addition_on_naturals}.
+    $L=R\circ a$ by \auto{finite_function_join_coherence}.
+    Hence $\converse{L}=\converse{a}\circ\converse{R}$ by \auto{circ_converse}.
+    $a\in\bijections{(U\times V)\times W}{U\times(V\times W)}$ by
+        \auto{product_associator_bijection}.
+    Hence $a\circ\converse{a}=\identity{U\times(V\times W)}$ by
+        \obv{bijection_circ_converse}.
+    $\finiteFunctionJoin{m}{n}{A}\in\bijections{U\times V}{\funs{m+n}{A}}$ and
+        $\finiteFunctionJoin{n}{k}{A}\in\bijections{V\times W}{\funs{n+k}{A}}$ by
+        \auto{finite_function_join_bijection}.
+    $\identity{U}\in\bijections{U}{U}$ and $\identity{W}\in\bijections{W}{W}$ by
+        \obv{id_elem_bijections}.
+    $Q\in\bijections{U\times(V\times W)}{U\times\funs{n+k}{A}}$ by
+        \auto{product_map_bijection}.
+    $\finiteFunctionJoin{m}{n+k}{A}\in
+        \bijections{U\times\funs{n+k}{A}}{\funs{m+(n+k)}{A}}$ by
+        \auto{finite_function_join_bijection}.
+    Hence $R\in\bijections{U\times(V\times W)}{\funs{m+(n+k)}{A}}$ by
+        \auto{bijection_circ}.
+    Hence $\converse{R}\in\funs{\funs{m+(n+k)}{A}}{U\times(V\times W)}$ by
+        \obv{bijection_converse_is_bijection,bijections_to_funs}.
+    $\identity{U\times(V\times W)}\circ\converse{R}=\converse{R}$ by
+        \obv{funs_identity_circ_left}.
+    Hence $a\circ\converse{L}=\converse{R}$ by \auto{circ_assoc}.
+    $\converse{P}=\productMap{\funs{m+n}{A}}{W}{
+        \finiteFunctionSplit{m}{n}{A}}{\identity{W}}$ by
+        \auto{product_map_converse,finite_function_join_converse,converse_identity}.
+    $\converse{Q}=\productMap{U}{\funs{n+k}{A}}{
+        \identity{U}}{\finiteFunctionSplit{n}{k}{A}}$ by
+        \auto{product_map_converse,finite_function_join_converse,converse_identity}.
+    $\converse{L}=\converse{P}\circ\finiteFunctionSplit{m+n}{k}{A}$ and
+        $\converse{R}=\converse{Q}\circ\finiteFunctionSplit{m}{n+k}{A}$ by
+        \auto{circ_converse,finite_function_join_converse}.
+\end{proof}

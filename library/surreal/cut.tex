@@ -1,0 +1,927 @@
+\import{surreal/core.tex}
+\import{recursion/transfinite.tex}
+
+\section{The simplest surreal between two sets}
+
+For a separated pair of set-sized option sets, the birthdays of all options
+have a set-sized strict upper bound.  We use transfinite recursion below that
+bound to build one sign sequence between the option sets.  A second,
+set-bounded minimization then selects its shortest common representative.
+
+\begin{definition}\label{surreal_cut_lengths}
+    $\surrealCutLengths{L}{R}=
+        \{\suc{\birthday{x}}\mid x\in L\union R\}$.
+\end{definition}
+
+\begin{definition}\label{surreal_cut_bound}
+    $\surrealCutBound{L}{R}=\unions{\surrealCutLengths{L}{R}}$.
+\end{definition}
+
+\begin{proposition}\label{surreal_cut_lengths_are_ordinals}
+    Suppose $\surrealCutPair{L}{R}$.
+    Then every element of $\surrealCutLengths{L}{R}$ is an ordinal.
+\end{proposition}
+\begin{proof}
+    Fix $\gamma\in\surrealCutLengths{L}{R}$.
+    Take $x\in L\union R$ such that
+        $\gamma=\suc{\birthday{x}}$
+        by \obv{surreal_cut_lengths}.
+    $\surreal{x}$ by \auto{surreal_cut_pair,union_iff}.
+    $\birthday{x}$ is an ordinal
+        by \obv{surreal_birthday_ordinal}.
+    Follows by \obv{suc_ordinal}.
+\end{proof}
+
+\begin{proposition}\label{surreal_cut_bound_ordinal}
+    Suppose $\surrealCutPair{L}{R}$.
+    Then $\surrealCutBound{L}{R}$ is an ordinal.
+\end{proposition}
+\begin{proof}
+    Every element of $\surrealCutLengths{L}{R}$ is an ordinal
+        by \obv{surreal_cut_lengths_are_ordinals}.
+    Hence every element of $\surrealCutLengths{L}{R}$ is
+        an \in-transitive set by \auto{ordinal}.
+    Thus $\surrealCutBound{L}{R}$ is an \in-transitive set
+        by \auto{surreal_cut_bound,unions_family_of_transitiveset_is_transitiveset}.
+    Every element of $\surrealCutBound{L}{R}$ is an \in-transitive set
+        by \auto{surreal_cut_bound,unions_iff,ordinal}.
+    Follows by \obv{ordinal_intro}.
+\end{proof}
+
+\begin{proposition}\label{surreal_option_birthday_in_cut_bound}
+    Suppose $\surrealCutPair{L}{R}$.
+    Let $x\in L\union R$.
+    Then $\birthday{x}\in\surrealCutBound{L}{R}$.
+\end{proposition}
+\begin{proof}
+    $\suc{\birthday{x}}\in\surrealCutLengths{L}{R}$
+        by \obv{surreal_cut_lengths}.
+    $\birthday{x}\in\suc{\birthday{x}}$
+        by \obv{suc_intro_self}.
+    Follows by \auto{surreal_cut_bound,unions_iff}.
+\end{proof}
+
+At stage $\alpha$, the partial sign graph $g$ is extended positively exactly
+when some left option either ends at that prefix or continues positively.
+This is the only information needed to build an arbitrary intervening sign
+sequence; separation from the right options proves that a positive decision
+can never cross one of them.
+
+\begin{definition}\label{surreal_cut_plus}
+    $\surrealCutPlus{L}{\alpha}{g}$ iff there exists $l\in L$ such that
+        $\surrealEq{\alpha}{g}{l}$ and
+        ($\birthday{l}=\alpha$ or
+         ($\alpha\in\birthday{l}$ and
+          $l(\alpha)=\suc{\emptyset}$)).
+\end{definition}
+
+\begin{definition}\label{surreal_cut_step}
+    $\surrealCutStep{L}{\kappa}=
+        \{v\in
+            (\kappa\times\pow{\kappa\times\surrealSigns})
+                \times\surrealSigns\mid
+            (\snd{v}=\suc{\emptyset}\land
+             \surrealCutPlus{L}{\fst{\fst{v}}}{\snd{\fst{v}}})\lor
+            (\snd{v}=\emptyset\land
+             \lnot\surrealCutPlus{L}{\fst{\fst{v}}}{\snd{\fst{v}}})
+        \}$.
+\end{definition}
+
+\begin{lemma}\label{surreal_sign_members}
+    $\emptyset\in\surrealSigns$ and
+        $\suc{\emptyset}\in\surrealSigns$.
+\end{lemma}
+\begin{proof}
+    $\emptyset\in\suc{\emptyset}$ by \obv{suc_intro_self}.
+    Follows by \obv{surreal_signs,suc_intro_in,suc_intro_self}.
+\end{proof}
+
+\begin{proposition}\label{surreal_cut_step_type}
+    $\surrealCutStep{L}{\kappa}\in
+        \funs{\kappa\times\pow{\kappa\times\surrealSigns}}
+            {\surrealSigns}$.
+\end{proposition}
+\begin{proof}
+    Let $D=\kappa\times\pow{\kappa\times\surrealSigns}$.
+    $\surrealCutStep{L}{\kappa}\subseteq D\times\surrealSigns$
+        by \obv{surreal_cut_step,subseteq}.
+    Show that $\surrealCutStep{L}{\kappa}$ is a relation.
+    \begin{subproof}
+        Show that for every $w\in\surrealCutStep{L}{\kappa}$
+            there exist $u,b$ such that $w=(u,b)$.
+        \begin{subproof}
+            Fix $w\in\surrealCutStep{L}{\kappa}$.
+            $w\in D\times\surrealSigns$ by \obv{subseteq}.
+            Follows by \auto{times_elem_is_tuple}.
+        \end{subproof}
+        Follows by \obv{relation}.
+    \end{subproof}
+    Show that $\surrealCutStep{L}{\kappa}$ is right-unique.
+    \begin{subproof}
+        Show that for all $u,b,c$ such that
+            $(u,b),(u,c)\in\surrealCutStep{L}{\kappa}$ we have $b=c$.
+        \begin{subproof}
+            Fix $u,b,c$.
+            Assume $(u,b),(u,c)\in\surrealCutStep{L}{\kappa}$.
+            Follows by
+                \auto{surreal_cut_step,fst_eq,snd_eq,surreal_signs_distinct}.
+        \end{subproof}
+        Follows by \obv{rightunique}.
+    \end{subproof}
+    Show that $\dom{\surrealCutStep{L}{\kappa}}=D$.
+    \begin{subproof}
+        Show that $\dom{\surrealCutStep{L}{\kappa}}\subseteq D$.
+        \begin{subproof}
+            Follows by
+                \auto{subseteq,dom_iff,surreal_cut_step,times_tuple_elim,pair_eq_iff}.
+        \end{subproof}
+        Show that $D\subseteq\dom{\surrealCutStep{L}{\kappa}}$.
+        \begin{subproof}
+            Show that for every $u\in D$ we have
+                $u\in\dom{\surrealCutStep{L}{\kappa}}$.
+            \begin{subproof}
+                Fix $u\in D$.
+                \begin{byCase}
+                    \caseOf{$\surrealCutPlus{L}{\fst{u}}{\snd{u}}$.}
+                        $(u,\suc{\emptyset})\in
+                            \surrealCutStep{L}{\kappa}$
+                            by \obv{surreal_cut_step,surreal_sign_members,fst_eq,snd_eq,times_tuple_intro}.
+                        Follows by \obv{dom_intro}.
+                    \caseOf{not $\surrealCutPlus{L}{\fst{u}}{\snd{u}}$.}
+                        $(u,\emptyset)\in
+                            \surrealCutStep{L}{\kappa}$
+                            by \auto{surreal_cut_step,surreal_sign_members,fst_eq,snd_eq,times_tuple_intro}.
+                        Follows by \obv{dom_intro}.
+                \end{byCase}
+            \end{subproof}
+            Follows by \obv{subseteq}.
+        \end{subproof}
+        Follows by \obv{subseteq_antisymmetric}.
+    \end{subproof}
+    For every $u\in D$ we have
+        $(\surrealCutStep{L}{\kappa})(u)\in\surrealSigns$
+        by \auto{function_apply_elim,subseteq,times_tuple_elim}.
+    Thus $\surrealCutStep{L}{\kappa}$ is a function to
+        $\surrealSigns$.
+    Follows by \obv{funs_intro}.
+\end{proof}
+
+\begin{proposition}\label{surreal_cut_step_positive}
+    Let $u\in\kappa\times\pow{\kappa\times\surrealSigns}$.
+    Then
+    $(\surrealCutStep{L}{\kappa})(u)=\suc{\emptyset}$ iff
+        $\surrealCutPlus{L}{\fst{u}}{\snd{u}}$.
+\end{proposition}
+\begin{proof}
+    $\surrealCutStep{L}{\kappa}$ is a function
+        by \auto{surreal_cut_step_type,funs_is_function}.
+    $(u,(\surrealCutStep{L}{\kappa})(u))\in
+        \surrealCutStep{L}{\kappa}$
+        by \auto{surreal_cut_step_type,funs,function_apply_elim}.
+    Follows by
+        \auto{surreal_cut_step,fst_eq,snd_eq,surreal_signs_distinct}.
+\end{proof}
+
+\begin{definition}\label{surreal_cut_witness}
+    $\surrealCutWitness{L}{R}=
+        \ordinalRecursion{\surrealCutBound{L}{R}}{\surrealSigns}
+            {\surrealCutStep{L}{\surrealCutBound{L}{R}}}$.
+\end{definition}
+
+\begin{proposition}\label{surreal_cut_witness_at}
+    Suppose $\surrealCutPair{L}{R}$.
+    Let $\kappa=\surrealCutBound{L}{R}$.
+    Then $\surrealAt{\kappa}{\surrealCutWitness{L}{R}}$.
+\end{proposition}
+\begin{proof}
+    $\kappa$ is an ordinal by \obv{surreal_cut_bound_ordinal}.
+    $\surrealCutStep{L}{\kappa}\in
+        \funs{\kappa\times\pow{\kappa\times\surrealSigns}}
+            {\surrealSigns}$
+        by \obv{surreal_cut_step_type}.
+    Hence $\surrealCutWitness{L}{R}\in
+        \funs{\kappa}{\surrealSigns}$
+        by \auto{surreal_cut_witness,ordinal_recursion_type}.
+    Follows by \obv{surreal_at}.
+\end{proof}
+
+\begin{proposition}\label{surreal_cut_witness_is_surreal}
+    Suppose $\surrealCutPair{L}{R}$.
+    Then $\surreal{\surrealCutWitness{L}{R}}$ and
+        $\birthday{\surrealCutWitness{L}{R}}=
+            \surrealCutBound{L}{R}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \obv{surreal_cut_witness_at,surreal_at_implies_surreal}.
+\end{proof}
+
+\begin{proposition}\label{surreal_cut_witness_sign}
+    Suppose $\surrealCutPair{L}{R}$.
+    Let $\kappa=\surrealCutBound{L}{R}$.
+    Let $\alpha\in\kappa$.
+    Then $\apply{\surrealCutWitness{L}{R}}{\alpha}=\suc{\emptyset}$ iff
+        $\surrealCutPlus{L}{\alpha}
+            {\restrl{\surrealCutWitness{L}{R}}{\alpha}}$.
+\end{proposition}
+\begin{proof}
+    $\kappa$ is an ordinal by \obv{surreal_cut_bound_ordinal}.
+    $\surrealCutStep{L}{\kappa}\in
+        \funs{\kappa\times\pow{\kappa\times\surrealSigns}}
+            {\surrealSigns}$
+        by \obv{surreal_cut_step_type}.
+    $\surrealCutWitness{L}{R}\in\funs{\kappa}{\surrealSigns}$
+        by \auto{surreal_cut_witness,ordinal_recursion_type}.
+    $\surrealCutWitness{L}{R}\subseteq
+        \kappa\times\surrealSigns$
+        by \auto{funs_subseteq_rels,rels,subseteq}.
+    $\restrl{\surrealCutWitness{L}{R}}{\alpha}
+        \subseteq\surrealCutWitness{L}{R}$
+        by \obv{restrl_subseteq}.
+    Hence $\restrl{\surrealCutWitness{L}{R}}{\alpha}
+        \subseteq\kappa\times\surrealSigns$
+        by \obv{subseteq_transitive}.
+    Hence $\restrl{\surrealCutWitness{L}{R}}{\alpha}
+        \in\pow{\kappa\times\surrealSigns}$
+        by \obv{powerset_intro}.
+    Thus $(\alpha,\restrl{\surrealCutWitness{L}{R}}{\alpha})
+        \in\kappa\times\pow{\kappa\times\surrealSigns}$
+        by \obv{times_tuple_intro}.
+    $\apply{\surrealCutWitness{L}{R}}{\alpha}=
+        (\surrealCutStep{L}{\kappa})
+            ((\alpha,\restrl{\surrealCutWitness{L}{R}}{\alpha}))$
+        by \auto{surreal_cut_witness,ordinal_recursion_equation}.
+    Follows by
+        \auto{surreal_cut_step_positive,fst_eq,snd_eq}.
+\end{proof}
+
+\begin{lemma}\label{surreal_cut_witness_follows_left_prefix}
+    Suppose $\surrealCutPair{L}{R}$.
+    Let $p=\surrealCutWitness{L}{R}$.
+    Let $\kappa=\surrealCutBound{L}{R}$.
+    Let $l\in L$.
+    Let $\alpha\in\kappa$.
+    Suppose $\surrealEq{\alpha}{p}{l}$.
+    Suppose $\birthday{l}=\alpha$ or
+        ($\alpha\in\birthday{l}$ and
+         $l(\alpha)=\suc{\emptyset}$).
+    Then $p(\alpha)=\suc{\emptyset}$.
+\end{lemma}
+\begin{proof}
+    $\surreal{p}$ and $\birthday{p}=\kappa$
+        by \auto{surreal_cut_witness_is_surreal}.
+    $\surrealEq{\alpha}{\restrl{p}{\alpha}}{p}$
+        by \obv{surreal_restriction_agrees}.
+    Hence $\surrealEq{\alpha}{\restrl{p}{\alpha}}{l}$
+        by \obv{surreal_eq_initial_transitive}.
+    Thus $\surrealCutPlus{L}{\alpha}{\restrl{p}{\alpha}}$
+        by \obv{surreal_cut_plus}.
+    Follows by \auto{surreal_cut_witness_sign}.
+\end{proof}
+
+\begin{theorem}\label{surreal_cut_witness_left}
+    Suppose $\surrealCutPair{L}{R}$.
+    Then for every $l\in L$ we have
+        $\surrealLt{l}{\surrealCutWitness{L}{R}}$.
+\end{theorem}
+\begin{proof}
+    Let $p=\surrealCutWitness{L}{R}$.
+    Let $\kappa=\surrealCutBound{L}{R}$.
+    Fix $l\in L$.
+    $\surreal{l}$ by \obv{surreal_cut_pair}.
+    $\surreal{p}$ and $\birthday{p}=\kappa$
+        by \auto{surreal_cut_witness_is_surreal}.
+    $\birthday{l}\in\kappa$
+        by \auto{surreal_option_birthday_in_cut_bound,union_iff}.
+    Hence $l\neq p$ by \obv{surreal_birthday,in_irrefl}.
+    Suppose not.
+    Then $\surrealLt{p}{l}$
+        by \obv{surreal_lt_trichotomy}.
+    Follows by \auto{surreal_lt,surreal_lt_common,surreal_lt_left_short,surreal_lt_right_short,surreal_cut_witness_follows_left_prefix,inter,surreal_signs_distinct,in_asymmetric}.
+\end{proof}
+
+\begin{lemma}\label{surreal_cut_positive_cannot_cross_right}
+    Suppose $\surrealCutPair{L}{R}$.
+    Let $p=\surrealCutWitness{L}{R}$.
+    Let $\kappa=\surrealCutBound{L}{R}$.
+    Let $r\in R$.
+    Let $\alpha\in\kappa$.
+    Suppose $\surrealEq{\alpha}{p}{r}$ and
+        $p(\alpha)=\suc{\emptyset}$.
+    Suppose $\birthday{r}=\alpha$ or
+        ($\alpha\in\birthday{r}$ and $r(\alpha)=\emptyset$).
+    Then $\bot$.
+\end{lemma}
+\begin{proof}
+    $\surreal{p}$ and $\birthday{p}=\kappa$
+        by \auto{surreal_cut_witness_is_surreal}.
+    $\surreal{r}$ by \obv{surreal_cut_pair}.
+    $\surrealEq{\alpha}{\restrl{p}{\alpha}}{p}$
+        by \obv{surreal_restriction_agrees}.
+    Hence $\surrealEq{\alpha}{\restrl{p}{\alpha}}{r}$
+        by \obv{surreal_eq_initial_transitive}.
+    $\surrealCutPlus{L}{\alpha}{\restrl{p}{\alpha}}$
+        by \auto{surreal_cut_witness_sign}.
+    Take $l\in L$ such that
+        $\surrealEq{\alpha}{\restrl{p}{\alpha}}{l}$ and
+        ($\birthday{l}=\alpha$ or
+         ($\alpha\in\birthday{l}$ and
+          $l(\alpha)=\suc{\emptyset}$))
+        by \obv{surreal_cut_plus}.
+    $\surreal{l}$ and $\surrealLt{l}{r}$
+        by \obv{surreal_cut_pair}.
+    $\surrealEq{\alpha}{l}{r}$
+        by \obv{surreal_eq_initial_symmetric,surreal_eq_initial_transitive}.
+    Show that $r=l$ or $\surrealLt{r}{l}$.
+    \begin{subproof}
+        \begin{byCase}
+            \caseOf{$\birthday{r}=\alpha$.}
+                \begin{byCase}
+                    \caseOf{$\birthday{l}=\alpha$.}
+                        $\surrealAt{\alpha}{r}$ and
+                            $\surrealAt{\alpha}{l}$
+                            by \auto{surreal_at_birthday}.
+                        $\surrealEq{\alpha}{r}{l}$
+                            by \obv{surreal_eq_initial_symmetric}.
+                        Hence $r=l$
+                            by \obv{surreal_eq_birthday_implies_eq}.
+                    \caseOf{$\birthday{l}\neq\alpha$.}
+                        $\alpha\in\birthday{l}$ and
+                            $l(\alpha)=\suc{\emptyset}$.
+                        $\surrealEq{\alpha}{r}{l}$
+                            by \obv{surreal_eq_initial_symmetric}.
+                        $\surrealLtLeftShort{r}{l}$
+                            by \obv{surreal_lt_left_short}.
+                        Follows by \obv{surreal_lt}.
+                \end{byCase}
+            \caseOf{$\birthday{r}\neq\alpha$.}
+                $\alpha\in\birthday{r}$ and
+                    $r(\alpha)=\emptyset$.
+                \begin{byCase}
+                    \caseOf{$\birthday{l}=\alpha$.}
+                        $\surrealEq{\alpha}{r}{l}$
+                            by \obv{surreal_eq_initial_symmetric}.
+                        $\surrealLtRightShort{r}{l}$
+                            by \obv{surreal_lt_right_short}.
+                        Follows by \obv{surreal_lt}.
+                    \caseOf{$\birthday{l}\neq\alpha$.}
+                        $\alpha\in\birthday{l}$ and
+                            $l(\alpha)=\suc{\emptyset}$.
+                        $\alpha\in\birthday{r}\inter\birthday{l}$
+                            by \obv{inter_intro}.
+                        $\surrealEq{\alpha}{r}{l}$
+                            by \obv{surreal_eq_initial_symmetric}.
+                        $\surrealLtCommon{\alpha}{r}{l}$
+                            by \obv{surreal_lt_common}.
+                        Follows by \obv{surreal_lt}.
+                \end{byCase}
+        \end{byCase}
+    \end{subproof}
+    Follows by \obv{surreal_lt_asymmetric}.
+\end{proof}
+
+\begin{theorem}\label{surreal_cut_witness_right}
+    Suppose $\surrealCutPair{L}{R}$.
+    Then for every $r\in R$ we have
+        $\surrealLt{\surrealCutWitness{L}{R}}{r}$.
+\end{theorem}
+\begin{proof}
+    Let $p=\surrealCutWitness{L}{R}$.
+    Let $\kappa=\surrealCutBound{L}{R}$.
+    Fix $r\in R$.
+    $\surreal{r}$ by \obv{surreal_cut_pair}.
+    $\surreal{p}$ and $\birthday{p}=\kappa$
+        by \auto{surreal_cut_witness_is_surreal}.
+    $\birthday{r}\in\kappa$
+        by \auto{surreal_option_birthday_in_cut_bound,union_iff}.
+    Hence $r\neq p$ by \obv{surreal_birthday,in_irrefl}.
+    Suppose not.
+    Then $\surrealLt{r}{p}$
+        by \auto{surreal_lt_trichotomy}.
+    Follows by \auto{surreal_lt,surreal_lt_common,surreal_lt_left_short,surreal_lt_right_short,surreal_eq_initial_symmetric,surreal_cut_positive_cannot_cross_right,inter,in_asymmetric}.
+\end{proof}
+
+\begin{theorem}\label{surreal_cut_witness_between}
+    Suppose $\surrealCutPair{L}{R}$.
+    Then $\surreal{\surrealCutWitness{L}{R}}$ and
+        (for every $l\in L$ we have
+            $\surrealLt{l}{\surrealCutWitness{L}{R}}$) and
+        (for every $r\in R$ we have
+            $\surrealLt{\surrealCutWitness{L}{R}}{r}$).
+\end{theorem}
+\begin{proof}
+    Follows by \auto{surreal_cut_witness_is_surreal,surreal_cut_witness_left,surreal_cut_witness_right}.
+\end{proof}
+
+\subsection{Birthday minimization}
+
+\begin{definition}\label{surreal_cut_interveners}
+    $\surrealCutInterveners{L}{R}{\kappa}=
+        \{z\in\surrealStage{\suc{\kappa}}\mid
+            \text{(for every $l\in L$ we have $\surrealLt{l}{z}$) and
+                (for every $r\in R$ we have $\surrealLt{z}{r}$)}\}$.
+\end{definition}
+
+\begin{definition}\label{surreal_cut_intervener_birthdays}
+    $\surrealCutBirthdays{L}{R}{\kappa}=
+        \{\birthday{z}\mid z\in\surrealCutInterveners{L}{R}{\kappa}\}$.
+\end{definition}
+
+\begin{proposition}\label{surreal_cut_witness_is_intervener}
+    Suppose $\surrealCutPair{L}{R}$.
+    Let $\kappa=\surrealCutBound{L}{R}$.
+    Then $\surrealCutWitness{L}{R}\in
+        \surrealCutInterveners{L}{R}{\kappa}$.
+\end{proposition}
+\begin{proof}
+    $\surreal{\surrealCutWitness{L}{R}}$ and
+        $\birthday{\surrealCutWitness{L}{R}}=\kappa$
+        by \obv{surreal_cut_witness_is_surreal}.
+    Hence $\surrealCutWitness{L}{R}\in\surrealStage{\suc{\kappa}}$
+        by \auto{surreal_in_successor_stage}.
+    Follows by \obv{surreal_cut_interveners,surreal_cut_witness_left,surreal_cut_witness_right}.
+\end{proof}
+
+\begin{proposition}\label{surreal_cut_intervener_birthdays_inhabited}
+    Suppose $\surrealCutPair{L}{R}$.
+    Let $\kappa=\surrealCutBound{L}{R}$.
+    Then $\surrealCutBirthdays{L}{R}{\kappa}$ is inhabited.
+\end{proposition}
+\begin{proof}
+    $\surrealCutWitness{L}{R}\in
+        \surrealCutInterveners{L}{R}{\kappa}$
+        by \obv{surreal_cut_witness_is_intervener}.
+    Hence $\birthday{\surrealCutWitness{L}{R}}\in
+        \surrealCutBirthdays{L}{R}{\kappa}$
+        by \obv{surreal_cut_intervener_birthdays}.
+\end{proof}
+
+\begin{lemma}\label{surreal_shorter_intervener_in_bound}
+    Suppose $\kappa$ is an ordinal.
+    Let $z\in\surrealCutInterveners{L}{R}{\kappa}$.
+    Suppose $\surreal{w}$ and
+        $\birthday{w}\in\birthday{z}$.
+    Suppose for every $l\in L$ we have $\surrealLt{l}{w}$.
+    Suppose for every $r\in R$ we have $\surrealLt{w}{r}$.
+    Then $w\in\surrealCutInterveners{L}{R}{\kappa}$.
+\end{lemma}
+\begin{proof}
+    $z\in\surrealStage{\suc{\kappa}}$
+        by \obv{surreal_cut_interveners}.
+    Hence $\birthday{z}\in\suc{\kappa}$
+        by \auto{surreal_stage_characterization,suc_ordinal}.
+    Hence $\birthday{w}\in\suc{\kappa}$
+        by \obv{ordinal_transitivity,suc_ordinal}.
+    Thus $w\in\surrealStage{\suc{\kappa}}$
+        by \auto{surreal_stage_characterization,suc_ordinal}.
+    Follows by \obv{surreal_cut_interveners}.
+\end{proof}
+
+\begin{lemma}\label{surreal_minimal_intervener_birthday}
+    Suppose $\surrealCutPair{L}{R}$.
+    Let $\kappa=\surrealCutBound{L}{R}$.
+    Let $\alpha\in\surrealCutBirthdays{L}{R}{\kappa}$.
+    Suppose $\alpha\notmeets\surrealCutBirthdays{L}{R}{\kappa}$.
+    Let $z\in\surrealCutInterveners{L}{R}{\kappa}$.
+    Suppose $\birthday{z}=\alpha$.
+    Let $w$ be a set.
+    Suppose $\surreal{w}$.
+    Suppose for every $l\in L$ we have $\surrealLt{l}{w}$.
+    Suppose for every $r\in R$ we have $\surrealLt{w}{r}$.
+    Then $\alpha\subseteq\birthday{w}$.
+\end{lemma}
+\begin{proof}
+    $\kappa$ is an ordinal by \obv{surreal_cut_bound_ordinal}.
+    $\alpha$ is an ordinal
+        by \auto{surreal_cut_intervener_birthdays,surreal_cut_interveners,surreal_stage_characterization,surreal_birthday_ordinal,suc_ordinal}.
+    $\birthday{w}$ is an ordinal
+        by \obv{surreal_birthday_ordinal}.
+    $\birthday{w}\in\alpha$ or
+        $\alpha\subseteq\birthday{w}$
+        by \obv{ordinal_elem_or_subseteq}.
+    \begin{byCase}
+        \caseOf{$\birthday{w}\in\alpha$.}
+            Then $w\in\surrealCutInterveners{L}{R}{\kappa}$
+                by \obv{surreal_shorter_intervener_in_bound}.
+            Hence $\birthday{w}\in\surrealCutBirthdays{L}{R}{\kappa}$
+                by \obv{surreal_cut_intervener_birthdays}.
+            Thus $\birthday{w}\in
+                \alpha\inter\surrealCutBirthdays{L}{R}{\kappa}$
+                by \obv{inter_intro}.
+            Contradiction by \auto{disjoint,emptyset}.
+        \caseOf{$\birthday{w}\notin\alpha$.}
+            Follows.
+    \end{byCase}
+\end{proof}
+
+\begin{lemma}\label{surreal_common_prefix_is_intervener}
+    Suppose $\surrealCutPair{L}{R}$.
+    Suppose $\kappa$ is an ordinal.
+    Let $z\in\surrealCutInterveners{L}{R}{\kappa}$.
+    Let $w$ be a set.
+    Suppose $\surreal{w}$.
+    Suppose for every $l\in L$ we have $\surrealLt{l}{w}$.
+    Suppose for every $r\in R$ we have $\surrealLt{w}{r}$.
+    Let $\delta\in\birthday{z}\inter\birthday{w}$.
+    Suppose $\surrealEq{\delta}{z}{w}$ and
+        $z(\delta)\neq w(\delta)$.
+    Then $\restrl{z}{\delta}\in
+        \surrealCutInterveners{L}{R}{\kappa}$.
+\end{lemma}
+\begin{proof}
+    Let $c=\restrl{z}{\delta}$.
+    $z\in\surrealStage{\suc{\kappa}}$
+        by \obv{surreal_cut_interveners}.
+    Hence $\surreal{z}$ and $\birthday{z}\in\suc{\kappa}$
+        by \auto{surreal_stage_characterization,suc_ordinal}.
+    $\delta\in\birthday{z}$ and $\delta\in\birthday{w}$
+        by \obv{inter}.
+    Hence $\surreal{c}$ and $\birthday{c}=\delta$
+        by \auto{surreal_restriction_birthday}.
+    $\delta\in\suc{\kappa}$
+        by \obv{ordinal_transitivity,suc_ordinal}.
+    Hence $c\in\surrealStage{\suc{\kappa}}$
+        by \auto{surreal_stage_characterization,suc_ordinal}.
+    $\surrealEq{\delta}{c}{z}$
+        by \auto{surreal_restriction_agrees}.
+    Hence $\surrealEq{\delta}{c}{w}$
+        by \obv{surreal_eq_initial_transitive}.
+    ($\surrealLt{z}{c}$ and $\surrealLt{c}{w}$) or
+        ($\surrealLt{w}{c}$ and $\surrealLt{c}{z}$)
+        by \auto{surreal_unequal_value_cases,surreal_lt,surreal_lt_left_short,surreal_lt_right_short,surreal_eq_initial_symmetric}.
+    Show that for every $l\in L$ we have $\surrealLt{l}{c}$.
+    \begin{subproof}
+        Fix $l\in L$.
+        $\surreal{l}$ by \obv{surreal_cut_pair}.
+        $\surrealLt{l}{z}$ by \obv{surreal_cut_interveners}.
+        $\surrealLt{l}{w}$.
+        Follows by \obv{surreal_lt_transitive}.
+    \end{subproof}
+    Show that for every $r\in R$ we have $\surrealLt{c}{r}$.
+    \begin{subproof}
+        Fix $r\in R$.
+        $\surreal{r}$ by \obv{surreal_cut_pair}.
+        $\surrealLt{z}{r}$ by \obv{surreal_cut_interveners}.
+        $\surrealLt{w}{r}$.
+        Follows by \auto{surreal_lt_transitive}.
+    \end{subproof}
+    Follows by \auto{surreal_cut_interveners}.
+\end{proof}
+
+\begin{lemma}\label{surreal_minimal_intervener_agrees}
+    Suppose $\surrealCutPair{L}{R}$.
+    Let $\kappa=\surrealCutBound{L}{R}$.
+    Let $\alpha\in\surrealCutBirthdays{L}{R}{\kappa}$.
+    Suppose $\alpha\notmeets\surrealCutBirthdays{L}{R}{\kappa}$.
+    Let $z\in\surrealCutInterveners{L}{R}{\kappa}$.
+    Suppose $\birthday{z}=\alpha$.
+    Let $w$ be a set.
+    Suppose $\surreal{w}$.
+    Suppose for every $l\in L$ we have $\surrealLt{l}{w}$.
+    Suppose for every $r\in R$ we have $\surrealLt{w}{r}$.
+    Then $\surrealEq{\alpha}{z}{w}$.
+\end{lemma}
+\begin{proof}
+    $\kappa$ and $\alpha$ are ordinals
+        by \auto{surreal_cut_bound_ordinal,surreal_cut_intervener_birthdays,surreal_cut_interveners,surreal_stage_characterization,suc_ordinal,surreal_birthday_ordinal}.
+    $\alpha\subseteq\birthday{w}$
+        by \obv{surreal_minimal_intervener_birthday}.
+    $\surreal{z}$
+        by \auto{surreal_cut_interveners,surreal_stage_characterization,suc_ordinal}.
+    Suppose not.
+    Let $D=\surrealDifferences{\alpha}{z}{w}$.
+    $D$ is inhabited
+        by \auto{surreal_eq_initial,surreal_differences}.
+    Take $\delta\in\alpha$ such that
+        $\surrealEq{\delta}{z}{w}$ and
+        $z(\delta)\neq w(\delta)$
+        by \auto{surreal_first_difference}.
+    $\delta\in\birthday{z}$.
+    $\delta\in\birthday{w}$ by \obv{subseteq}.
+    Hence $\delta\in\birthday{z}\inter\birthday{w}$
+        by \obv{inter_intro}.
+    Let $c=\restrl{z}{\delta}$.
+    Then $c\in\surrealCutInterveners{L}{R}{\kappa}$
+        by \auto{surreal_common_prefix_is_intervener}.
+    $\birthday{c}=\delta$
+        by \auto{surreal_restriction_birthday}.
+    Hence $\delta\in\surrealCutBirthdays{L}{R}{\kappa}$
+        by \obv{surreal_cut_intervener_birthdays}.
+    Thus $\delta\in
+        \alpha\inter\surrealCutBirthdays{L}{R}{\kappa}$
+        by \obv{inter_intro}.
+    Contradiction by \auto{disjoint,emptyset}.
+\end{proof}
+
+\begin{theorem}\label{surreal_cut_pair_admissible}
+    Suppose $\surrealCutPair{L}{R}$.
+    Then $\surrealCutAdmissible{L}{R}$.
+\end{theorem}
+\begin{proof}
+    Let $\kappa=\surrealCutBound{L}{R}$.
+    $\surrealCutBirthdays{L}{R}{\kappa}$ is inhabited
+        by \obv{surreal_cut_intervener_birthdays_inhabited}.
+    Take $\alpha$ such that
+        $\alpha$ is an \in-minimal element of
+            $\surrealCutBirthdays{L}{R}{\kappa}$
+        by \obv{regularity}.
+    $\alpha\in\surrealCutBirthdays{L}{R}{\kappa}$ and
+        $\alpha\notmeets\surrealCutBirthdays{L}{R}{\kappa}$.
+    Take $z\in\surrealCutInterveners{L}{R}{\kappa}$ such that
+        $\birthday{z}=\alpha$
+        by \auto{surreal_cut_intervener_birthdays}.
+    $\kappa$ is an ordinal by \obv{surreal_cut_bound_ordinal}.
+    $\surreal{z}$
+        by \auto{surreal_cut_interveners,surreal_stage_characterization,suc_ordinal}.
+    For every $l\in L$ we have $\surrealLt{l}{z}$
+        by \obv{surreal_cut_interveners}.
+    For every $r\in R$ we have $\surrealLt{z}{r}$
+        by \obv{surreal_cut_interveners}.
+    Show that for every $w$ such that
+        $\surreal{w}$ and
+        (for every $l\in L$ we have $\surrealLt{l}{w}$) and
+        (for every $r\in R$ we have $\surrealLt{w}{r}$)
+        we have $\birthday{z}\subseteq\birthday{w}$ and
+            $\surrealEq{\birthday{z}}{z}{w}$.
+    \begin{subproof}
+        Fix $w$.
+        Assume $\surreal{w}$ and
+            (for every $l\in L$ we have $\surrealLt{l}{w}$) and
+            (for every $r\in R$ we have $\surrealLt{w}{r}$).
+        $\alpha\subseteq\birthday{w}$
+            by \obv{surreal_minimal_intervener_birthday}.
+        $\surrealEq{\alpha}{z}{w}$
+            by \obv{surreal_minimal_intervener_agrees}.
+    \end{subproof}
+    Hence $\surrealCutCandidate{L}{R}{z}$
+        by \obv{surreal_cut_candidate}.
+    Follows by \obv{surreal_cut_admissible}.
+\end{proof}
+
+\begin{theorem}\label{surreal_cut_pair_specification}
+    Suppose $\surrealCutPair{L}{R}$.
+    Then $\surrealCutCandidate{L}{R}{\surrealCut{L}{R}}$.
+\end{theorem}
+\begin{proof}
+    $\surrealCutAdmissible{L}{R}$
+        by \obv{surreal_cut_pair_admissible}.
+    Follows by \obv{surreal_cut_specification}.
+\end{proof}
+
+\begin{corollary}\label{surreal_cut_pair_is_surreal}
+    Suppose $\surrealCutPair{L}{R}$.
+    Then $\surreal{\surrealCut{L}{R}}$.
+\end{corollary}
+\begin{proof}
+    Follows by
+        \auto{surreal_cut_pair_specification,surreal_cut_candidate}.
+\end{proof}
+
+\begin{corollary}\label{surreal_cut_pair_left}
+    Suppose $\surrealCutPair{L}{R}$.
+    Then for every $l\in L$ we have
+        $\surrealLt{l}{\surrealCut{L}{R}}$.
+\end{corollary}
+\begin{proof}
+    Follows by
+        \auto{surreal_cut_pair_specification,surreal_cut_candidate}.
+\end{proof}
+
+\begin{corollary}\label{surreal_cut_pair_right}
+    Suppose $\surrealCutPair{L}{R}$.
+    Then for every $r\in R$ we have
+        $\surrealLt{\surrealCut{L}{R}}{r}$.
+\end{corollary}
+\begin{proof}
+    Follows by
+        \auto{surreal_cut_pair_specification,surreal_cut_candidate}.
+\end{proof}
+
+\begin{corollary}\label{surreal_cut_pair_simplest}
+    Suppose $\surrealCutPair{L}{R}$.
+    Let $w$ be a set.
+    Suppose $\surreal{w}$.
+    Suppose for every $l\in L$ we have $\surrealLt{l}{w}$.
+    Suppose for every $r\in R$ we have $\surrealLt{w}{r}$.
+    Then $\birthday{\surrealCut{L}{R}}\subseteq\birthday{w}$ and
+        $\surrealEq{\birthday{\surrealCut{L}{R}}}
+            {\surrealCut{L}{R}}{w}$.
+\end{corollary}
+\begin{proof}
+    Follows by
+        \auto{surreal_cut_pair_specification,surreal_cut_candidate}.
+\end{proof}
+
+\begin{corollary}\label{surreal_cut_pair_birthday_bound}
+    Suppose $\surrealCutPair{L}{R}$.
+    Then $\birthday{\surrealCut{L}{R}}\in
+        \suc{\surrealCutBound{L}{R}}$.
+\end{corollary}
+\begin{proof}
+    Let $\kappa=\surrealCutBound{L}{R}$.
+    $\surreal{\surrealCutWitness{L}{R}}$ and
+        $\birthday{\surrealCutWitness{L}{R}}=\kappa$
+        by \obv{surreal_cut_witness_is_surreal}.
+    For every $l\in L$ we have
+        $\surrealLt{l}{\surrealCutWitness{L}{R}}$
+        by \auto{surreal_cut_witness_between}.
+    For every $r\in R$ we have
+        $\surrealLt{\surrealCutWitness{L}{R}}{r}$
+        by \obv{surreal_cut_witness_between}.
+    Hence $\birthday{\surrealCut{L}{R}}\subseteq\kappa$
+        by \auto{surreal_cut_pair_simplest}.
+    $\birthday{\surrealCut{L}{R}}$ is an ordinal
+        by \obv{surreal_cut_pair_is_surreal,surreal_birthday_ordinal}.
+    $\kappa$ is an ordinal by \obv{surreal_cut_bound_ordinal}.
+    Hence $\birthday{\surrealCut{L}{R}}\in\kappa$ or
+        $\birthday{\surrealCut{L}{R}}=\kappa$
+        by \obv{ordinal_subseteq_implies_elem_or_eq}.
+    Follows by \auto{suc_iff}.
+\end{proof}
+
+\subsection{Canonical options}
+
+\begin{theorem}\label{surreal_options_cut_candidate}
+    Suppose $\surreal{z}$.
+    Then $\surrealCutCandidate{\surrealLeft{z}}{\surrealRight{z}}{z}$.
+\end{theorem}
+\begin{proof}
+    $\surrealCutPair{\surrealLeft{z}}{\surrealRight{z}}$
+        by \obv{surreal_options_form_cut_pair}.
+    For every $l\in\surrealLeft{z}$ we have $\surrealLt{l}{z}$
+        by \obv{surreal_left_elim}.
+    For every $r\in\surrealRight{z}$ we have $\surrealLt{z}{r}$
+        by \obv{surreal_right_elim}.
+    Show that for every $w$ such that
+        $\surreal{w}$ and
+        (for every $l\in\surrealLeft{z}$ we have $\surrealLt{l}{w}$) and
+        (for every $r\in\surrealRight{z}$ we have $\surrealLt{w}{r}$)
+        we have $\birthday{z}\subseteq\birthday{w}$ and
+            $\surrealEq{\birthday{z}}{z}{w}$.
+    \begin{subproof}
+        Fix $w$.
+        Assume $\surreal{w}$ and
+            (for every $l\in\surrealLeft{z}$ we have $\surrealLt{l}{w}$) and
+            (for every $r\in\surrealRight{z}$ we have $\surrealLt{w}{r}$).
+        $\birthday{z}$ and $\birthday{w}$ are ordinals
+            by \obv{surreal_birthday_ordinal}.
+        $\birthday{w}\in\birthday{z}$ or
+            $\birthday{z}\subseteq\birthday{w}$
+            by \obv{ordinal_elem_or_subseteq}.
+        Show that $\birthday{z}\subseteq\birthday{w}$.
+        \begin{subproof}
+            \begin{byCase}
+                \caseOf{$\birthday{w}\in\birthday{z}$.}
+                    $w\neq z$ by \obv{surreal_birthday,in_irrefl}.
+                    $\surrealLt{w}{z}$ or $\surrealLt{z}{w}$
+                        by \obv{surreal_lt_trichotomy}.
+                    $w\in\surrealLeft{z}$ or
+                        $w\in\surrealRight{z}$
+                        by \obv{surreal_left_intro,surreal_right_intro}.
+                    $\surrealLt{w}{w}$.
+                    Contradiction by \obv{surreal_lt_irreflexive}.
+                \caseOf{$\birthday{w}\notin\birthday{z}$.}
+                    Follows.
+            \end{byCase}
+        \end{subproof}
+        Show that $\surrealEq{\birthday{z}}{z}{w}$.
+        \begin{subproof}
+            Suppose not.
+            Let $D=\surrealDifferences{\birthday{z}}{z}{w}$.
+            $D$ is inhabited
+                by \auto{surreal_eq_initial,surreal_differences}.
+            Take $\delta\in\birthday{z}$ such that
+                $\surrealEq{\delta}{z}{w}$ and
+                $z(\delta)\neq w(\delta)$
+                by \auto{surreal_first_difference}.
+            $\delta\in\birthday{w}$ by \obv{subseteq}.
+            Hence $\delta\in\birthday{z}\inter\birthday{w}$
+                by \obv{inter_intro}.
+            Let $c=\restrl{z}{\delta}$.
+            $\surreal{c}$ and $\birthday{c}=\delta$
+                by \auto{surreal_restriction_birthday}.
+            $\surrealEq{\delta}{c}{z}$
+                by \auto{surreal_restriction_agrees}.
+            Hence $\surrealEq{\delta}{c}{w}$
+                by \obv{surreal_eq_initial_transitive}.
+            ($\surrealLt{z}{c}$ and $\surrealLt{c}{w}$) or
+                ($\surrealLt{w}{c}$ and $\surrealLt{c}{z}$)
+                by \auto{surreal_unequal_value_cases,surreal_lt,surreal_lt_left_short,surreal_lt_right_short,surreal_eq_initial_symmetric}.
+            $c\in\surrealLeft{z}$ or
+                $c\in\surrealRight{z}$
+                by \auto{surreal_left_intro,surreal_right_intro}.
+            Follows by \obv{surreal_lt_asymmetric}.
+        \end{subproof}
+    \end{subproof}
+    Follows by \obv{surreal_cut_candidate}.
+\end{proof}
+
+\begin{theorem}\label{surreal_eta}
+    Suppose $\surreal{z}$.
+    Then $\surrealCut{\surrealLeft{z}}{\surrealRight{z}}=z$.
+\end{theorem}
+\begin{proof}
+    $\surrealCutPair{\surrealLeft{z}}{\surrealRight{z}}$
+        by \obv{surreal_options_form_cut_pair}.
+    Hence $\surrealCutCandidate{\surrealLeft{z}}{\surrealRight{z}}
+        {\surrealCut{\surrealLeft{z}}{\surrealRight{z}}}$
+        by \obv{surreal_cut_pair_specification}.
+    Follows by
+        \obv{surreal_cut_candidate_unique,surreal_options_cut_candidate}.
+\end{proof}
+
+\begin{theorem}\label{surreal_cut_le}
+    Suppose $\surrealCutPair{L_1}{R_1}$ and
+        $\surrealCutPair{L_2}{R_2}$.
+    Suppose for every $l\in L_1$ we have
+        $\surrealLt{l}{\surrealCut{L_2}{R_2}}$.
+    Suppose for every $r\in R_2$ we have
+        $\surrealLt{\surrealCut{L_1}{R_1}}{r}$.
+    Then $\surrealLe{\surrealCut{L_1}{R_1}}
+        {\surrealCut{L_2}{R_2}}$.
+\end{theorem}
+\begin{proof}
+    Let $a=\surrealCut{L_1}{R_1}$.
+    Let $b=\surrealCut{L_2}{R_2}$.
+    $\surreal{a}$ and $\surreal{b}$
+        by \obv{surreal_cut_pair_is_surreal}.
+    Suppose not.
+    $\surrealLt{b}{a}$
+        by \auto{surreal_lt_trichotomy,surreal_le}.
+    $(\exists q:\Set.\ \surreal{q}\land
+            \birthday{q}\in\birthday{b}\inter\birthday{a}\land
+            \surrealLt{b}{q}\land\surrealLt{q}{a})
+        \lor b\in\surrealLeft{a}
+        \lor a\in\surrealRight{b}$
+        by \obv{surreal_lt_elimination}.
+    Show that not $\exists q:\Set.\ \surreal{q}\land
+            \birthday{q}\in\birthday{b}\inter\birthday{a}\land
+            \surrealLt{b}{q}\land\surrealLt{q}{a}$.
+    \begin{subproof}
+        Suppose $\exists q:\Set.\ \surreal{q}\land
+            \birthday{q}\in\birthday{b}\inter\birthday{a}\land
+            \surrealLt{b}{q}\land\surrealLt{q}{a}$.
+        Take $q$ such that $\surreal{q}$ and
+            $\birthday{q}\in\birthday{b}\inter\birthday{a}$ and
+            $\surrealLt{b}{q}$ and $\surrealLt{q}{a}$.
+        For every $l\in L_1$ we have $\surrealLt{l}{q}$
+            by \auto{surreal_cut_pair,surreal_cut_pair_is_surreal,surreal_lt_transitive}.
+        For every $r\in R_1$ we have $\surrealLt{q}{r}$
+            by \auto{surreal_cut_pair,surreal_cut_pair_right,surreal_lt_transitive}.
+        Hence $\birthday{a}\subseteq\birthday{q}$
+            by \auto{surreal_cut_pair_simplest}.
+        $\birthday{q}\in\birthday{a}$ by \obv{inter}.
+        Contradiction by \auto{subseteq,in_irrefl}.
+    \end{subproof}
+    Show that $b\notin\surrealLeft{a}$.
+    \begin{subproof}
+        Suppose $b\in\surrealLeft{a}$.
+        $\birthday{b}\in\birthday{a}$ and $\surrealLt{b}{a}$
+            by \obv{surreal_left_elim}.
+        For every $l\in L_1$ we have $\surrealLt{l}{b}$
+            by \auto.
+        For every $r\in R_1$ we have $\surrealLt{b}{r}$
+            by \auto{surreal_cut_pair,surreal_cut_pair_right,surreal_lt_transitive}.
+        Hence $\birthday{a}\subseteq\birthday{b}$
+            by \auto{surreal_cut_pair_simplest}.
+        Contradiction by \auto{subseteq,in_irrefl}.
+    \end{subproof}
+    Show that $a\notin\surrealRight{b}$.
+    \begin{subproof}
+        Suppose $a\in\surrealRight{b}$.
+        $\birthday{a}\in\birthday{b}$ and $\surrealLt{b}{a}$
+            by \obv{surreal_right_elim}.
+        For every $l\in L_2$ we have $\surrealLt{l}{a}$
+            by \auto{surreal_cut_pair,surreal_cut_pair_left,surreal_lt_transitive}.
+        For every $r\in R_2$ we have $\surrealLt{a}{r}$
+            by \auto.
+        Hence $\birthday{b}\subseteq\birthday{a}$
+            by \auto{surreal_cut_pair_simplest}.
+        Contradiction by \auto{subseteq,in_irrefl}.
+    \end{subproof}
+    Contradiction.
+\end{proof}
+
+\begin{theorem}\label{surreal_cut_extensionality}
+    Suppose $\surrealCutPair{L_1}{R_1}$ and
+        $\surrealCutPair{L_2}{R_2}$.
+    Suppose for every $l\in L_1$ we have
+        $\surrealLt{l}{\surrealCut{L_2}{R_2}}$.
+    Suppose for every $r\in R_1$ we have
+        $\surrealLt{\surrealCut{L_2}{R_2}}{r}$.
+    Suppose for every $l\in L_2$ we have
+        $\surrealLt{l}{\surrealCut{L_1}{R_1}}$.
+    Suppose for every $r\in R_2$ we have
+        $\surrealLt{\surrealCut{L_1}{R_1}}{r}$.
+    Then $\surrealCut{L_1}{R_1}=\surrealCut{L_2}{R_2}$.
+\end{theorem}
+\begin{proof}
+    $\surrealLe{\surrealCut{L_1}{R_1}}{\surrealCut{L_2}{R_2}}$
+        by \obv{surreal_cut_le}.
+    $\surrealLe{\surrealCut{L_2}{R_2}}{\surrealCut{L_1}{R_1}}$
+        by \obv{surreal_cut_le}.
+    $\surreal{\surrealCut{L_1}{R_1}}$ and
+        $\surreal{\surrealCut{L_2}{R_2}}$
+        by \obv{surreal_cut_pair_is_surreal}.
+    Follows by \obv{surreal_le_antisymmetric}.
+\end{proof}

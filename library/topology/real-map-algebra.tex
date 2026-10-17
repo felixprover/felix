@@ -1,0 +1,467 @@
+\import{topology/real-map-linear.tex}
+\import{surreal/absolute-value-estimates.tex}
+\import{surreal/real-reciprocal.tex}
+
+\section{Pointwise nonlinear operations on real-valued maps}
+
+\subsection{Graph constructors}
+
+\begin{definition}\label{real_map_abs}
+    $\realMapAbs{D}{f}=\Apply{\graphOnDomainOp}
+        {D,\fun{x:\Set}{\abs{f(x)}}}$.
+\end{definition}
+
+\begin{definition}\label{real_map_mul}
+    $\realMapMul{D}{f}{g}=\Apply{\graphOnDomainOp}
+        {D,\fun{x:\Set}{\surrealMul{f(x)}{g(x)}}}$.
+\end{definition}
+
+\begin{definition}\label{real_map_reciprocal}
+    $\realMapReciprocal{D}{f}=\Apply{\graphOnDomainOp}
+        {D,\fun{x:\Set}{\surrealReciprocal{f(x)}}}$.
+\end{definition}
+
+\begin{definition}\label{real_map_div}
+    $\realMapDiv{D}{f}{g}=
+        \realMapMul{D}{f}{\realMapReciprocal{D}{g}}$.
+\end{definition}
+
+\begin{proposition}\label{real_map_abs_type}
+    Suppose $f\in\funs{D}{\reals}$.
+    Then $\realMapAbs{D}{f}\in\funs{D}{\reals}$.
+\end{proposition}
+\begin{proof}
+    For every $x\in D$ we have $\abs{f(x)}\in\reals$
+        by \obv{funs_type_apply,surreal_real_abs_closed}.
+    Follows by \auto{real_map_abs,logical_graph_on_domain_type}.
+\end{proof}
+
+\begin{proposition}\label{real_map_abs_apply}
+    Suppose $f\in\funs{D}{\reals}$.
+    Let $x\in D$.
+    Then $\apply{\realMapAbs{D}{f}}{x}=\abs{f(x)}$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{real_map_abs,logical_graph_on_domain_apply}.
+\end{proof}
+
+\begin{proposition}\label{real_map_mul_type}
+    Suppose $f,g\in\funs{D}{\reals}$.
+    Then $\realMapMul{D}{f}{g}\in\funs{D}{\reals}$.
+\end{proposition}
+\begin{proof}
+    For every $x\in D$ we have $\surrealMul{f(x)}{g(x)}\in\reals$
+        by \obv{funs_type_apply,surreal_real_multiplication_closed}.
+    Follows by \auto{real_map_mul,logical_graph_on_domain_type}.
+\end{proof}
+
+\begin{proposition}\label{real_map_mul_apply}
+    Suppose $f,g\in\funs{D}{\reals}$.
+    Let $x\in D$.
+    Then $\apply{\realMapMul{D}{f}{g}}{x}
+        =\surrealMul{f(x)}{g(x)}$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{real_map_mul,logical_graph_on_domain_apply}.
+\end{proof}
+
+\begin{proposition}\label{real_map_reciprocal_type}
+    Suppose $f\in\funs{D}{\reals}$.
+    Then $\realMapReciprocal{D}{f}\in\funs{D}{\reals}$.
+\end{proposition}
+\begin{proof}
+    For every $x\in D$ we have $\surrealReciprocal{f(x)}\in\reals$
+        by \obv{funs_type_apply,surreal_real_reciprocal_closed}.
+    Follows by
+        \auto{real_map_reciprocal,logical_graph_on_domain_type}.
+\end{proof}
+
+\begin{proposition}\label{real_map_reciprocal_apply}
+    Suppose $f\in\funs{D}{\reals}$.
+    Let $x\in D$.
+    Then $\apply{\realMapReciprocal{D}{f}}{x}
+        =\surrealReciprocal{f(x)}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{real_map_reciprocal,logical_graph_on_domain_apply}.
+\end{proof}
+
+\begin{proposition}\label{real_map_div_type}
+    Suppose $f,g\in\funs{D}{\reals}$.
+    Then $\realMapDiv{D}{f}{g}\in\funs{D}{\reals}$.
+\end{proposition}
+\begin{proof}
+    $\realMapReciprocal{D}{g}\in\funs{D}{\reals}$
+        by \obv{real_map_reciprocal_type}.
+    Follows by \auto{real_map_div,real_map_mul_type}.
+\end{proof}
+
+\begin{proposition}\label{real_map_div_apply}
+    Suppose $f,g\in\funs{D}{\reals}$.
+    Let $x\in D$.
+    Then $\apply{\realMapDiv{D}{f}{g}}{x}
+        =\surrealDiv{f(x)}{g(x)}$.
+\end{proposition}
+\begin{proof}
+    $\realMapReciprocal{D}{g}\in\funs{D}{\reals}$
+        by \obv{real_map_reciprocal_type}.
+    Follows by
+        \auto{real_map_div,real_map_mul_apply,real_map_reciprocal_apply,surreal_division}.
+\end{proof}
+
+\subsection{Continuity of absolute value}
+
+\begin{theorem}\label{real_map_abs_continuous}
+    Let $X$ be a topological space.
+    Let $f\in\funs{\carrier[X]}{\reals}$.
+    Suppose $f$ is continuous from $X$ to $\RealTopology$.
+    Then $\realMapAbs{\carrier[X]}{f}$ is continuous from $X$ to
+        $\RealTopology$.
+\end{theorem}
+\begin{proof}
+    Let $g=\realMapAbs{\carrier[X]}{f}$.
+    $\RealMetric$ is a metric space by \obv{surreal_real_metric_space}.
+    $\RealMetric$ is a pseudometric space by
+        \obv{surreal_real_pseudometric_space}.
+    $g\in\funs{\carrier[X]}{\carrier[\RealMetric]}$
+        by
+        \auto{real_map_abs_type,surreal_real_metric_carrier}.
+    Show that for every $x\in\carrier[X]$ we have
+        for every $e\in\reals$ we have if
+            $\surrealLt{\surrealZero}{e}$, then there exists
+            $U\in\opens[X]$ such that $x\in U$ and
+            for every $y\in U$ we have
+                $g(y)\in\metricBall{\RealMetric}{g(x)}{e}$.
+    \begin{subproof}
+        Fix $x\in\carrier[X]$.
+        Fix $e\in\reals$.
+        Assume $\surrealLt{\surrealZero}{e}$.
+        Take $U\in\opens[X]$ such that $x\in U$ and
+            for every $y\in U$ we have
+                $f(y)\in\metricBall{\RealMetric}{f(x)}{e}$
+            by
+            \auto{metric_continuous_iff_local_balls,real_topology,surreal_real_metric_space,surreal_real_metric_carrier}.
+        Show that for every $y\in U$ we have
+            $g(y)\in\metricBall{\RealMetric}{g(x)}{e}$.
+        \begin{subproof}
+            Fix $y\in U$.
+            $U\subseteq\carrier[X]$ by \obv{opens_type}.
+            Hence $y\in\carrier[X]$ by \obv{subseteq}.
+            $f(x),f(y)\in\reals$ by \obv{funs_type_apply}.
+            $g(x)=\abs{f(x)}$ and $g(y)=\abs{f(y)}$
+                by \auto{real_map_abs_apply}.
+            $g(x),g(y)\in\reals$
+                by \auto{real_map_abs_type,funs_type_apply}.
+            $\metricDistance[\RealMetric](g(x),g(y))
+                =\abs{\surrealAdd{\abs{f(x)}}
+                    {\surrealNeg{\abs{f(y)}}}}$
+                by \auto{surreal_real_metric_distance}.
+            $\metricDistance[\RealMetric](f(x),f(y))
+                =\abs{\surrealAdd{f(x)}{\surrealNeg{f(y)}}}$
+                by \obv{surreal_real_metric_distance}.
+            $\surrealLe{\metricDistance[\RealMetric](g(x),g(y))}
+                {\metricDistance[\RealMetric](f(x),f(y))}$
+                by
+                \auto{surreal_reverse_triangle_for_abs,surreal_real_is_surreal}.
+            $\surrealLt{\metricDistance[\RealMetric](f(x),f(y))}{e}$
+                by \auto{metric_ball_iff}.
+            Hence
+                $\surrealLt{\metricDistance[\RealMetric](g(x),g(y))}{e}$
+                by
+                \auto{surreal_le_lt_transitive,metric_distance_type,surreal_real_metric_carrier,surreal_real_is_surreal}.
+            $g(y)\in\carrier[\RealMetric]$
+                by \obv{funs_type_apply}.
+            Follows by \obv{metric_ball}.
+        \end{subproof}
+        Follows by \auto.
+    \end{subproof}
+    $\metricTopology{\RealMetric}=\RealTopology$
+        by \obv{real_topology}.
+    Follows by \auto{metric_continuous_iff_local_balls}.
+\end{proof}
+
+\subsection{Continuity of products}
+
+\begin{theorem}\label{real_map_mul_continuous}
+    Let $X$ be a topological space.
+    Let $f,g\in\funs{\carrier[X]}{\reals}$.
+    Suppose $f$ and $g$ are continuous from $X$ to $\RealTopology$.
+    Then $\realMapMul{\carrier[X]}{f}{g}$ is continuous from $X$ to
+        $\RealTopology$.
+\end{theorem}
+\begin{proof}
+    Let $h=\realMapMul{\carrier[X]}{f}{g}$.
+    $\RealMetric$ is a metric space by \obv{surreal_real_metric_space}.
+    $\RealMetric$ is a pseudometric space by
+        \obv{surreal_real_pseudometric_space}.
+    $h\in\funs{\carrier[X]}{\carrier[\RealMetric]}$
+        by
+        \auto{real_map_mul_type,surreal_real_metric_carrier}.
+    Show that for every $x\in\carrier[X]$ we have
+        for every $e\in\reals$ we have if
+            $\surrealLt{\surrealZero}{e}$, then there exists
+            $W\in\opens[X]$ such that $x\in W$ and
+            for every $y\in W$ we have
+                $h(y)\in\metricBall{\RealMetric}{h(x)}{e}$.
+    \begin{subproof}
+        Fix $x\in\carrier[X]$.
+        Fix $e\in\reals$.
+        Assume $\surrealLt{\surrealZero}{e}$.
+        $f(x),g(x)\in\reals$ by \obv{funs_type_apply}.
+        Let $c=\surrealAdd{\surrealAdd{\abs{f(x)}}{\abs{g(x)}}}
+            {\surrealOne}$.
+        $\abs{f(x)},\abs{g(x)}\in\reals$
+            by \obv{surreal_real_abs_closed}.
+        Hence $c\in\reals$
+            by
+            \auto{surreal_real_addition_closed,surreal_one_is_real}.
+        $\surreal{\abs{f(x)}}$ and $\surreal{\abs{g(x)}}$
+            by \obv{surreal_real_is_surreal}.
+        $\surrealLe{\surrealZero}{\abs{f(x)}}$
+            by
+            \obv{surreal_abs_nonnegative_value,surreal_real_is_surreal}.
+        $\surrealLe{\surrealZero}{\abs{g(x)}}$
+            by
+            \obv{surreal_abs_nonnegative_value,surreal_real_is_surreal}.
+        $\surrealLe{\surrealAdd{\surrealZero}{\surrealZero}}
+            {\surrealAdd{\abs{f(x)}}{\abs{g(x)}}}$
+            by
+            \obv{surreal_add_le_both,surreal_abs_is_surreal,empty_surreal}.
+        $\surrealAdd{\surrealZero}{\surrealZero}=\surrealZero$
+            by \obv{surreal_add_zero_left,empty_surreal}.
+        Hence
+            $\surrealLe{\surrealZero}
+                {\surrealAdd{\abs{f(x)}}{\abs{g(x)}}}$.
+        Hence $\surrealLt{\surrealZero}{c}$
+            by
+            \auto{surreal_add_le_lt,surreal_add_zero_left,surreal_add_is_surreal,surreal_one_is_surreal,surreal_zero_lt_one,empty_surreal}.
+        Take a natural number $n$ such that
+            $\surrealLt{\surrealMul{\surrealEpsilon{n}}{c}}{e}$
+            by \obv{positive_real_scaled_epsilon_below}.
+        Let $d=\surrealEpsilon{n}$.
+        $d\in\reals$ and $\surrealLt{\surrealZero}{d}$ and
+            $\surrealLe{d}{\surrealOne}$
+            by
+            \auto{surreal_epsilon_is_real,surreal_epsilon_positive,surreal_epsilon_le_one}.
+        Take $U\in\opens[X]$ such that $x\in U$ and
+            for every $y\in U$ we have
+                $f(y)\in\metricBall{\RealMetric}{f(x)}{d}$
+            by
+            \auto{metric_continuous_iff_local_balls,real_topology,surreal_real_metric_space,surreal_real_metric_carrier}.
+        Take $V\in\opens[X]$ such that $x\in V$ and
+            for every $y\in V$ we have
+                $g(y)\in\metricBall{\RealMetric}{g(x)}{d}$
+            by
+            \auto{metric_continuous_iff_local_balls,real_topology,surreal_real_metric_space,surreal_real_metric_carrier}.
+        Let $W=U\inter V$.
+        $W\in\opens[X]$ by \auto{opens_inter}.
+        $x\in W$ by \obv{inter}.
+        Show that for every $y\in W$ we have
+            $h(y)\in\metricBall{\RealMetric}{h(x)}{e}$.
+        \begin{subproof}
+            Fix $y\in W$.
+            $y\in U$ and $y\in V$ by \obv{inter}.
+            $W\subseteq\carrier[X]$ by \obv{opens_type}.
+            Hence $y\in\carrier[X]$ by \obv{subseteq}.
+            $f(y),g(y)\in\reals$ by \obv{funs_type_apply}.
+            $\surrealLt{
+                \abs{\surrealAdd{f(y)}{\surrealNeg{f(x)}}}}{d}$
+                by
+                \auto{metric_ball_iff,surreal_real_metric_distance,metric_distance_symmetric,surreal_real_metric_space}.
+            $\surrealLt{
+                \abs{\surrealAdd{g(y)}{\surrealNeg{g(x)}}}}{d}$
+                by
+                \auto{metric_ball_iff,surreal_real_metric_distance,metric_distance_symmetric,surreal_real_metric_space}.
+            Hence
+                $\surrealLt{
+                    \abs{\surrealAdd{\surrealMul{f(y)}{g(y)}}
+                        {\surrealNeg{\surrealMul{f(x)}{g(x)}}}}}
+                    {\surrealMul{d}{c}}$
+                by
+                \auto{surreal_product_difference_local_bound,surreal_real_is_surreal}.
+            $h(x)=\surrealMul{f(x)}{g(x)}$ and
+                $h(y)=\surrealMul{f(y)}{g(y)}$
+                by \auto{real_map_mul_apply}.
+            $h(x),h(y)\in\reals$
+                by \auto{real_map_mul_type,funs_type_apply}.
+            $\metricDistance[\RealMetric](h(x),h(y))
+                =\metricDistance[\RealMetric](h(y),h(x))$
+                by
+                \obv{metric_distance_symmetric,surreal_real_metric_space,surreal_real_metric_carrier}.
+            $\metricDistance[\RealMetric](h(y),h(x))
+                =\abs{\surrealAdd{h(y)}{\surrealNeg{h(x)}}}$
+                by \obv{surreal_real_metric_distance}.
+            Hence $\metricDistance[\RealMetric](h(x),h(y))
+                =\abs{\surrealAdd{h(y)}{\surrealNeg{h(x)}}}$.
+            $\metricDistance[\RealMetric](h(x),h(y))
+                =\abs{\surrealAdd{\surrealMul{f(y)}{g(y)}}
+                    {\surrealNeg{\surrealMul{f(x)}{g(x)}}}}$.
+            Hence
+                $\surrealLt{\metricDistance[\RealMetric](h(x),h(y))}
+                    {\surrealMul{d}{c}}$.
+            Hence
+                $\surrealLt{\metricDistance[\RealMetric](h(x),h(y))}{e}$
+                by
+                \auto{surreal_lt_transitive,metric_distance_type,surreal_real_metric_carrier,surreal_mul_is_surreal,surreal_real_is_surreal}.
+            $h(y)\in\carrier[\RealMetric]$
+                by \obv{surreal_real_metric_carrier}.
+            Follows by \obv{metric_ball}.
+        \end{subproof}
+    \end{subproof}
+    $\metricTopology{\RealMetric}=\RealTopology$
+        by \obv{real_topology}.
+    Follows by \auto{metric_continuous_iff_local_balls}.
+\end{proof}
+
+\subsection{Continuity away from zero}
+
+\begin{theorem}\label{real_map_reciprocal_continuous}
+    Let $X$ be a topological space.
+    Let $f\in\funs{\carrier[X]}{\reals}$.
+    Suppose $f$ is continuous from $X$ to $\RealTopology$ and
+        for every $x\in\carrier[X]$ we have $f(x)\neq\surrealZero$.
+    Then $\realMapReciprocal{\carrier[X]}{f}$ is continuous from
+        $X$ to $\RealTopology$.
+\end{theorem}
+\begin{proof}
+    Let $g=\realMapReciprocal{\carrier[X]}{f}$.
+    $\RealMetric$ is a metric space by \obv{surreal_real_metric_space}.
+    $\RealMetric$ is a pseudometric space by
+        \obv{surreal_real_pseudometric_space}.
+    $g\in\funs{\carrier[X]}{\carrier[\RealMetric]}$
+        by
+        \auto{real_map_reciprocal_type,surreal_real_metric_carrier}.
+    Show that for every $x\in\carrier[X]$ we have
+        for every $e\in\reals$ we have if
+            $\surrealLt{\surrealZero}{e}$, then there exists
+            $U\in\opens[X]$ such that $x\in U$ and
+            for every $y\in U$ we have
+                $g(y)\in\metricBall{\RealMetric}{g(x)}{e}$.
+    \begin{subproof}
+        Fix $x\in\carrier[X]$.
+        Fix $e\in\reals$.
+        Assume $\surrealLt{\surrealZero}{e}$.
+        $f(x)\in\reals$ and $f(x)\neq\surrealZero$
+            by \obv{funs_type_apply}.
+        Let $a=\abs{f(x)}$.
+        $a\in\reals$ by \auto{surreal_real_abs_closed}.
+        $\surrealLt{\surrealZero}{a}$
+            by
+            \obv{surreal_abs_positive_iff,surreal_real_is_surreal}.
+        Let $r=\surrealMul{\realHalf}{a}$.
+        $r\in\reals$
+            by
+            \auto{real_half_is_real,surreal_real_multiplication_closed}.
+        $\surrealLt{\surrealZero}{\realHalf}$
+            by \obv{real_half_positive}.
+        $\surrealLt{\surrealZero}{\realHalf}$ and
+            $\surrealLt{\surrealZero}{a}$.
+        Hence $\surrealLt{\surrealZero}{r}$
+            by
+            \obv{surreal_mul_pos_pos,real_half_is_real,surreal_real_is_surreal}.
+        $\surrealAdd{r}{r}=a$
+            by
+            \auto{surreal_mul_distributive_right,surreal_mul_commutative,real_half_plus_half_eq_one,surreal_mul_one_left,real_half_is_real,surreal_real_is_surreal}.
+        Hence $\surrealLe{\surrealAdd{r}{r}}{a}$
+            by \obv{surreal_le_reflexive,surreal_real_is_surreal}.
+        Let $c=\surrealMul{\abs{\surrealReciprocal{f(x)}}}
+            {\surrealReciprocal{r}}$.
+        $\surrealReciprocal{f(x)},\surrealReciprocal{r}\in\reals$
+            by \obv{surreal_real_reciprocal_closed}.
+        Hence $\abs{\surrealReciprocal{f(x)}}\in\reals$ and
+            $c\in\reals$
+            by
+            \auto{surreal_real_abs_closed,surreal_real_multiplication_closed}.
+        $\surrealLt{\surrealZero}
+            {\abs{\surrealReciprocal{f(x)}}}$
+            by
+            \obv{surreal_reciprocal_nonzero,surreal_abs_positive_iff,surreal_real_is_surreal}.
+        $\surrealLt{\surrealZero}{\surrealReciprocal{r}}$
+            by
+            \obv{surreal_reciprocal_positive,surreal_real_is_surreal}.
+        Hence $\surrealLt{\surrealZero}{c}$
+            by
+            \obv{surreal_mul_pos_pos,surreal_real_is_surreal,empty_surreal}.
+        Take $d\in\reals$ such that
+            $\surrealLt{\surrealZero}{d}$ and $\surrealLt{d}{r}$ and
+            $\surrealLt{\surrealMul{d}{c}}{e}$
+            by \obv{positive_real_has_lower_scaled_budget}.
+        Take $U\in\opens[X]$ such that $x\in U$ and
+            for every $y\in U$ we have
+                $f(y)\in\metricBall{\RealMetric}{f(x)}{d}$
+            by
+            \auto{metric_continuous_iff_local_balls,real_topology,surreal_real_metric_space,surreal_real_metric_carrier}.
+        Show that for every $y\in U$ we have
+            $g(y)\in\metricBall{\RealMetric}{g(x)}{e}$.
+        \begin{subproof}
+            Fix $y\in U$.
+            $U\subseteq\carrier[X]$ by \obv{opens_type}.
+            Hence $y\in\carrier[X]$ by \obv{subseteq}.
+            $f(y)\in\reals$ by \obv{funs_type_apply}.
+            $\surrealLt{
+                \abs{\surrealAdd{f(y)}{\surrealNeg{f(x)}}}}{d}$
+                by
+                \auto{metric_ball_iff,surreal_real_metric_distance,metric_distance_symmetric,surreal_real_metric_space}.
+            Hence $f(y)\neq\surrealZero$ and
+                $\surrealLt{
+                    \abs{\surrealAdd{\surrealReciprocal{f(y)}}
+                        {\surrealNeg{\surrealReciprocal{f(x)}}}}}
+                    {\surrealMul{d}{c}}$
+                by
+                \auto{surreal_reciprocal_difference_local_bound,surreal_real_is_surreal}.
+            $g(x)=\surrealReciprocal{f(x)}$ and
+                $g(y)=\surrealReciprocal{f(y)}$
+                by \auto{real_map_reciprocal_apply}.
+            $g(x),g(y)\in\reals$
+                by \auto{real_map_reciprocal_type,funs_type_apply}.
+            $\metricDistance[\RealMetric](g(x),g(y))
+                =\metricDistance[\RealMetric](g(y),g(x))$
+                by
+                \auto{metric_distance_symmetric,surreal_real_metric_space,surreal_real_metric_carrier}.
+            $\metricDistance[\RealMetric](g(y),g(x))
+                =\abs{\surrealAdd{g(y)}{\surrealNeg{g(x)}}}$
+                by \obv{surreal_real_metric_distance}.
+            Hence $\metricDistance[\RealMetric](g(x),g(y))
+                =\abs{\surrealAdd{g(y)}{\surrealNeg{g(x)}}}$.
+            $\metricDistance[\RealMetric](g(x),g(y))
+                =\abs{\surrealAdd{\surrealReciprocal{f(y)}}
+                    {\surrealNeg{\surrealReciprocal{f(x)}}}}$
+                by \auto.
+            Hence
+                $\surrealLt{\metricDistance[\RealMetric](g(x),g(y))}
+                    {\surrealMul{d}{c}}$
+                by \auto.
+            Hence
+                $\surrealLt{\metricDistance[\RealMetric](g(x),g(y))}{e}$
+                by
+                \auto{surreal_lt_transitive,metric_distance_type,surreal_real_metric_carrier,surreal_mul_is_surreal,surreal_real_is_surreal}.
+            $g(y)\in\carrier[\RealMetric]$
+                by \obv{surreal_real_metric_carrier}.
+            Follows by \obv{metric_ball}.
+        \end{subproof}
+        Follows by \auto.
+    \end{subproof}
+    $\metricTopology{\RealMetric}=\RealTopology$
+        by \obv{real_topology}.
+    Follows by \auto{metric_continuous_iff_local_balls}.
+\end{proof}
+
+\begin{theorem}\label{real_map_div_continuous}
+    Let $X$ be a topological space.
+    Let $f,g\in\funs{\carrier[X]}{\reals}$.
+    Suppose $f$ and $g$ are continuous from $X$ to $\RealTopology$.
+    Suppose for every $x\in\carrier[X]$ we have
+        $g(x)\neq\surrealZero$.
+    Then $\realMapDiv{\carrier[X]}{f}{g}$ is continuous from $X$ to
+        $\RealTopology$.
+\end{theorem}
+\begin{proof}
+    $\realMapReciprocal{\carrier[X]}{g}\in
+        \funs{\carrier[X]}{\reals}$
+        by \obv{real_map_reciprocal_type}.
+    $\realMapReciprocal{\carrier[X]}{g}$ is continuous from
+        $X$ to $\RealTopology$
+        by \obv{real_map_reciprocal_continuous}.
+    Follows by \auto{real_map_div,real_map_mul_continuous}.
+\end{proof}

@@ -1,0 +1,152 @@
+\section{Countable iteration of a set-coded endomap}
+
+\import{recursion/natural.tex}
+
+The implementation uses the checked logical natural recursor, but the public
+iteration sequence is an ordinary set-coded function graph.  This is the
+countable iteration interface needed by closure arguments; it adds no new
+recursion principle.
+
+\begin{definition}\label{iteration_step}
+    $\iterationStepOp:\Set\to\Set\to\Set\to\Set
+        =\fun{f,n,x:\Set}{f(x)}$.
+\end{definition}
+
+\begin{definition}\label{iteration_at}
+    $\iterationAt{f}{a}{n}
+        =\Apply{\naturalRecOp}{a,
+            \Apply{\iterationStepOp}{f},n}$.
+\end{definition}
+
+\begin{definition}\label{iteration_set}
+    $\iterationSet{f}{a}
+        =\{(n,\iterationAt{f}{a}{n})\mid n\in\naturals\}$.
+\end{definition}
+
+\begin{proposition}\label{iteration_at_zero}
+    $\iterationAt{f}{a}{\emptyset}=a$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \obv{iteration_at,natural_recursion_zero}.
+\end{proof}
+
+\begin{proposition}\label{iteration_at_successor}
+    Let $n$ be a natural number.
+    Then $\iterationAt{f}{a}{\suc{n}}=f(\iterationAt{f}{a}{n})$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{iteration_at,iteration_step,natural_recursion_successor}.
+\end{proof}
+
+\begin{proposition}\label{iteration_set_membership}
+    $(n,x)\in\iterationSet{f}{a}$ iff
+        $n\in\naturals$ and $x=\iterationAt{f}{a}{n}$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{iteration_set,pair_eq_iff}.
+\end{proof}
+
+\begin{theorem}\label{iteration_set_function}
+    $\iterationSet{f}{a}\in
+        \funs{\naturals}{\ran{\iterationSet{f}{a}}}$.
+\end{theorem}
+\begin{proof}
+    Let $s=\iterationSet{f}{a}$.
+    $s$ is a relation by \auto{relation,iteration_set}.
+    $s$ is right-unique
+        by \auto{rightunique,iteration_set_membership}.
+    $\dom{s}=\naturals$
+        by \auto{setext,dom_iff,iteration_set_membership}.
+    $s\in\funs{\dom{s}}{\ran{s}}$
+        by \obv{function_exact_type_to_range}.
+\end{proof}
+
+\begin{proposition}\label{iteration_set_domain}
+    $\dom{\iterationSet{f}{a}}=\naturals$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{iteration_set_function,funs_elim}.
+\end{proof}
+
+\begin{proposition}\label{iteration_set_apply}
+    Let $n$ be a natural number.
+    Then $(\iterationSet{f}{a})(n)=\iterationAt{f}{a}{n}$.
+\end{proposition}
+\begin{proof}
+    $\iterationSet{f}{a}$ is a function
+        by \auto{iteration_set_function,funs_is_function}.
+    $(n,\iterationAt{f}{a}{n})\in\iterationSet{f}{a}$
+        by \obv{iteration_set_membership}.
+    Follows by \obv{function_apply_intro}.
+\end{proof}
+
+\begin{corollary}\label{iteration_set_zero}
+    $(\iterationSet{f}{a})(\emptyset)=a$.
+\end{corollary}
+\begin{proof}
+    $\emptyset$ is a natural number by \obv{omega_empty}.
+    Follows by \auto{iteration_set_apply,iteration_at_zero}.
+\end{proof}
+
+\begin{corollary}\label{iteration_set_successor}
+    Let $n$ be a natural number.
+    Then $(\iterationSet{f}{a})(\suc{n})
+        =f((\iterationSet{f}{a})(n))$.
+\end{corollary}
+\begin{proof}
+    $\suc{n}$ is a natural number by \obv{omega_successor}.
+    Follows by \auto{iteration_set_apply,iteration_at_successor}.
+\end{proof}
+
+\begin{theorem}\label{iteration_at_closed}
+    Let $f\in\funs{A}{A}$.
+    Let $a\in A$.
+    Let $n$ be a natural number.
+    Then $\iterationAt{f}{a}{n}\in A$.
+\end{theorem}
+\begin{proof}
+    Let $C=\{k\in\naturals\mid \iterationAt{f}{a}{k}\in A\}$.
+    $\emptyset\in C$
+        by \obv{omega_empty,iteration_at_zero}.
+    Show that for every $k\in C$ we have $\suc{k}\in C$.
+    \begin{subproof}
+        Fix $k\in C$.
+        Hence $k$ is a natural number and
+            $\iterationAt{f}{a}{k}\in A$.
+        Hence $f(\iterationAt{f}{a}{k})\in A$
+            by \obv{funs_type_apply}.
+        $\iterationAt{f}{a}{\suc{k}}
+            =f(\iterationAt{f}{a}{k})$
+            by \obv{iteration_at_successor}.
+        $\suc{k}$ is a natural number by \obv{omega_successor}.
+    \end{subproof}
+    Hence $C$ is an inductive set by \obv{inductive_set}.
+    Hence every natural number is an element of $C$
+        by \obv{omega_minimal}.
+    Thus $n\in C$.
+\end{proof}
+
+\begin{theorem}\label{iteration_set_type}
+    Let $f\in\funs{A}{A}$.
+    Let $a\in A$.
+    Then $\iterationSet{f}{a}\in\funs{\naturals}{A}$.
+\end{theorem}
+\begin{proof}
+    Let $s=\iterationSet{f}{a}$.
+    $s\in\funs{\naturals}{\ran{s}}$
+        by \auto{iteration_set_function}.
+    Hence $s$ is a function by \obv{funs_is_function}.
+    $\dom{s}=\naturals$ by \obv{iteration_set_domain}.
+    Show that for every $n\in\dom{s}$ we have $s(n)\in A$.
+    \begin{subproof}
+        Fix $n\in\dom{s}$.
+        Hence $n\in\naturals$.
+        $s(n)=\iterationAt{f}{a}{n}$
+            by \auto{iteration_set_apply}.
+        Follows by \auto{iteration_at_closed}.
+    \end{subproof}
+    Hence $s$ is a function to $A$.
+    Follows by \auto{funs_intro}.
+\end{proof}

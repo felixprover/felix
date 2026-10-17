@@ -1,0 +1,897 @@
+\import{algebra/group/automorphism-tower-schema.tex}
+\import{algebra/group/direct-limit.tex}
+\import{algebra/group/direct-system-restriction.tex}
+\import{algebra/group/inner-automorphism.tex}
+
+\section{Automorphism-tower data}
+
+A tower segment of length $\theta$ has one stage at each
+$\alpha\in\theta$ and one bond for every $\alpha\subseteq\beta$ in
+$\theta$.  The recursive value at one stage is a local package containing
+the current group and all maps into it.  Validity of a package is deliberately
+separate from the package record: this keeps proof invariants out of the
+set-coded data and avoids recursively nesting the whole earlier segment.
+
+\subsection{Local stage packages}
+
+\begin{definition}\label{tower_incoming_map}
+    $\towerIncomingMap{P}{\beta}=\apply{\towerIncoming[P]}{\beta}$.
+\end{definition}
+
+\begin{definition}\label{tower_stage_package_well_formed}
+    $\towerStagePackageWellFormed{P}{G}{\alpha}{p}$ iff
+        $\alpha$ is an ordinal and
+        $P=\towerStagePackage{\alpha}
+            {\towerStageGroup[P]}{\towerIncoming[P]}$ and
+        $\carrier[P]=\suc{\alpha}$ and
+        $p$ is a function and $\dom{p}=\alpha$ and
+        $\towerStageGroup[P]$ is a group and
+        $\towerIncoming[P]\in
+            \funs{\suc{\alpha}}{\ran{\towerIncoming[P]}}$ and
+        ($\alpha=\emptyset\implies\towerStageGroup[P]=G$) and
+        $\towerIncomingMap{P}{\alpha}=
+            \identity{\carrier[\towerStageGroup[P]]}$.
+\end{definition}
+
+\begin{definition}\label{tower_stage_package_incoming_maps}
+    $\towerStagePackageIncomingMaps{P}{\alpha}{p}$ iff
+        (for every $\beta\in\alpha$ we have
+            $p(\beta)=\towerStagePackage{\beta}
+                {\towerStageGroup[p(\beta)]}{\towerIncoming[p(\beta)]}$ and
+            $\carrier[p(\beta)]=\suc{\beta}$ and
+            $\groupHom
+                {\towerIncomingMap{P}{\beta}}
+                {\towerStageGroup[p(\beta)]}
+                {\towerStageGroup[P]}$).
+\end{definition}
+
+\begin{definition}\label{tower_stage_package_coherent}
+    $\towerStagePackageCoherent{P}{\alpha}{p}$ iff
+        for all $\gamma,\beta\in\alpha$ such that
+            $\gamma\subseteq\beta$ we have
+            $\towerIncomingMap{P}{\gamma}=
+                \towerIncomingMap{P}{\beta}\circ
+                \towerIncomingMap{p(\beta)}{\gamma}$.
+\end{definition}
+
+\begin{definition}\label{tower_stage_package_compatible}
+    $\towerStagePackageCompatible{P}{\alpha}{p}$ iff
+        $\towerStagePackageIncomingMaps{P}{\alpha}{p}$ and
+        $\towerStagePackageCoherent{P}{\alpha}{p}$.
+\end{definition}
+
+\begin{definition}\label{valid_tower_stage_package}
+    $\validTowerStagePackage{P}{G}{\alpha}{p}$ iff
+        $\towerStagePackageWellFormed{P}{G}{\alpha}{p}$ and
+        $\towerStagePackageCompatible{P}{\alpha}{p}$.
+\end{definition}
+
+The parameter $G$ fixes the otherwise exceptional initial package.  For
+positive stages all source groups are obtained from the explicit predecessor
+history; no endpoint is inferred from a raw graph.
+
+\begin{proposition}\label{valid_tower_stage_package_data}
+    Suppose $\validTowerStagePackage{P}{G}{\alpha}{p}$.
+    Then $\alpha$ is an ordinal and
+        $P=\towerStagePackage{\alpha}
+            {\towerStageGroup[P]}{\towerIncoming[P]}$ and
+        $\carrier[P]=\suc{\alpha}$ and
+        $p$ is a function and $\dom{p}=\alpha$ and
+        $\towerStageGroup[P]$ is a group and
+        $\towerIncoming[P]\in
+            \funs{\suc{\alpha}}{\ran{\towerIncoming[P]}}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{valid_tower_stage_package,
+            tower_stage_package_well_formed}.
+\end{proof}
+
+\begin{proposition}\label{valid_tower_stage_package_base}
+    Suppose $\validTowerStagePackage{P}{G}{\alpha}{p}$ and
+        $\alpha=\emptyset$.
+    Then $\towerStageGroup[P]=G$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{valid_tower_stage_package,
+            tower_stage_package_well_formed}.
+\end{proof}
+
+\begin{proposition}\label{valid_tower_stage_package_identity}
+    Suppose $\validTowerStagePackage{P}{G}{\alpha}{p}$.
+    Then $\towerIncomingMap{P}{\alpha}=
+        \identity{\carrier[\towerStageGroup[P]]}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{valid_tower_stage_package,
+            tower_stage_package_well_formed}.
+\end{proof}
+
+\begin{proposition}\label{valid_tower_stage_package_incoming_hom}
+    Suppose $\validTowerStagePackage{P}{G}{\alpha}{p}$.
+    Let $\beta\in\alpha$.
+    Then $p(\beta)=\towerStagePackage{\beta}
+            {\towerStageGroup[p(\beta)]}{\towerIncoming[p(\beta)]}$ and
+        $\carrier[p(\beta)]=\suc{\beta}$ and
+        $\groupHom
+            {\towerIncomingMap{P}{\beta}}
+            {\towerStageGroup[p(\beta)]}
+            {\towerStageGroup[P]}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{valid_tower_stage_package,
+            tower_stage_package_compatible,
+            tower_stage_package_incoming_maps}.
+\end{proof}
+
+\begin{proposition}\label{valid_tower_stage_package_coherence}
+    Suppose $\validTowerStagePackage{P}{G}{\alpha}{p}$.
+    Let $\gamma,\beta\in\alpha$.
+    Suppose $\gamma\subseteq\beta$.
+    Then $\towerIncomingMap{P}{\gamma}=
+        \towerIncomingMap{P}{\beta}\circ
+        \towerIncomingMap{p(\beta)}{\gamma}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{valid_tower_stage_package,
+            tower_stage_package_compatible,
+            tower_stage_package_coherent}.
+\end{proof}
+
+\begin{definition}\label{tower_history}
+    $\towerHistory{G}{\alpha}{p}$ iff
+        $\alpha$ is an ordinal and
+        $p$ is a function and $\dom{p}=\alpha$ and
+        for every $\beta\in\alpha$ we have
+            $\validTowerStagePackage
+                {p(\beta)}{G}{\beta}{\restrl{p}{\beta}}$.
+\end{definition}
+
+\begin{proposition}\label{tower_history_function}
+    Suppose $\towerHistory{G}{\alpha}{p}$.
+    Then $p$ is a function and $\dom{p}=\alpha$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{tower_history}.
+\end{proof}
+
+\begin{proposition}\label{tower_history_ordinal}
+    Suppose $\towerHistory{G}{\alpha}{p}$.
+    Then $\alpha$ is an ordinal.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{tower_history}.
+\end{proof}
+
+\begin{proposition}\label{tower_history_value_valid}
+    Suppose $\towerHistory{G}{\alpha}{p}$.
+    Let $\beta\in\alpha$.
+    Then $\validTowerStagePackage
+        {p(\beta)}{G}{\beta}{\restrl{p}{\beta}}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{tower_history}.
+\end{proof}
+
+\subsection{Set-sized segment diagrams}
+
+For a nonempty segment, the stage and bond families are packaged once as an
+ordinal-indexed group direct system.  This reduct is the structural source of
+the group, homomorphism, identity, and composition laws.  Earlier systems are
+ordinary restrictions of it.  The separate family typings in the segment
+predicate retain the unique length-zero segment, for which a directed-system
+structure would be inappropriate because directed carriers are inhabited.
+
+\begin{abbreviation}\label{tower_segment_system}
+    $\towerSegmentSystem{T}=
+        \groupDirectSystemStructure
+            {\ordinalDirectedQuasiorder{\carrier[T]}}
+            {\towerStages[T]}
+            {\towerBonds[T]}$.
+\end{abbreviation}
+
+\begin{proposition}\label{tower_segment_system_carrier}
+    $\carrier[\towerSegmentSystem{T}]=\carrier[T]$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{group_direct_system_structure_carrier,
+            ordinal_directed_quasiorder_carrier}.
+\end{proof}
+
+\begin{proposition}\label{tower_segment_system_order}
+    $\leq[\towerSegmentSystem{T}]=
+        \subseteqrel{\carrier[T]}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{group_direct_system_structure_order,
+            ordinal_directed_quasiorder_relation}.
+\end{proof}
+
+\begin{proposition}\label{tower_segment_system_groups}
+    $\directSystemGroups[\towerSegmentSystem{T}]=\towerStages[T]$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \obv{group_direct_system_structure_groups}.
+\end{proof}
+
+\begin{proposition}\label{tower_segment_system_bonds}
+    $\directSystemBonds[\towerSegmentSystem{T}]=\towerBonds[T]$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \obv{group_direct_system_structure_bonds}.
+\end{proof}
+
+\begin{proposition}\label{tower_segment_system_group}
+    $\directSystemGroup{\towerSegmentSystem{T}}{\alpha}
+        =\towerStage{T}{\alpha}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \obv{direct_system_group,tower_segment_system_groups,tower_stage}.
+\end{proof}
+
+\begin{proposition}\label{tower_segment_system_bond}
+    $\directSystemBond{\towerSegmentSystem{T}}{\alpha}{\beta}
+        =\towerBond{T}{\alpha}{\beta}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \obv{direct_system_bond,tower_segment_system_bonds,tower_bond}.
+\end{proof}
+
+\begin{abbreviation}\label{tower_earlier_system}
+    $\towerEarlierSystem{T}{\lambda}=
+        \groupDirectSystemRestriction
+            {\towerSegmentSystem{T}}
+            {\ordinalDirectedQuasiorder{\lambda}}$.
+\end{abbreviation}
+
+\begin{proposition}\label{tower_earlier_system_carrier}
+    $\carrier[\towerEarlierSystem{T}{\lambda}]=\lambda$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{group_direct_system_restriction_carrier,
+            ordinal_directed_quasiorder_carrier}.
+\end{proof}
+
+\begin{proposition}\label{tower_earlier_system_order}
+    $\leq[\towerEarlierSystem{T}{\lambda}]=
+        \subseteqrel{\lambda}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{group_direct_system_restriction_order,
+            ordinal_directed_quasiorder_relation}.
+\end{proof}
+
+\begin{proposition}\label{tower_earlier_system_index_member}
+    Let $\alpha\in
+        \carrier[\towerEarlierSystem{T}{\lambda}]$.
+    Then $\alpha\in\lambda$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{tower_earlier_system_carrier}.
+\end{proof}
+
+\begin{proposition}\label{tower_earlier_system_indices_ordered}
+    Suppose $\alpha\mathrel{
+        \leq[\towerEarlierSystem{T}{\lambda}]}\beta$.
+    Then $\alpha\subseteq\beta$.
+\end{proposition}
+\begin{proof}
+    $(\alpha,\beta)\in\subseteqrel{\lambda}$ by
+        \obv{tower_earlier_system_order}.
+    Take $a,b\in\lambda$ such that
+        $(\alpha,\beta)=(a,b)$ and $a\subseteq b$ by
+        \auto{subseteqrel}.
+    $\alpha=a$ and $\beta=b$ by \obv{pair_eq_iff}.
+\end{proof}
+
+\begin{proposition}\label{tower_earlier_system_group}
+    Suppose $\towerStages[T]$ is a function.
+    Suppose $\lambda\subseteq\dom{\towerStages[T]}$.
+    Let $\alpha\in\lambda$.
+    Then $\directSystemGroup{\towerEarlierSystem{T}{\lambda}}{\alpha}
+        =\towerStage{T}{\alpha}$.
+\end{proposition}
+\begin{proof}
+    $\directSystemGroups[\towerEarlierSystem{T}{\lambda}]
+        =\restrl{\towerStages[T]}{\lambda}$ by
+        \auto{group_direct_system_restriction_groups,
+            tower_segment_system_groups,
+            ordinal_directed_quasiorder_carrier}.
+    Follows by
+        \auto{direct_system_group,tower_stage,
+            restrl_of_function_apply}.
+\end{proof}
+
+\begin{proposition}\label{tower_earlier_system_bond}
+    Suppose $\towerBonds[T]$ is a function.
+    Suppose $\subseteqrel{\lambda}\subseteq
+        \dom{\towerBonds[T]}$.
+    Let $\alpha,\beta\in\lambda$.
+    Suppose $\alpha\subseteq\beta$.
+    Then $\directSystemBond{\towerEarlierSystem{T}{\lambda}}
+        {\alpha}{\beta}=\towerBond{T}{\alpha}{\beta}$.
+\end{proposition}
+\begin{proof}
+    $\directSystemBonds[\towerEarlierSystem{T}{\lambda}]
+        =\restrl{\towerBonds[T]}{\subseteqrel{\lambda}}$ by
+        \auto{group_direct_system_restriction_bonds,
+            tower_segment_system_bonds,
+            ordinal_directed_quasiorder_relation}.
+    $(\alpha,\beta)\in\subseteqrel{\lambda}$ by
+        \obv{subseteqrel}.
+    Follows by
+        \auto{direct_system_bond,tower_bond,
+            restrl_of_function_apply}.
+\end{proof}
+
+\begin{proposition}\label{tower_segment_restriction_system}
+    $\towerSegmentSystem{\towerSegmentRestriction{T}{\lambda}}=
+        \towerEarlierSystem{T}{\lambda}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{group_direct_system_restriction,
+            tower_segment_system_groups,
+            tower_segment_system_bonds,
+            tower_segment_restriction_carrier,
+            tower_segment_restriction_stages,
+            tower_segment_restriction_bonds,
+            ordinal_directed_quasiorder_carrier,
+            ordinal_directed_quasiorder_relation}.
+\end{proof}
+
+\subsection{Diagram, canonical, and semantic correctness}
+
+\begin{definition}\label{tower_segment_diagram}
+    $\towerSegmentDiagram{T}{G}{\theta}$ iff
+        $G$ is a group and $\theta$ is an ordinal and
+        $T=\towerSegmentData{\theta}{\towerStages[T]}{\towerBonds[T]}$ and
+        $\carrier[T]=\theta$ and
+        $\towerStages[T]\in
+            \funs{\theta}{\ran{\towerStages[T]}}$ and
+        $\towerBonds[T]\in
+            \funs{\subseteqrel{\theta}}{\ran{\towerBonds[T]}}$ and
+        ($\theta=\emptyset$ or
+            $\towerSegmentSystem{T}$ is a group direct system) and
+        ($\emptyset\in\theta\implies
+            \towerStage{T}{\emptyset}=G$) and
+        (for every $\alpha\in\theta$ such that
+            $\suc{\alpha}\in\theta$ we have
+            $\towerStage{T}{\suc{\alpha}}=
+                \automorphismGroup{\towerStage{T}{\alpha}}$ and
+            $\towerBond{T}{\alpha}{\suc{\alpha}}=
+                \innerMap{\towerStage{T}{\alpha}}$).
+\end{definition}
+
+\begin{proposition}\label{tower_segment_diagram_data}
+    Suppose $\towerSegmentDiagram{T}{G}{\theta}$.
+    Then $G$ is a group and $\theta$ is an ordinal and
+        $T=\towerSegmentData{\theta}{\towerStages[T]}{\towerBonds[T]}$ and
+        $\carrier[T]=\theta$ and
+        $\towerStages[T]\in
+            \funs{\theta}{\ran{\towerStages[T]}}$ and
+        $\towerBonds[T]\in
+            \funs{\subseteqrel{\theta}}{\ran{\towerBonds[T]}}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{tower_segment_diagram}.
+\end{proof}
+
+\begin{proposition}\label{tower_segment_system_is_system}
+    Suppose $\towerSegmentDiagram{T}{G}{\theta}$ and
+        $\theta\neq\emptyset$.
+    Then $\towerSegmentSystem{T}$ is a group direct system.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{tower_segment_diagram}.
+\end{proof}
+
+\begin{proposition}\label{tower_segment_base}
+    Suppose $\towerSegmentDiagram{T}{G}{\theta}$ and
+        $\emptyset\in\theta$.
+    Then $\towerStage{T}{\emptyset}=G$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{tower_segment_diagram}.
+\end{proof}
+
+\begin{proposition}\label{tower_segment_successor}
+    Suppose $\towerSegmentDiagram{T}{G}{\theta}$.
+    Let $\alpha\in\theta$.
+    Suppose $\suc{\alpha}\in\theta$.
+    Then $\towerStage{T}{\suc{\alpha}}=
+            \automorphismGroup{\towerStage{T}{\alpha}}$ and
+        $\towerBond{T}{\alpha}{\suc{\alpha}}=
+            \innerMap{\towerStage{T}{\alpha}}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{tower_segment_diagram}.
+\end{proof}
+
+\begin{proposition}\label{tower_segment_system_stage_group_bridge}
+    Suppose $\towerSegmentSystem{T}$ is a group direct system.
+    Let $\alpha\in\carrier[T]$.
+    Then $\towerStage{T}{\alpha}$ is a group.
+\end{proposition}
+\begin{proof}
+    $\alpha\in\carrier[\towerSegmentSystem{T}]$ by
+        \obv{tower_segment_system_carrier}.
+    Hence $\directSystemGroup{\towerSegmentSystem{T}}{\alpha}$
+        is a group by \obv{direct_system_group_is_group}.
+    Follows by \obv{tower_segment_system_group}.
+\end{proof}
+
+\begin{proposition}\label{tower_segment_system_bond_hom_bridge}
+    Suppose $\towerSegmentSystem{T}$ is a group direct system.
+    Let $\alpha,\beta\in\carrier[T]$.
+    Suppose $\alpha\subseteq\beta$.
+    Then $\groupHom{\towerBond{T}{\alpha}{\beta}}
+        {\towerStage{T}{\alpha}}{\towerStage{T}{\beta}}$.
+\end{proposition}
+\begin{proof}
+    $\alpha,\beta\in\carrier[\towerSegmentSystem{T}]$ and
+        $\alpha\mathrel{\leq[\towerSegmentSystem{T}]}\beta$ by
+        \auto{tower_segment_system_carrier,
+            tower_segment_system_order,subseteqrel}.
+    $\groupHom{\directSystemBond{\towerSegmentSystem{T}}{\alpha}{\beta}}
+        {\directSystemGroup{\towerSegmentSystem{T}}{\alpha}}
+        {\directSystemGroup{\towerSegmentSystem{T}}{\beta}}$ by
+        \obv{direct_system_bond_hom}.
+    Follows by
+        \obv{tower_segment_system_group,
+            tower_segment_system_bond}.
+\end{proof}
+
+\begin{proposition}\label{tower_segment_system_bond_identity_bridge}
+    Suppose $\towerSegmentSystem{T}$ is a group direct system.
+    Let $\alpha\in\carrier[T]$.
+    Then $\towerBond{T}{\alpha}{\alpha}=
+        \identity{\carrier[\towerStage{T}{\alpha}]}$.
+\end{proposition}
+\begin{proof}
+    $\alpha\in\carrier[\towerSegmentSystem{T}]$ by
+        \obv{tower_segment_system_carrier}.
+    $\directSystemBond{\towerSegmentSystem{T}}{\alpha}{\alpha}=
+        \identity{\carrier[
+            \directSystemGroup{\towerSegmentSystem{T}}{\alpha}]}$ by
+        \obv{direct_system_bond_identity}.
+    Follows by
+        \auto{tower_segment_system_group,
+            tower_segment_system_bond}.
+\end{proof}
+
+\begin{proposition}\label{tower_segment_system_bond_composition_bridge}
+    Suppose $\towerSegmentSystem{T}$ is a group direct system.
+    Let $\alpha,\beta,\gamma\in\carrier[T]$.
+    Suppose $\alpha\subseteq\beta$ and $\beta\subseteq\gamma$.
+    Then $\towerBond{T}{\alpha}{\gamma}=
+        \towerBond{T}{\beta}{\gamma}\circ
+            \towerBond{T}{\alpha}{\beta}$.
+\end{proposition}
+\begin{proof}
+    $\alpha,\beta,\gamma\in\carrier[\towerSegmentSystem{T}]$ and
+        $\alpha\mathrel{\leq[\towerSegmentSystem{T}]}\beta$ and
+        $\beta\mathrel{\leq[\towerSegmentSystem{T}]}\gamma$ by
+        \auto{tower_segment_system_carrier,
+            tower_segment_system_order,subseteqrel}.
+    $\directSystemBond{\towerSegmentSystem{T}}{\alpha}{\gamma}=
+        \directSystemBond{\towerSegmentSystem{T}}{\beta}{\gamma}\circ
+            \directSystemBond{\towerSegmentSystem{T}}{\alpha}{\beta}$ by
+        \obv{direct_system_bond_composition}.
+    Follows by \auto{tower_segment_system_bond}.
+\end{proof}
+
+\begin{proposition}\label{tower_segment_index_context}
+    Suppose $\towerSegmentDiagram{T}{G}{\theta}$.
+    Let $\alpha\in\theta$.
+    Then $\towerSegmentSystem{T}$ is a group direct system and
+        $\alpha\in\carrier[T]$.
+\end{proposition}
+\begin{proof}
+    $\theta\neq\emptyset$ by \obv{emptyset}.
+    $\towerSegmentSystem{T}$ is a group direct system by
+        \obv{tower_segment_system_is_system}.
+    $\carrier[T]=\theta$ by
+        \obv{tower_segment_diagram_data}.
+\end{proof}
+
+\begin{proposition}\label{tower_segment_stage_is_group}
+    Suppose $\towerSegmentDiagram{T}{G}{\theta}$.
+    Let $\alpha\in\theta$.
+    Then $\towerStage{T}{\alpha}$ is a group.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \obv{tower_segment_index_context,
+            tower_segment_system_stage_group_bridge}.
+\end{proof}
+
+\begin{proposition}\label{tower_segment_bond_is_hom}
+    Suppose $\towerSegmentDiagram{T}{G}{\theta}$.
+    Let $\alpha,\beta\in\theta$.
+    Suppose $\alpha\subseteq\beta$.
+    Then $\groupHom{\towerBond{T}{\alpha}{\beta}}
+        {\towerStage{T}{\alpha}}{\towerStage{T}{\beta}}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \obv{tower_segment_index_context,
+            tower_segment_system_bond_hom_bridge}.
+\end{proof}
+
+\begin{proposition}\label{tower_segment_bond_identity}
+    Suppose $\towerSegmentDiagram{T}{G}{\theta}$.
+    Let $\alpha\in\theta$.
+    Then $\towerBond{T}{\alpha}{\alpha}=
+        \identity{\carrier[\towerStage{T}{\alpha}]}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \obv{tower_segment_index_context,
+            tower_segment_system_bond_identity_bridge}.
+\end{proof}
+
+\begin{proposition}\label{tower_segment_bond_composition}
+    Suppose $\towerSegmentDiagram{T}{G}{\theta}$.
+    Let $\alpha,\beta,\gamma\in\theta$.
+    Suppose $\alpha\subseteq\beta$ and $\beta\subseteq\gamma$.
+    Then $\towerBond{T}{\alpha}{\gamma}=
+        \towerBond{T}{\beta}{\gamma}\circ
+            \towerBond{T}{\alpha}{\beta}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \obv{tower_segment_index_context,
+            tower_segment_system_bond_composition_bridge}.
+\end{proof}
+
+\begin{proposition}\label{tower_segment_restriction_context}
+    Suppose $\towerSegmentDiagram{T}{G}{\theta}$.
+    Let $\lambda\in\theta$.
+    Suppose $\lambda\neq\emptyset$.
+    Then $\towerSegmentSystem{T}$ is a group direct system and
+        $\theta$ is an ordinal and $\theta\neq\emptyset$ and
+        $\carrier[\towerSegmentSystem{T}]=\theta$ and
+        $\leq[\towerSegmentSystem{T}]=\subseteqrel{\theta}$ and
+        $\lambda$ is an ordinal and $\lambda\subseteq\theta$.
+\end{proposition}
+\begin{proof}
+    $\theta$ is an ordinal and $\carrier[T]=\theta$ by
+        \obv{tower_segment_diagram_data}.
+    $\theta\neq\emptyset$ by \obv{emptyset}.
+    $\towerSegmentSystem{T}$ is a group direct system by
+        \obv{tower_segment_system_is_system}.
+    $\carrier[\towerSegmentSystem{T}]=\theta$ and
+        $\leq[\towerSegmentSystem{T}]=\subseteqrel{\theta}$ by
+        \auto{tower_segment_system_carrier,
+            tower_segment_system_order}.
+    $\lambda$ is an ordinal and $\lambda\subseteq\theta$ by
+        \obv{elem_of_ordinal_is_ordinal,
+            ordinal_elem_implies_subseteq}.
+\end{proof}
+
+\begin{theorem}\label{tower_earlier_system_is_system}
+    Suppose $\towerSegmentDiagram{T}{G}{\theta}$.
+    Let $\lambda\in\theta$.
+    Suppose $\lambda\neq\emptyset$.
+    Then $\towerEarlierSystem{T}{\lambda}$ is a group direct system.
+\end{theorem}
+\begin{proof}
+    Follows by
+        \auto{tower_segment_restriction_context,
+            ordinal_group_direct_system_restriction_is_system}.
+\end{proof}
+
+\begin{proposition}\label{tower_earlier_system_index_substructure}
+    Suppose $\towerSegmentDiagram{T}{G}{\theta}$.
+    Let $\lambda\in\theta$.
+    Suppose $\lambda\neq\emptyset$.
+    Then $\indexSubstructure
+        {\ordinalDirectedQuasiorder{\lambda}}
+        {\towerSegmentSystem{T}}$.
+\end{proposition}
+\begin{proof}
+    $\towerSegmentSystem{T}$ is a group direct system and
+        $\theta$ is an ordinal and $\theta\neq\emptyset$ and
+        $\carrier[\towerSegmentSystem{T}]=\theta$ and
+        $\leq[\towerSegmentSystem{T}]=\subseteqrel{\theta}$ and
+        $\lambda$ is an ordinal and $\lambda\subseteq\theta$ by
+        \obv{tower_segment_restriction_context}.
+    Follows by \obv{ordinal_index_substructure_of_group_system}.
+\end{proof}
+
+\begin{proposition}\label{tower_earlier_system_group_under_diagram}
+    Suppose $\towerSegmentDiagram{T}{G}{\theta}$.
+    Let $\lambda\in\theta$.
+    Let $\alpha\in\lambda$.
+    Then $\directSystemGroup{\towerEarlierSystem{T}{\lambda}}{\alpha}=
+        \towerStage{T}{\alpha}$.
+\end{proposition}
+\begin{proof}
+    $\towerStages[T]$ is a function and
+        $\dom{\towerStages[T]}=\theta$ by
+        \auto{tower_segment_diagram_data,
+            funs_is_function,funs_elim}.
+    $\theta$ is an ordinal and $\lambda\subseteq\theta$ by
+        \obv{tower_segment_diagram_data,
+            elem_of_ordinal_is_ordinal,
+            ordinal_elem_implies_subseteq}.
+    Follows by \obv{tower_earlier_system_group}.
+\end{proof}
+
+\begin{proposition}\label{tower_earlier_system_bond_domain_under_diagram}
+    Suppose $\towerSegmentDiagram{T}{G}{\theta}$.
+    Let $\lambda\in\theta$.
+    Then $\towerBonds[T]$ is a function and
+        $\subseteqrel{\lambda}\subseteq\dom{\towerBonds[T]}$.
+\end{proposition}
+\begin{proof}
+    $\towerBonds[T]$ is a function and
+        $\dom{\towerBonds[T]}=\subseteqrel{\theta}$ by
+        \auto{tower_segment_diagram_data,
+            funs_is_function,funs_elim}.
+    $\theta$ is an ordinal and $\lambda\subseteq\theta$ by
+        \obv{tower_segment_diagram_data,
+            elem_of_ordinal_is_ordinal,
+            ordinal_elem_implies_subseteq}.
+    $\subseteqrel{\lambda}\subseteq\subseteqrel{\theta}$ by
+        \obv{subseteqrel_monotone}.
+\end{proof}
+
+\begin{proposition}\label{tower_earlier_system_bond_under_diagram}
+    Suppose $\towerSegmentDiagram{T}{G}{\theta}$.
+    Let $\lambda\in\theta$.
+    Let $\alpha,\beta\in\lambda$.
+    Suppose $\alpha\subseteq\beta$.
+    Then $\directSystemBond{\towerEarlierSystem{T}{\lambda}}
+            {\alpha}{\beta}=\towerBond{T}{\alpha}{\beta}$.
+\end{proposition}
+\begin{proof}
+    $\towerBonds[T]$ is a function and
+        $\subseteqrel{\lambda}\subseteq\dom{\towerBonds[T]}$ by
+        \obv{tower_earlier_system_bond_domain_under_diagram}.
+    Follows by \obv{tower_earlier_system_bond}.
+\end{proof}
+
+\begin{proposition}\label{tower_earlier_system_bond_embedding_under_diagram}
+    Suppose $\towerSegmentDiagram{T}{G}{\theta}$.
+    Let $\lambda\in\theta$.
+    Let $\alpha,\beta\in\lambda$.
+    Suppose $\alpha\subseteq\beta$ and
+        $\groupEmbedding
+            {\towerBond{T}{\alpha}{\beta}}
+            {\towerStage{T}{\alpha}}
+            {\towerStage{T}{\beta}}$.
+    Then $\groupEmbedding
+        {\directSystemBond{\towerEarlierSystem{T}{\lambda}}
+            {\alpha}{\beta}}
+        {\directSystemGroup{\towerEarlierSystem{T}{\lambda}}{\alpha}}
+        {\directSystemGroup{\towerEarlierSystem{T}{\lambda}}{\beta}}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \obv{tower_earlier_system_group_under_diagram,
+            tower_earlier_system_bond_under_diagram}.
+\end{proof}
+
+\begin{proposition}\label{tower_earlier_system_embedding_condition}
+    Suppose $\towerSegmentDiagram{T}{G}{\theta}$.
+    Let $\lambda\in\theta$.
+    Suppose for all $\alpha,\beta\in\lambda$ such that
+        $\alpha\subseteq\beta$ we have
+        $\groupEmbedding
+            {\towerBond{T}{\alpha}{\beta}}
+            {\towerStage{T}{\alpha}}
+            {\towerStage{T}{\beta}}$.
+    Then for all
+        $\alpha,\beta\in\carrier[\towerEarlierSystem{T}{\lambda}]$
+        such that
+        $\alpha\mathrel{\leq[\towerEarlierSystem{T}{\lambda}]}\beta$
+        we have
+        $\groupEmbedding
+            {\directSystemBond{\towerEarlierSystem{T}{\lambda}}
+                {\alpha}{\beta}}
+            {\directSystemGroup{\towerEarlierSystem{T}{\lambda}}{\alpha}}
+            {\directSystemGroup{\towerEarlierSystem{T}{\lambda}}{\beta}}$.
+\end{proposition}
+\begin{proof}
+    Fix $\alpha,\beta\in
+        \carrier[\towerEarlierSystem{T}{\lambda}]$.
+    Assume $\alpha\mathrel{
+        \leq[\towerEarlierSystem{T}{\lambda}]}\beta$.
+    $\alpha,\beta\in\lambda$ by
+        \obv{tower_earlier_system_index_member}.
+    $\alpha\subseteq\beta$ by
+        \obv{tower_earlier_system_indices_ordered}.
+    Follows by
+        \obv{tower_earlier_system_bond_embedding_under_diagram}.
+\end{proof}
+
+\begin{proposition}\label{tower_earlier_system_embedding_bridge}
+    Suppose $\towerSegmentDiagram{T}{G}{\theta}$.
+    Let $\lambda\in\theta$.
+    Suppose $\lambda\neq\emptyset$.
+    Suppose for all $\alpha,\beta\in\lambda$ such that
+        $\alpha\subseteq\beta$ we have
+        $\groupEmbedding
+            {\towerBond{T}{\alpha}{\beta}}
+            {\towerStage{T}{\alpha}}
+            {\towerStage{T}{\beta}}$.
+    Then $\embeddingGroupDirectSystem{
+        \towerEarlierSystem{T}{\lambda}}$.
+\end{proposition}
+\begin{proof}
+    $\towerEarlierSystem{T}{\lambda}$ is a group direct system by
+        \obv{tower_earlier_system_is_system}.
+    Follows by
+        \obv{tower_earlier_system_embedding_condition,
+            embedding_group_direct_system_intro}.
+\end{proof}
+
+\begin{definition}\label{canonical_tower_segment}
+    $\canonicalTowerSegment{T}{G}{\theta}$ iff
+        $\towerSegmentDiagram{T}{G}{\theta}$ and
+        for every limit ordinal $\lambda\in\theta$ we have
+            $\towerStage{T}{\lambda}=
+                \groupDirectLimit{\towerEarlierSystem{T}{\lambda}}$ and
+            $\towerIncomingFamily{T}{\lambda}=
+                \directLimitCanonicalFamily{
+                    \towerEarlierSystem{T}{\lambda}}$.
+\end{definition}
+
+\begin{definition}\label{coherent_tower_segment}
+    $\coherentTowerSegment{T}{G}{\theta}$ iff
+        $\towerSegmentDiagram{T}{G}{\theta}$ and
+        for every limit ordinal $\lambda\in\theta$ we have
+            $\directLimitCocone
+                {\towerEarlierSystem{T}{\lambda}}
+                {\towerStage{T}{\lambda}}
+                {\towerIncomingFamily{T}{\lambda}}$.
+\end{definition}
+
+\begin{proposition}\label{canonical_tower_segment_diagram}
+    Suppose $\canonicalTowerSegment{T}{G}{\theta}$.
+    Then $\towerSegmentDiagram{T}{G}{\theta}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{canonical_tower_segment}.
+\end{proof}
+
+\begin{proposition}\label{coherent_tower_segment_diagram}
+    Suppose $\coherentTowerSegment{T}{G}{\theta}$.
+    Then $\towerSegmentDiagram{T}{G}{\theta}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{coherent_tower_segment}.
+\end{proof}
+
+\begin{proposition}\label{canonical_tower_segment_limit}
+    Suppose $\canonicalTowerSegment{T}{G}{\theta}$.
+    Let $\lambda\in\theta$.
+    Suppose $\lambda$ is a limit ordinal.
+    Then $\towerStage{T}{\lambda}=
+            \groupDirectLimit{\towerEarlierSystem{T}{\lambda}}$ and
+        $\towerIncomingFamily{T}{\lambda}=
+            \directLimitCanonicalFamily{
+                \towerEarlierSystem{T}{\lambda}}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{canonical_tower_segment}.
+\end{proof}
+
+\begin{proposition}\label{tower_limit_bond_from_incoming_family}
+    Suppose $\towerIncomingFamily{T}{\lambda}=
+        \directLimitCanonicalFamily{S}$.
+    Suppose $\carrier[S]=\lambda$.
+    Let $\beta\in\lambda$.
+    Then $\towerBond{T}{\beta}{\lambda}=
+        \directSystemCanonicalMap{S}{\beta}$.
+\end{proposition}
+\begin{proof}
+    $\beta\in\carrier[S]$.
+    Follows by
+        \auto{tower_incoming_family_apply,
+            direct_limit_canonical_family_apply}.
+\end{proof}
+
+\begin{proposition}\label{canonical_tower_segment_limit_bond}
+    Suppose $\canonicalTowerSegment{T}{G}{\theta}$.
+    Let $\lambda\in\theta$.
+    Suppose $\lambda$ is a limit ordinal.
+    Let $\beta\in\lambda$.
+    Then $\towerBond{T}{\beta}{\lambda}=
+        \directSystemCanonicalMap{
+            \towerEarlierSystem{T}{\lambda}}{\beta}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{canonical_tower_segment_limit,
+            tower_earlier_system_carrier,
+            tower_limit_bond_from_incoming_family}.
+\end{proof}
+
+\begin{proposition}\label{coherent_tower_segment_limit}
+    Suppose $\coherentTowerSegment{T}{G}{\theta}$.
+    Let $\lambda\in\theta$.
+    Suppose $\lambda$ is a limit ordinal.
+    Then $\directLimitCocone
+        {\towerEarlierSystem{T}{\lambda}}
+        {\towerStage{T}{\lambda}}
+        {\towerIncomingFamily{T}{\lambda}}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{coherent_tower_segment}.
+\end{proof}
+
+\begin{theorem}\label{canonical_tower_segment_is_coherent}
+    Suppose $\canonicalTowerSegment{T}{G}{\theta}$.
+    Then $\coherentTowerSegment{T}{G}{\theta}$.
+\end{theorem}
+\begin{proof}
+    $\towerSegmentDiagram{T}{G}{\theta}$ by
+        \obv{canonical_tower_segment_diagram}.
+    Show that for every limit ordinal $\lambda\in\theta$ we have
+        $\directLimitCocone
+            {\towerEarlierSystem{T}{\lambda}}
+            {\towerStage{T}{\lambda}}
+            {\towerIncomingFamily{T}{\lambda}}$.
+    \begin{subproof}
+        Fix $\lambda$.
+        Assume $\lambda\in\theta$.
+        Assume $\lambda$ is a limit ordinal.
+        Hence $\lambda\neq\emptyset$ by
+            \obv{zero_not_limitordinal}.
+        Let $S=\towerEarlierSystem{T}{\lambda}$.
+        $S$ is a group direct system by
+            \obv{tower_earlier_system_is_system}.
+        $\directLimitCocone
+            {S}{\groupDirectLimit{S}}{\directLimitCanonicalFamily{S}}$ by
+            \obv{group_direct_limit_is_direct_limit_cocone}.
+        $\towerStage{T}{\lambda}=\groupDirectLimit{S}$ and
+            $\towerIncomingFamily{T}{\lambda}=
+                \directLimitCanonicalFamily{S}$ by
+            \auto{canonical_tower_segment_limit}.
+    \end{subproof}
+    Follows by \obv{coherent_tower_segment}.
+\end{proof}
+
+\begin{theorem}\label{tower_incoming_family_eq_canonical_family}
+    Suppose $\carrier[S]=\lambda$.
+    Suppose for every $\beta\in\lambda$ we have
+        $\towerBond{T}{\beta}{\lambda}=
+            \directSystemCanonicalMap{S}{\beta}$.
+    Then $\towerIncomingFamily{T}{\lambda}=
+        \directLimitCanonicalFamily{S}$.
+\end{theorem}
+\begin{proof}
+    Let $F=\towerIncomingFamily{T}{\lambda}$.
+    Let $E=\directLimitCanonicalFamily{S}$.
+    $F\in\funs{\lambda}{\ran{F}}$ by
+        \auto{tower_incoming_family_type}.
+    $E\in\funs{\carrier[S]}{\ran{E}}$ by
+        \auto{direct_limit_canonical_family_type}.
+    Hence $E\in\funs{\lambda}{\ran{E}}$.
+    Show that for every $\beta\in\lambda$ we have
+        $\apply{F}{\beta}=\apply{E}{\beta}$.
+    \begin{subproof}
+        Fix $\beta\in\lambda$.
+        Hence $\beta\in\carrier[S]$.
+        $\apply{F}{\beta}=\towerBond{T}{\beta}{\lambda}$ by
+            \auto{tower_incoming_family_apply}.
+        $\apply{E}{\beta}=\directSystemCanonicalMap{S}{\beta}$ by
+            \auto{direct_limit_canonical_family_apply}.
+    \end{subproof}
+    Follows by \auto{typed_functions_equal_from_agreement}.
+\end{proof}

@@ -1,0 +1,371 @@
+\import{algebra/monoid/homomorphism.tex}
+\import{algebra/semigroup/positive-power.tex}
+\import{set/iteration.tex}
+\import{nat/multiplication.tex}
+
+\section{Natural powers in monoids}
+
+Natural powers are iterates of right multiplication, starting at the neutral
+element.  This is the sole recursion owner for algebraic natural powers.
+
+\begin{definition}\label{monoid_right_translation}
+    $\monoidRightTranslation{M}{x}=
+        \{(y,\mul[M](y,x))\mid y\in\carrier[M]\}$.
+\end{definition}
+
+\begin{proposition}\label{monoid_right_translation_iff}
+    $(y,z)\in\monoidRightTranslation{M}{x}$ iff
+        $y\in\carrier[M]$ and $z=\mul[M](y,x)$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{monoid_right_translation,pair_eq_iff}.
+\end{proof}
+
+\begin{proposition}\label{monoid_right_translation_type}
+    Let $M$ be a monoid.
+    Let $x\in\carrier[M]$.
+    Then $\monoidRightTranslation{M}{x}\in
+        \funs{\carrier[M]}{\carrier[M]}$.
+\end{proposition}
+\begin{proof}
+    Let $f=\monoidRightTranslation{M}{x}$.
+    $f$ is a relation by
+        \auto{relation,monoid_right_translation}.
+    $f$ is right-unique by
+        \auto{rightunique,monoid_right_translation_iff}.
+    $\dom{f}=\carrier[M]$ by
+        \auto{setext,dom_iff,monoid_right_translation_iff}.
+    Show that for every $y\in\dom{f}$ we have $f(y)\in\carrier[M]$.
+    \begin{subproof}
+        Fix $y\in\dom{f}$.
+        Hence $y\in\carrier[M]$.
+        $f(y)=\mul[M](y,x)$ by
+            \obv{function_apply_intro,monoid_right_translation_iff}.
+        Follows by \auto{monoid_is_magma,magma_welldef}.
+    \end{subproof}
+    Hence $f$ is a function to $\carrier[M]$.
+    Follows by \auto{funs_intro}.
+\end{proof}
+
+\begin{proposition}\label{monoid_right_translation_apply}
+    Let $M$ be a monoid.
+    Let $x,y\in\carrier[M]$.
+    Then $\apply{\monoidRightTranslation{M}{x}}{y}=\mul[M](y,x)$.
+\end{proposition}
+\begin{proof}
+    $\monoidRightTranslation{M}{x}$ is a function by
+        \auto{monoid_right_translation_type,funs_is_function}.
+    $(y,\mul[M](y,x))\in\monoidRightTranslation{M}{x}$ by
+        \obv{monoid_right_translation_iff}.
+    Follows by \obv{function_apply_intro}.
+\end{proof}
+
+\begin{definition}\label{monoid_power}
+    $\monoidPower{M}{x}{n}=
+        \iterationAt{\monoidRightTranslation{M}{x}}{\neutral[M]}{n}$.
+\end{definition}
+
+\begin{proposition}\label{monoid_power_zero}
+    $\monoidPower{M}{x}{\emptyset}=\neutral[M]$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{monoid_power,iteration_at_zero}.
+\end{proof}
+
+\begin{proposition}\label{monoid_power_type}
+    Let $M$ be a monoid.
+    Let $x\in\carrier[M]$.
+    Let $n$ be a natural number.
+    Then $\monoidPower{M}{x}{n}\in\carrier[M]$.
+\end{proposition}
+\begin{proof}
+    $\monoidRightTranslation{M}{x}\in
+        \funs{\carrier[M]}{\carrier[M]}$ by
+        \obv{monoid_right_translation_type}.
+    $\neutral[M]\in\carrier[M]$ by
+        \obv{monoid_is_unital_magma,unitalmagma_type}.
+    Follows by \auto{monoid_power,iteration_at_closed}.
+\end{proof}
+
+\begin{proposition}\label{monoid_power_successor}
+    Let $M$ be a monoid.
+    Let $x\in\carrier[M]$.
+    Let $n$ be a natural number.
+    Then $\monoidPower{M}{x}{\suc{n}}=
+        \mul[M](\monoidPower{M}{x}{n},x)$.
+\end{proposition}
+\begin{proof}
+    $\monoidPower{M}{x}{n}\in\carrier[M]$ by
+        \obv{monoid_power_type}.
+    $\monoidPower{M}{x}{\suc{n}}=
+        \apply{\monoidRightTranslation{M}{x}}{
+            \monoidPower{M}{x}{n}}$ by
+        \auto{monoid_power,iteration_at_successor}.
+    Follows by \obv{monoid_right_translation_apply}.
+\end{proof}
+
+\begin{proposition}\label{monoid_power_one}
+    Let $M$ be a monoid.
+    Let $x\in\carrier[M]$.
+    Then $\monoidPower{M}{x}{\suc{\emptyset}}=x$.
+\end{proposition}
+\begin{proof}
+    $\emptyset$ is a natural number by \obv{omega_empty}.
+    $\monoidPower{M}{x}{\suc{\emptyset}}=
+        \mul[M](\monoidPower{M}{x}{\emptyset},x)$ by
+        \obv{monoid_power_successor}.
+    Follows by
+        \auto{monoid_power_zero,monoid_is_unital_magma,
+            unitalmagma_left}.
+\end{proof}
+
+\begin{proposition}\label{monoid_power_neutral}
+    Let $M$ be a monoid.
+    Let $n$ be a natural number.
+    Then $\monoidPower{M}{\neutral[M]}{n}=\neutral[M]$.
+\end{proposition}
+\begin{proof}
+    Let $C=\{k\in\naturals\mid
+        \monoidPower{M}{\neutral[M]}{k}=\neutral[M]\}$.
+    $\emptyset\in C$ by
+        \obv{omega_empty,monoid_power_zero}.
+    Show that for every $k\in C$ we have $\suc{k}\in C$.
+    \begin{subproof}
+        Fix $k\in C$.
+        Hence $k$ is a natural number and
+            $\monoidPower{M}{\neutral[M]}{k}=\neutral[M]$.
+        $\neutral[M]\in\carrier[M]$ by
+            \obv{monoid_is_unital_magma,unitalmagma_type}.
+        $\monoidPower{M}{\neutral[M]}{\suc{k}}
+            =\mul[M](\monoidPower{M}{\neutral[M]}{k},\neutral[M])$ by
+            \obv{monoid_power_successor}.
+        Hence $\monoidPower{M}{\neutral[M]}{\suc{k}}
+            =\neutral[M]$ by
+            \auto{monoid_is_unital_magma,unitalmagma_right}.
+        $\suc{k}$ is a natural number by \obv{omega_successor}.
+    \end{subproof}
+    Hence $C$ is an inductive set by \obv{inductive_set}.
+    Hence every natural number is an element of $C$ by
+        \obv{omega_minimal}.
+    Hence $n\in C$.
+\end{proof}
+
+\begin{theorem}\label{semigroup_positive_power_eq_monoid_power}
+    Let $M$ be a monoid and $x\in\carrier[M]$.
+    Let $n$ be a natural number.
+    Suppose $n\neq\emptyset$.
+    Then $\semigroupPositivePower{M}{x}{n}=\monoidPower{M}{x}{n}$.
+\end{theorem}
+\begin{proof}
+    Let $C=\{k\in\naturals\mid
+        \text{$\semigroupPositivePower{M}{x}{\suc{k}}
+            =\monoidPower{M}{x}{\suc{k}}$}\}$.
+    $\semigroupPositivePower{M}{x}{\suc{\emptyset}}=x$ by
+        \obv{semigroup_positive_power_one}.
+    $\monoidPower{M}{x}{\suc{\emptyset}}=x$ by
+        \obv{monoid_power_one}.
+    Hence $\emptyset\in C$ by \obv{omega_empty}.
+
+    Show that for every $k\in C$ we have $\suc{k}\in C$.
+    \begin{subproof}
+        Fix $k\in C$.
+        Hence $k$ is a natural number and
+            $\semigroupPositivePower{M}{x}{\suc{k}}
+                =\monoidPower{M}{x}{\suc{k}}$.
+        $\suc{k}$ is a natural number and $\suc{k}\neq\emptyset$ by
+            \obv{omega_successor,suc_neq_emptyset}.
+        $\semigroupPositivePower{M}{x}{\suc{\suc{k}}}
+            =\mul[M](\semigroupPositivePower{M}{x}{\suc{k}},x)$ by
+            \obv{semigroup_positive_power_successor}.
+        $\monoidPower{M}{x}{\suc{\suc{k}}}
+            =\mul[M](\monoidPower{M}{x}{\suc{k}},x)$ by
+            \obv{monoid_power_successor}.
+        Hence $\semigroupPositivePower{M}{x}{\suc{\suc{k}}}
+            =\monoidPower{M}{x}{\suc{\suc{k}}}$.
+        $\suc{\suc{k}}$ is a natural number by
+            \obv{omega_successor}.
+    \end{subproof}
+    Hence $C$ is an inductive set by \obv{inductive_set}.
+    Hence every natural number is an element of $C$ by
+        \obv{omega_minimal}.
+    $\unions{n}$ is a natural number and
+        $n=\suc{\unions{n}}$ by
+        \obv{natural_nonzero_successor_of_union}.
+    Hence $\unions{n}\in C$.
+\end{proof}
+
+\begin{theorem}\label{monoid_power_addition}
+    Let $M$ be a monoid.
+    Let $x\in\carrier[M]$.
+    Let $m,n$ be natural numbers.
+    Then $\monoidPower{M}{x}{m+n}=
+        \mul[M](\monoidPower{M}{x}{m},\monoidPower{M}{x}{n})$.
+\end{theorem}
+\begin{proof}
+    Let $C=\{k\in\naturals\mid
+        \text{$\monoidPower{M}{x}{m+k}=
+            \mul[M](\monoidPower{M}{x}{m},
+                \monoidPower{M}{x}{k})$}\}$.
+    $\monoidPower{M}{x}{m},\monoidPower{M}{x}{\emptyset}
+        \in\carrier[M]$ by
+        \obv{monoid_power_type,omega_empty}.
+    $m+\emptyset=m$ by \obv{num_addition_zero_right}.
+    $\monoidPower{M}{x}{\emptyset}=\neutral[M]$ by
+        \obv{monoid_power_zero}.
+    Hence $\emptyset\in C$ by
+        \auto{omega_empty,monoid_is_unital_magma,unitalmagma_right}.
+    Show that for every $k\in C$ we have $\suc{k}\in C$.
+    \begin{subproof}
+        Fix $k\in C$.
+        Hence $k$ is a natural number and
+            $\monoidPower{M}{x}{m+k}=
+                \mul[M](\monoidPower{M}{x}{m},
+                    \monoidPower{M}{x}{k})$.
+        $m+k$ is a natural number by
+            \obv{num_addition_on_naturals}.
+        $m+\suc{k}=\suc{m+k}$ by
+            \obv{num_addition_successor_right}.
+        $\monoidPower{M}{x}{m+k},\monoidPower{M}{x}{m},
+            \monoidPower{M}{x}{k}\in\carrier[M]$ by
+            \obv{monoid_power_type}.
+        $\monoidPower{M}{x}{m+\suc{k}}=
+            \mul[M](\monoidPower{M}{x}{m+k},x)$ by
+            \auto{monoid_power_successor}.
+        Hence $\monoidPower{M}{x}{m+\suc{k}}=
+            \mul[M](
+                \mul[M](\monoidPower{M}{x}{m},
+                    \monoidPower{M}{x}{k}),x)$.
+        $\monoidPower{M}{x}{\suc{k}}=
+            \mul[M](\monoidPower{M}{x}{k},x)$ by
+            \obv{monoid_power_successor}.
+        Hence $\monoidPower{M}{x}{m+\suc{k}}=
+            \mul[M](\monoidPower{M}{x}{m},
+                \monoidPower{M}{x}{\suc{k}})$ by
+            \auto{monoid_assoc}.
+        $\suc{k}$ is a natural number by \obv{omega_successor}.
+    \end{subproof}
+    Hence $C$ is an inductive set by \obv{inductive_set}.
+    Hence every natural number is an element of $C$ by
+        \obv{omega_minimal}.
+    Hence $n\in C$.
+\end{proof}
+
+\begin{theorem}\label{monoid_power_multiplication}
+    Let $M$ be a monoid.
+    Let $x\in\carrier[M]$.
+    Let $m,n$ be natural numbers.
+    Then $\monoidPower{M}{x}{\naturalMul{m}{n}}=
+        \monoidPower{M}{\monoidPower{M}{x}{m}}{n}$.
+\end{theorem}
+\begin{proof}
+    Let $y=\monoidPower{M}{x}{m}$.
+    $y\in\carrier[M]$ by \auto{monoid_power_type}.
+    Let $C=\{k\in\naturals\mid
+        \monoidPower{M}{x}{\naturalMul{m}{k}}=
+            \monoidPower{M}{y}{k}\}$.
+    $\naturalMul{m}{\emptyset}=\emptyset$ by
+        \obv{natural_multiplication_zero_right}.
+    Hence $\emptyset\in C$ by
+        \auto{omega_empty,monoid_power_zero}.
+    Show that for every $k\in C$ we have $\suc{k}\in C$.
+    \begin{subproof}
+        Fix $k\in C$.
+        Hence $k$ is a natural number and
+            $\monoidPower{M}{x}{\naturalMul{m}{k}}=
+                \monoidPower{M}{y}{k}$.
+        $\naturalMul{m}{k}$ is a natural number by
+            \obv{natural_multiplication_closed}.
+        $\naturalMul{m}{\suc{k}}=\naturalMul{m}{k}+m$ by
+            \obv{natural_multiplication_successor_right}.
+        $\monoidPower{M}{x}{\naturalMul{m}{\suc{k}}}=
+            \mul[M](\monoidPower{M}{x}{\naturalMul{m}{k}},y)$ by
+            \auto{monoid_power_addition}.
+        $\monoidPower{M}{y}{\suc{k}}=
+            \mul[M](\monoidPower{M}{y}{k},y)$ by
+            \obv{monoid_power_successor}.
+        Hence $\monoidPower{M}{x}{\naturalMul{m}{\suc{k}}}=
+            \monoidPower{M}{y}{\suc{k}}$.
+        $\suc{k}$ is a natural number by \obv{omega_successor}.
+    \end{subproof}
+    Hence $C$ is an inductive set by \obv{inductive_set}.
+    Hence every natural number is an element of $C$ by
+        \obv{omega_minimal}.
+    Hence $n\in C$.
+\end{proof}
+
+\begin{theorem}\label{monoid_power_of_commuting_product}
+    Let $M$ be a monoid and $x,y\in\carrier[M]$.
+    Suppose $\mul[M](x,y)=\mul[M](y,x)$.
+    Let $n$ be a natural number.
+    Then
+        $\monoidPower{M}{\mul[M](x,y)}{n}
+            =\mul[M](\monoidPower{M}{x}{n},
+                \monoidPower{M}{y}{n})$.
+\end{theorem}
+\begin{proof}
+    Hence $\mul[M](x,y)\in\carrier[M]$ by \obv{magma_welldef}.
+    \begin{byCase}
+        \caseOf{$n=\emptyset$.}
+            $\monoidPower{M}{\mul[M](x,y)}{n}=\neutral[M]$ and
+                $\monoidPower{M}{x}{n}=\neutral[M]$ and
+                $\monoidPower{M}{y}{n}=\neutral[M]$ by
+                \auto{monoid_power_zero}.
+            $\mul[M](\neutral[M],\neutral[M])=\neutral[M]$ by
+                \obv{unitalmagma_mul_neutral_neutral}.
+        \caseOf{$n\neq\emptyset$.}
+            $\semigroupPositivePower{M}{\mul[M](x,y)}{n}
+                =\mul[M](\semigroupPositivePower{M}{x}{n},
+                    \semigroupPositivePower{M}{y}{n})$ by
+                \obv{semigroup_positive_power_of_commuting_product}.
+            $\semigroupPositivePower{M}{\mul[M](x,y)}{n}
+                =\monoidPower{M}{\mul[M](x,y)}{n}$ and
+                $\semigroupPositivePower{M}{x}{n}
+                    =\monoidPower{M}{x}{n}$ and
+                $\semigroupPositivePower{M}{y}{n}
+                    =\monoidPower{M}{y}{n}$ by
+                \obv{semigroup_positive_power_eq_monoid_power}.
+    \end{byCase}
+\end{proof}
+
+\begin{theorem}\label{monoid_hom_preserves_power}
+    Suppose $f$ is a monoid homomorphism from $M$ to $N$.
+    Let $x\in\carrier[M]$.
+    Let $n$ be a natural number.
+    Then $f(\monoidPower{M}{x}{n})=
+        \monoidPower{N}{f(x)}{n}$.
+\end{theorem}
+\begin{proof}
+    Let $C=\{k\in\naturals\mid
+        f(\monoidPower{M}{x}{k})=
+            \monoidPower{N}{f(x)}{k}\}$.
+    $f(\neutral[M])=\neutral[N]$ by \obv{monoid_hom_neutral}.
+    Hence $\emptyset\in C$ by
+        \auto{omega_empty,monoid_power_zero}.
+    Show that for every $k\in C$ we have $\suc{k}\in C$.
+    \begin{subproof}
+        Fix $k\in C$.
+        Hence $k$ is a natural number and
+            $f(\monoidPower{M}{x}{k})=
+                \monoidPower{N}{f(x)}{k}$.
+        $\monoidPower{M}{x}{k}\in\carrier[M]$ by
+            \obv{monoid_power_type}.
+        $f(x)\in\carrier[N]$ by \obv{monoid_hom_apply_type}.
+        $f(\mul[M](\monoidPower{M}{x}{k},x))=
+            \mul[N](f(\monoidPower{M}{x}{k}),f(x))$ by
+            \obv{monoid_hom_mul}.
+        $\monoidPower{M}{x}{\suc{k}}=
+            \mul[M](\monoidPower{M}{x}{k},x)$ by
+            \obv{monoid_power_successor}.
+        $\monoidPower{N}{f(x)}{\suc{k}}=
+            \mul[N](\monoidPower{N}{f(x)}{k},f(x))$ by
+            \obv{monoid_power_successor}.
+        Hence $f(\monoidPower{M}{x}{\suc{k}})=
+            \monoidPower{N}{f(x)}{\suc{k}}$.
+        $\suc{k}$ is a natural number by \obv{omega_successor}.
+    \end{subproof}
+    Hence $C$ is an inductive set by \obv{inductive_set}.
+    Hence every natural number is an element of $C$ by
+        \obv{omega_minimal}.
+    Hence $n\in C$.
+\end{proof}

@@ -1,0 +1,490 @@
+\import{algebra/group/homomorphism.tex}
+
+\section{Generated subgroups}
+
+Generated subgroups are carriers in an explicit ambient group.  The
+construction is the bounded intersection of the subgroup carriers that
+contain the proposed generators.  Its mathematical laws therefore carry the
+usual group and carrier guards.  The set-coded construction itself is total;
+direct membership and leastness are both public, and no ambient group is
+inferred from the set of generators alone.
+
+\begin{definition}\label{subgroup_cover_family}
+    $\subgroupCoverFamily{A}{G}=
+        \{K\in\pow{\carrier[G]}\mid
+            \subgroup{K}{G}\land A\subseteq K\}$.
+\end{definition}
+
+\begin{proposition}\label{subgroup_cover_family_iff}
+    Let $G$ be a group.
+    Let $A$ be a subset of $\carrier[G]$.
+    $K\in\subgroupCoverFamily{A}{G}$ iff
+        $K\subseteq\carrier[G]$ and
+        $\subgroup{K}{G}$ and
+        $A\subseteq K$.
+\end{proposition}
+\begin{proof}
+    Show that if $K\in\subgroupCoverFamily{A}{G}$, then
+        $K\subseteq\carrier[G]$ and
+        $\subgroup{K}{G}$ and
+        $A\subseteq K$.
+    \begin{subproof}
+        Assume $K\in\subgroupCoverFamily{A}{G}$.
+        Hence $K\in\pow{\carrier[G]}$ and
+            $\subgroup{K}{G}$ and $A\subseteq K$ by
+            \obv{subgroup_cover_family}.
+        Hence $K\subseteq\carrier[G]$ by \obv{powerset_elim}.
+    \end{subproof}
+    Show that if $K\subseteq\carrier[G]$ and
+        $\subgroup{K}{G}$ and $A\subseteq K$, then
+        $K\in\subgroupCoverFamily{A}{G}$.
+    \begin{subproof}
+        Assume $K\subseteq\carrier[G]$ and
+            $\subgroup{K}{G}$ and $A\subseteq K$.
+        Hence $K\in\pow{\carrier[G]}$ by \obv{powerset_intro}.
+        Follows by \obv{subgroup_cover_family}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{proposition}\label{subgroup_cover_family_contains_carrier}
+    Let $G$ be a group.
+    Let $A$ be a subset of $\carrier[G]$.
+    Then $\carrier[G]\in\subgroupCoverFamily{A}{G}$.
+\end{proposition}
+\begin{proof}
+    $\subgroup{\carrier[G]}{G}$ by
+        \obv{full_carrier_subgroup}.
+    Follows by
+        \auto{subgroup_cover_family_iff,subseteq_refl}.
+\end{proof}
+
+\begin{corollary}\label{subgroup_cover_family_inhabited}
+    Let $G$ be a group.
+    Let $A$ be a subset of $\carrier[G]$.
+    Then $\subgroupCoverFamily{A}{G}$ is inhabited.
+\end{corollary}
+\begin{proof}
+    Follows by \obv{subgroup_cover_family_contains_carrier}.
+\end{proof}
+
+\begin{definition}\label{generated_subgroup}
+    $\generatedSubgroup{A}{G}=
+        \inters{\subgroupCoverFamily{A}{G}}$.
+\end{definition}
+
+\begin{proposition}\label{generated_subgroup_subseteq_carrier}
+    Let $G$ be a group.
+    Let $A$ be a subset of $\carrier[G]$.
+    Then $\generatedSubgroup{A}{G}\subseteq\carrier[G]$.
+\end{proposition}
+\begin{proof}
+    $\carrier[G]\in\subgroupCoverFamily{A}{G}$ by
+        \obv{subgroup_cover_family_contains_carrier}.
+    $\inters{\subgroupCoverFamily{A}{G}}\subseteq\carrier[G]$ by
+        \obv{inters_subseteq_elem}.
+    Follows by \obv{generated_subgroup}.
+\end{proof}
+
+\begin{proposition}\label{generated_subgroup_contains_generators}
+    Let $G$ be a group.
+    Let $A$ be a subset of $\carrier[G]$.
+    Then $A\subseteq\generatedSubgroup{A}{G}$.
+\end{proposition}
+\begin{proof}
+    $\subgroupCoverFamily{A}{G}$ is inhabited by
+        \obv{subgroup_cover_family_inhabited}.
+    For every $K\in\subgroupCoverFamily{A}{G}$ we have $A\subseteq K$ by
+        \obv{subgroup_cover_family_iff}.
+    Hence $A\subseteq\inters{\subgroupCoverFamily{A}{G}}$ by
+        \obv{inters_greatest}.
+    Follows by \obv{generated_subgroup}.
+\end{proof}
+
+\begin{theorem}\label{generated_subgroup_is_subgroup}
+    Let $G$ be a group.
+    Let $A$ be a subset of $\carrier[G]$.
+    Then $\subgroup{\generatedSubgroup{A}{G}}{G}$.
+\end{theorem}
+\begin{proof}
+    Let $C=\subgroupCoverFamily{A}{G}$.
+    Let $P=\generatedSubgroup{A}{G}$.
+    $C$ is inhabited by \auto{subgroup_cover_family_inhabited}.
+    $P=\inters{C}$ by \obv{generated_subgroup}.
+    $P\subseteq\carrier[G]$ by
+        \auto{generated_subgroup_subseteq_carrier}.
+    Show that $\neutral[G]\in P$.
+    \begin{subproof}
+        Show that for every $K\in C$ we have $\neutral[G]\in K$.
+        \begin{subproof}
+            Fix $K\in C$.
+            $\subgroup{K}{G}$ by \auto{subgroup_cover_family_iff}.
+            Follows by \obv{subgroup_neutral}.
+        \end{subproof}
+        Hence $\neutral[G]\in\inters{C}$ by \obv{inters_intro}.
+    \end{subproof}
+    Show that for all $x,y\in P$ we have $\mul[G](x,y)\in P$.
+    \begin{subproof}
+        Fix $x,y\in P$.
+        Show that for every $K\in C$ we have $\mul[G](x,y)\in K$.
+        \begin{subproof}
+            Fix $K\in C$.
+            $x,y\in\inters{C}$.
+            Hence $x,y\in K$ by \obv{inters_destr}.
+            $\subgroup{K}{G}$ by \auto{subgroup_cover_family_iff}.
+            Follows by \obv{subgroup_mul}.
+        \end{subproof}
+        Hence $\mul[G](x,y)\in\inters{C}$ by \obv{inters_intro}.
+    \end{subproof}
+    Show that for every $x\in P$ we have $\groupInv[G](x)\in P$.
+    \begin{subproof}
+        Fix $x\in P$.
+        Show that for every $K\in C$ we have $\groupInv[G](x)\in K$.
+        \begin{subproof}
+            Fix $K\in C$.
+            $x\in\inters{C}$.
+            Hence $x\in K$ by \obv{inters_destr}.
+            $\subgroup{K}{G}$ by \auto{subgroup_cover_family_iff}.
+            Follows by \obv{subgroup_inv}.
+        \end{subproof}
+        Hence $\groupInv[G](x)\in\inters{C}$ by \obv{inters_intro}.
+    \end{subproof}
+    Follows by \auto{subgroup}.
+\end{proof}
+
+\begin{theorem}\label{generated_subgroup_least}
+    Let $G$ be a group.
+    Let $A$ be a subset of $\carrier[G]$.
+    Suppose $\subgroup{K}{G}$ and $A\subseteq K$.
+    Then $\generatedSubgroup{A}{G}\subseteq K$.
+\end{theorem}
+\begin{proof}
+    $K\subseteq\carrier[G]$ by \obv{subgroup_subseteq}.
+    Hence $K\in\subgroupCoverFamily{A}{G}$ by
+        \auto{subgroup_cover_family_iff}.
+    $\inters{\subgroupCoverFamily{A}{G}}\subseteq K$ by
+        \obv{inters_subseteq_elem}.
+    Follows by \obv{generated_subgroup}.
+\end{proof}
+
+\begin{theorem}\label{generated_subgroup_eq_trivial_iff}
+    Let $G$ be a group.
+    Let $A\subseteq\carrier[G]$.
+    Then
+        $\generatedSubgroup{A}{G}=\trivialSubgroupCarrier{G}$ iff
+        $A\subseteq\trivialSubgroupCarrier{G}$.
+\end{theorem}
+\begin{proof}
+    Show that if
+        $\generatedSubgroup{A}{G}=\trivialSubgroupCarrier{G}$, then
+        $A\subseteq\trivialSubgroupCarrier{G}$.
+    \begin{subproof}
+        Assume
+            $\generatedSubgroup{A}{G}=\trivialSubgroupCarrier{G}$.
+        $A\subseteq\generatedSubgroup{A}{G}$ by
+            \obv{generated_subgroup_contains_generators}.
+    \end{subproof}
+    Show that if $A\subseteq\trivialSubgroupCarrier{G}$, then
+        $\generatedSubgroup{A}{G}=\trivialSubgroupCarrier{G}$.
+    \begin{subproof}
+        Assume $A\subseteq\trivialSubgroupCarrier{G}$.
+        $\subgroup{\trivialSubgroupCarrier{G}}{G}$ by
+            \obv{trivial_carrier_subgroup}.
+        Hence
+            $\generatedSubgroup{A}{G}\subseteq
+                \trivialSubgroupCarrier{G}$ by
+            \obv{generated_subgroup_least}.
+        $\subgroup{\generatedSubgroup{A}{G}}{G}$ by
+            \obv{generated_subgroup_is_subgroup}.
+        Hence $\neutral[G]\in\generatedSubgroup{A}{G}$ by
+            \obv{subgroup_neutral}.
+        Hence
+            $\trivialSubgroupCarrier{G}\subseteq
+                \generatedSubgroup{A}{G}$ by
+            \auto{trivial_subgroup_carrier,singleton_subset_intro}.
+        Follows by \obv{subseteq_antisymmetric}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{corollary}\label{generated_subgroup_emptyset}
+    Let $G$ be a group.
+    Then
+        $\generatedSubgroup{\emptyset}{G}=
+            \trivialSubgroupCarrier{G}$.
+\end{corollary}
+\begin{proof}
+    $\emptyset\subseteq\carrier[G]$ and
+        $\emptyset\subseteq\trivialSubgroupCarrier{G}$ by
+        \obv{emptyset_subseteq}.
+    Follows by \obv{generated_subgroup_eq_trivial_iff}.
+\end{proof}
+
+\begin{theorem}\label{generated_subgroup_iff}
+    Let $G$ be a group.
+    Let $A$ be a subset of $\carrier[G]$.
+    Then $x\in\generatedSubgroup{A}{G}$ iff for every $K$ such that
+        $\subgroup{K}{G}$ and $A\subseteq K$ we have $x\in K$.
+\end{theorem}
+\begin{proof}
+    Let $C=\subgroupCoverFamily{A}{G}$.
+    $C$ is inhabited by \auto{subgroup_cover_family_inhabited}.
+    Show that if $x\in\generatedSubgroup{A}{G}$, then for every $K$ such that
+        $\subgroup{K}{G}$ and $A\subseteq K$ we have $x\in K$.
+    \begin{subproof}
+        Assume $x\in\generatedSubgroup{A}{G}$.
+        Hence $x\in\inters{C}$ by \obv{generated_subgroup}.
+        Fix $K$.
+        Assume $\subgroup{K}{G}$ and $A\subseteq K$.
+        $K\subseteq\carrier[G]$ by \obv{subgroup_subseteq}.
+        Hence $K\in C$ by \auto{subgroup_cover_family_iff}.
+        Follows by \obv{inters_destr}.
+    \end{subproof}
+    Show that if for every $K$ such that
+        $\subgroup{K}{G}$ and $A\subseteq K$ we have $x\in K$, then
+        $x\in\generatedSubgroup{A}{G}$.
+    \begin{subproof}
+        Assume that for every $K$ such that
+            $\subgroup{K}{G}$ and $A\subseteq K$ we have $x\in K$.
+        Show that for every $K\in C$ we have $x\in K$.
+        \begin{subproof}
+            Fix $K\in C$.
+            $\subgroup{K}{G}$ and $A\subseteq K$ by
+                \auto{subgroup_cover_family_iff}.
+        \end{subproof}
+        Hence $x\in\inters{C}$ by \obv{inters_intro}.
+        Follows by \obv{generated_subgroup}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{generated_subgroup_universal_property}
+    Let $G$ be a group.
+    Let $A$ be a subset of $\carrier[G]$.
+    Suppose $\subgroup{K}{G}$.
+    Then $\generatedSubgroup{A}{G}\subseteq K$ iff $A\subseteq K$.
+\end{theorem}
+\begin{proof}
+    $A\subseteq\generatedSubgroup{A}{G}$ by
+        \obv{generated_subgroup_contains_generators}.
+    Follows by \auto{generated_subgroup_least,subseteq_transitive}.
+\end{proof}
+
+\begin{corollary}\label{generated_subgroup_of_subgroup}
+    Let $G$ be a group.
+    Let $A$ be a subset of $\carrier[G]$.
+    Suppose $\subgroup{A}{G}$.
+    Then $\generatedSubgroup{A}{G}=A$.
+\end{corollary}
+\begin{proof}
+    $G$ is a group and $A\subseteq\carrier[G]$ by
+        \obv{subgroup_ambient_group,subgroup_subseteq}.
+    $A\subseteq\generatedSubgroup{A}{G}$ by
+        \obv{generated_subgroup_contains_generators}.
+    $A\subseteq A$ by \obv{subseteq_refl}.
+    $\generatedSubgroup{A}{G}\subseteq A$ by
+        \obv{generated_subgroup_least}.
+    Follows by \obv{subseteq_antisymmetric}.
+\end{proof}
+
+\begin{proposition}\label{generated_subgroup_monotone}
+    Let $G$ be a group.
+    Let $A,B\subseteq\carrier[G]$.
+    Suppose $A\subseteq B$.
+    Then $\generatedSubgroup{A}{G}\subseteq
+        \generatedSubgroup{B}{G}$.
+\end{proposition}
+\begin{proof}
+    $A\subseteq\carrier[G]$ by \obv{subseteq_transitive}.
+    $\subgroup{\generatedSubgroup{B}{G}}{G}$ by
+        \obv{generated_subgroup_is_subgroup}.
+    $B\subseteq\generatedSubgroup{B}{G}$ by
+        \obv{generated_subgroup_contains_generators}.
+    Hence $A\subseteq\generatedSubgroup{B}{G}$ by
+        \obv{subseteq_transitive}.
+    Follows by \obv{generated_subgroup_least}.
+\end{proof}
+
+\begin{definition}\label{generates_group}
+    Let $G$ be a group.
+    Let $A$ be a subset of $\carrier[G]$.
+    $\generatesGroup{A}{G}$ iff
+        $G$ is a group and
+        $A\subseteq\carrier[G]$ and
+        $\generatedSubgroup{A}{G}=\carrier[G]$.
+\end{definition}
+
+\begin{proposition}\label{generates_group_is_group}
+    Let $G$ be a group.
+    Let $A$ be a subset of $\carrier[G]$.
+    Suppose $\generatesGroup{A}{G}$.
+    Then $G$ is a group.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{generates_group}.
+\end{proof}
+
+\begin{proposition}\label{generates_group_subseteq_carrier}
+    Let $G$ be a group.
+    Let $A$ be a subset of $\carrier[G]$.
+    Suppose $\generatesGroup{A}{G}$.
+    Then $A\subseteq\carrier[G]$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{generates_group}.
+\end{proof}
+
+\begin{proposition}\label{generates_group_equation}
+    Let $G$ be a group.
+    Let $A$ be a subset of $\carrier[G]$.
+    Suppose $\generatesGroup{A}{G}$.
+    Then $\generatedSubgroup{A}{G}=\carrier[G]$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{generates_group}.
+\end{proof}
+
+\subsection{Homomorphisms and generators}
+
+\begin{theorem}\label{group_hom_image_generated_subgroup}
+    Let $G$ be a group.
+    Let $H$ be a group.
+    Let $f\in\funs{\carrier[G]}{\carrier[H]}$.
+    Suppose $\groupHom{f}{G}{H}$.
+    Let $A$ be a subset of $\carrier[G]$.
+    Then
+        $\img{f}{\generatedSubgroup{A}{G}}=
+            \generatedSubgroup{\img{f}{A}}{H}$.
+\end{theorem}
+\begin{proof}
+    Let $P=\generatedSubgroup{A}{G}$.
+    Let $B=\img{f}{A}$.
+    Let $J=\img{f}{P}$.
+    Let $Q=\generatedSubgroup{B}{H}$.
+    $\subgroup{P}{G}$ by
+        \auto{generated_subgroup_is_subgroup}.
+    Hence $\subgroup{J}{H}$ by
+        \auto{group_hom_subgroup_image}.
+    $A\subseteq P$ by
+        \obv{generated_subgroup_contains_generators}.
+    Hence $B\subseteq J$ by \auto{img_subseteq}.
+    $J\subseteq\carrier[H]$ by \obv{subgroup_subseteq}.
+    Hence $B\subseteq\carrier[H]$ by \obv{subseteq_transitive}.
+    $\subgroup{Q}{H}$ by
+        \auto{generated_subgroup_is_subgroup}.
+    $Q\subseteq J$ by
+        \auto{generated_subgroup_least}.
+    Let $R=\preimg{f}{Q}$.
+    $\subgroup{R}{G}$ by
+        \auto{group_hom_subgroup_preimage}.
+    Show that $A\subseteq R$.
+    \begin{subproof}
+        Show that for every $x\in A$ we have $x\in R$.
+        \begin{subproof}
+            Fix $x\in A$.
+            Hence $x\in\carrier[G]$ by \obv{subseteq}.
+            $f(x)\in B$ by \auto{group_hom_image_iff}.
+            $B\subseteq Q$ by
+                \obv{generated_subgroup_contains_generators}.
+            Hence $f(x)\in Q$ by \obv{subseteq}.
+            Follows by \auto{group_hom_preimage_iff}.
+        \end{subproof}
+        Follows by \obv{subseteq}.
+    \end{subproof}
+    Hence $P\subseteq R$ by
+        \auto{generated_subgroup_least}.
+    Show that $J\subseteq Q$.
+    \begin{subproof}
+        Show that for every $y\in J$ we have $y\in Q$.
+        \begin{subproof}
+            Fix $y\in J$.
+            $P\subseteq\carrier[G]$ by
+                \obv{subgroup_subseteq}.
+            Take $x\in P$ such that $f(x)=y$ by
+                \auto{group_hom_image_iff}.
+            Hence $x\in R$ by \obv{subseteq}.
+            Hence $f(x)\in Q$ by
+                \auto{group_hom_preimage_iff}.
+        \end{subproof}
+        Follows by \obv{subseteq}.
+    \end{subproof}
+    Follows by \obv{subseteq_antisymmetric}.
+\end{proof}
+
+\begin{theorem}\label{group_hom_agreement_on_generated_subgroup}
+    Let $G$ be a group.
+    Suppose $\groupHom{f}{G}{H}$ and $\groupHom{g}{G}{H}$.
+    Let $A$ be a subset of $\carrier[G]$.
+    Suppose for every $a\in A$ we have $f(a)=g(a)$.
+    Then for every $x\in\generatedSubgroup{A}{G}$ we have
+        $f(x)=g(x)$.
+\end{theorem}
+\begin{proof}
+    Let $E=\{x\in\carrier[G]\mid f(x)=g(x)\}$.
+    Show that $E\subseteq\carrier[G]$.
+    \begin{subproof}
+        Follows by \obv{subseteq}.
+    \end{subproof}
+    $f(\neutral[G])=\neutral[H]$ and
+        $g(\neutral[G])=\neutral[H]$ by
+        \obv{group_hom_neutral}.
+    $\neutral[G]\in\carrier[G]$ by
+        \obv{group_is_monoid,monoid_is_unital_magma,unitalmagma_type}.
+    Hence $\neutral[G]\in E$.
+    Show that for all $x,y\in E$ we have $\mul[G](x,y)\in E$.
+    \begin{subproof}
+        Fix $x,y\in E$.
+        Hence $x,y\in\carrier[G]$ and
+            $f(x)=g(x)$ and $f(y)=g(y)$.
+        $\mul[G](x,y)\in\carrier[G]$ by
+            \obv{group_is_monoid,monoid_is_magma,magma_welldef}.
+        $f(\mul[G](x,y))=\mul[H](f(x),f(y))$ and
+            $g(\mul[G](x,y))=\mul[H](g(x),g(y))$ by
+            \obv{group_hom_mul}.
+        Hence $f(\mul[G](x,y))=g(\mul[G](x,y))$.
+    \end{subproof}
+    Show that for every $x\in E$ we have $\groupInv[G](x)\in E$.
+    \begin{subproof}
+        Fix $x\in E$.
+        Hence $x\in\carrier[G]$ and $f(x)=g(x)$.
+        $\groupInv[G](x)\in\carrier[G]$ by
+            \obv{group_inverse_type}.
+        $f(\groupInv[G](x))=\groupInv[H](f(x))$ and
+            $g(\groupInv[G](x))=\groupInv[H](g(x))$ by
+            \obv{group_hom_inverse}.
+        Hence $f(\groupInv[G](x))=g(\groupInv[G](x))$.
+    \end{subproof}
+    Hence $\subgroup{E}{G}$ by \obv{subgroup}.
+    Show that $A\subseteq E$.
+    \begin{subproof}
+        Show that for every $a\in A$ we have $a\in E$.
+        \begin{subproof}
+            Fix $a\in A$.
+            Hence $a\in\carrier[G]$ by \obv{subseteq}.
+            $f(a)=g(a)$.
+        \end{subproof}
+        Follows by \obv{subseteq}.
+    \end{subproof}
+    Hence $\generatedSubgroup{A}{G}\subseteq E$ by
+        \obv{generated_subgroup_least}.
+    Follows by \auto{subseteq}.
+\end{proof}
+
+\begin{theorem}\label{group_hom_equality_from_generators}
+    Let $G$ be a group.
+    Let $A$ be a subset of $\carrier[G]$.
+    Suppose $\generatesGroup{A}{G}$.
+    Suppose $\groupHom{f}{G}{H}$ and $\groupHom{g}{G}{H}$.
+    Suppose for every $a\in A$ we have $f(a)=g(a)$.
+    Then $f=g$.
+\end{theorem}
+\begin{proof}
+    $A\subseteq\carrier[G]$ by
+        \obv{generates_group_subseteq_carrier}.
+    For every $x\in\generatedSubgroup{A}{G}$ we have $f(x)=g(x)$ by
+        \obv{group_hom_agreement_on_generated_subgroup}.
+    $\generatedSubgroup{A}{G}=\carrier[G]$ by
+        \obv{generates_group_equation}.
+    Hence for every $x\in\carrier[G]$ we have $f(x)=g(x)$.
+    Follows by \obv{group_hom_extensionality}.
+\end{proof}

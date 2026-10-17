@@ -1,0 +1,307 @@
+\import{algebra/group/direct-limit.tex}
+
+\section{Canonical images in a group direct limit}
+
+Canonical component images all live in the one constructed limit group.  This
+turns an abstract directed system into a directed family of subgroup carriers
+without pretending that the original component records share an ambient set.
+
+\begin{definition}\label{direct_limit_image}
+    $\directLimitImage{S}{i}=
+        \img{\directSystemCanonicalMap{S}{i}}
+            {\carrier[\directSystemGroup{S}{i}]}$.
+\end{definition}
+
+\begin{definition}\label{direct_limit_image_value_op}
+    $\directLimitImageValueOp:\Set\to\Set\to\Set
+        =\fun{S,i:\Set}{\directLimitImage{S}{i}}$.
+\end{definition}
+
+\begin{definition}\label{direct_limit_image_family}
+    $\directLimitImageFamily{S}=
+        \Apply{\graphOnDomainOp}
+            {\carrier[S],\Apply{\directLimitImageValueOp}{S}}$.
+\end{definition}
+
+\begin{proposition}\label{direct_limit_image_family_type}
+    $\directLimitImageFamily{S}\in
+        \funs{\carrier[S]}{\ran{\directLimitImageFamily{S}}}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{direct_limit_image_family,logical_graph_on_domain_function}.
+\end{proof}
+
+\begin{proposition}\label{direct_limit_image_family_apply}
+    Let $i\in\carrier[S]$.
+    Then $\apply{\directLimitImageFamily{S}}{i}
+        =\directLimitImage{S}{i}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{direct_limit_image_family,direct_limit_image_value_op,logical_graph_on_domain_apply}.
+\end{proof}
+
+\begin{theorem}\label{direct_limit_image_subgroup}
+    Let $S$ be a group direct system.
+    Let $i\in\carrier[S]$.
+    Then $\subgroup{\directLimitImage{S}{i}}{\groupDirectLimit{S}}$.
+\end{theorem}
+\begin{proof}
+    $\groupHom
+        {\directSystemCanonicalMap{S}{i}}
+        {\directSystemGroup{S}{i}}{\groupDirectLimit{S}}$ by
+        \obv{direct_system_canonical_map_hom}.
+    Follows by
+        \auto{direct_limit_image,group_hom_image_subgroup}.
+\end{proof}
+
+\begin{corollary}\label{direct_limit_image_subseteq_carrier}
+    Let $S$ be a group direct system.
+    Let $i\in\carrier[S]$.
+    Then $\directLimitImage{S}{i}\subseteq
+        \carrier[\groupDirectLimit{S}]$.
+\end{corollary}
+\begin{proof}
+    Follows by
+        \obv{direct_limit_image_subgroup,subgroup_subseteq}.
+\end{proof}
+
+\begin{theorem}\label{direct_limit_image_coverage}
+    Let $S$ be a group direct system.
+    Let $C\in\carrier[\groupDirectLimit{S}]$.
+    Then there exists $i\in\carrier[S]$ such that
+        $C\in\directLimitImage{S}{i}$.
+\end{theorem}
+\begin{proof}
+    $\carrier[\groupDirectLimit{S}]=\directLimitCarrier{S}$ by
+        \obv{group_direct_limit_structure_carrier}.
+    Take $i,x$ such that $i\in\carrier[S]$ and
+        $x\in\carrier[\directSystemGroup{S}{i}]$ and
+        $C=\directSystemClass{S}{(i,x)}$ by
+        \obv{direct_limit_carrier_coordinates}.
+    Let $f=\directSystemCanonicalMap{S}{i}$.
+    $f\in\funs{\carrier[\directSystemGroup{S}{i}]}
+        {\directLimitCarrier{S}}$ by
+        \auto{direct_system_canonical_map_type}.
+    Hence $f$ is a function and
+        $\dom{f}=\carrier[\directSystemGroup{S}{i}]$ by
+        \obv{funs_elim,funs_is_function}.
+    Hence $x\in\dom{f}$.
+    $\apply{f}{x}=\directSystemClass{S}{(i,x)}$ by
+        \auto{direct_system_canonical_map_apply}.
+    Hence $\apply{f}{x}=C$.
+    Hence $(x,C)\in f$ by
+        \obv{function_apply_elim}.
+    Hence $C\in\img{f}{\carrier[\directSystemGroup{S}{i}]}$ by
+        \obv{img_elem_intro}.
+    Follows by \auto{direct_limit_image}.
+\end{proof}
+
+\begin{theorem}\label{direct_limit_images_cover_carrier}
+    Let $S$ be a group direct system.
+    Then $\unions{\ran{\directLimitImageFamily{S}}}
+        =\carrier[\groupDirectLimit{S}]$.
+\end{theorem}
+\begin{proof}
+    Let $F=\directLimitImageFamily{S}$.
+    $F\in\funs{\carrier[S]}{\ran{F}}$ by
+        \auto{direct_limit_image_family_type}.
+    Hence $F$ is a function and $\dom{F}=\carrier[S]$ by
+        \obv{funs_elim,funs_is_function}.
+    Show that $\unions{\ran{F}}\subseteq
+        \carrier[\groupDirectLimit{S}]$.
+    \begin{subproof}
+        Show that for every $C\in\unions{\ran{F}}$ we have
+            $C\in\carrier[\groupDirectLimit{S}]$.
+        \begin{subproof}
+            Fix $C\in\unions{\ran{F}}$.
+            Take $A\in\ran{F}$ such that $C\in A$ by
+                \obv{unions_iff}.
+            Take $i\in\dom{F}$ such that $\apply{F}{i}=A$ by
+                \obv{fun_ran_iff}.
+            Hence $i\in\carrier[S]$.
+            $A=\directLimitImage{S}{i}$ by
+                \auto{direct_limit_image_family_apply}.
+            Follows by
+                \auto{direct_limit_image_subseteq_carrier,subseteq}.
+        \end{subproof}
+        Follows by \obv{subseteq}.
+    \end{subproof}
+    Show that $\carrier[\groupDirectLimit{S}]\subseteq
+        \unions{\ran{F}}$.
+    \begin{subproof}
+        Show that for every $C\in\carrier[\groupDirectLimit{S}]$ we have
+            $C\in\unions{\ran{F}}$.
+        \begin{subproof}
+            Fix $C\in\carrier[\groupDirectLimit{S}]$.
+            Take $i\in\carrier[S]$ such that
+                $C\in\directLimitImage{S}{i}$ by
+                \obv{direct_limit_image_coverage}.
+            $\apply{F}{i}=\directLimitImage{S}{i}$ by
+                \auto{direct_limit_image_family_apply}.
+            $\apply{F}{i}\in\ran{F}$ by
+                \auto{fun_ran_iff}.
+            Follows by \auto{unions_iff}.
+        \end{subproof}
+        Follows by \obv{subseteq}.
+    \end{subproof}
+    Follows by \obv{subseteq_antisymmetric}.
+\end{proof}
+
+\begin{theorem}\label{direct_limit_images_nested}
+    Let $S$ be a group direct system.
+    Let $i,j\in\carrier[S]$.
+    Suppose $i\mathrel{\leq[S]}j$.
+    Then $\directLimitImage{S}{i}\subseteq
+        \directLimitImage{S}{j}$.
+\end{theorem}
+\begin{proof}
+    Let $f=\directSystemCanonicalMap{S}{i}$.
+    Let $g=\directSystemCanonicalMap{S}{j}$.
+    Let $b=\directSystemBond{S}{i}{j}$.
+    Let $A=\carrier[\directSystemGroup{S}{i}]$.
+    Let $B=\carrier[\directSystemGroup{S}{j}]$.
+    $f\in\funs{A}{\directLimitCarrier{S}}$ and
+        $g\in\funs{B}{\directLimitCarrier{S}}$ by
+        \auto{direct_system_canonical_map_type}.
+    $b\in\funs{A}{B}$ by
+        \auto{direct_system_bond_hom,group_hom_type}.
+    Hence $f$ and $g$ are functions and $\dom{f}=A$ and
+        $\dom{g}=B$ by
+        \auto{funs_elim,funs_is_function}.
+    $b$ is a function and $\dom{b}=A$ by
+        \auto{funs_elim,funs_is_function}.
+    $g$ is composable with $b$ by
+        \obv{funs_ran,subseteq,funs_elim}.
+    $g\circ b=f$ by
+        \auto{direct_system_canonical_map_compatibility}.
+    Show that for every $C\in\directLimitImage{S}{i}$ we have
+        $C\in\directLimitImage{S}{j}$.
+    \begin{subproof}
+        Fix $C\in\directLimitImage{S}{i}$.
+        Take $x\in A$ such that $x\mathrel{f}C$ by
+            \auto{direct_limit_image,img_iff}.
+        Hence $\apply{f}{x}=C$ by
+            \obv{function_apply_intro}.
+        $\apply{b}{x}\in B$ by
+            \obv{funs_type_apply}.
+        Hence $\apply{b}{x}\in\dom{g}$.
+        $\apply{g\circ b}{x}=\apply{g}{\apply{b}{x}}$ by
+            \obv{circ_apply}.
+        Hence $\apply{g}{\apply{b}{x}}=C$.
+        Hence $(\apply{b}{x},C)\in g$ by
+            \auto{function_apply_elim}.
+        Hence $C\in\img{g}{B}$ by
+            \obv{img_elem_intro}.
+        Follows by \auto{direct_limit_image}.
+    \end{subproof}
+    Follows by \obv{subseteq}.
+\end{proof}
+
+\begin{theorem}\label{direct_limit_image_family_directed}
+    Let $S$ be a group direct system.
+    Then $\ran{\directLimitImageFamily{S}}$ is inhabited and
+        for all $A,B\in\ran{\directLimitImageFamily{S}}$
+        there exists $C\in\ran{\directLimitImageFamily{S}}$ such that
+            $A\subseteq C$ and $B\subseteq C$.
+\end{theorem}
+\begin{proof}
+    Let $F=\directLimitImageFamily{S}$.
+    $F\in\funs{\carrier[S]}{\ran{F}}$ by
+        \auto{direct_limit_image_family_type}.
+    Hence $F$ is a function and $\dom{F}=\carrier[S]$ by
+        \obv{funs_elim,funs_is_function}.
+    $S$ is a directed quasiordered set by
+        \obv{group_direct_system_is_directed}.
+    Hence $\carrier[S]$ is inhabited by
+        \obv{directed_quasiordered_set_carrier_inhabited}.
+    Take $r$ such that $r\in\carrier[S]$.
+    $\apply{F}{r}\in\ran{F}$ by \auto{fun_ran_iff}.
+    Hence $\ran{F}$ is inhabited.
+    Show that for all $A,B\in\ran{F}$ there exists
+        $C\in\ran{F}$ such that $A\subseteq C$ and $B\subseteq C$.
+    \begin{subproof}
+        Fix $A,B\in\ran{F}$.
+        Take $i\in\carrier[S]$ such that $\apply{F}{i}=A$ by
+            \auto{fun_ran_iff}.
+        Take $j\in\carrier[S]$ such that $\apply{F}{j}=B$ by
+            \auto{fun_ran_iff}.
+        Take $k\in\carrier[S]$ such that
+            $i\mathrel{\leq[S]}k$ and $j\mathrel{\leq[S]}k$ by
+            \obv{directed_common_upper_bound}.
+        Let $C=\apply{F}{k}$.
+        $C\in\ran{F}$ by \auto{fun_ran_iff}.
+        $\apply{F}{i}=\directLimitImage{S}{i}$ and
+            $\apply{F}{j}=\directLimitImage{S}{j}$ and
+            $C=\directLimitImage{S}{k}$ by
+            \auto{direct_limit_image_family_apply}.
+        $\directLimitImage{S}{i}\subseteq\directLimitImage{S}{k}$ and
+            $\directLimitImage{S}{j}\subseteq\directLimitImage{S}{k}$ by
+            \obv{direct_limit_images_nested}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{embedding_system_canonical_map_embedding}
+    Suppose $\embeddingGroupDirectSystem{S}$.
+    Let $i\in\carrier[S]$.
+    Then $\groupEmbedding
+        {\directSystemCanonicalMap{S}{i}}
+        {\directSystemGroup{S}{i}}{\groupDirectLimit{S}}$.
+\end{theorem}
+\begin{proof}
+    $S$ is a group direct system by
+        \obv{embedding_group_direct_system_is_system}.
+    Let $f=\directSystemCanonicalMap{S}{i}$.
+    Let $A=\carrier[\directSystemGroup{S}{i}]$.
+    $\groupHom{f}{\directSystemGroup{S}{i}}{\groupDirectLimit{S}}$ by
+        \auto{direct_system_canonical_map_hom}.
+    Hence $f\in\funs{A}{\carrier[\groupDirectLimit{S}]}$ by
+        \obv{group_hom_type}.
+    Hence $f$ is a function and $\dom{f}=A$ by
+        \obv{funs_elim,funs_is_function}.
+    Show that $f$ is injective.
+    \begin{subproof}
+        Show that for all $x,y\in\dom{f}$ such that
+            $\apply{f}{x}=\apply{f}{y}$ we have $x=y$.
+        \begin{subproof}
+            Fix $x,y\in\dom{f}$ such that $\apply{f}{x}=\apply{f}{y}$.
+            Hence $x\in A$ and $y\in A$.
+            $(i,x),(i,y)\in\directSystemTaggedCarrier{S}$ by
+                \auto{direct_system_tagged_carrier_iff}.
+            $\apply{f}{x}=\directSystemClass{S}{(i,x)}$ and
+                $\apply{f}{y}=\directSystemClass{S}{(i,y)}$ by
+                \auto{direct_system_canonical_map_apply}.
+            Hence $(i,x)\mathrel{\directSystemEventualRelation{S}}(i,y)$ by
+                \auto{direct_system_class_equality_iff}.
+            Take $k\in\carrier[S]$ such that
+                $i\mathrel{\leq[S]}k$ and
+                $\directSystemMove{S}{(i,x)}{k}
+                    =\directSystemMove{S}{(i,y)}{k}$ by
+                \auto{direct_system_eventual_relation_iff,fst_eq}.
+            Let $b=\directSystemBond{S}{i}{k}$.
+            $\directSystemMove{S}{(i,x)}{k}=\apply{b}{x}$ and
+                $\directSystemMove{S}{(i,y)}{k}=\apply{b}{y}$ by
+                \auto{direct_system_move,fst_eq,snd_eq}.
+            Hence $\apply{b}{x}=\apply{b}{y}$.
+            $\groupEmbedding{b}
+                {\directSystemGroup{S}{i}}
+                {\directSystemGroup{S}{k}}$ by
+                \auto{embedding_direct_system_bond}.
+            Hence $b$ is injective by
+                \obv{group_embedding_injective}.
+            $\groupHom{b}
+                {\directSystemGroup{S}{i}}
+                {\directSystemGroup{S}{k}}$ by
+                \obv{group_embedding_is_hom}.
+            Hence $b$ is a function and $\dom{b}=A$ by
+                \auto{group_hom_type,funs_elim,funs_is_function}.
+            Hence $(x,\apply{b}{x}),(y,\apply{b}{y})\in b$ by
+                \obv{function_apply_elim}.
+            Follows by \auto{injective}.
+        \end{subproof}
+        Follows by \obv{injective_function}.
+    \end{subproof}
+    Follows by \obv{group_embedding}.
+\end{proof}

@@ -1,0 +1,390 @@
+\import{algebra/module/linear-map.tex}
+
+\section{Kernels and images of linear maps}
+
+The kernel is the source-indexed kernel of the canonical additive-group
+homomorphism, while the image is the ordinary image of the graph on the source
+carrier.  The linear-map predicate retains the scalar ring and both module
+endpoints; the raw carrier terms record only the source that determines them.
+
+\begin{definition}\label{module_kernel}
+    $\moduleKernel{f}{M}=\groupKernel{f}{\ModuleAdditiveGroup{M}}$.
+\end{definition}
+
+\begin{definition}\label{module_image}
+    $\moduleImage{f}{M}=\img{f}{\carrier[M]}$.
+\end{definition}
+
+\begin{proposition}\label{module_kernel_iff}
+    Suppose $f$ is a linear map from $M$ to $N$ over $R$.
+    Then $x\in\moduleKernel{f}{M}$ iff
+        $x\in\carrier[M]$ and $f(x)=\neutral[N]$.
+\end{proposition}
+\begin{proof}
+    $\groupHom{f}{\ModuleAdditiveGroup{M}}{
+        \ModuleAdditiveGroup{N}}$ by
+        \obv{linear_map_is_additive_group_hom}.
+    Follows by
+        \auto{module_kernel,group_kernel_iff,
+            module_additive_group_fields}.
+\end{proof}
+
+\begin{proposition}\label{module_image_iff}
+    Suppose $f$ is a linear map from $M$ to $N$ over $R$.
+    Then $y\in\moduleImage{f}{M}$ iff
+        there exists $x\in\carrier[M]$ such that $f(x)=y$.
+\end{proposition}
+\begin{proof}
+    $\groupHom{f}{\ModuleAdditiveGroup{M}}{
+        \ModuleAdditiveGroup{N}}$ by
+        \obv{linear_map_is_additive_group_hom}.
+    $\carrier[M]\subseteq\carrier[\ModuleAdditiveGroup{M}]$ by
+        \auto{module_additive_group_fields,subseteq_refl}.
+    Follows by
+        \auto{module_image,group_hom_image_iff}.
+\end{proof}
+
+\begin{theorem}\label{module_kernel_is_submodule}
+    Suppose $f$ is a linear map from $M$ to $N$ over $R$.
+    Then $\moduleKernel{f}{M}$ is a submodule of $M$ over $R$.
+\end{theorem}
+\begin{proof}
+    Let $K=\moduleKernel{f}{M}$ and
+        $G=\ModuleAdditiveGroup{M}$.
+    $M$ is a left module over $R$ by
+        \obv{linear_map_source_module}.
+    $\groupHom{f}{G}{\ModuleAdditiveGroup{N}}$ by
+        \obv{linear_map_is_additive_group_hom}.
+    Hence $\subgroup{K}{G}$ by
+        \auto{module_kernel,group_kernel_subgroup}.
+    Show that for all $a,x$ such that $a\in\carrier[R]$ and $x\in K$
+        we have $\scalarMul[M](a,x)\in K$.
+    \begin{subproof}
+        Fix $a,x$.
+        Assume $a\in\carrier[R]$ and $x\in K$.
+        Hence $x\in\carrier[M]$ and $f(x)=\neutral[N]$ by
+            \auto{module_kernel_iff}.
+        $\scalarMul[M](a,x)\in\carrier[M]$ by
+            \obv{linear_map_scalar_ring,module_scalar_type}.
+        $f(\scalarMul[M](a,x))=\scalarMul[N](a,f(x))$ by
+            \obv{linear_map_scalar}.
+        Hence $f(\scalarMul[M](a,x))
+            =\scalarMul[N](a,\neutral[N])$.
+        $\scalarMul[N](a,\neutral[N])=\neutral[N]$ by
+            \obv{linear_map_scalar_ring,linear_map_target_module,
+                module_scalar_vector_zero}.
+        Hence $f(\scalarMul[M](a,x))=\neutral[N]$.
+        Follows by \auto{module_kernel_iff}.
+    \end{subproof}
+    Follows by \obv{submodule}.
+\end{proof}
+
+\begin{theorem}\label{module_image_is_submodule}
+    Suppose $f$ is a linear map from $M$ to $N$ over $R$.
+    Then $\moduleImage{f}{M}$ is a submodule of $N$ over $R$.
+\end{theorem}
+\begin{proof}
+    Let $I=\moduleImage{f}{M}$ and
+        $H=\ModuleAdditiveGroup{N}$.
+    $N$ is a left module over $R$ by
+        \obv{linear_map_target_module}.
+    $\groupHom{f}{\ModuleAdditiveGroup{M}}{H}$ by
+        \obv{linear_map_is_additive_group_hom}.
+    Hence $\subgroup{I}{H}$ by
+        \auto{module_image,module_additive_group_fields,
+            group_hom_image_subgroup}.
+    Show that for all $a,y$ such that $a\in\carrier[R]$ and $y\in I$
+        we have $\scalarMul[N](a,y)\in I$.
+    \begin{subproof}
+        Fix $a,y$.
+        Assume $a\in\carrier[R]$ and $y\in I$.
+        Take $x\in\carrier[M]$ such that $f(x)=y$ by
+            \auto{module_image_iff}.
+        $\scalarMul[M](a,x)\in\carrier[M]$ by
+            \obv{linear_map_scalar_ring,linear_map_source_module,
+                module_scalar_type}.
+        $f(\scalarMul[M](a,x))=\scalarMul[N](a,f(x))$ by
+            \obv{linear_map_scalar}.
+        Hence $f(\scalarMul[M](a,x))=\scalarMul[N](a,y)$.
+        Follows by \auto{module_image_iff}.
+    \end{subproof}
+    Follows by \obv{submodule}.
+\end{proof}
+
+\begin{theorem}\label{linear_map_submodule_image}
+    Suppose $f$ is a linear map from $M$ to $N$ over $R$.
+    Suppose $A$ is a submodule of $M$ over $R$.
+    Then $\img{f}{A}$ is a submodule of $N$ over $R$.
+\end{theorem}
+\begin{proof}
+    Let $G=\ModuleAdditiveGroup{M}$ and
+        $H=\ModuleAdditiveGroup{N}$.
+    Let $I=\img{f}{A}$.
+    $N$ is a left module over $R$ by
+        \obv{linear_map_target_module}.
+    $\groupHom{f}{G}{H}$ by
+        \obv{linear_map_is_additive_group_hom}.
+    $\subgroup{A}{G}$ by \obv{submodule_additive_subgroup}.
+    Hence $\subgroup{I}{H}$ by
+        \auto{group_hom_subgroup_image}.
+    Show that for all $a,y$ such that $a\in\carrier[R]$ and $y\in I$
+        we have $\scalarMul[N](a,y)\in I$.
+    \begin{subproof}
+        Fix $a,y$.
+        Assume $a\in\carrier[R]$ and $y\in I$.
+        Take $x\in A$ such that $f(x)=y$ by
+            \auto{group_hom_image_iff,subgroup_subseteq}.
+        $\scalarMul[M](a,x)\in A$ by \obv{submodule_scalar}.
+        $x\in\carrier[M]$ by \auto{submodule_subseteq,subseteq}.
+        $f(\scalarMul[M](a,x))=\scalarMul[N](a,f(x))$ by
+            \obv{linear_map_scalar}.
+        Hence $f(\scalarMul[M](a,x))=\scalarMul[N](a,y)$.
+        Follows by
+            \auto{group_hom_image_iff,subgroup_subseteq}.
+    \end{subproof}
+    Follows by \obv{submodule}.
+\end{proof}
+
+\begin{theorem}\label{linear_map_submodule_preimage}
+    Suppose $f$ is a linear map from $M$ to $N$ over $R$.
+    Suppose $B$ is a submodule of $N$ over $R$.
+    Then $\preimg{f}{B}$ is a submodule of $M$ over $R$.
+\end{theorem}
+\begin{proof}
+    Let $G=\ModuleAdditiveGroup{M}$ and
+        $H=\ModuleAdditiveGroup{N}$.
+    Let $P=\preimg{f}{B}$.
+    $M$ is a left module over $R$ by
+        \obv{linear_map_source_module}.
+    $\groupHom{f}{G}{H}$ by
+        \obv{linear_map_is_additive_group_hom}.
+    $\subgroup{B}{H}$ by \obv{submodule_additive_subgroup}.
+    Hence $\subgroup{P}{G}$ by
+        \auto{group_hom_subgroup_preimage}.
+    Show that for all $a,x$ such that $a\in\carrier[R]$ and $x\in P$
+        we have $\scalarMul[M](a,x)\in P$.
+    \begin{subproof}
+        Fix $a,x$.
+        Assume $a\in\carrier[R]$ and $x\in P$.
+        Hence $x\in\carrier[G]$ and $f(x)\in B$ by
+            \auto{group_hom_preimage_iff}.
+        Hence $x\in\carrier[M]$ by
+            \auto{module_additive_group_fields}.
+        $\scalarMul[M](a,x)\in\carrier[M]$ by
+            \obv{linear_map_scalar_ring,module_scalar_type}.
+        Hence $\scalarMul[M](a,x)\in\carrier[G]$ by
+            \auto{module_additive_group_fields}.
+        $f(\scalarMul[M](a,x))=\scalarMul[N](a,f(x))$ by
+            \obv{linear_map_scalar}.
+        $\scalarMul[N](a,f(x))\in B$ by
+            \obv{submodule_scalar}.
+        Hence $f(\scalarMul[M](a,x))\in B$.
+        Follows by \auto{group_hom_preimage_iff}.
+    \end{subproof}
+    Follows by \obv{submodule}.
+\end{proof}
+
+\begin{corollary}\label{induced_module_kernel_is_exact}
+    Suppose $f$ is a linear map from $M$ to $N$ over $R$.
+    Then $\InducedSubmodule{R}{M}{\moduleKernel{f}{M}}$
+        is an exact left module over $R$.
+\end{corollary}
+\begin{proof}
+    Follows by
+        \obv{module_kernel_is_submodule,induced_submodule_is_exact}.
+\end{proof}
+
+\begin{corollary}\label{induced_module_image_is_exact}
+    Suppose $f$ is a linear map from $M$ to $N$ over $R$.
+    Then $\InducedSubmodule{R}{N}{\moduleImage{f}{M}}$
+        is an exact left module over $R$.
+\end{corollary}
+\begin{proof}
+    Follows by
+        \obv{module_image_is_submodule,induced_submodule_is_exact}.
+\end{proof}
+
+\subsection{Canonical inclusion and corestriction maps}
+
+\begin{theorem}\label{module_kernel_inclusion_is_embedding}
+    Suppose $f$ is a linear map from $M$ to $N$ over $R$.
+    Let $K=\moduleKernel{f}{M}$.
+    Then $\subgroupInclusion{\ModuleAdditiveGroup{M}}{K}$ is a module
+        embedding from $\InducedSubmodule{R}{M}{K}$ to $M$ over $R$.
+\end{theorem}
+\begin{proof}
+    Let $P=\InducedSubmodule{R}{M}{K}$ and
+        $i=\subgroupInclusion{\ModuleAdditiveGroup{M}}{K}$.
+    $K$ is a submodule of $M$ over $R$ by
+        \auto{module_kernel_is_submodule}.
+    Hence $P$ is an exact left module over $R$ by
+        \auto{induced_submodule_is_exact}.
+    Hence $P$ is a left module over $R$.
+    $M$ is a left module over $R$ by
+        \obv{linear_map_source_module}.
+    $\subgroup{K}{\ModuleAdditiveGroup{M}}$ by
+        \obv{submodule_additive_subgroup}.
+    $\ModuleAdditiveGroup{P}
+        =\subgroupStructure{\ModuleAdditiveGroup{M}}{K}$ by
+        \auto{induced_submodule_additive_group}.
+    $\groupHom{i}{
+        \subgroupStructure{\ModuleAdditiveGroup{M}}{K}}{
+        \ModuleAdditiveGroup{M}}$ by
+        \auto{subgroup_inclusion_group_hom}.
+    Hence $\groupHom{i}{\ModuleAdditiveGroup{P}}{
+        \ModuleAdditiveGroup{M}}$.
+    Show that for all $a,x$ such that $a\in\carrier[R]$ and
+        $x\in\carrier[P]$ we have
+        $i(\scalarMul[P](a,x))=\scalarMul[M](a,i(x))$.
+    \begin{subproof}
+        Fix $a,x$.
+        Assume $a\in\carrier[R]$ and $x\in\carrier[P]$.
+        Hence $x\in K$ by \auto{induced_submodule_carrier}.
+        $\scalarMul[M](a,x)\in K$ by \obv{submodule_scalar}.
+        $\scalarMul[P](a,x)=\scalarMul[M](a,x)$ by
+            \auto{induced_submodule_scalar_apply}.
+        Hence $\scalarMul[P](a,x)\in K$.
+        $i(\scalarMul[P](a,x))=\scalarMul[P](a,x)$ and
+            $i(x)=x$ by \auto{subgroup_inclusion_apply}.
+    \end{subproof}
+    Hence $i$ is a linear map from $P$ to $M$ over $R$ by
+        \obv{linear_map}.
+    $i=\identity{K}$ by \obv{subgroup_inclusion}.
+    Hence $i$ is injective by \obv{identity_injective}.
+    Follows by \obv{module_embedding}.
+\end{proof}
+
+\begin{theorem}\label{module_image_corestriction_is_surjection}
+    Suppose $f$ is a linear map from $M$ to $N$ over $R$.
+    Let $I=\moduleImage{f}{M}$ and
+        $P=\InducedSubmodule{R}{N}{I}$.
+    Then $f$ is a module surjection from $M$ to $P$ over $R$.
+\end{theorem}
+\begin{proof}
+    $I$ is a submodule of $N$ over $R$ by
+        \auto{module_image_is_submodule}.
+    $\img{f}{\carrier[M]}\subseteq I$ by
+        \obv{module_image,subseteq_refl}.
+    Hence $f$ is a linear map from $M$ to $P$ over $R$ by
+        \auto{linear_map_codomain_corestriction}.
+    $f\in\funs{\carrier[M]}{\carrier[N]}$ by
+        \obv{linear_map_type}.
+    Hence $f$ is a function and $\dom{f}=\carrier[M]$ by
+        \obv{funs_elim}.
+    Hence $\ran{f}=\img{f}{\carrier[M]}$ by \auto{img_dom}.
+    Hence $\ran{f}=I$ by \obv{module_image}.
+    $f\in\surj{\carrier[M]}{\ran{f}}$ by
+        \obv{linear_map_type,fun_to_surj}.
+    Hence $f\in\surj{\carrier[M]}{I}$.
+    $\carrier[P]=I$ by \auto{induced_submodule_carrier}.
+    Hence $f\in\surj{\carrier[M]}{\carrier[P]}$.
+    Follows by \obv{module_surjection}.
+\end{proof}
+
+\subsection{Kernel and image criteria}
+
+\begin{theorem}\label{linear_map_injective_iff_kernel_zero}
+    Suppose $f$ is a linear map from $M$ to $N$ over $R$.
+    Then $f$ is injective iff
+        $\moduleKernel{f}{M}=\{\neutral[M]\}$.
+\end{theorem}
+\begin{proof}
+    Let $G=\ModuleAdditiveGroup{M}$ and
+        $H=\ModuleAdditiveGroup{N}$.
+    $\groupHom{f}{G}{H}$ by
+        \obv{linear_map_is_additive_group_hom}.
+    Hence $f$ is injective iff
+        $\groupKernel{f}{G}=\trivialSubgroupCarrier{G}$ by
+        \obv{group_hom_injective_iff_kernel_trivial}.
+    $\moduleKernel{f}{M}=\groupKernel{f}{G}$ by
+        \obv{module_kernel}.
+    $\trivialSubgroupCarrier{G}=\{\neutral[G]\}$ by
+        \obv{trivial_subgroup_carrier}.
+    $\neutral[G]=\neutral[M]$ by
+        \auto{module_additive_group_fields}.
+    Follows by \auto.
+\end{proof}
+
+\begin{corollary}\label{module_embedding_iff_kernel_zero}
+    Suppose $f$ is a linear map from $M$ to $N$ over $R$.
+    Then $f$ is a module embedding from $M$ to $N$ over $R$ iff
+        $\moduleKernel{f}{M}=\{\neutral[M]\}$.
+\end{corollary}
+\begin{proof}
+    Follows by
+        \auto{module_embedding,linear_map_injective_iff_kernel_zero}.
+\end{proof}
+
+\begin{theorem}\label{linear_map_surjective_iff_image_full}
+    Suppose $f$ is a linear map from $M$ to $N$ over $R$.
+    Then $f\in\surj{\carrier[M]}{\carrier[N]}$ iff
+        $\moduleImage{f}{M}=\carrier[N]$.
+\end{theorem}
+\begin{proof}
+    $f\in\funs{\carrier[M]}{\carrier[N]}$ by
+        \obv{linear_map_type}.
+    Hence $\dom{f}=\carrier[M]$ by \obv{funs}.
+    Hence $\ran{f}=\img{f}{\carrier[M]}$ by \auto{img_dom}.
+    $f\in\surj{\carrier[M]}{\carrier[N]}$ iff
+        $\ran{f}=\carrier[N]$ by \obv{funs_surj_iff}.
+    Follows by \auto{module_image}.
+\end{proof}
+
+\begin{corollary}\label{module_surjection_iff_image_full}
+    Suppose $f$ is a linear map from $M$ to $N$ over $R$.
+    Then $f$ is a module surjection from $M$ to $N$ over $R$ iff
+        $\moduleImage{f}{M}=\carrier[N]$.
+\end{corollary}
+\begin{proof}
+    Follows by
+        \auto{module_surjection,
+            linear_map_surjective_iff_image_full}.
+\end{proof}
+
+\subsection{Composition}
+
+\begin{theorem}\label{module_image_composition}
+    Suppose $f$ is a linear map from $M$ to $N$ over $R$ and
+        $g$ is a linear map from $N$ to $P$ over $R$.
+    Then
+        $\moduleImage{g\circ f}{M}
+            =\img{g}{\moduleImage{f}{M}}$.
+\end{theorem}
+\begin{proof}
+    $\groupHom{f}{\ModuleAdditiveGroup{M}}{
+        \ModuleAdditiveGroup{N}}$ and
+        $\groupHom{g}{\ModuleAdditiveGroup{N}}{
+        \ModuleAdditiveGroup{P}}$ by
+        \obv{linear_map_is_additive_group_hom}.
+    $\img{g\circ f}{\carrier[\ModuleAdditiveGroup{M}]}
+        =\img{g}{\img{f}{\carrier[\ModuleAdditiveGroup{M}]}}$ by
+        \obv{group_hom_composition_image}.
+    Follows by
+        \auto{module_image,module_additive_group_fields}.
+\end{proof}
+
+\begin{theorem}\label{module_kernel_composition}
+    Suppose $f$ is a linear map from $M$ to $N$ over $R$ and
+        $g$ is a linear map from $N$ to $P$ over $R$.
+    Then
+        $\moduleKernel{g\circ f}{M}
+            =\preimg{f}{\moduleKernel{g}{N}}$.
+\end{theorem}
+\begin{proof}
+    Let $G=\ModuleAdditiveGroup{M}$,
+        $H=\ModuleAdditiveGroup{N}$, and
+        $K=\ModuleAdditiveGroup{P}$.
+    $\groupHom{f}{G}{H}$ and $\groupHom{g}{H}{K}$ by
+        \obv{linear_map_is_additive_group_hom}.
+    Hence $\groupHom{g\circ f}{G}{K}$ by
+        \obv{group_hom_composition}.
+    $\moduleKernel{g\circ f}{M}
+        =\preimg{g\circ f}{\trivialSubgroupCarrier{K}}$ by
+        \obv{module_kernel,group_kernel_target_preimage}.
+    $\preimg{g\circ f}{\trivialSubgroupCarrier{K}}
+        =\preimg{f}{\preimg{g}{\trivialSubgroupCarrier{K}}}$ by
+        \obv{preimg_circ}.
+    $\moduleKernel{g}{N}
+        =\preimg{g}{\trivialSubgroupCarrier{K}}$ by
+        \obv{module_kernel,group_kernel_target_preimage}.
+\end{proof}

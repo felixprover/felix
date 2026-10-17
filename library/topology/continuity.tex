@@ -1,0 +1,329 @@
+\import{topology/topological-space.tex}
+\import{function.tex}
+\import{set/function-space.tex}
+
+\section{Continuous maps and homeomorphisms}
+
+\begin{definition}\label{continuous_map}
+    $f$ is continuous from $X$ to $Y$ iff
+        $X$ is a topological space and
+        $Y$ is a topological space and
+        $f\in\funs{\carrier[X]}{\carrier[Y]}$ and
+        for every $V\in\opens[Y]$ we have
+            $\preimg{f}{V}\in\opens[X]$.
+\end{definition}
+
+\begin{abbreviation}\label{continuous_function_from_to}
+    $f$ is a continuous function from $X$ to $Y$ iff
+        $f$ is continuous from $X$ to $Y$.
+\end{abbreviation}
+
+\begin{definition}\label{homeomorphism}
+    $f$ is a homeomorphism from $X$ to $Y$ iff
+        $f$ is continuous from $X$ to $Y$ and
+        $f\in\bijections{\carrier[X]}{\carrier[Y]}$ and
+        $\converse{f}$ is continuous from $Y$ to $X$.
+\end{definition}
+
+\begin{theorem}\label{continuous_iff_open_local}
+    Let $X$ be a topological space.
+    Let $Y$ be a topological space.
+    Let $f\in\funs{\carrier[X]}{\carrier[Y]}$.
+    Then $f$ is continuous from $X$ to $Y$ iff
+        for every $x\in\carrier[X]$ we have
+        for every $V\in\opens[Y]$ we have if $f(x)\in V$, then there exists
+            $U\in\opens[X]$ such that $x\in U$ and
+            for every $y\in U$ we have $f(y)\in V$.
+\end{theorem}
+\begin{proof}
+    Show that if $f$ is continuous from $X$ to $Y$, then
+        for every $x\in\carrier[X]$ we have
+        for every $V\in\opens[Y]$ we have if $f(x)\in V$, then there exists
+            $U\in\opens[X]$ such that $x\in U$ and
+            for every $y\in U$ we have $f(y)\in V$.
+    \begin{subproof}
+        Assume $f$ is continuous from $X$ to $Y$.
+        Fix $x\in\carrier[X]$.
+        Fix $V\in\opens[Y]$.
+        Assume $f(x)\in V$.
+        Let $U=\preimg{f}{V}$.
+        $U\in\opens[X]$ by \auto{continuous_map}.
+        $f$ is a function and $\dom{f}=\carrier[X]$
+            by \obv{funs_is_function,funs}.
+        Hence $(x,f(x))\in f$ by \obv{function_apply_elim}.
+        Hence $x\in U$ by \obv{preimg_iff}.
+        For every $y\in U$ we have $f(y)\in V$
+            by
+            \auto{preimg_iff,funs_is_function,function_apply_intro}.
+    \end{subproof}
+    Show that if for every $x\in\carrier[X]$ we have
+        for every $V\in\opens[Y]$ we have if $f(x)\in V$, then there exists
+            $U\in\opens[X]$ such that $x\in U$ and
+            for every $y\in U$ we have $f(y)\in V$, then
+        $f$ is continuous from $X$ to $Y$.
+    \begin{subproof}
+        Assume for every $x\in\carrier[X]$ we have
+            for every $V\in\opens[Y]$ we have if $f(x)\in V$, then there exists
+                $U\in\opens[X]$ such that $x\in U$ and
+                for every $y\in U$ we have $f(y)\in V$.
+        Show that for every $V\in\opens[Y]$ we have
+            $\preimg{f}{V}\in\opens[X]$.
+        \begin{subproof}
+            Fix $V\in\opens[Y]$.
+            Let $P=\preimg{f}{V}$.
+            Let $G=\{U\in\opens[X]\mid U\subseteq P\}$.
+            $G\subseteq\opens[X]$ by \obv{subseteq}.
+            Hence $\unions{G}\in\opens[X]$ by \obv{opens_unions}.
+            Show that $P=\unions{G}$.
+            \begin{subproof}
+                Show that for every $x\in P$ we have $x\in\unions{G}$.
+                \begin{subproof}
+                    Fix $x\in P$.
+                    Take $v\in V$ such that $(x,v)\in f$
+                        by \obv{preimg_iff}.
+                    $f$ is a function by \obv{funs_is_function}.
+                    Hence $v=f(x)$
+                        by \obv{function_apply_intro}.
+                    $x\in\dom{f}=\carrier[X]$
+                        by \auto{dom_iff,funs}.
+                    Take $U\in\opens[X]$ such that $x\in U$ and
+                        for every $y\in U$ we have $f(y)\in V$.
+                    Show that $U\subseteq P$.
+                    \begin{subproof}
+                        Show that for every $y\in U$ we have $y\in P$.
+                        \begin{subproof}
+                            Fix $y\in U$.
+                            $U\subseteq\carrier[X]$
+                                by \obv{opens_type,subseteq}.
+                            Hence $y\in\carrier[X]=\dom{f}$
+                                by \obv{subseteq,funs}.
+                            Thus $(y,f(y))\in f$
+                                by \obv{function_apply_elim}.
+                            $f(y)\in V$.
+                            Follows by \obv{preimg_iff}.
+                        \end{subproof}
+                        Follows by \obv{subseteq}.
+                    \end{subproof}
+                    Hence $U\in G$.
+                    Follows by \auto{unions_iff}.
+                \end{subproof}
+                Show that for every $x\in\unions{G}$ we have $x\in P$.
+                \begin{subproof}
+                    Fix $x\in\unions{G}$.
+                    Take $U\in G$ such that $x\in U$
+                        by \obv{unions_iff}.
+                    $U\subseteq P$.
+                    Follows by \obv{subseteq}.
+                \end{subproof}
+                Follows by set extensionality.
+            \end{subproof}
+        \end{subproof}
+        Follows by \obv{continuous_map}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{lemma}\label{preimage_composition}
+    Let $f\in\funs{A}{B}$.
+    Let $g\in\funs{B}{C}$.
+    Then
+        $\preimg{g\circ f}{V}
+            =\preimg{f}{\preimg{g}{V}}$.
+\end{lemma}
+\begin{proof}
+    Follows by \obv{preimg_circ}.
+\end{proof}
+
+\begin{theorem}\label{continuous_preimage_closed}
+    Let $X,Y$ be topological spaces.
+    Suppose $f$ is continuous from $X$ to $Y$.
+    Let $C\in\closeds{Y}$.
+    Then $\preimg{f}{C}\in\closeds{X}$.
+\end{theorem}
+\begin{proof}
+    $f\in\funs{\carrier[X]}{\carrier[Y]}$
+        by \obv{continuous_map}.
+    $\carrier[Y]\setminus C\in\opens[Y]$ by \obv{closeds}.
+    Hence $\preimg{f}{\carrier[Y]\setminus C}\in\opens[X]$
+        by \obv{continuous_map}.
+    $\carrier[X]\setminus\preimg{f}{C}
+        =\preimg{f}{\carrier[Y]\setminus C}$
+        by \obv{preimg_relative_complement_of_function}.
+    $\preimg{f}{C}\subseteq\carrier[X]$
+        by \auto{preimg_subseteq_dom,funs,subseteq}.
+    Hence $\preimg{f}{C}\in\pow{\carrier[X]}$
+        by \obv{powerset_intro}.
+    Follows by \obv{closeds}.
+\end{proof}
+
+\begin{theorem}\label{empty_function_continuous}
+    Let $X,Y$ be topological spaces.
+    Suppose $\carrier[X]=\emptyset$.
+    Then $\emptyset$ is continuous from $X$ to $Y$.
+\end{theorem}
+\begin{proof}
+    $\emptyset$ is a function on $\emptyset$ and
+        $\emptyset$ is a function to $\carrier[Y]$ by
+        \obv{emptyset_is_function_on_emptyset,codom_of_emptyset_can_be_anything}.
+    $\emptyset\in\funs{\carrier[X]}{\carrier[Y]}$ by \obv{funs_intro}.
+    $\emptyset\in\opens[X]$ by \obv{carrier_open}.
+    Show that for every $V\in\opens[Y]$ we have
+        $\preimg{\emptyset}{V}\in\opens[X]$.
+    \begin{subproof}
+        Fix $V\in\opens[Y]$.
+        $\preimg{\emptyset}{V}\subseteq\dom{\emptyset}$ by
+            \obv{preimg_subseteq_dom}.
+        $\dom{\emptyset}=\emptyset$ by \obv{dom_emptyset}.
+        Hence $\preimg{\emptyset}{V}=\emptyset$ by \obv{subseteq_emptyset_iff}.
+    \end{subproof}
+    Follows by \obv{continuous_map}.
+\end{proof}
+
+\begin{proposition}\label{identity_continuous}
+    Let $X$ be a topological space.
+    Then $\identity{\carrier[X]}$ is continuous from $X$ to $X$.
+\end{proposition}
+\begin{proof}
+    $\identity{\carrier[X]}\in
+        \funs{\carrier[X]}{\carrier[X]}$
+        by \obv{id_elem_funs}.
+    Show that for every $V\in\opens[X]$ we have
+        $\preimg{\identity{\carrier[X]}}{V}\in\opens[X]$.
+    \begin{subproof}
+        Fix $V\in\opens[X]$.
+        $V\subseteq\carrier[X]$ by \obv{opens_type,subseteq,pow_iff}.
+        $\preimg{\identity{\carrier[X]}}{V}=V$
+            by \auto{setext,preimg_iff,id_iff,subseteq}.
+    \end{subproof}
+    Follows by \obv{continuous_map}.
+\end{proof}
+
+\begin{theorem}\label{continuous_composition}
+    Suppose $f$ is continuous from $X$ to $Y$ and
+        $g$ is continuous from $Y$ to $Z$.
+    Then $g\circ f$ is continuous from $X$ to $Z$.
+\end{theorem}
+\begin{proof}
+    $f\in\funs{\carrier[X]}{\carrier[Y]}$ and
+        $g\in\funs{\carrier[Y]}{\carrier[Z]}$
+        by \obv{continuous_map}.
+    Hence $g\circ f\in\funs{\carrier[X]}{\carrier[Z]}$
+        by \obv{funs_circ}.
+    Show that for every $W\in\opens[Z]$ we have
+        $\preimg{g\circ f}{W}\in\opens[X]$.
+    \begin{subproof}
+        Fix $W\in\opens[Z]$.
+        $\preimg{g}{W}\in\opens[Y]$
+            by \obv{continuous_map}.
+        Hence $\preimg{f}{\preimg{g}{W}}\in\opens[X]$
+            by \obv{continuous_map}.
+        $\preimg{g\circ f}{W}
+            =\preimg{f}{\preimg{g}{W}}$
+            by \obv{preimage_composition}.
+    \end{subproof}
+    Follows by \obv{continuous_map}.
+\end{proof}
+
+\begin{classification}\label{identity_homeomorphism}
+    Let $X$ be a topological space.
+    Then $\identity{\carrier[X]}$ is a homeomorphism from $X$ to $X$.
+\end{classification}
+\begin{proof}
+    $\identity{\carrier[X]}$ is continuous from $X$ to $X$ by \obv{identity_continuous}.
+    $\identity{\carrier[X]}\in\bijections{\carrier[X]}{\carrier[X]}$ by \obv{id_elem_bijections}.
+    $\converse{\identity{\carrier[X]}}=\identity{\carrier[X]}$ by \obv{converse_identity}.
+    Follows by \obv{homeomorphism}.
+\end{proof}
+
+\begin{classification}\label{homeomorphism_inverse}
+    Suppose $f$ is a homeomorphism from $X$ to $Y$.
+    Then $\converse{f}$ is a homeomorphism from $Y$ to $X$.
+\end{classification}
+\begin{proof}
+    $f\in\bijections{\carrier[X]}{\carrier[Y]}$
+        by \obv{homeomorphism}.
+    Hence $\converse{f}\in
+        \bijections{\carrier[Y]}{\carrier[X]}$
+        by \obv{bijection_converse_is_bijection}.
+    $f$ is a function by \obv{bijection_is_function}.
+    Hence $\converse{\converse{f}}=f$
+        by \obv{converse_converse_eq}.
+    Follows by \obv{homeomorphism}.
+\end{proof}
+
+\begin{classification}\label{homeomorphism_composition}
+    Suppose $f$ is a homeomorphism from $X$ to $Y$ and
+        $g$ is a homeomorphism from $Y$ to $Z$.
+    Then $g\circ f$ is a homeomorphism from $X$ to $Z$.
+\end{classification}
+\begin{proof}
+    $f$ is continuous from $X$ to $Y$ and
+        $g$ is continuous from $Y$ to $Z$
+        by \obv{homeomorphism}.
+    Hence $g\circ f$ is continuous from $X$ to $Z$
+        by \obv{continuous_composition}.
+    $f\in\bijections{\carrier[X]}{\carrier[Y]}$ and
+        $g\in\bijections{\carrier[Y]}{\carrier[Z]}$
+        by \obv{homeomorphism}.
+    Hence $g\circ f\in\bijections{\carrier[X]}{\carrier[Z]}$
+        by \obv{bijection_circ}.
+    $\converse{f}$ is continuous from $Y$ to $X$ and
+        $\converse{g}$ is continuous from $Z$ to $Y$
+        by \obv{homeomorphism}.
+    Hence $\converse{f}\circ\converse{g}$ is continuous from $Z$ to $X$
+        by \obv{continuous_composition}.
+    $\converse{g\circ f}=\converse{f}\circ\converse{g}$
+        by \obv{circ_converse}.
+    Follows by \obv{homeomorphism}.
+\end{proof}
+
+\begin{definition}\label{locally_constant_map}
+    $f$ is locally constant from $X$ to $Y$ iff
+        $X$ is a topological space and
+        $Y$ is a topological space and
+        $f\in\funs{\carrier[X]}{\carrier[Y]}$ and
+        for every $x\in\carrier[X]$ there exists $U\in\opens[X]$
+            such that $x\in U$ and
+            for every $y\in U$ we have $f(y)=f(x)$.
+\end{definition}
+
+\begin{theorem}\label{locally_constant_map_is_continuous}
+    Suppose $f$ is locally constant from $X$ to $Y$.
+    Then $f$ is continuous from $X$ to $Y$.
+\end{theorem}
+\begin{proof}
+    $X$ is a topological space and $Y$ is a topological space and
+        $f\in\funs{\carrier[X]}{\carrier[Y]}$
+        by \obv{locally_constant_map}.
+    Show that for every $x\in\carrier[X]$ we have
+        for every $V\in\opens[Y]$ we have if $f(x)\in V$, then
+            there exists $U\in\opens[X]$ such that $x\in U$ and
+                for every $y\in U$ we have $f(y)\in V$.
+    \begin{subproof}
+        Fix $x\in\carrier[X]$.
+        Fix $V\in\opens[Y]$.
+        Assume $f(x)\in V$.
+        Take $U\in\opens[X]$ such that $x\in U$ and
+            for every $y\in U$ we have $f(y)=f(x)$
+            by \obv{locally_constant_map}.
+        For every $y\in U$ we have $f(y)\in V$.
+        Follows by \auto.
+    \end{subproof}
+    Follows by \obv{continuous_iff_open_local}.
+\end{proof}
+
+\begin{theorem}\label{constant_graph_continuous}
+    Let $X,Y$ be topological spaces and $a\in\carrier[Y]$.
+    Then $\carrier[X]\times\{a\}$ is continuous from $X$ to $Y$.
+\end{theorem}
+\begin{proof}
+    Let $k=\carrier[X]\times\{a\}$.
+    $k\in\funs{\carrier[X]}{\{a\}}$ by \auto{constant_graph_type}.
+    $\{a\}\subseteq\carrier[Y]$ by \auto{subseteq,singleton_iff}.
+    Hence $k\in\funs{\carrier[X]}{\carrier[Y]}$ by \obv{funs_weaken_codom}.
+    $\carrier[X]\in\opens[X]$ by \obv{carrier_open}.
+    For all $x,y\in\carrier[X]$ we have $k(y)=k(x)$ by
+        \auto{constant_graph_application}.
+    Hence $k$ is locally constant from $X$ to $Y$ by \auto{locally_constant_map}.
+    Follows by \obv{locally_constant_map_is_continuous}.
+\end{proof}

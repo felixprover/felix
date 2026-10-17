@@ -1,0 +1,179 @@
+\import{ordinal.tex}
+\import{set/inductive-definition.tex}
+
+\section{Proto-surreal sign sequences}
+
+A proto-surreal of length $\alpha$ is represented at the logical level by a
+predicate on sets.  Only its values below $\alpha$ matter.  This mirrors
+Megalodon's Part 2 representation and deliberately keeps logical predicates
+distinct from the set codes introduced later.
+
+\begin{definition}\label{pno_eq}
+    $\pnoEqOp :
+        \Set\to(\Set\to\Prop)\to(\Set\to\Prop)\to\Prop
+        =\fun{\alpha:\Set}{
+            \fun{p,q:\Set\to\Prop}{
+                \forall \beta:\Set.\ \beta\in\alpha\implies
+                    (\Apply{p}{\beta}\iff\Apply{q}{\beta})}}$.
+\end{definition}
+
+\begin{proposition}\label{pno_eq_reflexive}
+    $\forall \alpha:\Set.\ \forall p:\Set\to\Prop.
+        \Apply{\pnoEqOp}{\alpha,p,p}$.
+\end{proposition}
+\begin{proof}
+    Fix $\alpha,p$.
+    Follows by \obv{pno_eq}.
+\end{proof}
+
+\begin{proposition}\label{pno_eq_symmetric}
+    $\forall \alpha:\Set.\ \forall p,q:\Set\to\Prop.
+        \Apply{\pnoEqOp}{\alpha,p,q}\implies
+        \Apply{\pnoEqOp}{\alpha,q,p}$.
+\end{proposition}
+\begin{proof}
+    Fix $\alpha,p,q$.
+    Assume $\Apply{\pnoEqOp}{\alpha,p,q}$.
+    Follows by \obv{pno_eq}.
+\end{proof}
+
+\begin{proposition}\label{pno_eq_transitive}
+    $\forall \alpha:\Set.\ \forall p,q,r:\Set\to\Prop.
+        (\Apply{\pnoEqOp}{\alpha,p,q}\land
+         \Apply{\pnoEqOp}{\alpha,q,r})
+            \implies
+         \Apply{\pnoEqOp}{\alpha,p,r}$.
+\end{proposition}
+\begin{proof}
+    Fix $\alpha,p,q,r$.
+    Assume $(\Apply{\pnoEqOp}{\alpha,p,q}\land
+        \Apply{\pnoEqOp}{\alpha,q,r})$.
+    Follows by \obv{pno_eq}.
+\end{proof}
+
+\begin{proposition}\label{pno_eq_restrict}
+    Let $\alpha$ be an ordinal.
+    Let $\beta\in\alpha$.
+    Then $\forall p,q:\Set\to\Prop.
+        \Apply{\pnoEqOp}{\alpha,p,q}\implies
+        \Apply{\pnoEqOp}{\beta,p,q}$.
+\end{proposition}
+\begin{proof}
+    Fix $p,q$.
+    Assume $\Apply{\pnoEqOp}{\alpha,p,q}$.
+    $\beta$ is an ordinal by \obv{elem_of_ordinal_is_ordinal}.
+    $\beta\subseteq\alpha$ by \obv{ordinal_elem_implies_subseteq}.
+    Follows by \obv{pno_eq,subseteq}.
+\end{proof}
+
+\begin{definition}\label{pno_lt_initial}
+    $\pnoLtInitialOp :
+        \Set\to(\Set\to\Prop)\to(\Set\to\Prop)\to\Prop
+        =\fun{\alpha:\Set}{
+            \fun{p,q:\Set\to\Prop}{
+                \exists \beta:\Set.\ \beta\in\alpha\land
+                    \Apply{\pnoEqOp}{\beta,p,q}\land
+                    \lnot\Apply{p}{\beta}\land\Apply{q}{\beta}}}$.
+\end{definition}
+
+\begin{proposition}\label{pno_lt_initial_intro}
+    Let $\beta\in\alpha$.
+    Then $\forall p,q:\Set\to\Prop.
+        (\Apply{\pnoEqOp}{\beta,p,q}\land
+         \lnot\Apply{p}{\beta}\land\Apply{q}{\beta})
+        \implies
+        \Apply{\pnoLtInitialOp}{\alpha,p,q}$.
+\end{proposition}
+\begin{proof}
+    Fix $p,q$.
+    Assume
+        $(\Apply{\pnoEqOp}{\beta,p,q}\land
+          \lnot\Apply{p}{\beta}\land\Apply{q}{\beta})$.
+    Follows by \obv{pno_lt_initial}.
+\end{proof}
+
+\begin{proposition}\label{pno_lt_initial_irreflexive}
+    $\forall \alpha:\Set.\ \forall p:\Set\to\Prop.
+        \lnot\Apply{\pnoLtInitialOp}{\alpha,p,p}$.
+\end{proposition}
+\begin{proof}
+    Fix $\alpha,p$.
+    Suppose $\Apply{\pnoLtInitialOp}{\alpha,p,p}$.
+    Follows by \auto{pno_lt_initial}.
+\end{proof}
+
+\begin{proposition}\label{pno_lt_initial_extend}
+    Let $\alpha$ be an ordinal.
+    Let $\beta\in\alpha$.
+    Then $\forall p,q:\Set\to\Prop.
+        \Apply{\pnoLtInitialOp}{\beta,p,q}\implies
+        \Apply{\pnoLtInitialOp}{\alpha,p,q}$.
+\end{proposition}
+\begin{proof}
+    Fix $p,q$.
+    Assume $\Apply{\pnoLtInitialOp}{\beta,p,q}$.
+    $\beta$ is an ordinal by \obv{elem_of_ordinal_is_ordinal}.
+    $\beta\subseteq\alpha$ by \obv{ordinal_elem_implies_subseteq}.
+    Follows by \auto{pno_lt_initial,subseteq}.
+\end{proof}
+
+\begin{theorem}\label{pno_lt_initial_trichotomy}
+    Let $\alpha$ be an ordinal.
+    Then $\forall p,q:\Set\to\Prop.
+        \Apply{\pnoLtInitialOp}{\alpha,p,q}\lor
+        \Apply{\pnoEqOp}{\alpha,p,q}\lor
+        \Apply{\pnoLtInitialOp}{\alpha,q,p}$.
+\end{theorem}
+\begin{proof}
+    Fix $p,q$.
+    \begin{byCase}
+        \caseOf{$\Apply{\pnoEqOp}{\alpha,p,q}$.}
+            Follows by \obv{pno_eq,pno_lt_initial}.
+        \caseOf{$\lnot\Apply{\pnoEqOp}{\alpha,p,q}$.}
+            Let $D=\sep{\alpha}{\fun{\delta:\Set}{
+                (\Apply{p}{\delta}\land\lnot\Apply{q}{\delta})\lor
+                (\lnot\Apply{p}{\delta}\land\Apply{q}{\delta})}}$.
+            $D$ is inhabited
+                by \auto{pno_eq,logical_separation_iff}.
+            Take $\delta$ such that $\delta$ is an \in-minimal element of $D$
+                by \obv{regularity}.
+            $\delta\in D$ and $\delta\notmeets D$.
+            Hence $\delta\in\alpha$
+                by \obv{logical_separation_iff}.
+            Hence
+                $((\Apply{p}{\delta}\land\lnot\Apply{q}{\delta})\lor
+                 (\lnot\Apply{p}{\delta}\land\Apply{q}{\delta}))$
+                by \obv{logical_separation_iff}.
+            Show that
+                $\Apply{\pnoEqOp}{\delta,p,q}$.
+            \begin{subproof}
+                Show that $\forall \gamma:\Set.\ \gamma\in\delta\implies
+                    (\Apply{p}{\gamma}\iff\Apply{q}{\gamma})$.
+                \begin{subproof}
+                    Fix $\gamma\in\delta$.
+                    Hence $\gamma\in\alpha$
+                        by \obv{ordinal_transitivity}.
+                    Suppose not.
+                    Hence $\gamma\in D$
+                        by \auto{logical_separation_iff}.
+                    Contradiction by \auto{disjoint}.
+                \end{subproof}
+                Follows by \obv{pno_eq}.
+            \end{subproof}
+            \begin{byCase}
+                \caseOf{$\Apply{p}{\delta}$.}
+                    We have $\lnot\Apply{q}{\delta}$.
+                    We have
+                        $\Apply{\pnoEqOp}{\delta,q,p}$
+                        by \obv{pno_eq_symmetric}.
+                    We have
+                        $\Apply{\pnoLtInitialOp}{\alpha,q,p}$
+                        by \obv{pno_lt_initial_intro}.
+                \caseOf{$\lnot\Apply{p}{\delta}$.}
+                    We have $\Apply{q}{\delta}$.
+                    We have
+                        $\Apply{\pnoLtInitialOp}{\alpha,p,q}$
+                        by \obv{pno_lt_initial_intro}.
+            \end{byCase}
+    \end{byCase}
+\end{proof}

@@ -1,0 +1,775 @@
+\import{algebra/monoid/homomorphism.tex}
+\import{algebra/monoid/divisibility.tex}
+\import{algebra/monoid/power.tex}
+\import{algebra/group.tex}
+\import{algebra/group/maps.tex}
+
+\section{Units of a monoid}
+
+A unit includes its ambient monoid in the proposition.  Its inverse is unique,
+but the witness itself remains hidden behind the application theorem for the
+inverse graph below.
+
+\begin{definition}\label{monoid_unit}
+    $u$ is a unit of $M$ iff
+        $M$ is a monoid and $u\in\carrier[M]$ and
+        there exists $v\in\carrier[M]$ such that
+            $\mul[M](u,v)=\neutral[M]$ and
+            $\mul[M](v,u)=\neutral[M]$.
+\end{definition}
+
+\begin{proposition}\label{monoid_unit_ambient_monoid}
+    Suppose $u$ is a unit of $M$.
+    Then $M$ is a monoid.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{monoid_unit}.
+\end{proof}
+
+\begin{proposition}\label{monoid_unit_in_carrier}
+    Suppose $u$ is a unit of $M$.
+    Then $u\in\carrier[M]$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{monoid_unit}.
+\end{proof}
+
+\begin{proposition}\label{monoid_unit_has_inverse}
+    Suppose $u$ is a unit of $M$.
+    Then there exists $v\in\carrier[M]$ such that
+        $\mul[M](u,v)=\neutral[M]$ and
+        $\mul[M](v,u)=\neutral[M]$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{monoid_unit}.
+\end{proof}
+
+\begin{theorem}\label{monoid_unit_left_divides}
+    Suppose $u$ is a unit of $M$.
+    Let $a\in\carrier[M]$.
+    Then $u$ left-divides $a$ in $M$.
+\end{theorem}
+\begin{proof}
+    $M$ is a monoid by \obv{monoid_unit_ambient_monoid}.
+    $u\in\carrier[M]$ by \obv{monoid_unit_in_carrier}.
+    Take $v\in\carrier[M]$ such that
+        $\mul[M](u,v)=\neutral[M]$ and
+        $\mul[M](v,u)=\neutral[M]$ by
+        \obv{monoid_unit_has_inverse}.
+    $\mul[M](v,a)\in\carrier[M]$ by
+        \obv{monoid_is_magma,magma_welldef}.
+    $\mul[M](u,\mul[M](v,a))=a$ by
+        \auto{monoid_assoc,monoid_is_unital_magma,unitalmagma_left}.
+    Follows by \obv{left_monoid_divisibility}.
+\end{proof}
+
+\begin{theorem}\label{monoid_unit_right_divides}
+    Suppose $u$ is a unit of $M$.
+    Let $a\in\carrier[M]$.
+    Then $u$ right-divides $a$ in $M$.
+\end{theorem}
+\begin{proof}
+    $M$ is a monoid by \obv{monoid_unit_ambient_monoid}.
+    $u\in\carrier[M]$ by \obv{monoid_unit_in_carrier}.
+    Take $v\in\carrier[M]$ such that
+        $\mul[M](u,v)=\neutral[M]$ and
+        $\mul[M](v,u)=\neutral[M]$ by
+        \obv{monoid_unit_has_inverse}.
+    $\mul[M](a,v)\in\carrier[M]$ by
+        \obv{monoid_is_magma,magma_welldef}.
+    $\mul[M](\mul[M](a,v),u)=a$ by
+        \auto{monoid_assoc,monoid_is_unital_magma,unitalmagma_right}.
+    Follows by \obv{right_monoid_divisibility}.
+\end{proof}
+
+\begin{theorem}\label{monoid_unit_inverse_unique}
+    Let $M$ be a monoid.
+    Let $u,v,w\in\carrier[M]$.
+    Suppose $\mul[M](u,v)=\neutral[M]$ and
+        $\mul[M](v,u)=\neutral[M]$.
+    Suppose $\mul[M](u,w)=\neutral[M]$ and
+        $\mul[M](w,u)=\neutral[M]$.
+    Then $v=w$.
+\end{theorem}
+\begin{proof}
+    $v=\mul[M](v,\neutral[M])$ by
+        \obv{monoid_is_unital_magma,unitalmagma_right}.
+    Hence $v=\mul[M](v,\mul[M](u,w))$.
+    Hence $v=\mul[M](\mul[M](v,u),w)$ by
+        \obv{monoid_assoc}.
+    Hence $v=\mul[M](\neutral[M],w)$.
+    Follows by
+        \obv{monoid_is_unital_magma,unitalmagma_left}.
+\end{proof}
+
+\subsection{Translation by units}
+
+An explicit two-sided inverse makes both translations bijective and identifies
+their converse graphs.  Keeping the witness visible is useful when the
+inverse carries additional structure, for example continuity.
+
+\begin{theorem}\label{monoid_unit_left_translation_bijection}
+    Let $M$ be a monoid.
+    Let $u,v\in\carrier[M]$.
+    Suppose $\mul[M](u,v)=\neutral[M]$ and
+        $\mul[M](v,u)=\neutral[M]$.
+    Then $\LeftTranslation{M}{u}\in
+        \bijections{\carrier[M]}{\carrier[M]}$.
+\end{theorem}
+\begin{proof}
+    Let $f=\LeftTranslation{M}{u}$.
+    $f\in\funs{\carrier[M]}{\carrier[M]}$
+        by \auto{left_translation_monoid_function}.
+    Show that for every $y\in\carrier[M]$ there exists
+        $x\in\carrier[M]$ such that $f(x)=y$.
+    \begin{subproof}
+        Fix $y\in\carrier[M]$.
+        Let $x=\mul[M](v,y)$.
+        $x\in\carrier[M]$ by \auto{monoid_is_magma,magma_welldef}.
+        $f(x)=\mul[M](u,x)$ by \auto{left_translation_monoid_apply}.
+        Hence $f(x)=y$ by
+            \auto{monoid_assoc,monoid_is_unital_magma,unitalmagma_left}.
+    \end{subproof}
+    Hence $f\in\surj{\carrier[M]}{\carrier[M]}$ by \obv{surj}.
+    Show that $f$ is injective.
+    \begin{subproof}
+        Show that for all $x,y,z$ such that $x\mathrel{f}z$ and
+            $y\mathrel{f}z$ we have $x=y$.
+        \begin{subproof}
+            Fix $x,y,z$ such that $x\mathrel{f}z$ and $y\mathrel{f}z$.
+            $x,y\in\carrier[M]$ and
+                $z=\mul[M](u,x)=\mul[M](u,y)$
+                by \auto{left_translation_iff}.
+            $\mul[M](v,\mul[M](u,x))
+                =\mul[M](v,\mul[M](u,y))$.
+            Follows by
+                \auto{monoid_assoc,monoid_is_unital_magma,
+                    unitalmagma_left}.
+        \end{subproof}
+        Follows by \obv{injective}.
+    \end{subproof}
+    Follows by \obv{bijections}.
+\end{proof}
+
+\begin{theorem}\label{monoid_unit_right_translation_bijection}
+    Let $M$ be a monoid.
+    Let $u,v\in\carrier[M]$.
+    Suppose $\mul[M](u,v)=\neutral[M]$ and
+        $\mul[M](v,u)=\neutral[M]$.
+    Then $\RightTranslation{M}{u}\in
+        \bijections{\carrier[M]}{\carrier[M]}$.
+\end{theorem}
+\begin{proof}
+    Let $f=\RightTranslation{M}{u}$.
+    $f\in\funs{\carrier[M]}{\carrier[M]}$
+        by \auto{right_translation_monoid_function}.
+    Show that for every $y\in\carrier[M]$ there exists
+        $x\in\carrier[M]$ such that $f(x)=y$.
+    \begin{subproof}
+        Fix $y\in\carrier[M]$.
+        Let $x=\mul[M](y,v)$.
+        $x\in\carrier[M]$ by \auto{monoid_is_magma,magma_welldef}.
+        $f(x)=\mul[M](x,u)$ by \auto{right_translation_monoid_apply}.
+        Hence $f(x)=y$ by
+            \auto{monoid_assoc,monoid_is_unital_magma,unitalmagma_right}.
+    \end{subproof}
+    Hence $f\in\surj{\carrier[M]}{\carrier[M]}$ by \obv{surj}.
+    Show that $f$ is injective.
+    \begin{subproof}
+        Show that for all $x,y,z$ such that $x\mathrel{f}z$ and
+            $y\mathrel{f}z$ we have $x=y$.
+        \begin{subproof}
+            Fix $x,y,z$ such that $x\mathrel{f}z$ and $y\mathrel{f}z$.
+            $x,y\in\carrier[M]$ and
+                $z=\mul[M](x,u)=\mul[M](y,u)$
+                by \auto{right_translation_iff}.
+            $\mul[M](\mul[M](x,u),v)
+                =\mul[M](\mul[M](y,u),v)$.
+            Follows by
+                \auto{monoid_assoc,monoid_is_unital_magma,
+                    unitalmagma_right}.
+        \end{subproof}
+        Follows by \obv{injective}.
+    \end{subproof}
+    Follows by \obv{bijections}.
+\end{proof}
+
+\begin{lemma}\label{monoid_unit_left_translation_converse}
+    Let $M$ be a monoid.
+    Let $u,v\in\carrier[M]$.
+    Suppose $\mul[M](u,v)=\neutral[M]$ and
+        $\mul[M](v,u)=\neutral[M]$.
+    Then $\converse{\LeftTranslation{M}{u}}
+        =\LeftTranslation{M}{v}$.
+\end{lemma}
+\begin{proof}
+    Show that for all $x,y$ we have
+        $x\mathrel{\converse{\LeftTranslation{M}{u}}}y$ iff
+        $x\mathrel{\LeftTranslation{M}{v}}y$.
+    \begin{subproof}
+        Fix $x,y$.
+        If $x\mathrel{\converse{\LeftTranslation{M}{u}}}y$, then
+            $x\in\carrier[M]$ and $y=\mul[M](v,x)$ by
+            \auto{converse_iff,left_translation_iff,monoid_is_magma,
+                magma_welldef,monoid_assoc,monoid_is_unital_magma,
+                unitalmagma_left}.
+        Hence if $x\mathrel{\converse{\LeftTranslation{M}{u}}}y$, then
+            $x\mathrel{\LeftTranslation{M}{v}}y$
+            by \auto{left_translation_iff}.
+        If $x\mathrel{\LeftTranslation{M}{v}}y$, then
+            $y\in\carrier[M]$ and $x=\mul[M](u,y)$ by
+            \auto{left_translation_iff,monoid_is_magma,magma_welldef,
+                monoid_assoc,monoid_is_unital_magma,unitalmagma_left}.
+        Hence if $x\mathrel{\LeftTranslation{M}{v}}y$, then
+            $x\mathrel{\converse{\LeftTranslation{M}{u}}}y$
+            by \auto{converse_iff,left_translation_iff}.
+        Follows by \auto.
+    \end{subproof}
+    Follows by
+        \auto{relext,converse_is_relation,left_translation,
+            relation}.
+\end{proof}
+
+\begin{lemma}\label{monoid_unit_right_translation_converse}
+    Let $M$ be a monoid.
+    Let $u,v\in\carrier[M]$.
+    Suppose $\mul[M](u,v)=\neutral[M]$ and
+        $\mul[M](v,u)=\neutral[M]$.
+    Then $\converse{\RightTranslation{M}{u}}
+        =\RightTranslation{M}{v}$.
+\end{lemma}
+\begin{proof}
+    Show that for all $x,y$ we have
+        $x\mathrel{\converse{\RightTranslation{M}{u}}}y$ iff
+        $x\mathrel{\RightTranslation{M}{v}}y$.
+    \begin{subproof}
+        Fix $x,y$.
+        If $x\mathrel{\converse{\RightTranslation{M}{u}}}y$, then
+            $x\in\carrier[M]$ and $y=\mul[M](x,v)$ by
+            \auto{converse_iff,right_translation_iff,monoid_is_magma,
+                magma_welldef,monoid_assoc,monoid_is_unital_magma,
+                unitalmagma_right}.
+        Hence if $x\mathrel{\converse{\RightTranslation{M}{u}}}y$, then
+            $x\mathrel{\RightTranslation{M}{v}}y$
+            by \auto{right_translation_iff}.
+        If $x\mathrel{\RightTranslation{M}{v}}y$, then
+            $y\in\carrier[M]$ and $x=\mul[M](y,u)$ by
+            \auto{right_translation_iff,monoid_is_magma,magma_welldef,
+                monoid_assoc,monoid_is_unital_magma,unitalmagma_right}.
+        Hence if $x\mathrel{\RightTranslation{M}{v}}y$, then
+            $x\mathrel{\converse{\RightTranslation{M}{u}}}y$
+            by \auto{converse_iff,right_translation_iff}.
+        Follows by \auto.
+    \end{subproof}
+    Follows by
+        \auto{relext,converse_is_relation,right_translation,
+            relation}.
+\end{proof}
+
+\begin{definition}\label{monoid_units}
+    $\monoidUnits{M}=\{u\in\carrier[M]\mid
+        \text{$u$ is a unit of $M$}\}$.
+\end{definition}
+
+\begin{proposition}\label{monoid_units_iff}
+    $u\in\monoidUnits{M}$ iff
+        $u\in\carrier[M]$ and $u$ is a unit of $M$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{monoid_units}.
+\end{proof}
+
+\begin{proposition}\label{monoid_units_subseteq_carrier}
+    $\monoidUnits{M}\subseteq\carrier[M]$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{subseteq,monoid_units_iff}.
+\end{proof}
+
+\begin{proposition}\label{monoid_neutral_is_unit}
+    Let $M$ be a monoid.
+    Then $\neutral[M]$ is a unit of $M$.
+\end{proposition}
+\begin{proof}
+    $\neutral[M]\in\carrier[M]$ by \obv{unitalmagma_type}.
+    $\mul[M](\neutral[M],\neutral[M])=\neutral[M]$ by
+        \obv{unitalmagma_left}.
+    Follows by \obv{monoid_unit}.
+\end{proof}
+
+\begin{corollary}\label{monoid_neutral_in_units}
+    Let $M$ be a monoid.
+    Then $\neutral[M]\in\monoidUnits{M}$.
+\end{corollary}
+\begin{proof}
+    Follows by
+        \obv{monoid_units_iff,monoid_neutral_is_unit,
+            monoid_is_unital_magma,unitalmagma_type}.
+\end{proof}
+
+\begin{theorem}\label{monoid_unit_inverse_is_unit}
+    Suppose $u$ is a unit of $M$.
+    Let $v\in\carrier[M]$.
+    Suppose $\mul[M](u,v)=\neutral[M]$ and
+        $\mul[M](v,u)=\neutral[M]$.
+    Then $v$ is a unit of $M$.
+\end{theorem}
+\begin{proof}
+    $u\in\carrier[M]$ by \obv{monoid_unit_in_carrier}.
+    Follows by \obv{monoid_unit}.
+\end{proof}
+
+\begin{theorem}\label{monoid_unit_product}
+    Suppose $u$ is a unit of $M$ and $w$ is a unit of $M$.
+    Then $\mul[M](u,w)$ is a unit of $M$.
+\end{theorem}
+\begin{proof}
+    $M$ is a monoid by \obv{monoid_unit_ambient_monoid}.
+    $u,w\in\carrier[M]$ by \obv{monoid_unit_in_carrier}.
+    Take $v\in\carrier[M]$ such that
+        $\mul[M](u,v)=\neutral[M]$ and
+        $\mul[M](v,u)=\neutral[M]$ by
+        \obv{monoid_unit_has_inverse}.
+    Take $z\in\carrier[M]$ such that
+        $\mul[M](w,z)=\neutral[M]$ and
+        $\mul[M](z,w)=\neutral[M]$ by
+        \obv{monoid_unit_has_inverse}.
+    $\mul[M](u,w),\mul[M](z,v)\in\carrier[M]$ by
+        \obv{monoid_is_magma,magma_welldef}.
+    $\mul[M](\mul[M](u,w),\mul[M](z,v))=\neutral[M]$ by
+        \auto{monoid_assoc,monoid_is_unital_magma,
+            unitalmagma_left,unitalmagma_right}.
+    $\mul[M](\mul[M](z,v),\mul[M](u,w))=\neutral[M]$ by
+        \auto{monoid_assoc,monoid_is_unital_magma,
+            unitalmagma_left,unitalmagma_right}.
+    Follows by \obv{monoid_unit}.
+\end{proof}
+
+\begin{corollary}\label{monoid_units_closed_under_product}
+    Let $M$ be a monoid.
+    Let $u,w\in\monoidUnits{M}$.
+    Then $\mul[M](u,w)\in\monoidUnits{M}$.
+\end{corollary}
+\begin{proof}
+    $u$ is a unit of $M$ and $w$ is a unit of $M$ by
+        \obv{monoid_units_iff}.
+    $\mul[M](u,w)$ is a unit of $M$ by
+        \obv{monoid_unit_product}.
+    $\mul[M](u,w)\in\carrier[M]$ by
+        \obv{monoid_units_subseteq_carrier,subseteq,
+            monoid_is_magma,magma_welldef}.
+    Follows by \obv{monoid_units_iff}.
+\end{proof}
+
+\begin{theorem}\label{monoid_unit_power}
+    Suppose $u$ is a unit of $M$.
+    Let $n$ be a natural number.
+    Then $\monoidPower{M}{u}{n}$ is a unit of $M$.
+\end{theorem}
+\begin{proof}
+    $M$ is a monoid by \obv{monoid_unit_ambient_monoid}.
+    $u\in\carrier[M]$ by \obv{monoid_unit_in_carrier}.
+    Let $C=\{k\in\naturals\mid
+        \text{$\monoidPower{M}{u}{k}$ is a unit of $M$}\}$.
+    $\emptyset\in C$ by
+        \auto{omega_empty,monoid_power_zero,monoid_neutral_is_unit}.
+    Show that for every $k\in C$ we have $\suc{k}\in C$.
+    \begin{subproof}
+        Fix $k\in C$.
+        Hence $k$ is a natural number and
+            $\monoidPower{M}{u}{k}$ is a unit of $M$.
+        $\monoidPower{M}{u}{\suc{k}}=
+            \mul[M](\monoidPower{M}{u}{k},u)$ by
+            \obv{monoid_power_successor}.
+        Hence $\monoidPower{M}{u}{\suc{k}}$ is a unit of $M$ by
+            \auto{monoid_unit_product}.
+        $\suc{k}$ is a natural number by \obv{omega_successor}.
+    \end{subproof}
+    Hence $C$ is an inductive set by \obv{inductive_set}.
+    Hence every natural number is an element of $C$ by
+        \obv{omega_minimal}.
+    Hence $n\in C$.
+\end{proof}
+
+\begin{theorem}\label{monoid_hom_preserves_unit}
+    Suppose $f$ is a monoid homomorphism from $M$ to $N$.
+    Suppose $u$ is a unit of $M$.
+    Then $f(u)$ is a unit of $N$.
+\end{theorem}
+\begin{proof}
+    $M$ is a monoid and $N$ is a monoid by
+        \obv{monoid_hom_source_monoid,monoid_hom_target_monoid}.
+    $u\in\carrier[M]$ by \obv{monoid_unit_in_carrier}.
+    Take $v\in\carrier[M]$ such that
+        $\mul[M](u,v)=\neutral[M]$ and
+        $\mul[M](v,u)=\neutral[M]$ by
+        \obv{monoid_unit_has_inverse}.
+    $f(u),f(v)\in\carrier[N]$ by
+        \obv{monoid_hom_apply_type}.
+    $f(\mul[M](u,v))=\mul[N](f(u),f(v))$ and
+        $f(\mul[M](v,u))=\mul[N](f(v),f(u))$ by
+        \obv{monoid_hom_mul}.
+    $f(\neutral[M])=\neutral[N]$ by \obv{monoid_hom_neutral}.
+    Hence $\mul[N](f(u),f(v))=\neutral[N]$ and
+        $\mul[N](f(v),f(u))=\neutral[N]$.
+    Follows by \auto{monoid_unit}.
+\end{proof}
+
+\subsection{The inverse graph and exact unit group}
+
+\begin{definition}\label{monoid_unit_inverse_graph}
+    $\monoidUnitInverseGraph{M}=\{(u,v)\mid
+        u\in\monoidUnits{M},v\in\carrier[M]\mid
+        \text{$\mul[M](u,v)=\neutral[M]$ and
+            $\mul[M](v,u)=\neutral[M]$}\}$.
+\end{definition}
+
+\begin{proposition}\label{monoid_unit_inverse_graph_iff}
+    $(u,v)\in\monoidUnitInverseGraph{M}$ iff
+        $u\in\monoidUnits{M}$ and $v\in\carrier[M]$ and
+        $\mul[M](u,v)=\neutral[M]$ and
+        $\mul[M](v,u)=\neutral[M]$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{monoid_unit_inverse_graph,pair_eq_iff}.
+\end{proof}
+
+\begin{theorem}\label{monoid_unit_inverse_graph_type}
+    Let $M$ be a monoid.
+    Then $\monoidUnitInverseGraph{M}\in
+        \funs{\monoidUnits{M}}{\monoidUnits{M}}$.
+\end{theorem}
+\begin{proof}
+    Let $f=\monoidUnitInverseGraph{M}$.
+    $f$ is a relation by
+        \auto{relation,monoid_unit_inverse_graph}.
+    Show that $f$ is right-unique.
+    \begin{subproof}
+        Show that for all $u,v,w$ such that $(u,v)\in f$ and
+            $(u,w)\in f$ we have $v=w$.
+        \begin{subproof}
+            Fix $u,v,w$ such that $(u,v)\in f$ and $(u,w)\in f$.
+            $u\in\monoidUnits{M}$ and $v,w\in\carrier[M]$ and
+                $\mul[M](u,v)=\neutral[M]$ and
+                $\mul[M](v,u)=\neutral[M]$ and
+                $\mul[M](u,w)=\neutral[M]$ and
+                $\mul[M](w,u)=\neutral[M]$ by
+                \auto{monoid_unit_inverse_graph_iff}.
+            $u\in\carrier[M]$ by
+                \obv{monoid_units_subseteq_carrier,subseteq}.
+            Follows by \obv{monoid_unit_inverse_unique}.
+        \end{subproof}
+        Follows by \obv{rightunique}.
+    \end{subproof}
+    Show that $\dom{f}=\monoidUnits{M}$.
+    \begin{subproof}
+        Show that for every $u$ we have
+            $u\in\dom{f}$ iff $u\in\monoidUnits{M}$.
+        \begin{subproof}
+            Fix $u$.
+            Show that if $u\in\dom{f}$, then
+                $u\in\monoidUnits{M}$.
+            \begin{subproof}
+                Assume $u\in\dom{f}$.
+                Follows by
+                    \auto{dom_iff,monoid_unit_inverse_graph_iff}.
+            \end{subproof}
+            Show that if $u\in\monoidUnits{M}$, then $u\in\dom{f}$.
+            \begin{subproof}
+                Assume $u\in\monoidUnits{M}$.
+                Hence $u$ is a unit of $M$ by
+                    \obv{monoid_units_iff}.
+                Take $v\in\carrier[M]$ such that
+                    $\mul[M](u,v)=\neutral[M]$ and
+                    $\mul[M](v,u)=\neutral[M]$ by
+                    \obv{monoid_unit_has_inverse}.
+                Hence $(u,v)\in f$ by
+                    \auto{monoid_unit_inverse_graph_iff}.
+                Follows by \auto{dom_iff}.
+            \end{subproof}
+            Follows by \auto.
+        \end{subproof}
+        Follows by \obv{setext}.
+    \end{subproof}
+    Show that for every $u\in\dom{f}$ we have
+        $f(u)\in\monoidUnits{M}$.
+    \begin{subproof}
+        Fix $u\in\dom{f}$.
+        $(u,f(u))\in f$ by \obv{function_apply_elim}.
+        Hence $u\in\monoidUnits{M}$ and
+            $f(u)\in\carrier[M]$ and
+            $\mul[M](u,f(u))=\neutral[M]$ and
+            $\mul[M](f(u),u)=\neutral[M]$ by
+            \obv{monoid_unit_inverse_graph_iff}.
+        $u$ is a unit of $M$ by \obv{monoid_units_iff}.
+        Hence $f(u)$ is a unit of $M$ by
+            \obv{monoid_unit_inverse_is_unit}.
+        Follows by \obv{monoid_units_iff}.
+    \end{subproof}
+    Hence $f$ is a function to $\monoidUnits{M}$.
+    Follows by \auto{funs_intro}.
+\end{proof}
+
+\begin{theorem}\label{monoid_unit_inverse_graph_apply}
+    Suppose $u$ is a unit of $M$.
+    Then $\apply{\monoidUnitInverseGraph{M}}{u}\in\carrier[M]$ and
+        $\mul[M](u,\apply{\monoidUnitInverseGraph{M}}{u})
+            =\neutral[M]$ and
+        $\mul[M](\apply{\monoidUnitInverseGraph{M}}{u},u)
+            =\neutral[M]$.
+\end{theorem}
+\begin{proof}
+    $u\in\monoidUnits{M}$ by
+        \obv{monoid_unit_in_carrier,monoid_units_iff}.
+    $\monoidUnitInverseGraph{M}\in
+        \funs{\monoidUnits{M}}{\monoidUnits{M}}$ by
+        \obv{monoid_unit_inverse_graph_type}.
+    Hence $\monoidUnitInverseGraph{M}$ is a function and
+        $u\in\dom{\monoidUnitInverseGraph{M}}$ by
+        \auto{funs_elim}.
+    Hence
+        $(u,\apply{\monoidUnitInverseGraph{M}}{u})
+            \in\monoidUnitInverseGraph{M}$ by
+        \obv{function_apply_elim}.
+    Follows by \auto{monoid_unit_inverse_graph_iff}.
+\end{proof}
+
+\begin{corollary}\label{monoid_unit_inverse_in_units}
+    Let $M$ be a monoid.
+    Let $u\in\monoidUnits{M}$.
+    Then $\apply{\monoidUnitInverseGraph{M}}{u}\in\monoidUnits{M}$.
+\end{corollary}
+\begin{proof}
+    Follows by
+        \auto{monoid_unit_inverse_graph_type,funs_type_apply}.
+\end{proof}
+
+\begin{proposition}\label{monoid_unit_mul_restriction_type}
+    Let $M$ be a monoid.
+    Then $\restrl{\mul[M]}{
+        \monoidUnits{M}\times\monoidUnits{M}}
+        \in\funs{
+            \monoidUnits{M}\times\monoidUnits{M}}{
+            \monoidUnits{M}}$.
+\end{proposition}
+\begin{proof}
+    Let $U=\monoidUnits{M}$.
+    Let $m=\restrl{\mul[M]}{U\times U}$.
+    $\mul[M]\in
+        \funs{\carrier[M]\times\carrier[M]}{\carrier[M]}$ by
+        \obv{magma_mul_graph}.
+    $U\subseteq\carrier[M]$ by \auto{monoid_units_subseteq_carrier}.
+    $U\times U\subseteq\carrier[M]\times U$ by
+        \obv{times_subseteq_left}.
+    $\carrier[M]\times U\subseteq
+        \carrier[M]\times\carrier[M]$ by
+        \obv{times_subseteq_right}.
+    Hence $U\times U\subseteq
+        \carrier[M]\times\carrier[M]$ by
+        \obv{subseteq_transitive}.
+    Hence $U\times U\subseteq\dom{\mul[M]}$ by \obv{funs}.
+    Hence $m\in\funs{U\times U}{\carrier[M]}$ by
+        \auto{funs_restrl}.
+    Hence $m$ is a function and $\dom{m}=U\times U$ by
+        \auto{funs_elim}.
+    Show that for every $p\in\dom{m}$ we have $m(p)\in U$.
+    \begin{subproof}
+        Fix $p\in\dom{m}$.
+        Hence $p\in U\times U$.
+        Take $u,w$ such that $u\in U$ and $w\in U$ and
+            $p=(u,w)$ by \obv{times_elem_is_tuple}.
+        $\mul[M]$ is a function by \obv{funs_is_function}.
+        $m(p)=\mul[M](u,w)$ by
+            \auto{restrl_of_function_apply}.
+        Follows by \auto{monoid_units_closed_under_product}.
+    \end{subproof}
+    Hence $m$ is a function to $U$.
+    Follows by \auto{funs_intro}.
+\end{proof}
+
+\begin{proposition}\label{monoid_unit_mul_restriction_apply}
+    Let $M$ be a monoid.
+    Let $u,w\in\monoidUnits{M}$.
+    Then $(\restrl{\mul[M]}{
+        \monoidUnits{M}\times\monoidUnits{M}})(u,w)=\mul[M](u,w)$.
+\end{proposition}
+\begin{proof}
+    $\mul[M]\in
+        \funs{\carrier[M]\times\carrier[M]}{\carrier[M]}$ by
+        \obv{magma_mul_graph}.
+    Hence $\mul[M]$ is a function and
+        $\dom{\mul[M]}=\carrier[M]\times\carrier[M]$ by
+        \obv{funs_elim}.
+    $\monoidUnits{M}\subseteq\carrier[M]$ by
+        \obv{monoid_units_subseteq_carrier}.
+    $\monoidUnits{M}\times\monoidUnits{M}
+        \subseteq\carrier[M]\times\monoidUnits{M}$ by
+        \obv{times_subseteq_left}.
+    $\carrier[M]\times\monoidUnits{M}
+        \subseteq\carrier[M]\times\carrier[M]$ by
+        \obv{times_subseteq_right}.
+    Hence $\monoidUnits{M}\times\monoidUnits{M}
+        \subseteq\carrier[M]\times\carrier[M]$ by
+        \obv{subseteq_transitive}.
+    Hence $\monoidUnits{M}\times\monoidUnits{M}
+        \subseteq\dom{\mul[M]}$.
+    Hence $u,w\in\carrier[M]$ by \obv{subseteq}.
+    Hence $(u,w)\in\carrier[M]\times\carrier[M]$ by
+        \obv{times_tuple_intro}.
+    Hence $(u,w)\in\dom{\mul[M]}$.
+    $(u,w)\in\monoidUnits{M}\times\monoidUnits{M}$ by
+        \obv{times_tuple_intro}.
+    Follows by \obv{restrl_of_function_apply}.
+\end{proof}
+
+\begin{definition}\label{monoid_unit_group}
+    $\MonoidUnitGroup{M}=\structure[group]{
+        \carrier=\monoidUnits{M},
+        \mul=\restrl{\mul[M]}{
+            \monoidUnits{M}\times\monoidUnits{M}},
+        \neutral=\neutral[M],
+        \groupInv=\monoidUnitInverseGraph{M}
+    }$.
+\end{definition}
+
+\begin{proposition}\label{monoid_unit_group_fields}
+    $\carrier[\MonoidUnitGroup{M}]=\monoidUnits{M}$ and
+    $\mul[\MonoidUnitGroup{M}]=
+        \restrl{\mul[M]}{
+            \monoidUnits{M}\times\monoidUnits{M}}$ and
+    $\neutral[\MonoidUnitGroup{M}]=\neutral[M]$ and
+    $\groupInv[\MonoidUnitGroup{M}]=\monoidUnitInverseGraph{M}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{monoid_unit_group,groupaggregateprojection_carrier,
+            groupaggregateprojection_mul,groupaggregateprojection_neutral,
+            groupaggregateprojection_groupInv}.
+\end{proof}
+
+\begin{proposition}\label{monoid_unit_group_mul_apply}
+    Let $M$ be a monoid.
+    Let $u,w\in\monoidUnits{M}$.
+    Then $\mul[\MonoidUnitGroup{M}](u,w)=\mul[M](u,w)$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{monoid_unit_group_fields,
+            monoid_unit_mul_restriction_apply}.
+\end{proof}
+
+\begin{proposition}\label{monoid_unit_group_inv_apply}
+    Let $M$ be a monoid.
+    Let $u\in\monoidUnits{M}$.
+    Then $\groupInv[\MonoidUnitGroup{M}](u)=
+        \apply{\monoidUnitInverseGraph{M}}{u}$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{monoid_unit_group_fields}.
+\end{proof}
+
+\begin{theorem}\label{monoid_unit_group_is_exact_group}
+    Let $M$ be a monoid.
+    Then $\MonoidUnitGroup{M}$ is an exact group.
+\end{theorem}
+\begin{proof}
+    Let $U=\monoidUnits{M}$.
+    Let $G=\MonoidUnitGroup{M}$.
+    $\carrier[G]=U$ and
+        $\mul[G]=\restrl{\mul[M]}{U\times U}$ and
+        $\neutral[G]=\neutral[M]$ and
+        $\groupInv[G]=\monoidUnitInverseGraph{M}$ by
+        \auto{monoid_unit_group_fields}.
+    $\mul[G]\in\funs{\carrier[G]\times\carrier[G]}{\carrier[G]}$ by
+        \auto{monoid_unit_mul_restriction_type}.
+    $\neutral[G]\in\carrier[G]$ by
+        \obv{monoid_neutral_in_units}.
+    $\groupInv[G]\in\funs{\carrier[G]}{\carrier[G]}$ by
+        \auto{monoid_unit_inverse_graph_type}.
+    Show that for every $u\in\carrier[G]$ we have
+        $\mul[G](u,\neutral[G])=u$.
+    \begin{subproof}
+        Fix $u\in\carrier[G]$.
+        Hence $u\in U$.
+        $\mul[G](u,\neutral[G])=\mul[M](u,\neutral[M])$ by
+            \auto{monoid_unit_group_mul_apply,monoid_neutral_in_units}.
+        $u\in\carrier[M]$ by
+            \auto{monoid_units_subseteq_carrier,subseteq}.
+        Follows by
+            \obv{monoid_is_unital_magma,unitalmagma_right}.
+    \end{subproof}
+    Show that for every $u\in\carrier[G]$ we have
+        $\mul[G](\neutral[G],u)=u$.
+    \begin{subproof}
+        Fix $u\in\carrier[G]$.
+        Hence $u\in U$.
+        $\mul[G](\neutral[G],u)=\mul[M](\neutral[M],u)$ by
+            \auto{monoid_unit_group_mul_apply,monoid_neutral_in_units}.
+        $u\in\carrier[M]$ by
+            \auto{monoid_units_subseteq_carrier,subseteq}.
+        Follows by
+            \obv{monoid_is_unital_magma,unitalmagma_left}.
+    \end{subproof}
+    Show that for all $u,v,w\in\carrier[G]$ we have
+        $\mul[G](u,\mul[G](v,w))=
+            \mul[G](\mul[G](u,v),w)$.
+    \begin{subproof}
+        Fix $u,v,w\in\carrier[G]$.
+        Hence $u,v,w\in U$.
+        $\mul[M](u,v),\mul[M](v,w)\in U$ by
+            \obv{monoid_units_closed_under_product}.
+        $\mul[G](u,\mul[G](v,w))=
+            \mul[M](u,\mul[M](v,w))$ by
+            \auto{monoid_unit_group_mul_apply}.
+        $\mul[G](\mul[G](u,v),w)=
+            \mul[M](\mul[M](u,v),w)$ by
+            \auto{monoid_unit_group_mul_apply}.
+        $u,v,w\in\carrier[M]$ by
+            \auto{monoid_units_subseteq_carrier,subseteq}.
+        Follows by \obv{monoid_assoc}.
+    \end{subproof}
+    Show that for every $u\in\carrier[G]$ we have
+        $\mul[G](u,\groupInv[G](u))=\neutral[G]$.
+    \begin{subproof}
+        Fix $u\in\carrier[G]$.
+        Hence $u\in U$.
+        $u$ is a unit of $M$ by \auto{monoid_units_iff}.
+        $\apply{\monoidUnitInverseGraph{M}}{u}\in U$ by
+            \obv{monoid_unit_inverse_in_units}.
+        $\mul[G](u,\groupInv[G](u))=
+            \mul[M](u,\apply{\monoidUnitInverseGraph{M}}{u})$ by
+            \auto{monoid_unit_group_mul_apply,
+                monoid_unit_group_inv_apply}.
+        Follows by
+            \auto{monoid_unit_inverse_graph_apply}.
+    \end{subproof}
+    Show that for every $u\in\carrier[G]$ we have
+        $\mul[G](\groupInv[G](u),u)=\neutral[G]$.
+    \begin{subproof}
+        Fix $u\in\carrier[G]$.
+        Hence $u\in U$.
+        $u$ is a unit of $M$ by \auto{monoid_units_iff}.
+        $\apply{\monoidUnitInverseGraph{M}}{u}\in U$ by
+            \obv{monoid_unit_inverse_in_units}.
+        $\mul[G](\groupInv[G](u),u)=
+            \mul[M](\apply{\monoidUnitInverseGraph{M}}{u},u)$ by
+            \auto{monoid_unit_group_mul_apply,
+                monoid_unit_group_inv_apply}.
+        Follows by
+            \auto{monoid_unit_inverse_graph_apply}.
+    \end{subproof}
+    Hence $G$ is a group by
+        \auto{monoid_unit_group,group,monoid,unitalmagma,magma,
+            groupaggregateexact}.
+    Follows by
+        \auto{monoid_unit_group,groupaggregateexact}.
+\end{proof}
+
+\begin{corollary}\label{monoid_unit_group_is_group}
+    Let $M$ be a monoid.
+    Then $\MonoidUnitGroup{M}$ is a group.
+\end{corollary}
+\begin{proof}
+    Follows by \obv{monoid_unit_group_is_exact_group}.
+\end{proof}

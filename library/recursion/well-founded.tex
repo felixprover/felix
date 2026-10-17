@@ -1,0 +1,468 @@
+\import{relation/well-founded.tex}
+\import{order/zorn.tex}
+\import{order/well-order.tex}
+\import{function.tex}
+
+\section{Well-founded recursion}
+
+The recursion operator in this section is deliberately bounded.  A step
+function has type
+$A\times\pow{A\times B}\longrightarrow B$: its second argument is the graph
+of the already defined values below the current point.  This formulation is
+set-sized, first-order, and sufficient whenever a codomain bound is known.
+
+\begin{definition}\label{recursive_partials}
+    $\recursivePartials{A}{B}{R}{H} =
+        \{f\in\pow{A\times B}\mid
+            \text{$f\in\funs{\dom{f}}{B}$ and
+            $\dom{f}$ is an initial segment of $A$ with respect to $R$ and
+            for every $x\in\dom{f}$ we have
+            $f(x)=H((x,\restrl{f}{\downward{R}{x}}))$}\}$.
+\end{definition}
+
+\begin{definition}\label{recursive_functions}
+    $\recursiveFunctions{A}{B}{R}{H}=
+        \{f\in\funs{A}{B}\mid
+            \text{for every $x\in A$ we have
+            $f(x)=H((x,\restrl{f}{\downward{R}{x}}))$}\}$.
+\end{definition}
+
+\begin{proposition}\label{empty_recursive_partial}
+    $\emptyset\in\recursivePartials{A}{B}{R}{H}$.
+\end{proposition}
+\begin{proof}
+    $\emptyset\in\pow{A\times B}$ by \obv{powerset_bottom}.
+    $\emptyset\in\funs{\emptyset}{B}$
+        by \obv{emptyset_is_function_on_emptyset,codom_of_emptyset_can_be_anything,funs_intro}.
+    $\dom{\emptyset}=\emptyset$ by \obv{dom_emptyset}.
+    $\emptyset$ is an initial segment of $A$ with respect to $R$
+        by \obv{emptyset_initial_segment}.
+    Follows by \auto{recursive_partials,emptyset}.
+\end{proof}
+
+\begin{proposition}\label{recursive_partials_inhabited}
+    $\recursivePartials{A}{B}{R}{H}$ is inhabited.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{empty_recursive_partial}.
+\end{proof}
+
+\begin{proposition}\label{recursive_partial_is_function}
+    Let $f\in\recursivePartials{A}{B}{R}{H}$.
+    Then $f$ is a function and $f\subseteq A\times B$.
+\end{proposition}
+\begin{proof}
+    $f\in\pow{A\times B}$ and $f\in\funs{\dom{f}}{B}$
+        by \obv{recursive_partials}.
+    Follows by \obv{powerset_elim,funs_is_function}.
+\end{proof}
+
+\begin{proposition}\label{recursive_partial_domain_initial}
+    Let $f\in\recursivePartials{A}{B}{R}{H}$.
+    Then $\dom{f}$ is an initial segment of $A$ with respect to $R$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{recursive_partials}.
+\end{proof}
+
+\begin{proposition}\label{recursive_partial_equation}
+    Let $f\in\recursivePartials{A}{B}{R}{H}$.
+    Let $x\in\dom{f}$.
+    Then $f(x)=H((x,\restrl{f}{\downward{R}{x}}))$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{recursive_partials}.
+\end{proof}
+
+\begin{proposition}\label{recursive_partial_union_is_function}
+    Suppose $C\subseteq\recursivePartials{A}{B}{R}{H}$.
+    Suppose $C$ is an inclusion chain.
+    Then $\unions{C}$ is a function and $\unions{C}\subseteq A\times B$.
+\end{proposition}
+\begin{proof}
+    Every element of $C$ is a function
+        by \auto{subseteq,recursive_partial_is_function}.
+    For all $f,g\in C$ we have $f\subseteq g$ or $g\subseteq f$
+        by \obv{inclusion_chain}.
+    Thus $\unions{C}$ is a function
+        by \obv{unions_of_compatible_family_of_function_is_function}.
+    $\unions{C}\subseteq A\times B$
+        by \auto{subseteq,unions_iff,recursive_partial_is_function}.
+\end{proof}
+
+\begin{proposition}\label{recursive_partial_union_domain_initial}
+    Suppose $C\subseteq\recursivePartials{A}{B}{R}{H}$.
+    Then $\dom{\unions{C}}$ is an initial segment of $A$ with respect to $R$.
+\end{proposition}
+\begin{proof}
+    $\dom{\unions{C}}\subseteq A$
+        by \auto{subseteq,dom_iff,unions_iff,recursive_partial_is_function,times_tuple_elim}.
+    For all $x\in\dom{\unions{C}}$ we have for all $y\in A$
+        such that $y\mathrel{R}x$ we have $y\in\dom{\unions{C}}$
+        by \auto{dom_iff,unions_iff,subseteq,recursive_partial_domain_initial,initial_segment}.
+    Follows by \obv{initial_segment}.
+\end{proof}
+
+\begin{lemma}\label{recursive_partial_union_restriction}
+    Suppose $C\subseteq\recursivePartials{A}{B}{R}{H}$.
+    Suppose $C$ is an inclusion chain.
+    Suppose $R$ is a binary relation on $A$.
+    Let $f\in C$.
+    Let $x\in\dom{f}$.
+    Then
+        $\restrl{\unions{C}}{\downward{R}{x}}
+        =\restrl{f}{\downward{R}{x}}$.
+\end{lemma}
+\begin{proof}
+    Let $g=\unions{C}$.
+    $f$ and $g$ are functions
+        by \auto{subseteq,recursive_partial_is_function,recursive_partial_union_is_function}.
+    $f\subseteq g$ by \auto{subseteq,unions_iff}.
+    Show that for every $y\in\downward{R}{x}$ such that
+        $y\in\dom{f}\union\dom{g}$ we have
+        $y\in\dom{f}\inter\dom{g}$ and $f(y)=g(y)$.
+    \begin{subproof}
+        Fix $y$.
+        Assume $y\in\downward{R}{x}$ and $y\in\dom{f}\union\dom{g}$.
+        $y\mathrel{R}x$ by \obv{downward_closure_iff}.
+        $y\in A$ by \obv{subseteq,times_tuple_elim}.
+        $\dom{f}$ is an initial segment of $A$ with respect to $R$
+            by \obv{subseteq,recursive_partial_domain_initial}.
+        Hence $y\in\dom{f}$ by \obv{initial_segment}.
+        Thus $y\in\dom{g}$ by \auto{subseteq,dom_iff}.
+        Hence $y\in\dom{f}\inter\dom{g}$ by \obv{inter_intro}.
+        Follows by \obv{subfunction_apply}.
+    \end{subproof}
+    Follows by \auto{restrictions_agree}.
+\end{proof}
+
+\begin{proposition}\label{recursive_partial_chain_union}
+    Suppose $C\subseteq\recursivePartials{A}{B}{R}{H}$.
+    Suppose $C$ is an inclusion chain.
+    Suppose $R$ is a binary relation on $A$.
+    Then $\unions{C}\in\recursivePartials{A}{B}{R}{H}$.
+\end{proposition}
+\begin{proof}
+    Let $g=\unions{C}$.
+    $g$ is a function and $g\subseteq A\times B$
+        by \auto{recursive_partial_union_is_function}.
+    Thus $g\in\pow{A\times B}$ by \obv{powerset_intro}.
+    For every $x\in\dom{g}$ we have $g(x)\in B$
+        by \auto{function_apply_elim,subseteq,times_tuple_elim}.
+    Thus $g$ is a function to $B$.
+    Hence $g\in\funs{\dom{g}}{B}$ by \obv{funs_intro}.
+    $\dom{g}$ is an initial segment of $A$ with respect to $R$
+        by \auto{recursive_partial_union_domain_initial}.
+    Show that for every $x\in\dom{g}$ we have
+        $g(x)=H((x,\restrl{g}{\downward{R}{x}}))$.
+    \begin{subproof}
+        Fix $x\in\dom{g}$.
+        Take $f\in C$ such that $x\in\dom{f}$
+            by \auto{dom_iff,unions_iff,relation,function_member_elim,pair_eq_iff}.
+        $f\in\recursivePartials{A}{B}{R}{H}$ by \obv{subseteq}.
+        $f\subseteq g$ by \auto{subseteq,unions_iff}.
+        $f(x)=g(x)$ by \obv{subfunction_apply,recursive_partial_is_function}.
+        $f(x)=H((x,\restrl{f}{\downward{R}{x}}))$
+            by \obv{recursive_partial_equation}.
+        $\restrl{g}{\downward{R}{x}}=\restrl{f}{\downward{R}{x}}$
+            by \auto{recursive_partial_union_restriction}.
+    \end{subproof}
+    Follows by \auto{recursive_partials}.
+\end{proof}
+
+\begin{theorem}\label{maximal_recursive_partial}
+    Suppose $R$ is a binary relation on $A$.
+    Then there exists $M\in\recursivePartials{A}{B}{R}{H}$ such that
+        for every $f\in\recursivePartials{A}{B}{R}{H}$ such that
+            $M\subseteq f$ we have $f=M$.
+\end{theorem}
+\begin{proof}
+    Let $P=\recursivePartials{A}{B}{R}{H}$.
+    $P$ is inhabited by \auto{recursive_partials_inhabited}.
+    Show that for every $C$ such that $C\subseteq P$ and $C$ is inhabited
+        and $C$ is an inclusion chain we have $\unions{C}\in P$.
+    \begin{subproof}
+        Fix $C$.
+        Assume $C\subseteq P$ and $C$ is inhabited and $C$ is an inclusion chain.
+        Follows by \obv{recursive_partial_chain_union}.
+    \end{subproof}
+    Follows by \auto{zorn_subset_family}.
+\end{proof}
+
+\begin{lemma}\label{recursive_extension_restriction}
+    Suppose $R$ is a binary relation on $A$.
+    Let $f\in\recursivePartials{A}{B}{R}{H}$.
+    Let $x\in A\setminus\dom{f}$.
+    Suppose for every $y\in A$ such that $y\mathrel{R}x$ we have $y\in\dom{f}$.
+    Let $b\in B$.
+    Let $g=\cons{(x,b)}{f}$.
+    Let $z\in\dom{g}$.
+    Then $\restrl{g}{\downward{R}{z}}=\restrl{f}{\downward{R}{z}}$.
+\end{lemma}
+\begin{proof}
+    $f$ is a function by \auto{recursive_partial_is_function}.
+    $x\notin\dom{f}$ by \obv{setminus}.
+    $g\in\funs{\cons{x}{\dom{f}}}{B}$
+        by \auto{recursive_partials,funs,extend_function_at_new_point}.
+    Hence $g$ is a function and $\dom{g}=\cons{x}{\dom{f}}$
+        by \obv{funs_is_function,funs}.
+    $f\subseteq g$ by \auto{subseteq,cons_iff}.
+    Show that for every $y\in\downward{R}{z}$ such that
+        $y\in\dom{g}\union\dom{f}$ we have
+        $y\in\dom{g}\inter\dom{f}$ and $g(y)=f(y)$.
+    \begin{subproof}
+        Fix $y$.
+        Assume $y\in\downward{R}{z}$ and $y\in\dom{g}\union\dom{f}$.
+        $y\mathrel{R}z$ by \obv{downward_closure_iff}.
+        $y\in A$ by \obv{subseteq,times_tuple_elim}.
+        $z=x$ or $z\in\dom{f}$ by \auto{cons_iff}.
+        $\dom{f}$ is an initial segment of $A$ with respect to $R$
+            by \obv{recursive_partial_domain_initial}.
+        Hence $y\in\dom{f}$ by \auto{initial_segment}.
+        Thus $y\in\dom{g}$ by \auto{subseteq,dom_iff}.
+        Hence $y\in\dom{g}\inter\dom{f}$ by \obv{inter_intro}.
+        Follows by \obv{subfunction_apply}.
+    \end{subproof}
+    Follows by \obv{restrictions_agree}.
+\end{proof}
+
+\begin{proposition}\label{extend_recursive_partial}
+    Suppose $R$ is a binary relation on $A$.
+    Let $H\in\funs{A\times\pow{A\times B}}{B}$.
+    Let $f\in\recursivePartials{A}{B}{R}{H}$.
+    Let $x\in A\setminus\dom{f}$.
+    Suppose for every $y\in A$ such that $y\mathrel{R}x$ we have $y\in\dom{f}$.
+    Let $p=\restrl{f}{\downward{R}{x}}$.
+    Let $b=H((x,p))$.
+    Then $\cons{(x,b)}{f}\in\recursivePartials{A}{B}{R}{H}$.
+\end{proposition}
+\begin{proof}
+    $f$ is a function and $f\subseteq A\times B$
+        by \obv{recursive_partial_is_function}.
+    $p\subseteq f$ by \auto{restrl_subseteq}.
+    Hence $p\subseteq A\times B$ by \obv{subseteq_transitive}.
+    Thus $p\in\pow{A\times B}$ by \obv{powerset_intro}.
+    Hence $(x,p)\in A\times\pow{A\times B}$ by \obv{setminus,times_tuple_intro}.
+    Thus $b\in B$ by notion.
+    Let $g=\cons{(x,b)}{f}$.
+    $x\notin\dom{f}$ by \obv{setminus}.
+    $f\in\funs{\dom{f}}{B}$ by \obv{recursive_partials}.
+    Hence $g\in\funs{\cons{x}{\dom{f}}}{B}$
+        by \auto{extend_function_at_new_point}.
+    Thus $g$ is a function and $\dom{g}=\cons{x}{\dom{f}}$
+        by \obv{funs_is_function,funs}.
+    $(x,b)\in A\times B$ by \obv{setminus,times_tuple_intro}.
+    $g\subseteq A\times B$ by \auto{cons_iff,subseteq}.
+    Thus $g\in\pow{A\times B}$ by \obv{powerset_intro}.
+    Show that $\dom{g}$ is an initial segment of $A$ with respect to $R$.
+    \begin{subproof}
+        $\dom{g}\subseteq A$
+            by \auto{cons_iff,setminus,recursive_partial_domain_initial,initial_segment,subseteq}.
+        Show that for all $z,y$ such that $z\in\dom{g}$ and $y\in A$
+            and $y\mathrel{R}z$ we have $y\in\dom{g}$.
+        \begin{subproof}
+            Fix $z,y$.
+            Assume $z\in\dom{g}$ and $y\in A$ and $y\mathrel{R}z$.
+            $z=x$ or $z\in\dom{f}$ by \auto{cons_iff}.
+            $\dom{f}$ is an initial segment of $A$ with respect to $R$
+                by \obv{recursive_partial_domain_initial}.
+            Thus $y\in\dom{f}$ by \auto{initial_segment}.
+            Follows by \auto{cons_iff}.
+        \end{subproof}
+        Follows by \obv{initial_segment}.
+    \end{subproof}
+    Show that for every $z\in\dom{g}$ we have
+        $g(z)=H((z,\restrl{g}{\downward{R}{z}}))$.
+    \begin{subproof}
+        Fix $z\in\dom{g}$.
+        $z=x$ or $z\in\dom{f}$ by \auto{cons_iff}.
+        $\restrl{g}{\downward{R}{z}}=\restrl{f}{\downward{R}{z}}$
+            by \obv{recursive_extension_restriction}.
+        \begin{byCase}
+            \caseOf{$z=x$.}
+                $(x,b)\in g$ by \obv{cons_left}.
+                Hence $g(z)=b$ by \obv{function_apply_intro}.
+                $\restrl{g}{\downward{R}{z}}=p$.
+            \caseOf{$z\neq x$.}
+                $z\in\dom{f}$.
+                $f\subseteq g$ by \auto{subseteq,cons_iff}.
+                Hence $f(z)=g(z)$ by \obv{subfunction_apply}.
+                $f(z)=H((z,\restrl{f}{\downward{R}{z}}))$
+                    by \obv{recursive_partial_equation}.
+        \end{byCase}
+    \end{subproof}
+    Follows by \auto{recursive_partials}.
+\end{proof}
+
+\begin{theorem}\label{bounded_well_founded_recursion_exists}
+    Suppose $R$ is a binary relation on $A$ and $R$ is well-founded on $A$.
+    Let $H\in\funs{A\times\pow{A\times B}}{B}$.
+    Then $\recursiveFunctions{A}{B}{R}{H}$ is inhabited.
+\end{theorem}
+\begin{proof}
+    Take $M\in\recursivePartials{A}{B}{R}{H}$ such that
+        for every $f\in\recursivePartials{A}{B}{R}{H}$ such that
+            $M\subseteq f$ we have $f=M$
+        by \obv{maximal_recursive_partial}.
+    $\dom{M}$ is an initial segment of $A$ with respect to $R$
+        by \obv{recursive_partial_domain_initial}.
+    Show that $\dom{M}=A$.
+    \begin{subproof}
+        Suppose not.
+        Let $D=A\setminus\dom{M}$.
+        $\dom{M}\subseteq A$ by \obv{initial_segment}.
+        Hence $D$ is inhabited
+            by \auto{subset,difference_with_proper_subset_is_inhabited}.
+        $D\subseteq A$ by \auto{setminus_subseteq}.
+        Take $x\in D$ such that for every $y\in D$ we have $y\not\mathrel{R}x$
+            by \obv{well_founded_on}.
+        For every $y\in A$ such that $y\mathrel{R}x$ we have $y\in\dom{M}$
+            by \auto{setminus}.
+        Let $p=\restrl{M}{\downward{R}{x}}$.
+        Let $b=H((x,p))$.
+        Let $g=\cons{(x,b)}{M}$.
+        $g\in\recursivePartials{A}{B}{R}{H}$
+            by \auto{extend_recursive_partial}.
+        $M\subseteq g$ by \auto{subseteq,cons_iff}.
+        Hence $g=M$.
+        $x\in\dom{g}$ by \auto{dom_cons,cons_left}.
+        $x\notin\dom{M}$ by \auto{setminus}.
+        Contradiction.
+    \end{subproof}
+    $M\in\funs{\dom{M}}{B}$ by \obv{recursive_partials}.
+    Hence $M\in\funs{A}{B}$.
+    For every $x\in A$ we have
+        $M(x)=H((x,\restrl{M}{\downward{R}{x}}))$
+        by \obv{recursive_partial_equation}.
+    Thus $M\in\recursiveFunctions{A}{B}{R}{H}$
+        by \obv{recursive_functions}.
+\end{proof}
+
+\begin{theorem}\label{bounded_well_founded_recursion_unique}
+    Suppose $R$ is a binary relation on $A$ and $R$ is well-founded on $A$.
+    Let $H\in\funs{A\times\pow{A\times B}}{B}$.
+    Let $f,g\in\recursiveFunctions{A}{B}{R}{H}$.
+    Then $f=g$.
+\end{theorem}
+\begin{proof}
+    $f,g\in\funs{A}{B}$ by \obv{recursive_functions}.
+    Hence $f$ and $g$ are functions by \obv{funs_is_function}.
+    $\dom{f}=A$ and $\dom{g}=A$ by \obv{funs}.
+    Let $E=\{x\in A\mid f(x)=g(x)\}$.
+    Show that $E$ is progressive for $R$ on $A$.
+    \begin{subproof}
+        Show that for every $x\in A$ we have
+            if for every $y\in A$ such that $y\mathrel{R}x$ we have $y\in E$,
+            then $x\in E$.
+        \begin{subproof}
+            Fix $x\in A$.
+            Suppose for every $y\in A$ such that $y\mathrel{R}x$ we have $y\in E$.
+            Show that
+                $\restrl{f}{\downward{R}{x}}=\restrl{g}{\downward{R}{x}}$.
+            \begin{subproof}
+                Show that for every $y\in\downward{R}{x}$ such that
+                    $y\in\dom{f}\union\dom{g}$ we have
+                    $y\in\dom{f}\inter\dom{g}$ and $f(y)=g(y)$.
+                \begin{subproof}
+                    Fix $y$.
+                    Assume $y\in\downward{R}{x}$ and
+                        $y\in\dom{f}\union\dom{g}$.
+                    $y\mathrel{R}x$ by \obv{downward_closure_iff}.
+                    Hence $y\in A$ by \obv{subseteq,times_tuple_elim}.
+                    Thus $y\in E$.
+                    $f(y)=g(y)$.
+                    $y\in\dom{f}\inter\dom{g}$ by \obv{inter_intro}.
+                \end{subproof}
+                Follows by \obv{restrictions_agree}.
+            \end{subproof}
+            $f(x)=H((x,\restrl{f}{\downward{R}{x}}))$ and
+                $g(x)=H((x,\restrl{g}{\downward{R}{x}}))$
+                by \obv{recursive_functions}.
+            Hence $f(x)=g(x)$.
+        \end{subproof}
+        Follows by \obv{progressive_on}.
+    \end{subproof}
+    Hence $A\subseteq E$ by \obv{well_founded_induction_set}.
+    For every $x\in A$ we have $f(x)=g(x)$ by \auto{subseteq}.
+    Show that $f\subseteq g$.
+    \begin{subproof}
+        Show that for every $w\in f$ we have $w\in g$.
+        \begin{subproof}
+            Fix $w\in f$.
+            Take $x\in\dom{f}$ such that $w=(x,f(x))$
+                by \obv{function_member_elim}.
+            Hence $x\in A$.
+            Thus $f(x)=g(x)$.
+            $(x,g(x))\in g$ by \obv{function_apply_elim}.
+        \end{subproof}
+        Follows by \obv{subseteq}.
+    \end{subproof}
+    Show that $g\subseteq f$.
+    \begin{subproof}
+        Show that for every $w\in g$ we have $w\in f$.
+        \begin{subproof}
+            Fix $w\in g$.
+            Take $x\in\dom{g}$ such that $w=(x,g(x))$
+                by \obv{function_member_elim}.
+            Hence $x\in A$.
+            Thus $f(x)=g(x)$.
+            $(x,f(x))\in f$ by \obv{function_apply_elim}.
+        \end{subproof}
+        Follows by \obv{subseteq}.
+    \end{subproof}
+    Follows by \obv{subseteq_antisymmetric}.
+\end{proof}
+
+\begin{definition}\label{wfrec}
+    $\wfrec{A}{B}{R}{H}=\choice{\recursiveFunctions{A}{B}{R}{H}}$.
+\end{definition}
+
+This is a total set-valued term selected from the set of bounded recursive
+functions.  Its type, equation, and uniqueness laws apply only under the
+relation, well-foundedness, and step-map hypotheses stated below.  When those
+hypotheses do not make the candidate set inhabited, global choice supplies no
+membership law and no canonical off-domain value is claimed.
+
+\begin{theorem}\label{wfrec_is_recursive}
+    Suppose $R$ is a binary relation on $A$ and $R$ is well-founded on $A$.
+    Let $H\in\funs{A\times\pow{A\times B}}{B}$.
+    Then $\wfrec{A}{B}{R}{H}\in\recursiveFunctions{A}{B}{R}{H}$.
+\end{theorem}
+\begin{proof}
+    $\recursiveFunctions{A}{B}{R}{H}$ is inhabited
+        by \obv{bounded_well_founded_recursion_exists}.
+    Follows by \auto{wfrec,choice_member}.
+\end{proof}
+
+\begin{theorem}\label{wfrec_type}
+    Suppose $R$ is a binary relation on $A$ and $R$ is well-founded on $A$.
+    Let $H\in\funs{A\times\pow{A\times B}}{B}$.
+    Then $\wfrec{A}{B}{R}{H}\in\funs{A}{B}$.
+\end{theorem}
+\begin{proof}
+    Follows by \auto{wfrec_is_recursive,recursive_functions}.
+\end{proof}
+
+\begin{theorem}\label{wfrec_equation}
+    Suppose $R$ is a binary relation on $A$ and $R$ is well-founded on $A$.
+    Let $H\in\funs{A\times\pow{A\times B}}{B}$.
+    Let $x\in A$.
+    Then
+        $\apply{\wfrec{A}{B}{R}{H}}{x}=
+            H((x,\restrl{\wfrec{A}{B}{R}{H}}{\downward{R}{x}}))$.
+\end{theorem}
+\begin{proof}
+    Follows by \auto{wfrec_is_recursive,recursive_functions}.
+\end{proof}
+
+\begin{theorem}\label{wfrec_unique}
+    Suppose $R$ is a binary relation on $A$ and $R$ is well-founded on $A$.
+    Let $H\in\funs{A\times\pow{A\times B}}{B}$.
+    Let $f\in\recursiveFunctions{A}{B}{R}{H}$.
+    Then $f=\wfrec{A}{B}{R}{H}$.
+\end{theorem}
+\begin{proof}
+    $\wfrec{A}{B}{R}{H}\in\recursiveFunctions{A}{B}{R}{H}$
+        by \obv{wfrec_is_recursive}.
+    Follows by \obv{bounded_well_founded_recursion_unique}.
+\end{proof}

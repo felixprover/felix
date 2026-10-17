@@ -1,0 +1,283 @@
+\section{Compact intervals in conditionally complete linear orders}
+
+\import{order/supremum.tex}
+\import{topology/order-topology.tex}
+\import{topology/compactness.tex}
+\import{topology/subspace-neighbourhood-filter.tex}
+\import{topology/local-compactness.tex}
+
+The proof isolates the order-theoretic heart of compactness.  An ultrafilter
+which contains a closed interval determines a cut: take the supremum of the
+points whose closed upper rays belong to the ultrafilter.  The two kinds of
+open ray then force convergence to that supremum.
+
+\begin{theorem}\label{bounded_order_ultrafilter_converges}
+    Let $L$ be a conditionally complete linearly ordered set.
+    Let $a,b\in\carrier[L]$.
+    Suppose $V$ is an ultrafilter on $\carrier[L]$ and
+        $\orderClosedInterval{L}{a}{b}\in V$.
+    Then there exists $q\in\orderClosedInterval{L}{a}{b}$ such that
+        $\filterConverges{V}{q}{\orderTopology{L}}$.
+\end{theorem}
+\begin{proof}
+    $L$ is an ordered set by
+        \obv{linearly_ordered_set_is_ordered_set}.
+    $V$ is a proper filter on $\carrier[L]$ by
+        \auto{ultrafilter,maximalfilter}.
+    Hence $V$ is a filter on $\carrier[L]$ by
+        \obv{proper_filter_is_filter}.
+
+    Let $A=\{x\in\carrier[L]\mid
+        \orderClosedUpperRay{L}{x}\in V\}$.
+    $A\subseteq\carrier[L]$ by \obv{subseteq}.
+    $\orderClosedInterval{L}{a}{b}
+        \subseteq\orderClosedUpperRay{L}{a}$ by
+        \obv{order_closed_interval_iff,
+            order_closed_upper_ray_iff,subseteq}.
+    $\orderClosedUpperRay{L}{a}\subseteq\carrier[L]$ by
+        \obv{order_interval_and_ray_types}.
+    Hence $\orderClosedUpperRay{L}{a}\in V$ by \obv{filter}.
+    Thus $a\in A$.
+    Hence $A$ is inhabited.
+
+    Show that for every $x\in A$ we have $x\mathrel{\leq[L]}b$.
+    \begin{subproof}
+        Fix $x\in A$.
+        $x\in\carrier[L]$ and
+            $\orderClosedUpperRay{L}{x}\in V$.
+        Suppose not.
+        Hence not $x\mathrel{\leq[L]}b$.
+        Show that
+            $\orderClosedInterval{L}{a}{b}\inter
+                \orderClosedUpperRay{L}{x}=\emptyset$.
+        \begin{subproof}
+            Suppose not.
+            Hence $\orderClosedInterval{L}{a}{b}\inter
+                \orderClosedUpperRay{L}{x}$ is inhabited by
+                \obv{nonempty_inhabited}.
+            Take $y$ such that
+                $y\in\orderClosedInterval{L}{a}{b}\inter
+                    \orderClosedUpperRay{L}{x}$.
+            $y\in\orderClosedInterval{L}{a}{b}$ and
+                $y\in\orderClosedUpperRay{L}{x}$ by \obv{inter}.
+            Hence $y\mathrel{\leq[L]}b$ and
+                $x\mathrel{\leq[L]}y$ by
+                \obv{order_closed_interval,
+                    order_closed_upper_ray}.
+            Thus $x\mathrel{\leq[L]}b$ by
+                \auto{ordered_set_order_transitive,transitive}.
+            Contradiction.
+        \end{subproof}
+        $\orderClosedInterval{L}{a}{b}\inter
+            \orderClosedUpperRay{L}{x}\in V$ by \obv{filter}.
+        Hence $\emptyset\in V$.
+        Contradiction by \obv{proper_filter_excludes_emptyset}.
+    \end{subproof}
+    Hence $A$ is bounded above in $L$ by
+        \obv{bounded_above_in_ordered_set}.
+    $\hasSupremum{L}{A}$ by
+        \obv{conditionally_complete_linear_order}.
+    Let $q=\supremum{L}{A}$.
+    $q\in\carrier[L]$ by \auto{supremum_type}.
+    $a\mathrel{\leq[L]}q$ by \auto{supremum_upper}.
+    $q\mathrel{\leq[L]}b$ by \auto{supremum_least}.
+    Hence $q\in\orderClosedInterval{L}{a}{b}$ by
+        \obv{order_closed_interval_iff}.
+
+    $\orderTopology{L}$ is a topological space by
+        \obv{order_topology_is_topological_space}.
+    $\carrier[\orderTopology{L}]=\carrier[L]$ by
+        \obv{order_topology_carrier}.
+    $\orderTopologyPrebasis{L}$ is an open prebasis of
+        $\orderTopology{L}$ by
+        \obv{order_topology_prebasis_is_open_prebasis}.
+    Show that for every $U\in\orderTopologyPrebasis{L}$ such that
+        $q\in U$ we have $U\in V$.
+    \begin{subproof}
+        Fix $U\in\orderTopologyPrebasis{L}$.
+        Assume $q\in U$.
+        Take $c\in\carrier[L]$ such that
+            $U=\orderOpenLowerRay{L}{c}$ or
+            $U=\orderOpenUpperRay{L}{c}$ by
+            \obv{order_topology_prebasis}.
+        \begin{byCase}
+        \caseOf{$U=\orderOpenLowerRay{L}{c}$.}
+            Hence $q\in\orderOpenLowerRay{L}{c}$.
+            Thus $q\mathrel{\orderStrictRelation{L}}c$ by
+                \obv{order_open_lower_ray}.
+            Suppose not.
+            Hence $\orderOpenLowerRay{L}{c}\notin V$.
+            $\orderOpenLowerRay{L}{c}\subseteq\carrier[L]$ by
+                \obv{order_interval_and_ray_types}.
+            $\orderOpenLowerRay{L}{c}\in V$ or
+                $\carrier[L]\setminus
+                    \orderOpenLowerRay{L}{c}\in V$ by
+                \obv{ultrafilter_decides_subset}.
+            Hence $\carrier[L]\setminus
+                \orderOpenLowerRay{L}{c}\in V$.
+            $\carrier[L]\setminus\orderOpenLowerRay{L}{c}
+                =\orderClosedUpperRay{L}{c}$ by
+                \obv{order_complement_open_lower_ray}.
+            Hence $\orderClosedUpperRay{L}{c}\in V$.
+            Thus $c\in A$.
+            Hence $c\mathrel{\leq[L]}\supremum{L}{A}$ by
+                \obv{supremum_upper}.
+            Thus $c\mathrel{\leq[L]}q$.
+            $q\mathrel{\leq[L]}c$ and $q\neq c$ by
+                \obv{ordered_set_strict_relation_iff}.
+            Hence $q=c$ by
+                \auto{ordered_set_order_antisymmetric,antisymmetric}.
+            Contradiction.
+        \caseOf{$U=\orderOpenUpperRay{L}{c}$.}
+            Hence $q\in\orderOpenUpperRay{L}{c}$.
+            Thus $c\mathrel{\orderStrictRelation{L}}q$ by
+                \obv{order_open_upper_ray}.
+            Show that it is not the case that for every $x\in A$ we have
+                $x\mathrel{\leq[L]}c$.
+            \begin{subproof}
+                Assume for every $x\in A$ we have
+                    $x\mathrel{\leq[L]}c$.
+                $\supremum{L}{A}\mathrel{\leq[L]}c$ by
+                    \obv{supremum_least}.
+                Hence $q\mathrel{\leq[L]}c$.
+                $c\mathrel{\leq[L]}q$ and $c\neq q$ by
+                    \obv{ordered_set_strict_relation_iff}.
+                Hence $c=q$ by
+                    \auto{ordered_set_order_antisymmetric,antisymmetric}.
+                Contradiction.
+            \end{subproof}
+            Take $x\in A$ such that not $x\mathrel{\leq[L]}c$ by
+                \auto.
+            $c\mathrel{\leq[L]}x$ by
+                \obv{linearly_ordered_set_total}.
+            $c\neq x$.
+            Hence $c\mathrel{\orderStrictRelation{L}}x$ by
+                \auto{ordered_set_strict_relation_iff}.
+            Show that $\orderClosedUpperRay{L}{x}
+                \subseteq\orderOpenUpperRay{L}{c}$.
+            \begin{subproof}
+                It suffices to show that every element of
+                    $\orderClosedUpperRay{L}{x}$ is an element of
+                    $\orderOpenUpperRay{L}{c}$ by \obv{subseteq}.
+                Fix $y\in\orderClosedUpperRay{L}{x}$.
+                Hence $y\in\carrier[L]$ and
+                    $x\mathrel{\leq[L]}y$ by
+                    \obv{order_closed_upper_ray_iff}.
+                $c\mathrel{\leq[L]}y$ by
+                    \auto{ordered_set_order_transitive,transitive}.
+                $c\neq y$.
+                Hence $c\mathrel{\orderStrictRelation{L}}y$ by
+                    \auto{ordered_set_strict_relation_iff}.
+                Follows by \obv{order_open_upper_ray}.
+            \end{subproof}
+            $\orderClosedUpperRay{L}{x}\in V$.
+            $\orderOpenUpperRay{L}{c}\subseteq\carrier[L]$ by
+                \obv{order_interval_and_ray_types}.
+            Hence $\orderOpenUpperRay{L}{c}\in V$ by \obv{filter}.
+        \end{byCase}
+    \end{subproof}
+    $\filterConverges{V}{q}{\orderTopology{L}}$ by
+        \obv{filter_converges_iff_open_prebasis_members}.
+\end{proof}
+
+\begin{theorem}\label{order_closed_interval_is_compact}
+    Let $L$ be a conditionally complete linearly ordered set.
+    Let $a,b\in\carrier[L]$.
+    Then $\orderClosedInterval{L}{a}{b}$ is compact in
+        $\orderTopology{L}$.
+\end{theorem}
+\begin{proof}
+    Let $X=\orderTopology{L}$ and
+        $K=\orderClosedInterval{L}{a}{b}$.
+    $X$ is a topological space by
+        \obv{order_topology_is_topological_space}.
+    $\carrier[X]=\carrier[L]$ by
+        \auto{order_topology_carrier}.
+    $K\subseteq\carrier[L]$ by
+        \auto{order_interval_and_ray_types}.
+    Hence $K\subseteq\carrier[X]$.
+    $\subspaceTopology{X}{K}$ is a topological space by
+        \obv{subspace_topology_is_topological_space}.
+    $\carrier[\subspaceTopology{X}{K}]=K$ by
+        \obv{subspace_topology_carrier_of_subset}.
+
+    Show that for every $U$ such that $U$ is an ultrafilter on
+        $\carrier[\subspaceTopology{X}{K}]$ there exists
+        $q\in\carrier[\subspaceTopology{X}{K}]$ such that
+        $\filterConverges{U}{q}{\subspaceTopology{X}{K}}$.
+    \begin{subproof}
+        Fix $U$.
+        Assume $U$ is an ultrafilter on
+            $\carrier[\subspaceTopology{X}{K}]$.
+        Hence $U$ is an ultrafilter on $K$.
+        $U$ is a proper filter on $K$ by
+            \auto{ultrafilter,maximalfilter}.
+        Hence $U$ is a filter on $K$ by
+            \obv{proper_filter_is_filter}.
+
+        Let $i=\subspaceInclusion{X}{K}$.
+        $\subspaceInclusion{X}{K}\in
+            \funs{K\inter\carrier[X]}{\carrier[X]}$ by
+            \obv{subspace_inclusion_type}.
+        $K\inter\carrier[X]=K$ by
+            \obv{inter_absorb_supseteq_right}.
+        Hence $i\in\funs{K}{\carrier[L]}$.
+        Let $V=\filterPushforward{K}{\carrier[L]}{i}{U}$.
+        $\filterPushforward{K}{\carrier[L]}{i}{U}$ is an ultrafilter on
+            $\carrier[L]$ by
+            \obv{filter_pushforward_preserves_ultrafilters}.
+        Hence $V$ is an ultrafilter on $\carrier[L]$.
+
+        $\preimg{\subspaceInclusion{X}{K}}{K}
+            =(K\inter\carrier[X])\inter K$ by
+            \obv{subspace_inclusion_preimage}.
+        Hence $\preimg{i}{K}=K$ by
+            \auto{inter_idempotent}.
+        $K\in U$ by \obv{filter}.
+        Hence $K\in\filterPushforward{K}{\carrier[L]}{i}{U}$ by
+            \auto{filter_pushforward_iff}.
+        Thus $K\in V$.
+        $\orderClosedInterval{L}{a}{b}\in V$.
+        Take $q\in\orderClosedInterval{L}{a}{b}$ such that
+            $\filterConverges{V}{q}{\orderTopology{L}}$ by
+            \obv{bounded_order_ultrafilter_converges}.
+        Hence $q\in K$.
+        Hence $q\in\carrier[\subspaceTopology{X}{K}]$.
+
+        $V$ is a filter on $\carrier[L]$ by
+            \auto{ultrafilter,maximalfilter,proper_filter}.
+        $q\in\carrier[L]$ by \obv{subseteq}.
+        $\neighbourhoods{q}{\orderTopology{L}}$ is a filter on
+            $\carrier[L]$ by
+            \auto{neighbourhoods_is_filter,order_topology_carrier}.
+        $\neighbourhoods{q}{\orderTopology{L}}\subseteq V$ by
+            \obv{filter_converges}.
+        Hence $V$ refines $\neighbourhoods{q}{\orderTopology{L}}$ on
+            $\carrier[L]$ by \obv{filter_refines}.
+        $\filterPushforward{K}{\carrier[L]}{i}{U}$ refines
+            $\neighbourhoods{q}{\orderTopology{L}}$ on $\carrier[L]$.
+        Hence $U$ refines
+            $\filterPullback{K}{\carrier[L]}{i}{
+                \neighbourhoods{q}{\orderTopology{L}}}$ on $K$ by
+            \obv{filter_pushforward_pullback_adjunction}.
+
+        $q\in K\inter\carrier[X]$ by
+            \obv{inter_absorb_supseteq_right}.
+        $\neighbourhoods{q}{\subspaceTopology{X}{K}}
+            =\filterPullback{K\inter\carrier[X]}{\carrier[X]}{
+                \subspaceInclusion{X}{K}}{\neighbourhoods{q}{X}}$ by
+            \obv{subspace_neighbourhood_filter_is_pullback}.
+        Hence $\neighbourhoods{q}{\subspaceTopology{X}{K}}
+            =\filterPullback{K}{\carrier[L]}{i}{
+                \neighbourhoods{q}{\orderTopology{L}}}$.
+        Thus $U$ refines
+            $\neighbourhoods{q}{\subspaceTopology{X}{K}}$ on $K$.
+        Hence $\neighbourhoods{q}{\subspaceTopology{X}{K}}\subseteq U$
+            by \obv{filter_refines}.
+        $\filterConverges{U}{q}{\subspaceTopology{X}{K}}$ by
+            \obv{filter_converges}.
+    \end{subproof}
+    Hence $\subspaceTopology{X}{K}$ is compact by
+        \obv{compact_iff_every_ultrafilter_converges}.
+    Thus $K$ is compact in $X$ by \obv{compact_in}.
+\end{proof}

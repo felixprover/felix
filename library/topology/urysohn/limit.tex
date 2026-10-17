@@ -1,0 +1,754 @@
+\section{Limits of open-chain step maps}
+
+\import{topology/urysohn/step.tex}
+\import{topology/metric-continuity.tex}
+\import{topology/subspace-continuity.tex}
+\import{topology/real-line.tex}
+\import{surreal/real-completeness.tex}
+\import{set/logical-graph.tex}
+
+\subsection{Pointwise value sets}
+
+At each point, take the supremum of the successive step values. These values
+increase and lie between zero and one. The decreasing upper envelopes, formed
+by adding one mesh to each step value, will trap the supremum within one mesh
+of every approximation.
+
+The value set and supremum are total set-theoretic terms. The following
+results establish their real and order properties under the nested-open and
+normal-shrinker hypotheses.
+
+\begin{definition}\label{open_chain_value_set}
+    $\openChainValueSet{X}{h}{U}{W}{x}
+        =\{\apply{\apply{\openChainStepMaps{X}{h}{U}{W}}{n}}{x}
+            \mid n\in\naturals\}$.
+\end{definition}
+
+\begin{proposition}\label{open_chain_value_set_iff}
+    $y\in\openChainValueSet{X}{h}{U}{W}{x}$ iff
+        there exists $n\in\naturals$ such that
+            $y=\apply{\apply{\openChainStepMaps{X}{h}{U}{W}}{n}}{x}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{open_chain_value_set}.
+\end{proof}
+
+\begin{proposition}\label{open_chain_value_set_inhabited}
+    Then $\openChainValueSet{X}{h}{U}{W}{x}$ is inhabited.
+\end{proposition}
+\begin{proof}
+    $\emptyset\in\naturals$ by \obv{omega_empty}.
+    Hence
+        $\apply{\apply{\openChainStepMaps{X}{h}{U}{W}}{\emptyset}}{x}
+            \in\openChainValueSet{X}{h}{U}{W}{x}$
+        by \obv{open_chain_value_set_iff}.
+\end{proof}
+
+\begin{proposition}\label{open_chain_value_set_subset_reals}
+    Let $X$ be a topological space.
+    Let $h$ be a normal shrinker for $X$.
+    Let $U,W\in\opens[X]$.
+    Suppose $\closure{U}{X}\subseteq W$.
+    Let $x\in\carrier[X]$.
+    Then $\openChainValueSet{X}{h}{U}{W}{x}\subseteq\reals$.
+\end{proposition}
+\begin{proof}
+    Let $s=\openChainStepMaps{X}{h}{U}{W}$.
+    $s\in\funs{\naturals}{\funs{\carrier[X]}{\reals}}$
+        by \auto{open_chain_step_maps_typed}.
+    Show that for every $y\in\openChainValueSet{X}{h}{U}{W}{x}$
+        we have $y\in\reals$.
+    \begin{subproof}
+        Fix $y\in\openChainValueSet{X}{h}{U}{W}{x}$.
+        Take $n\in\naturals$ such that $y=\apply{\apply{s}{n}}{x}$
+            by \auto{open_chain_value_set_iff}.
+        $s(n)\in\funs{\carrier[X]}{\reals}$
+            by \obv{funs_type_apply}.
+        Follows by \auto{funs_type_apply}.
+    \end{subproof}
+    Follows by \obv{subseteq}.
+\end{proof}
+
+\begin{proposition}\label{open_chain_value_set_bounded_by_one}
+    Let $X$ be a topological space.
+    Let $h$ be a normal shrinker for $X$.
+    Let $U,W\in\opens[X]$.
+    Suppose $\closure{U}{X}\subseteq W$.
+    Let $x\in\carrier[X]$.
+    Then for every $y\in\openChainValueSet{X}{h}{U}{W}{x}$ we have
+        $\surrealLe{y}{\surrealOne}$.
+\end{proposition}
+\begin{proof}
+    Let $s=\openChainStepMaps{X}{h}{U}{W}$.
+    Fix $y\in\openChainValueSet{X}{h}{U}{W}{x}$.
+    Take $n\in\naturals$ such that $y=\apply{\apply{s}{n}}{x}$
+        by \auto{open_chain_value_set_iff}.
+    $s(n)=\openChainStepMap{X}{h}{U}{W}{n}$
+        by \auto{open_chain_step_maps_apply}.
+    Follows by \auto{open_chain_step_map_between_zero_and_one}.
+\end{proof}
+
+\subsection{The pointwise supremum graph}
+
+\begin{definition}\label{open_chain_limit_value}
+    $\openChainLimitValue{X}{h}{U}{W}{x}
+        =\realSupremum{\openChainValueSet{X}{h}{U}{W}{x}}$.
+\end{definition}
+
+\begin{proposition}\label{open_chain_limit_value_is_real}
+    Let $X$ be a topological space.
+    Let $h$ be a normal shrinker for $X$.
+    Let $U,W\in\opens[X]$.
+    Suppose $\closure{U}{X}\subseteq W$.
+    Let $x\in\carrier[X]$.
+    Then $\openChainLimitValue{X}{h}{U}{W}{x}\in\reals$.
+\end{proposition}
+\begin{proof}
+    Let $A=\openChainValueSet{X}{h}{U}{W}{x}$.
+    $A\subseteq\reals$ by \auto{open_chain_value_set_subset_reals}.
+    $A$ is inhabited by \auto{open_chain_value_set_inhabited}.
+    $\surrealOne\in\reals$ by \obv{surreal_one_is_real}.
+    For every $y\in A$ we have $\surrealLe{y}{\surrealOne}$
+        by \obv{open_chain_value_set_bounded_by_one}.
+    Follows by \auto{open_chain_limit_value,real_supremum_is_real}.
+\end{proof}
+
+\begin{definition}\label{open_chain_limit_map}
+    $\openChainLimitMap{X}{h}{U}{W}
+        =\Apply{\graphOnDomainOp}
+            {\carrier[X],\fun{x:\Set}{\openChainLimitValue{X}{h}{U}{W}{x}}}$.
+\end{definition}
+
+\begin{proposition}\label{open_chain_limit_map_apply}
+    Let $x\in\carrier[X]$.
+    Then $\apply{\openChainLimitMap{X}{h}{U}{W}}{x}
+        =\openChainLimitValue{X}{h}{U}{W}{x}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{open_chain_limit_map,logical_graph_on_domain_apply}.
+\end{proof}
+
+\begin{theorem}\label{open_chain_limit_map_typed}
+    Let $X$ be a topological space.
+    Let $h$ be a normal shrinker for $X$.
+    Let $U,W\in\opens[X]$.
+    Suppose $\closure{U}{X}\subseteq W$.
+    Then $\openChainLimitMap{X}{h}{U}{W}
+        \in\funs{\carrier[X]}{\reals}$.
+\end{theorem}
+\begin{proof}
+    For every $x\in\carrier[X]$ we have
+        $\openChainLimitValue{X}{h}{U}{W}{x}\in\reals$
+        by \obv{open_chain_limit_value_is_real}.
+    Follows by
+        \auto{open_chain_limit_map,logical_graph_on_domain_type}.
+\end{proof}
+
+\subsection{The dyadic envelope}
+
+\begin{theorem}\label{open_chain_step_maps_envelope_monotone}
+    Let $X$ be a topological space.
+    Let $h$ be a normal shrinker for $X$.
+    Let $U,W\in\opens[X]$.
+    Suppose $\closure{U}{X}\subseteq W$.
+    Let $x\in\carrier[X]$.
+    Let $m,n$ be natural numbers such that $m\in n$.
+    Let $s=\openChainStepMaps{X}{h}{U}{W}$.
+    Then
+        $\surrealLe{\apply{\apply{s}{m}}{x}}
+            {\apply{\apply{s}{n}}{x}}$ and
+        $\surrealLe{
+            \surrealAdd{\apply{\apply{s}{n}}{x}}{\surrealEpsilon{n}}}
+            {\surrealAdd{\apply{\apply{s}{m}}{x}}{\surrealEpsilon{m}}}$.
+\end{theorem}
+\begin{proof}
+    Let $a:\Set\to\Set
+        =\fun{k:\Set}{\apply{\apply{s}{k}}{x}}$.
+    Let $b:\Set\to\Set
+        =\fun{k:\Set}{
+            \surrealAdd{\Apply{a}{k}}{\surrealEpsilon{k}}}$.
+    $s\in\funs{\naturals}{\funs{\carrier[X]}{\reals}}$
+        by \auto{open_chain_step_maps_typed}.
+    Show that $\forall k:\Set.\ k\in\naturals\implies
+        (\Apply{a}{k}\in\reals\land\Apply{b}{k}\in\reals)$.
+    \begin{subproof}
+        Fix $k:\Set$.
+        Assume $k\in\naturals$.
+        $s(k)\in\funs{\carrier[X]}{\reals}$
+            by \obv{funs_type_apply}.
+        Hence $\apply{\apply{s}{k}}{x}\in\reals$
+            by \obv{funs_type_apply}.
+        $\Apply{a}{k}=\apply{\apply{s}{k}}{x}$.
+        Hence $\Apply{a}{k}\in\reals$.
+        $\surrealEpsilon{k}\in\reals$
+            by \obv{surreal_epsilon_is_real}.
+        $\Apply{b}{k}
+            =\surrealAdd{\Apply{a}{k}}{\surrealEpsilon{k}}$.
+        Hence $\Apply{b}{k}\in\reals$
+            by \auto{surreal_real_addition_closed}.
+    \end{subproof}
+    Show that $\forall k:\Set.\ k\in\naturals\implies
+        (\surrealLe{\Apply{a}{k}}{\Apply{a}{\suc{k}}}\land
+         \surrealLe{\Apply{b}{\suc{k}}}{\Apply{b}{k}})$.
+    \begin{subproof}
+        Fix $k:\Set$.
+        Assume $k\in\naturals$.
+        Let $p=\Apply{a}{k}$, $q=\Apply{a}{\suc{k}}$,
+            $e=\surrealEpsilon{\suc{k}}$, and $E=\surrealEpsilon{k}$.
+        $s(k)=\openChainStepMap{X}{h}{U}{W}{k}$
+            by \auto{open_chain_step_maps_apply}.
+        $\suc{k}$ is a natural number by \obv{omega_successor}.
+        $s(\suc{k})=\openChainStepMap{X}{h}{U}{W}{\suc{k}}$
+            by \auto{open_chain_step_maps_apply}.
+        $p=\apply{\openChainStepMap{X}{h}{U}{W}{k}}{x}$ and
+            $q=\apply{\openChainStepMap{X}{h}{U}{W}{\suc{k}}}{x}$.
+        Hence $\surrealLe{p}{q}$ and
+            $\surrealLe{q}{\surrealAdd{p}{e}}$
+            by \auto{open_chain_step_map_successor_bounds}.
+        $p,q\in\reals$ by \auto.
+        $e,E\in\reals$ by \auto{surreal_epsilon_is_real}.
+        Hence $\surreal{p}$ and $\surreal{q}$ and $\surreal{e}$ and
+            $\surreal{E}$ by \obv{surreal_real_is_surreal}.
+        $\surrealLe{\surrealAdd{q}{e}}
+            {\surrealAdd{\surrealAdd{p}{e}}{e}}$
+            by \obv{surreal_add_le_left,surreal_add_is_surreal}.
+        $\surrealAdd{\surrealAdd{p}{e}}{e}
+            =\surrealAdd{p}{\surrealAdd{e}{e}}$
+            by \obv{surreal_add_associative}.
+        $\surrealAdd{e}{e}=E$
+            by \auto{surreal_epsilon_halving,natural_number_is_ordinal}.
+        Hence $\surrealLe{\surrealAdd{q}{e}}{\surrealAdd{p}{E}}$.
+        $\Apply{b}{\suc{k}}=\surrealAdd{q}{e}$ and
+            $\Apply{b}{k}=\surrealAdd{p}{E}$
+            by \auto.
+    \end{subproof}
+    Hence $\forall k:\Set.\ k\in\naturals\implies
+        (\forall j:\Set.\ j\in k\implies
+            (\surrealLe{\Apply{a}{j}}{\Apply{a}{k}}\land
+             \surrealLe{\Apply{b}{k}}{\Apply{b}{j}}))$
+        by \obv{surreal_real_adjacent_sequences_monotone}.
+    $\Apply{a}{m}=\apply{\apply{s}{m}}{x}$ and
+        $\Apply{a}{n}=\apply{\apply{s}{n}}{x}$ and
+        $\Apply{b}{m}=\surrealAdd{\apply{\apply{s}{m}}{x}}
+            {\surrealEpsilon{m}}$ and
+        $\Apply{b}{n}=\surrealAdd{\apply{\apply{s}{n}}{x}}
+            {\surrealEpsilon{n}}$
+        by \auto.
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{open_chain_step_map_below_envelope}
+    Let $X$ be a topological space.
+    Let $h$ be a normal shrinker for $X$.
+    Let $U,W\in\opens[X]$.
+    Suppose $\closure{U}{X}\subseteq W$.
+    Let $x\in\carrier[X]$.
+    Let $m,n$ be natural numbers.
+    Let $s=\openChainStepMaps{X}{h}{U}{W}$.
+    Then
+        $\surrealLe{\apply{\apply{s}{m}}{x}}
+            {\surrealAdd{\apply{\apply{s}{n}}{x}}
+                {\surrealEpsilon{n}}}$.
+\end{theorem}
+\begin{proof}
+    Let $p=\apply{\apply{s}{m}}{x}$, $q=\apply{\apply{s}{n}}{x}$,
+        $d=\surrealEpsilon{m}$, and $e=\surrealEpsilon{n}$.
+    $s\in\funs{\naturals}{\funs{\carrier[X]}{\reals}}$
+        by \auto{open_chain_step_maps_typed}.
+    Hence $s(m),s(n)\in\funs{\carrier[X]}{\reals}$
+        by \obv{funs_type_apply}.
+    Hence $p,q\in\reals$ by \auto{funs_type_apply}.
+    $d,e\in\reals$ by \auto{surreal_epsilon_is_real}.
+    Hence $\surreal{p}$ and $\surreal{q}$ and $\surreal{d}$ and
+        $\surreal{e}$ by \obv{surreal_real_is_surreal}.
+    $\surrealLt{\surrealZero}{d}$ and
+        $\surrealLt{\surrealZero}{e}$
+        by \obv{surreal_epsilon_positive,natural_number_is_ordinal}.
+    Hence $\surrealLe{\surrealZero}{d}$ and
+        $\surrealLe{\surrealZero}{e}$ by \obv{surreal_le}.
+    Hence
+        $\surrealLe{\surrealAdd{p}{\surrealZero}}
+            {\surrealAdd{p}{d}}$ and
+        $\surrealLe{\surrealAdd{q}{\surrealZero}}
+            {\surrealAdd{q}{e}}$
+        by \obv{surreal_add_le_right,empty_surreal}.
+    Thus $\surrealLe{p}{\surrealAdd{p}{d}}$ and
+        $\surrealLe{q}{\surrealAdd{q}{e}}$
+        by \obv{surreal_add_zero_right}.
+    $m$ and $n$ are ordinals by \obv{natural_number_is_ordinal}.
+    $m\in n$ or $m=n$ or $n\in m$
+        by \obv{ordinal_in_trichotomy}.
+    \begin{byCase}
+    \caseOf{$m=n$.}
+        Follows.
+    \caseOf{$m\neq n$.}
+        \begin{byCase}
+        \caseOf{$m\in n$.}
+            $\surrealLe{p}{q}$
+                by \auto{open_chain_step_maps_envelope_monotone}.
+            Follows by
+                \auto{surreal_le_transitive,surreal_real_is_surreal,surreal_real_addition_closed}.
+        \caseOf{$m\notin n$.}
+            Hence $n\in m$.
+            $\surrealLe{\surrealAdd{p}{d}}{\surrealAdd{q}{e}}$
+                by \auto{open_chain_step_maps_envelope_monotone}.
+            Follows by
+                \auto{surreal_le_transitive,surreal_real_is_surreal,surreal_real_addition_closed}.
+        \end{byCase}
+    \end{byCase}
+\end{proof}
+
+\subsection{Approximation and endpoint values}
+
+Each step value is bounded by the supremum because it belongs to the value
+set. Conversely, the step value plus one mesh bounds every member of that
+set, and hence bounds its supremum. These are the two inequalities below.
+
+\begin{theorem}[Approximation of the supremum]\label{open_chain_limit_value_approximation}
+    Let $X$ be a topological space.
+    Let $h$ be a normal shrinker for $X$.
+    Let $U,W\in\opens[X]$.
+    Suppose $\closure{U}{X}\subseteq W$.
+    Let $x\in\carrier[X]$.
+    Let $n$ be a natural number.
+    Let $s=\openChainStepMaps{X}{h}{U}{W}$.
+    Let $g=s(n)$ and $d=\surrealEpsilon{n}$.
+    Let $v=\openChainLimitValue{X}{h}{U}{W}{x}$.
+    Then $\surrealLe{g(x)}{v}$ and
+        $\surrealLe{v}{\surrealAdd{g(x)}{d}}$.
+\end{theorem}
+\begin{proof}
+    Let $A=\openChainValueSet{X}{h}{U}{W}{x}$.
+    Let $u=\surrealAdd{g(x)}{d}$.
+    $A\subseteq\reals$ by \auto{open_chain_value_set_subset_reals}.
+    $A$ is inhabited by \auto{open_chain_value_set_inhabited}.
+    $\surrealOne\in\reals$ by \obv{surreal_one_is_real}.
+    For every $y\in A$ we have $\surrealLe{y}{\surrealOne}$
+        by \obv{open_chain_value_set_bounded_by_one}.
+    $g(x)\in A$ by \auto{open_chain_value_set_iff}.
+    Hence $\surrealLe{g(x)}{\realSupremum{A}}$
+        by \obv{real_supremum_upper_bound}.
+    $s\in\funs{\naturals}{\funs{\carrier[X]}{\reals}}$
+        by \auto{open_chain_step_maps_typed}.
+    Hence $s(n)\in\funs{\carrier[X]}{\reals}$
+        by \obv{funs_type_apply}.
+    Hence $g(x)\in\reals$ by \obv{funs_type_apply}.
+    $\surrealEpsilon{n}\in\reals$ by \obv{surreal_epsilon_is_real}.
+    Hence $u\in\reals$ by \auto{surreal_real_addition_closed}.
+    Show that for every $y\in A$ we have $\surrealLe{y}{u}$.
+    \begin{subproof}
+        Fix $y\in A$.
+        Take $m\in\naturals$ such that
+            $y=(s(m))(x)$
+            by \auto{open_chain_value_set_iff}.
+        Follows by \auto{open_chain_step_map_below_envelope}.
+    \end{subproof}
+    Hence $\surrealLe{\realSupremum{A}}{u}$
+        by \obv{real_supremum_least}.
+    Follows by \auto{open_chain_limit_value}.
+\end{proof}
+
+\begin{corollary}\label{open_chain_limit_map_approximation}
+    Let $X$ be a topological space.
+    Let $h$ be a normal shrinker for $X$.
+    Let $U,W\in\opens[X]$.
+    Suppose $\closure{U}{X}\subseteq W$.
+    Let $x\in\carrier[X]$.
+    Let $n$ be a natural number.
+    Let $s=\openChainStepMaps{X}{h}{U}{W}$.
+    Let $g=s(n)$ and $d=\surrealEpsilon{n}$.
+    Let $f=\openChainLimitMap{X}{h}{U}{W}$.
+    Then $\surrealLe{g(x)}{f(x)}$ and
+        $\surrealLe{f(x)}{\surrealAdd{g(x)}{d}}$.
+\end{corollary}
+\begin{proof}
+    $f(x)=\openChainLimitValue{X}{h}{U}{W}{x}$
+        by \auto{open_chain_limit_map_apply}.
+    Follows by \auto{open_chain_limit_value_approximation}.
+\end{proof}
+
+\begin{proposition}\label{open_chain_limit_value_between_zero_and_one}
+    Let $X$ be a topological space.
+    Let $h$ be a normal shrinker for $X$.
+    Let $U,W\in\opens[X]$.
+    Suppose $\closure{U}{X}\subseteq W$.
+    Let $x\in\carrier[X]$.
+    Then
+        $\surrealLe{\surrealZero}
+            {\openChainLimitValue{X}{h}{U}{W}{x}}$ and
+        $\surrealLe{\openChainLimitValue{X}{h}{U}{W}{x}}
+            {\surrealOne}$.
+\end{proposition}
+\begin{proof}
+    Let $A=\openChainValueSet{X}{h}{U}{W}{x}$.
+    Let $s=\openChainStepMaps{X}{h}{U}{W}$.
+    Let $v=\apply{\apply{s}{\emptyset}}{x}$.
+    $\emptyset\in\naturals$ by \obv{omega_empty}.
+    $s(\emptyset)=\openChainStepMap{X}{h}{U}{W}{\emptyset}$
+        by \auto{open_chain_step_maps_apply}.
+    Hence $\surrealLe{\surrealZero}{v}$
+        by \auto{open_chain_step_map_between_zero_and_one}.
+    $\surrealLe{v}{\openChainLimitValue{X}{h}{U}{W}{x}}$
+        by \auto{open_chain_limit_value_approximation}.
+    $v\in\reals$ by \auto{open_chain_value_set_subset_reals,open_chain_value_set_iff,subseteq}.
+    Hence $\surreal{v}$ by \obv{surreal_real_is_surreal}.
+    $\openChainLimitValue{X}{h}{U}{W}{x}\in\reals$
+        by \obv{open_chain_limit_value_is_real}.
+    Hence $\surreal{\openChainLimitValue{X}{h}{U}{W}{x}}$
+        by \obv{surreal_real_is_surreal}.
+    Thus $\surrealLe{\surrealZero}
+        {\openChainLimitValue{X}{h}{U}{W}{x}}$
+        by \obv{surreal_le_transitive,empty_surreal}.
+    $A\subseteq\reals$ by \auto{open_chain_value_set_subset_reals}.
+    $A$ is inhabited by \auto{open_chain_value_set_inhabited}.
+    $\surrealOne\in\reals$ by \obv{surreal_one_is_real}.
+    For every $y\in A$ we have $\surrealLe{y}{\surrealOne}$
+        by \obv{open_chain_value_set_bounded_by_one}.
+    Hence $\surrealLe{\realSupremum{A}}{\surrealOne}$
+        by \auto{real_supremum_least}.
+    Follows by \auto{open_chain_limit_value}.
+\end{proof}
+
+\begin{corollary}\label{open_chain_limit_map_between_zero_and_one}
+    Let $X$ be a topological space.
+    Let $h$ be a normal shrinker for $X$.
+    Let $U,W\in\opens[X]$.
+    Suppose $\closure{U}{X}\subseteq W$.
+    Let $x\in\carrier[X]$.
+    Then
+        $\surrealLe{\surrealZero}
+            {\apply{\openChainLimitMap{X}{h}{U}{W}}{x}}$ and
+        $\surrealLe{\apply{\openChainLimitMap{X}{h}{U}{W}}{x}}
+            {\surrealOne}$.
+\end{corollary}
+\begin{proof}
+    $\apply{\openChainLimitMap{X}{h}{U}{W}}{x}
+        =\openChainLimitValue{X}{h}{U}{W}{x}$
+        by \obv{open_chain_limit_map_apply}.
+    Follows by \auto{open_chain_limit_value_between_zero_and_one}.
+\end{proof}
+
+\begin{proposition}\label{open_chain_limit_map_one_on_first}
+    Let $X$ be a topological space.
+    Let $h$ be a normal shrinker for $X$.
+    Let $U,W\in\opens[X]$.
+    Suppose $\closure{U}{X}\subseteq W$.
+    Let $x\in U$.
+    Then $\apply{\openChainLimitMap{X}{h}{U}{W}}{x}=\surrealOne$.
+\end{proposition}
+\begin{proof}
+    $U\subseteq\carrier[X]$ by \obv{opens_type,subseteq}.
+    Hence $x\in\carrier[X]$ by \obv{subseteq}.
+    $\emptyset\in\naturals$ by \obv{omega_empty}.
+    Let $s=\openChainStepMaps{X}{h}{U}{W}$.
+    $s(\emptyset)=\openChainStepMap{X}{h}{U}{W}{\emptyset}$
+        by \auto{open_chain_step_maps_apply}.
+    Hence $\apply{\apply{s}{\emptyset}}{x}=\surrealOne$
+        by \auto{open_chain_step_map_one_on_first}.
+    Hence $\surrealLe{\surrealOne}
+        {\apply{\openChainLimitMap{X}{h}{U}{W}}{x}}$
+        by \auto{open_chain_limit_map_approximation}.
+    $\surrealLe{\apply{\openChainLimitMap{X}{h}{U}{W}}{x}}
+        {\surrealOne}$
+        by \auto{open_chain_limit_map_between_zero_and_one}.
+    Follows by
+        \auto{surreal_le_antisymmetric,surreal_one_is_surreal,open_chain_limit_map_typed,funs_type_apply,surreal_real_is_surreal}.
+\end{proof}
+
+\begin{proposition}\label{open_chain_limit_map_zero_outside_last}
+    Let $X$ be a topological space.
+    Let $h$ be a normal shrinker for $X$.
+    Let $U,W\in\opens[X]$.
+    Suppose $\closure{U}{X}\subseteq W$.
+    Let $x\in\carrier[X]\setminus W$.
+    Then $\apply{\openChainLimitMap{X}{h}{U}{W}}{x}=\surrealZero$.
+\end{proposition}
+\begin{proof}
+    Let $A=\openChainValueSet{X}{h}{U}{W}{x}$.
+    Let $s=\openChainStepMaps{X}{h}{U}{W}$.
+    Let $f=\openChainLimitMap{X}{h}{U}{W}$.
+    $x\in\carrier[X]$ by \obv{setminus}.
+    $A\subseteq\reals$ by \auto{open_chain_value_set_subset_reals}.
+    $A$ is inhabited by \auto{open_chain_value_set_inhabited}.
+    $\surrealOne\in\reals$ by \obv{surreal_one_is_real}.
+    For every $y\in A$ we have $\surrealLe{y}{\surrealOne}$
+        by \obv{open_chain_value_set_bounded_by_one}.
+    $\surrealZero\in\reals$ by \obv{surreal_zero_is_real}.
+    Show that for every $y\in A$ we have $\surrealLe{y}{\surrealZero}$.
+    \begin{subproof}
+        Fix $y\in A$.
+        Take $n\in\naturals$ such that
+            $y=\apply{\apply{s}{n}}{x}$
+            by \auto{open_chain_value_set_iff}.
+        $s(n)=\openChainStepMap{X}{h}{U}{W}{n}$
+            by \auto{open_chain_step_maps_apply}.
+        Hence $y=\surrealZero$
+            by \auto{open_chain_step_map_zero_outside_last}.
+        Follows by \auto{surreal_le_reflexive,empty_surreal}.
+    \end{subproof}
+    Hence $\surrealLe{\realSupremum{A}}{\surrealZero}$
+        by \obv{real_supremum_least}.
+    Hence $\surrealLe{f(x)}{\surrealZero}$
+        by \auto{open_chain_limit_map_apply,open_chain_limit_value}.
+    $\surrealLe{\surrealZero}{f(x)}$
+        by \auto{open_chain_limit_map_between_zero_and_one}.
+    Follows by
+        \auto{surreal_le_antisymmetric,empty_surreal,open_chain_limit_map_typed,funs_type_apply,surreal_real_is_surreal}.
+\end{proof}
+
+\subsection{Local oscillation of the limit}
+
+\begin{lemma}\label{surreal_one_sided_approximations_oscillation}
+    Suppose $\surreal{a}$ and $\surreal{b}$ and
+        $\surreal{A}$ and $\surreal{B}$ and $\surreal{e}$.
+    Suppose $\surrealLe{a}{A}$ and
+        $\surrealLe{A}{\surrealAdd{a}{e}}$.
+    Suppose $\surrealLe{b}{B}$ and
+        $\surrealLe{B}{\surrealAdd{b}{e}}$.
+    Suppose
+        $\surrealLe{\abs{\surrealAdd{a}{\surrealNeg{b}}}}{e}$.
+    Then
+        $\surrealLe{A}{\surrealAdd{B}{\surrealAdd{e}{e}}}$ and
+        $\surrealLe{B}{\surrealAdd{A}{\surrealAdd{e}{e}}}$.
+\end{lemma}
+\begin{proof}
+    $\surrealLe{a}{\surrealAdd{b}{e}}$ and
+        $\surrealLe{b}{\surrealAdd{a}{e}}$
+        by \obv{surreal_abs_difference_le_iff}.
+    $\surrealLe{\surrealAdd{a}{e}}
+        {\surrealAdd{\surrealAdd{b}{e}}{e}}$ and
+        $\surrealLe{\surrealAdd{b}{e}}
+        {\surrealAdd{\surrealAdd{a}{e}}{e}}$
+        by \obv{surreal_add_le_left,surreal_add_is_surreal}.
+    Hence
+        $\surrealLe{A}{\surrealAdd{b}{\surrealAdd{e}{e}}}$ and
+        $\surrealLe{B}{\surrealAdd{a}{\surrealAdd{e}{e}}}$
+        by
+        \auto{surreal_le_transitive,surreal_add_associative,surreal_add_is_surreal}.
+    $\surrealLe{\surrealAdd{b}{\surrealAdd{e}{e}}}
+        {\surrealAdd{B}{\surrealAdd{e}{e}}}$ and
+        $\surrealLe{\surrealAdd{a}{\surrealAdd{e}{e}}}
+        {\surrealAdd{A}{\surrealAdd{e}{e}}}$
+        by \obv{surreal_add_le_left,surreal_add_is_surreal}.
+    Follows by
+        \auto{surreal_le_transitive,surreal_add_is_surreal}.
+\end{proof}
+
+On a rank cell, the step map varies by at most one mesh. Each limit value lies
+between its step value and that value plus one mesh. These one-sided bounds
+give a two-mesh estimate for the limit, by the preceding algebraic lemma.
+
+\begin{lemma}[Limit oscillation on a cell]\label{open_chain_limit_map_cell_oscillation}
+    Let $X$ be a topological space.
+    Let $h$ be a normal shrinker for $X$.
+    Let $U,W\in\opens[X]$.
+    Suppose $\closure{U}{X}\subseteq W$.
+    Let $n$ be a natural number.
+    Let $r=\openChainStepCount{X}{h}{U}{W}{n}$.
+    Let $c=\openChainAtLevel{X}{h}{U}{W}{n}$.
+    Let $D=\openChainRankCells{X}{c}{r}$.
+    Let $f=\openChainLimitMap{X}{h}{U}{W}$.
+    Let $d=\surrealEpsilon{n}$.
+    Let $k\in\suc{r}$.
+    Let $x,y\in D(k)$.
+    Then $\surrealLe{\abs{\surrealAdd{f(x)}{\surrealNeg{f(y)}}}}
+        {\surrealAdd{d}{d}}$.
+\end{lemma}
+\begin{proof}
+    $r$ is a natural number and $r\neq\emptyset$ and
+        $c$ is a finite open chain with $r$ steps in $X$
+        by \auto{open_chain_level_components}.
+    $D\in\funs{\suc{r}}{\opens[X]}$
+        by \auto{open_chain_rank_cells_typed}.
+    Hence $D(k)\in\opens[X]$ by \obv{funs_type_apply}.
+    Hence $D(k)\subseteq\carrier[X]$
+        by \obv{opens_type,subseteq}.
+    Thus $x,y\in\carrier[X]$ by \obv{subseteq}.
+    Let $s=\openChainStepMaps{X}{h}{U}{W}$.
+    Let $g=s(n)$.
+    $g=\openChainStepMap{X}{h}{U}{W}{n}$
+        by \auto{open_chain_step_maps_apply}.
+    $\openChainStepMap{X}{h}{U}{W}{n}
+        \in\funs{\carrier[X]}{\reals}$
+        by \obv{open_chain_step_map_typed}.
+    Hence $g(x),g(y)\in\reals$ by \auto{funs_type_apply}.
+    $f(x),f(y)\in\reals$
+        by \auto{open_chain_limit_map_typed,funs_type_apply}.
+    $d\in\reals$ by \auto{surreal_epsilon_is_real}.
+    Hence $\surreal{g(x)}$ and $\surreal{g(y)}$ and
+        $\surreal{f(x)}$ and $\surreal{f(y)}$ and $\surreal{d}$
+        by \obv{surreal_real_is_surreal}.
+    $\surrealLe{g(x)}{f(x)}$ and
+        $\surrealLe{f(x)}{\surrealAdd{g(x)}{d}}$ and
+        $\surrealLe{g(y)}{f(y)}$ and
+        $\surrealLe{f(y)}{\surrealAdd{g(y)}{d}}$
+        by \auto{open_chain_limit_map_approximation}.
+    $\surrealLe{\abs{\surrealAdd{g(x)}{\surrealNeg{g(y)}}}}{d}$
+        by \auto{open_chain_step_map_cell_oscillation}.
+    Hence $\surrealLe{f(x)}{\surrealAdd{f(y)}{\surrealAdd{d}{d}}}$ and
+        $\surrealLe{f(y)}{\surrealAdd{f(x)}{\surrealAdd{d}{d}}}$
+        by \obv{surreal_one_sided_approximations_oscillation}.
+    $\surreal{\surrealAdd{d}{d}}$ by \obv{surreal_add_is_surreal}.
+    Follows by \obv{surreal_abs_difference_le_iff}.
+\end{proof}
+
+Given a positive radius, choose a level whose doubled mesh is smaller than
+that radius. A rank cell containing the point is then an open neighbourhood
+whose image lies in the required ball.
+
+\begin{theorem}[Continuity of the limit]\label{open_chain_limit_map_continuous_real}
+    Let $X$ be a topological space.
+    Let $h$ be a normal shrinker for $X$.
+    Let $U,W\in\opens[X]$.
+    Suppose $\closure{U}{X}\subseteq W$.
+    Then $\openChainLimitMap{X}{h}{U}{W}$ is continuous from
+        $X$ to $\RealTopology$.
+\end{theorem}
+\begin{proof}
+    Let $f=\openChainLimitMap{X}{h}{U}{W}$.
+    $f\in\funs{\carrier[X]}{\reals}$
+        by \auto{open_chain_limit_map_typed}.
+    $\carrier[\RealMetric]=\reals$
+        by \obv{surreal_real_metric_carrier}.
+    Hence $f\in\funs{\carrier[X]}{\carrier[\RealMetric]}$.
+    $\RealMetric$ is a pseudometric space by
+        \obv{surreal_real_pseudometric_space}.
+    Show that for every $x\in\carrier[X]$ we have
+        for every $e\in\reals$ we have if
+            $\surrealLt{\surrealZero}{e}$, then there exists
+            $V\in\opens[X]$ such that $x\in V$ and
+            for every $y\in V$ we have
+                $f(y)\in\metricBall{\RealMetric}{f(x)}{e}$.
+    \begin{subproof}
+        Fix $x\in\carrier[X]$.
+        Fix $e\in\reals$.
+        Assume $\surrealLt{\surrealZero}{e}$.
+        Take $m\in\naturals$ such that
+            $\surrealLt{
+                \surrealMul{\surrealEpsilon{m}}{\surrealOne}}{e}$
+            by
+            \obv{positive_real_scaled_epsilon_below,surreal_one_is_real,surreal_zero_lt_one}.
+        $\surrealMul{\surrealEpsilon{m}}{\surrealOne}
+            =\surrealEpsilon{m}$
+            by
+            \auto{surreal_mul_one_right,surreal_epsilon_is_surreal,natural_number_is_ordinal}.
+        Hence $\surrealLt{\surrealEpsilon{m}}{e}$.
+        Let $n=\suc{m}$.
+        $n$ is a natural number by \auto{omega_successor}.
+        Let $d=\surrealEpsilon{n}$.
+        $\surrealAdd{d}{d}=\surrealEpsilon{m}$
+            by \auto{surreal_epsilon_halving,natural_number_is_ordinal}.
+        Hence $\surrealLt{\surrealAdd{d}{d}}{e}$ by \auto.
+        Let $r=\openChainStepCount{X}{h}{U}{W}{n}$.
+        Let $c=\openChainAtLevel{X}{h}{U}{W}{n}$.
+        Let $D=\openChainRankCells{X}{c}{r}$.
+        $r$ is a natural number and $r\neq\emptyset$ and
+            $c$ is a finite open chain with $r$ steps in $X$
+            by \auto{open_chain_level_components}.
+        Take $k\in\suc{r}$ such that $x\in D(k)$
+            by \auto{open_chain_rank_cells_cover_point}.
+        $D\in\funs{\suc{r}}{\opens[X]}$
+            by \auto{open_chain_rank_cells_typed}.
+        Hence $D(k)\in\opens[X]$ by \obv{funs_type_apply}.
+        Show that for every $y\in D(k)$ we have
+            $f(y)\in\metricBall{\RealMetric}{f(x)}{e}$.
+        \begin{subproof}
+            Fix $y\in D(k)$.
+            $D(k)\subseteq\carrier[X]$
+                by \obv{opens_type,subseteq}.
+            Hence $y\in\carrier[X]$ by \obv{subseteq}.
+            $f(x),f(y)\in\reals$ by \obv{funs_type_apply}.
+            $d\in\reals$ by \auto{surreal_epsilon_is_real}.
+            Hence $\surreal{f(x)}$ and $\surreal{f(y)}$ and
+                $\surreal{d}$ and $\surreal{e}$
+                by \obv{surreal_real_is_surreal}.
+            $\surrealLe{\abs{\surrealAdd{f(x)}{\surrealNeg{f(y)}}}}
+                {\surrealAdd{d}{d}}$
+                by \auto{open_chain_limit_map_cell_oscillation}.
+            Hence $\surrealLt{\abs{\surrealAdd{f(x)}{\surrealNeg{f(y)}}}}{e}$
+                by \auto{surreal_le_lt_transitive,surreal_abs_is_surreal,
+                    surreal_add_is_surreal,surreal_negation_is_surreal}.
+            $\metricDistance[\RealMetric](f(x),f(y))
+                =\abs{\surrealAdd{f(x)}{\surrealNeg{f(y)}}}$
+                by \obv{surreal_real_metric_distance}.
+            $f(y)\in\carrier[\RealMetric]$
+                by \obv{surreal_real_metric_carrier}.
+            Follows by \auto{metric_ball_iff}.
+        \end{subproof}
+        Follows by \auto.
+    \end{subproof}
+    Hence $f$ is continuous from $X$ to
+        $\metricTopology{\RealMetric}$
+        by \obv{metric_continuous_iff_local_balls}.
+    Follows by \obv{real_topology}.
+\end{proof}
+
+\subsection{The nested-open construction}
+
+\begin{theorem}\label{open_chain_limit_map_typed_unit_interval}
+    Let $X$ be a topological space.
+    Let $h$ be a normal shrinker for $X$.
+    Let $U,W\in\opens[X]$.
+    Suppose $\closure{U}{X}\subseteq W$.
+    Then $\openChainLimitMap{X}{h}{U}{W}
+        \in\funs{\carrier[X]}{\RealUnitInterval}$.
+\end{theorem}
+\begin{proof}
+    Let $f=\openChainLimitMap{X}{h}{U}{W}$.
+    $f\in\funs{\carrier[X]}{\reals}$
+        by \auto{open_chain_limit_map_typed}.
+    Hence $f$ is a function and $\carrier[X]=\dom{f}$
+        by \obv{funs_is_function,funs}.
+    For every $x\in\dom{f}$ we have $f(x)\in\RealUnitInterval$
+        by \auto{open_chain_limit_map_between_zero_and_one,
+            funs_type_apply,real_unit_interval_iff}.
+    Hence $f$ is a function to $\RealUnitInterval$.
+    Follows by \auto{funs_intro}.
+\end{proof}
+
+\begin{theorem}\label{open_chain_limit_map_continuous_unit_interval}
+    Let $X$ be a topological space.
+    Let $h$ be a normal shrinker for $X$.
+    Let $U,W\in\opens[X]$.
+    Suppose $\closure{U}{X}\subseteq W$.
+    Then $\openChainLimitMap{X}{h}{U}{W}$ is continuous from
+        $X$ to $\RealUnitIntervalTopology$.
+\end{theorem}
+\begin{proof}
+    Let $f=\openChainLimitMap{X}{h}{U}{W}$.
+    $f$ is continuous from $X$ to $\RealTopology$
+        by \auto{open_chain_limit_map_continuous_real}.
+    $\RealUnitIntervalTopology
+        =\subspaceTopology{\RealTopology}{\RealUnitInterval}$
+        by \obv{real_unit_interval_topology}.
+    $f\in\funs{\carrier[X]}{\RealUnitInterval}$
+        by \auto{open_chain_limit_map_typed_unit_interval}.
+    Hence $\ran{f}\subseteq\RealUnitInterval$ by \obv{funs_ran}.
+    $\carrier[\RealUnitIntervalTopology]=\RealUnitInterval$
+        by \obv{real_unit_interval_topology_carrier}.
+    Hence $\ran{f}\subseteq\carrier[\RealUnitIntervalTopology]$.
+    Follows by \obv{continuous_codomain_corestriction}.
+\end{proof}
+
+\begin{theorem}\label{open_chain_limit_map_separates_nested_opens}
+    Let $X$ be a topological space.
+    Let $h$ be a normal shrinker for $X$.
+    Let $U,W\in\opens[X]$.
+    Suppose $\closure{U}{X}\subseteq W$.
+    Let $f=\openChainLimitMap{X}{h}{U}{W}$.
+    Then $f\in\funs{\carrier[X]}{\RealUnitInterval}$ and
+        $f$ is continuous from $X$ to $\RealUnitIntervalTopology$ and
+        $f$ is constantly $\surrealOne$ on $U$ and
+        $f$ is constantly $\surrealZero$ on $\carrier[X]\setminus W$.
+\end{theorem}
+\begin{proof}
+    $f\in\funs{\carrier[X]}{\RealUnitInterval}$
+        by \auto{open_chain_limit_map_typed_unit_interval}.
+    $f$ is continuous from $X$ to $\RealUnitIntervalTopology$
+        by \auto{open_chain_limit_map_continuous_unit_interval}.
+    $f$ is constantly $\surrealOne$ on $U$
+        by \auto{open_chain_limit_map_one_on_first}.
+    $f$ is constantly $\surrealZero$ on $\carrier[X]\setminus W$
+        by \auto{open_chain_limit_map_zero_outside_last}.
+\end{proof}

@@ -1,0 +1,907 @@
+\import{algebra/group.tex}
+
+\section{Elementary group constructions and maps}
+
+\subsection{Typed commutation and trivial objects}
+
+The indexed operations retain the ambient group whenever more than one group
+may be in scope.  In particular, commutation is guarded by membership in one
+specified carrier.
+
+\begin{definition}\label{commutes_in}
+    $\commutesIn{G}{x}{y}$ iff
+        $x\in\carrier[G]$ and $y\in\carrier[G]$ and
+        $\mul[G](x,y)=\mul[G](y,x)$.
+\end{definition}
+
+\begin{theorem}\label{commutes_in_symmetric}
+    Let $G$ be a group.
+    Let $x,y\in\carrier[G]$.
+    Then $\commutesIn{G}{x}{y}$ iff
+        $\commutesIn{G}{y}{x}$.
+\end{theorem}
+\begin{proof}
+    Follows by \auto{commutes_in}.
+\end{proof}
+
+\begin{definition}\label{trivial_subgroup_carrier}
+    $\trivialSubgroupCarrier{G}=\{\neutral[G]\}$.
+\end{definition}
+
+The canonical one-element group is independent of any ambient group.  Its
+chosen element is the empty set; the choice affects only the literal record,
+not its isomorphism type.
+
+\begin{definition}\label{trivial_group_multiplication}
+    $\trivialGroupMultiplication=
+        \{((\emptyset,\emptyset),\emptyset)\}$.
+\end{definition}
+
+\begin{proposition}\label{trivial_group_multiplication_type}
+    $\trivialGroupMultiplication\in
+        \funs{\{\emptyset\}\times\{\emptyset\}}{\{\emptyset\}}$.
+\end{proposition}
+\begin{proof}
+    Let $m=\trivialGroupMultiplication$.
+    Show that $m$ is a relation.
+    \begin{subproof}
+        Show that for every $w\in m$ there exist $p,y$ such that
+            $w=(p,y)$.
+        \begin{subproof}
+            Fix $w\in m$.
+            Hence $w=((\emptyset,\emptyset),\emptyset)$ by
+                \obv{trivial_group_multiplication,singleton_iff}.
+            Follows by \auto.
+        \end{subproof}
+        Follows by \obv{relation}.
+    \end{subproof}
+    Show that $m$ is right-unique.
+    \begin{subproof}
+        Show that for all $p,y,z$ such that $(p,y),(p,z)\in m$
+            we have $y=z$.
+        \begin{subproof}
+            Fix $p,y,z$.
+            Assume $(p,y),(p,z)\in m$.
+            Hence $y=\emptyset$ and $z=\emptyset$ by
+                \auto{trivial_group_multiplication,singleton_iff,pair_eq_iff}.
+        \end{subproof}
+        Follows by \obv{rightunique}.
+    \end{subproof}
+    Show that $\dom{m}=\{\emptyset\}\times\{\emptyset\}$.
+    \begin{subproof}
+        Show that for every $p\in\dom{m}$ we have
+            $p\in\{\emptyset\}\times\{\emptyset\}$.
+        \begin{subproof}
+            Fix $p\in\dom{m}$.
+            Take $y$ such that $(p,y)\in m$ by \obv{dom_iff}.
+            Hence $p=(\emptyset,\emptyset)$ by
+                \auto{trivial_group_multiplication,singleton_iff,pair_eq_iff}.
+            Follows by \obv{times_tuple_intro,singleton_intro}.
+        \end{subproof}
+        Show that for every
+            $p\in\{\emptyset\}\times\{\emptyset\}$ we have
+            $p\in\dom{m}$.
+        \begin{subproof}
+            Fix $p\in\{\emptyset\}\times\{\emptyset\}$.
+            Take $x,y$ such that $x\in\{\emptyset\}$ and
+                $y\in\{\emptyset\}$ and $p=(x,y)$ by
+                \obv{times_elem_is_tuple}.
+            Hence $x=\emptyset$ and $y=\emptyset$ by
+                \obv{singleton_iff}.
+            $((\emptyset,\emptyset),\emptyset)\in m$ by
+                \obv{trivial_group_multiplication,singleton_intro}.
+            Follows by \auto{dom_iff}.
+        \end{subproof}
+        Follows by \obv{setext}.
+    \end{subproof}
+    Show that $m$ is a function to $\{\emptyset\}$.
+    \begin{subproof}
+        Show that for every $p\in\dom{m}$ we have
+            $m(p)\in\{\emptyset\}$.
+        \begin{subproof}
+            Fix $p\in\dom{m}$.
+            $(p,m(p))\in m$ by \obv{function_apply_elim}.
+            Hence $m(p)=\emptyset$ by
+                \auto{trivial_group_multiplication,singleton_iff,pair_eq_iff}.
+            Follows by \auto{singleton_intro}.
+        \end{subproof}
+    \end{subproof}
+    Follows by \auto{funs_intro}.
+\end{proof}
+
+\begin{proposition}\label{trivial_group_multiplication_apply}
+    $\apply{\trivialGroupMultiplication}{(\emptyset,\emptyset)}
+        =\emptyset$.
+\end{proposition}
+\begin{proof}
+    $\trivialGroupMultiplication$ is a function by
+        \obv{trivial_group_multiplication_type,funs_is_function}.
+    $((\emptyset,\emptyset),\emptyset)
+        \in\trivialGroupMultiplication$ by
+        \obv{trivial_group_multiplication,singleton_intro}.
+    Follows by \obv{function_apply_intro}.
+\end{proof}
+
+\begin{definition}\label{trivial_group_inverse}
+    $\trivialGroupInverse=\identity{\{\emptyset\}}$.
+\end{definition}
+
+\begin{proposition}\label{trivial_group_inverse_type}
+    $\trivialGroupInverse\in
+        \funs{\{\emptyset\}}{\{\emptyset\}}$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{trivial_group_inverse,id_elem_funs}.
+\end{proof}
+
+\begin{proposition}\label{trivial_group_inverse_apply}
+    $\apply{\trivialGroupInverse}{\emptyset}=\emptyset$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{trivial_group_inverse,id_apply,singleton_intro}.
+\end{proof}
+
+\begin{instance}\label{trivial_group}
+    The group $\TrivialGroup$ is
+        $\structure[group]{
+            \carrier=\{\emptyset\},
+            \mul=\trivialGroupMultiplication,
+            \neutral=\emptyset,
+            \groupInv=\trivialGroupInverse
+        }$.
+\end{instance}
+\begin{proof}
+    $\carrier[\TrivialGroup]=\{\emptyset\}$ by
+        \obv{groupaggregateprojection_carrier}.
+    $\mul[\TrivialGroup]=\trivialGroupMultiplication$ by
+        \obv{groupaggregateprojection_mul}.
+    $\neutral[\TrivialGroup]=\emptyset$ by
+        \obv{groupaggregateprojection_neutral}.
+    $\groupInv[\TrivialGroup]=\trivialGroupInverse$ by
+        \obv{groupaggregateprojection_groupInv}.
+
+    $\mul[\TrivialGroup]\in
+        \funs{\carrier[\TrivialGroup]\times\carrier[\TrivialGroup]}
+            {\carrier[\TrivialGroup]}$ by
+        \obv{trivial_group_multiplication_type}.
+    $\neutral[\TrivialGroup]\in\carrier[\TrivialGroup]$ by
+        \auto{singleton_intro}.
+    $\groupInv[\TrivialGroup]\in
+        \funs{\carrier[\TrivialGroup]}{\carrier[\TrivialGroup]}$ by
+        \obv{trivial_group_inverse_type}.
+
+    Show that for every $x\in\carrier[\TrivialGroup]$ we have
+        $\mul[\TrivialGroup](x,\neutral[\TrivialGroup])=x$.
+    \begin{subproof}
+        Fix $x\in\carrier[\TrivialGroup]$.
+        Hence $x=\emptyset$ by \obv{singleton_iff}.
+        Follows by \obv{trivial_group_multiplication_apply}.
+    \end{subproof}
+    Show that for every $x\in\carrier[\TrivialGroup]$ we have
+        $\mul[\TrivialGroup](\neutral[\TrivialGroup],x)=x$.
+    \begin{subproof}
+        Fix $x\in\carrier[\TrivialGroup]$.
+        Hence $x=\emptyset$ by \obv{singleton_iff}.
+        Follows by \obv{trivial_group_multiplication_apply}.
+    \end{subproof}
+    Show that for all $a,b,c\in\carrier[\TrivialGroup]$ we have
+        $\mul[\TrivialGroup](a,\mul[\TrivialGroup](b,c))
+            =\mul[\TrivialGroup](\mul[\TrivialGroup](a,b),c)$.
+    \begin{subproof}
+        Fix $a,b,c\in\carrier[\TrivialGroup]$.
+        Hence $a=\emptyset$ and $b=\emptyset$ and $c=\emptyset$ by
+            \auto{singleton_iff}.
+        Follows by \obv{trivial_group_multiplication_apply}.
+    \end{subproof}
+    Show that for every $x\in\carrier[\TrivialGroup]$ we have
+        $\mul[\TrivialGroup](x,\groupInv[\TrivialGroup](x))
+            =\neutral[\TrivialGroup]$.
+    \begin{subproof}
+        Fix $x\in\carrier[\TrivialGroup]$.
+        Hence $x=\emptyset$ by \obv{singleton_iff}.
+        Follows by
+            \obv{trivial_group_inverse_apply,trivial_group_multiplication_apply}.
+    \end{subproof}
+    Show that for every $x\in\carrier[\TrivialGroup]$ we have
+        $\mul[\TrivialGroup](\groupInv[\TrivialGroup](x),x)
+            =\neutral[\TrivialGroup]$.
+    \begin{subproof}
+        Fix $x\in\carrier[\TrivialGroup]$.
+        Hence $x=\emptyset$ by \obv{singleton_iff}.
+        Follows by
+            \obv{trivial_group_inverse_apply,trivial_group_multiplication_apply}.
+    \end{subproof}
+    Follows by \obv{groupaggregateexact}.
+\end{proof}
+
+\begin{proposition}\label{trivial_group_carrier}
+    $\carrier[\TrivialGroup]=\{\emptyset\}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{trivial_groupprojection_carrier}.
+\end{proof}
+
+\begin{proposition}\label{trivial_group_mul}
+    $\mul[\TrivialGroup]=\trivialGroupMultiplication$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{trivial_groupprojection_mul}.
+\end{proof}
+
+\begin{proposition}\label{trivial_group_neutral}
+    $\neutral[\TrivialGroup]=\emptyset$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{trivial_groupprojection_neutral}.
+\end{proof}
+
+\begin{proposition}\label{trivial_group_inv}
+    $\groupInv[\TrivialGroup]=\trivialGroupInverse$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{trivial_groupprojection_groupInv}.
+\end{proof}
+
+\begin{corollary}\label{trivial_group_is_group}
+    $\TrivialGroup$ is a group.
+\end{corollary}
+\begin{proof}
+    Follows by \obv{trivial_group}.
+\end{proof}
+
+\begin{proposition}\label{trivial_group_is_exact}
+    $\TrivialGroup$ is an exact group.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{trivial_group,trivial_groupshape}.
+\end{proof}
+
+\subsection{Translation and inversion maps}
+
+\begin{definition}\label{left_translation}
+    $\LeftTranslation{G}{a}=
+        \{(x,\mul[G](a,x))\mid x\in\carrier[G]\}$.
+\end{definition}
+
+\begin{definition}\label{right_translation}
+    $\RightTranslation{G}{a}=
+        \{(x,\mul[G](x,a))\mid x\in\carrier[G]\}$.
+\end{definition}
+
+\begin{definition}\label{inverse_map}
+    $\InverseMap{G}=
+        \{(x,\groupInv[G](x))\mid x\in\carrier[G]\}$.
+\end{definition}
+
+\begin{proposition}\label{left_translation_iff}
+    $(x,y)\in\LeftTranslation{G}{a}$ iff
+        $x\in\carrier[G]$ and $y=\mul[G](a,x)$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{left_translation,pair_eq_iff}.
+\end{proof}
+\begin{proposition}\label{right_translation_iff}
+    $(x,y)\in\RightTranslation{G}{a}$ iff
+        $x\in\carrier[G]$ and $y=\mul[G](x,a)$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{right_translation,pair_eq_iff}.
+\end{proof}
+
+\begin{proposition}\label{inverse_map_iff}
+    $(x,y)\in\InverseMap{G}$ iff
+        $x\in\carrier[G]$ and $y=\groupInv[G](x)$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{inverse_map,pair_eq_iff}.
+\end{proof}
+
+The translation graphs only use multiplication.  Their elementary function
+interface is therefore available already for monoids; the group results below
+add invertibility for every translating element.
+
+\begin{proposition}\label{left_translation_monoid_function}
+    Let $M$ be a monoid.
+    Let $a\in\carrier[M]$.
+    Then $\LeftTranslation{M}{a}\in
+        \funs{\carrier[M]}{\carrier[M]}$.
+\end{proposition}
+\begin{proof}
+    $\LeftTranslation{M}{a}$ is a relation
+        by \auto{relation,left_translation}.
+    $\LeftTranslation{M}{a}$ is right-unique
+        by \auto{rightunique,left_translation_iff}.
+    $\dom{\LeftTranslation{M}{a}}=\carrier[M]$
+        by \auto{setext,dom_iff,left_translation_iff}.
+    Show that for every $x\in\dom{\LeftTranslation{M}{a}}$ we have
+        $\apply{\LeftTranslation{M}{a}}{x}\in\carrier[M]$.
+    \begin{subproof}
+        Fix $x\in\dom{\LeftTranslation{M}{a}}$.
+        $x\in\carrier[M]$.
+        $\apply{\LeftTranslation{M}{a}}{x}=\mul[M](a,x)$
+            by \obv{function_apply_intro,left_translation_iff}.
+        Follows by \auto{monoid_is_magma,magma_welldef}.
+    \end{subproof}
+    Hence $\LeftTranslation{M}{a}$ is a function to $\carrier[M]$.
+    Follows by \obv{funs_intro}.
+\end{proof}
+
+\begin{proposition}\label{right_translation_monoid_function}
+    Let $M$ be a monoid.
+    Let $a\in\carrier[M]$.
+    Then $\RightTranslation{M}{a}\in
+        \funs{\carrier[M]}{\carrier[M]}$.
+\end{proposition}
+\begin{proof}
+    $\RightTranslation{M}{a}$ is a relation
+        by \auto{relation,right_translation}.
+    $\RightTranslation{M}{a}$ is right-unique
+        by \auto{rightunique,right_translation_iff}.
+    $\dom{\RightTranslation{M}{a}}=\carrier[M]$
+        by \auto{setext,dom_iff,right_translation_iff}.
+    Show that for every $x\in\dom{\RightTranslation{M}{a}}$ we have
+        $\apply{\RightTranslation{M}{a}}{x}\in\carrier[M]$.
+    \begin{subproof}
+        Fix $x\in\dom{\RightTranslation{M}{a}}$.
+        $x\in\carrier[M]$.
+        $\apply{\RightTranslation{M}{a}}{x}=\mul[M](x,a)$
+            by \obv{function_apply_intro,right_translation_iff}.
+        Follows by \auto{monoid_is_magma,magma_welldef}.
+    \end{subproof}
+    Hence $\RightTranslation{M}{a}$ is a function to $\carrier[M]$.
+    Follows by \obv{funs_intro}.
+\end{proof}
+
+\begin{proposition}\label{left_translation_monoid_apply}
+    Let $M$ be a monoid.
+    Let $a,x\in\carrier[M]$.
+    Then $\apply{\LeftTranslation{M}{a}}{x}=\mul[M](a,x)$.
+\end{proposition}
+\begin{proof}
+    $\LeftTranslation{M}{a}$ is a function by
+        \auto{left_translation_monoid_function,funs_is_function}.
+    $(x,\mul[M](a,x))\in\LeftTranslation{M}{a}$ by
+        \obv{left_translation_iff}.
+    Follows by \obv{function_apply_intro}.
+\end{proof}
+
+\begin{proposition}\label{right_translation_monoid_apply}
+    Let $M$ be a monoid.
+    Let $a,x\in\carrier[M]$.
+    Then $\apply{\RightTranslation{M}{a}}{x}=\mul[M](x,a)$.
+\end{proposition}
+\begin{proof}
+    $\RightTranslation{M}{a}$ is a function by
+        \auto{right_translation_monoid_function,funs_is_function}.
+    $(x,\mul[M](x,a))\in\RightTranslation{M}{a}$ by
+        \obv{right_translation_iff}.
+    Follows by \obv{function_apply_intro}.
+\end{proof}
+
+\begin{proposition}\label{left_translation_function}
+    Let $G$ be a group.
+    Let $a\in\carrier[G]$.
+    Then $\LeftTranslation{G}{a}\in
+        \funs{\carrier[G]}{\carrier[G]}$.
+\end{proposition}
+\begin{proof}
+    $G$ is a monoid by \obv{group_is_monoid}.
+    Follows by \obv{left_translation_monoid_function}.
+\end{proof}
+
+\begin{proposition}\label{right_translation_function}
+    Let $G$ be a group.
+    Let $a\in\carrier[G]$.
+    Then $\RightTranslation{G}{a}\in
+        \funs{\carrier[G]}{\carrier[G]}$.
+\end{proposition}
+\begin{proof}
+    $G$ is a monoid by \obv{group_is_monoid}.
+    Follows by \obv{right_translation_monoid_function}.
+\end{proof}
+
+\begin{proposition}\label{inverse_map_function}
+    Let $G$ be a group.
+    Then $\InverseMap{G}\in\funs{\carrier[G]}{\carrier[G]}$.
+\end{proposition}
+\begin{proof}
+    $\InverseMap{G}$ is a relation
+        by \auto{relation,inverse_map}.
+    $\InverseMap{G}$ is right-unique
+        by \auto{rightunique,inverse_map_iff}.
+    $\dom{\InverseMap{G}}=\carrier[G]$
+        by \auto{setext,dom_iff,inverse_map_iff}.
+    Show that for every $x\in\dom{\InverseMap{G}}$ we have
+        $\apply{\InverseMap{G}}{x}\in\carrier[G]$.
+    \begin{subproof}
+        Fix $x\in\dom{\InverseMap{G}}$.
+        $x\in\carrier[G]$.
+        $\apply{\InverseMap{G}}{x}=\groupInv[G](x)$
+            by \obv{function_apply_intro,inverse_map_iff}.
+        Follows by \auto{group_inverse_type}.
+    \end{subproof}
+    Hence $\InverseMap{G}$ is a function to $\carrier[G]$.
+    Follows by \obv{funs_intro}.
+\end{proof}
+
+\begin{proposition}\label{left_translation_apply}
+    Let $G$ be a group.
+    Let $a,x\in\carrier[G]$.
+    Then $\apply{\LeftTranslation{G}{a}}{x}=\mul[G](a,x)$.
+\end{proposition}
+\begin{proof}
+    $G$ is a monoid by \obv{group_is_monoid}.
+    Follows by \obv{left_translation_monoid_apply}.
+\end{proof}
+
+\begin{proposition}\label{right_translation_apply}
+    Let $G$ be a group.
+    Let $a,x\in\carrier[G]$.
+    Then $\apply{\RightTranslation{G}{a}}{x}=\mul[G](x,a)$.
+\end{proposition}
+\begin{proof}
+    $G$ is a monoid by \obv{group_is_monoid}.
+    Follows by \obv{right_translation_monoid_apply}.
+\end{proof}
+
+\begin{proposition}\label{inverse_map_apply}
+    Let $G$ be a group.
+    Let $x\in\carrier[G]$.
+    Then $\apply{\InverseMap{G}}{x}=\groupInv[G](x)$.
+\end{proposition}
+\begin{proof}
+    $\InverseMap{G}$ is a function by
+        \auto{inverse_map_function,funs_is_function}.
+    $(x,\groupInv[G](x))\in\InverseMap{G}$ by
+        \obv{inverse_map_iff}.
+    Follows by \obv{function_apply_intro}.
+\end{proof}
+
+\begin{theorem}\label{left_translation_bijection}
+    Let $G$ be a group.
+    Let $a\in\carrier[G]$.
+    Then $\LeftTranslation{G}{a}\in
+        \bijections{\carrier[G]}{\carrier[G]}$.
+\end{theorem}
+\begin{proof}
+    Let $f=\LeftTranslation{G}{a}$.
+    $f\in\funs{\carrier[G]}{\carrier[G]}$
+        by \auto{left_translation_function}.
+    Show that for every $y\in\carrier[G]$ there exists
+        $x\in\carrier[G]$ such that $f(x)=y$.
+    \begin{subproof}
+        Fix $y\in\carrier[G]$.
+        Let $x=\mul[G](\groupInv[G](a),y)$.
+        $\groupInv[G](a)\in\carrier[G]$
+            by \obv{group_inverse_type}.
+        Hence $x\in\carrier[G]$
+            by \auto{group_is_monoid,monoid_is_magma,magma_welldef}.
+        $f(x)=\mul[G](a,x)$
+            by \obv{funs_is_function,function_apply_intro,left_translation_iff}.
+        $\mul[G](a,x)=y$ by \obv{group_solve_left}.
+    \end{subproof}
+    Hence $f\in\surj{\carrier[G]}{\carrier[G]}$
+        by \obv{surj}.
+    Show that $f$ is injective.
+    \begin{subproof}
+        Show that for all $x,y$ such that $x\mathrel{f}y$ we have
+            $x\in\carrier[G]$ and $y\in\carrier[G]$.
+        \begin{subproof}
+            Follows by \auto{left_translation_iff,group_is_monoid,monoid_is_magma,magma_welldef}.
+        \end{subproof}
+        Show that for all $x,y,z$ such that $x\mathrel{f}z$ and
+            $y\mathrel{f}z$ we have $x=y$.
+        \begin{subproof}
+            Fix $x,y,z$ such that $x\mathrel{f}z$ and $y\mathrel{f}z$.
+            $x,y\in\carrier[G]$ and
+                $z=\mul[G](a,x)=\mul[G](a,y)$
+                by \auto{left_translation_iff}.
+            Follows by \obv{group_cancel_left}.
+        \end{subproof}
+        Follows by \obv{injective}.
+    \end{subproof}
+    Follows by \obv{bijections}.
+\end{proof}
+
+\begin{theorem}\label{right_translation_bijection}
+    Let $G$ be a group.
+    Let $a\in\carrier[G]$.
+    Then $\RightTranslation{G}{a}\in
+        \bijections{\carrier[G]}{\carrier[G]}$.
+\end{theorem}
+\begin{proof}
+    Let $f=\RightTranslation{G}{a}$.
+    $f\in\funs{\carrier[G]}{\carrier[G]}$
+        by \auto{right_translation_function}.
+    Show that for every $y\in\carrier[G]$ there exists
+        $x\in\carrier[G]$ such that $f(x)=y$.
+    \begin{subproof}
+        Fix $y\in\carrier[G]$.
+        Let $x=\mul[G](y,\groupInv[G](a))$.
+        $\groupInv[G](a)\in\carrier[G]$
+            by \obv{group_inverse_type}.
+        Hence $x\in\carrier[G]$
+            by \auto{group_is_monoid,monoid_is_magma,magma_welldef}.
+        $f(x)=\mul[G](x,a)$
+            by \obv{funs_is_function,function_apply_intro,right_translation_iff}.
+        $\mul[G](x,a)=y$ by \obv{group_solve_right}.
+    \end{subproof}
+    Hence $f\in\surj{\carrier[G]}{\carrier[G]}$
+        by \obv{surj}.
+    Show that $f$ is injective.
+    \begin{subproof}
+        Show that for all $x,y,z$ such that $x\mathrel{f}z$ and
+            $y\mathrel{f}z$ we have $x=y$.
+        \begin{subproof}
+            Fix $x,y,z$ such that $x\mathrel{f}z$ and $y\mathrel{f}z$.
+            $x,y\in\carrier[G]$ and
+                $z=\mul[G](x,a)=\mul[G](y,a)$
+                by \auto{right_translation_iff}.
+            Follows by \obv{group_cancel_right}.
+        \end{subproof}
+        Follows by \obv{injective}.
+    \end{subproof}
+    Follows by \obv{bijections}.
+\end{proof}
+
+\begin{theorem}\label{inverse_map_bijection}
+    Let $G$ be a group.
+    Then $\InverseMap{G}\in
+        \bijections{\carrier[G]}{\carrier[G]}$.
+\end{theorem}
+\begin{proof}
+    Let $f=\InverseMap{G}$.
+    $f\in\funs{\carrier[G]}{\carrier[G]}$
+        by \auto{inverse_map_function}.
+    Show that for every $y\in\carrier[G]$ there exists
+        $x\in\carrier[G]$ such that $f(x)=y$.
+    \begin{subproof}
+        Fix $y\in\carrier[G]$.
+        Let $x=\groupInv[G](y)$.
+        $x\in\carrier[G]$ by \auto{group_inverse_type}.
+        $f(x)=\groupInv[G](x)$
+            by \obv{funs_is_function,function_apply_intro,inverse_map_iff}.
+        Hence $f(x)=y$ by \auto{group_inverse_involutive}.
+    \end{subproof}
+    Hence $f\in\surj{\carrier[G]}{\carrier[G]}$
+        by \obv{surj}.
+    Show that $f$ is injective.
+    \begin{subproof}
+        Show that for all $x,y,z$ such that $x\mathrel{f}z$ and
+            $y\mathrel{f}z$ we have $x=y$.
+        \begin{subproof}
+            Fix $x,y,z$ such that $x\mathrel{f}z$ and $y\mathrel{f}z$.
+            $x,y\in\carrier[G]$ and
+                $z=\groupInv[G](x)=\groupInv[G](y)$
+                by \auto{inverse_map_iff}.
+            $\groupInv[G](\groupInv[G](x))
+                =\groupInv[G](\groupInv[G](y))$.
+            Follows by \obv{group_inverse_involutive}.
+        \end{subproof}
+        Follows by \obv{injective}.
+    \end{subproof}
+    Follows by \obv{bijections}.
+\end{proof}
+
+\begin{lemma}\label{left_translation_converse}
+    Let $G$ be a group.
+    Let $a\in\carrier[G]$.
+    Then $\converse{\LeftTranslation{G}{a}}
+        =\LeftTranslation{G}{\groupInv[G](a)}$.
+\end{lemma}
+\begin{proof}
+    $\groupInv[G](a)\in\carrier[G]$ by \obv{group_inverse_type}.
+    Hence $\LeftTranslation{G}{\groupInv[G](a)}$ is a function
+        by \auto{left_translation_function,funs_is_function}.
+    Show that for all $x,y$ we have
+        $x\mathrel{\converse{\LeftTranslation{G}{a}}}y$ iff
+        $x\mathrel{\LeftTranslation{G}{\groupInv[G](a)}}y$.
+    \begin{subproof}
+        Fix $x,y$.
+        If $x\mathrel{\converse{\LeftTranslation{G}{a}}}y$, then
+            $x\in\carrier[G]$ and
+            $y=\mul[G](\groupInv[G](a),x)$
+            by
+            \auto{converse_iff,left_translation_iff,group_is_monoid,monoid_is_magma,magma_welldef,group_solve_left}.
+        Hence if $x\mathrel{\converse{\LeftTranslation{G}{a}}}y$, then
+            $x\mathrel{\LeftTranslation{G}{\groupInv[G](a)}}y$
+            by \auto{left_translation_iff}.
+        If $x\mathrel{\LeftTranslation{G}{\groupInv[G](a)}}y$, then
+            $y\in\carrier[G]$ and $x=\mul[G](a,y)$
+            by
+            \auto{left_translation_iff,group_inverse_type,group_is_monoid,monoid_is_magma,magma_welldef,group_solve_left}.
+        Hence if $x\mathrel{\LeftTranslation{G}{\groupInv[G](a)}}y$, then
+            $x\mathrel{\converse{\LeftTranslation{G}{a}}}y$
+            by \auto{converse_iff,left_translation_iff}.
+        Follows by \auto.
+    \end{subproof}
+    Follows by
+        \obv{relext,converse_is_relation,funs_is_relation}.
+\end{proof}
+
+\begin{lemma}\label{right_translation_converse}
+    Let $G$ be a group.
+    Let $a\in\carrier[G]$.
+    Then $\converse{\RightTranslation{G}{a}}
+        =\RightTranslation{G}{\groupInv[G](a)}$.
+\end{lemma}
+\begin{proof}
+    $\groupInv[G](a)\in\carrier[G]$ by \obv{group_inverse_type}.
+    Hence $\RightTranslation{G}{\groupInv[G](a)}$ is a function
+        by \auto{right_translation_function,funs_is_function}.
+    Show that for all $x,y$ we have
+        $x\mathrel{\converse{\RightTranslation{G}{a}}}y$ iff
+        $x\mathrel{\RightTranslation{G}{\groupInv[G](a)}}y$.
+    \begin{subproof}
+        Fix $x,y$.
+        If $x\mathrel{\converse{\RightTranslation{G}{a}}}y$, then
+            $x\in\carrier[G]$ and
+            $y=\mul[G](x,\groupInv[G](a))$
+            by
+            \auto{converse_iff,right_translation_iff,group_is_monoid,monoid_is_magma,magma_welldef,group_solve_right}.
+        Hence if $x\mathrel{\converse{\RightTranslation{G}{a}}}y$, then
+            $x\mathrel{\RightTranslation{G}{\groupInv[G](a)}}y$
+            by \auto{right_translation_iff}.
+        If $x\mathrel{\RightTranslation{G}{\groupInv[G](a)}}y$, then
+            $y\in\carrier[G]$ and $x=\mul[G](y,a)$
+            by
+            \auto{right_translation_iff,group_inverse_type,group_is_monoid,monoid_is_magma,magma_welldef,group_solve_right}.
+        Hence if $x\mathrel{\RightTranslation{G}{\groupInv[G](a)}}y$, then
+            $x\mathrel{\converse{\RightTranslation{G}{a}}}y$
+            by \auto{converse_iff,right_translation_iff}.
+        Follows by \auto.
+    \end{subproof}
+    Follows by
+        \obv{relext,converse_is_relation,funs_is_relation}.
+\end{proof}
+
+\begin{lemma}\label{inverse_map_converse}
+    Let $G$ be a group.
+    Then $\converse{\InverseMap{G}}=\InverseMap{G}$.
+\end{lemma}
+\begin{proof}
+    $\InverseMap{G}$ is a function
+        by \auto{inverse_map_function,funs_is_function}.
+    Show that for all $x,y$ we have
+        $x\mathrel{\converse{\InverseMap{G}}}y$ iff
+        $x\mathrel{\InverseMap{G}}y$.
+    \begin{subproof}
+        Fix $x,y$.
+        If $x\mathrel{\converse{\InverseMap{G}}}y$, then
+            $x\in\carrier[G]$ and $y=\groupInv[G](x)$
+            by
+            \auto{converse_iff,inverse_map_iff,group_inverse_type,group_inverse_involutive}.
+        Hence if $x\mathrel{\converse{\InverseMap{G}}}y$, then
+            $x\mathrel{\InverseMap{G}}y$ by \obv{inverse_map_iff}.
+        If $x\mathrel{\InverseMap{G}}y$, then
+            $y\in\carrier[G]$ and $x=\groupInv[G](y)$
+            by
+            \auto{inverse_map_iff,group_inverse_type,group_inverse_involutive}.
+        Hence if $x\mathrel{\InverseMap{G}}y$, then
+            $x\mathrel{\converse{\InverseMap{G}}}y$
+            by \auto{converse_iff,inverse_map_iff}.
+        Follows by \auto.
+    \end{subproof}
+    Follows by
+        \obv{relext,converse_is_relation,funs_is_relation}.
+\end{proof}
+
+\subsection{Conjugation}
+
+We use the convention $x\mapsto axa^{-1}$.  Function composition therefore
+corresponds to multiplication in the same order.
+
+\begin{definition}\label{group_conjugate}
+    $\conjugate{G}{a}{x}=
+        \mul[G](\mul[G](a,x),\groupInv[G](a))$.
+\end{definition}
+
+\begin{proposition}\label{group_conjugate_type}
+    Let $G$ be a group.
+    Let $a,x\in\carrier[G]$.
+    Then $\conjugate{G}{a}{x}\in\carrier[G]$.
+\end{proposition}
+\begin{proof}
+    $\groupInv[G](a)\in\carrier[G]$ by
+        \obv{group_inverse_type}.
+    $\mul[G](a,x)\in\carrier[G]$ by
+        \obv{group_is_monoid,monoid_is_magma,magma_welldef}.
+    Follows by
+        \auto{group_is_monoid,monoid_is_magma,magma_welldef,group_conjugate}.
+\end{proof}
+
+\begin{proposition}\label{group_conjugate_by_neutral}
+    Let $G$ be a group.
+    Let $x\in\carrier[G]$.
+    Then $\conjugate{G}{\neutral[G]}{x}=x$.
+\end{proposition}
+\begin{proof}
+    $G$ is a unital magma by
+        \obv{group_is_monoid,monoid_is_unital_magma}.
+    Follows by
+        \auto{group_conjugate,unitalmagma_type,group_inverse_neutral,unitalmagma_left,unitalmagma_right}.
+\end{proof}
+
+\begin{theorem}\label{group_conjugate_composition}
+    Let $G$ be a group.
+    Let $a,b,x\in\carrier[G]$.
+    Then
+        $\conjugate{G}{a}{\conjugate{G}{b}{x}}
+            =\conjugate{G}{\mul[G](a,b)}{x}$.
+\end{theorem}
+\begin{proof}
+    $\groupInv[G](a),\groupInv[G](b)\in\carrier[G]$ by
+        \obv{group_inverse_type}.
+    $\mul[G](a,b)\in\carrier[G]$ by
+        \obv{group_is_monoid,monoid_is_magma,magma_welldef}.
+    Follows by
+        \auto{group_conjugate,group_inverse_product,group_is_monoid,monoid_assoc,monoid_is_magma,magma_welldef}.
+\end{proof}
+
+\begin{corollary}\label{group_conjugate_inverse_left}
+    Let $G$ be a group.
+    Let $a,x\in\carrier[G]$.
+    Then
+        $\conjugate{G}{\groupInv[G](a)}{\conjugate{G}{a}{x}}=x$.
+\end{corollary}
+\begin{proof}
+    $\groupInv[G](a)\in\carrier[G]$ by
+        \obv{group_inverse_type}.
+    $\conjugate{G}{\groupInv[G](a)}{\conjugate{G}{a}{x}}
+        =\conjugate{G}
+            {\mul[G](\groupInv[G](a),a)}{x}$ by
+        \obv{group_conjugate_composition}.
+    Follows by
+        \auto{group_inverse_left,group_conjugate_by_neutral}.
+\end{proof}
+
+\begin{corollary}\label{group_conjugate_inverse_right}
+    Let $G$ be a group.
+    Let $a,x\in\carrier[G]$.
+    Then
+        $\conjugate{G}{a}{\conjugate{G}{\groupInv[G](a)}{x}}=x$.
+\end{corollary}
+\begin{proof}
+    $\groupInv[G](a)\in\carrier[G]$ by
+        \obv{group_inverse_type}.
+    $\conjugate{G}{a}{\conjugate{G}{\groupInv[G](a)}{x}}
+        =\conjugate{G}
+            {\mul[G](a,\groupInv[G](a))}{x}$ by
+        \obv{group_conjugate_composition}.
+    Follows by
+        \auto{group_inverse_right,group_conjugate_by_neutral}.
+\end{proof}
+
+\begin{definition}\label{conjugation_map}
+    $\ConjugationMap{G}{a}=
+        \{(x,\conjugate{G}{a}{x})\mid x\in\carrier[G]\}$.
+\end{definition}
+
+\begin{proposition}\label{conjugation_map_iff}
+    $(x,y)\in\ConjugationMap{G}{a}$ iff
+        $x\in\carrier[G]$ and $y=\conjugate{G}{a}{x}$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{conjugation_map,pair_eq_iff}.
+\end{proof}
+
+\begin{proposition}\label{conjugation_map_function}
+    Let $G$ be a group.
+    Let $a\in\carrier[G]$.
+    Then $\ConjugationMap{G}{a}\in
+        \funs{\carrier[G]}{\carrier[G]}$.
+\end{proposition}
+\begin{proof}
+    $\ConjugationMap{G}{a}$ is a relation by
+        \auto{relation,conjugation_map}.
+    $\ConjugationMap{G}{a}$ is right-unique by
+        \auto{rightunique,conjugation_map_iff}.
+    $\dom{\ConjugationMap{G}{a}}=\carrier[G]$ by
+        \auto{setext,dom_iff,conjugation_map_iff}.
+    Show that for every $x\in\dom{\ConjugationMap{G}{a}}$ we have
+        $\apply{\ConjugationMap{G}{a}}{x}\in\carrier[G]$.
+    \begin{subproof}
+        Fix $x\in\dom{\ConjugationMap{G}{a}}$.
+        Hence $x\in\carrier[G]$.
+        $\apply{\ConjugationMap{G}{a}}{x}=\conjugate{G}{a}{x}$ by
+            \obv{function_apply_intro,conjugation_map_iff}.
+        Follows by \auto{group_conjugate_type}.
+    \end{subproof}
+    Hence $\ConjugationMap{G}{a}$ is a function to $\carrier[G]$.
+    Follows by \obv{funs_intro}.
+\end{proof}
+
+\begin{proposition}\label{conjugation_map_apply}
+    Let $G$ be a group.
+    Let $a,x\in\carrier[G]$.
+    Then
+        $\apply{\ConjugationMap{G}{a}}{x}=\conjugate{G}{a}{x}$.
+\end{proposition}
+\begin{proof}
+    $\ConjugationMap{G}{a}$ is a function by
+        \auto{conjugation_map_function,funs_is_function}.
+    $(x,\conjugate{G}{a}{x})\in\ConjugationMap{G}{a}$ by
+        \obv{conjugation_map_iff}.
+    Follows by \obv{function_apply_intro}.
+\end{proof}
+
+\begin{theorem}\label{conjugation_map_bijection}
+    Let $G$ be a group.
+    Let $a\in\carrier[G]$.
+    Then $\ConjugationMap{G}{a}\in
+        \bijections{\carrier[G]}{\carrier[G]}$.
+\end{theorem}
+\begin{proof}
+    Let $f=\ConjugationMap{G}{a}$.
+    $f\in\funs{\carrier[G]}{\carrier[G]}$ by
+        \auto{conjugation_map_function}.
+    Show that for every $y\in\carrier[G]$ there exists
+        $x\in\carrier[G]$ such that $f(x)=y$.
+    \begin{subproof}
+        Fix $y\in\carrier[G]$.
+        Let $x=\conjugate{G}{\groupInv[G](a)}{y}$.
+        $\groupInv[G](a)\in\carrier[G]$ by
+            \obv{group_inverse_type}.
+        Hence $x\in\carrier[G]$ by
+            \auto{group_conjugate_type}.
+        $f(x)=\conjugate{G}{a}{x}$ by
+            \auto{conjugation_map_apply}.
+        Hence $f(x)=y$ by \auto{group_conjugate_inverse_right}.
+    \end{subproof}
+    Hence $f\in\surj{\carrier[G]}{\carrier[G]}$ by
+        \obv{surj}.
+    Show that $f$ is injective.
+    \begin{subproof}
+        Show that for all $x,y,z$ such that $x\mathrel{f}z$ and
+            $y\mathrel{f}z$ we have $x=y$.
+        \begin{subproof}
+            Fix $x,y,z$ such that $x\mathrel{f}z$ and
+                $y\mathrel{f}z$.
+            $x,y\in\carrier[G]$ and
+                $z=\conjugate{G}{a}{x}=\conjugate{G}{a}{y}$ by
+                \auto{conjugation_map_iff}.
+            $\conjugate{G}{\groupInv[G](a)}
+                {\conjugate{G}{a}{x}}
+                =\conjugate{G}{\groupInv[G](a)}
+                    {\conjugate{G}{a}{y}}$.
+            Follows by \obv{group_conjugate_inverse_left}.
+        \end{subproof}
+        Follows by \obv{injective}.
+    \end{subproof}
+    Follows by \obv{bijections}.
+\end{proof}
+
+\begin{theorem}\label{conjugation_map_converse}
+    Let $G$ be a group.
+    Let $a\in\carrier[G]$.
+    Then $\converse{\ConjugationMap{G}{a}}
+        =\ConjugationMap{G}{\groupInv[G](a)}$.
+\end{theorem}
+\begin{proof}
+    $\groupInv[G](a)\in\carrier[G]$ by
+        \obv{group_inverse_type}.
+    Hence $\ConjugationMap{G}{\groupInv[G](a)}$ is a function by
+        \auto{conjugation_map_function,funs_is_function}.
+    Show that for all $x,y$ we have
+        $x\mathrel{\converse{\ConjugationMap{G}{a}}}y$ iff
+        $x\mathrel{\ConjugationMap{G}{\groupInv[G](a)}}y$.
+    \begin{subproof}
+        Fix $x,y$.
+        If $x\mathrel{\converse{\ConjugationMap{G}{a}}}y$, then
+            $x\in\carrier[G]$ and
+            $y=\conjugate{G}{\groupInv[G](a)}{x}$ by
+            \auto{converse_iff,conjugation_map_iff,group_conjugate_type,group_conjugate_inverse_left}.
+        Hence if $x\mathrel{\converse{\ConjugationMap{G}{a}}}y$, then
+            $x\mathrel{\ConjugationMap{G}{\groupInv[G](a)}}y$ by
+            \auto{conjugation_map_iff}.
+        If $x\mathrel{\ConjugationMap{G}{\groupInv[G](a)}}y$, then
+            $y\in\carrier[G]$ and $x=\conjugate{G}{a}{y}$ by
+            \auto{conjugation_map_iff,group_conjugate_type,group_conjugate_inverse_right}.
+        Hence if $x\mathrel{\ConjugationMap{G}{\groupInv[G](a)}}y$, then
+            $x\mathrel{\converse{\ConjugationMap{G}{a}}}y$ by
+            \auto{converse_iff,conjugation_map_iff}.
+        Follows by \auto.
+    \end{subproof}
+    Follows by
+        \obv{relext,converse_is_relation,funs_is_relation}.
+\end{proof}

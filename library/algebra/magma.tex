@@ -1,0 +1,243 @@
+\import{function.tex}
+
+\section{Magmas}
+
+\begin{struct}\label{magma}
+    A magma $A$ is a onesorted structure equipped with
+    \begin{enumerate}
+        \item\label{magma_mul_graph}
+            a multiplication
+            $\mul[A]:\carrier[A]\times\carrier[A]\to\carrier[A]$;
+    \end{enumerate}.
+\end{struct}
+
+\begin{classification}\label{magma_mul_function}
+    Let $A$ be a magma.
+    Then $\mul[A]$ is a function from
+        $\carrier[A]\times\carrier[A]$ to $\carrier[A]$.
+\end{classification}
+\begin{proof}
+    Follows by \obv{magma_mul_graph}.
+\end{proof}
+
+\begin{proposition}\label{magma_welldef}
+    Let $A$ be a magma.
+    Let $a,b\in\carrier[A]$.
+    Then $\mul[A](a,b)\in\carrier[A]$.
+\end{proposition}
+\begin{proof}
+    Follows by notion.
+\end{proof}
+
+\begin{theorem}\label{exact_magma_extensionality}
+    Let $A,B$ be sets.
+    Suppose $A$ is an exact magma and $B$ is an exact magma.
+    Suppose $\carrier[A]=\carrier[B]$.
+    Suppose $\mul[A]=\mul[B]$.
+    Then $A=B$.
+\end{theorem}
+\begin{proof}
+    Follows by structure extensionality.
+\end{proof}
+
+\begin{theorem}\label{magma_reduct_is_exact_magma}
+    Let $A$ be a magma.
+    Then $\reduct[magma]{A}$ is an exact magma.
+\end{theorem}
+\begin{proof}
+    $\carrier[\reduct[magma]{A}]=\carrier[A]$ by
+        \obv{magmareductprojection_carrier}.
+    $\mul[\reduct[magma]{A}]=\mul[A]$ by
+        \obv{magmareductprojection_mul}.
+    Hence $\mul[\reduct[magma]{A}]\in
+        \funs{\carrier[\reduct[magma]{A}]\times
+            \carrier[\reduct[magma]{A}]}{
+            \carrier[\reduct[magma]{A}]}$ by
+        \obv{magma_mul_graph}.
+    Hence $\reduct[magma]{A}$ is a magma by \auto{magma}.
+    Follows by \obv{magmashape,magmareductexact}.
+\end{proof}
+
+The empty carrier is permitted: a structure declaration supplies no hidden
+inhabitation assumption.  Its unique multiplication graph is the empty
+function.
+
+\begin{instance}\label{empty_magma}
+    The magma $\EmptyMagma=\structure{\emptyset,\emptyset}$.
+\end{instance}
+\begin{proof}
+    $\emptyset\times\emptyset=\emptyset$
+        by \obv{times_empty_left}.
+    $\emptyset\in\funs{\emptyset}{\emptyset}$ by
+        \obv{emptyset_is_function_on_emptyset,codom_of_emptyset_can_be_anything,funs_intro}.
+    Follows by \auto{magmaaggregateprojection_carrier,magmaaggregateprojection_mul}.
+\end{proof}
+
+\begin{proposition}\label{empty_magma_carrier}
+    $\carrier[\EmptyMagma]=\emptyset$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{empty_magmaprojection_carrier}.
+\end{proof}
+
+\begin{proposition}\label{empty_magma_is_exact}
+    $\EmptyMagma$ is an exact magma.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{empty_magma,empty_magmashape}.
+\end{proof}
+
+\begin{definition}\label{cdot_indexed}
+    Let $A$ be a magma.
+    Let $a,b\in\carrier[A]$.
+    %! infixl 4
+    $a\cdot_{A} b = \mul[A](a,b)$,
+        which is an element of $\carrier[A]$.
+\end{definition}
+
+\begin{definition}\label{idempotentelement}
+    Let $A$ be a magma.
+    $a$ is an idempotent element of $A$ iff
+        $a\in\carrier[A]$ and $\mul[A](a,a)=a$.
+\end{definition}
+
+
+\begin{definition}\label{idempotents}
+    Let $A$ be a magma.
+    $\idempotents{A}=\{a\in\carrier[A]\mid a\cdot_{A}a=a\}$.
+\end{definition}
+
+\begin{classification}\label{idempotent_element_in_carrier}
+    Let $A$ be a magma.
+    Let $a$ be an idempotent element of $A$.
+    Then $a\in\carrier[A]$.
+\end{classification}
+\begin{proof}
+    Follows by \obv{idempotentelement}.
+\end{proof}
+
+\begin{definition}\label{submagma}
+    $A$ is a submagma of $B$ iff
+        $A$ is a magma and
+        $B$ is a magma and
+        $\carrier[A]\subseteq \carrier[B]$ and
+        $\mul[A]
+            = \restrl{\mul[B]}{\carrier[A]\times\carrier[A]}$.
+\end{definition}
+
+\begin{proposition}\label{submagma_iff_mul_subseteq}
+    Let $A$ be a magma.
+    Let $B$ be a magma.
+    Suppose $\carrier[A]\subseteq\carrier[B]$.
+    Then $A$ is a submagma of $B$ iff $\mul[A]\subseteq\mul[B]$.
+\end{proposition}
+\begin{proof}
+    Show that if $A$ is a submagma of $B$, then
+        $\mul[A]\subseteq\mul[B]$.
+    \begin{subproof}
+        Assume $A$ is a submagma of $B$.
+        Follows by \auto{submagma,restrl_subseteq}.
+    \end{subproof}
+
+    Show that if $\mul[A]\subseteq\mul[B]$, then
+        $A$ is a submagma of $B$.
+    \begin{subproof}
+        Assume $\mul[A]\subseteq\mul[B]$.
+        $\mul[A]$ and $\mul[B]$ are functions
+            by \auto{magma_mul_graph,funs_is_function}.
+        Then $\mul[A]=\restrl{\mul[B]}{\dom{\mul[A]}}$
+            by \obv{subfunction_eq_restrl}.
+        We have $\dom{\mul[A]}=\carrier[A]\times\carrier[A]$
+            by \auto{magma_mul_graph,funs}.
+        Hence $A$ is a submagma of $B$ by \obv{submagma}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{proposition}\label{submagma_transitive}
+    Suppose $A$ is a submagma of $B$.
+    Suppose $B$ is a submagma of $C$.
+    Then $A$ is a submagma of $C$.
+\end{proposition}
+\begin{proof}
+    $A$ is a magma and $\carrier[A]\subseteq\carrier[B]$
+        by \obv{submagma}.
+    $B$ is a magma and $\carrier[B]\subseteq\carrier[C]$
+        by \obv{submagma}.
+    $C$ is a magma by \obv{submagma}.
+    Hence $\carrier[A]\subseteq\carrier[C]$
+        by \obv{subseteq_transitive}.
+    $\mul[A]\subseteq\mul[B]\subseteq\mul[C]$
+        by \obv{submagma_iff_mul_subseteq}.
+    Hence $\mul[A]\subseteq\mul[C]$
+        by \obv{subseteq_transitive}.
+    Follows by \obv{submagma_iff_mul_subseteq}.
+\end{proof}
+
+\begin{struct}\label{unitalmagma}
+    A unital magma $A$ is a magma equipped with
+    \begin{enumerate}
+        \item\label{unitalmagma_type}
+            an identity element $\neutral[A]\in\carrier[A]$;
+    \end{enumerate}
+    such that
+    \begin{enumerate}
+        \item\label{unitalmagma_right}
+            for every $a\in\carrier[A]$ we have
+                $\mul[A](a,\neutral[A])=a$.
+        \item\label{unitalmagma_left}
+            for every $a\in\carrier[A]$ we have
+                $\mul[A](\neutral[A],a)=a$.
+    \end{enumerate}
+\end{struct}
+
+\begin{classification}\label{unitalmagma_neutral_in_carrier}
+    Let $A$ be a unital magma.
+    Then $\neutral[A]\in\carrier[A]$.
+\end{classification}
+\begin{proof}
+    Follows by \obv{unitalmagma_type}.
+\end{proof}
+
+\begin{proposition}\label{unitalmagma_mul_neutral_neutral}
+    Let $A$ be a unital magma.
+    Then $\mul[A](\neutral[A],\neutral[A])=\neutral[A]$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{unitalmagma_type,unitalmagma_left}.
+\end{proof}
+
+\begin{proposition}\label{unitalmagma_neutral_unique}
+    Let $A$ be a unital magma.
+    Let $e\in\carrier[A]$.
+    Suppose for every $x\in\carrier[A]$ we have
+        $\mul[A](x,e)=x=\mul[A](e,x)$.
+    Then $e=\neutral[A]$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{unitalmagma_type,unitalmagma_left}.
+\end{proof}
+
+\begin{definition}[Left orbit]\label{left_orbit}
+    Let $A$ be a magma.
+    Let $x\in\carrier[A]$.
+    $\LeftOrb{x}{A}=\{\mul[A](a,x)\mid a\in\carrier[A]\}$.
+\end{definition}
+
+\begin{proposition}\label{eq_left_orbit_witness}
+    Let $A$ be a magma.
+    Let $e,f\in\carrier[A]$.
+    Suppose $\LeftOrb{e}{A} = \LeftOrb{f}{A}$.
+    Let $x\in\carrier[A]$.
+    Then there exists $y\in\carrier[A]$ such that
+        $x\cdot_{A}e=y\cdot_{A}f$.
+\end{proposition}
+\begin{proof}
+    We have $x\cdot_{A}e\in \LeftOrb{e}{A}$
+        by \obv{left_orbit,cdot_indexed}.
+    Thus $x\cdot_{A}e\in\LeftOrb{f}{A}$.
+    Take $y\in\carrier[A]$ such that
+        $x\cdot_{A}e=y\cdot_{A}f$
+        by \auto{left_orbit,cdot_indexed}.
+    Follows by \auto.
+\end{proof}

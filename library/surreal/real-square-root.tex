@@ -1,0 +1,823 @@
+\import{surreal/real-reciprocal.tex}
+
+\section{Square roots of surreal reals}
+
+\subsection{Square-error identities}
+
+\begin{lemma}\label{surreal_square_add_error_identity}
+    Suppose $\surreal{a}$ and $\surreal{e}$.
+    Then
+        $\surrealMul{\surrealAdd{a}{e}}{\surrealAdd{a}{e}}
+        =\surrealAdd{\surrealMul{a}{a}}
+            {\surrealMul{e}{\surrealAdd{\surrealAdd{a}{a}}{e}}}$.
+\end{lemma}
+\begin{proof}
+    $\surrealMul{\surrealAdd{a}{e}}{\surrealAdd{a}{e}}
+        =\surrealAdd{\surrealMul{a}{a}}
+            {\surrealAdd
+                {\surrealAdd{\surrealMul{e}{a}}{\surrealMul{e}{a}}}
+                {\surrealMul{e}{e}}}$
+        by \obv{surreal_product_perturbation_identity}.
+    $\surrealMul{e}{\surrealAdd{\surrealAdd{a}{a}}{e}}
+        =\surrealAdd
+            {\surrealAdd{\surrealMul{e}{a}}{\surrealMul{e}{a}}}
+            {\surrealMul{e}{e}}$
+        by
+        \auto{surreal_mul_distributive_left,surreal_add_is_surreal}.
+\end{proof}
+
+\begin{lemma}\label{surreal_square_subtract_error_identity}
+    Suppose $\surreal{a}$ and $\surreal{e}$.
+    Let $r=\surrealAdd{a}{\surrealNeg{e}}$.
+    Then
+        $\surrealAdd{\surrealMul{r}{r}}
+            {\surrealMul{e}{
+                \surrealAdd{\surrealAdd{a}{a}}{\surrealNeg{e}}}}
+        =\surrealMul{a}{a}$.
+\end{lemma}
+\begin{proof}
+    $\surrealAdd{r}{e}=a$
+        by
+        \auto{surreal_add_associative,surreal_add_inverse_left,surreal_add_zero_right,surreal_negation_is_surreal}.
+    Hence
+        $\surrealMul{a}{a}
+        =\surrealAdd{\surrealMul{r}{r}}
+            {\surrealMul{e}{\surrealAdd{\surrealAdd{r}{r}}{e}}}$
+        by
+        \auto{surreal_square_add_error_identity,surreal_add_is_surreal,surreal_negation_is_surreal}.
+    $\surrealAdd{\surrealAdd{r}{r}}{e}
+        =\surrealAdd{r}{\surrealAdd{r}{e}}$
+        by
+        \auto{surreal_add_associative,surreal_add_is_surreal,surreal_negation_is_surreal}.
+    Hence
+        $\surrealAdd{\surrealAdd{r}{r}}{e}
+        =\surrealAdd{r}{a}$.
+    Hence
+        $\surrealAdd{\surrealAdd{r}{r}}{e}
+        =\surrealAdd{a}{r}$
+        by
+        \auto{surreal_add_commutative,surreal_add_is_surreal,surreal_negation_is_surreal}.
+    Hence
+        $\surrealAdd{\surrealAdd{r}{r}}{e}
+        =\surrealAdd{a}{\surrealAdd{a}{\surrealNeg{e}}}$.
+    Hence
+        $\surrealAdd{\surrealAdd{r}{r}}{e}
+        =\surrealAdd{\surrealAdd{a}{a}}{\surrealNeg{e}}$
+        by
+        \obv{surreal_add_associative,surreal_negation_is_surreal}.
+\end{proof}
+
+\subsection{The positive square-root cut}
+
+\begin{definition}\label{surreal_real_sqrt_lower}
+    $\realSqrtLower{x}=
+        \{q\in\surrealStage{\naturals}\mid
+            \surrealLt{\surrealZero}{q}\land
+            \surrealLt{\surrealMul{q}{q}}{x}\}$.
+\end{definition}
+
+\begin{definition}\label{surreal_real_sqrt_upper}
+    $\realSqrtUpper{x}=
+        \{q\in\surrealStage{\naturals}\mid
+            \surrealLt{\surrealZero}{q}\land
+            \surrealLt{x}{\surrealMul{q}{q}}\}$.
+\end{definition}
+
+\begin{proposition}\label{surreal_real_sqrt_lower_iff}
+    $q\in\realSqrtLower{x}$ iff
+        $q\in\surrealStage{\naturals}$ and
+        $\surrealLt{\surrealZero}{q}$ and
+        $\surrealLt{\surrealMul{q}{q}}{x}$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{surreal_real_sqrt_lower}.
+\end{proof}
+
+\begin{proposition}\label{surreal_real_sqrt_upper_iff}
+    $q\in\realSqrtUpper{x}$ iff
+        $q\in\surrealStage{\naturals}$ and
+        $\surrealLt{\surrealZero}{q}$ and
+        $\surrealLt{x}{\surrealMul{q}{q}}$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{surreal_real_sqrt_upper}.
+\end{proof}
+
+\begin{proposition}\label{surreal_real_sqrt_bounds_finite_stage}
+    $\realSqrtLower{x}\union\realSqrtUpper{x}
+        \subseteq\surrealStage{\naturals}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{subseteq,union_iff,surreal_real_sqrt_lower_iff,surreal_real_sqrt_upper_iff}.
+\end{proof}
+
+\begin{proposition}\label{surreal_real_sqrt_cut_pair}
+    Suppose $x\in\reals$ and
+        $\surrealLt{\surrealZero}{x}$.
+    Then $\surrealCutPair{\realSqrtLower{x}}{\realSqrtUpper{x}}$.
+\end{proposition}
+\begin{proof}
+    Show that for every $q\in\realSqrtLower{x}$ we have
+        $\surreal{q}$.
+    \begin{subproof}
+        Follows by
+            \auto{surreal_real_sqrt_lower_iff,surreal_stage_characterization,omega_is_ordinal}.
+    \end{subproof}
+    Show that for every $r\in\realSqrtUpper{x}$ we have
+        $\surreal{r}$.
+    \begin{subproof}
+        Follows by
+            \auto{surreal_real_sqrt_upper_iff,surreal_stage_characterization,omega_is_ordinal}.
+    \end{subproof}
+    Show that for every $q\in\realSqrtLower{x}$ we have
+        for every $r\in\realSqrtUpper{x}$ we have
+            $\surrealLt{q}{r}$.
+    \begin{subproof}
+        Fix $q\in\realSqrtLower{x}$.
+        Fix $r\in\realSqrtUpper{x}$.
+        $q,r\in\surrealStage{\naturals}$ and
+            $\surrealLt{\surrealZero}{q}$ and
+            $\surrealLt{\surrealZero}{r}$ and
+            $\surrealLt{\surrealMul{q}{q}}{x}$ and
+            $\surrealLt{x}{\surrealMul{r}{r}}$
+            by
+            \obv{surreal_real_sqrt_lower_iff,surreal_real_sqrt_upper_iff}.
+        Hence $\surreal{q}$ and $\surreal{r}$
+            by
+            \obv{surreal_stage_characterization,omega_is_ordinal}.
+        Hence
+            $\surrealLt{\surrealMul{q}{q}}
+                {\surrealMul{r}{r}}$
+            by
+            \auto{surreal_lt_transitive,surreal_mul_is_surreal,surreal_real_is_surreal}.
+        Suppose not.
+        $r=q$ or $\surrealLt{r}{q}$
+            by \obv{surreal_lt_trichotomy}.
+        \begin{byCase}
+            \caseOf{$r=q$.}
+                Contradiction by
+                    \obv{surreal_lt_irreflexive,surreal_mul_is_surreal}.
+            \caseOf{$r\neq q$.}
+                Hence $\surrealLt{r}{q}$.
+                Hence
+                    $\surrealLt{\surrealMul{r}{r}}
+                        {\surrealMul{q}{q}}$
+                    by
+                    \obv{surreal_square_strict_monotone_nonnegative,surreal_le}.
+                Contradiction by
+                    \obv{surreal_lt_asymmetric,surreal_mul_is_surreal}.
+        \end{byCase}
+    \end{subproof}
+    Follows by \obv{surreal_cut_pair}.
+\end{proof}
+
+\begin{proposition}\label{surreal_real_sqrt_lower_inhabited}
+    Suppose $x\in\reals$ and
+        $\surrealLt{\surrealZero}{x}$.
+    Then $\realSqrtLower{x}$ is inhabited.
+\end{proposition}
+\begin{proof}
+    Take a natural number $n$ such that
+        $\surrealLt
+            {\surrealMul{\surrealEpsilon{n}}{\surrealOne}}{x}$
+        by
+        \obv{positive_real_scaled_epsilon_below,surreal_one_is_real,surreal_zero_lt_one}.
+    Let $e=\surrealEpsilon{n}$.
+    $e\in\surrealStage{\naturals}$
+        by \auto{surreal_epsilon_in_finite_stage}.
+    $\surreal{e}$ and $\surrealLt{\surrealZero}{e}$
+        by
+        \auto{surreal_epsilon_is_surreal,surreal_epsilon_positive,natural_number_is_ordinal}.
+    Hence $\surrealLe{\surrealZero}{e}$
+        by \obv{surreal_le}.
+    $\surrealLe{e}{\surrealOne}$
+        by
+        \auto{surreal_epsilon_at_most_one,natural_number_is_ordinal}.
+    Hence
+        $\surrealLe{\surrealMul{e}{e}}
+            {\surrealMul{e}{\surrealOne}}$
+        by \obv{surreal_nonneg_mul_le_left,surreal_one_is_surreal}.
+    Hence $\surrealLt{\surrealMul{e}{e}}{x}$
+        by
+        \auto{surreal_le_lt_transitive,surreal_mul_is_surreal,surreal_one_is_surreal,surreal_real_is_surreal}.
+    Hence $e\in\realSqrtLower{x}$
+        by \obv{surreal_real_sqrt_lower_iff}.
+\end{proof}
+
+\begin{proposition}\label{surreal_real_sqrt_upper_inhabited}
+    Suppose $x\in\reals$ and
+        $\surrealLt{\surrealZero}{x}$.
+    Then $\realSqrtUpper{x}$ is inhabited.
+\end{proposition}
+\begin{proof}
+    $x\in\surrealStage{\suc{\naturals}}$ and
+        $\surrealLt{x}{\ordinalSurreal{\naturals}}$
+        by \obv{surreal_real_elim,surreal_real_bounds}.
+    Take a natural number $N$ such that
+        $\surrealLt{x}{\ordinalSurreal{N}}$
+        by \obv{successor_omega_surreal_natural_bound_above}.
+    Let $M=\suc{\suc{N}}$.
+    $\suc{N}$ and $M$ are natural numbers
+        by \auto{omega_successor}.
+    Let $q=\ordinalSurreal{M}$.
+    $\surreal{q}$ and $\birthday{q}=M$
+        by
+        \auto{ordinal_surreal_is_surreal,ordinal_surreal_birthday,natural_number_is_ordinal}.
+    Hence $q\in\surrealStage{\naturals}$
+        by
+        \auto{surreal_stage_characterization,omega_is_ordinal}.
+    $\emptyset\subseteq N$ by \obv{emptyset_subseteq}.
+    Hence $\emptyset\in N$ or $\emptyset=N$
+        by
+        \obv{ordinal_subseteq_implies_elem_or_eq,emptyset_is_ordinal,natural_number_is_ordinal}.
+    Hence $\emptyset\in\suc{N}$ by \auto{suc_iff}.
+    Hence $\suc{\emptyset}\subseteq\suc{N}$
+        by
+        \obv{ordinal_suc_subseteq,suc_ordinal,natural_number_is_ordinal}.
+    Hence $\suc{\emptyset}\in\suc{N}$ or
+        $\suc{\emptyset}=\suc{N}$
+        by
+        \obv{ordinal_subseteq_implies_elem_or_eq,suc_ordinal,emptyset_is_ordinal,natural_number_is_ordinal}.
+    Hence $\suc{\emptyset}\in M$ by \auto{suc_iff}.
+    Hence $\surrealLt{\surrealOne}{q}$
+        by
+        \obv{ordinal_surreal_lt_iff,suc_ordinal,emptyset_is_ordinal,natural_number_is_ordinal}.
+    Hence $\surrealLt{\surrealZero}{q}$
+        by
+        \obv{surreal_lt_transitive,surreal_zero_lt_one,empty_surreal,surreal_one_is_surreal}.
+    $N\in M$ by \auto{suc_iff,suc_intro_self}.
+    Hence
+        $\surrealLt{\ordinalSurreal{N}}{q}$
+        by
+        \obv{ordinal_surreal_lt_iff,natural_number_is_ordinal}.
+    Hence $\surrealLt{x}{q}$
+        by
+        \obv{surreal_lt_transitive,ordinal_surreal_is_surreal,natural_number_is_ordinal,surreal_real_is_surreal}.
+    $\surrealLt{\surrealMul{q}{\surrealOne}}
+        {\surrealMul{q}{q}}$
+        by \obv{surreal_pos_mul_lt_left,surreal_one_is_surreal}.
+    Hence $\surrealLt{q}{\surrealMul{q}{q}}$
+        by \obv{surreal_mul_one_right}.
+    Hence $\surrealLt{x}{\surrealMul{q}{q}}$
+        by
+        \obv{surreal_lt_transitive,surreal_mul_is_surreal,surreal_real_is_surreal}.
+    Hence $q\in\realSqrtUpper{x}$
+        by \obv{surreal_real_sqrt_upper_iff}.
+\end{proof}
+
+\begin{proposition}\label{surreal_real_sqrt_lower_no_maximum}
+    Suppose $x\in\reals$ and
+        $\surrealLt{\surrealZero}{x}$.
+    Then for every $q\in\realSqrtLower{x}$ there exists
+        $r\in\realSqrtLower{x}$ such that $\surrealLt{q}{r}$.
+\end{proposition}
+\begin{proof}
+    Fix $q\in\realSqrtLower{x}$.
+    $q\in\surrealStage{\naturals}$ and
+        $\surrealLt{\surrealZero}{q}$ and
+        $\surrealLt{\surrealMul{q}{q}}{x}$
+        by \obv{surreal_real_sqrt_lower_iff}.
+    Hence $\surreal{q}$
+        by
+        \auto{surreal_stage_characterization,omega_is_ordinal}.
+    $q\in\reals$
+        by \obv{finite_surreal_stage_subset_reals,subseteq}.
+    Hence $\surrealMul{q}{q}\in\reals$
+        by \obv{surreal_real_multiplication_closed}.
+    Hence $\surrealNeg{\surrealMul{q}{q}}\in\reals$
+        by \obv{surreal_real_negation_closed}.
+    Let $d=\surrealAdd{x}{\surrealNeg{\surrealMul{q}{q}}}$.
+    $d\in\reals$ by \auto{surreal_real_addition_closed}.
+    $\surrealLt{\surrealZero}{d}$
+        by
+        \obv{surreal_subtraction_positive,surreal_mul_is_surreal,surreal_real_is_surreal}.
+    Let $s=\surrealAdd{\surrealAdd{q}{q}}{\surrealOne}$.
+    $s\in\reals$
+        by
+        \auto{surreal_real_addition_closed,surreal_one_is_real}.
+    $\surrealLt{\surrealZero}{\surrealAdd{q}{q}}$
+        by
+        \auto{surreal_add_lt_both,surreal_add_zero_left,empty_surreal}.
+    $\surrealLt{\surrealAdd{q}{q}}{s}$
+        by
+        \auto{surreal_add_lt_right,surreal_add_zero_right,surreal_zero_lt_one,surreal_add_is_surreal,empty_surreal,surreal_one_is_surreal}.
+    Hence $\surrealLt{\surrealZero}{s}$
+        by
+        \auto{surreal_lt_transitive,surreal_add_is_surreal,empty_surreal,surreal_real_is_surreal}.
+    Take a natural number $n$ such that
+        $\surrealLt{\surrealMul{\surrealEpsilon{n}}{s}}{d}$
+        by \obv{positive_real_scaled_epsilon_below}.
+    Let $e=\surrealEpsilon{n}$.
+    $e\in\surrealStage{\naturals}$
+        by \auto{surreal_epsilon_in_finite_stage}.
+    $\surreal{e}$ and $\surrealLt{\surrealZero}{e}$
+        by
+        \auto{surreal_epsilon_is_surreal,surreal_epsilon_positive,natural_number_is_ordinal}.
+    Hence $\surrealLe{\surrealZero}{e}$ by \obv{surreal_le}.
+    $\surrealLe{e}{\surrealOne}$
+        by
+        \auto{surreal_epsilon_at_most_one,natural_number_is_ordinal}.
+    Hence
+        $\surrealLe{\surrealAdd{\surrealAdd{q}{q}}{e}}{s}$
+        by
+        \auto{surreal_add_le_right,surreal_add_is_surreal,surreal_one_is_surreal}.
+    Hence
+        $\surrealLe
+            {\surrealMul{e}{\surrealAdd{\surrealAdd{q}{q}}{e}}}
+            {\surrealMul{e}{s}}$
+        by
+        \obv{surreal_nonneg_mul_le_left,surreal_add_is_surreal,surreal_real_is_surreal}.
+    Hence
+        $\surrealLt
+            {\surrealMul{e}{\surrealAdd{\surrealAdd{q}{q}}{e}}}
+            {d}$
+        by
+        \auto{surreal_le_lt_transitive,surreal_mul_is_surreal,surreal_add_is_surreal,surreal_real_is_surreal}.
+    Hence
+        $\surrealLt
+            {\surrealAdd{\surrealMul{q}{q}}
+                {\surrealMul{e}{
+                    \surrealAdd{\surrealAdd{q}{q}}{e}}}}
+            {\surrealAdd{\surrealMul{q}{q}}{d}}$
+        by
+        \obv{surreal_add_lt_right,surreal_mul_is_surreal,surreal_add_is_surreal,surreal_real_is_surreal}.
+    $\surrealAdd{\surrealMul{q}{q}}{d}=x$
+        by
+        \auto{surreal_add_associative,surreal_add_commutative,surreal_add_inverse_right,surreal_add_zero_right,surreal_mul_is_surreal,surreal_real_is_surreal}.
+    Let $r=\surrealAdd{q}{e}$.
+    $r\in\surrealStage{\naturals}$
+        by \auto{surreal_addition_finite_stage}.
+    $\surrealLt{q}{r}$
+        by
+        \auto{surreal_add_lt_right,surreal_add_zero_right,empty_surreal}.
+    Hence $\surrealLt{\surrealZero}{r}$
+        by
+        \auto{surreal_lt_transitive,surreal_add_is_surreal,empty_surreal}.
+    $\surrealMul{r}{r}
+        =\surrealAdd{\surrealMul{q}{q}}
+            {\surrealMul{e}{\surrealAdd{\surrealAdd{q}{q}}{e}}}$
+        by \auto{surreal_square_add_error_identity}.
+    Hence $\surrealLt{\surrealMul{r}{r}}{x}$ by \auto.
+    Hence $r\in\realSqrtLower{x}$
+        by \obv{surreal_real_sqrt_lower_iff}.
+    Follows by \auto.
+\end{proof}
+
+\begin{proposition}\label{surreal_real_sqrt_upper_no_minimum}
+    Suppose $x\in\reals$ and
+        $\surrealLt{\surrealZero}{x}$.
+    Then for every $q\in\realSqrtUpper{x}$ there exists
+        $r\in\realSqrtUpper{x}$ such that $\surrealLt{r}{q}$.
+\end{proposition}
+\begin{proof}
+    Fix $q\in\realSqrtUpper{x}$.
+    $q\in\surrealStage{\naturals}$ and
+        $\surrealLt{\surrealZero}{q}$ and
+        $\surrealLt{x}{\surrealMul{q}{q}}$
+        by \obv{surreal_real_sqrt_upper_iff}.
+    Hence $\surreal{q}$ and $\birthday{q}\in\naturals$
+        by
+        \auto{surreal_stage_characterization,omega_is_ordinal}.
+    $q\in\reals$
+        by \obv{finite_surreal_stage_subset_reals,subseteq}.
+    Hence $\surrealMul{q}{q}\in\reals$
+        by \obv{surreal_real_multiplication_closed}.
+    $\surrealNeg{x}\in\reals$
+        by \obv{surreal_real_negation_closed}.
+    Let $d=\surrealAdd{\surrealMul{q}{q}}{\surrealNeg{x}}$.
+    $d\in\reals$ by \auto{surreal_real_addition_closed}.
+    $\surrealLt{\surrealZero}{d}$
+        by
+        \obv{surreal_subtraction_positive,surreal_mul_is_surreal,surreal_real_is_surreal}.
+    Let $s=\surrealAdd{q}{q}$.
+    $s\in\reals$ by \auto{surreal_real_addition_closed}.
+    $\surrealLt{\surrealZero}{s}$
+        by
+        \auto{surreal_add_lt_both,surreal_add_zero_left,empty_surreal}.
+    Take a natural number $i$ such that
+        $\surrealLt{\surrealMul{\surrealEpsilon{i}}{s}}{d}$
+        by \obv{positive_real_scaled_epsilon_below}.
+    Take a natural number $n$ such that
+        $i\in n$ and $\birthday{q}\in n$
+        by \obv{natural_common_strict_upper_bound}.
+    Let $e=\surrealEpsilon{n}$.
+    $e\in\surrealStage{\naturals}$
+        by \auto{surreal_epsilon_in_finite_stage}.
+    $\surreal{e}$ and $\surrealLt{\surrealZero}{e}$
+        by
+        \auto{surreal_epsilon_is_surreal,surreal_epsilon_positive,natural_number_is_ordinal}.
+    $\surrealLt{e}{\surrealEpsilon{i}}$ and
+        $\surrealLt{e}{\surrealEpsilon{\birthday{q}}}$
+        by \auto{surreal_epsilon_decreasing}.
+    $q\in\surrealStage{\suc{\birthday{q}}}$
+        by \obv{surreal_in_successor_stage}.
+    Hence
+        $\surrealLt{\surrealEpsilon{\birthday{q}}}{q}$
+        by \obv{positive_finite_surreal_dominates_epsilon}.
+    Hence $\surrealLt{e}{q}$
+        by
+        \auto{surreal_lt_transitive,surreal_epsilon_is_surreal,natural_number_is_ordinal}.
+    $\surrealLt{\surrealMul{e}{s}}
+        {\surrealMul{\surrealEpsilon{i}}{s}}$
+        by
+        \auto{surreal_pos_mul_lt_right,surreal_epsilon_is_surreal,surreal_real_is_surreal,natural_number_is_ordinal}.
+    Hence $\surrealLt{\surrealMul{e}{s}}{d}$
+        by
+        \auto{surreal_lt_transitive,surreal_mul_is_surreal,surreal_real_is_surreal,surreal_epsilon_is_surreal,natural_number_is_ordinal}.
+    Let $r=\surrealAdd{q}{\surrealNeg{e}}$.
+    $\surrealNeg{e}\in\surrealStage{\naturals}$
+        by \obv{surreal_negation_finite_stage}.
+    Hence $r\in\surrealStage{\naturals}$
+        by \auto{surreal_addition_finite_stage}.
+    Hence $\surreal{r}$
+        by
+        \auto{surreal_stage_characterization,omega_is_ordinal}.
+    $\surrealLt{\surrealZero}{r}$
+        by \auto{surreal_subtraction_positive}.
+    $\surrealLt{\surrealNeg{e}}{\surrealZero}$
+        by
+        \auto{surreal_negation_lt_reverses,surreal_negation_empty,empty_surreal}.
+    Hence $\surrealLt{r}{q}$
+        by
+        \auto{surreal_add_lt_right,surreal_add_zero_right,empty_surreal,surreal_negation_is_surreal}.
+    Let $h=\surrealAdd{s}{\surrealNeg{e}}$.
+    $\surrealLt{h}{s}$
+        by
+        \auto{surreal_add_lt_right,surreal_add_zero_right,empty_surreal,surreal_negation_is_surreal,surreal_real_is_surreal}.
+    Hence $\surrealLt{\surrealMul{e}{h}}{\surrealMul{e}{s}}$
+        by
+        \auto{surreal_pos_mul_lt_left,surreal_add_is_surreal,surreal_negation_is_surreal,surreal_real_is_surreal}.
+    Hence $\surrealLt{\surrealMul{e}{h}}{d}$
+        by
+        \auto{surreal_lt_transitive,surreal_mul_is_surreal,surreal_add_is_surreal,surreal_negation_is_surreal,surreal_real_is_surreal}.
+    Hence
+        $\surrealLt{\surrealAdd{\surrealMul{e}{h}}{x}}
+            {\surrealMul{q}{q}}$
+        by
+        \auto{surreal_lt_subtract_add,surreal_mul_is_surreal,surreal_add_is_surreal,surreal_negation_is_surreal,surreal_real_is_surreal}.
+    $\surrealAdd{\surrealMul{r}{r}}{\surrealMul{e}{h}}
+        =\surrealMul{q}{q}$
+        by \auto{surreal_square_subtract_error_identity}.
+    $\surrealAdd{\surrealMul{e}{h}}{x}
+        =\surrealAdd{x}{\surrealMul{e}{h}}$
+        by
+        \auto{surreal_add_commutative,surreal_mul_is_surreal,surreal_add_is_surreal,surreal_negation_is_surreal,surreal_real_is_surreal}.
+    Hence
+        $\surrealLt{\surrealAdd{x}{\surrealMul{e}{h}}}
+            {\surrealAdd{\surrealMul{r}{r}}{\surrealMul{e}{h}}}$
+        by \auto.
+    Hence $\surrealLt{x}{\surrealMul{r}{r}}$
+        by
+        \auto{surreal_add_lt_cancel_right,surreal_mul_is_surreal,surreal_real_is_surreal,surreal_add_is_surreal,surreal_negation_is_surreal}.
+    Hence $r\in\realSqrtUpper{x}$
+        by \obv{surreal_real_sqrt_upper_iff}.
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{surreal_positive_real_sqrt_cut_is_real}
+    Suppose $x\in\reals$ and
+        $\surrealLt{\surrealZero}{x}$.
+    Then
+        $\surrealCut{\realSqrtLower{x}}{\realSqrtUpper{x}}
+            \in\reals$.
+\end{theorem}
+\begin{proof}
+    Follows by
+        \obv{dense_finite_stage_surreal_cut_is_real,surreal_real_sqrt_bounds_finite_stage,surreal_real_sqrt_cut_pair,surreal_real_sqrt_lower_inhabited,surreal_real_sqrt_upper_inhabited,surreal_real_sqrt_lower_no_maximum,surreal_real_sqrt_upper_no_minimum}.
+\end{proof}
+
+\begin{proposition}\label{surreal_positive_real_sqrt_cut_positive}
+    Suppose $x\in\reals$ and
+        $\surrealLt{\surrealZero}{x}$.
+    Then
+        $\surrealLt{\surrealZero}
+            {\surrealCut{\realSqrtLower{x}}{\realSqrtUpper{x}}}$.
+\end{proposition}
+\begin{proof}
+    Take $q$ such that $q\in\realSqrtLower{x}$
+        by \obv{surreal_real_sqrt_lower_inhabited}.
+    $q\in\surrealStage{\naturals}$ and
+        $\surrealLt{\surrealZero}{q}$
+        by \obv{surreal_real_sqrt_lower_iff}.
+    Hence $\surreal{q}$
+        by
+        \auto{surreal_stage_characterization,omega_is_ordinal}.
+    $\surrealLt{q}
+        {\surrealCut{\realSqrtLower{x}}{\realSqrtUpper{x}}}$
+        by \obv{surreal_cut_pair_left,surreal_real_sqrt_cut_pair}.
+    Follows by
+        \obv{surreal_lt_transitive,empty_surreal,surreal_cut_pair_is_surreal,surreal_real_sqrt_cut_pair}.
+\end{proof}
+
+\begin{lemma}\label{positive_real_square_approximation_error_bound}
+    Suppose $c\in\reals$ and
+        $\surrealLt{\surrealZero}{c}$.
+    Let $n$ be a natural number.
+    Suppose $a\in\realPositiveLower{c}$.
+    Let $e=\surrealEpsilon{n}$.
+    Let $s=\surrealAdd{\surrealAdd{c}{c}}{\surrealOne}$.
+    Then
+        $\surrealLt
+            {\surrealMul{e}{\surrealAdd{\surrealAdd{a}{a}}{e}}}
+            {\surrealMul{e}{s}}$.
+\end{lemma}
+\begin{proof}
+    $a\in\surrealStage{\naturals}$ and
+        $\surrealLt{\surrealZero}{a}$ and
+        $\surrealLt{a}{c}$
+        by \auto{surreal_real_positive_lower_iff}.
+    Hence $\surreal{a}$
+        by
+        \auto{surreal_stage_characterization,omega_is_ordinal}.
+    $\surreal{e}$ and $\surrealLt{\surrealZero}{e}$
+        by
+        \auto{surreal_epsilon_is_surreal,surreal_epsilon_positive,natural_number_is_ordinal}.
+    $\surrealLt{\surrealAdd{a}{a}}{\surrealAdd{c}{c}}$
+        by
+        \obv{surreal_add_lt_both,surreal_real_is_surreal}.
+    $\surrealLe{e}{\surrealOne}$
+        by
+        \auto{surreal_epsilon_at_most_one,natural_number_is_ordinal}.
+    Hence
+        $\surrealLt{\surrealAdd{\surrealAdd{a}{a}}{e}}{s}$
+        by
+        \auto{surreal_add_lt_le,surreal_add_is_surreal,surreal_real_is_surreal,surreal_one_is_surreal}.
+    Follows by
+        \auto{surreal_pos_mul_lt_left,surreal_add_is_surreal,surreal_real_is_surreal,surreal_epsilon_is_surreal,natural_number_is_ordinal,surreal_one_is_surreal}.
+\end{proof}
+
+\begin{theorem}\label{surreal_positive_real_sqrt_cut_square}
+    Suppose $x\in\reals$ and
+        $\surrealLt{\surrealZero}{x}$.
+    Let $c=\surrealCut{\realSqrtLower{x}}{\realSqrtUpper{x}}$.
+    Then $\surrealMul{c}{c}=x$.
+\end{theorem}
+\begin{proof}
+    $c\in\reals$ by \auto{surreal_positive_real_sqrt_cut_is_real}.
+    $\surrealLt{\surrealZero}{c}$
+        by \obv{surreal_positive_real_sqrt_cut_positive}.
+    Let $p=\surrealMul{c}{c}$.
+    $p\in\reals$ by \auto{surreal_real_multiplication_closed}.
+    Hence $\surreal{p}$ by \obv{surreal_real_is_surreal}.
+    $\surrealLt{p}{x}$ or $p=x$ or $\surrealLt{x}{p}$
+        by \auto{surreal_lt_trichotomy,surreal_real_is_surreal}.
+    \begin{byCase}
+        \caseOf{$p=x$.}
+            Follows.
+        \caseOf{$p\neq x$.}
+            \begin{byCase}
+                \caseOf{$\surrealLt{p}{x}$.}
+                    $\surrealNeg{p}\in\reals$
+                        by \obv{surreal_real_negation_closed}.
+                    Let $d=\surrealAdd{x}{\surrealNeg{p}}$.
+                    $d\in\reals$
+                        by \auto{surreal_real_addition_closed}.
+                    $\surrealLt{\surrealZero}{d}$
+                        by
+                        \obv{surreal_subtraction_positive,surreal_real_is_surreal}.
+                    Let
+                        $s=\surrealAdd{\surrealAdd{c}{c}}
+                            {\surrealOne}$.
+                    $s\in\reals$
+                        by
+                        \auto{surreal_real_addition_closed,surreal_one_is_real}.
+                    $\surrealLt{\surrealZero}{\surrealAdd{c}{c}}$
+                        by
+                        \auto{surreal_add_lt_both,surreal_add_zero_left,empty_surreal,surreal_real_is_surreal}.
+                    $\surrealLt{\surrealAdd{c}{c}}{s}$
+                        by
+                        \auto{surreal_add_lt_right,surreal_add_zero_right,surreal_zero_lt_one,surreal_add_is_surreal,empty_surreal,surreal_one_is_surreal,surreal_real_is_surreal}.
+                    Hence $\surrealLt{\surrealZero}{s}$
+                        by
+                        \auto{surreal_lt_transitive,surreal_add_is_surreal,surreal_real_is_surreal,empty_surreal}.
+                    Take a natural number $n$ such that
+                        $\surrealLt
+                            {\surrealMul{\surrealEpsilon{n}}{s}}{d}$
+                        by \obv{positive_real_scaled_epsilon_below}.
+                    Take $a\in\realPositiveLower{c}$ such that
+                        $\surrealLt{c}
+                            {\surrealAdd{a}{\surrealEpsilon{n}}}$
+                        by
+                        \obv{positive_real_dyadic_interval,natural_number_is_ordinal}.
+                    $a\in\surrealStage{\naturals}$ and
+                        $\surrealLt{\surrealZero}{a}$ and
+                        $\surrealLt{a}{c}$
+                        by \auto{surreal_real_positive_lower_iff}.
+                    Hence $\surreal{a}$
+                        by
+                        \auto{surreal_stage_characterization,omega_is_ordinal}.
+                    Let $e=\surrealEpsilon{n}$.
+                    $\surreal{e}$ and
+                        $e\in\surrealStage{\naturals}$
+                        by
+                        \auto{surreal_epsilon_is_surreal,surreal_epsilon_in_finite_stage,natural_number_is_ordinal}.
+                    Let
+                        $E=\surrealMul{e}{
+                            \surrealAdd{\surrealAdd{a}{a}}{e}}$.
+                    $\surrealLt{E}{\surrealMul{e}{s}}$
+                        by
+                        \auto{positive_real_square_approximation_error_bound}.
+                    Hence $\surrealLt{E}{d}$
+                        by
+                        \auto{surreal_lt_transitive,surreal_mul_is_surreal,surreal_add_is_surreal,surreal_real_is_surreal}.
+                    $\surrealLe{\surrealZero}{a}$ by \obv{surreal_le}.
+                    Hence
+                        $\surrealLt{\surrealMul{a}{a}}{p}$
+                        by
+                        \auto{surreal_square_strict_monotone_nonnegative,surreal_real_is_surreal}.
+                    Hence
+                        $\surrealLt
+                            {\surrealAdd{\surrealMul{a}{a}}{E}}
+                            {\surrealAdd{p}{E}}$
+                        by
+                        \auto{surreal_add_lt_left,surreal_mul_is_surreal,surreal_add_is_surreal}.
+                    $\surrealLt{\surrealAdd{p}{E}}
+                        {\surrealAdd{p}{d}}$
+                        by
+                        \auto{surreal_add_lt_right,surreal_mul_is_surreal,surreal_add_is_surreal,surreal_real_is_surreal}.
+                    Hence
+                        $\surrealLt
+                            {\surrealAdd{\surrealMul{a}{a}}{E}}
+                            {\surrealAdd{p}{d}}$
+                        by
+                        \auto{surreal_lt_transitive,surreal_add_is_surreal,surreal_mul_is_surreal,surreal_real_is_surreal}.
+                    $\surrealAdd{p}{d}=x$
+                        by
+                        \auto{surreal_add_associative,surreal_add_commutative,surreal_add_inverse_right,surreal_add_zero_right,surreal_real_is_surreal}.
+                    Let $r=\surrealAdd{a}{e}$.
+                    $r\in\surrealStage{\naturals}$
+                        by \auto{surreal_addition_finite_stage}.
+                    Hence $\surreal{r}$
+                        by
+                        \auto{surreal_stage_characterization,omega_is_ordinal}.
+                    $\surrealLt{\surrealZero}{r}$
+                        by
+                        \auto{surreal_lt_transitive,surreal_add_lt_right,surreal_add_zero_right,surreal_epsilon_positive,surreal_add_is_surreal,empty_surreal,natural_number_is_ordinal}.
+                    $\surrealMul{r}{r}
+                        =\surrealAdd{\surrealMul{a}{a}}{E}$
+                        by \auto{surreal_square_add_error_identity}.
+                    Hence $\surrealLt{\surrealMul{r}{r}}{x}$
+                        by \auto.
+                    Hence $r\in\realSqrtLower{x}$
+                        by \obv{surreal_real_sqrt_lower_iff}.
+                    Hence $\surrealLt{r}{c}$
+                        by
+                        \auto{surreal_cut_pair_left,surreal_real_sqrt_cut_pair}.
+                    Contradiction by
+                        \obv{surreal_lt_asymmetric,surreal_add_is_surreal,surreal_real_is_surreal}.
+                \caseOf{not $\surrealLt{p}{x}$.}
+                    Hence $\surrealLt{x}{p}$.
+                    $\surrealNeg{x}\in\reals$
+                        by \obv{surreal_real_negation_closed}.
+                    Let $d=\surrealAdd{p}{\surrealNeg{x}}$.
+                    $d\in\reals$
+                        by \auto{surreal_real_addition_closed}.
+                    $\surrealLt{\surrealZero}{d}$
+                        by
+                        \obv{surreal_subtraction_positive,surreal_real_is_surreal}.
+                    Let
+                        $s=\surrealAdd{\surrealAdd{c}{c}}
+                            {\surrealOne}$.
+                    $s\in\reals$
+                        by
+                        \auto{surreal_real_addition_closed,surreal_one_is_real}.
+                    $\surrealLt{\surrealZero}{\surrealAdd{c}{c}}$
+                        by
+                        \auto{surreal_add_lt_both,surreal_add_zero_left,empty_surreal,surreal_real_is_surreal}.
+                    $\surrealLt{\surrealAdd{c}{c}}{s}$
+                        by
+                        \auto{surreal_add_lt_right,surreal_add_zero_right,surreal_zero_lt_one,surreal_add_is_surreal,empty_surreal,surreal_one_is_surreal,surreal_real_is_surreal}.
+                    Hence $\surrealLt{\surrealZero}{s}$
+                        by
+                        \auto{surreal_lt_transitive,surreal_add_is_surreal,surreal_real_is_surreal,empty_surreal}.
+                    Take a natural number $n$ such that
+                        $\surrealLt
+                            {\surrealMul{\surrealEpsilon{n}}{s}}{d}$
+                        by \obv{positive_real_scaled_epsilon_below}.
+                    Take $a\in\realPositiveLower{c}$ such that
+                        $\surrealLt{c}
+                            {\surrealAdd{a}{\surrealEpsilon{n}}}$
+                        by
+                        \obv{positive_real_dyadic_interval,natural_number_is_ordinal}.
+                    $a\in\surrealStage{\naturals}$ and
+                        $\surrealLt{\surrealZero}{a}$ and
+                        $\surrealLt{a}{c}$
+                        by \auto{surreal_real_positive_lower_iff}.
+                    Hence $\surreal{a}$
+                        by
+                        \auto{surreal_stage_characterization,omega_is_ordinal}.
+                    Let $e=\surrealEpsilon{n}$.
+                    $\surreal{e}$ and
+                        $e\in\surrealStage{\naturals}$
+                        by
+                        \auto{surreal_epsilon_is_surreal,surreal_epsilon_in_finite_stage,natural_number_is_ordinal}.
+                    Let
+                        $E=\surrealMul{e}{
+                            \surrealAdd{\surrealAdd{a}{a}}{e}}$.
+                    $\surrealLt{E}{\surrealMul{e}{s}}$
+                        by
+                        \auto{positive_real_square_approximation_error_bound}.
+                    Hence $\surrealLt{E}{d}$
+                        by
+                        \auto{surreal_lt_transitive,surreal_mul_is_surreal,surreal_add_is_surreal,surreal_real_is_surreal}.
+                    Hence
+                        $\surrealLt{\surrealAdd{E}{x}}{p}$
+                        by
+                        \auto{surreal_lt_subtract_add,surreal_mul_is_surreal,surreal_add_is_surreal,surreal_real_is_surreal}.
+                    Let $r=\surrealAdd{a}{e}$.
+                    $r\in\surrealStage{\naturals}$
+                        by \auto{surreal_addition_finite_stage}.
+                    Hence $\surreal{r}$
+                        by
+                        \auto{surreal_stage_characterization,omega_is_ordinal}.
+                    $\surrealLt{\surrealZero}{r}$
+                        by
+                        \auto{surreal_lt_transitive,surreal_add_lt_right,surreal_add_zero_right,surreal_epsilon_positive,surreal_add_is_surreal,empty_surreal,natural_number_is_ordinal}.
+                    $\surrealLt{c}{r}$ by \auto.
+                    Hence $\surrealLt{p}{\surrealMul{r}{r}}$
+                        by
+                        \auto{surreal_square_strict_monotone_nonnegative,surreal_le,empty_surreal,surreal_real_is_surreal}.
+                    $\surrealMul{r}{r}
+                        =\surrealAdd{\surrealMul{a}{a}}{E}$
+                        by \auto{surreal_square_add_error_identity}.
+                    Hence
+                        $\surrealLt{\surrealAdd{E}{x}}
+                            {\surrealAdd{\surrealMul{a}{a}}{E}}$
+                        by
+                        \auto{surreal_lt_transitive,surreal_mul_is_surreal,surreal_add_is_surreal,surreal_real_is_surreal}.
+                    $\surrealAdd{E}{x}=\surrealAdd{x}{E}$
+                        by
+                        \auto{surreal_add_commutative,surreal_mul_is_surreal,surreal_add_is_surreal,surreal_real_is_surreal}.
+                    Hence
+                        $\surrealLt{\surrealAdd{x}{E}}
+                            {\surrealAdd{\surrealMul{a}{a}}{E}}$
+                        by \auto.
+                    Hence $\surrealLt{x}{\surrealMul{a}{a}}$
+                        by
+                        \auto{surreal_add_lt_cancel_right,surreal_mul_is_surreal,surreal_add_is_surreal,surreal_real_is_surreal}.
+                    Hence $a\in\realSqrtUpper{x}$
+                        by \obv{surreal_real_sqrt_upper_iff}.
+                    Hence $\surrealLt{c}{a}$
+                        by
+                        \auto{surreal_cut_pair_right,surreal_real_sqrt_cut_pair}.
+                    Contradiction by
+                        \obv{surreal_lt_asymmetric,surreal_real_is_surreal}.
+            \end{byCase}
+    \end{byCase}
+\end{proof}
+
+\begin{theorem}\label{surreal_positive_real_sqrt_cut_equation}
+    Suppose $x\in\reals$ and
+        $\surrealLt{\surrealZero}{x}$.
+    Then
+        $\surrealCut{\realSqrtLower{x}}{\realSqrtUpper{x}}
+        =\surrealNonnegativeSqrt{x}$.
+\end{theorem}
+\begin{proof}
+    Let $c=\surrealCut{\realSqrtLower{x}}{\realSqrtUpper{x}}$.
+    $c\in\reals$ by \auto{surreal_positive_real_sqrt_cut_is_real}.
+    Hence $\surreal{c}$ by \obv{surreal_real_is_surreal}.
+    $\surrealLt{\surrealZero}{c}$
+        by \obv{surreal_positive_real_sqrt_cut_positive}.
+    Hence $\surrealLe{\surrealZero}{c}$ by \obv{surreal_le}.
+    $\surreal{\surrealNonnegativeSqrt{x}}$ and
+        $\surrealLe{\surrealZero}{\surrealNonnegativeSqrt{x}}$ and
+        $\surrealMul{\surrealNonnegativeSqrt{x}}
+            {\surrealNonnegativeSqrt{x}}=x$
+        by
+        \auto{surreal_nonnegative_sqrt_properties,surreal_real_is_surreal,surreal_le}.
+    $\surrealMul{c}{c}=x$
+        by \obv{surreal_positive_real_sqrt_cut_square}.
+    Follows by
+        \auto{surreal_nonnegative_square_unique,surreal_real_is_surreal}.
+\end{proof}
+
+\begin{theorem}\label{surreal_positive_real_sqrt_closed}
+    Suppose $x\in\reals$ and
+        $\surrealLt{\surrealZero}{x}$.
+    Then $\surrealNonnegativeSqrt{x}\in\reals$.
+\end{theorem}
+\begin{proof}
+    $\surrealCut{\realSqrtLower{x}}{\realSqrtUpper{x}}\in\reals$
+        by \obv{surreal_positive_real_sqrt_cut_is_real}.
+    Follows by \obv{surreal_positive_real_sqrt_cut_equation}.
+\end{proof}
+
+\begin{theorem}\label{surreal_real_nonnegative_sqrt_closed}
+    Suppose $x\in\reals$ and
+        $\surrealLe{\surrealZero}{x}$.
+    Then $\surrealNonnegativeSqrt{x}\in\reals$.
+\end{theorem}
+\begin{proof}
+    \begin{byCase}
+        \caseOf{$x=\surrealZero$.}
+            $\surrealNonnegativeSqrt{x}=\surrealZero$
+                by \obv{surreal_nonnegative_sqrt_zero}.
+            Follows by \obv{surreal_zero_is_real}.
+        \caseOf{$x\neq\surrealZero$.}
+            Hence $\surrealLt{\surrealZero}{x}$
+                by \auto{surreal_le}.
+            Follows by \obv{surreal_positive_real_sqrt_closed}.
+    \end{byCase}
+\end{proof}

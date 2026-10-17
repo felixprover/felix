@@ -1,0 +1,379 @@
+\import{topology/metric-sequences.tex}
+\import{surreal/real-reciprocal.tex}
+\import{set/logical-graph.tex}
+\import{set/function-space.tex}
+
+\section{Sequences in the metric real line}
+
+\begin{theorem}\label{nonnegative_real_sequence_converges_zero_iff_eventually_below}
+    Let $b\in\funs{\naturals}{\reals}$.
+    Suppose for every $n\in\naturals$ we have
+        $\surrealLe{\surrealZero}{b(n)}$.
+    Then $\metricConverges{\RealMetric}{b}{\surrealZero}$ iff
+        for every $e\in\reals$ such that
+            $\surrealLt{\surrealZero}{e}$ there exists $N\in\naturals$
+            such that for every $n\in\naturals$ such that $N\subseteq n$
+                we have $\surrealLt{b(n)}{e}$.
+\end{theorem}
+\begin{proof}
+    Show that if $\metricConverges{\RealMetric}{b}{\surrealZero}$, then
+        for every $e\in\reals$ such that
+            $\surrealLt{\surrealZero}{e}$ there exists $N\in\naturals$
+            such that for every $n\in\naturals$ such that $N\subseteq n$
+                we have $\surrealLt{b(n)}{e}$.
+    \begin{subproof}
+        Assume $\metricConverges{\RealMetric}{b}{\surrealZero}$.
+        Fix $e\in\reals$.
+        Assume $\surrealLt{\surrealZero}{e}$.
+        Take $N\in\naturals$ such that for every $n\in\naturals$
+            such that $N\subseteq n$ we have
+                $b(n)\in\metricBall{\RealMetric}{\surrealZero}{e}$
+            by \obv{metric_convergence}.
+        Show that for every $n\in\naturals$ such that $N\subseteq n$
+            we have $\surrealLt{b(n)}{e}$.
+        \begin{subproof}
+            Fix $n\in\naturals$.
+            Assume $N\subseteq n$.
+            $b(n)\in\metricBall{\RealMetric}{\surrealZero}{e}$.
+            Hence
+                $\surrealLt{
+                    \metricDistance[\RealMetric](\surrealZero,b(n))}{e}$
+                by \obv{metric_ball}.
+            $b(n)\in\reals$ and $\surrealLe{\surrealZero}{b(n)}$
+                by \obv{funs_type_apply}.
+            $\metricDistance[\RealMetric](\surrealZero,b(n))
+                =\abs{\surrealAdd{\surrealZero}{\surrealNeg{b(n)}}}$
+                by \obv{surreal_real_metric_distance,surreal_zero_is_real}.
+            $\surrealAdd{\surrealZero}{\surrealNeg{b(n)}}
+                =\surrealNeg{b(n)}$
+                by
+                \obv{surreal_add_zero_left,surreal_negation_is_surreal,surreal_real_is_surreal}.
+            $\abs{\surrealNeg{b(n)}}=\abs{b(n)}$
+                by \obv{surreal_abs_negation,surreal_real_is_surreal}.
+            $\abs{b(n)}=b(n)$
+                by \obv{surreal_abs_nonnegative,surreal_real_is_surreal}.
+        \end{subproof}
+        Follows by \auto.
+    \end{subproof}
+    Show that if for every $e\in\reals$ such that
+        $\surrealLt{\surrealZero}{e}$ there exists $N\in\naturals$
+        such that for every $n\in\naturals$ such that $N\subseteq n$
+            we have $\surrealLt{b(n)}{e}$, then
+        $\metricConverges{\RealMetric}{b}{\surrealZero}$.
+    \begin{subproof}
+        Assume for every $e\in\reals$ such that
+            $\surrealLt{\surrealZero}{e}$ there exists $N\in\naturals$
+            such that for every $n\in\naturals$ such that $N\subseteq n$
+                we have $\surrealLt{b(n)}{e}$.
+        $\RealMetric$ is a metric space by \obv{surreal_real_metric_space}.
+        $\carrier[\RealMetric]=\reals$
+            by \obv{surreal_real_metric_carrier}.
+        $\surrealZero\in\carrier[\RealMetric]$
+            by \obv{surreal_zero_is_real}.
+        Show that for every $e\in\reals$ such that
+            $\surrealLt{\surrealZero}{e}$ there exists $N\in\naturals$
+            such that for every $n\in\naturals$ such that $N\subseteq n$
+                we have $b(n)\in\metricBall{\RealMetric}{\surrealZero}{e}$.
+        \begin{subproof}
+            Fix $e\in\reals$.
+            Assume $\surrealLt{\surrealZero}{e}$.
+            Take $N\in\naturals$ such that for every $n\in\naturals$
+                such that $N\subseteq n$ we have $\surrealLt{b(n)}{e}$.
+            Show that for every $n\in\naturals$ such that $N\subseteq n$
+                we have $b(n)\in\metricBall{\RealMetric}{\surrealZero}{e}$.
+            \begin{subproof}
+                Fix $n\in\naturals$.
+                Assume $N\subseteq n$.
+                $b(n)\in\reals$ and $\surrealLe{\surrealZero}{b(n)}$
+                    by \obv{funs_type_apply}.
+                $\metricDistance[\RealMetric](\surrealZero,b(n))=b(n)$
+                    by
+                    \auto{surreal_real_metric_distance,surreal_add_zero_left,surreal_abs_negation,surreal_abs_nonnegative,surreal_negation_is_surreal,surreal_real_is_surreal,surreal_zero_is_real}.
+                $\surrealLt{b(n)}{e}$.
+                Follows by
+                    \obv{metric_ball_iff,surreal_real_metric_carrier}.
+            \end{subproof}
+            Follows by \auto.
+        \end{subproof}
+        Follows by \obv{metric_convergence}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{definition}\label{real_scaled_sequence}
+    $\realScaledSequence{c}{b}=\Apply{\graphOnDomainOp}
+        {\naturals,\fun{n:\Set}{\surrealMul{c}{b(n)}}}$.
+\end{definition}
+
+\begin{proposition}\label{real_scaled_sequence_typed}
+    Suppose $c\in\reals$ and $b\in\funs{\naturals}{\reals}$.
+    Then $\realScaledSequence{c}{b}\in\funs{\naturals}{\reals}$.
+\end{proposition}
+\begin{proof}
+    For every $n\in\naturals$ we have $\surrealMul{c}{b(n)}\in\reals$
+        by \obv{funs_type_apply,surreal_real_multiplication_closed}.
+    Follows by
+        \auto{real_scaled_sequence,logical_graph_on_domain_type}.
+\end{proof}
+
+\begin{proposition}\label{real_scaled_sequence_apply}
+    Let $n\in\naturals$.
+    Then $\apply{\realScaledSequence{c}{b}}{n}=\surrealMul{c}{b(n)}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{real_scaled_sequence,logical_graph_on_domain_apply}.
+\end{proof}
+
+\begin{definition}\label{surreal_epsilon_sequence}
+    $\surrealEpsilonSequence=\Apply{\graphOnDomainOp}
+        {\naturals,\fun{n:\Set}{\surrealEpsilon{n}}}$.
+\end{definition}
+
+\begin{proposition}\label{surreal_epsilon_sequence_typed}
+    $\surrealEpsilonSequence\in\funs{\naturals}{\reals}$.
+\end{proposition}
+\begin{proof}
+    For every $n\in\naturals$ we have $\surrealEpsilon{n}\in\reals$
+        by \obv{surreal_epsilon_is_real}.
+    Follows by
+        \auto{surreal_epsilon_sequence,logical_graph_on_domain_type}.
+\end{proof}
+
+\begin{proposition}\label{surreal_epsilon_sequence_apply}
+    Let $n\in\naturals$.
+    Then $\apply{\surrealEpsilonSequence}{n}=\surrealEpsilon{n}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{surreal_epsilon_sequence,logical_graph_on_domain_apply}.
+\end{proof}
+
+\begin{proposition}\label{surreal_epsilon_sequence_converges_zero}
+    $\metricConverges{\RealMetric}{\surrealEpsilonSequence}{\surrealZero}$.
+\end{proposition}
+\begin{proof}
+    For every $n\in\naturals$ we have
+        $\surrealLe{\surrealZero}{\apply{\surrealEpsilonSequence}{n}}$
+        by
+        \auto{surreal_epsilon_sequence_apply,surreal_epsilon_positive,surreal_le,empty_surreal}.
+    Show that for every $e\in\reals$ such that
+        $\surrealLt{\surrealZero}{e}$ there exists $N\in\naturals$
+        such that for every $n\in\naturals$ such that $N\subseteq n$
+            we have $\surrealLt{\apply{\surrealEpsilonSequence}{n}}{e}$.
+    \begin{subproof}
+        Fix $e\in\reals$.
+        Assume $\surrealLt{\surrealZero}{e}$.
+        Take a natural number $N$ such that
+            $\surrealLt{
+                \surrealMul{\surrealEpsilon{N}}{\surrealOne}}{e}$
+            by
+            \obv{positive_real_scaled_epsilon_below,surreal_one_is_real,surreal_zero_lt_one}.
+        $\surrealMul{\surrealEpsilon{N}}{\surrealOne}
+            =\surrealEpsilon{N}$
+            by
+            \auto{surreal_mul_one_right,surreal_epsilon_is_surreal}.
+        Hence $\surrealLt{\surrealEpsilon{N}}{e}$.
+        Show that for every $n\in\naturals$ such that $N\subseteq n$
+            we have $\surrealLt{\apply{\surrealEpsilonSequence}{n}}{e}$.
+        \begin{subproof}
+            Fix $n\in\naturals$.
+            Assume $N\subseteq n$.
+            $N\in n$ or $N=n$
+                by
+                \obv{ordinal_subseteq_implies_elem_or_eq,natural_number_is_ordinal}.
+            Hence $\surrealLe{\surrealEpsilon{n}}{\surrealEpsilon{N}}$
+                by
+                \obv{surreal_epsilon_decreasing,surreal_le,surreal_epsilon_is_surreal}.
+            Hence $\surrealLt{\surrealEpsilon{n}}{e}$
+                by
+                \auto{surreal_le_lt_transitive,surreal_epsilon_is_surreal,surreal_real_is_surreal}.
+            Follows by \obv{surreal_epsilon_sequence_apply}.
+        \end{subproof}
+        Follows by \auto.
+    \end{subproof}
+    Follows by
+        \obv{nonnegative_real_sequence_converges_zero_iff_eventually_below,surreal_epsilon_sequence_typed}.
+\end{proof}
+
+\begin{proposition}\label{real_scaled_sequence_zero_scalar}
+    Suppose $b\in\funs{\naturals}{\reals}$.
+    Then $\realScaledSequence{\surrealZero}{b}
+        =\naturals\times\{\surrealZero\}$.
+\end{proposition}
+\begin{proof}
+    $\realScaledSequence{\surrealZero}{b}\in\funs{\naturals}{\reals}$
+        by \obv{real_scaled_sequence_typed,surreal_zero_is_real}.
+    $\naturals\times\{\surrealZero\}\in
+        \funs{\naturals}{\{\surrealZero\}}$
+        by \obv{constant_graph_type}.
+    $\{\surrealZero\}\subseteq\reals$
+        by \auto{singleton_iff,surreal_zero_is_real,subseteq}.
+    Hence $\naturals\times\{\surrealZero\}\in
+        \funs{\naturals}{\reals}$
+        by \obv{funs_weaken_codom}.
+    For every $n\in\naturals$ we have
+        $\apply{\realScaledSequence{\surrealZero}{b}}{n}
+            =(\naturals\times\{\surrealZero\})(n)$
+        by
+        \auto{real_scaled_sequence_apply,constant_graph_application,surreal_mul_zero_left,funs_type_apply,surreal_real_is_surreal}.
+    Follows by \obv{typed_functions_equal_from_agreement}.
+\end{proof}
+
+\begin{proposition}\label{real_zero_sequence_converges_zero}
+    $\metricConverges{\RealMetric}
+        {\naturals\times\{\surrealZero\}}{\surrealZero}$.
+\end{proposition}
+\begin{proof}
+    $\RealMetric$ is a metric space by \obv{surreal_real_metric_space}.
+    $\naturals\times\{\surrealZero\}\in
+        \funs{\naturals}{\{\surrealZero\}}$
+        by \obv{constant_graph_type}.
+    $\{\surrealZero\}\subseteq\reals$
+        by \auto{singleton_iff,surreal_zero_is_real,subseteq}.
+    Hence $\naturals\times\{\surrealZero\}\in
+        \funs{\naturals}{\carrier[\RealMetric]}$
+        by
+        \obv{funs_weaken_codom,surreal_real_metric_carrier}.
+    $\surrealZero\in\carrier[\RealMetric]$
+        by
+        \obv{surreal_zero_is_real,surreal_real_metric_carrier}.
+    Show that for every $e\in\reals$ such that
+        $\surrealLt{\surrealZero}{e}$ there exists $N\in\naturals$
+        such that for every $n\in\naturals$ such that $N\subseteq n$
+            we have $(\naturals\times\{\surrealZero\})(n)
+                \in\metricBall{\RealMetric}{\surrealZero}{e}$.
+    \begin{subproof}
+        Fix $e\in\reals$.
+        Assume $\surrealLt{\surrealZero}{e}$.
+        Let $N=\emptyset$.
+        $N\in\naturals$ by \obv{omega_empty}.
+        Show that for every $n\in\naturals$ such that
+            $N\subseteq n$ we have
+            $(\naturals\times\{\surrealZero\})(n)
+                \in\metricBall{\RealMetric}{\surrealZero}{e}$.
+        \begin{subproof}
+            Fix $n\in\naturals$.
+            Assume $N\subseteq n$.
+            $(\naturals\times\{\surrealZero\})(n)=\surrealZero$
+                by \obv{constant_graph_application}.
+            Follows by
+                \obv{metric_ball_contains_centre,
+                    surreal_real_pseudometric_space,
+                    surreal_zero_is_real,surreal_real_metric_carrier}.
+        \end{subproof}
+    \end{subproof}
+    Follows by \obv{metric_convergence}.
+\end{proof}
+
+\begin{theorem}\label{real_sequence_scale_converges_zero}
+    Let $c\in\reals$ and $b\in\funs{\naturals}{\reals}$.
+    Suppose $\metricConverges{\RealMetric}{b}{\surrealZero}$.
+    Then
+        $\metricConverges{\RealMetric}
+            {\realScaledSequence{c}{b}}{\surrealZero}$.
+\end{theorem}
+\begin{proof}
+    \begin{byCase}
+        \caseOf{$c=\surrealZero$.}
+            $\realScaledSequence{c}{b}
+                =\naturals\times\{\surrealZero\}$
+                by \auto{real_scaled_sequence_zero_scalar}.
+            Follows by \obv{real_zero_sequence_converges_zero}.
+        \caseOf{$c\neq\surrealZero$.}
+            $\abs{c}\in\reals$ by \obv{surreal_real_abs_closed}.
+            $\surrealLt{\surrealZero}{\abs{c}}$
+                by
+                \obv{surreal_abs_positive_iff,surreal_real_is_surreal}.
+            $\realScaledSequence{c}{b}\in
+                \funs{\naturals}{\carrier[\RealMetric]}$
+                by
+                \obv{real_scaled_sequence_typed,surreal_real_metric_carrier}.
+            $\surrealZero\in\carrier[\RealMetric]$
+                by
+                \obv{surreal_zero_is_real,surreal_real_metric_carrier}.
+            Show that for every $e\in\reals$ such that
+                $\surrealLt{\surrealZero}{e}$ there exists $N\in\naturals$
+                such that for every $n\in\naturals$ such that
+                    $N\subseteq n$ we have
+                    $\apply{\realScaledSequence{c}{b}}{n}
+                        \in\metricBall{\RealMetric}{\surrealZero}{e}$.
+            \begin{subproof}
+                Fix $e\in\reals$.
+                Assume $\surrealLt{\surrealZero}{e}$.
+                Take a natural number $j$ such that
+                    $\surrealLt{
+                        \surrealMul{\surrealEpsilon{j}}{\abs{c}}}{e}$
+                    by \obv{positive_real_scaled_epsilon_below}.
+                Let $d=\surrealEpsilon{j}$.
+                $d\in\reals$ and $\surrealLt{\surrealZero}{d}$
+                    by
+                    \auto{surreal_epsilon_is_real,surreal_epsilon_positive}.
+                Take $N\in\naturals$ such that for every $n\in\naturals$
+                    such that $N\subseteq n$ we have
+                        $b(n)\in\metricBall{\RealMetric}
+                            {\surrealZero}{d}$
+                    by \obv{metric_convergence}.
+                Show that for every $n\in\naturals$ such that
+                    $N\subseteq n$ we have
+                    $\apply{\realScaledSequence{c}{b}}{n}
+                        \in\metricBall{\RealMetric}{\surrealZero}{e}$.
+                \begin{subproof}
+                    Fix $n\in\naturals$.
+                    Assume $N\subseteq n$.
+                    $b(n)\in\metricBall{\RealMetric}{\surrealZero}{d}$.
+                    Hence $b(n)\in\reals$ and
+                        $\surrealLt{
+                            \metricDistance[\RealMetric]
+                                (\surrealZero,b(n))}{d}$
+                        by
+                        \auto{metric_ball_iff,surreal_real_metric_carrier}.
+                    $\metricDistance[\RealMetric](\surrealZero,b(n))
+                        \in\reals$ by
+                        \obv{metric_distance_type,surreal_real_metric_carrier}.
+                    Hence
+                        $\surrealLt{
+                            \surrealMul{\abs{c}}
+                                {\metricDistance[\RealMetric]
+                                    (\surrealZero,b(n))}}
+                            {\surrealMul{\abs{c}}{d}}$
+                        by
+                        \obv{surreal_pos_mul_lt_left,surreal_real_is_surreal}.
+                    $\surrealMul{\abs{c}}{d}
+                        =\surrealMul{d}{\abs{c}}$
+                        by
+                        \obv{surreal_mul_commutative,surreal_real_is_surreal}.
+                    Hence
+                        $\surrealLt{
+                            \surrealMul{\abs{c}}
+                                {\metricDistance[\RealMetric]
+                                    (\surrealZero,b(n))}}{e}$
+                        by
+                        \auto{surreal_lt_transitive,surreal_mul_is_surreal,metric_distance_type,surreal_real_metric_carrier,surreal_real_is_surreal}.
+                    $\surrealMul{c}{\surrealZero}=\surrealZero$
+                        by
+                        \obv{surreal_mul_zero_right,surreal_real_is_surreal,empty_surreal}.
+                    $\metricDistance[\RealMetric]
+                        (\surrealMul{c}{\surrealZero},
+                            \surrealMul{c}{b(n)})
+                        =\surrealMul{\abs{c}}
+                            {\metricDistance[\RealMetric]
+                                (\surrealZero,b(n))}$
+                        by \obv{real_metric_scale,surreal_zero_is_real}.
+                    Hence
+                        $\surrealLt{
+                            \metricDistance[\RealMetric]
+                                (\surrealZero,\surrealMul{c}{b(n)})}{e}$.
+                    $\apply{\realScaledSequence{c}{b}}{n}
+                        =\surrealMul{c}{b(n)}$
+                        by \obv{real_scaled_sequence_apply}.
+                    $\apply{\realScaledSequence{c}{b}}{n}
+                        \in\carrier[\RealMetric]$
+                        by \obv{funs_type_apply}.
+                    Follows by \auto{metric_ball_iff}.
+                \end{subproof}
+                Follows by \auto.
+            \end{subproof}
+            Follows by \obv{metric_convergence}.
+    \end{byCase}
+\end{proof}

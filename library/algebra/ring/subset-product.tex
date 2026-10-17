@@ -1,0 +1,1508 @@
+\import{algebra/group/generated.tex}
+\import{algebra/ring/reducts.tex}
+\import{algebra/ring/subring.tex}
+\import{algebra/ring/natural.tex}
+\import{algebra/ring/binomial.tex}
+\import{algebra/magma/subset.tex}
+\import{algebra/monoid/subset.tex}
+\import{algebra/semigroup/positive-power.tex}
+\import{algebra/group/finite-sum.tex}
+
+\section{Additively generated products of subsets}
+
+The product below first multiplies elements pointwise and then takes their
+additive span.  It is therefore distinct from the raw pointwise product used
+for boundedness questions.
+
+\begin{definition}\label{additive_subset_product}
+    $\additiveSubsetProduct{R}{A}{B}=
+        \generatedSubgroup{
+            \pointwiseProduct{\MultiplicativeMonoid{R}}{A}{B}}
+            {\AdditiveGroup{R}}$.
+\end{definition}
+
+\begin{proposition}\label{additive_subset_product_type}
+    Let $R$ be a ring.
+    Suppose $A,B\subseteq\carrier[R]$.
+    Then $\additiveSubsetProduct{R}{A}{B}\subseteq\carrier[R]$.
+\end{proposition}
+\begin{proof}
+    Let $G=\AdditiveGroup{R}$ and $M=\MultiplicativeMonoid{R}$.
+    $G$ is a group by \obv{additive_group_is_group}.
+    $M$ is a monoid by \obv{multiplicative_monoid_is_monoid}.
+    $\carrier[G]=\carrier[R]$ and $\carrier[M]=\carrier[R]$ by
+        \auto{additive_group_fields,multiplicative_monoid_fields}.
+    Hence $A,B\subseteq\carrier[M]$.
+    Hence $\pointwiseProduct{M}{A}{B}\subseteq\carrier[M]$ by
+        \obv{pointwise_product_type}.
+    Hence $\pointwiseProduct{M}{A}{B}\subseteq\carrier[G]$.
+    $\generatedSubgroup{\pointwiseProduct{M}{A}{B}}{G}
+        \subseteq\carrier[G]$ by
+        \obv{generated_subgroup_subseteq_carrier}.
+    Follows by \auto{additive_subset_product}.
+\end{proof}
+
+\begin{lemma}\label{additive_subgroup_contains_natural_multiple}
+    Let $R$ be a ring and $n$ be a natural number.
+    Suppose $\subgroup{H}{\AdditiveGroup{R}}$ and $x\in H$.
+    Then $\ringMul[R](\ringNatural{R}{n},x)\in H$.
+\end{lemma}
+\begin{proof}
+    Let $G=\AdditiveGroup{R}$.
+    $\carrier[G]=\carrier[R]$ and $\mul[G]=\ringAdd[R]$ and
+        $\neutral[G]=\ringZero[R]$ by
+        \auto{additive_group_fields}.
+    $\subgroup{H}{G}$.
+    $H\subseteq\carrier[G]$ by \obv{subgroup_subseteq}.
+    Hence $x\in\carrier[G]$ by \obv{subseteq}.
+    Hence $x\in\carrier[R]$.
+    Let $C=\{k\in\naturals\mid
+        \ringMul[R](\ringNatural{R}{k},x)\in H\}$.
+    $\ringNatural{R}{\emptyset}=\ringZero[R]$ by
+        \obv{ring_natural_zero}.
+    $\ringMul[R](\ringZero[R],x)=\ringZero[R]$ by
+        \obv{ring_mul_zero_left}.
+    $\neutral[G]\in H$ by \obv{subgroup_neutral}.
+    Hence $\ringMul[R](\ringNatural{R}{\emptyset},x)\in H$.
+    Hence $\emptyset\in C$ by \obv{omega_empty}.
+    Show that for every $k\in C$ we have $\suc{k}\in C$.
+    \begin{subproof}
+        Fix $k\in C$.
+        Hence $k$ is a natural number and
+            $\ringMul[R](\ringNatural{R}{k},x)\in H$.
+        $\ringNatural{R}{k},\ringOne[R]\in\carrier[R]$ by
+            \obv{ring_natural_type,ring_one_type}.
+        $\ringNatural{R}{\suc{k}}
+            =\ringAdd[R](\ringNatural{R}{k},\ringOne[R])$ by
+            \obv{ring_natural_successor}.
+        $\ringMul[R](\ringNatural{R}{\suc{k}},x)
+            =\ringAdd[R](\ringMul[R](\ringNatural{R}{k},x),x)$ by
+            \auto{ring_distributive_right,ring_mul_one_left}.
+        $\mul[G](\ringMul[R](\ringNatural{R}{k},x),x)\in H$ by
+            \obv{subgroup_mul}.
+        Hence $\ringMul[R](\ringNatural{R}{\suc{k}},x)\in H$.
+        $\suc{k}$ is a natural number by \obv{omega_successor}.
+    \end{subproof}
+    Hence $C$ is an inductive set by \obv{inductive_set}.
+    Hence every natural number is an element of $C$ by
+        \obv{omega_minimal}.
+    Hence $n\in C$.
+\end{proof}
+
+\begin{theorem}\label{additive_subset_product_is_subgroup}
+    Let $R$ be a ring.
+    Suppose $A,B\subseteq\carrier[R]$.
+    Then
+        $\subgroup{\additiveSubsetProduct{R}{A}{B}}
+            {\AdditiveGroup{R}}$.
+\end{theorem}
+\begin{proof}
+    Let $G=\AdditiveGroup{R}$ and $M=\MultiplicativeMonoid{R}$.
+    $G$ is a group by \obv{additive_group_is_group}.
+    $M$ is a monoid by \obv{multiplicative_monoid_is_monoid}.
+    $\carrier[G]=\carrier[R]$ and $\carrier[M]=\carrier[R]$ by
+        \auto{additive_group_fields,multiplicative_monoid_fields}.
+    Hence $A,B\subseteq\carrier[M]$.
+    Hence $\pointwiseProduct{M}{A}{B}\subseteq\carrier[M]$ by
+        \obv{pointwise_product_type}.
+    Hence $\pointwiseProduct{M}{A}{B}\subseteq\carrier[G]$.
+    $\subgroup{\generatedSubgroup{
+        \pointwiseProduct{M}{A}{B}}{G}}{G}$ by
+        \obv{generated_subgroup_is_subgroup}.
+    Follows by \auto{additive_subset_product}.
+\end{proof}
+
+\begin{proposition}\label{pointwise_product_subseteq_additive_subset_product}
+    Let $R$ be a ring.
+    Suppose $A,B\subseteq\carrier[R]$.
+    Then $\pointwiseProduct{\MultiplicativeMonoid{R}}{A}{B}
+        \subseteq\additiveSubsetProduct{R}{A}{B}$.
+\end{proposition}
+\begin{proof}
+    Let $G=\AdditiveGroup{R}$ and $M=\MultiplicativeMonoid{R}$.
+    $G$ is a group by \obv{additive_group_is_group}.
+    $M$ is a monoid by \obv{multiplicative_monoid_is_monoid}.
+    Hence $M$ is a magma by \obv{monoid_is_magma}.
+    $\carrier[G]=\carrier[R]$ and $\carrier[M]=\carrier[R]$ by
+        \auto{additive_group_fields,multiplicative_monoid_fields}.
+    Hence $A,B\subseteq\carrier[M]$.
+    Hence $\pointwiseProduct{M}{A}{B}\subseteq\carrier[G]$ by
+        \obv{pointwise_product_type}.
+    $\pointwiseProduct{M}{A}{B}\subseteq
+        \generatedSubgroup{\pointwiseProduct{M}{A}{B}}{G}$ by
+        \obv{generated_subgroup_contains_generators}.
+    Follows by \auto{additive_subset_product}.
+\end{proof}
+
+\begin{theorem}\label{ring_power_of_sum_in_power_envelope_product}
+    Let $R$ be a commutative ring and $x,y\in\carrier[R]$.
+    Let $n$ be a natural number.
+    Then
+        $\ringPower{R}{\ringAdd[R](x,y)}{n}\in
+            \additiveSubsetProduct{R}{
+                \pointwiseSubsetPowers{\MultiplicativeMonoid{R}}{\{x\}}}{
+                \pointwiseSubsetPowers{\MultiplicativeMonoid{R}}{\{y\}}}$.
+\end{theorem}
+\begin{proof}
+    Let $G=\AdditiveGroup{R}$ and $M=\MultiplicativeMonoid{R}$.
+    Let $X=\pointwiseSubsetPowers{M}{\{x\}}$ and
+        $Y=\pointwiseSubsetPowers{M}{\{y\}}$.
+    Let $H=\additiveSubsetProduct{R}{X}{Y}$.
+    $R$ is a ring by \obv{commutative_ring_is_ring}.
+    $G$ is a commutative group by
+        \obv{additive_group_is_exact_commutative_group}.
+    $M$ is a monoid by \obv{multiplicative_monoid_is_exact_monoid}.
+    $\carrier[G]=\carrier[R]$ and $\carrier[M]=\carrier[R]$ and
+        $\mul[M]=\ringMul[R]$ by
+        \auto{additive_group_fields,multiplicative_monoid_fields}.
+    Hence $x,y\in\carrier[M]$.
+    $\{x\},\{y\}\subseteq\carrier[M]$ by
+        \auto{subseteq,singleton_iff}.
+    Hence $\pointwiseSubsetPowers{M}{\{x\}},
+        \pointwiseSubsetPowers{M}{\{y\}}\subseteq\carrier[M]$ by
+        \obv{pointwise_subset_powers_type}.
+    Hence $X,Y\subseteq\carrier[M]$.
+    Hence $X,Y\subseteq\carrier[R]$.
+    $\subgroup{\additiveSubsetProduct{R}{X}{Y}}{\AdditiveGroup{R}}$ by
+        \obv{additive_subset_product_is_subgroup}.
+    Hence $\subgroup{H}{G}$.
+    Let $f=\Apply{\graphOnOp}{
+        \suc{n},\carrier[R],
+        \fun{k:\Set}{
+            \ringMul[R](
+                \ringNatural{R}{\naturalChoose{n}{k}},
+                \ringMul[R](
+                    \ringPower{R}{x}{\naturalDifference{n}{k}},
+                    \ringPower{R}{y}{k}))}}$.
+    $f\in\funs{\suc{n}}{\carrier[R]}$ by
+        \auto{ring_binomial_summand_graph_type}.
+    Hence $f\in\funs{\suc{n}}{\carrier[G]}$ by
+        \obv{additive_group_fields}.
+    Show that for every $k\in\suc{n}$ we have $f(k)\in H$.
+    \begin{subproof}
+        Fix $k\in\suc{n}$.
+        $k$ is a natural number by
+            \auto{omega_successor,naturals_is_transitive_set,
+                transitiveset_iff_subseteq,subseteq}.
+        $k$ and $n$ are ordinals by \obv{natural_number_is_ordinal}.
+        $k=n$ or $k\in n$ by \obv{suc_elim}.
+        Hence $k\subseteq n$ by
+            \obv{subseteq_refl,ordinal_elem_implies_subseteq}.
+        $\naturalDifference{n}{k}$ is a natural number by
+            \auto{natural_difference_specification}.
+        $\naturalChoose{n}{k}$ is a natural number by
+            \obv{natural_choose_type}.
+        $\ringPower{R}{x}{\naturalDifference{n}{k}}
+            =\monoidPower{M}{x}{\naturalDifference{n}{k}}$ and
+            $\ringPower{R}{y}{k}=\monoidPower{M}{y}{k}$ by
+            \obv{ring_power}.
+        $\pointwiseSubsetPower{M}{\{x\}}{\naturalDifference{n}{k}}
+            =\{\monoidPower{M}{x}{\naturalDifference{n}{k}}\}$ and
+            $\pointwiseSubsetPower{M}{\{y\}}{k}
+            =\{\monoidPower{M}{y}{k}\}$ by
+            \obv{pointwise_subset_power_singleton}.
+        Hence $\ringPower{R}{x}{\naturalDifference{n}{k}}\in X$ and
+            $\ringPower{R}{y}{k}\in Y$ by
+            \auto{singleton_iff,pointwise_subset_powers_iff}.
+        Hence $\ringMul[R](
+                \ringPower{R}{x}{\naturalDifference{n}{k}},
+                \ringPower{R}{y}{k})
+            \in\pointwiseProduct{M}{X}{Y}$ by
+            \auto{pointwise_product_iff}.
+        $\pointwiseProduct{\MultiplicativeMonoid{R}}{X}{Y}
+            \subseteq\additiveSubsetProduct{R}{X}{Y}$ by
+            \obv{pointwise_product_subseteq_additive_subset_product}.
+        Hence $\pointwiseProduct{M}{X}{Y}
+            \subseteq\additiveSubsetProduct{R}{X}{Y}$.
+        Hence $\ringMul[R](
+                \ringPower{R}{x}{\naturalDifference{n}{k}},
+                \ringPower{R}{y}{k})
+            \in\additiveSubsetProduct{R}{X}{Y}$ by \obv{subseteq}.
+        Hence $\ringMul[R](
+                \ringPower{R}{x}{\naturalDifference{n}{k}},
+                \ringPower{R}{y}{k})\in H$.
+        $\ringMul[R](
+                \ringNatural{R}{\naturalChoose{n}{k}},
+                \ringMul[R](
+                    \ringPower{R}{x}{\naturalDifference{n}{k}},
+                    \ringPower{R}{y}{k}))
+            \in\additiveSubsetProduct{R}{X}{Y}$ by
+            \obv{additive_subgroup_contains_natural_multiple}.
+        Hence $\ringMul[R](
+                \ringNatural{R}{\naturalChoose{n}{k}},
+                \ringMul[R](
+                    \ringPower{R}{x}{\naturalDifference{n}{k}},
+                    \ringPower{R}{y}{k}))\in H$.
+        $f(k)=\ringMul[R](
+                \ringNatural{R}{\naturalChoose{n}{k}},
+                \ringMul[R](
+                    \ringPower{R}{x}{\naturalDifference{n}{k}},
+                    \ringPower{R}{y}{k}))$ by
+            \auto{logical_graph_on_apply}.
+    \end{subproof}
+    $\suc{n}$ is finite by
+        \obv{omega_successor,natural_number_is_finite}.
+    Hence $\finiteSum{G}{\suc{n}}{f}\in H$ by
+        \obv{subgroup_contains_finite_sum}.
+    $\ringBinomialExpansion{R}{x}{y}{n}
+        =\finiteSum{G}{\suc{n}}{f}$ by
+        \obv{ring_binomial_expansion}.
+    $\ringPower{R}{\ringAdd[R](x,y)}{n}
+        =\ringBinomialExpansion{R}{x}{y}{n}$ by
+        \obv{ring_binomial_theorem}.
+    Hence $\ringPower{R}{\ringAdd[R](x,y)}{n}\in H$.
+\end{proof}
+
+\begin{proposition}\label{additive_subset_product_monotone}
+    Let $R$ be a ring.
+    Suppose $A,A',B,B'\subseteq\carrier[R]$.
+    Suppose $A\subseteq A'$ and $B\subseteq B'$.
+    Then $\additiveSubsetProduct{R}{A}{B}
+        \subseteq\additiveSubsetProduct{R}{A'}{B'}$.
+\end{proposition}
+\begin{proof}
+    Let $G=\AdditiveGroup{R}$ and $M=\MultiplicativeMonoid{R}$.
+    $G$ is a group by \obv{additive_group_is_group}.
+    $M$ is a monoid by \obv{multiplicative_monoid_is_monoid}.
+    Hence $M$ is a magma by \obv{monoid_is_magma}.
+    $\carrier[G]=\carrier[R]$ and $\carrier[M]=\carrier[R]$ by
+        \auto{additive_group_fields,multiplicative_monoid_fields}.
+    Hence $A,A',B,B'\subseteq\carrier[M]$.
+    $\pointwiseProduct{M}{A}{B}
+        \subseteq\pointwiseProduct{M}{A'}{B'}$ by
+        \obv{pointwise_product_monotone}.
+    $\pointwiseProduct{M}{A}{B},
+        \pointwiseProduct{M}{A'}{B'}\subseteq\carrier[G]$ by
+        \obv{pointwise_product_type}.
+    Follows by
+        \auto{additive_subset_product,generated_subgroup_monotone}.
+\end{proof}
+
+\subsection{Multiplication and additive generation}
+
+\begin{lemma}\label{generated_subgroup_closed_under_right_ring_multiplication}
+    Let $R$ be a ring and $G=\AdditiveGroup{R}$.
+    Suppose $A\subseteq\carrier[R]$ and $b\in\carrier[R]$.
+    Suppose $\subgroup{H}{G}$.
+    Suppose for every $a\in A$ we have $\ringMul[R](a,b)\in H$.
+    Then for every $x\in\generatedSubgroup{A}{G}$ we have
+        $\ringMul[R](x,b)\in H$.
+\end{lemma}
+\begin{proof}
+    $\carrier[G]=\carrier[R]$ and
+        $\mul[G]=\ringAdd[R]$ and
+        $\neutral[G]=\ringZero[R]$ and
+        $\groupInv[G]=\ringNeg[R]$ by
+        \auto{additive_group_fields}.
+    Let $K=\{x\in\carrier[R]\mid \ringMul[R](x,b)\in H\}$.
+    $K\subseteq\carrier[G]$ by \obv{subseteq}.
+    $\neutral[G]\in H$ by \obv{subgroup_neutral}.
+    $\ringMul[R](\ringZero[R],b)=\ringZero[R]$ by
+        \obv{ring_mul_zero_left}.
+    $\neutral[G]\in\carrier[R]$ by \obv{ring_zero_type}.
+    $\ringMul[R](\neutral[G],b)\in H$.
+    Hence $\neutral[G]\in K$.
+    Show that for all $x,y\in K$ we have $\mul[G](x,y)\in K$.
+    \begin{subproof}
+        Fix $x,y\in K$.
+        Hence $x,y\in\carrier[R]$ and
+            $\ringMul[R](x,b),\ringMul[R](y,b)\in H$.
+        $\mul[G](\ringMul[R](x,b),\ringMul[R](y,b))\in H$ by
+            \obv{subgroup_mul}.
+        Hence $\ringAdd[R](\ringMul[R](x,b),\ringMul[R](y,b))\in H$.
+        $\ringMul[R](\ringAdd[R](x,y),b)
+            =\ringAdd[R](\ringMul[R](x,b),\ringMul[R](y,b))$ by
+            \obv{ring_distributive_right}.
+        $\ringAdd[R](x,y)\in\carrier[R]$ by \obv{ring_add_type}.
+        Follows by \auto.
+    \end{subproof}
+    Show that for every $x\in K$ we have $\groupInv[G](x)\in K$.
+    \begin{subproof}
+        Fix $x\in K$.
+        Hence $x\in\carrier[R]$ and $\ringMul[R](x,b)\in H$.
+        $\groupInv[G](\ringMul[R](x,b))\in H$ by
+            \obv{subgroup_inv}.
+        Hence $\ringNeg[R](\ringMul[R](x,b))\in H$.
+        $\ringMul[R](\ringNeg[R](x),b)
+            =\ringNeg[R](\ringMul[R](x,b))$ by
+            \obv{ring_neg_product_left}.
+        $\ringNeg[R](x)\in\carrier[R]$ by \obv{ring_neg_type}.
+    \end{subproof}
+    Hence $\subgroup{K}{G}$ by \obv{subgroup}.
+    Show that $A\subseteq K$.
+    \begin{subproof}
+        Follows by \obv{subseteq}.
+    \end{subproof}
+    Hence $\generatedSubgroup{A}{G}\subseteq K$ by
+        \obv{generated_subgroup_least}.
+    Follows by \auto{subseteq}.
+\end{proof}
+
+\begin{lemma}\label{generated_subgroup_closed_under_left_ring_multiplication}
+    Let $R$ be a ring and $G=\AdditiveGroup{R}$.
+    Suppose $A\subseteq\carrier[R]$ and $a\in\carrier[R]$.
+    Suppose $\subgroup{H}{G}$.
+    Suppose for every $b\in A$ we have $\ringMul[R](a,b)\in H$.
+    Then for every $y\in\generatedSubgroup{A}{G}$ we have
+        $\ringMul[R](a,y)\in H$.
+\end{lemma}
+\begin{proof}
+    $\carrier[G]=\carrier[R]$ and
+        $\mul[G]=\ringAdd[R]$ and
+        $\neutral[G]=\ringZero[R]$ and
+        $\groupInv[G]=\ringNeg[R]$ by
+        \auto{additive_group_fields}.
+    Let $K=\{y\in\carrier[R]\mid \ringMul[R](a,y)\in H\}$.
+    $K\subseteq\carrier[G]$ by \obv{subseteq}.
+    $\neutral[G]\in H$ by \obv{subgroup_neutral}.
+    $\ringMul[R](a,\ringZero[R])=\ringZero[R]$ by
+        \obv{ring_mul_zero_right}.
+    $\neutral[G]\in\carrier[R]$ by \obv{ring_zero_type}.
+    $\ringMul[R](a,\neutral[G])\in H$.
+    Hence $\neutral[G]\in K$.
+    Show that for all $x,y\in K$ we have $\mul[G](x,y)\in K$.
+    \begin{subproof}
+        Fix $x,y\in K$.
+        Hence $x,y\in\carrier[R]$ and
+            $\ringMul[R](a,x),\ringMul[R](a,y)\in H$.
+        $\mul[G](\ringMul[R](a,x),\ringMul[R](a,y))\in H$ by
+            \obv{subgroup_mul}.
+        Hence $\ringAdd[R](\ringMul[R](a,x),\ringMul[R](a,y))\in H$.
+        $\ringMul[R](a,\ringAdd[R](x,y))
+            =\ringAdd[R](\ringMul[R](a,x),\ringMul[R](a,y))$ by
+            \obv{ring_distributive_left}.
+        $\ringAdd[R](x,y)\in\carrier[R]$ by \obv{ring_add_type}.
+        Follows by \auto.
+    \end{subproof}
+    Show that for every $y\in K$ we have $\groupInv[G](y)\in K$.
+    \begin{subproof}
+        Fix $y\in K$.
+        Hence $y\in\carrier[R]$ and $\ringMul[R](a,y)\in H$.
+        $\groupInv[G](\ringMul[R](a,y))\in H$ by
+            \obv{subgroup_inv}.
+        Hence $\ringNeg[R](\ringMul[R](a,y))\in H$.
+        $\ringMul[R](a,\ringNeg[R](y))
+            =\ringNeg[R](\ringMul[R](a,y))$ by
+            \obv{ring_neg_product_right}.
+        $\ringNeg[R](y)\in\carrier[R]$ by \obv{ring_neg_type}.
+    \end{subproof}
+    Hence $\subgroup{K}{G}$ by \obv{subgroup}.
+    Show that $A\subseteq K$.
+    \begin{subproof}
+        Follows by \obv{subseteq}.
+    \end{subproof}
+    Hence $\generatedSubgroup{A}{G}\subseteq K$ by
+        \obv{generated_subgroup_least}.
+    Follows by \auto{subseteq}.
+\end{proof}
+
+\begin{theorem}\label{additive_subset_product_generated_left}
+    Let $R$ be a ring and $G=\AdditiveGroup{R}$.
+    Suppose $A,B\subseteq\carrier[R]$.
+    Then
+        $\additiveSubsetProduct{R}{\generatedSubgroup{A}{G}}{B}
+            =\additiveSubsetProduct{R}{A}{B}$.
+\end{theorem}
+\begin{proof}
+    Let $M=\MultiplicativeMonoid{R}$ and
+        $H=\additiveSubsetProduct{R}{A}{B}$.
+    $G$ is a group by \obv{additive_group_is_group}.
+    $M$ is a monoid by \obv{multiplicative_monoid_is_monoid}.
+    Hence $M$ is a magma by \obv{monoid_is_magma}.
+    $\carrier[G]=\carrier[R]$ and $\carrier[M]=\carrier[R]$ and
+        $\mul[M]=\ringMul[R]$ by
+        \auto{additive_group_fields,multiplicative_monoid_fields}.
+    $\generatedSubgroup{A}{G}\subseteq\carrier[R]$ by
+        \obv{generated_subgroup_subseteq_carrier}.
+    $A\subseteq\carrier[G]$.
+    $A\subseteq\generatedSubgroup{A}{G}$ by
+        \obv{generated_subgroup_contains_generators}.
+    Hence $H\subseteq
+        \additiveSubsetProduct{R}{\generatedSubgroup{A}{G}}{B}$ by
+        \auto{additive_subset_product_monotone,subseteq_refl}.
+
+    $\subgroup{\additiveSubsetProduct{R}{A}{B}}{\AdditiveGroup{R}}$ by
+        \obv{additive_subset_product_is_subgroup}.
+    Hence $\subgroup{H}{G}$.
+    Show that
+        $\pointwiseProduct{M}{\generatedSubgroup{A}{G}}{B}\subseteq H$.
+    \begin{subproof}
+        Show that every element of
+            $\pointwiseProduct{M}{\generatedSubgroup{A}{G}}{B}$ is an
+            element of $H$.
+        \begin{subproof}
+            Fix $z\in
+                \pointwiseProduct{M}{\generatedSubgroup{A}{G}}{B}$.
+            Take $x,b$ such that $x\in\generatedSubgroup{A}{G}$ and
+                $b\in B$ and $z=\mul[M](x,b)$ by
+                \obv{pointwise_product_iff}.
+            $b\in\carrier[R]$ by \obv{subseteq}.
+            Show that for every $a\in A$ we have $\ringMul[R](a,b)\in H$.
+            \begin{subproof}
+                Fix $a\in A$.
+                $\mul[M](a,b)\in\pointwiseProduct{M}{A}{B}$ by
+                    \auto{pointwise_product_iff}.
+                Hence $\ringMul[R](a,b)\in
+                    \pointwiseProduct{\MultiplicativeMonoid{R}}{A}{B}$.
+                $\pointwiseProduct{\MultiplicativeMonoid{R}}{A}{B}
+                    \subseteq\additiveSubsetProduct{R}{A}{B}$ by
+                    \obv{pointwise_product_subseteq_additive_subset_product}.
+                Hence $\ringMul[R](a,b)\in
+                    \additiveSubsetProduct{R}{A}{B}$ by
+                    \obv{subseteq}.
+            \end{subproof}
+            Hence $\ringMul[R](x,b)\in
+                \additiveSubsetProduct{R}{A}{B}$ by
+                \auto{generated_subgroup_closed_under_right_ring_multiplication}.
+        \end{subproof}
+        Follows by \obv{subseteq}.
+    \end{subproof}
+    $\pointwiseProduct{M}{\generatedSubgroup{A}{G}}{B}
+        \subseteq\carrier[G]$ by \obv{pointwise_product_type}.
+    Hence $\generatedSubgroup{
+        \pointwiseProduct{M}{\generatedSubgroup{A}{G}}{B}}{G}
+        \subseteq H$ by \obv{generated_subgroup_least}.
+    Hence $\additiveSubsetProduct{R}{\generatedSubgroup{A}{G}}{B}
+        \subseteq H$ by \auto{additive_subset_product}.
+    Hence $\additiveSubsetProduct{R}{\generatedSubgroup{A}{G}}{B}=H$ by
+        \obv{subseteq_antisymmetric}.
+\end{proof}
+
+\begin{theorem}\label{additive_subset_product_generated_right}
+    Let $R$ be a ring and $G=\AdditiveGroup{R}$.
+    Suppose $A,B\subseteq\carrier[R]$.
+    Then
+        $\additiveSubsetProduct{R}{A}{\generatedSubgroup{B}{G}}
+            =\additiveSubsetProduct{R}{A}{B}$.
+\end{theorem}
+\begin{proof}
+    Let $M=\MultiplicativeMonoid{R}$ and
+        $H=\additiveSubsetProduct{R}{A}{B}$.
+    $G$ is a group by \obv{additive_group_is_group}.
+    $M$ is a monoid by \obv{multiplicative_monoid_is_monoid}.
+    Hence $M$ is a magma by \obv{monoid_is_magma}.
+    $\carrier[G]=\carrier[R]$ and $\carrier[M]=\carrier[R]$ and
+        $\mul[M]=\ringMul[R]$ by
+        \auto{additive_group_fields,multiplicative_monoid_fields}.
+    $\generatedSubgroup{B}{G}\subseteq\carrier[R]$ by
+        \obv{generated_subgroup_subseteq_carrier}.
+    $B\subseteq\carrier[G]$.
+    $B\subseteq\generatedSubgroup{B}{G}$ by
+        \obv{generated_subgroup_contains_generators}.
+    Hence $H\subseteq
+        \additiveSubsetProduct{R}{A}{\generatedSubgroup{B}{G}}$ by
+        \auto{additive_subset_product_monotone,subseteq_refl}.
+
+    $\subgroup{\additiveSubsetProduct{R}{A}{B}}{\AdditiveGroup{R}}$ by
+        \obv{additive_subset_product_is_subgroup}.
+    Hence $\subgroup{H}{G}$.
+    Show that
+        $\pointwiseProduct{M}{A}{\generatedSubgroup{B}{G}}\subseteq H$.
+    \begin{subproof}
+        Show that every element of
+            $\pointwiseProduct{M}{A}{\generatedSubgroup{B}{G}}$ is an
+            element of $H$.
+        \begin{subproof}
+            Fix $z\in
+                \pointwiseProduct{M}{A}{\generatedSubgroup{B}{G}}$.
+            Take $a,y$ such that $a\in A$ and
+                $y\in\generatedSubgroup{B}{G}$ and $z=\mul[M](a,y)$ by
+                \obv{pointwise_product_iff}.
+            $a\in\carrier[R]$ by \obv{subseteq}.
+            Show that for every $b\in B$ we have $\ringMul[R](a,b)\in H$.
+            \begin{subproof}
+                Fix $b\in B$.
+                $\mul[M](a,b)\in\pointwiseProduct{M}{A}{B}$ by
+                    \obv{pointwise_product_iff}.
+                Hence $\ringMul[R](a,b)\in
+                    \pointwiseProduct{\MultiplicativeMonoid{R}}{A}{B}$.
+                $\pointwiseProduct{\MultiplicativeMonoid{R}}{A}{B}
+                    \subseteq\additiveSubsetProduct{R}{A}{B}$ by
+                    \obv{pointwise_product_subseteq_additive_subset_product}.
+                Hence $\ringMul[R](a,b)\in
+                    \additiveSubsetProduct{R}{A}{B}$ by
+                    \obv{subseteq}.
+            \end{subproof}
+            Hence $\ringMul[R](a,y)\in
+                \additiveSubsetProduct{R}{A}{B}$ by
+                \auto{generated_subgroup_closed_under_left_ring_multiplication}.
+        \end{subproof}
+        Follows by \obv{subseteq}.
+    \end{subproof}
+    $\pointwiseProduct{M}{A}{\generatedSubgroup{B}{G}}
+        \subseteq\carrier[G]$ by \obv{pointwise_product_type}.
+    Hence $\generatedSubgroup{
+        \pointwiseProduct{M}{A}{\generatedSubgroup{B}{G}}}{G}
+        \subseteq H$ by \obv{generated_subgroup_least}.
+    Hence $\additiveSubsetProduct{R}{A}{\generatedSubgroup{B}{G}}
+        \subseteq H$ by \auto{additive_subset_product}.
+    Hence $\additiveSubsetProduct{R}{A}{\generatedSubgroup{B}{G}}=H$ by
+        \obv{subseteq_antisymmetric}.
+\end{proof}
+
+\begin{theorem}\label{additive_subset_product_associative}
+    Let $R$ be a ring.
+    Suppose $A,B,C\subseteq\carrier[R]$.
+    Then
+        $\additiveSubsetProduct{R}{
+            \additiveSubsetProduct{R}{A}{B}}{C}
+        =\additiveSubsetProduct{R}{A}{
+            \additiveSubsetProduct{R}{B}{C}}$.
+\end{theorem}
+\begin{proof}
+    Let $G=\AdditiveGroup{R}$ and $M=\MultiplicativeMonoid{R}$.
+    Let $X=\pointwiseProduct{M}{A}{B}$ and
+        $Y=\pointwiseProduct{M}{B}{C}$.
+    $M$ is a monoid by \obv{multiplicative_monoid_is_monoid}.
+    Hence $M$ is a semigroup by \obv{monoid_implies_semigroup}.
+    Hence $M$ is a magma by \obv{semigroup}.
+    $\carrier[G]=\carrier[R]$ and $\carrier[M]=\carrier[R]$ by
+        \auto{additive_group_fields,multiplicative_monoid_fields}.
+    Hence $A,B,C\subseteq\carrier[M]$.
+    Hence $X,Y\subseteq\carrier[M]$ by
+        \auto{pointwise_product_type}.
+    Hence $X,Y\subseteq\carrier[R]$ by \auto.
+    $\additiveSubsetProduct{R}{A}{B}=\generatedSubgroup{X}{G}$ and
+        $\additiveSubsetProduct{R}{B}{C}=\generatedSubgroup{Y}{G}$ by
+        \auto{additive_subset_product}.
+    $\additiveSubsetProduct{R}{\generatedSubgroup{X}{G}}{C}
+        =\additiveSubsetProduct{R}{X}{C}$ by
+        \obv{additive_subset_product_generated_left}.
+    $\additiveSubsetProduct{R}{A}{\generatedSubgroup{Y}{G}}
+        =\additiveSubsetProduct{R}{A}{Y}$ by
+        \obv{additive_subset_product_generated_right}.
+    $\pointwiseProduct{M}{X}{C}=\pointwiseProduct{M}{A}{Y}$ by
+        \auto{pointwise_product_associative}.
+    $\additiveSubsetProduct{R}{X}{C}
+        =\generatedSubgroup{\pointwiseProduct{M}{X}{C}}{G}$ and
+        $\additiveSubsetProduct{R}{A}{Y}
+        =\generatedSubgroup{\pointwiseProduct{M}{A}{Y}}{G}$ by
+        \auto{additive_subset_product}.
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{commutative_ring_pointwise_product_commutative}
+    Let $R$ be a commutative ring.
+    Suppose $A,B\subseteq\carrier[R]$.
+    Then $\pointwiseProduct{\MultiplicativeMonoid{R}}{A}{B}
+        =\pointwiseProduct{\MultiplicativeMonoid{R}}{B}{A}$.
+\end{theorem}
+\begin{proof}
+    Let $M=\MultiplicativeMonoid{R}$.
+    $\mul[M]=\ringMul[R]$ by \auto{multiplicative_monoid_fields}.
+    Show that $\pointwiseProduct{M}{A}{B}
+        =\pointwiseProduct{M}{B}{A}$.
+    \begin{subproof}
+        Show that every element of $\pointwiseProduct{M}{A}{B}$ is an
+            element of $\pointwiseProduct{M}{B}{A}$.
+        \begin{subproof}
+            Fix $z\in\pointwiseProduct{M}{A}{B}$.
+            Take $a,b$ such that $a\in A$ and $b\in B$ and
+                $z=\mul[M](a,b)$ by \auto{pointwise_product_iff}.
+            $a,b\in\carrier[R]$ by \obv{subseteq}.
+            $\ringMul[R](a,b)=\ringMul[R](b,a)$ by
+                \obv{commutative_ring_mul_commutative}.
+            Hence $z=\mul[M](b,a)$ by \auto.
+            Follows by \auto{pointwise_product_iff}.
+        \end{subproof}
+        Show that every element of $\pointwiseProduct{M}{B}{A}$ is an
+            element of $\pointwiseProduct{M}{A}{B}$.
+        \begin{subproof}
+            Fix $z\in\pointwiseProduct{M}{B}{A}$.
+            Take $b,a$ such that $b\in B$ and $a\in A$ and
+                $z=\mul[M](b,a)$ by \auto{pointwise_product_iff}.
+            $a,b\in\carrier[R]$ by \obv{subseteq}.
+            $\ringMul[R](b,a)=\ringMul[R](a,b)$ by
+                \obv{commutative_ring_mul_commutative}.
+            Hence $z=\mul[M](a,b)$ by \auto.
+            Follows by \auto{pointwise_product_iff}.
+        \end{subproof}
+        Follows by set extensionality.
+    \end{subproof}
+\end{proof}
+
+\begin{theorem}\label{additive_subset_product_commutative}
+    Let $R$ be a commutative ring.
+    Suppose $A,B\subseteq\carrier[R]$.
+    Then $\additiveSubsetProduct{R}{A}{B}
+        =\additiveSubsetProduct{R}{B}{A}$.
+\end{theorem}
+\begin{proof}
+    $\pointwiseProduct{\MultiplicativeMonoid{R}}{A}{B}
+        =\pointwiseProduct{\MultiplicativeMonoid{R}}{B}{A}$ by
+        \obv{commutative_ring_pointwise_product_commutative}.
+    Follows by \auto{additive_subset_product}.
+\end{proof}
+
+\subsection{Scalar multiples of subrings}
+
+\begin{theorem}\label{left_scalar_multiple_is_additive_subgroup}
+    Let $R$ be a ring.
+    Suppose $\subgroup{A}{\AdditiveGroup{R}}$.
+    Let $a\in\carrier[R]$.
+    Then
+        $\subgroup{
+            \pointwiseProduct{\MultiplicativeMonoid{R}}{\{a\}}{A}}
+            {\AdditiveGroup{R}}$.
+\end{theorem}
+\begin{proof}
+    Let $G=\AdditiveGroup{R}$ and $M=\MultiplicativeMonoid{R}$.
+    Let $K=\pointwiseProduct{M}{\{a\}}{A}$.
+    $M$ is a monoid by \obv{multiplicative_monoid_is_exact_monoid}.
+    Hence $M$ is a magma by \obv{monoid_is_magma}.
+    $\carrier[G]=\carrier[R]$ and $\carrier[M]=\carrier[R]$ and
+        $\mul[G]=\ringAdd[R]$ and $\neutral[G]=\ringZero[R]$ and
+        $\groupInv[G]=\ringNeg[R]$ and $\mul[M]=\ringMul[R]$ by
+        \auto{additive_group_fields,multiplicative_monoid_fields}.
+    $A\subseteq\carrier[\AdditiveGroup{R}]$ by
+        \obv{subgroup_subseteq}.
+    Hence $A\subseteq\carrier[G]$ by \auto.
+    Hence $A\subseteq\carrier[R]$ by \auto.
+    Hence $\{a\},A\subseteq\carrier[M]$ by
+        \auto{subseteq,singleton_iff}.
+    Hence $K\subseteq\carrier[M]$ by
+        \auto{pointwise_product_type}.
+    Hence $K\subseteq\carrier[G]$.
+
+    $\ringZero[R]\in A$ by
+        \auto{subgroup_neutral,additive_group_fields}.
+    $\ringMul[R](a,\ringZero[R])=\ringZero[R]$ by
+        \obv{ring_mul_zero_right}.
+    Hence $\neutral[G]\in K$ by
+        \auto{pointwise_product_iff,singleton_iff}.
+
+    Show that for all $x,y\in K$ we have $\mul[G](x,y)\in K$.
+    \begin{subproof}
+        Fix $x,y\in K$.
+        Take $u\in A$ such that $x=\ringMul[R](a,u)$ by
+            \auto{pointwise_product_iff,singleton_iff}.
+        Take $v\in A$ such that $y=\ringMul[R](a,v)$ by
+            \auto{pointwise_product_iff,singleton_iff}.
+        $u,v\in\carrier[R]$ by \obv{subseteq}.
+        $\ringAdd[R](u,v)\in A$ by
+            \auto{subgroup_mul,additive_group_fields}.
+        $\ringAdd[R](x,y)=
+            \ringMul[R](a,\ringAdd[R](u,v))$ by
+            \auto{ring_distributive_left}.
+        Follows by
+            \auto{pointwise_product_iff,singleton_iff}.
+    \end{subproof}
+
+    Show that for every $x\in K$ we have $\groupInv[G](x)\in K$.
+    \begin{subproof}
+        Fix $x\in K$.
+        Take $u\in A$ such that $x=\ringMul[R](a,u)$ by
+            \auto{pointwise_product_iff,singleton_iff}.
+        $u\in\carrier[R]$ by \obv{subseteq}.
+        $\ringNeg[R](u)\in A$ by
+            \auto{subgroup_inv,additive_group_fields}.
+        $\ringNeg[R](x)=\ringMul[R](a,\ringNeg[R](u))$ by
+            \auto{ring_neg_product_right}.
+        Follows by
+            \auto{pointwise_product_iff,singleton_iff}.
+    \end{subproof}
+    Follows by \auto{subgroup}.
+\end{proof}
+
+\begin{proposition}\label{additive_subset_product_singleton_subgroup}
+    Let $R$ be a ring.
+    Suppose $\subgroup{A}{\AdditiveGroup{R}}$.
+    Let $a\in\carrier[R]$.
+    Then $\additiveSubsetProduct{R}{\{a\}}{A}
+        =\pointwiseProduct{\MultiplicativeMonoid{R}}{\{a\}}{A}$.
+\end{proposition}
+\begin{proof}
+    Let $G=\AdditiveGroup{R}$ and $M=\MultiplicativeMonoid{R}$.
+    $\subgroup{
+        \pointwiseProduct{\MultiplicativeMonoid{R}}{\{a\}}{A}}{
+        \AdditiveGroup{R}}$ by
+        \obv{left_scalar_multiple_is_additive_subgroup}.
+    Hence $\subgroup{\pointwiseProduct{M}{\{a\}}{A}}{G}$ by
+        \auto.
+    $\generatedSubgroup{\pointwiseProduct{M}{\{a\}}{A}}{G}
+        =\pointwiseProduct{M}{\{a\}}{A}$ by
+        \obv{generated_subgroup_of_subgroup}.
+    Follows by \auto{additive_subset_product}.
+\end{proof}
+
+\begin{theorem}\label{additive_subset_product_of_scalar_multiples}
+    Let $R$ be a commutative ring and $A$ be a subring of $R$.
+    Let $a,b\in\carrier[R]$.
+    Then $\additiveSubsetProduct{R}{
+            \pointwiseProduct{\MultiplicativeMonoid{R}}{\{a\}}{A}}{
+            \pointwiseProduct{\MultiplicativeMonoid{R}}{\{b\}}{A}}
+        =\pointwiseProduct{\MultiplicativeMonoid{R}}{
+            \{\ringMul[R](a,b)\}}{A}$.
+\end{theorem}
+\begin{proof}
+    Let $M=\MultiplicativeMonoid{R}$.
+    Let $X=\pointwiseProduct{M}{\{a\}}{A}$.
+    Let $Y=\pointwiseProduct{M}{\{b\}}{A}$.
+    Let $Z=\pointwiseProduct{M}{\{\ringMul[R](a,b)\}}{A}$.
+    $R$ is a ring by \obv{commutative_ring_is_ring}.
+    $M$ is a monoid by \obv{multiplicative_monoid_is_exact_monoid}.
+    $\carrier[M]=\carrier[R]$ and $\mul[M]=\ringMul[R]$ by
+        \auto{multiplicative_monoid_fields}.
+    $A\subseteq\carrier[R]$ by \obv{subring_subseteq_carrier}.
+    Hence $A\subseteq\carrier[M]$.
+    $\{a\},\{b\}\subseteq\carrier[M]$ by
+        \auto{subseteq,singleton_iff}.
+    $\subgroup{A}{\AdditiveGroup{R}}$ by
+        \obv{subring_additive_subgroup}.
+    $\ringMul[R](a,b)\in\carrier[R]$ by \obv{ring_mul_type}.
+
+    Show that $\pointwiseProduct{M}{X}{Y}=Z$.
+    \begin{subproof}
+        Show that every element of $\pointwiseProduct{M}{X}{Y}$ is an
+            element of $Z$.
+        \begin{subproof}
+            Fix $z\in\pointwiseProduct{M}{X}{Y}$.
+            Take $x,y$ such that $x\in X$ and $y\in Y$ and
+                $z=\ringMul[R](x,y)$ by
+                \auto{pointwise_product_iff}.
+            Take $c\in A$ such that $x=\ringMul[R](a,c)$ by
+                \auto{pointwise_product_iff,singleton_iff}.
+            Take $d\in A$ such that $y=\ringMul[R](b,d)$ by
+                \auto{pointwise_product_iff,singleton_iff}.
+            $c,d\in\carrier[R]$ by \obv{subseteq}.
+            $\ringMul[R](b,d),\ringMul[R](c,d),
+                \ringMul[R](c,b),\ringMul[R](b,c)\in\carrier[R]$ by
+                \obv{ring_mul_type}.
+            $\ringMul[R](c,d)\in A$ by \obv{subring_mul}.
+            $z=\ringMul[R](
+                \ringMul[R](a,c),\ringMul[R](b,d))$ by \auto.
+            $\ringMul[R](c,\ringMul[R](b,d))
+                =\ringMul[R](\ringMul[R](c,b),d)$ by
+                \obv{ring_mul_associative}.
+            $\ringMul[R](c,b)=\ringMul[R](b,c)$ by
+                \obv{commutative_ring_mul_commutative}.
+            $\ringMul[R](\ringMul[R](b,c),d)
+                =\ringMul[R](b,\ringMul[R](c,d))$ by
+                \obv{ring_mul_associative}.
+            Hence $\ringMul[R](c,\ringMul[R](b,d))
+                =\ringMul[R](b,\ringMul[R](c,d))$ by \auto.
+            $\ringMul[R](\ringMul[R](a,c),\ringMul[R](b,d))
+                =\ringMul[R](a,\ringMul[R](c,\ringMul[R](b,d)))$ by
+                \obv{ring_mul_associative}.
+            Hence $z=\ringMul[R](a,
+                \ringMul[R](c,\ringMul[R](b,d)))$ by \auto.
+            Hence $z=\ringMul[R](a,
+                \ringMul[R](b,\ringMul[R](c,d)))$ by \auto.
+            $z=\ringMul[R](\ringMul[R](a,b),\ringMul[R](c,d))$ by
+                \obv{ring_mul_associative}.
+            Follows by
+                \auto{pointwise_product_iff,singleton_iff}.
+        \end{subproof}
+        Show that every element of $Z$ is an element of
+            $\pointwiseProduct{M}{X}{Y}$.
+        \begin{subproof}
+            Fix $z\in Z$.
+            Take $c\in A$ such that
+                $z=\ringMul[R](\ringMul[R](a,b),c)$ by
+                \auto{pointwise_product_iff,singleton_iff}.
+            $c\in\carrier[R]$ by \obv{subseteq}.
+            $\ringOne[R]\in A$ by \obv{subring_one}.
+            $\ringMul[R](a,\ringOne[R])\in X$ and
+                $\ringMul[R](b,c)\in Y$ by
+                \auto{pointwise_product_iff,singleton_iff}.
+            $z=\ringMul[R](
+                \ringMul[R](a,\ringOne[R]),\ringMul[R](b,c))$ by
+                \auto{ring_mul_associative,ring_mul_one_right}.
+            Follows by \auto{pointwise_product_iff}.
+        \end{subproof}
+        Follows by set extensionality.
+    \end{subproof}
+    $\subgroup{
+        \pointwiseProduct{\MultiplicativeMonoid{R}}{
+            \{\ringMul[R](a,b)\}}{A}}{\AdditiveGroup{R}}$ by
+        \obv{left_scalar_multiple_is_additive_subgroup}.
+    Hence $\subgroup{Z}{\AdditiveGroup{R}}$ by \auto.
+    $\AdditiveGroup{R}$ is a group by \obv{additive_group_is_group}.
+    $Z\subseteq\carrier[\AdditiveGroup{R}]$ by
+        \obv{subgroup_subseteq}.
+    $\generatedSubgroup{Z}{\AdditiveGroup{R}}=Z$ by
+        \obv{generated_subgroup_of_subgroup}.
+    Follows by \auto{additive_subset_product}.
+\end{proof}
+
+\begin{proposition}\label{additive_subset_product_singleton_scalar_multiple}
+    Let $R$ be a ring and $A$ be a subring of $R$.
+    Let $a,b\in\carrier[R]$.
+    Then $\additiveSubsetProduct{R}{\{a\}}{
+            \pointwiseProduct{\MultiplicativeMonoid{R}}{\{b\}}{A}}
+        =\pointwiseProduct{\MultiplicativeMonoid{R}}{
+            \{\ringMul[R](a,b)\}}{A}$.
+\end{proposition}
+\begin{proof}
+    Let $M=\MultiplicativeMonoid{R}$.
+    Let $H=\pointwiseProduct{M}{\{b\}}{A}$.
+    $M$ is a monoid by \obv{multiplicative_monoid_is_exact_monoid}.
+    Hence $M$ is a semigroup by \obv{monoid_implies_semigroup}.
+    $\carrier[M]=\carrier[R]$ and $\mul[M]=\ringMul[R]$ by
+        \auto{multiplicative_monoid_fields}.
+    $A\subseteq\carrier[R]$ by \obv{subring_subseteq_carrier}.
+    Hence $A\subseteq\carrier[M]$.
+    $\{a\},\{b\}\subseteq\carrier[M]$ by
+        \auto{subseteq,singleton_iff}.
+    $\subgroup{A}{\AdditiveGroup{R}}$ by
+        \obv{subring_additive_subgroup}.
+    $\subgroup{
+        \pointwiseProduct{\MultiplicativeMonoid{R}}{\{b\}}{A}}{
+        \AdditiveGroup{R}}$ by
+        \obv{left_scalar_multiple_is_additive_subgroup}.
+    Hence $\subgroup{H}{\AdditiveGroup{R}}$ by \auto.
+    $\additiveSubsetProduct{R}{\{a\}}{H}
+        =\pointwiseProduct{\MultiplicativeMonoid{R}}{\{a\}}{H}$ by
+        \obv{additive_subset_product_singleton_subgroup}.
+    Hence $\additiveSubsetProduct{R}{\{a\}}{H}
+        =\pointwiseProduct{M}{\{a\}}{H}$ by \auto.
+    $\pointwiseProduct{M}{
+            \pointwiseProduct{M}{\{a\}}{\{b\}}}{A}
+        =\pointwiseProduct{M}{\{a\}}{
+            \pointwiseProduct{M}{\{b\}}{A}}$ by
+        \obv{pointwise_product_associative}.
+    Hence $\pointwiseProduct{M}{\{a\}}{H}
+        =\pointwiseProduct{M}{
+            \pointwiseProduct{M}{\{a\}}{\{b\}}}{A}$ by
+        \auto.
+    $\pointwiseProduct{M}{\{a\}}{\{b\}}
+        =\{\ringMul[R](a,b)\}$ by
+        \auto{pointwise_product_singletons}.
+    Hence $\additiveSubsetProduct{R}{\{a\}}{H}
+        =\pointwiseProduct{M}{\{\ringMul[R](a,b)\}}{A}$ by
+        \auto.
+    Follows by \auto.
+\end{proof}
+
+\begin{proposition}\label{scalar_square_subring_subset_scalar_multiple}
+    Let $R$ be a ring and $A$ be a subring of $R$.
+    Let $a\in A$.
+    Then $\pointwiseProduct{\MultiplicativeMonoid{R}}{
+            \{\ringMul[R](a,a)\}}{A}
+        \subseteq\pointwiseProduct{\MultiplicativeMonoid{R}}{\{a\}}{A}$.
+\end{proposition}
+\begin{proof}
+    Let $M=\MultiplicativeMonoid{R}$.
+    $\carrier[M]=\carrier[R]$ and $\mul[M]=\ringMul[R]$ by
+        \auto{multiplicative_monoid_fields}.
+    $A\subseteq\carrier[R]$ by \obv{subring_subseteq_carrier}.
+    Hence $a\in\carrier[R]$.
+    Show that every element of
+        $\pointwiseProduct{M}{\{\ringMul[R](a,a)\}}{A}$ is an element of
+        $\pointwiseProduct{M}{\{a\}}{A}$.
+    \begin{subproof}
+        Fix $z\in\pointwiseProduct{M}{\{\ringMul[R](a,a)\}}{A}$.
+        Take $c\in A$ such that
+            $z=\ringMul[R](\ringMul[R](a,a),c)$ by
+            \auto{pointwise_product_iff,singleton_iff}.
+        $c\in\carrier[R]$ by \obv{subseteq}.
+        $\ringMul[R](a,c)\in A$ by \obv{subring_mul}.
+        $\ringMul[R](\ringMul[R](a,a),c)
+            =\ringMul[R](a,\ringMul[R](a,c))$ by
+            \obv{ring_mul_associative}.
+        Hence $z=\ringMul[R](a,\ringMul[R](a,c))$ by \auto.
+        Follows by \auto{pointwise_product_iff,singleton_iff}.
+    \end{subproof}
+    Hence $\pointwiseProduct{M}{\{\ringMul[R](a,a)\}}{A}
+        \subseteq\pointwiseProduct{M}{\{a\}}{A}$ by \obv{subseteq}.
+    Follows by \auto.
+\end{proof}
+
+\section{The additive subset semigroup}
+
+\begin{definition}\label{additive_subset_semigroup}
+    $\AdditiveSubsetSemigroup{R}=\structure[magma]{
+        \carrier=\pow{\carrier[R]},
+        \mul=\Apply{\binaryGraphOnOp}{
+            \pow{\carrier[R]},\pow{\carrier[R]},
+            \fun{A,B:\Set}{\additiveSubsetProduct{R}{A}{B}}}
+    }$.
+\end{definition}
+
+\begin{proposition}\label{additive_subset_semigroup_carrier}
+    $\carrier[\AdditiveSubsetSemigroup{R}]=\pow{\carrier[R]}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{additive_subset_semigroup,magmaaggregateprojection_carrier}.
+\end{proof}
+
+\begin{proposition}\label{additive_subset_semigroup_multiplication}
+    $\mul[\AdditiveSubsetSemigroup{R}]
+        =\Apply{\binaryGraphOnOp}{
+            \pow{\carrier[R]},\pow{\carrier[R]},
+            \fun{A,B:\Set}{\additiveSubsetProduct{R}{A}{B}}}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{additive_subset_semigroup,magmaaggregateprojection_mul}.
+\end{proof}
+
+\begin{proposition}\label{additive_subset_semigroup_mul_apply}
+    Suppose $A,B\subseteq\carrier[R]$.
+    Then $\mul[\AdditiveSubsetSemigroup{R}](A,B)
+        =\additiveSubsetProduct{R}{A}{B}$.
+\end{proposition}
+\begin{proof}
+    $A,B\in\pow{\carrier[R]}$ by \obv{powerset_intro}.
+    Follows by
+        \auto{additive_subset_semigroup_multiplication,
+            logical_binary_graph_on_apply}.
+\end{proof}
+
+\begin{theorem}\label{additive_subset_semigroup_is_exact}
+    Let $R$ be a ring.
+    Then $\AdditiveSubsetSemigroup{R}$ is an exact semigroup.
+\end{theorem}
+\begin{proof}
+    Let $S=\AdditiveSubsetSemigroup{R}$.
+    $\carrier[S]=\pow{\carrier[R]}$ by
+        \auto{additive_subset_semigroup_carrier}.
+    $\mul[S]=\Apply{\binaryGraphOnOp}{
+        \pow{\carrier[R]},\pow{\carrier[R]},
+        \fun{A,B:\Set}{\additiveSubsetProduct{R}{A}{B}}}$ by
+        \auto{additive_subset_semigroup_multiplication}.
+    Show that for all $A,B\in\pow{\carrier[R]}$ we have
+        $\additiveSubsetProduct{R}{A}{B}\in\pow{\carrier[R]}$.
+    \begin{subproof}
+        Fix $A,B\in\pow{\carrier[R]}$.
+        Hence $A,B\subseteq\carrier[R]$ by \obv{powerset_elim}.
+        Hence $\additiveSubsetProduct{R}{A}{B}\subseteq\carrier[R]$ by
+            \obv{additive_subset_product_type}.
+        Follows by \obv{powerset_intro}.
+    \end{subproof}
+    Hence $\mul[S]\in
+        \funs{\carrier[S]\times\carrier[S]}{\carrier[S]}$ by
+        \auto{logical_binary_graph_on_function}.
+    Show that for all $A,B,C\in\carrier[S]$ we have
+        $\mul[S](A,\mul[S](B,C))
+            =\mul[S](\mul[S](A,B),C)$.
+    \begin{subproof}
+        Fix $A,B,C\in\carrier[S]$.
+        Hence $A,B,C\in\pow{\carrier[R]}$.
+        Hence $A,B,C\subseteq\carrier[R]$ by \obv{powerset_elim}.
+        $\additiveSubsetProduct{R}{A}{B}\subseteq\carrier[R]$ and
+            $\additiveSubsetProduct{R}{B}{C}\subseteq\carrier[R]$ by
+            \obv{additive_subset_product_type}.
+        $\mul[S](A,B)=\additiveSubsetProduct{R}{A}{B}$ and
+            $\mul[S](B,C)=\additiveSubsetProduct{R}{B}{C}$ by
+            \auto{additive_subset_semigroup_mul_apply}.
+        $\mul[S](A,\additiveSubsetProduct{R}{B}{C})
+            =\additiveSubsetProduct{R}{A}{
+                \additiveSubsetProduct{R}{B}{C}}$ and
+        $\mul[S](\additiveSubsetProduct{R}{A}{B},C)
+            =\additiveSubsetProduct{R}{
+                \additiveSubsetProduct{R}{A}{B}}{C}$ by
+            \auto{additive_subset_semigroup_mul_apply}.
+        Follows by \auto{additive_subset_product_associative}.
+    \end{subproof}
+    Hence $S$ is a semigroup by
+        \auto{additive_subset_semigroup,magmaaggregateexact,
+            magma,semigroup}.
+    Follows by
+        \auto{additive_subset_semigroup,magmaaggregateexact}.
+\end{proof}
+
+\begin{classification}\label{additive_subset_semigroup_is_semigroup}
+    Let $R$ be a ring.
+    Then $\AdditiveSubsetSemigroup{R}$ is a semigroup.
+\end{classification}
+\begin{proof}
+    $\AdditiveSubsetSemigroup{R}$ is an exact semigroup by
+        \obv{additive_subset_semigroup_is_exact}.
+\end{proof}
+
+\section{Positive additively generated powers}
+
+\begin{definition}\label{additive_subset_power}
+    $\additiveSubsetPower{R}{U}{n}
+        =\semigroupPositivePower{\AdditiveSubsetSemigroup{R}}{U}{n}$.
+\end{definition}
+
+\begin{proposition}\label{additive_subset_power_type}
+    Let $R$ be a ring.
+    Suppose $U\subseteq\carrier[R]$.
+    Let $n$ be a natural number.
+    Suppose $n\neq\emptyset$.
+    Then $\additiveSubsetPower{R}{U}{n}\subseteq\carrier[R]$.
+\end{proposition}
+\begin{proof}
+    Let $S=\AdditiveSubsetSemigroup{R}$.
+    $S$ is a semigroup by \obv{additive_subset_semigroup_is_semigroup}.
+    $\carrier[S]=\pow{\carrier[R]}$ by
+        \auto{additive_subset_semigroup_carrier}.
+    Hence $U\in\carrier[S]$ by \obv{powerset_intro}.
+    $\semigroupPositivePower{S}{U}{n}\in\carrier[S]$ by
+        \obv{semigroup_positive_power_type}.
+    Follows by
+        \auto{additive_subset_power,powerset_elim}.
+\end{proof}
+
+\begin{proposition}\label{additive_subset_power_one}
+    Let $R$ be a ring.
+    Suppose $U\subseteq\carrier[R]$.
+    Then $\additiveSubsetPower{R}{U}{\suc{\emptyset}}=U$.
+\end{proposition}
+\begin{proof}
+    Let $S=\AdditiveSubsetSemigroup{R}$.
+    $S$ is a semigroup by \obv{additive_subset_semigroup_is_semigroup}.
+    $\carrier[S]=\pow{\carrier[R]}$ by
+        \auto{additive_subset_semigroup_carrier}.
+    Hence $U\in\carrier[S]$ by \obv{powerset_intro}.
+    Follows by
+        \auto{additive_subset_power,semigroup_positive_power_one}.
+\end{proof}
+
+\begin{theorem}\label{pointwise_subset_power_subseteq_additive_subset_power}
+    Let $R$ be a ring. Suppose $U\subseteq\carrier[R]$.
+    Let $n$ be a natural number such that $n\neq\emptyset$.
+    Then
+        $\pointwiseSubsetPower{\MultiplicativeMonoid{R}}{U}{n}
+            \subseteq\additiveSubsetPower{R}{U}{n}$.
+\end{theorem}
+\begin{proof}
+    Let $M=\MultiplicativeMonoid{R}$.
+    Let $S=\AdditiveSubsetSemigroup{R}$.
+    $M$ is a monoid by \obv{multiplicative_monoid_is_exact_monoid}.
+    Hence $M$ is a unital magma by \obv{monoid_is_unital_magma}.
+    $S$ is a semigroup by \obv{additive_subset_semigroup_is_semigroup}.
+    $\carrier[S]=\pow{\carrier[R]}$ by
+        \auto{additive_subset_semigroup_carrier}.
+    Hence $U\in\carrier[S]$ by \obv{powerset_intro}.
+    $\carrier[M]=\carrier[R]$ and $\neutral[M]=\ringOne[R]$ by
+        \auto{multiplicative_monoid_fields}.
+    Hence $U\subseteq\carrier[M]$.
+    Let $C=\{k\in\naturals\mid
+        \pointwiseSubsetPower{M}{U}{\suc{k}}
+            \subseteq\additiveSubsetPower{R}{U}{\suc{k}}\}$.
+
+    $\emptyset$ is a natural number by \obv{omega_empty}.
+    $\pointwiseSubsetPower{M}{U}{\emptyset}=\{\neutral[M]\}$ by
+        \obv{pointwise_subset_power_zero}.
+    $\pointwiseSubsetPower{M}{U}{\suc{\emptyset}}
+        =\pointwiseProduct{M}{
+            \pointwiseSubsetPower{M}{U}{\emptyset}}{U}$ by
+        \obv{pointwise_subset_power_successor}.
+    Hence $\pointwiseSubsetPower{M}{U}{\suc{\emptyset}}
+        =\pointwiseProduct{M}{\{\neutral[M]\}}{U}$ by \auto.
+    $\pointwiseProduct{M}{\{\neutral[M]\}}{U}=U$ by
+        \obv{pointwise_product_neutral_singleton_left}.
+    Hence $\pointwiseSubsetPower{M}{U}{\suc{\emptyset}}=U$ by
+        \auto.
+    $\additiveSubsetPower{R}{U}{\suc{\emptyset}}=U$ by
+        \obv{additive_subset_power_one}.
+    Hence $\emptyset\in C$ by \auto{omega_empty,subseteq_refl}.
+
+    Show that for every $k\in C$ we have $\suc{k}\in C$.
+    \begin{subproof}
+        Fix $k\in C$.
+        Hence $k\in\naturals$ and
+            $\pointwiseSubsetPower{M}{U}{\suc{k}}
+                \subseteq\additiveSubsetPower{R}{U}{\suc{k}}$.
+        $\suc{k}$ is a natural number and $\suc{k}\neq\emptyset$ by
+            \obv{omega_successor,suc_neq_emptyset}.
+        $\pointwiseSubsetPower{M}{U}{\suc{k}}
+            \subseteq\carrier[M]$ by
+            \obv{pointwise_subset_power_type}.
+        $\additiveSubsetPower{R}{U}{\suc{k}}
+            \subseteq\carrier[R]$ by
+            \obv{additive_subset_power_type}.
+        Hence $\additiveSubsetPower{R}{U}{\suc{k}}
+            \subseteq\carrier[M]$ by \auto.
+        $\pointwiseSubsetPower{M}{U}{\suc{\suc{k}}}
+            =\pointwiseProduct{M}{
+                \pointwiseSubsetPower{M}{U}{\suc{k}}}{U}$ by
+            \obv{pointwise_subset_power_successor}.
+        $\semigroupPositivePower{S}{U}{\suc{\suc{k}}}
+            =\mul[S](\semigroupPositivePower{S}{U}{\suc{k}},U)$ by
+            \obv{semigroup_positive_power_successor}.
+        $\semigroupPositivePower{S}{U}{\suc{k}}
+            =\additiveSubsetPower{R}{U}{\suc{k}}$ by
+            \auto{additive_subset_power}.
+        $\mul[S](\additiveSubsetPower{R}{U}{\suc{k}},U)
+            =\additiveSubsetProduct{R}{
+                \additiveSubsetPower{R}{U}{\suc{k}}}{U}$ by
+            \auto{additive_subset_semigroup_mul_apply}.
+        Hence $\additiveSubsetPower{R}{U}{\suc{\suc{k}}}
+            =\additiveSubsetProduct{R}{
+                \additiveSubsetPower{R}{U}{\suc{k}}}{U}$ by
+            \auto{additive_subset_power}.
+        $\pointwiseProduct{M}{
+                \pointwiseSubsetPower{M}{U}{\suc{k}}}{U}
+            \subseteq\pointwiseProduct{M}{
+                \additiveSubsetPower{R}{U}{\suc{k}}}{U}$ by
+            \auto{pointwise_product_monotone,subseteq_refl}.
+        $\pointwiseProduct{\MultiplicativeMonoid{R}}{
+                \additiveSubsetPower{R}{U}{\suc{k}}}{U}
+            \subseteq\additiveSubsetProduct{R}{
+                \additiveSubsetPower{R}{U}{\suc{k}}}{U}$ by
+            \obv{pointwise_product_subseteq_additive_subset_product}.
+        Hence $\pointwiseProduct{M}{
+                \additiveSubsetPower{R}{U}{\suc{k}}}{U}
+            \subseteq\additiveSubsetProduct{R}{
+                \additiveSubsetPower{R}{U}{\suc{k}}}{U}$ by
+            \auto.
+        Hence $\pointwiseSubsetPower{M}{U}{\suc{\suc{k}}}
+            \subseteq\additiveSubsetPower{R}{U}{\suc{\suc{k}}}$ by
+            \auto{subseteq_transitive}.
+        $\suc{k}$ is a natural number by \obv{omega_successor}.
+        Follows by \auto.
+    \end{subproof}
+    Hence $C$ is an inductive set by \obv{inductive_set}.
+    Hence every natural number is an element of $C$ by
+        \obv{omega_minimal}.
+    $\unions{n}$ is a natural number and $n=\suc{\unions{n}}$ by
+        \obv{natural_nonzero_successor_of_union}.
+    Hence $\unions{n}\in C$.
+    Follows by \auto.
+\end{proof}
+
+\begin{proposition}\label{additive_subset_power_successor}
+    Let $R$ be a ring.
+    Suppose $U\subseteq\carrier[R]$.
+    Let $n$ be a natural number.
+    Suppose $n\neq\emptyset$.
+    Then $\additiveSubsetPower{R}{U}{\suc{n}}
+        =\additiveSubsetProduct{R}{\additiveSubsetPower{R}{U}{n}}{U}$.
+\end{proposition}
+\begin{proof}
+    Let $S=\AdditiveSubsetSemigroup{R}$.
+    $S$ is a semigroup by \obv{additive_subset_semigroup_is_semigroup}.
+    $\carrier[S]=\pow{\carrier[R]}$ by
+        \auto{additive_subset_semigroup_carrier}.
+    Hence $U\in\carrier[S]$ by \obv{powerset_intro}.
+    $\semigroupPositivePower{S}{U}{n}\in\carrier[S]$ by
+        \obv{semigroup_positive_power_type}.
+    Hence $\semigroupPositivePower{S}{U}{n}\subseteq\carrier[R]$ by
+        \auto{powerset_elim}.
+    $\semigroupPositivePower{S}{U}{\suc{n}}
+        =\mul[S](\semigroupPositivePower{S}{U}{n},U)$ by
+        \obv{semigroup_positive_power_successor}.
+    Follows by
+        \auto{additive_subset_power,additive_subset_semigroup_mul_apply}.
+\end{proof}
+
+\begin{theorem}\label{additive_subset_power_of_scalar_multiple}
+    Let $R$ be a commutative ring and $A$ be a subring of $R$.
+    Let $a\in\carrier[R]$.
+    Let $n$ be a natural number.
+    Suppose $n\neq\emptyset$.
+    Then $\additiveSubsetPower{R}{
+            \pointwiseProduct{\MultiplicativeMonoid{R}}{\{a\}}{A}}{n}
+        =\pointwiseProduct{\MultiplicativeMonoid{R}}{
+            \{\ringPower{R}{a}{n}\}}{A}$.
+\end{theorem}
+\begin{proof}
+    Let $M=\MultiplicativeMonoid{R}$.
+    Let $U=\pointwiseProduct{M}{\{a\}}{A}$.
+    $R$ is a ring by \obv{commutative_ring_is_ring}.
+    $A\subseteq\carrier[R]$ by \obv{subring_subseteq_carrier}.
+    $\subgroup{A}{\AdditiveGroup{R}}$ by
+        \obv{subring_additive_subgroup}.
+    $U\subseteq\carrier[R]$ by
+        \auto{subgroup_subseteq,additive_group_fields,
+            left_scalar_multiple_is_additive_subgroup}.
+    Let $C=\{k\in\naturals\mid
+        \additiveSubsetPower{R}{U}{\suc{k}}
+            =\pointwiseProduct{M}{
+                \{\ringPower{R}{a}{\suc{k}}\}}{A}\}$.
+    $\additiveSubsetPower{R}{U}{\suc{\emptyset}}=U$ by
+        \obv{additive_subset_power_one}.
+    $\ringPower{R}{a}{\suc{\emptyset}}=a$ by
+        \obv{ring_power_one}.
+    Hence $\emptyset\in C$ by \auto{omega_empty}.
+
+    Show that for every $k\in C$ we have $\suc{k}\in C$.
+    \begin{subproof}
+        Fix $k\in C$.
+        Hence $k$ is a natural number and
+            $\additiveSubsetPower{R}{U}{\suc{k}}
+                =\pointwiseProduct{M}{
+                    \{\ringPower{R}{a}{\suc{k}}\}}{A}$.
+        $\suc{k}\in\naturals$ and $\suc{k}\neq\emptyset$ by
+            \obv{omega_successor,suc_neq_emptyset}.
+        $\ringPower{R}{a}{\suc{k}}\in\carrier[R]$ by
+            \obv{ring_power_type}.
+        $\additiveSubsetPower{R}{U}{\suc{\suc{k}}}
+            =\additiveSubsetProduct{R}{
+                \additiveSubsetPower{R}{U}{\suc{k}}}{U}$ by
+            \obv{additive_subset_power_successor}.
+        Hence $\additiveSubsetPower{R}{U}{\suc{\suc{k}}}
+            =\pointwiseProduct{M}{
+                \{\ringMul[R](\ringPower{R}{a}{\suc{k}},a)\}}{A}$ by
+            \auto{additive_subset_product_of_scalar_multiples}.
+        $\ringPower{R}{a}{\suc{\suc{k}}}
+            =\ringMul[R](\ringPower{R}{a}{\suc{k}},a)$ by
+            \obv{ring_power_successor}.
+        Hence $\suc{k}\in C$ by \auto{omega_successor}.
+    \end{subproof}
+    Hence $C$ is an inductive set by \obv{inductive_set}.
+    Hence every natural number is an element of $C$ by
+        \obv{omega_minimal}.
+    $\unions{n}$ is a natural number and $n=\suc{\unions{n}}$ by
+        \obv{natural_nonzero_successor_of_union}.
+    Hence $\unions{n}\in C$.
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{additive_subset_power_addition}
+    Let $R$ be a ring.
+    Suppose $U\subseteq\carrier[R]$.
+    Let $m,n$ be natural numbers.
+    Suppose $m\neq\emptyset$ and $n\neq\emptyset$.
+    Then $\additiveSubsetPower{R}{U}{m+n}
+        =\additiveSubsetProduct{R}{\additiveSubsetPower{R}{U}{m}}
+            {\additiveSubsetPower{R}{U}{n}}$.
+\end{theorem}
+\begin{proof}
+    Let $S=\AdditiveSubsetSemigroup{R}$.
+    $S$ is a semigroup by \obv{additive_subset_semigroup_is_semigroup}.
+    $\carrier[S]=\pow{\carrier[R]}$ by
+        \auto{additive_subset_semigroup_carrier}.
+    Hence $U\in\carrier[S]$ by \obv{powerset_intro}.
+    $\semigroupPositivePower{S}{U}{m},
+        \semigroupPositivePower{S}{U}{n}\in\carrier[S]$ by
+        \obv{semigroup_positive_power_type}.
+    Hence $\semigroupPositivePower{S}{U}{m},
+        \semigroupPositivePower{S}{U}{n}\subseteq\carrier[R]$ by
+        \auto{powerset_elim}.
+    $\semigroupPositivePower{S}{U}{m+n}
+        =\mul[S](\semigroupPositivePower{S}{U}{m},
+            \semigroupPositivePower{S}{U}{n})$ by
+        \obv{semigroup_positive_power_addition}.
+    Follows by
+        \auto{additive_subset_power,additive_subset_semigroup_mul_apply}.
+\end{proof}
+
+\subsection{Additive closure and contraction}
+
+\begin{theorem}\label{additive_subset_power_is_subgroup}
+    Let $R$ be a ring.
+    Suppose $U\subseteq\carrier[R]$.
+    Let $n$ be a natural number.
+    Suppose $\suc{\suc{\emptyset}}\subseteq n$.
+    Then
+        $\subgroup{\additiveSubsetPower{R}{U}{n}}
+            {\AdditiveGroup{R}}$.
+\end{theorem}
+\begin{proof}
+    $\emptyset,\suc{\emptyset},\suc{\suc{\emptyset}}\in\naturals$ by
+        \obv{omega_empty,omega_successor}.
+    Take a natural number $k$ such that
+        $n=\suc{\suc{\emptyset}}+k$ by
+        \obv{natural_additive_difference}.
+    $\emptyset+k=k$ by \obv{num_addition_zero_left}.
+    $\suc{\emptyset}+k=\suc{k}$ and
+        $\suc{\suc{\emptyset}}+k=\suc{\suc{k}}$ by
+        \auto{num_addition_successor_left}.
+    Hence $n=\suc{\suc{k}}$.
+    $\suc{k}$ is a natural number and $\suc{k}\neq\emptyset$ by
+        \obv{omega_successor,suc_neq_emptyset}.
+    Hence $\additiveSubsetPower{R}{U}{\suc{k}}\subseteq\carrier[R]$ by
+        \obv{additive_subset_power_type}.
+    $\additiveSubsetPower{R}{U}{\suc{\suc{k}}}
+        =\additiveSubsetProduct{R}{
+            \additiveSubsetPower{R}{U}{\suc{k}}}{U}$ by
+        \obv{additive_subset_power_successor}.
+    $\subgroup{
+        \additiveSubsetProduct{R}{
+            \additiveSubsetPower{R}{U}{\suc{k}}}{U}}
+        {\AdditiveGroup{R}}$ by
+        \obv{additive_subset_product_is_subgroup}.
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{additive_subset_power_subset_of_square_subset}
+    Let $R$ be a ring.
+    Suppose $U\subseteq\carrier[R]$.
+    Suppose $\additiveSubsetProduct{R}{U}{U}\subseteq U$.
+    Let $n$ be a natural number.
+    Suppose $n\neq\emptyset$.
+    Then $\additiveSubsetPower{R}{U}{n}\subseteq U$.
+\end{theorem}
+\begin{proof}
+    Let $C=\{k\in\naturals\mid
+        \additiveSubsetPower{R}{U}{\suc{k}}\subseteq U\}$.
+    $\additiveSubsetPower{R}{U}{\suc{\emptyset}}=U$ by
+        \obv{additive_subset_power_one}.
+    Hence $\emptyset\in C$ by
+        \auto{omega_empty,subseteq_refl}.
+
+    Show that for every $k\in C$ we have $\suc{k}\in C$.
+    \begin{subproof}
+        Fix $k\in C$.
+        Hence $k$ is a natural number and
+            $\additiveSubsetPower{R}{U}{\suc{k}}\subseteq U$.
+        $\suc{k}$ is a natural number and $\suc{k}\neq\emptyset$ by
+            \obv{omega_successor,suc_neq_emptyset}.
+        Hence $\additiveSubsetPower{R}{U}{\suc{k}}
+            \subseteq\carrier[R]$ by
+            \obv{additive_subset_power_type}.
+        $\additiveSubsetPower{R}{U}{\suc{\suc{k}}}
+            =\additiveSubsetProduct{R}{
+                \additiveSubsetPower{R}{U}{\suc{k}}}{U}$ by
+            \obv{additive_subset_power_successor}.
+        $\additiveSubsetProduct{R}{
+            \additiveSubsetPower{R}{U}{\suc{k}}}{U}
+            \subseteq\additiveSubsetProduct{R}{U}{U}$ by
+            \auto{additive_subset_product_monotone,subseteq_refl}.
+        Hence $\additiveSubsetPower{R}{U}{\suc{\suc{k}}}
+            \subseteq\additiveSubsetProduct{R}{U}{U}$ by
+            \auto.
+        Hence $\additiveSubsetPower{R}{U}{\suc{\suc{k}}}
+            \subseteq U$ by \obv{subseteq_transitive}.
+        $\suc{k}$ is a natural number by \obv{omega_successor}.
+        Follows by \auto.
+    \end{subproof}
+    Hence $C$ is an inductive set by \obv{inductive_set}.
+    Hence every natural number is an element of $C$ by
+        \obv{omega_minimal}.
+    $\unions{n}$ is a natural number and $n=\suc{\unions{n}}$ by
+        \obv{natural_nonzero_successor_of_union}.
+    Hence $\unions{n}\in C$.
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{additive_subset_power_successor_subset}
+    Let $R$ be a ring.
+    Suppose $U\subseteq\carrier[R]$.
+    Suppose $\additiveSubsetProduct{R}{U}{U}\subseteq U$.
+    Let $n$ be a natural number.
+    Suppose $n\neq\emptyset$.
+    Then $\additiveSubsetPower{R}{U}{\suc{n}}
+        \subseteq\additiveSubsetPower{R}{U}{n}$.
+\end{theorem}
+\begin{proof}
+    Let $D=\{k\in\naturals\mid
+        \additiveSubsetPower{R}{U}{\suc{\suc{k}}}
+            \subseteq\additiveSubsetPower{R}{U}{\suc{k}}\}$.
+    $\additiveSubsetPower{R}{U}{\suc{\emptyset}}=U$ by
+        \obv{additive_subset_power_one}.
+    $\suc{\emptyset}$ is a natural number and
+        $\suc{\emptyset}\neq\emptyset$ by
+        \obv{omega_empty,omega_successor,suc_neq_emptyset}.
+    $\additiveSubsetPower{R}{U}{\suc{\suc{\emptyset}}}
+        =\additiveSubsetProduct{R}{
+            \additiveSubsetPower{R}{U}{\suc{\emptyset}}}{U}$ by
+        \obv{additive_subset_power_successor}.
+    Hence $\additiveSubsetPower{R}{U}{\suc{\suc{\emptyset}}}
+        =\additiveSubsetProduct{R}{U}{U}$ by \auto.
+    Hence $\emptyset\in D$ by \auto{omega_empty}.
+
+    Show that for every $k\in D$ we have $\suc{k}\in D$.
+    \begin{subproof}
+        Fix $k\in D$.
+        Hence $k$ is a natural number and
+            $\additiveSubsetPower{R}{U}{\suc{\suc{k}}}
+                \subseteq\additiveSubsetPower{R}{U}{\suc{k}}$.
+        $\suc{k},\suc{\suc{k}}\in\naturals$ and
+            $\suc{k}\neq\emptyset$ and
+            $\suc{\suc{k}}\neq\emptyset$ by
+            \obv{omega_successor,suc_neq_emptyset}.
+        Hence $\additiveSubsetPower{R}{U}{\suc{k}},
+            \additiveSubsetPower{R}{U}{\suc{\suc{k}}}
+            \subseteq\carrier[R]$ by
+            \obv{additive_subset_power_type}.
+        $\additiveSubsetPower{R}{U}{\suc{\suc{k}}}
+            =\additiveSubsetProduct{R}{
+                \additiveSubsetPower{R}{U}{\suc{k}}}{U}$ and
+        $\additiveSubsetPower{R}{U}{\suc{\suc{\suc{k}}}}
+            =\additiveSubsetProduct{R}{
+                \additiveSubsetPower{R}{U}{\suc{\suc{k}}}}{U}$ by
+            \obv{additive_subset_power_successor}.
+        $\additiveSubsetProduct{R}{
+            \additiveSubsetPower{R}{U}{\suc{\suc{k}}}}{U}
+            \subseteq\additiveSubsetProduct{R}{
+                \additiveSubsetPower{R}{U}{\suc{k}}}{U}$ by
+            \auto{additive_subset_product_monotone,subseteq_refl}.
+        Hence $\additiveSubsetPower{R}{U}{\suc{\suc{\suc{k}}}}
+            \subseteq\additiveSubsetPower{R}{U}{\suc{\suc{k}}}$ by
+            \auto.
+        $\suc{k}$ is a natural number by \obv{omega_successor}.
+        Follows by \auto.
+    \end{subproof}
+    Hence $D$ is an inductive set by \obv{inductive_set}.
+    Hence every natural number is an element of $D$ by
+        \obv{omega_minimal}.
+    $\unions{n}$ is a natural number and $n=\suc{\unions{n}}$ by
+        \obv{natural_nonzero_successor_of_union}.
+    Hence $\unions{n}\in D$.
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{additive_subset_power_antitone}
+    Let $R$ be a ring.
+    Suppose $U\subseteq\carrier[R]$.
+    Suppose $\additiveSubsetProduct{R}{U}{U}\subseteq U$.
+    Let $m,n$ be natural numbers.
+    Suppose $m\neq\emptyset$ and $n\neq\emptyset$ and $m\subseteq n$.
+    Then $\additiveSubsetPower{R}{U}{n}
+        \subseteq\additiveSubsetPower{R}{U}{m}$.
+\end{theorem}
+\begin{proof}
+    Take a natural number $d$ such that $n=m+d$ by
+        \obv{natural_additive_difference}.
+    Let $C=\{k\in\naturals\mid
+        \additiveSubsetPower{R}{U}{m+k}
+            \subseteq\additiveSubsetPower{R}{U}{m}\}$.
+    $m+\emptyset=m$ by \obv{num_addition_zero_right}.
+    Hence $\emptyset\in C$ by
+        \auto{omega_empty,subseteq_refl}.
+
+    Show that for every $k\in C$ we have $\suc{k}\in C$.
+    \begin{subproof}
+        Fix $k\in C$.
+        Hence $k$ is a natural number and
+            $\additiveSubsetPower{R}{U}{m+k}
+                \subseteq\additiveSubsetPower{R}{U}{m}$.
+        $m+k$ is a natural number by
+            \obv{num_addition_on_naturals}.
+        $\emptyset\in m$ by
+            \obv{natural_nonzero_contains_zero}.
+        $m\subseteq m+k$ by
+            \obv{natural_addition_left_subseteq_sum}.
+        Hence $\emptyset\in m+k$ by \obv{subseteq}.
+        Hence $m+k\neq\emptyset$ by \auto.
+        $\additiveSubsetPower{R}{U}{\suc{m+k}}
+            \subseteq\additiveSubsetPower{R}{U}{m+k}$ by
+            \obv{additive_subset_power_successor_subset}.
+        $m+\suc{k}=\suc{m+k}$ by
+            \obv{num_addition_successor_right}.
+        Hence $\additiveSubsetPower{R}{U}{m+\suc{k}}
+            \subseteq\additiveSubsetPower{R}{U}{m+k}$ by
+            \auto.
+        Hence $\additiveSubsetPower{R}{U}{m+\suc{k}}
+            \subseteq\additiveSubsetPower{R}{U}{m}$ by
+            \auto{subseteq_transitive}.
+        $\suc{k}$ is a natural number by \obv{omega_successor}.
+        Follows by \auto.
+    \end{subproof}
+    Hence $C$ is an inductive set by \obv{inductive_set}.
+    Hence every natural number is an element of $C$ by
+        \obv{omega_minimal}.
+    Hence $d\in C$.
+    Follows by \auto.
+\end{proof}
+
+\begin{corollary}\label{pointwise_square_contraction_implies_additive_square_contraction}
+    Let $R$ be a ring.
+    Suppose $U\subseteq\carrier[R]$.
+    Suppose $\subgroup{U}{\AdditiveGroup{R}}$.
+    Suppose
+        $\pointwiseProduct{\MultiplicativeMonoid{R}}{U}{U}\subseteq U$.
+    Then $\additiveSubsetProduct{R}{U}{U}\subseteq U$.
+\end{corollary}
+\begin{proof}
+    Let $G=\AdditiveGroup{R}$ and $M=\MultiplicativeMonoid{R}$.
+    $\carrier[G]=\carrier[R]$ and $\carrier[M]=\carrier[R]$ by
+        \auto{additive_group_fields,multiplicative_monoid_fields}.
+    Hence $U\subseteq\carrier[M]$.
+    Hence $\pointwiseProduct{M}{U}{U}\subseteq\carrier[M]$ by
+        \obv{pointwise_product_type}.
+    Hence $\pointwiseProduct{M}{U}{U}\subseteq\carrier[G]$.
+    $\subgroup{U}{G}$ and
+        $\pointwiseProduct{M}{U}{U}\subseteq U$ by \auto.
+    $\generatedSubgroup{\pointwiseProduct{M}{U}{U}}{G}\subseteq U$ by
+        \obv{generated_subgroup_least}.
+    Follows by \auto{additive_subset_product}.
+\end{proof}

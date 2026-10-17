@@ -1,0 +1,1052 @@
+\import{test/algebra-spike/14-phrases.tex}
+\import{nat/multiplication.tex}
+
+\section{Natural divisibility and greatest common divisors}
+
+The arithmetic in this fixture is wholly internal to the natural numbers.
+In particular, the proofs use neither signed coefficients nor the surreal
+integer implementation.
+
+\begin{definition}\label{spike15_common_divisors}
+    $\spikeNaturalCommonDivisors{m}{n}=
+        \{d\in\suc{m\union n}\mid
+            \text{$m$ and $n$ are natural numbers and
+                $d$ divides $m$ as natural numbers and
+                $d$ divides $n$ as natural numbers}\}$.
+\end{definition}
+
+\subsection{Elementary divisibility calculus}
+
+\begin{proposition}\label{spike15_natural_divides_itself}
+    Let $m$ be a natural number.
+    Then $m$ divides $m$ as natural numbers.
+\end{proposition}
+\begin{proof}
+    $\suc{\emptyset}$ is a natural number
+        by \auto{omega_empty,omega_successor}.
+    $m=\naturalMul{m}{\suc{\emptyset}}$
+        by \auto{natural_multiplication_one_right}.
+    Follows by \auto{spike_phrase_natural_divisibility}.
+\end{proof}
+
+\begin{proposition}\label{spike15_every_natural_divides_zero}
+    Let $m$ be a natural number.
+    Then $m$ divides $\emptyset$ as natural numbers.
+\end{proposition}
+\begin{proof}
+    $\emptyset$ is a natural number by \auto{omega_empty}.
+    $\naturalMul{m}{\emptyset}=\emptyset$
+        by \auto{natural_multiplication_zero_right}.
+    Follows by \auto{spike_phrase_natural_divisibility}.
+\end{proof}
+
+\begin{proposition}\label{spike15_one_divides_every_natural}
+    Let $n$ be a natural number.
+    Then $\naturalOne$ divides $n$ as natural numbers.
+\end{proposition}
+\begin{proof}
+    $\naturalOne$ is a natural number
+        by \auto{spike_phrase_natural_one,omega_empty,omega_successor}.
+    $\naturalMul{\naturalOne}{n}=n$
+        by \auto{spike_phrase_natural_one,
+            natural_multiplication_one_left}.
+    Follows by \auto{spike_phrase_natural_divisibility}.
+\end{proof}
+
+\begin{proposition}\label{spike15_zero_divides_natural_iff_zero}
+    Let $n$ be a natural number.
+    Then $\emptyset$ divides $n$ as natural numbers iff
+        $n=\emptyset$.
+\end{proposition}
+\begin{proof}
+    Show that if $\emptyset$ divides $n$ as natural numbers, then
+        $n=\emptyset$.
+    \begin{subproof}
+        Assume $\emptyset$ divides $n$ as natural numbers.
+        Take a natural number $k$ such that
+            $n=\naturalMul{\emptyset}{k}$
+            by \auto{spike_phrase_natural_divisibility}.
+        Follows by \auto{natural_multiplication_zero_left}.
+    \end{subproof}
+    Show that if $n=\emptyset$, then
+        $\emptyset$ divides $n$ as natural numbers.
+    \begin{subproof}
+        Assume $n=\emptyset$.
+        Follows by \auto{spike15_every_natural_divides_zero,omega_empty}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{proposition}\label{spike15_natural_divisibility_transitive}
+    Let $d,m,n$ be natural numbers.
+    Suppose $d$ divides $m$ as natural numbers and
+        $m$ divides $n$ as natural numbers.
+    Then $d$ divides $n$ as natural numbers.
+\end{proposition}
+\begin{proof}
+    Take $a,b\in\naturals$ such that
+        $m=\naturalMul{d}{a}$ and $n=\naturalMul{m}{b}$
+        by \auto{spike_phrase_natural_divisibility}.
+    $\naturalMul{a}{b}$ is a natural number
+        by \auto{natural_multiplication_closed}.
+    $n=\naturalMul{d}{\naturalMul{a}{b}}$
+        by \auto{natural_multiplication_associative}.
+    Follows by \auto{spike_phrase_natural_divisibility}.
+\end{proof}
+
+\begin{proposition}\label{spike15_common_divisor_divides_sum}
+    Let $d,m,n$ be natural numbers.
+    Suppose $d$ divides $m$ as natural numbers and
+        $d$ divides $n$ as natural numbers.
+    Then $d$ divides $m+n$ as natural numbers.
+\end{proposition}
+\begin{proof}
+    Take $a,b\in\naturals$ such that
+        $m=\naturalMul{d}{a}$ and $n=\naturalMul{d}{b}$
+        by \auto{spike_phrase_natural_divisibility}.
+    $a+b$ is a natural number by \auto{num_addition_on_naturals}.
+    $m+n$ is a natural number by \auto{num_addition_on_naturals}.
+    $m+n=\naturalMul{d}{a+b}$
+        by \auto{natural_multiplication_distributive_left}.
+    Follows by \auto{spike_phrase_natural_divisibility}.
+\end{proof}
+
+\begin{proposition}\label{spike15_natural_multiplication_zero_iff}
+    Let $a,b$ be natural numbers.
+    Then $\naturalMul{a}{b}=\emptyset$ iff
+        $a=\emptyset$ or $b=\emptyset$.
+\end{proposition}
+\begin{proof}
+    Show that if $\naturalMul{a}{b}=\emptyset$, then
+        $a=\emptyset$ or $b=\emptyset$.
+    \begin{subproof}
+        Assume $\naturalMul{a}{b}=\emptyset$.
+        \begin{byCase}
+            \caseOf{$b=\emptyset$.}
+                Follows.
+            \caseOf{$b\neq\emptyset$.}
+                Take a natural number $c$ such that $b=\suc{c}$
+                    by \auto{natural_zero_or_successor}.
+                $\naturalMul{a}{b}=\naturalMul{a}{c}+a$
+                    by \auto{natural_multiplication_successor_right}.
+                $\naturalMul{a}{c}$ is a natural number
+                    by \auto{natural_multiplication_closed}.
+                $a\subseteq a+\naturalMul{a}{c}$
+                    by \auto{natural_addition_left_subseteq_sum}.
+                $a+\naturalMul{a}{c}=\naturalMul{a}{c}+a$
+                    by \auto{natural_addition_commutative}.
+                Hence $a\subseteq\naturalMul{a}{b}$
+                    by \auto.
+                Thus $a\subseteq\emptyset$ by \auto.
+                Hence $a=\emptyset$
+                    by \auto{subseteq_emptyset_iff}.
+                Follows.
+        \end{byCase}
+    \end{subproof}
+    Show that if $a=\emptyset$ or $b=\emptyset$, then
+        $\naturalMul{a}{b}=\emptyset$.
+    \begin{subproof}
+        Assume $a=\emptyset$ or $b=\emptyset$.
+        Follows by
+            \auto{natural_multiplication_zero_left,
+                natural_multiplication_zero_right}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{proposition}\label{spike15_positive_summand_makes_strict_sum}
+    Let $a,b$ be natural numbers.
+    Suppose $a\neq\emptyset$.
+    Then $b\in a+b$.
+\end{proposition}
+\begin{proof}
+    Take a natural number $c$ such that $a=\suc{c}$
+        by \auto{natural_zero_or_successor}.
+    $c+b$ is a natural number by \auto{num_addition_on_naturals}.
+    $b\subseteq b+c$ by \auto{natural_addition_left_subseteq_sum}.
+    Hence $b\subseteq c+b$ by \auto{natural_addition_commutative}.
+    Hence $b\in c+b$ or $b=c+b$
+        by \auto{natural_number_is_ordinal,
+            ordinal_subseteq_implies_elem_or_eq}.
+    Thus $b\in\suc{c+b}$ by \auto{suc_iff}.
+    $a+b=\suc{c+b}$ by \auto{num_addition_successor_left}.
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{spike15_natural_multiplication_cancel_left}
+    Let $d,a,b$ be natural numbers.
+    Suppose $d\neq\emptyset$ and
+        $\naturalMul{d}{a}=\naturalMul{d}{b}$.
+    Then $a=b$.
+\end{theorem}
+\begin{proof}
+    Let $C=\{x\in\naturals\mid
+        \text{for every $y\in\naturals$ such that
+            $\naturalMul{d}{x}=\naturalMul{d}{y}$ we have $x=y$}\}$.
+    Show that $\emptyset\in C$.
+    \begin{subproof}
+        Show that for every $y\in\naturals$ such that
+            $\naturalMul{d}{\emptyset}=\naturalMul{d}{y}$
+            we have $\emptyset=y$.
+        \begin{subproof}
+            Fix $y\in\naturals$.
+            Assume $\naturalMul{d}{\emptyset}=\naturalMul{d}{y}$.
+            Hence $\naturalMul{d}{y}=\emptyset$
+                by \auto{natural_multiplication_zero_right}.
+            Hence $d=\emptyset$ or $y=\emptyset$
+                by \auto{spike15_natural_multiplication_zero_iff}.
+            Follows by \auto.
+        \end{subproof}
+        Follows by \auto{omega_empty}.
+    \end{subproof}
+    Show that for every $x\in C$ we have $\suc{x}\in C$.
+    \begin{subproof}
+        Fix $x\in C$.
+        Then $x$ is a natural number.
+        $\suc{x}$ is a natural number by \auto{omega_successor}.
+        Show that for every $y\in\naturals$ such that
+            $\naturalMul{d}{\suc{x}}=\naturalMul{d}{y}$
+            we have $\suc{x}=y$.
+        \begin{subproof}
+            Fix $y\in\naturals$.
+            Assume $\naturalMul{d}{\suc{x}}=\naturalMul{d}{y}$.
+            Show that $y\neq\emptyset$.
+            \begin{subproof}
+                Suppose $y=\emptyset$.
+                Then $\naturalMul{d}{\suc{x}}=\emptyset$
+                    by \auto{natural_multiplication_zero_right}.
+                Hence $d=\emptyset$ or $\suc{x}=\emptyset$
+                    by \auto{spike15_natural_multiplication_zero_iff}.
+                Contradiction by \auto{suc_neq_emptyset}.
+            \end{subproof}
+            Take a natural number $z$ such that $y=\suc{z}$
+                by \auto{natural_zero_or_successor}.
+            $\naturalMul{d}{x}+d=\naturalMul{d}{z}+d$
+                by \auto{natural_multiplication_successor_right}.
+            Hence $\naturalMul{d}{x}=\naturalMul{d}{z}$
+                by \auto{natural_addition_cancel_right,
+                    natural_multiplication_closed}.
+            Hence $x=z$ by \auto.
+            Follows by \auto.
+        \end{subproof}
+        Follows.
+    \end{subproof}
+    Hence $C$ is an inductive set by \auto{inductive_set}.
+    Hence every natural number is an element of $C$
+        by \auto{omega_minimal}.
+    Thus $a\in C$.
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{spike15_positive_multiplication_reflects_order}
+    Let $d,a,b$ be natural numbers.
+    Suppose $d\neq\emptyset$ and
+        $\naturalMul{d}{a}\subseteq\naturalMul{d}{b}$.
+    Then $a\subseteq b$.
+\end{theorem}
+\begin{proof}
+    $a$ and $b$ are ordinals by \auto{natural_number_is_ordinal}.
+    \begin{byCase}
+        \caseOf{$a\subseteq b$.}
+            Follows.
+        \caseOf{$\lnot(a\subseteq b)$.}
+            Hence $b\subseteq a$
+                by \auto{ordinal_subseteq_or_subseteq}.
+            Take a natural number $k$ such that $a=b+k$
+                by \auto{natural_additive_difference}.
+            $\naturalMul{d}{a}
+                =\naturalMul{d}{b}+\naturalMul{d}{k}$
+                by \auto{natural_multiplication_distributive_left}.
+            $\naturalMul{d}{b}\subseteq\naturalMul{d}{a}$
+                by \auto{natural_addition_left_subseteq_sum,
+                    natural_multiplication_closed}.
+            Hence $\naturalMul{d}{a}=\naturalMul{d}{b}$
+                by \auto{subseteq_antisymmetric}.
+            Hence $a=b$
+                by \auto{spike15_natural_multiplication_cancel_left}.
+            Follows by \auto.
+    \end{byCase}
+\end{proof}
+
+\begin{proposition}\label{spike15_divisor_bounded_by_nonzero_dividend}
+    Let $d,n$ be natural numbers.
+    Suppose $n\neq\emptyset$ and
+        $d$ divides $n$ as natural numbers.
+    Then $d\subseteq n$.
+\end{proposition}
+\begin{proof}
+    Take a natural number $k$ such that $n=\naturalMul{d}{k}$
+        by \auto{spike_phrase_natural_divisibility}.
+    Show that $k\neq\emptyset$.
+    \begin{subproof}
+        Suppose $k=\emptyset$.
+        Then $n=\emptyset$
+            by \auto{natural_multiplication_zero_right}.
+        Contradiction.
+    \end{subproof}
+    Take a natural number $l$ such that $k=\suc{l}$
+        by \auto{natural_zero_or_successor}.
+    $n=\naturalMul{d}{l}+d$
+        by \auto{natural_multiplication_successor_right}.
+    $\naturalMul{d}{l}$ is a natural number
+        by \auto{natural_multiplication_closed}.
+    $d\subseteq d+\naturalMul{d}{l}$
+        by \auto{natural_addition_left_subseteq_sum}.
+    $d+\naturalMul{d}{l}=\naturalMul{d}{l}+d$
+        by \auto{natural_addition_commutative}.
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{spike15_common_divisor_of_sum_difference}
+    Let $d,m,k$ be natural numbers.
+    Suppose $d$ divides $m$ as natural numbers and
+        $d$ divides $m+k$ as natural numbers.
+    Then $d$ divides $k$ as natural numbers.
+\end{theorem}
+\begin{proof}
+    Take $a,b\in\naturals$ such that
+        $m=\naturalMul{d}{a}$ and
+        $m+k=\naturalMul{d}{b}$
+        by \auto{spike_phrase_natural_divisibility}.
+    \begin{byCase}
+        \caseOf{$d=\emptyset$.}
+            Then $m=\emptyset$ and $m+k=\emptyset$
+                by \auto{natural_multiplication_zero_left}.
+            Hence $k=\emptyset$ by \auto{num_addition_zero_left}.
+            Follows by \auto{spike15_every_natural_divides_zero,omega_empty}.
+        \caseOf{$d\neq\emptyset$.}
+            $m\subseteq m+k$ by
+                \auto{natural_addition_left_subseteq_sum}.
+            Hence $\naturalMul{d}{a}\subseteq\naturalMul{d}{b}$
+                by \auto.
+            Thus $a\subseteq b$
+                by \auto{spike15_positive_multiplication_reflects_order}.
+            Take a natural number $c$ such that $b=a+c$
+                by \auto{natural_additive_difference}.
+            $m+k=\naturalMul{d}{a}+\naturalMul{d}{c}$
+                by \auto{natural_multiplication_distributive_left}.
+            Hence $m+k=m+\naturalMul{d}{c}$ by \auto.
+            Thus $k=\naturalMul{d}{c}$
+                by \auto{natural_addition_cancel_left,
+                    natural_multiplication_closed}.
+            Follows by \auto{spike_phrase_natural_divisibility}.
+    \end{byCase}
+\end{proof}
+
+\begin{corollary}\label{spike15_common_divisor_sum_iff_difference}
+    Let $d,m,k$ be natural numbers.
+    Then
+        ($d$ divides $m$ as natural numbers and
+            $d$ divides $m+k$ as natural numbers)
+        iff
+        ($d$ divides $m$ as natural numbers and
+            $d$ divides $k$ as natural numbers).
+\end{corollary}
+\begin{proof}
+    Show that if $d$ divides $m$ as natural numbers and
+        $d$ divides $m+k$ as natural numbers,
+        then $d$ divides $m$ as natural numbers and
+            $d$ divides $k$ as natural numbers.
+    \begin{subproof}
+        Assume $d$ divides $m$ as natural numbers and
+            $d$ divides $m+k$ as natural numbers.
+        Follows by \auto{spike15_common_divisor_of_sum_difference}.
+    \end{subproof}
+    Show that if $d$ divides $m$ as natural numbers and
+        $d$ divides $k$ as natural numbers,
+        then $d$ divides $m$ as natural numbers and
+            $d$ divides $m+k$ as natural numbers.
+    \begin{subproof}
+        Assume $d$ divides $m$ as natural numbers and
+            $d$ divides $k$ as natural numbers.
+        Follows by \auto{spike15_common_divisor_divides_sum}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\subsection{The bounded greatest common divisor}
+
+\begin{proposition}\label{spike15_common_divisors_iff}
+    $d\in\spikeNaturalCommonDivisors{m}{n}$ iff
+        $d\in\suc{m\union n}$ and
+        $m$ is a natural number and $n$ is a natural number and
+        $d$ divides $m$ as natural numbers and
+        $d$ divides $n$ as natural numbers.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{spike15_common_divisors}.
+\end{proof}
+
+\begin{proposition}\label{spike15_gcd_is_union_of_common_divisors}
+    $\naturalGcd{m}{n}=
+        \unions{\spikeNaturalCommonDivisors{m}{n}}$.
+\end{proposition}
+\begin{proof}
+    Show that $\naturalGcd{m}{n}
+        \subseteq\unions{\spikeNaturalCommonDivisors{m}{n}}$.
+    \begin{subproof}
+        Follows by
+            \auto{spike_phrase_natural_gcd,spike15_common_divisors,
+                subseteq,unions_iff}.
+    \end{subproof}
+    Show that $\unions{\spikeNaturalCommonDivisors{m}{n}}
+        \subseteq\naturalGcd{m}{n}$.
+    \begin{subproof}
+        Follows by
+            \auto{spike_phrase_natural_gcd,spike15_common_divisors,
+                subseteq,unions_iff}.
+    \end{subproof}
+    Follows by \auto{subseteq_antisymmetric}.
+\end{proof}
+
+\begin{proposition}\label{spike15_common_divisors_symmetric}
+    $\spikeNaturalCommonDivisors{m}{n}
+        =\spikeNaturalCommonDivisors{n}{m}$.
+\end{proposition}
+\begin{proof}
+    $m\union n=n\union m$ by \auto{union_comm}.
+    Follows by
+        \auto{spike15_common_divisors_iff,setext}.
+\end{proof}
+
+\begin{proposition}\label{spike15_natural_gcd_symmetric}
+    $\naturalGcd{m}{n}=\naturalGcd{n}{m}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{spike15_gcd_is_union_of_common_divisors,
+            spike15_common_divisors_symmetric}.
+\end{proof}
+
+\begin{proposition}\label{spike15_common_divisor_in_bounded_set}
+    Let $d,m,n$ be natural numbers.
+    Suppose $m\neq\emptyset$ and
+        $d$ divides $m$ as natural numbers and
+        $d$ divides $n$ as natural numbers.
+    Then $d\in\spikeNaturalCommonDivisors{m}{n}$.
+\end{proposition}
+\begin{proof}
+    $d\subseteq m$
+        by \auto{spike15_divisor_bounded_by_nonzero_dividend}.
+    $m\subseteq m\union n$ by \auto{union_upper_left}.
+    Hence $d\subseteq m\union n$ by \auto{subseteq_transitive}.
+    $d$ and $m\union n$ are ordinals
+        by \auto{natural_number_is_ordinal,
+            union_of_two_ordinals_is_ordinal}.
+    Hence $d\in m\union n$ or $d=m\union n$
+        by \auto{ordinal_subseteq_implies_elem_or_eq}.
+    Thus $d\in\suc{m\union n}$ by \auto{suc_iff}.
+    Follows by \auto{spike15_common_divisors_iff}.
+\end{proof}
+
+\begin{proposition}\label{spike15_natural_gcd_zero_zero}
+    $\naturalGcd{\emptyset}{\emptyset}=\emptyset$.
+\end{proposition}
+\begin{proof}
+    Show that $\naturalGcd{\emptyset}{\emptyset}\subseteq\emptyset$.
+    \begin{subproof}
+        Follows by
+            \auto{spike15_gcd_is_union_of_common_divisors,
+                spike15_common_divisors_iff,subseteq,unions_iff,
+                union_emptyset,suc_iff,emptyset}.
+    \end{subproof}
+    Follows by \auto{subseteq_emptyset_iff}.
+\end{proof}
+
+\begin{proposition}\label{spike15_natural_gcd_positive_zero}
+    Let $m$ be a natural number.
+    Suppose $m\neq\emptyset$.
+    Then $\naturalGcd{m}{\emptyset}=m$.
+\end{proposition}
+\begin{proof}
+    Let $C=\spikeNaturalCommonDivisors{m}{\emptyset}$.
+    Show that for every $x\in\unions{C}$ we have $x\in m$.
+    \begin{subproof}
+        Fix $x\in\unions{C}$.
+        Take $d\in C$ such that $x\in d$ by \auto{unions_iff}.
+        $d$ is a natural number and
+            $d$ divides $m$ as natural numbers
+            by \auto{spike15_common_divisors_iff,
+                spike_phrase_natural_divisibility}.
+        Hence $d\subseteq m$
+            by \auto{spike15_divisor_bounded_by_nonzero_dividend}.
+        Follows by \auto{subseteq}.
+    \end{subproof}
+    Hence $\unions{C}\subseteq m$ by \auto{subseteq}.
+    $\emptyset$ is a natural number by \auto{omega_empty}.
+    $m$ divides $m$ as natural numbers
+        by \auto{spike15_natural_divides_itself}.
+    $m$ divides $\emptyset$ as natural numbers
+        by \auto{spike15_every_natural_divides_zero}.
+    Hence $m\in C$
+        by \auto{spike15_common_divisor_in_bounded_set}.
+    Thus $m\subseteq\unions{C}$ by \auto{subseteq,unions_iff}.
+    Hence $\unions{C}=m$ by \auto{subseteq_antisymmetric}.
+    Follows by
+        \auto{spike15_gcd_is_union_of_common_divisors}.
+\end{proof}
+
+\begin{theorem}\label{spike15_natural_gcd_zero_right}
+    Let $m$ be a natural number.
+    Then $\naturalGcd{m}{\emptyset}=m$.
+\end{theorem}
+\begin{proof}
+    \begin{byCase}
+        \caseOf{$m=\emptyset$.}
+            Follows by \auto{spike15_natural_gcd_zero_zero}.
+        \caseOf{$m\neq\emptyset$.}
+            Follows by \auto{spike15_natural_gcd_positive_zero}.
+    \end{byCase}
+\end{proof}
+
+\begin{corollary}\label{spike15_natural_gcd_zero_left}
+    Let $n$ be a natural number.
+    Then $\naturalGcd{\emptyset}{n}=n$.
+\end{corollary}
+\begin{proof}
+    Follows by
+        \auto{spike15_natural_gcd_symmetric,
+            spike15_natural_gcd_zero_right}.
+\end{proof}
+
+\begin{theorem}\label{spike15_common_divisors_subtract_sum}
+    Let $m,k$ be natural numbers.
+    Suppose $m\neq\emptyset$.
+    Then $\spikeNaturalCommonDivisors{m}{m+k}
+        =\spikeNaturalCommonDivisors{m}{k}$.
+\end{theorem}
+\begin{proof}
+    $m+k$ is a natural number by \auto{num_addition_on_naturals}.
+    Show that for every
+        $d\in\spikeNaturalCommonDivisors{m}{m+k}$ we have
+        $d\in\spikeNaturalCommonDivisors{m}{k}$.
+    \begin{subproof}
+        Fix $d\in\spikeNaturalCommonDivisors{m}{m+k}$.
+        Then $d$ is a natural number and
+            $d$ divides $m$ as natural numbers and
+            $d$ divides $m+k$ as natural numbers
+            by \auto{spike15_common_divisors_iff,
+                spike_phrase_natural_divisibility}.
+        Hence $d$ divides $k$ as natural numbers
+            by \auto{spike15_common_divisor_of_sum_difference}.
+        Follows by
+            \auto{spike15_common_divisor_in_bounded_set}.
+    \end{subproof}
+    Hence $\spikeNaturalCommonDivisors{m}{m+k}
+        \subseteq\spikeNaturalCommonDivisors{m}{k}$
+        by \auto{subseteq}.
+    Show that for every
+        $d\in\spikeNaturalCommonDivisors{m}{k}$ we have
+        $d\in\spikeNaturalCommonDivisors{m}{m+k}$.
+    \begin{subproof}
+        Fix $d\in\spikeNaturalCommonDivisors{m}{k}$.
+        Then $d$ is a natural number and
+            $d$ divides $m$ as natural numbers and
+            $d$ divides $k$ as natural numbers
+            by \auto{spike15_common_divisors_iff,
+                spike_phrase_natural_divisibility}.
+        Hence $d$ divides $m+k$ as natural numbers
+            by \auto{spike15_common_divisor_divides_sum}.
+        Follows by
+            \auto{spike15_common_divisor_in_bounded_set}.
+    \end{subproof}
+    Hence $\spikeNaturalCommonDivisors{m}{k}
+        \subseteq\spikeNaturalCommonDivisors{m}{m+k}$
+        by \auto{subseteq}.
+    Follows by \auto{subseteq_antisymmetric}.
+\end{proof}
+
+\begin{corollary}\label{spike15_natural_gcd_subtract_sum}
+    Let $m,k$ be natural numbers.
+    Suppose $m\neq\emptyset$.
+    Then $\naturalGcd{m}{m+k}=\naturalGcd{m}{k}$.
+\end{corollary}
+\begin{proof}
+    Follows by
+        \auto{spike15_gcd_is_union_of_common_divisors,
+            spike15_common_divisors_subtract_sum}.
+\end{proof}
+
+\subsection{The divisibility universal property}
+
+\begin{definition}\label{spike15_gcd_good_pairs}
+    $\spikeNaturalGcdGoodPairs=
+        \{p\in\naturals\times\naturals\mid
+            \text{$\naturalGcd{\fst{p}}{\snd{p}}$ divides $\fst{p}$
+                as natural numbers and
+                $\naturalGcd{\fst{p}}{\snd{p}}$ divides $\snd{p}$
+                as natural numbers and
+                for every $d\in\naturals$ we have
+                ($d$ divides $\naturalGcd{\fst{p}}{\snd{p}}$
+                    as natural numbers iff
+                 $d$ divides $\fst{p}$ as natural numbers and
+                 $d$ divides $\snd{p}$ as natural numbers)}\}$.
+\end{definition}
+
+\begin{proposition}\label{spike15_gcd_good_pair_iff}
+    $(m,n)\in\spikeNaturalGcdGoodPairs$ iff
+        $m$ is a natural number and $n$ is a natural number and
+        $\naturalGcd{m}{n}$ divides $m$ as natural numbers and
+        $\naturalGcd{m}{n}$ divides $n$ as natural numbers and
+        for every $d\in\naturals$ we have
+            ($d$ divides $\naturalGcd{m}{n}$ as natural numbers iff
+             $d$ divides $m$ as natural numbers and
+             $d$ divides $n$ as natural numbers).
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{spike15_gcd_good_pairs,times_tuple_intro,
+            times_tuple_elim,pair_eq_iff}.
+\end{proof}
+
+\begin{proposition}\label{spike15_gcd_good_pair_zero_right}
+    Let $m$ be a natural number.
+    Then $(m,\emptyset)\in\spikeNaturalGcdGoodPairs$.
+\end{proposition}
+\begin{proof}
+    $\emptyset$ is a natural number by \auto{omega_empty}.
+    $\naturalGcd{m}{\emptyset}=m$
+        by \auto{spike15_natural_gcd_zero_right}.
+    $m$ divides $m$ as natural numbers
+        by \auto{spike15_natural_divides_itself}.
+    $m$ divides $\emptyset$ as natural numbers
+        by \auto{spike15_every_natural_divides_zero}.
+    Show that for every $d\in\naturals$ we have
+        ($d$ divides $\naturalGcd{m}{\emptyset}$ as natural numbers iff
+         $d$ divides $m$ as natural numbers and
+         $d$ divides $\emptyset$ as natural numbers).
+    \begin{subproof}
+        Fix $d\in\naturals$.
+        $d$ divides $\emptyset$ as natural numbers
+            by \auto{spike15_every_natural_divides_zero}.
+        Follows by \auto.
+    \end{subproof}
+    Follows by \auto{spike15_gcd_good_pair_iff}.
+\end{proof}
+
+\begin{corollary}\label{spike15_gcd_good_pair_zero_left}
+    Let $n$ be a natural number.
+    Then $(\emptyset,n)\in\spikeNaturalGcdGoodPairs$.
+\end{corollary}
+\begin{proof}
+    $\emptyset$ is a natural number by \auto{omega_empty}.
+    $\naturalGcd{\emptyset}{n}=n$
+        by \auto{spike15_natural_gcd_zero_left}.
+    $n$ divides $n$ as natural numbers
+        by \auto{spike15_natural_divides_itself}.
+    $n$ divides $\emptyset$ as natural numbers
+        by \auto{spike15_every_natural_divides_zero}.
+    Show that for every $d\in\naturals$ we have
+        ($d$ divides $\naturalGcd{\emptyset}{n}$ as natural numbers iff
+         $d$ divides $\emptyset$ as natural numbers and
+         $d$ divides $n$ as natural numbers).
+    \begin{subproof}
+        Fix $d\in\naturals$.
+        $d$ divides $\emptyset$ as natural numbers
+            by \auto{spike15_every_natural_divides_zero}.
+        Follows by \auto.
+    \end{subproof}
+    Follows by \auto{spike15_gcd_good_pair_iff}.
+\end{proof}
+
+\begin{proposition}\label{spike15_gcd_good_pair_symmetric}
+    Let $m,n$ be natural numbers.
+    Suppose $(m,n)\in\spikeNaturalGcdGoodPairs$.
+    Then $(n,m)\in\spikeNaturalGcdGoodPairs$.
+\end{proposition}
+\begin{proof}
+    $\naturalGcd{m}{n}=\naturalGcd{n}{m}$
+        by \auto{spike15_natural_gcd_symmetric}.
+    Follows by \auto{spike15_gcd_good_pair_iff}.
+\end{proof}
+
+\begin{theorem}\label{spike15_gcd_good_pair_sum_right}
+    Let $m,k$ be natural numbers.
+    Suppose $m\neq\emptyset$ and
+        $(m,k)\in\spikeNaturalGcdGoodPairs$.
+    Then $(m,m+k)\in\spikeNaturalGcdGoodPairs$.
+\end{theorem}
+\begin{proof}
+    $m+k$ is a natural number by \auto{num_addition_on_naturals}.
+    $\naturalGcd{m}{m+k}=\naturalGcd{m}{k}$
+        by \auto{spike15_natural_gcd_subtract_sum}.
+    $\naturalGcd{m}{k}$ divides $m$ as natural numbers and
+        $\naturalGcd{m}{k}$ divides $k$ as natural numbers
+        by \auto{spike15_gcd_good_pair_iff}.
+    Hence $\naturalGcd{m}{m+k}$ divides $m$ as natural numbers
+        by \auto.
+    Hence $\naturalGcd{m}{m+k}$ is a natural number
+        by \auto{spike_phrase_natural_divisibility}.
+    $\naturalGcd{m}{m+k}$ divides $k$ as natural numbers
+        by \auto.
+    $\naturalGcd{m}{m+k}$ divides $m+k$ as natural numbers
+        by \auto{spike15_common_divisor_divides_sum}.
+    Show that for every $d\in\naturals$ we have
+        ($d$ divides $\naturalGcd{m}{m+k}$ as natural numbers iff
+         $d$ divides $m$ as natural numbers and
+         $d$ divides $m+k$ as natural numbers).
+    \begin{subproof}
+        Fix $d\in\naturals$.
+        ($d$ divides $\naturalGcd{m}{k}$ as natural numbers iff
+         $d$ divides $m$ as natural numbers and
+         $d$ divides $k$ as natural numbers)
+            by \auto{spike15_gcd_good_pair_iff}.
+        ($d$ divides $m$ as natural numbers and
+         $d$ divides $m+k$ as natural numbers)
+            iff
+        ($d$ divides $m$ as natural numbers and
+         $d$ divides $k$ as natural numbers)
+            by \auto{spike15_common_divisor_sum_iff_difference}.
+        Follows by \auto.
+    \end{subproof}
+    Follows by \auto{spike15_gcd_good_pair_iff}.
+\end{proof}
+
+\begin{theorem}\label{spike15_every_natural_pair_is_gcd_good}
+    Let $m,n$ be natural numbers.
+    Then $(m,n)\in\spikeNaturalGcdGoodPairs$.
+\end{theorem}
+\begin{proof}
+    Suppose not.
+    Let $B=\{v\in\naturals\mid
+        \text{there exists $u\in\naturals$ such that
+            $(u,v)\notin\spikeNaturalGcdGoodPairs$}\}$.
+    $n\in B$ by \auto.
+    Hence $B$ is inhabited by \auto.
+    Take $q$ such that $q$ is an \in-minimal element of $B$
+        by \auto{regularity}.
+    Then $q\in B$ and $q\notmeets B$.
+    Hence $q$ is a natural number and
+        there exists $u\in\naturals$ such that
+            $(u,q)\notin\spikeNaturalGcdGoodPairs$ by \auto.
+
+    Let $A=\{u\in\naturals\mid
+        (u,q)\notin\spikeNaturalGcdGoodPairs\}$.
+    $A$ is inhabited by \auto.
+    Take $p$ such that $p$ is an \in-minimal element of $A$
+        by \auto{regularity}.
+    Then $p\in A$ and $p\notmeets A$.
+    Hence $p$ is a natural number and
+        $(p,q)\notin\spikeNaturalGcdGoodPairs$ by \auto.
+
+    Show that $q\neq\emptyset$.
+    \begin{subproof}
+        Suppose $q=\emptyset$.
+        Then $(p,q)\in\spikeNaturalGcdGoodPairs$
+            by \auto{spike15_gcd_good_pair_zero_right}.
+        Contradiction.
+    \end{subproof}
+    Show that $p\neq\emptyset$.
+    \begin{subproof}
+        Suppose $p=\emptyset$.
+        Then $(p,q)\in\spikeNaturalGcdGoodPairs$
+            by \auto{spike15_gcd_good_pair_zero_left}.
+        Contradiction.
+    \end{subproof}
+    $p$ and $q$ are ordinals by \auto{natural_number_is_ordinal}.
+
+    \begin{byCase}
+        \caseOf{$p\subseteq q$.}
+            Take a natural number $k$ such that $q=p+k$
+                by \auto{natural_additive_difference}.
+            $k\in p+k$
+                by \auto{spike15_positive_summand_makes_strict_sum}.
+            Hence $k\in q$ by \auto.
+            Thus $k\notin B$ by \auto{disjoint}.
+            Hence $(p,k)\in\spikeNaturalGcdGoodPairs$
+                by \auto.
+            Thus $(p,p+k)\in\spikeNaturalGcdGoodPairs$
+                by \auto{spike15_gcd_good_pair_sum_right}.
+            Hence $(p,q)\in\spikeNaturalGcdGoodPairs$ by \auto.
+            Contradiction.
+        \caseOf{$\lnot(p\subseteq q)$.}
+            Hence $q\subseteq p$
+                by \auto{ordinal_subseteq_or_subseteq}.
+            Take a natural number $k$ such that $p=q+k$
+                by \auto{natural_additive_difference}.
+            $k\in q+k$
+                by \auto{spike15_positive_summand_makes_strict_sum}.
+            Hence $k\in p$ by \auto.
+            Thus $k\notin A$ by \auto{disjoint}.
+            Hence $(k,q)\in\spikeNaturalGcdGoodPairs$
+                by \auto.
+            Hence $(q,k)\in\spikeNaturalGcdGoodPairs$
+                by \auto{spike15_gcd_good_pair_symmetric}.
+            Thus $(q,q+k)\in\spikeNaturalGcdGoodPairs$
+                by \auto{spike15_gcd_good_pair_sum_right}.
+            Hence $(q,p)\in\spikeNaturalGcdGoodPairs$ by \auto.
+            Thus $(p,q)\in\spikeNaturalGcdGoodPairs$
+                by \auto{spike15_gcd_good_pair_symmetric}.
+            Contradiction.
+    \end{byCase}
+\end{proof}
+
+\begin{theorem}\label{spike15_natural_gcd_common_divisor}
+    Let $m,n$ be natural numbers.
+    Then $\naturalGcd{m}{n}$ divides $m$ as natural numbers and
+        $\naturalGcd{m}{n}$ divides $n$ as natural numbers.
+\end{theorem}
+\begin{proof}
+    $(m,n)\in\spikeNaturalGcdGoodPairs$
+        by \auto{spike15_every_natural_pair_is_gcd_good}.
+    Follows by \auto{spike15_gcd_good_pair_iff}.
+\end{proof}
+
+\begin{theorem}\label{spike15_natural_gcd_universal}
+    Let $d,m,n$ be natural numbers.
+    Then $d$ divides $\naturalGcd{m}{n}$ as natural numbers iff
+        $d$ divides $m$ as natural numbers and
+        $d$ divides $n$ as natural numbers.
+\end{theorem}
+\begin{proof}
+    $(m,n)\in\spikeNaturalGcdGoodPairs$
+        by \auto{spike15_every_natural_pair_is_gcd_good}.
+    Follows by \auto{spike15_gcd_good_pair_iff}.
+\end{proof}
+
+\begin{proposition}\label{spike15_natural_gcd_off_domain}
+    Suppose $m$ is not a natural number or $n$ is not a natural number.
+    Then $\naturalGcd{m}{n}=\emptyset$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{spike_phrase_natural_gcd,subseteq_emptyset_iff,
+            subseteq,unions_iff,emptyset}.
+\end{proof}
+
+\begin{proposition}\label{spike15_coprime_naturals_symmetric}
+    Let $m,n$ be natural numbers.
+    Suppose $m$ is coprime to $n$ as natural numbers.
+    Then $n$ is coprime to $m$ as natural numbers.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{spike_phrase_coprime_naturals,
+            spike15_natural_gcd_symmetric}.
+\end{proof}
+
+\subsection{Prime divisors of products}
+
+\begin{proposition}\label{spike15_divisor_divides_multiple}
+    Let $d,a,b$ be natural numbers.
+    Suppose $d$ divides $a$ as natural numbers.
+    Then $d$ divides $\naturalMul{a}{b}$ as natural numbers.
+\end{proposition}
+\begin{proof}
+    Take a natural number $c$ such that $a=\naturalMul{d}{c}$
+        by \auto{spike_phrase_natural_divisibility}.
+    $\naturalMul{c}{b}$ is a natural number
+        by \auto{natural_multiplication_closed}.
+    $\naturalMul{a}{b}=\naturalMul{d}{\naturalMul{c}{b}}$
+        by \auto{natural_multiplication_associative}.
+    $\naturalMul{a}{b}$ is a natural number
+        by \auto{natural_multiplication_closed}.
+    Follows by \auto{spike_phrase_natural_divisibility}.
+\end{proof}
+
+\begin{theorem}\label{spike15_natural_division_algorithm}
+    Let $a,b$ be natural numbers.
+    Suppose $b\neq\emptyset$.
+    Then there exist $q,r\in\naturals$ such that
+        $a=\naturalMul{b}{q}+r$ and $r\in b$.
+\end{theorem}
+\begin{proof}
+    Let $C=\{n\in\naturals\mid
+        \text{there exist $q,r\in\naturals$ such that
+            $n=\naturalMul{b}{q}+r$ and $r\in b$}\}$.
+    Show that $\emptyset\in C$.
+    \begin{subproof}
+        $\emptyset\in b$ by \auto{natural_nonzero_contains_zero}.
+        $\naturalMul{b}{\emptyset}=\emptyset$
+            by \auto{natural_multiplication_zero_right}.
+        $\emptyset+\emptyset=\emptyset$
+            by \auto{num_addition_zero_right,omega_empty}.
+        Follows by \auto{omega_empty}.
+    \end{subproof}
+    Show that for every $n\in C$ we have $\suc{n}\in C$.
+    \begin{subproof}
+        Fix $n\in C$.
+        Then $n$ is a natural number.
+        Take $q,r\in\naturals$ such that
+            $n=\naturalMul{b}{q}+r$ and $r\in b$ by \auto.
+        $\naturalMul{b}{q}$ is a natural number
+            by \auto{natural_multiplication_closed}.
+        $\suc{n}=\naturalMul{b}{q}+\suc{r}$
+            by \auto{num_addition_successor_right}.
+        $r$ and $b$ are ordinals by \auto{natural_number_is_ordinal}.
+        Hence $\suc{r}\subseteq b$ by \auto{ordinal_suc_subseteq}.
+        $\suc{r}$ is a natural number by \auto{omega_successor}.
+        $\suc{r}$ is an ordinal by \auto{natural_number_is_ordinal}.
+        \begin{byCase}
+            \caseOf{$\suc{r}=b$.}
+                $\suc{q}$ is a natural number by \auto{omega_successor}.
+                $\naturalMul{b}{\suc{q}}
+                    =\naturalMul{b}{q}+b$
+                    by \auto{natural_multiplication_successor_right}.
+                $\naturalMul{b}{\suc{q}}$ is a natural number
+                    by \auto{natural_multiplication_closed}.
+                $\naturalMul{b}{\suc{q}}+\emptyset
+                    =\naturalMul{b}{\suc{q}}$
+                    by \auto{num_addition_zero_right}.
+                Hence $\suc{n}=\naturalMul{b}{\suc{q}}+\emptyset$
+                    by \auto.
+                $\emptyset\in b$
+                    by \auto{natural_nonzero_contains_zero}.
+                Follows by \auto{omega_empty}.
+            \caseOf{$\suc{r}\neq b$.}
+                Hence $\suc{r}\in b$
+                    by \auto{ordinal_subseteq_implies_elem_or_eq}.
+                Follows by \auto{omega_successor}.
+        \end{byCase}
+    \end{subproof}
+    Hence $C$ is an inductive set by \auto{inductive_set}.
+    Hence every natural number is an element of $C$
+        by \auto{omega_minimal}.
+    Thus $a\in C$.
+    Follows by \auto.
+\end{proof}
+
+\begin{definition}\label{spike15_positive_multiplier_set}
+    $\spikePositiveMultipliers{d}{a}=
+        \{t\in\naturals\mid
+            \text{$t\neq\emptyset$ and
+                $d$ divides $\naturalMul{a}{t}$ as natural numbers}\}$.
+\end{definition}
+
+\begin{proposition}\label{spike15_positive_multiplier_iff}
+    $t\in\spikePositiveMultipliers{d}{a}$ iff
+        $t$ is a natural number and $t\neq\emptyset$ and
+        $d$ divides $\naturalMul{a}{t}$ as natural numbers.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{spike15_positive_multiplier_set}.
+\end{proof}
+
+\begin{theorem}\label{spike15_least_positive_multiplier_divides_all}
+    Let $d,a,r$ be natural numbers.
+    Suppose $r$ is an \in-minimal element of
+        $\spikePositiveMultipliers{d}{a}$.
+    Then for every $t\in\spikePositiveMultipliers{d}{a}$ we have
+        $r$ divides $t$ as natural numbers.
+\end{theorem}
+\begin{proof}
+    $r\in\spikePositiveMultipliers{d}{a}$ and
+        $r\notmeets\spikePositiveMultipliers{d}{a}$.
+    Hence $r\neq\emptyset$ and
+        $d$ divides $\naturalMul{a}{r}$ as natural numbers
+        by \auto{spike15_positive_multiplier_iff}.
+    Fix $t\in\spikePositiveMultipliers{d}{a}$.
+    Then $t$ is a natural number and $t\neq\emptyset$ and
+        $d$ divides $\naturalMul{a}{t}$ as natural numbers
+        by \auto{spike15_positive_multiplier_iff}.
+    Take $q,s\in\naturals$ such that
+        $t=\naturalMul{r}{q}+s$ and $s\in r$
+        by \auto{spike15_natural_division_algorithm}.
+
+    $d$ divides $\naturalMul{\naturalMul{a}{r}}{q}$ as natural numbers
+        by \auto{spike15_divisor_divides_multiple,
+            natural_multiplication_closed}.
+    $\naturalMul{\naturalMul{a}{r}}{q}
+        =\naturalMul{a}{\naturalMul{r}{q}}$
+        by \auto{natural_multiplication_associative}.
+    Hence $d$ divides $\naturalMul{a}{\naturalMul{r}{q}}$
+        as natural numbers by \auto.
+    $\naturalMul{r}{q}$ is a natural number
+        by \auto{natural_multiplication_closed}.
+    $\naturalMul{a}{t}
+        =\naturalMul{a}{\naturalMul{r}{q}+s}$ by \auto.
+    $\naturalMul{a}{\naturalMul{r}{q}+s}
+        =\naturalMul{a}{\naturalMul{r}{q}}+\naturalMul{a}{s}$
+        by \auto{natural_multiplication_distributive_left}.
+    $\naturalMul{a}{t}
+        =\naturalMul{a}{\naturalMul{r}{q}}+\naturalMul{a}{s}$
+        by \auto.
+    Hence $d$ divides $\naturalMul{a}{s}$ as natural numbers
+        by \auto{spike15_common_divisor_of_sum_difference,
+            natural_multiplication_closed}.
+
+    Show that $s=\emptyset$.
+    \begin{subproof}
+        Suppose not.
+        Hence $s\in\spikePositiveMultipliers{d}{a}$
+            by \auto{spike15_positive_multiplier_iff}.
+        Contradiction by \auto{disjoint}.
+    \end{subproof}
+    Hence $t=\naturalMul{r}{q}$
+        by \auto{num_addition_zero_right}.
+    Follows by \auto{spike_phrase_natural_divisibility}.
+\end{proof}
+
+\begin{theorem}\label{spike15_prime_divides_natural_product}
+    Let $p,a,b$ be natural numbers.
+    Suppose $p$ is a prime natural number and
+        $p$ divides $\naturalMul{a}{b}$ as natural numbers.
+    Then $p$ divides $a$ as natural numbers or
+        $p$ divides $b$ as natural numbers.
+\end{theorem}
+\begin{proof}
+    \begin{byCase}
+        \caseOf{$p$ divides $a$ as natural numbers.}
+            Follows.
+        \caseOf{$p$ does not divide $a$ as natural numbers.}
+            \begin{byCase}
+                \caseOf{$b=\emptyset$.}
+                    Hence $p$ divides $b$ as natural numbers
+                        by \auto{spike15_every_natural_divides_zero}.
+                    Follows.
+                \caseOf{$b\neq\emptyset$.}
+                    Show that $p\neq\emptyset$.
+                    \begin{subproof}
+                        Suppose not.
+                        $\naturalOne\in p$
+                            by \auto{spike_phrase_prime_natural}.
+                        Contradiction by \auto{emptyset}.
+                    \end{subproof}
+
+                    Let $S=\spikePositiveMultipliers{p}{a}$.
+                    $p$ divides $p$ as natural numbers
+                        by \auto{spike15_natural_divides_itself}.
+                    Hence $p$ divides $\naturalMul{p}{a}$
+                        as natural numbers
+                        by \auto{spike15_divisor_divides_multiple}.
+                    $\naturalMul{p}{a}=\naturalMul{a}{p}$
+                        by \auto{natural_multiplication_commutative}.
+                    Hence $p$ divides $\naturalMul{a}{p}$
+                        as natural numbers by \auto.
+                    Thus $p\in S$
+                        by \auto{spike15_positive_multiplier_iff}.
+                    Hence $S$ is inhabited by \auto.
+                    $b\in S$ by
+                        \auto{spike15_positive_multiplier_iff}.
+
+                    Take $r$ such that $r$ is an \in-minimal element of $S$
+                        by \auto{regularity}.
+                    $r\in S$ and $r\notmeets S$.
+                    Hence $r$ is a natural number and $r\neq\emptyset$
+                        by \auto{spike15_positive_multiplier_iff}.
+                    $r$ divides $p$ as natural numbers and
+                        $r$ divides $b$ as natural numbers
+                        by \auto{spike15_least_positive_multiplier_divides_all}.
+                    Hence $r=\naturalOne$ or $r=p$
+                        by \auto{spike_phrase_prime_natural}.
+
+                    \begin{byCase}
+                        \caseOf{$r=\naturalOne$.}
+                            $p$ divides $\naturalMul{a}{r}$
+                                as natural numbers
+                                by \auto{spike15_positive_multiplier_iff}.
+                            $\naturalMul{a}{r}=a$ by
+                                \auto{spike_phrase_natural_one,
+                                    natural_multiplication_one_right}.
+                            Hence $p$ divides $a$ as natural numbers
+                                by \auto.
+                            Contradiction.
+                        \caseOf{$r\neq\naturalOne$.}
+                            Hence $r=p$ by \auto.
+                            Thus $p$ divides $b$ as natural numbers
+                                by \auto.
+                            Follows.
+                    \end{byCase}
+            \end{byCase}
+    \end{byCase}
+\end{proof}

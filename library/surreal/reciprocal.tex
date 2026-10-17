@@ -1,0 +1,2332 @@
+\import{surreal/dyadic.tex}
+\import{recursion/natural.tex}
+\import{set/inductive-definition.tex}
+
+\section{Reciprocals and division}
+
+\subsection{Finite reciprocal approximations}
+
+For a positive surreal $x$, Conway's reciprocal construction repeatedly
+improves lower and upper candidates.  If $u$ is an earlier positive option of
+$x$ whose reciprocal has already been constructed, the update based at $u$
+is the following ring expression.
+
+\begin{definition}\label{surreal_reciprocal_positive_left}
+    $\surrealReciprocalPositiveLeft{x}=
+        \{u\in\surrealLeft{x}\mid
+            \surrealLt{\surrealZero}{u}\}$.
+\end{definition}
+
+\begin{definition}\label{surreal_reciprocal_update}
+    $\surrealReciprocalUpdate{y}{x}{u}{v}=
+        \surrealMul{
+            \surrealAdd{\surrealOne}{
+                \surrealMul{\surrealAdd{u}{\surrealNeg{x}}}{y}}}{v}$.
+\end{definition}
+
+\begin{definition}\label{surreal_reciprocal_update_set}
+    $\surrealReciprocalUpdateSetOp:
+        \Set\to\Set\to\Set\to(\Set\to\Set)\to\Set
+        =\fun{Y,x,X:\Set}{
+                    \fun{g:\Set\to\Set}{
+                        \{\surrealReciprocalUpdate
+                            {\fst{p}}{x}{\snd{p}}{\Apply{g}{\snd{p}}}
+                            \mid p\in Y\times X\}}}$.
+\end{definition}
+
+\begin{proposition}\label{surreal_reciprocal_update_set_iff}
+    $\forall a,x,b:\Set.\ \forall g:\Set\to\Set.\ \forall z:\Set.
+        z\in\Apply{\surrealReciprocalUpdateSetOp}{a,x,b,g}
+        \iff
+        (\exists w,u:\Set.\ w\in a\land u\in b\land
+            z=\surrealReciprocalUpdate{w}{x}{u}{\Apply{g}{u}})$.
+\end{proposition}
+\begin{proof}
+    Fix $a,x,b,g,z$.
+    Show that if
+        $z\in\Apply{\surrealReciprocalUpdateSetOp}{a,x,b,g}$, then
+        there exist $w,u$ such that $w\in a$ and $u\in b$ and
+            $z=\surrealReciprocalUpdate{w}{x}{u}{\Apply{g}{u}}$.
+    \begin{subproof}
+        Assume
+            $z\in\Apply{\surrealReciprocalUpdateSetOp}{a,x,b,g}$.
+        Take $w,u$ such that $w\in a$ and $u\in b$ and
+            $z=\surrealReciprocalUpdate{w}{x}{u}{\Apply{g}{u}}$ by
+            \auto{surreal_reciprocal_update_set,times_elem_is_tuple,fst_eq,snd_eq}.
+        Follows by \auto.
+    \end{subproof}
+    Show that if there exist $w,u$ such that
+        $w\in a$ and $u\in b$ and
+        $z=\surrealReciprocalUpdate{w}{x}{u}{\Apply{g}{u}}$, then
+        $z\in\Apply{\surrealReciprocalUpdateSetOp}{a,x,b,g}$.
+    \begin{subproof}
+        Assume that there exist $w,u$ such that
+            $w\in a$ and $u\in b$ and
+            $z=\surrealReciprocalUpdate{w}{x}{u}{\Apply{g}{u}}$.
+        Take $w,u$ such that $w\in a$ and $u\in b$ and
+            $z=\surrealReciprocalUpdate{w}{x}{u}{\Apply{g}{u}}$.
+        $w\in a$.
+        $u\in b$.
+        $(w,u)\in a\times b$ by \obv{times_tuple_intro}.
+        $\fst{(w,u)}=w$ and $\snd{(w,u)}=u$ by
+            \obv{fst_eq,snd_eq}.
+        Follows by \auto{surreal_reciprocal_update_set}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{proposition}\label{surreal_reciprocal_update_set_extensionality}
+    $\forall a,x,b:\Set.\ \forall g,h:\Set\to\Set.
+        (\forall u:\Set.\ u\in b\implies\Apply{g}{u}=\Apply{h}{u})
+        \implies
+        \Apply{\surrealReciprocalUpdateSetOp}{a,x,b,g}
+        =\Apply{\surrealReciprocalUpdateSetOp}{a,x,b,h}$.
+\end{proposition}
+\begin{proof}
+    Fix $a,x,b,g,h$.
+    Assume $\forall u:\Set.\ u\in b\implies
+        \Apply{g}{u}=\Apply{h}{u}$.
+    Show that for every $p\in a\times b$ we have
+        $\surrealReciprocalUpdate
+            {\fst{p}}{x}{\snd{p}}{\Apply{g}{\snd{p}}}
+        =\surrealReciprocalUpdate
+            {\fst{p}}{x}{\snd{p}}{\Apply{h}{\snd{p}}}$.
+    \begin{subproof}
+        Fix $p\in a\times b$.
+        $\snd{p}\in b$ by \auto{times_elem_is_tuple,snd_eq}.
+        Hence $\Apply{g}{\snd{p}}=\Apply{h}{\snd{p}}$.
+    \end{subproof}
+    Follows by
+        \auto{surreal_reciprocal_update_set,logical_replacement_extensionality}.
+\end{proof}
+
+\begin{definition}\label{surreal_reciprocal_approximation_step}
+    $\surrealReciprocalApproxStepOp:
+        \Set\to(\Set\to\Set)\to\Set\to\Set\to\Set
+        =\fun{x:\Set}{
+            \fun{g:\Set\to\Set}{
+                \fun{n,p:\Set}{
+                        (\fst{p}
+                            \union
+                            \Apply{\surrealReciprocalUpdateSetOp}{\fst{p},x,\surrealRight{x},g}
+                            \union
+                            \Apply{\surrealReciprocalUpdateSetOp}{\snd{p},x,\surrealReciprocalPositiveLeft{x},g},
+                         \snd{p}
+                            \union
+                            \Apply{\surrealReciprocalUpdateSetOp}{\fst{p},x,\surrealReciprocalPositiveLeft{x},g}
+                            \union
+                            \Apply{\surrealReciprocalUpdateSetOp}{\snd{p},x,\surrealRight{x},g})}}}$.
+\end{definition}
+
+\begin{definition}\label{surreal_reciprocal_approximation}
+    $\surrealReciprocalApproxOp:
+        \Set\to(\Set\to\Set)\to\Set\to\Set
+        =\fun{x:\Set}{
+            \fun{g:\Set\to\Set}{
+                \fun{n:\Set}{
+                    \Apply{\naturalRecOp}
+                        {
+                                (\{\surrealZero\},\emptyset),
+                            \Apply{\surrealReciprocalApproxStepOp}{x,g},n}}}}$.
+\end{definition}
+
+\begin{definition}\label{surreal_reciprocal_lower_approximation}
+    $\surrealReciprocalLowerApproxOp:
+        \Set\to(\Set\to\Set)\to\Set\to\Set
+        =\fun{x:\Set}{
+            \fun{g:\Set\to\Set}{
+                \fun{n:\Set}{
+                    \fst{\Apply{\surrealReciprocalApproxOp}{x,g,n}}}}}$.
+\end{definition}
+
+\begin{definition}\label{surreal_reciprocal_upper_approximation}
+    $\surrealReciprocalUpperApproxOp:
+        \Set\to(\Set\to\Set)\to\Set\to\Set
+        =\fun{x:\Set}{
+            \fun{g:\Set\to\Set}{
+                \fun{n:\Set}{
+                    \snd{\Apply{\surrealReciprocalApproxOp}{x,g,n}}}}}$.
+\end{definition}
+
+\begin{proposition}\label{surreal_reciprocal_approximation_zero}
+    $\forall x:\Set.\ \forall g:\Set\to\Set.
+        \Apply{\surrealReciprocalApproxOp}
+            {x,g,\emptyset}
+        =(\{\surrealZero\},\emptyset)$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \obv{surreal_reciprocal_approximation,natural_recursion_zero}.
+\end{proof}
+
+\begin{proposition}\label{surreal_reciprocal_approximation_successor}
+    $\forall x:\Set.\ \forall g:\Set\to\Set.\ \forall n:\Set.
+        n\in\naturals\implies
+        \Apply{\surrealReciprocalApproxOp}{x,g,\suc{n}}
+        =\Apply{\surrealReciprocalApproxStepOp}{x,g,n,
+                \Apply{\surrealReciprocalApproxOp}{x,g,n}}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{surreal_reciprocal_approximation,natural_recursion_successor}.
+\end{proof}
+
+\begin{definition}\label{surreal_reciprocal_lower_options}
+    $\surrealReciprocalLowerOptionsOp:
+        \Set\to(\Set\to\Set)\to\Set
+        =\fun{x:\Set}{
+            \fun{g:\Set\to\Set}{
+                \unions{\{\Apply{\surrealReciprocalLowerApproxOp}{x,g,n}
+                    \mid n\in\naturals\}}}}$.
+\end{definition}
+
+\begin{definition}\label{surreal_reciprocal_upper_options}
+    $\surrealReciprocalUpperOptionsOp:
+        \Set\to(\Set\to\Set)\to\Set
+        =\fun{x:\Set}{
+            \fun{g:\Set\to\Set}{
+                \unions{\{\Apply{\surrealReciprocalUpperApproxOp}{x,g,n}
+                    \mid n\in\naturals\}}}}$.
+\end{definition}
+
+\subsection{The reciprocal update invariant}
+
+\begin{lemma}\label{surreal_subtraction_negative}
+    Suppose $\surreal{a}$ and $\surreal{b}$ and $\surrealLt{a}{b}$.
+    Then $\surrealLt{\surrealAdd{a}{\surrealNeg{b}}}{\surrealZero}$.
+\end{lemma}
+\begin{proof}
+    $\surrealLt{
+        \surrealAdd{a}{\surrealNeg{b}}}{
+        \surrealAdd{b}{\surrealNeg{b}}}$
+        by \obv{surreal_add_lt_left,surreal_negation_is_surreal}.
+    Follows by \obv{surreal_add_inverse_right}.
+\end{proof}
+
+\begin{lemma}\label{surreal_subtraction_positive}
+    Suppose $\surreal{a}$ and $\surreal{b}$ and $\surrealLt{a}{b}$.
+    Then $\surrealLt{\surrealZero}{
+        \surrealAdd{b}{\surrealNeg{a}}}$.
+\end{lemma}
+\begin{proof}
+    $\surrealLt{
+        \surrealAdd{a}{\surrealNeg{a}}}{
+        \surrealAdd{b}{\surrealNeg{a}}}$
+        by \obv{surreal_add_lt_left,surreal_negation_is_surreal}.
+    Follows by \obv{surreal_add_inverse_right}.
+\end{proof}
+
+\begin{lemma}\label{surreal_subtraction_negative_elim}
+    Suppose $\surreal{a}$ and $\surreal{b}$.
+    Suppose $\surrealLt{\surrealAdd{a}{\surrealNeg{b}}}{\surrealZero}$.
+    Then $\surrealLt{a}{b}$.
+\end{lemma}
+\begin{proof}
+    Follows by
+        \auto{surreal_subtract_lt_add,surreal_add_zero_left,empty_surreal}.
+\end{proof}
+
+\begin{lemma}\label{surreal_subtraction_positive_elim}
+    Suppose $\surreal{a}$ and $\surreal{b}$.
+    Suppose $\surrealLt{\surrealZero}{
+        \surrealAdd{a}{\surrealNeg{b}}}$.
+    Then $\surrealLt{b}{a}$.
+\end{lemma}
+\begin{proof}
+    Follows by
+        \auto{surreal_lt_subtract_add,surreal_add_zero_left,empty_surreal}.
+\end{proof}
+
+\begin{lemma}\label{surreal_reciprocal_of_positive_is_positive}
+    Suppose $\surreal{x}$ and $\surreal{v}$.
+    Suppose $\surrealLt{\surrealZero}{x}$ and
+        $\surrealMul{x}{v}=\surrealOne$.
+    Then $\surrealLt{\surrealZero}{v}$.
+\end{lemma}
+\begin{proof}
+    $\surrealLt{\surrealZero}{v}$ or $v=\surrealZero$ or
+        $\surrealLt{v}{\surrealZero}$
+        by \obv{surreal_lt_trichotomy,empty_surreal}.
+    \begin{byCase}
+        \caseOf{$\surrealLt{\surrealZero}{v}$.}
+            Follows.
+        \caseOf{not $\surrealLt{\surrealZero}{v}$.}
+            \begin{byCase}
+                \caseOf{$v=\surrealZero$.}
+                    $\surrealMul{x}{v}=\surrealZero$
+                        by \auto{surreal_mul_zero_right}.
+                    $\surrealZero\neq\surrealOne$
+                        by \obv{surreal_zero_lt_one,surreal_lt_irreflexive}.
+                    Contradiction.
+                \caseOf{$v\neq\surrealZero$.}
+                    Hence $\surrealLt{v}{\surrealZero}$.
+                    $\surrealLt{\surrealMul{x}{v}}{\surrealZero}$
+                        by \obv{surreal_mul_pos_neg}.
+                    Hence $\surrealLt{\surrealOne}{\surrealZero}$.
+                    Contradiction by
+                        \obv{surreal_zero_lt_one,surreal_lt_asymmetric,empty_surreal,surreal_one_is_surreal}.
+            \end{byCase}
+    \end{byCase}
+\end{proof}
+
+\begin{lemma}\label{surreal_reciprocal_update_identity}
+    Suppose $\surreal{x}$ and $\surreal{u}$ and $\surreal{v}$ and
+        $\surreal{y}$.
+    Suppose $\surrealMul{u}{v}=\surrealOne$.
+    Let $y'=\surrealReciprocalUpdate{y}{x}{u}{v}$.
+    Then
+        $\surrealAdd{\surrealOne}{\surrealNeg{\surrealMul{x}{y'}}}
+        =\surrealMul{
+            \surrealMul{
+                \surrealAdd{\surrealOne}{
+                    \surrealNeg{\surrealMul{x}{y}}}}
+                {\surrealAdd{u}{\surrealNeg{x}}}}{v}$.
+\end{lemma}
+\begin{proof}
+    Let $d=\surrealAdd{u}{\surrealNeg{x}}$.
+    $\surreal{d}$ and $\surreal{y'}$
+        by \auto{surreal_reciprocal_update,surreal_add_is_surreal,surreal_mul_is_surreal,surreal_negation_is_surreal}.
+    $y'=\surrealMul{
+        \surrealAdd{\surrealOne}{\surrealMul{d}{y}}}{v}$
+        by \auto{surreal_reciprocal_update}.
+    $\surrealMul{x}{\surrealAdd{\surrealOne}{\surrealMul{d}{y}}}
+        =\surrealAdd{x}{\surrealMul{\surrealMul{x}{d}}{y}}$
+        by \auto{surreal_mul_distributive_left,surreal_mul_one_right,surreal_mul_associative,surreal_mul_is_surreal}.
+    Hence $\surrealMul{x}{y'}=
+        \surrealAdd{\surrealMul{x}{v}}{
+            \surrealMul{
+                \surrealMul{\surrealMul{x}{d}}{y}}{v}}$
+        by \auto{surreal_mul_distributive_right,surreal_mul_associative,surreal_mul_is_surreal,surreal_add_is_surreal}.
+    Hence
+        $\surrealAdd{\surrealOne}{\surrealNeg{\surrealMul{x}{y'}}}
+        =\surrealAdd{
+            \surrealAdd{\surrealOne}{
+                \surrealNeg{\surrealMul{x}{v}}}}{
+            \surrealNeg{
+                \surrealMul{
+                    \surrealMul{\surrealMul{x}{d}}{y}}{v}}}$
+        by \auto{surreal_negation_additive,surreal_add_associative,surreal_mul_is_surreal,surreal_add_is_surreal,surreal_negation_is_surreal}.
+    $\surrealMul{d}{v}=
+        \surrealAdd{\surrealOne}{
+            \surrealNeg{\surrealMul{x}{v}}}$
+        by \auto{surreal_mul_distributive_right,surreal_mul_neg_left,surreal_mul_neg_right,surreal_mul_is_surreal,surreal_negation_is_surreal}.
+    $\surrealMul{
+        \surrealMul{\surrealMul{x}{d}}{y}}{v}
+        =\surrealMul{
+            \surrealMul{\surrealMul{x}{y}}{d}}{v}$
+        by \auto{surreal_mul_associative,surreal_mul_commutative,surreal_mul_is_surreal}.
+    $\surrealMul{
+            \surrealMul{
+                \surrealAdd{\surrealOne}{
+                    \surrealNeg{\surrealMul{x}{y}}}}{d}}{v}
+        =\surrealAdd{
+            \surrealMul{d}{v}}{
+            \surrealNeg{
+                \surrealMul{
+                    \surrealMul{\surrealMul{x}{y}}{d}}{v}}}$
+        by \auto{surreal_mul_distributive_right,surreal_mul_neg_left,surreal_mul_neg_right,surreal_mul_one_left,surreal_mul_associative,surreal_mul_is_surreal,surreal_add_is_surreal,surreal_negation_is_surreal}.
+\end{proof}
+
+\begin{lemma}\label{surreal_reciprocal_update_left_lower}
+    Suppose $\surreal{x}$ and $\surreal{u}$ and $\surreal{v}$ and
+        $\surreal{y}$.
+    Suppose $\surrealLt{\surrealZero}{x}$ and
+        $\surrealLt{\surrealZero}{u}$ and
+        $\surrealLt{u}{x}$ and
+        $\surrealMul{u}{v}=\surrealOne$ and
+        $\surrealLt{\surrealMul{x}{y}}{\surrealOne}$.
+    Then $\surreal{\surrealReciprocalUpdate{y}{x}{u}{v}}$ and
+        $\surrealLt{\surrealOne}{
+            \surrealMul{x}{\surrealReciprocalUpdate{y}{x}{u}{v}}}$.
+\end{lemma}
+\begin{proof}
+    Let $y'=\surrealReciprocalUpdate{y}{x}{u}{v}$.
+    $\surrealLt{\surrealZero}{v}$
+        by \obv{surreal_reciprocal_of_positive_is_positive}.
+    $\surreal{y'}$ by
+        \auto{surreal_reciprocal_update,surreal_add_is_surreal,surreal_mul_is_surreal,surreal_negation_is_surreal}.
+    $\surrealLt{\surrealZero}{
+        \surrealAdd{\surrealOne}{
+            \surrealNeg{\surrealMul{x}{y}}}}$
+        by \obv{surreal_subtraction_positive,surreal_mul_is_surreal,surreal_one_is_surreal}.
+    $\surrealLt{\surrealAdd{u}{\surrealNeg{x}}}{\surrealZero}$
+        by \obv{surreal_subtraction_negative}.
+    Hence $\surrealLt{
+        \surrealMul{
+            \surrealMul{
+                \surrealAdd{\surrealOne}{
+                    \surrealNeg{\surrealMul{x}{y}}}}
+                {\surrealAdd{u}{\surrealNeg{x}}}}{v}}
+        {\surrealZero}$
+        by \auto{surreal_mul_pos_neg,surreal_mul_neg_pos,surreal_add_is_surreal,surreal_mul_is_surreal,surreal_negation_is_surreal}.
+    Hence $\surrealLt{
+        \surrealAdd{\surrealOne}{
+            \surrealNeg{\surrealMul{x}{y'}}}}{\surrealZero}$
+        by \obv{surreal_reciprocal_update_identity}.
+    Follows by
+        \obv{surreal_subtraction_negative_elim,surreal_mul_is_surreal,surreal_one_is_surreal}.
+\end{proof}
+
+\begin{lemma}\label{surreal_reciprocal_update_left_upper}
+    Suppose $\surreal{x}$ and $\surreal{u}$ and $\surreal{v}$ and
+        $\surreal{y}$.
+    Suppose $\surrealLt{\surrealZero}{x}$ and
+        $\surrealLt{\surrealZero}{u}$ and
+        $\surrealLt{u}{x}$ and
+        $\surrealMul{u}{v}=\surrealOne$ and
+        $\surrealLt{\surrealOne}{\surrealMul{x}{y}}$.
+    Then $\surreal{\surrealReciprocalUpdate{y}{x}{u}{v}}$ and
+        $\surrealLt{
+            \surrealMul{x}{\surrealReciprocalUpdate{y}{x}{u}{v}}}
+            {\surrealOne}$.
+\end{lemma}
+\begin{proof}
+    Let $y'=\surrealReciprocalUpdate{y}{x}{u}{v}$.
+    $\surrealLt{\surrealZero}{v}$
+        by \obv{surreal_reciprocal_of_positive_is_positive}.
+    $\surreal{y'}$ by
+        \auto{surreal_reciprocal_update,surreal_add_is_surreal,surreal_mul_is_surreal,surreal_negation_is_surreal}.
+    $\surrealLt{
+        \surrealAdd{\surrealOne}{
+            \surrealNeg{\surrealMul{x}{y}}}}{\surrealZero}$
+        by \obv{surreal_subtraction_negative,surreal_mul_is_surreal,surreal_one_is_surreal}.
+    $\surrealLt{\surrealAdd{u}{\surrealNeg{x}}}{\surrealZero}$
+        by \obv{surreal_subtraction_negative}.
+    Hence $\surrealLt{\surrealZero}{
+        \surrealMul{
+            \surrealMul{
+                \surrealAdd{\surrealOne}{
+                    \surrealNeg{\surrealMul{x}{y}}}}
+                {\surrealAdd{u}{\surrealNeg{x}}}}{v}}$
+        by \auto{surreal_mul_neg_neg,surreal_mul_pos_pos,surreal_add_is_surreal,surreal_mul_is_surreal,surreal_negation_is_surreal}.
+    Hence $\surrealLt{\surrealZero}{
+        \surrealAdd{\surrealOne}{
+            \surrealNeg{\surrealMul{x}{y'}}}}$
+        by \obv{surreal_reciprocal_update_identity}.
+    Follows by
+        \obv{surreal_subtraction_positive_elim,surreal_mul_is_surreal,surreal_one_is_surreal}.
+\end{proof}
+
+\begin{lemma}\label{surreal_reciprocal_update_right_lower}
+    Suppose $\surreal{x}$ and $\surreal{u}$ and $\surreal{v}$ and
+        $\surreal{y}$.
+    Suppose $\surrealLt{\surrealZero}{x}$ and
+        $\surrealLt{x}{u}$ and
+        $\surrealMul{u}{v}=\surrealOne$ and
+        $\surrealLt{\surrealMul{x}{y}}{\surrealOne}$.
+    Then $\surreal{\surrealReciprocalUpdate{y}{x}{u}{v}}$ and
+        $\surrealLt{
+            \surrealMul{x}{\surrealReciprocalUpdate{y}{x}{u}{v}}}
+            {\surrealOne}$.
+\end{lemma}
+\begin{proof}
+    Let $y'=\surrealReciprocalUpdate{y}{x}{u}{v}$.
+    $\surrealLt{\surrealZero}{u}$
+        by \obv{surreal_lt_transitive,empty_surreal}.
+    $\surrealLt{\surrealZero}{v}$
+        by \obv{surreal_reciprocal_of_positive_is_positive}.
+    $\surreal{y'}$ by
+        \auto{surreal_reciprocal_update,surreal_add_is_surreal,surreal_mul_is_surreal,surreal_negation_is_surreal}.
+    $\surrealLt{\surrealZero}{
+        \surrealAdd{\surrealOne}{
+            \surrealNeg{\surrealMul{x}{y}}}}$
+        by \obv{surreal_subtraction_positive,surreal_mul_is_surreal,surreal_one_is_surreal}.
+    $\surrealLt{\surrealZero}{\surrealAdd{u}{\surrealNeg{x}}}$
+        by \obv{surreal_subtraction_positive}.
+    Hence $\surrealLt{\surrealZero}{
+        \surrealMul{
+            \surrealMul{
+                \surrealAdd{\surrealOne}{
+                    \surrealNeg{\surrealMul{x}{y}}}}
+                {\surrealAdd{u}{\surrealNeg{x}}}}{v}}$
+        by \auto{surreal_mul_pos_pos,surreal_add_is_surreal,surreal_mul_is_surreal,surreal_negation_is_surreal}.
+    Hence $\surrealLt{\surrealZero}{
+        \surrealAdd{\surrealOne}{
+            \surrealNeg{\surrealMul{x}{y'}}}}$
+        by \auto{surreal_reciprocal_update_identity}.
+    Follows by
+        \auto{surreal_subtraction_positive_elim,surreal_mul_is_surreal,surreal_one_is_surreal}.
+\end{proof}
+
+\begin{lemma}\label{surreal_reciprocal_update_right_upper}
+    Suppose $\surreal{x}$ and $\surreal{u}$ and $\surreal{v}$ and
+        $\surreal{y}$.
+    Suppose $\surrealLt{\surrealZero}{x}$ and
+        $\surrealLt{x}{u}$ and
+        $\surrealMul{u}{v}=\surrealOne$ and
+        $\surrealLt{\surrealOne}{\surrealMul{x}{y}}$.
+    Then $\surreal{\surrealReciprocalUpdate{y}{x}{u}{v}}$ and
+        $\surrealLt{\surrealOne}{
+            \surrealMul{x}{\surrealReciprocalUpdate{y}{x}{u}{v}}}$.
+\end{lemma}
+\begin{proof}
+    Let $y'=\surrealReciprocalUpdate{y}{x}{u}{v}$.
+    $\surrealLt{\surrealZero}{u}$
+        by \obv{surreal_lt_transitive,empty_surreal}.
+    $\surrealLt{\surrealZero}{v}$
+        by \auto{surreal_reciprocal_of_positive_is_positive}.
+    $\surreal{y'}$ by
+        \auto{surreal_reciprocal_update,surreal_add_is_surreal,surreal_mul_is_surreal,surreal_negation_is_surreal}.
+    $\surrealLt{
+        \surrealAdd{\surrealOne}{
+            \surrealNeg{\surrealMul{x}{y}}}}{\surrealZero}$
+        by \obv{surreal_subtraction_negative,surreal_mul_is_surreal,surreal_one_is_surreal}.
+    $\surrealLt{\surrealZero}{\surrealAdd{u}{\surrealNeg{x}}}$
+        by \obv{surreal_subtraction_positive}.
+    Hence $\surrealLt{
+        \surrealMul{
+            \surrealMul{
+                \surrealAdd{\surrealOne}{
+                    \surrealNeg{\surrealMul{x}{y}}}}
+                {\surrealAdd{u}{\surrealNeg{x}}}}{v}}
+        {\surrealZero}$
+        by \auto{surreal_mul_neg_pos,surreal_add_is_surreal,surreal_mul_is_surreal,surreal_negation_is_surreal}.
+    Hence $\surrealLt{
+        \surrealAdd{\surrealOne}{
+            \surrealNeg{\surrealMul{x}{y'}}}}{\surrealZero}$
+        by \auto{surreal_reciprocal_update_identity}.
+    Follows by
+        \auto{surreal_subtraction_negative_elim,surreal_mul_is_surreal,surreal_one_is_surreal}.
+\end{proof}
+
+\begin{theorem}\label{surreal_reciprocal_approximation_invariant}
+    $\forall x:\Set.\ \forall g:\Set\to\Set.\ \forall n:\Set.
+        (\surreal{x}\land
+         \surrealLt{\surrealZero}{x}\land
+         n\in\naturals\land
+         (\forall u:\Set.
+            (\surreal{u}\land\birthday{u}\in\birthday{x}\land
+                \surrealLt{\surrealZero}{u})
+            \implies
+            (\surreal{\Apply{g}{u}}\land
+                \surrealMul{u}{\Apply{g}{u}}=\surrealOne)))
+        \implies
+        ((\forall y:\Set.
+            y\in\Apply{\surrealReciprocalLowerApproxOp}{x,g,n}
+            \implies
+            (\surreal{y}\land
+                \surrealLt{\surrealMul{x}{y}}{\surrealOne}))
+         \land
+         (\forall y:\Set.
+            y\in\Apply{\surrealReciprocalUpperApproxOp}{x,g,n}
+            \implies
+            (\surreal{y}\land
+                \surrealLt{\surrealOne}{\surrealMul{x}{y}})))$.
+\end{theorem}
+\begin{proof}
+    Fix $x,g,n$.
+    Assume $\surreal{x}$ and $\surrealLt{\surrealZero}{x}$ and
+        $n\in\naturals$.
+    Assume $\forall u:\Set.
+        (\surreal{u}\land\birthday{u}\in\birthday{x}\land
+            \surrealLt{\surrealZero}{u})
+        \implies
+        (\surreal{\Apply{g}{u}}\land
+            \surrealMul{u}{\Apply{g}{u}}=\surrealOne)$.
+    Let $P:\Set\to\Prop=\fun{k:\Set}{
+        (\forall y:\Set.
+            y\in\Apply{\surrealReciprocalLowerApproxOp}{x,g,k}
+            \implies
+            (\surreal{y}\land
+                \surrealLt{\surrealMul{x}{y}}{\surrealOne}))
+        \land
+        (\forall y:\Set.
+            y\in\Apply{\surrealReciprocalUpperApproxOp}{x,g,k}
+            \implies
+            (\surreal{y}\land
+                \surrealLt{\surrealOne}{\surrealMul{x}{y}}))}$.
+
+    Show that $\Apply{P}{\emptyset}$.
+    \begin{subproof}
+        Show that $\forall y:\Set.
+            y\in\Apply{\surrealReciprocalLowerApproxOp}{x,g,\emptyset}
+            \implies
+            (\surreal{y}\land
+                \surrealLt{\surrealMul{x}{y}}{\surrealOne})$.
+        \begin{subproof}
+            Fix $y$.
+            Assume $y\in\Apply{\surrealReciprocalLowerApproxOp}{x,g,\emptyset}$.
+            Hence $y=\surrealZero$
+                by \auto{surreal_reciprocal_lower_approximation,surreal_reciprocal_approximation_zero,fst_eq,singleton_iff}.
+            Follows by
+                \auto{empty_surreal,surreal_mul_zero_right,surreal_zero_lt_one}.
+        \end{subproof}
+        Show that $\forall y:\Set.
+            y\in\Apply{\surrealReciprocalUpperApproxOp}{x,g,\emptyset}
+            \implies
+            (\surreal{y}\land
+                \surrealLt{\surrealOne}{\surrealMul{x}{y}})$.
+        \begin{subproof}
+            Fix $y$.
+            Assume $y\in\Apply{\surrealReciprocalUpperApproxOp}{x,g,\emptyset}$.
+            Contradiction by
+                \auto{surreal_reciprocal_upper_approximation,surreal_reciprocal_approximation_zero,snd_eq,emptyset}.
+        \end{subproof}
+    \end{subproof}
+
+    Show that $\forall k:\Set.\ k\in\naturals\implies
+        (\Apply{P}{k}\implies\Apply{P}{\suc{k}})$.
+    \begin{subproof}
+        Fix $k$.
+        Assume $k\in\naturals$.
+        Assume $\Apply{P}{k}$.
+        Let $L=\Apply{\surrealReciprocalLowerApproxOp}{x,g,k}$.
+        Let $R=\Apply{\surrealReciprocalUpperApproxOp}{x,g,k}$.
+        $\forall y:\Set.\ y\in L\implies
+            (\surreal{y}\land
+                \surrealLt{\surrealMul{x}{y}}{\surrealOne})$.
+        $\forall y:\Set.\ y\in R\implies
+            (\surreal{y}\land
+                \surrealLt{\surrealOne}{\surrealMul{x}{y}})$.
+
+        Show that for every
+            $z\in\Apply{\surrealReciprocalUpdateSetOp}{L,x,\surrealRight{x},g}$ we have
+            $\surreal{z}$ and
+                $\surrealLt{\surrealMul{x}{z}}{\surrealOne}$.
+        \begin{subproof}
+            Fix $z\in\Apply{\surrealReciprocalUpdateSetOp}{L,x,\surrealRight{x},g}$.
+            Take $y,u$ such that $y\in L$ and
+                $u\in\surrealRight{x}$ and
+                $z=\surrealReciprocalUpdate{y}{x}{u}{\Apply{g}{u}}$
+                by \auto{surreal_reciprocal_update_set_iff}.
+            $\surreal{y}$ and
+                $\surrealLt{\surrealMul{x}{y}}{\surrealOne}$.
+            $u\in\surrealRight{x}$.
+            $\surreal{x}$.
+            $\surreal{u}$ by \auto{surreal_right_elim}.
+            $\birthday{u}\in\birthday{x}$
+                by \auto{surreal_right_elim}.
+            $\surrealLt{x}{u}$ by \auto{surreal_right_elim}.
+            $\surrealLt{\surrealZero}{u}$
+                by \obv{surreal_lt_transitive,empty_surreal}.
+            Hence $\surreal{\Apply{g}{u}}$ and
+                $\surrealMul{u}{\Apply{g}{u}}=\surrealOne$.
+            $z=\surrealReciprocalUpdate{y}{x}{u}{\Apply{g}{u}}$.
+            $\surreal{\surrealReciprocalUpdate{y}{x}{u}{\Apply{g}{u}}}$
+                and $\surrealLt{
+                    \surrealMul{x}{\surrealReciprocalUpdate{y}{x}{u}{\Apply{g}{u}}}}
+                    {\surrealOne}$ by
+                \auto{surreal_reciprocal_update_right_lower}.
+            Follows by \auto.
+        \end{subproof}
+
+        Show that for every
+            $z\in\Apply{\surrealReciprocalUpdateSetOp}{R,x,\surrealReciprocalPositiveLeft{x},g}$ we have
+            $\surreal{z}$ and
+                $\surrealLt{\surrealMul{x}{z}}{\surrealOne}$.
+        \begin{subproof}
+            Fix $z\in\Apply{\surrealReciprocalUpdateSetOp}{R,x,\surrealReciprocalPositiveLeft{x},g}$.
+            Take $y,u$ such that $y\in R$ and
+                $u\in\surrealReciprocalPositiveLeft{x}$ and
+                $z=\surrealReciprocalUpdate{y}{x}{u}{\Apply{g}{u}}$
+                by \auto{surreal_reciprocal_update_set_iff}.
+            $\surreal{y}$ and
+                $\surrealLt{\surrealOne}{\surrealMul{x}{y}}$.
+            $u\in\surrealReciprocalPositiveLeft{x}$.
+            $u\in\surrealLeft{x}$ and
+                $\surrealLt{\surrealZero}{u}$
+                by \auto{surreal_reciprocal_positive_left}.
+            $\surreal{x}$.
+            Hence $\surreal{u}$ by \auto{surreal_left_elim}.
+            $\birthday{u}\in\birthday{x}$
+                by \auto{surreal_left_elim}.
+            $\surrealLt{u}{x}$ by \auto{surreal_left_elim}.
+            Hence $\surreal{\Apply{g}{u}}$ and
+                $\surrealMul{u}{\Apply{g}{u}}=\surrealOne$
+                by \auto.
+            $z=\surrealReciprocalUpdate{y}{x}{u}{\Apply{g}{u}}$.
+            $\surreal{\surrealReciprocalUpdate{y}{x}{u}{\Apply{g}{u}}}$
+                and $\surrealLt{
+                    \surrealMul{x}{\surrealReciprocalUpdate{y}{x}{u}{\Apply{g}{u}}}}
+                    {\surrealOne}$ by
+                \auto{surreal_reciprocal_update_left_upper}.
+            Follows by \auto.
+        \end{subproof}
+
+        Show that for every
+            $z\in\Apply{\surrealReciprocalUpdateSetOp}{L,x,\surrealReciprocalPositiveLeft{x},g}$ we have
+            $\surreal{z}$ and
+                $\surrealLt{\surrealOne}{\surrealMul{x}{z}}$.
+        \begin{subproof}
+            Fix $z\in\Apply{\surrealReciprocalUpdateSetOp}{L,x,\surrealReciprocalPositiveLeft{x},g}$.
+            Take $y,u$ such that $y\in L$ and
+                $u\in\surrealReciprocalPositiveLeft{x}$ and
+                $z=\surrealReciprocalUpdate{y}{x}{u}{\Apply{g}{u}}$
+                by \auto{surreal_reciprocal_update_set_iff}.
+            $\surreal{y}$ and
+                $\surrealLt{\surrealMul{x}{y}}{\surrealOne}$.
+            $u\in\surrealReciprocalPositiveLeft{x}$.
+            $u\in\surrealLeft{x}$ and
+                $\surrealLt{\surrealZero}{u}$
+                by \auto{surreal_reciprocal_positive_left}.
+            $\surreal{x}$.
+            Hence $\surreal{u}$ by \auto{surreal_left_elim}.
+            $\birthday{u}\in\birthday{x}$
+                by \auto{surreal_left_elim}.
+            $\surrealLt{u}{x}$ by \auto{surreal_left_elim}.
+            Hence $\surreal{\Apply{g}{u}}$ and
+                $\surrealMul{u}{\Apply{g}{u}}=\surrealOne$
+                by \auto.
+            $z=\surrealReciprocalUpdate{y}{x}{u}{\Apply{g}{u}}$.
+            $\surreal{\surrealReciprocalUpdate{y}{x}{u}{\Apply{g}{u}}}$
+                and $\surrealLt{\surrealOne}{
+                    \surrealMul{x}{\surrealReciprocalUpdate{y}{x}{u}{\Apply{g}{u}}}}$
+                by
+                \auto{surreal_reciprocal_update_left_lower}.
+            Follows by \auto.
+        \end{subproof}
+
+        Show that for every
+            $z\in\Apply{\surrealReciprocalUpdateSetOp}{R,x,\surrealRight{x},g}$ we have
+            $\surreal{z}$ and
+                $\surrealLt{\surrealOne}{\surrealMul{x}{z}}$.
+        \begin{subproof}
+            Fix $z\in\Apply{\surrealReciprocalUpdateSetOp}{R,x,\surrealRight{x},g}$.
+            Take $y,u$ such that $y\in R$ and
+                $u\in\surrealRight{x}$ and
+                $z=\surrealReciprocalUpdate{y}{x}{u}{\Apply{g}{u}}$
+                by \auto{surreal_reciprocal_update_set_iff}.
+            $\surreal{y}$ and
+                $\surrealLt{\surrealOne}{\surrealMul{x}{y}}$.
+            $u\in\surrealRight{x}$.
+            $\surreal{x}$.
+            $\surreal{u}$ by \auto{surreal_right_elim}.
+            $\birthday{u}\in\birthday{x}$
+                by \auto{surreal_right_elim}.
+            $\surrealLt{x}{u}$ by \auto{surreal_right_elim}.
+            $\surrealLt{\surrealZero}{u}$
+                by \obv{surreal_lt_transitive,empty_surreal}.
+            Hence $\surreal{\Apply{g}{u}}$ and
+                $\surrealMul{u}{\Apply{g}{u}}=\surrealOne$.
+            $z=\surrealReciprocalUpdate{y}{x}{u}{\Apply{g}{u}}$.
+            $\surreal{\surrealReciprocalUpdate{y}{x}{u}{\Apply{g}{u}}}$
+                and $\surrealLt{\surrealOne}{
+                    \surrealMul{x}{\surrealReciprocalUpdate{y}{x}{u}{\Apply{g}{u}}}}$
+                by
+                \auto{surreal_reciprocal_update_right_upper}.
+            Follows by \auto.
+        \end{subproof}
+
+        Follows by
+            \auto{surreal_reciprocal_lower_approximation,surreal_reciprocal_upper_approximation,surreal_reciprocal_approximation_successor,surreal_reciprocal_approximation_step,fst_eq,snd_eq,union_iff}.
+    \end{subproof}
+
+    Let $C=\sep{\naturals}{P}$.
+    $\emptyset\in C$ by
+        \auto{logical_separation_iff,omega_empty}.
+    For every $k\in C$ we have $\suc{k}\in C$
+        by \auto{logical_separation_iff,omega_successor}.
+    Hence $C$ is an inductive set by \obv{inductive_set}.
+    Hence every natural number is an element of $C$
+        by \obv{omega_minimal}.
+    Hence $n\in C$.
+    Hence $\Apply{P}{n}$ by \auto{logical_separation_iff}.
+    Follows by \auto.
+\end{proof}
+
+\begin{proposition}\label{surreal_reciprocal_lower_options_iff}
+    $\forall x:\Set.\ \forall g:\Set\to\Set.\ \forall z:\Set.
+        z\in\Apply{\surrealReciprocalLowerOptionsOp}{x,g}
+        \iff
+        (\exists n:\Set.\ n\in\naturals\land
+            z\in\Apply{\surrealReciprocalLowerApproxOp}{x,g,n})$.
+\end{proposition}
+\begin{proof}
+    Fix $x,g,z$.
+    Follows by
+        \auto{surreal_reciprocal_lower_options,unions_iff}.
+\end{proof}
+
+\begin{proposition}\label{surreal_reciprocal_upper_options_iff}
+    $\forall x:\Set.\ \forall g:\Set\to\Set.\ \forall z:\Set.
+        z\in\Apply{\surrealReciprocalUpperOptionsOp}{x,g}
+        \iff
+        (\exists n:\Set.\ n\in\naturals\land
+            z\in\Apply{\surrealReciprocalUpperApproxOp}{x,g,n})$.
+\end{proposition}
+\begin{proof}
+    Fix $x,g,z$.
+    Follows by
+        \auto{surreal_reciprocal_upper_options,unions_iff}.
+\end{proof}
+
+\begin{theorem}\label{surreal_reciprocal_approximation_extensionality}
+    $\forall x:\Set.\ \forall g,h:\Set\to\Set.\ \forall n:\Set.
+        (\surreal{x}\land n\in\naturals\land
+         (\forall u:\Set.
+            (\surreal{u}\land\birthday{u}\in\birthday{x})
+            \implies\Apply{g}{u}=\Apply{h}{u}))
+        \implies
+        \Apply{\surrealReciprocalApproxOp}{x,g,n}
+        =\Apply{\surrealReciprocalApproxOp}{x,h,n}$.
+\end{theorem}
+\begin{proof}
+    Fix $x,g,h,n$.
+    Assume $\surreal{x}$ and $n\in\naturals$.
+    Assume $\forall u:\Set.
+        (\surreal{u}\land\birthday{u}\in\birthday{x})
+        \implies\Apply{g}{u}=\Apply{h}{u}$.
+    Let $P:\Set\to\Prop=\fun{k:\Set}{
+        \Apply{\surrealReciprocalApproxOp}{x,g,k}
+        =\Apply{\surrealReciprocalApproxOp}{x,h,k}}$.
+
+    Show that $\Apply{P}{\emptyset}$.
+    \begin{subproof}
+        Follows by \auto{surreal_reciprocal_approximation_zero}.
+    \end{subproof}
+
+    Show that $\forall k:\Set.\ k\in\naturals\implies
+        (\Apply{P}{k}\implies\Apply{P}{\suc{k}})$.
+    \begin{subproof}
+        Fix $k$.
+        Assume $k\in\naturals$.
+        Assume $\Apply{P}{k}$.
+        Let $p=\Apply{\surrealReciprocalApproxOp}{x,h,k}$.
+        $\Apply{\surrealReciprocalApproxOp}{x,g,k}
+            =\Apply{\surrealReciprocalApproxOp}{x,h,k}$.
+        $\Apply{\surrealReciprocalApproxOp}{x,g,k}=p$.
+
+        Show that $\forall u:\Set.\ u\in\surrealRight{x}
+            \implies\Apply{g}{u}=\Apply{h}{u}$.
+        \begin{subproof}
+            Fix $u$.
+            Assume $u\in\surrealRight{x}$.
+            $\surreal{u}$ and $\birthday{u}\in\birthday{x}$
+                by \auto{surreal_right_elim}.
+        \end{subproof}
+        Show that $\forall u:\Set.
+            u\in\surrealReciprocalPositiveLeft{x}
+            \implies\Apply{g}{u}=\Apply{h}{u}$.
+        \begin{subproof}
+            Fix $u$.
+            Assume $u\in\surrealReciprocalPositiveLeft{x}$.
+            Hence $u\in\surrealLeft{x}$
+                by \obv{surreal_reciprocal_positive_left}.
+            Hence $\surreal{u}$ and $\birthday{u}\in\birthday{x}$
+                by \auto{surreal_left_elim}.
+        \end{subproof}
+
+        $\Apply{\surrealReciprocalUpdateSetOp}{\fst{p},x,\surrealRight{x},g}
+        =\Apply{\surrealReciprocalUpdateSetOp}{\fst{p},x,\surrealRight{x},h}$
+            by \obv{surreal_reciprocal_update_set_extensionality}.
+        $\Apply{\surrealReciprocalUpdateSetOp}{\snd{p},x,\surrealRight{x},g}
+        =\Apply{\surrealReciprocalUpdateSetOp}{\snd{p},x,\surrealRight{x},h}$
+            by \obv{surreal_reciprocal_update_set_extensionality}.
+        $\Apply{\surrealReciprocalUpdateSetOp}{\fst{p},x,\surrealReciprocalPositiveLeft{x},g}
+        =\Apply{\surrealReciprocalUpdateSetOp}{\fst{p},x,\surrealReciprocalPositiveLeft{x},h}$
+            by \obv{surreal_reciprocal_update_set_extensionality}.
+        $\Apply{\surrealReciprocalUpdateSetOp}{\snd{p},x,\surrealReciprocalPositiveLeft{x},g}
+        =\Apply{\surrealReciprocalUpdateSetOp}{\snd{p},x,\surrealReciprocalPositiveLeft{x},h}$
+            by \obv{surreal_reciprocal_update_set_extensionality}.
+
+        $\Apply{\surrealReciprocalApproxStepOp}{x,g,k,p}
+        =\Apply{\surrealReciprocalApproxStepOp}{x,h,k,p}$
+            by \auto{surreal_reciprocal_approximation_step}.
+        Follows by
+            \auto{surreal_reciprocal_approximation_successor}.
+    \end{subproof}
+
+    Let $C=\sep{\naturals}{P}$.
+    $\emptyset\in C$ by
+        \auto{logical_separation_iff,omega_empty}.
+    For every $k\in C$ we have $\suc{k}\in C$
+        by \auto{logical_separation_iff,omega_successor}.
+    Hence $C$ is an inductive set by \obv{inductive_set}.
+    Hence every natural number is an element of $C$
+        by \obv{omega_minimal}.
+    Hence $n\in C$.
+    Hence $\Apply{P}{n}$ by \auto{logical_separation_iff}.
+\end{proof}
+
+\subsection{The positive reciprocal}
+
+\begin{definition}\label{surreal_positive_reciprocal_step}
+    $\surrealPositiveReciprocalStepOp:
+        \Set\to(\Set\to\Set)\to\Set
+        =\fun{x:\Set}{
+            \fun{g:\Set\to\Set}{
+                \surrealCut
+                    {\Apply{\surrealReciprocalLowerOptionsOp}{x,g}}
+                    {\Apply{\surrealReciprocalUpperOptionsOp}{x,g}}}}$.
+\end{definition}
+
+\begin{proposition}\label{surreal_positive_reciprocal_step_functional}
+    $\Apply{\surrealRecFunctionalOp}{
+        \surrealPositiveReciprocalStepOp}$.
+\end{proposition}
+\begin{proof}
+    Show that $\forall x:\Set.\ \surreal{x}\implies
+        (\forall g,h:\Set\to\Set.
+            (\forall u:\Set.
+                (\surreal{u}\land\birthday{u}\in\birthday{x})
+                \implies\Apply{g}{u}=\Apply{h}{u})
+            \implies
+            \Apply{\surrealPositiveReciprocalStepOp}{x,g}
+            =\Apply{\surrealPositiveReciprocalStepOp}{x,h})$.
+    \begin{subproof}
+        Fix $x$.
+        Assume $\surreal{x}$.
+        Fix $g,h$.
+        Assume $\forall u:\Set.
+            (\surreal{u}\land\birthday{u}\in\birthday{x})
+            \implies\Apply{g}{u}=\Apply{h}{u}$.
+        Show that for every $n\in\naturals$ we have
+            $\Apply{\surrealReciprocalLowerApproxOp}{x,g,n}
+            =\Apply{\surrealReciprocalLowerApproxOp}{x,h,n}$.
+        \begin{subproof}
+            Fix $n\in\naturals$.
+            $\Apply{\surrealReciprocalApproxOp}{x,g,n}
+            =\Apply{\surrealReciprocalApproxOp}{x,h,n}$
+                by \obv{surreal_reciprocal_approximation_extensionality}.
+            Follows by
+                \auto{surreal_reciprocal_lower_approximation}.
+        \end{subproof}
+        Hence
+            $\{\Apply{\surrealReciprocalLowerApproxOp}{x,g,n}
+                \mid n\in\naturals\}
+            =\{\Apply{\surrealReciprocalLowerApproxOp}{x,h,n}
+                \mid n\in\naturals\}$
+            by \obv{logical_replacement_extensionality}.
+        Hence $\Apply{\surrealReciprocalLowerOptionsOp}{x,g}
+            =\Apply{\surrealReciprocalLowerOptionsOp}{x,h}$
+            by \auto{surreal_reciprocal_lower_options}.
+
+        Show that for every $n\in\naturals$ we have
+            $\Apply{\surrealReciprocalUpperApproxOp}{x,g,n}
+            =\Apply{\surrealReciprocalUpperApproxOp}{x,h,n}$.
+        \begin{subproof}
+            Fix $n\in\naturals$.
+            $\Apply{\surrealReciprocalApproxOp}{x,g,n}
+            =\Apply{\surrealReciprocalApproxOp}{x,h,n}$
+                by \obv{surreal_reciprocal_approximation_extensionality}.
+            Follows by
+                \auto{surreal_reciprocal_upper_approximation}.
+        \end{subproof}
+        Hence
+            $\{\Apply{\surrealReciprocalUpperApproxOp}{x,g,n}
+                \mid n\in\naturals\}
+            =\{\Apply{\surrealReciprocalUpperApproxOp}{x,h,n}
+                \mid n\in\naturals\}$
+            by \obv{logical_replacement_extensionality}.
+        Hence $\Apply{\surrealReciprocalUpperOptionsOp}{x,g}
+            =\Apply{\surrealReciprocalUpperOptionsOp}{x,h}$
+            by \auto{surreal_reciprocal_upper_options}.
+        Follows by \auto{surreal_positive_reciprocal_step}.
+    \end{subproof}
+    Follows by \obv{surreal_recursion_functional}.
+\end{proof}
+
+\begin{definition}\label{surreal_positive_reciprocal_typed}
+    $\surrealPositiveReciprocalOp:\Set\to\Set
+        =\Apply{\surrealRecOp}{\surrealPositiveReciprocalStepOp}$.
+\end{definition}
+
+\begin{definition}\label{surreal_positive_reciprocal}
+    $\surrealPositiveReciprocal{x}=
+        \Apply{\surrealPositiveReciprocalOp}{x}$.
+\end{definition}
+
+\begin{proposition}\label{surreal_positive_reciprocal_equation}
+    Suppose $\surreal{x}$.
+    Then
+        $\surrealPositiveReciprocal{x}
+        =\surrealCut
+            {\Apply{\surrealReciprocalLowerOptionsOp}
+                {x,\surrealPositiveReciprocalOp}}
+            {\Apply{\surrealReciprocalUpperOptionsOp}
+                {x,\surrealPositiveReciprocalOp}}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{surreal_positive_reciprocal,surreal_positive_reciprocal_typed,surreal_positive_reciprocal_step,surreal_positive_reciprocal_step_functional,surreal_recursion_equation_functional}.
+\end{proof}
+
+\begin{theorem}\label{surreal_reciprocal_options_cut_pair}
+    $\forall x:\Set.\ \forall g:\Set\to\Set.
+        (\surreal{x}\land
+         \surrealLt{\surrealZero}{x}\land
+         (\forall u:\Set.
+            (\surreal{u}\land\birthday{u}\in\birthday{x}\land
+                \surrealLt{\surrealZero}{u})
+            \implies
+            (\surreal{\Apply{g}{u}}\land
+                \surrealMul{u}{\Apply{g}{u}}=\surrealOne)))
+        \implies
+        \surrealCutPair
+            {\Apply{\surrealReciprocalLowerOptionsOp}{x,g}}
+            {\Apply{\surrealReciprocalUpperOptionsOp}{x,g}}$.
+\end{theorem}
+\begin{proof}
+    Fix $x,g$.
+    Assume $\surreal{x}$ and $\surrealLt{\surrealZero}{x}$.
+    Assume $\forall u:\Set.
+        (\surreal{u}\land\birthday{u}\in\birthday{x}\land
+            \surrealLt{\surrealZero}{u})
+        \implies
+        (\surreal{\Apply{g}{u}}\land
+            \surrealMul{u}{\Apply{g}{u}}=\surrealOne)$.
+    Let $A=\Apply{\surrealReciprocalLowerOptionsOp}{x,g}$.
+    Let $B=\Apply{\surrealReciprocalUpperOptionsOp}{x,g}$.
+
+    Show that for every $a\in A$ we have $\surreal{a}$ and
+        $\surrealLt{\surrealMul{x}{a}}{\surrealOne}$.
+    \begin{subproof}
+        Fix $a\in A$.
+        Take $n\in\naturals$ such that
+            $a\in\Apply{\surrealReciprocalLowerApproxOp}{x,g,n}$
+            by \auto{surreal_reciprocal_lower_options_iff}.
+        Follows by
+            \auto{surreal_reciprocal_approximation_invariant}.
+    \end{subproof}
+    Show that for every $b\in B$ we have $\surreal{b}$ and
+        $\surrealLt{\surrealOne}{\surrealMul{x}{b}}$.
+    \begin{subproof}
+        Fix $b\in B$.
+        Take $n\in\naturals$ such that
+            $b\in\Apply{\surrealReciprocalUpperApproxOp}{x,g,n}$
+            by \auto{surreal_reciprocal_upper_options_iff}.
+        Follows by
+            \auto{surreal_reciprocal_approximation_invariant}.
+    \end{subproof}
+
+    Show that $\forall a:\Set.\ a\in A\implies
+        (\forall b:\Set.\ b\in B\implies\surrealLt{a}{b})$.
+    \begin{subproof}
+        Fix $a$.
+        Assume $a\in A$.
+        Fix $b$.
+        Assume $b\in B$.
+        $\surreal{a}$ and
+            $\surrealLt{\surrealMul{x}{a}}{\surrealOne}$.
+        $\surreal{b}$ and
+            $\surrealLt{\surrealOne}{\surrealMul{x}{b}}$.
+        $\surrealLt{a}{b}$ or $a=b$ or $\surrealLt{b}{a}$
+            by \obv{surreal_lt_trichotomy}.
+        \begin{byCase}
+            \caseOf{$\surrealLt{a}{b}$.}
+                Follows.
+            \caseOf{not $\surrealLt{a}{b}$.}
+                \begin{byCase}
+                    \caseOf{$a=b$.}
+                        Hence $\surrealMul{x}{a}=\surrealMul{x}{b}$.
+                        Hence $\surrealLt{
+                            \surrealMul{x}{a}}{
+                            \surrealMul{x}{a}}$
+                            by \auto{surreal_lt_transitive,surreal_mul_is_surreal,surreal_one_is_surreal}.
+                        Contradiction by
+                            \obv{surreal_lt_irreflexive,surreal_mul_is_surreal}.
+                    \caseOf{$a\neq b$.}
+                        Hence $\surrealLt{b}{a}$.
+                        $\surrealLt{\surrealMul{x}{b}}
+                            {\surrealMul{x}{a}}$
+                            by \obv{surreal_pos_mul_lt_left}.
+                        Hence $\surrealLt{\surrealOne}{\surrealOne}$
+                            by \auto{surreal_lt_transitive,surreal_mul_is_surreal,surreal_one_is_surreal}.
+                        Contradiction by
+                            \obv{surreal_lt_irreflexive,surreal_one_is_surreal}.
+                \end{byCase}
+        \end{byCase}
+    \end{subproof}
+    Follows by \auto{surreal_cut_pair}.
+\end{proof}
+
+\begin{proposition}\label{surreal_zero_in_reciprocal_lower_options}
+    $\forall x:\Set.\ \forall g:\Set\to\Set.
+        \surrealZero\in
+            \Apply{\surrealReciprocalLowerOptionsOp}{x,g}$.
+\end{proposition}
+\begin{proof}
+    Fix $x,g$.
+    $\emptyset\in\naturals$ by \obv{omega_empty}.
+    $\surrealZero\in\Apply{\surrealReciprocalLowerApproxOp}{x,g,\emptyset}$
+        by \auto{surreal_reciprocal_lower_approximation,surreal_reciprocal_approximation_zero,fst_eq,singleton_iff}.
+    Follows by \auto{surreal_reciprocal_lower_options_iff}.
+\end{proof}
+
+\begin{lemma}\label{surreal_reciprocal_lower_options_invariant}
+    $\forall x,z:\Set.\ \forall g:\Set\to\Set.
+        (\surreal{x}\land
+         \surrealLt{\surrealZero}{x}\land
+         (\forall u:\Set.
+            (\surreal{u}\land\birthday{u}\in\birthday{x}\land
+                \surrealLt{\surrealZero}{u})
+            \implies
+            (\surreal{\Apply{g}{u}}\land
+                \surrealMul{u}{\Apply{g}{u}}=\surrealOne))\land
+         z\in\Apply{\surrealReciprocalLowerOptionsOp}{x,g})
+        \implies
+        (\surreal{z}\land
+            \surrealLt{\surrealMul{x}{z}}{\surrealOne})$.
+\end{lemma}
+\begin{proof}
+    Fix $x,z,g$.
+    Assume $\surreal{x}$ and $\surrealLt{\surrealZero}{x}$ and
+        ($\forall u:\Set.
+            (\surreal{u}\land\birthday{u}\in\birthday{x}\land
+                \surrealLt{\surrealZero}{u})
+            \implies
+            (\surreal{\Apply{g}{u}}\land
+                \surrealMul{u}{\Apply{g}{u}}=\surrealOne)$) and
+        $z\in\Apply{\surrealReciprocalLowerOptionsOp}{x,g}$.
+    Take $n\in\naturals$ such that
+        $z\in\Apply{\surrealReciprocalLowerApproxOp}{x,g,n}$
+        by \auto{surreal_reciprocal_lower_options_iff}.
+    $n\in\naturals$.
+    Follows by
+        \auto{surreal_reciprocal_approximation_invariant}.
+\end{proof}
+
+\begin{lemma}\label{surreal_reciprocal_upper_options_invariant}
+    $\forall x,z:\Set.\ \forall g:\Set\to\Set.
+        (\surreal{x}\land
+         \surrealLt{\surrealZero}{x}\land
+         (\forall u:\Set.
+            (\surreal{u}\land\birthday{u}\in\birthday{x}\land
+                \surrealLt{\surrealZero}{u})
+            \implies
+            (\surreal{\Apply{g}{u}}\land
+                \surrealMul{u}{\Apply{g}{u}}=\surrealOne))\land
+         z\in\Apply{\surrealReciprocalUpperOptionsOp}{x,g})
+        \implies
+        (\surreal{z}\land
+            \surrealLt{\surrealOne}{\surrealMul{x}{z}})$.
+\end{lemma}
+\begin{proof}
+    Fix $x,z,g$.
+    Assume $\surreal{x}$ and $\surrealLt{\surrealZero}{x}$ and
+        ($\forall u:\Set.
+            (\surreal{u}\land\birthday{u}\in\birthday{x}\land
+                \surrealLt{\surrealZero}{u})
+            \implies
+            (\surreal{\Apply{g}{u}}\land
+                \surrealMul{u}{\Apply{g}{u}}=\surrealOne)$) and
+        $z\in\Apply{\surrealReciprocalUpperOptionsOp}{x,g}$.
+    Take $n\in\naturals$ such that
+        $z\in\Apply{\surrealReciprocalUpperApproxOp}{x,g,n}$
+        by \auto{surreal_reciprocal_upper_options_iff}.
+    $n\in\naturals$.
+    Follows by
+        \auto{surreal_reciprocal_approximation_invariant}.
+\end{proof}
+
+\begin{proposition}\label{surreal_reciprocal_lower_approximation_successor}
+    $\forall x,n:\Set.\ \forall g:\Set\to\Set.
+        n\in\naturals\implies
+        \Apply{\surrealReciprocalLowerApproxOp}{x,g,\suc{n}}
+        =
+        \Apply{\surrealReciprocalLowerApproxOp}{x,g,n}
+        \union
+        \Apply{\surrealReciprocalUpdateSetOp}{
+                \Apply{\surrealReciprocalLowerApproxOp}{x,g,n},x,\surrealRight{x},g}
+        \union
+        \Apply{\surrealReciprocalUpdateSetOp}{
+                \Apply{\surrealReciprocalUpperApproxOp}{x,g,n},x,\surrealReciprocalPositiveLeft{x},g}$.
+\end{proposition}
+\begin{proof}
+    Fix $x,n,g$.
+    Assume $n\in\naturals$.
+    Follows by
+        \auto{surreal_reciprocal_lower_approximation,surreal_reciprocal_upper_approximation,surreal_reciprocal_approximation_successor,surreal_reciprocal_approximation_step,fst_eq,snd_eq}.
+\end{proof}
+
+\begin{proposition}\label{surreal_reciprocal_upper_approximation_successor}
+    $\forall x,n:\Set.\ \forall g:\Set\to\Set.
+        n\in\naturals\implies
+        \Apply{\surrealReciprocalUpperApproxOp}{x,g,\suc{n}}
+        =
+        \Apply{\surrealReciprocalUpperApproxOp}{x,g,n}
+        \union
+        \Apply{\surrealReciprocalUpdateSetOp}{
+                \Apply{\surrealReciprocalLowerApproxOp}{x,g,n},x,\surrealReciprocalPositiveLeft{x},g}
+        \union
+        \Apply{\surrealReciprocalUpdateSetOp}{
+                \Apply{\surrealReciprocalUpperApproxOp}{x,g,n},x,\surrealRight{x},g}$.
+\end{proposition}
+\begin{proof}
+    Fix $x,n,g$.
+    Assume $n\in\naturals$.
+    Follows by
+        \auto{surreal_reciprocal_lower_approximation,surreal_reciprocal_upper_approximation,surreal_reciprocal_approximation_successor,surreal_reciprocal_approximation_step,fst_eq,snd_eq}.
+\end{proof}
+
+\begin{lemma}\label{surreal_reciprocal_lower_options_from_lower_right}
+    $\forall x,w,u:\Set.\ \forall g:\Set\to\Set.
+        (w\in\Apply{\surrealReciprocalLowerOptionsOp}{x,g}
+         \land u\in\surrealRight{x})
+        \implies
+        \surrealReciprocalUpdate{w}{x}{u}{\Apply{g}{u}}
+            \in\Apply{\surrealReciprocalLowerOptionsOp}{x,g}$.
+\end{lemma}
+\begin{proof}
+    Fix $x,w,u,g$.
+    Assume $w\in\Apply{\surrealReciprocalLowerOptionsOp}{x,g}$ and
+        $u\in\surrealRight{x}$.
+    Take $n\in\naturals$ such that
+        $w\in\Apply{\surrealReciprocalLowerApproxOp}{x,g,n}$
+        by \auto{surreal_reciprocal_lower_options_iff}.
+    $n\in\naturals$.
+    $\suc{n}\in\naturals$ by \obv{omega_successor}.
+    Let $L=\Apply{\surrealReciprocalLowerApproxOp}{x,g,n}$.
+    $\surrealReciprocalUpdate{w}{x}{u}{\Apply{g}{u}}
+        \in\Apply{\surrealReciprocalUpdateSetOp}{L,x,\surrealRight{x},g}$
+        by \auto{surreal_reciprocal_update_set_iff}.
+    $\surrealReciprocalUpdate{w}{x}{u}{\Apply{g}{u}}
+        \in\Apply{\surrealReciprocalLowerApproxOp}{x,g,\suc{n}}$
+        by \auto{surreal_reciprocal_lower_approximation_successor,union_iff}.
+    Follows by \auto{surreal_reciprocal_lower_options_iff}.
+\end{proof}
+
+\begin{lemma}\label{surreal_reciprocal_lower_options_from_upper_left}
+    $\forall x,w,u:\Set.\ \forall g:\Set\to\Set.
+        (w\in\Apply{\surrealReciprocalUpperOptionsOp}{x,g}
+         \land u\in\surrealReciprocalPositiveLeft{x})
+        \implies
+        \surrealReciprocalUpdate{w}{x}{u}{\Apply{g}{u}}
+            \in\Apply{\surrealReciprocalLowerOptionsOp}{x,g}$.
+\end{lemma}
+\begin{proof}
+    Fix $x,w,u,g$.
+    Assume $w\in\Apply{\surrealReciprocalUpperOptionsOp}{x,g}$ and
+        $u\in\surrealReciprocalPositiveLeft{x}$.
+    Take $n\in\naturals$ such that
+        $w\in\Apply{\surrealReciprocalUpperApproxOp}{x,g,n}$
+        by \auto{surreal_reciprocal_upper_options_iff}.
+    $n\in\naturals$.
+    $\suc{n}\in\naturals$ by \obv{omega_successor}.
+    Let $R=\Apply{\surrealReciprocalUpperApproxOp}{x,g,n}$.
+    $\surrealReciprocalUpdate{w}{x}{u}{\Apply{g}{u}}
+        \in\Apply{\surrealReciprocalUpdateSetOp}{R,x,\surrealReciprocalPositiveLeft{x},g}$
+        by \auto{surreal_reciprocal_update_set_iff}.
+    $\surrealReciprocalUpdate{w}{x}{u}{\Apply{g}{u}}
+        \in\Apply{\surrealReciprocalLowerApproxOp}{x,g,\suc{n}}$
+        by \auto{surreal_reciprocal_lower_approximation_successor,union_iff}.
+    Follows by \auto{surreal_reciprocal_lower_options_iff}.
+\end{proof}
+
+\begin{lemma}\label{surreal_reciprocal_upper_options_from_lower_left}
+    $\forall x,w,u:\Set.\ \forall g:\Set\to\Set.
+        (w\in\Apply{\surrealReciprocalLowerOptionsOp}{x,g}
+         \land u\in\surrealReciprocalPositiveLeft{x})
+        \implies
+        \surrealReciprocalUpdate{w}{x}{u}{\Apply{g}{u}}
+            \in\Apply{\surrealReciprocalUpperOptionsOp}{x,g}$.
+\end{lemma}
+\begin{proof}
+    Fix $x,w,u,g$.
+    Assume $w\in\Apply{\surrealReciprocalLowerOptionsOp}{x,g}$ and
+        $u\in\surrealReciprocalPositiveLeft{x}$.
+    Take $n\in\naturals$ such that
+        $w\in\Apply{\surrealReciprocalLowerApproxOp}{x,g,n}$
+        by \auto{surreal_reciprocal_lower_options_iff}.
+    $n\in\naturals$.
+    $\suc{n}\in\naturals$ by \obv{omega_successor}.
+    Let $L=\Apply{\surrealReciprocalLowerApproxOp}{x,g,n}$.
+    $\surrealReciprocalUpdate{w}{x}{u}{\Apply{g}{u}}
+        \in\Apply{\surrealReciprocalUpdateSetOp}{L,x,\surrealReciprocalPositiveLeft{x},g}$
+        by \auto{surreal_reciprocal_update_set_iff}.
+    $\surrealReciprocalUpdate{w}{x}{u}{\Apply{g}{u}}
+        \in\Apply{\surrealReciprocalUpperApproxOp}{x,g,\suc{n}}$
+        by \auto{surreal_reciprocal_upper_approximation_successor,union_iff}.
+    Follows by \auto{surreal_reciprocal_upper_options_iff}.
+\end{proof}
+
+\begin{lemma}\label{surreal_reciprocal_upper_options_from_upper_right}
+    $\forall x,w,u:\Set.\ \forall g:\Set\to\Set.
+        (w\in\Apply{\surrealReciprocalUpperOptionsOp}{x,g}
+         \land u\in\surrealRight{x})
+        \implies
+        \surrealReciprocalUpdate{w}{x}{u}{\Apply{g}{u}}
+            \in\Apply{\surrealReciprocalUpperOptionsOp}{x,g}$.
+\end{lemma}
+\begin{proof}
+    Fix $x,w,u,g$.
+    Assume $w\in\Apply{\surrealReciprocalUpperOptionsOp}{x,g}$ and
+        $u\in\surrealRight{x}$.
+    Take $n\in\naturals$ such that
+        $w\in\Apply{\surrealReciprocalUpperApproxOp}{x,g,n}$
+        by \auto{surreal_reciprocal_upper_options_iff}.
+    $n\in\naturals$.
+    $\suc{n}\in\naturals$ by \obv{omega_successor}.
+    Let $R=\Apply{\surrealReciprocalUpperApproxOp}{x,g,n}$.
+    $\surrealReciprocalUpdate{w}{x}{u}{\Apply{g}{u}}
+        \in\Apply{\surrealReciprocalUpdateSetOp}{R,x,\surrealRight{x},g}$
+        by \auto{surreal_reciprocal_update_set_iff}.
+    $\surrealReciprocalUpdate{w}{x}{u}{\Apply{g}{u}}
+        \in\Apply{\surrealReciprocalUpperApproxOp}{x,g,\suc{n}}$
+        by \auto{surreal_reciprocal_upper_approximation_successor,union_iff}.
+    Follows by \auto{surreal_reciprocal_upper_options_iff}.
+\end{proof}
+
+\begin{lemma}\label{surreal_positive_small_birthday_is_one}
+    Suppose $\surreal{z}$ and
+        $\surrealLt{\surrealZero}{z}$ and
+        $\birthday{z}\subseteq\birthday{\surrealOne}$.
+    Then $z=\surrealOne$.
+\end{lemma}
+\begin{proof}
+    $\birthday{z}$ and $\birthday{\surrealOne}$ are ordinals
+        by \obv{surreal_birthday_ordinal,surreal_one_is_surreal}.
+    $\birthday{\surrealOne}=\suc{\emptyset}$
+        by \obv{surreal_one_is_surreal}.
+    $\birthday{z}\in\suc{\emptyset}$ or
+        $\birthday{z}=\suc{\emptyset}$
+        by \auto{ordinal_subseteq_implies_elem_or_eq}.
+    \begin{byCase}
+        \caseOf{$\birthday{z}=\suc{\emptyset}$.}
+            $\surrealAt{\suc{\emptyset}}{z}$
+                by \auto{surreal_at_birthday}.
+            $\surrealAt{\suc{\emptyset}}{\surrealOne}$
+                by \auto{surreal_at_birthday,surreal_one_is_surreal}.
+            Show that $\surrealEq{\suc{\emptyset}}{z}{\surrealOne}$.
+            \begin{subproof}
+                Show that for every $\delta\in\suc{\emptyset}$ we have
+                    $\apply{z}{\delta}=\apply{\surrealOne}{\delta}$.
+                \begin{subproof}
+                    Fix $\delta\in\suc{\emptyset}$.
+                    Hence $\delta=\emptyset$ by \auto{suc_iff,emptyset}.
+                    $\birthday{\surrealZero}=\emptyset$
+                        by \obv{empty_surreal}.
+                    $\surrealLtLeftShort{\surrealZero}{z}$
+                        by \auto{surreal_lt,surreal_lt_common,surreal_lt_right_short,inter,emptyset}.
+                    Hence $\apply{z}{\emptyset}=\suc{\emptyset}$
+                        by \auto{surreal_lt_left_short}.
+                    $\apply{\surrealOne}{\emptyset}=\suc{\emptyset}$
+                        by \obv{ordinal_surreal_value,suc_intro_self}.
+                \end{subproof}
+                Follows by \obv{surreal_eq_initial}.
+            \end{subproof}
+            Follows by \obv{surreal_eq_birthday_implies_eq}.
+        \caseOf{$\birthday{z}\neq\suc{\emptyset}$.}
+            Hence $\birthday{z}\in\suc{\emptyset}$.
+            Hence $\birthday{z}=\emptyset$
+                by \auto{suc_iff,emptyset}.
+            Hence $z=\surrealZero$
+                by \obv{surreal_empty_birthday}.
+            Contradiction by
+                \obv{surreal_lt_irreflexive,empty_surreal}.
+    \end{byCase}
+\end{proof}
+
+\begin{lemma}\label{surreal_one_birthday_before_positive_nonunit}
+    Suppose $\surreal{z}$ and $\surrealLt{\surrealZero}{z}$ and
+        $z\neq\surrealOne$.
+    Then $\birthday{\surrealOne}\in\birthday{z}$.
+\end{lemma}
+\begin{proof}
+    $\birthday{\surrealOne}$ and $\birthday{z}$ are ordinals
+        by \obv{surreal_birthday_ordinal,surreal_one_is_surreal}.
+    $\birthday{\surrealOne}\in\birthday{z}$ or
+        $\birthday{z}\subseteq\birthday{\surrealOne}$
+        by \obv{ordinal_elem_or_subseteq}.
+    \begin{byCase}
+        \caseOf{$\birthday{\surrealOne}\in\birthday{z}$.}
+            Follows.
+        \caseOf{not $\birthday{\surrealOne}\in\birthday{z}$.}
+            Hence $\birthday{z}\subseteq\birthday{\surrealOne}$.
+            Contradiction by
+                \obv{surreal_positive_small_birthday_is_one}.
+    \end{byCase}
+\end{proof}
+
+\begin{lemma}\label{surreal_reciprocal_update_multiplied}
+    Suppose $\surreal{x}$ and $\surreal{u}$ and $\surreal{v}$ and
+        $\surreal{w}$.
+    Suppose $\surrealMul{u}{v}=\surrealOne$.
+    Then
+        $\surrealMul{u}{\surrealReciprocalUpdate{w}{x}{u}{v}}
+        =\surrealAdd{\surrealOne}{
+            \surrealMul{\surrealAdd{u}{\surrealNeg{x}}}{w}}$.
+\end{lemma}
+\begin{proof}
+    Follows by
+        \auto{surreal_reciprocal_update,surreal_mul_associative,surreal_mul_commutative,surreal_mul_distributive_left,surreal_mul_one_left,surreal_mul_one_right,surreal_mul_is_surreal,surreal_add_is_surreal,surreal_negation_is_surreal}.
+\end{proof}
+
+\begin{lemma}\label{surreal_reciprocal_update_gap_identity}
+    Suppose $\surreal{x}$ and $\surreal{u}$ and $\surreal{v}$ and
+        $\surreal{y}$ and $\surreal{w}$.
+    Suppose $\surrealMul{u}{v}=\surrealOne$.
+    Then
+        $\surrealAdd{\surrealOne}{
+            \surrealMul{u}{
+                \surrealAdd{y}{
+                    \surrealNeg{
+                        \surrealReciprocalUpdate{w}{x}{u}{v}}}}}
+        =\surrealAdd{\surrealMul{u}{y}}{
+            \surrealMul{\surrealAdd{\surrealNeg{u}}{x}}{w}}$.
+\end{lemma}
+\begin{proof}
+    Let $z=\surrealReciprocalUpdate{w}{x}{u}{v}$.
+    $\surreal{z}$ by
+        \auto{surreal_reciprocal_update,surreal_mul_is_surreal,surreal_add_is_surreal,surreal_negation_is_surreal}.
+    $\surrealMul{u}{z}
+        =\surrealAdd{\surrealOne}{
+            \surrealMul{\surrealAdd{u}{\surrealNeg{x}}}{w}}$
+        by \auto{surreal_reciprocal_update_multiplied}.
+    $\surrealMul{u}{\surrealAdd{y}{\surrealNeg{z}}}
+        =\surrealAdd{\surrealMul{u}{y}}{
+            \surrealNeg{\surrealMul{u}{z}}}$
+        by \auto{surreal_mul_distributive_left,surreal_mul_neg_right,surreal_negation_is_surreal}.
+    $\surrealNeg{\surrealMul{u}{z}}
+        =\surrealAdd{\surrealNeg{\surrealOne}}{
+            \surrealNeg{
+                \surrealMul{\surrealAdd{u}{\surrealNeg{x}}}{w}}}$
+        by \auto{surreal_negation_additive,surreal_one_is_surreal,surreal_mul_is_surreal,surreal_add_is_surreal,surreal_negation_is_surreal}.
+    $\surrealNeg{
+        \surrealMul{\surrealAdd{u}{\surrealNeg{x}}}{w}}
+        =\surrealMul{\surrealAdd{\surrealNeg{u}}{x}}{w}$
+        by \auto{surreal_mul_neg_left,surreal_negation_additive,surreal_negation_involutive,surreal_add_is_surreal,surreal_negation_is_surreal}.
+    Hence $\surrealNeg{\surrealMul{u}{z}}
+        =\surrealAdd{\surrealNeg{\surrealOne}}{
+            \surrealMul{\surrealAdd{\surrealNeg{u}}{x}}{w}}$
+        by \auto.
+    Hence $\surrealMul{u}{\surrealAdd{y}{\surrealNeg{z}}}
+        =\surrealAdd{\surrealMul{u}{y}}{
+            \surrealAdd{\surrealNeg{\surrealOne}}{
+                \surrealMul{\surrealAdd{\surrealNeg{u}}{x}}{w}}}$
+        by \auto.
+    $\surreal{\surrealMul{u}{y}}$ and
+        $\surreal{
+            \surrealMul{\surrealAdd{\surrealNeg{u}}{x}}{w}}$
+        by \obv{surreal_mul_is_surreal,surreal_add_is_surreal,surreal_negation_is_surreal}.
+    $\surrealAdd{\surrealOne}{
+        \surrealAdd{\surrealNeg{\surrealOne}}{
+            \surrealMul{\surrealAdd{\surrealNeg{u}}{x}}{w}}}
+        =\surrealMul{\surrealAdd{\surrealNeg{u}}{x}}{w}$
+        by \obv{surreal_add_negated_cancel_left,surreal_one_is_surreal}.
+    $\surrealAdd{\surrealOne}{
+        \surrealAdd{\surrealMul{u}{y}}{
+            \surrealAdd{\surrealNeg{\surrealOne}}{
+                \surrealMul{\surrealAdd{\surrealNeg{u}}{x}}{w}}}}
+        =\surrealAdd{\surrealMul{u}{y}}{
+            \surrealAdd{\surrealOne}{
+                \surrealAdd{\surrealNeg{\surrealOne}}{
+                    \surrealMul{\surrealAdd{\surrealNeg{u}}{x}}{w}}}}$
+        by \auto{surreal_add_associative,surreal_add_commutative,surreal_one_is_surreal,surreal_add_is_surreal,surreal_negation_is_surreal}.
+    Follows by \auto.
+\end{proof}
+
+\begin{lemma}\label{surreal_reciprocal_interpolation_lower_bound}
+    Suppose $\surreal{x}$ and $\surreal{u}$ and $\surreal{y}$ and
+        $\surreal{w}$.
+    Suppose
+        $\surrealLe{
+            \surrealAdd{\surrealMul{u}{y}}{\surrealMul{x}{w}}}{
+            \surrealAdd{\surrealOne}{\surrealMul{u}{w}}}$.
+    Then
+        $\surrealLe{
+            \surrealAdd{\surrealMul{u}{y}}{
+                \surrealMul{\surrealAdd{\surrealNeg{u}}{x}}{w}}}{
+            \surrealOne}$.
+\end{lemma}
+\begin{proof}
+    Let $q=\surrealMul{u}{w}$.
+    $\surreal{q}$ by \obv{surreal_mul_is_surreal}.
+    $\surrealLe{
+        \surrealAdd{
+            \surrealAdd{\surrealMul{u}{y}}{\surrealMul{x}{w}}}{
+            \surrealNeg{q}}}{
+        \surrealAdd{
+            \surrealAdd{\surrealOne}{\surrealMul{u}{w}}}{
+            \surrealNeg{q}}}$
+        by \obv{surreal_add_le_left,surreal_negation_is_surreal,surreal_mul_is_surreal,surreal_add_is_surreal,surreal_one_is_surreal}.
+    Follows by
+        \auto{surreal_mul_distributive_right,surreal_mul_neg_left,surreal_add_associative,surreal_add_commutative,surreal_add_inverse_right,surreal_add_zero_right,surreal_mul_is_surreal,surreal_add_is_surreal,surreal_negation_is_surreal,surreal_one_is_surreal}.
+\end{proof}
+
+\begin{lemma}\label{surreal_reciprocal_interpolation_upper_bound}
+    Suppose $\surreal{x}$ and $\surreal{u}$ and $\surreal{y}$ and
+        $\surreal{w}$.
+    Suppose
+        $\surrealLe{
+            \surrealAdd{\surrealOne}{\surrealMul{u}{w}}}{
+            \surrealAdd{\surrealMul{u}{y}}{\surrealMul{x}{w}}}$.
+    Then
+        $\surrealLe{\surrealOne}{
+            \surrealAdd{\surrealMul{u}{y}}{
+                \surrealMul{\surrealAdd{\surrealNeg{u}}{x}}{w}}}$.
+\end{lemma}
+\begin{proof}
+    Let $q=\surrealMul{u}{w}$.
+    $\surreal{q}$ by \obv{surreal_mul_is_surreal}.
+    $\surrealLe{
+        \surrealAdd{
+            \surrealAdd{\surrealOne}{\surrealMul{u}{w}}}{
+            \surrealNeg{q}}}{
+        \surrealAdd{
+            \surrealAdd{\surrealMul{u}{y}}{\surrealMul{x}{w}}}{
+            \surrealNeg{q}}}$
+        by \obv{surreal_add_le_left,surreal_negation_is_surreal,surreal_mul_is_surreal,surreal_add_is_surreal,surreal_one_is_surreal}.
+    Follows by
+        \auto{surreal_mul_distributive_right,surreal_mul_neg_left,surreal_add_associative,surreal_add_commutative,surreal_add_inverse_right,surreal_add_zero_right,surreal_mul_is_surreal,surreal_add_is_surreal,surreal_negation_is_surreal,surreal_one_is_surreal}.
+\end{proof}
+
+\begin{lemma}\label{surreal_reciprocal_balanced_identity}
+    Suppose $\surreal{x}$ and $\surreal{u}$ and $\surreal{y}$ and
+        $\surreal{w}$.
+    Then
+        $\surrealAdd{
+            \surrealMul{u}{\surrealAdd{y}{\surrealNeg{w}}}}{
+            \surrealMul{x}{w}}
+        =\surrealAdd{\surrealMul{u}{y}}{
+            \surrealMul{\surrealAdd{\surrealNeg{u}}{x}}{w}}$.
+\end{lemma}
+\begin{proof}
+    $\surrealMul{u}{\surrealAdd{y}{\surrealNeg{w}}}
+        =\surrealAdd{\surrealMul{u}{y}}{
+            \surrealNeg{\surrealMul{u}{w}}}$
+        by \auto{surreal_mul_distributive_left,surreal_mul_neg_right,surreal_negation_is_surreal}.
+    $\surrealMul{\surrealAdd{\surrealNeg{u}}{x}}{w}
+        =\surrealAdd{\surrealNeg{\surrealMul{u}{w}}}{
+            \surrealMul{x}{w}}$
+        by \auto{surreal_mul_distributive_right,surreal_mul_neg_left,surreal_negation_is_surreal}.
+    Follows by
+        \auto{surreal_add_associative,surreal_mul_is_surreal,surreal_negation_is_surreal}.
+\end{proof}
+
+\begin{lemma}\label{surreal_reciprocal_nonpositive_lower_interpolation}
+    Suppose $\surreal{x}$ and $\surreal{u}$ and $\surreal{y}$ and
+        $\surreal{w}$.
+    Suppose $\surrealLe{u}{\surrealZero}$ and $\surrealLt{y}{w}$.
+    Suppose
+        $\surrealLe{
+            \surrealAdd{\surrealMul{u}{y}}{\surrealMul{x}{w}}}{
+            \surrealAdd{\surrealOne}{\surrealMul{u}{w}}}$.
+    Then $\surrealLe{\surrealMul{x}{w}}{\surrealOne}$.
+\end{lemma}
+\begin{proof}
+    Let $d=\surrealAdd{y}{\surrealNeg{w}}$.
+    $\surreal{d}$ and $\surrealLt{d}{\surrealZero}$
+        by \auto{surreal_add_is_surreal,surreal_negation_is_surreal,surreal_subtraction_negative}.
+    Hence $\surrealLe{d}{\surrealZero}$ by \obv{surreal_le}.
+    $\surrealLe{
+        \surrealMul{u}{\surrealZero}}{\surrealMul{u}{d}}$
+        by \obv{surreal_nonpos_mul_le_left,empty_surreal}.
+    Hence $\surrealLe{\surrealZero}{\surrealMul{u}{d}}$
+        by \obv{surreal_mul_zero_right}.
+    Hence $\surrealLe{\surrealMul{x}{w}}{
+        \surrealAdd{\surrealMul{u}{d}}{\surrealMul{x}{w}}}$
+        by \auto{surreal_add_le_left,surreal_add_zero_left,surreal_mul_is_surreal,empty_surreal}.
+    $\surrealAdd{\surrealMul{u}{d}}{\surrealMul{x}{w}}
+        =\surrealAdd{\surrealMul{u}{y}}{
+            \surrealMul{\surrealAdd{\surrealNeg{u}}{x}}{w}}$
+        by \auto{surreal_reciprocal_balanced_identity}.
+    $\surrealLe{
+        \surrealAdd{\surrealMul{u}{y}}{
+            \surrealMul{\surrealAdd{\surrealNeg{u}}{x}}{w}}}{
+        \surrealOne}$
+        by \obv{surreal_reciprocal_interpolation_lower_bound}.
+    Follows by
+        \auto{surreal_le_transitive,surreal_one_is_surreal,surreal_mul_is_surreal,surreal_add_is_surreal,surreal_negation_is_surreal}.
+\end{proof}
+
+\begin{lemma}\label{surreal_reciprocal_nonpositive_upper_interpolation}
+    Suppose $\surreal{x}$ and $\surreal{u}$ and $\surreal{y}$ and
+        $\surreal{w}$.
+    Suppose $\surrealLe{u}{\surrealZero}$ and $\surrealLt{w}{y}$.
+    Suppose
+        $\surrealLe{
+            \surrealAdd{\surrealOne}{\surrealMul{u}{w}}}{
+            \surrealAdd{\surrealMul{u}{y}}{\surrealMul{x}{w}}}$.
+    Then $\surrealLe{\surrealOne}{\surrealMul{x}{w}}$.
+\end{lemma}
+\begin{proof}
+    Let $d=\surrealAdd{y}{\surrealNeg{w}}$.
+    $\surreal{d}$ and $\surrealLt{\surrealZero}{d}$
+        by \obv{surreal_add_is_surreal,surreal_negation_is_surreal,surreal_subtraction_positive}.
+    Hence $\surrealLe{\surrealZero}{d}$ by \obv{surreal_le}.
+    $\surrealLe{
+        \surrealMul{u}{d}}{\surrealMul{u}{\surrealZero}}$
+        by \obv{surreal_nonpos_mul_le_left,empty_surreal}.
+    Hence $\surrealLe{\surrealMul{u}{d}}{\surrealZero}$
+        by \obv{surreal_mul_zero_right}.
+    Hence $\surrealLe{
+        \surrealAdd{\surrealMul{u}{d}}{\surrealMul{x}{w}}}{
+        \surrealMul{x}{w}}$
+        by \auto{surreal_add_le_left,surreal_add_zero_left,surreal_mul_is_surreal,empty_surreal}.
+    $\surrealAdd{\surrealMul{u}{d}}{\surrealMul{x}{w}}
+        =\surrealAdd{\surrealMul{u}{y}}{
+            \surrealMul{\surrealAdd{\surrealNeg{u}}{x}}{w}}$
+        by \auto{surreal_reciprocal_balanced_identity}.
+    $\surrealLe{\surrealOne}{
+        \surrealAdd{\surrealMul{u}{y}}{
+            \surrealMul{\surrealAdd{\surrealNeg{u}}{x}}{w}}}$
+        by \obv{surreal_reciprocal_interpolation_upper_bound}.
+    Follows by
+        \auto{surreal_le_transitive,surreal_one_is_surreal,surreal_mul_is_surreal,surreal_add_is_surreal,surreal_negation_is_surreal}.
+\end{proof}
+
+\begin{lemma}\label{surreal_reciprocal_lower_update_contradiction}
+    Suppose $\surreal{x}$ and $\surreal{u}$ and $\surreal{v}$ and
+        $\surreal{y}$ and $\surreal{w}$ and $\surreal{w'}$.
+    Suppose $\surrealLt{\surrealZero}{u}$ and
+        $\surrealMul{u}{v}=\surrealOne$.
+    Suppose
+        $\surrealLe{
+            \surrealAdd{\surrealMul{u}{y}}{\surrealMul{x}{w}}}{
+            \surrealAdd{\surrealOne}{\surrealMul{u}{w}}}$.
+    Suppose
+        $\surrealLt{\surrealReciprocalUpdate{w'}{x}{u}{v}}{y}$.
+    Suppose
+        $\surrealLe{
+            \surrealMul{\surrealAdd{\surrealNeg{u}}{x}}{w'}}{
+            \surrealMul{\surrealAdd{\surrealNeg{u}}{x}}{w}}$.
+    Then $\surrealLt{\surrealOne}{\surrealOne}$.
+\end{lemma}
+\begin{proof}
+    Let $z=\surrealReciprocalUpdate{w'}{x}{u}{v}$.
+    $\surreal{z}$ by
+        \auto{surreal_reciprocal_update,surreal_mul_is_surreal,surreal_add_is_surreal,surreal_negation_is_surreal}.
+    $\surrealLt{\surrealZero}{\surrealAdd{y}{\surrealNeg{z}}}$
+        by \auto{surreal_subtraction_positive}.
+    Hence $\surrealLt{\surrealZero}{
+        \surrealMul{u}{\surrealAdd{y}{\surrealNeg{z}}}}$
+        by \obv{surreal_mul_pos_pos,surreal_add_is_surreal,surreal_negation_is_surreal,empty_surreal}.
+    Hence $\surrealLt{\surrealOne}{
+        \surrealAdd{\surrealOne}{
+            \surrealMul{u}{\surrealAdd{y}{\surrealNeg{z}}}}}$
+        by \auto{surreal_add_lt_right,surreal_add_zero_right,surreal_one_is_surreal,empty_surreal,surreal_mul_is_surreal,surreal_add_is_surreal,surreal_negation_is_surreal}.
+
+    $\surrealAdd{\surrealOne}{
+        \surrealMul{u}{\surrealAdd{y}{\surrealNeg{z}}}}
+        =\surrealAdd{\surrealMul{u}{y}}{
+            \surrealMul{\surrealAdd{\surrealNeg{u}}{x}}{w'}}$
+        by \auto{surreal_reciprocal_update_gap_identity}.
+    $\surrealLe{
+        \surrealAdd{\surrealMul{u}{y}}{
+            \surrealMul{\surrealAdd{\surrealNeg{u}}{x}}{w'}}}{
+        \surrealAdd{\surrealMul{u}{y}}{
+            \surrealMul{\surrealAdd{\surrealNeg{u}}{x}}{w}}}$
+        by \obv{surreal_add_le_right,surreal_mul_is_surreal,surreal_add_is_surreal,surreal_negation_is_surreal}.
+    $\surrealLe{
+        \surrealAdd{\surrealMul{u}{y}}{
+            \surrealMul{\surrealAdd{\surrealNeg{u}}{x}}{w}}}{
+        \surrealOne}$
+        by \obv{surreal_reciprocal_interpolation_lower_bound}.
+    Follows by
+        \auto{surreal_lt_le_transitive,surreal_le_transitive,surreal_one_is_surreal,surreal_add_is_surreal,surreal_mul_is_surreal,surreal_negation_is_surreal}.
+\end{proof}
+
+\begin{lemma}\label{surreal_reciprocal_upper_update_contradiction}
+    Suppose $\surreal{x}$ and $\surreal{u}$ and $\surreal{v}$ and
+        $\surreal{y}$ and $\surreal{w}$ and $\surreal{w'}$.
+    Suppose $\surrealLt{\surrealZero}{u}$ and
+        $\surrealMul{u}{v}=\surrealOne$.
+    Suppose
+        $\surrealLe{
+            \surrealAdd{\surrealOne}{\surrealMul{u}{w}}}{
+            \surrealAdd{\surrealMul{u}{y}}{\surrealMul{x}{w}}}$.
+    Suppose
+        $\surrealLt{y}{\surrealReciprocalUpdate{w'}{x}{u}{v}}$.
+    Suppose
+        $\surrealLe{
+            \surrealMul{\surrealAdd{\surrealNeg{u}}{x}}{w}}{
+            \surrealMul{\surrealAdd{\surrealNeg{u}}{x}}{w'}}$.
+    Then $\surrealLt{\surrealOne}{\surrealOne}$.
+\end{lemma}
+\begin{proof}
+    Let $z=\surrealReciprocalUpdate{w'}{x}{u}{v}$.
+    $\surreal{z}$ by
+        \auto{surreal_reciprocal_update,surreal_mul_is_surreal,surreal_add_is_surreal,surreal_negation_is_surreal}.
+    $\surrealLt{\surrealAdd{y}{\surrealNeg{z}}}{\surrealZero}$
+        by \auto{surreal_subtraction_negative}.
+    Hence $\surrealLt{
+        \surrealMul{u}{\surrealAdd{y}{\surrealNeg{z}}}}{\surrealZero}$
+        by \obv{surreal_mul_pos_neg,surreal_add_is_surreal,surreal_negation_is_surreal,empty_surreal}.
+    Hence $\surrealLt{
+        \surrealAdd{\surrealOne}{
+            \surrealMul{u}{\surrealAdd{y}{\surrealNeg{z}}}}}
+        {\surrealOne}$
+        by \auto{surreal_add_lt_right,surreal_add_zero_right,surreal_one_is_surreal,empty_surreal,surreal_mul_is_surreal,surreal_add_is_surreal,surreal_negation_is_surreal}.
+
+    $\surrealAdd{\surrealOne}{
+        \surrealMul{u}{\surrealAdd{y}{\surrealNeg{z}}}}
+        =\surrealAdd{\surrealMul{u}{y}}{
+            \surrealMul{\surrealAdd{\surrealNeg{u}}{x}}{w'}}$
+        by \auto{surreal_reciprocal_update_gap_identity}.
+    $\surrealLe{\surrealOne}{
+        \surrealAdd{\surrealMul{u}{y}}{
+            \surrealMul{\surrealAdd{\surrealNeg{u}}{x}}{w}}}$
+        by \obv{surreal_reciprocal_interpolation_upper_bound}.
+    $\surrealLe{
+        \surrealAdd{\surrealMul{u}{y}}{
+            \surrealMul{\surrealAdd{\surrealNeg{u}}{x}}{w}}}{
+        \surrealAdd{\surrealMul{u}{y}}{
+            \surrealMul{\surrealAdd{\surrealNeg{u}}{x}}{w'}}}$
+        by \obv{surreal_add_le_right,surreal_mul_is_surreal,surreal_add_is_surreal,surreal_negation_is_surreal}.
+    Follows by
+        \auto{surreal_le_lt_transitive,surreal_le_transitive,surreal_one_is_surreal,surreal_add_is_surreal,surreal_mul_is_surreal,surreal_negation_is_surreal}.
+\end{proof}
+
+\begin{theorem}\label{surreal_positive_reciprocal_inverse}
+    Suppose $\surreal{x}$ and $\surrealLt{\surrealZero}{x}$.
+    Then $\surreal{\surrealPositiveReciprocal{x}}$ and
+        $\surrealMul{x}{\surrealPositiveReciprocal{x}}=\surrealOne$.
+\end{theorem}
+\begin{proof}
+    Let $P:\Set\to\Prop=\fun{a:\Set}{
+        \surrealLt{\surrealZero}{a}\implies
+        (\surreal{\surrealPositiveReciprocal{a}}\land
+            \surrealMul{a}{\surrealPositiveReciprocal{a}}
+                =\surrealOne)}$.
+
+    Show that $\forall a:\Set.\ \surreal{a}\implies
+        ((\forall u:\Set.
+            (\surreal{u}\land\birthday{u}\in\birthday{a})
+            \implies\Apply{P}{u})
+         \implies\Apply{P}{a})$.
+    \begin{subproof}
+        Fix $a$.
+        Assume $\surreal{a}$.
+        Assume $\forall u:\Set.
+            (\surreal{u}\land\birthday{u}\in\birthday{a})
+            \implies\Apply{P}{u}$.
+        Show that if $\surrealLt{\surrealZero}{a}$ then
+            $\surreal{\surrealPositiveReciprocal{a}}$ and
+            $\surrealMul{a}{\surrealPositiveReciprocal{a}}
+                =\surrealOne$.
+        \begin{subproof}
+            Suppose $\surrealLt{\surrealZero}{a}$.
+            Let $g:\Set\to\Set=\surrealPositiveReciprocalOp$.
+            Let $A=\Apply{\surrealReciprocalLowerOptionsOp}{a,g}$.
+            Let $B=\Apply{\surrealReciprocalUpperOptionsOp}{a,g}$.
+            Let $y=\surrealPositiveReciprocal{a}$.
+
+            Show that $\forall u:\Set.
+                (\surreal{u}\land\birthday{u}\in\birthday{a}\land
+                    \surrealLt{\surrealZero}{u})
+                \implies
+                (\surreal{\Apply{g}{u}}\land
+                    \surrealMul{u}{\Apply{g}{u}}=\surrealOne)$.
+            \begin{subproof}
+                Fix $u$.
+                Assume $\surreal{u}$ and
+                    $\birthday{u}\in\birthday{a}$ and
+                    $\surrealLt{\surrealZero}{u}$.
+                $\Apply{P}{u}$.
+                Follows by
+                    \auto{surreal_positive_reciprocal_typed,surreal_positive_reciprocal}.
+            \end{subproof}
+
+            $\surrealCutPair{A}{B}$
+                by \auto{surreal_reciprocal_options_cut_pair}.
+            $y=\surrealCut{A}{B}$
+                by \auto{surreal_positive_reciprocal_equation}.
+            Hence $\surreal{y}$
+                by \obv{surreal_cut_pair_is_surreal}.
+            $\surrealZero\in A$
+                by \obv{surreal_zero_in_reciprocal_lower_options}.
+            Hence $\surrealLt{\surrealZero}{y}$
+                by \obv{surreal_cut_pair_left}.
+
+            Let $p=\surrealMul{a}{y}$.
+            $\surreal{p}$ by \obv{surreal_mul_is_surreal}.
+            $\surrealLt{\surrealZero}{p}$
+                by \auto{surreal_mul_pos_pos,empty_surreal}.
+
+            Show that $p=\surrealOne$.
+            \begin{subproof}
+                Suppose not.
+                $\surrealLt{p}{\surrealOne}$ or
+                    $\surrealLt{\surrealOne}{p}$
+                    by \auto{surreal_lt_trichotomy,surreal_one_is_surreal}.
+                \begin{byCase}
+                    \caseOf{$\surrealLt{p}{\surrealOne}$.}
+                        $\birthday{\surrealOne}\in\birthday{p}$
+                            by \obv{surreal_one_birthday_before_positive_nonunit}.
+                        Hence $\surrealOne\in\surrealRight{p}$
+                            by \obv{surreal_right_intro,surreal_one_is_surreal}.
+                        Take $u,w$ such that
+                            (($u\in\surrealLeft{a}$ and
+                                $w\in\surrealRight{y}$) or
+                             ($u\in\surrealRight{a}$ and
+                                $w\in\surrealLeft{y}$)) and
+                            $\surrealLe{
+                                \surrealAdd{\surrealMul{u}{y}}{
+                                    \surrealMul{a}{w}}}{
+                                \surrealAdd{\surrealOne}{
+                                    \surrealMul{u}{w}}}$
+                            by \auto{surreal_mul_right_interpolation}.
+                        $\surreal{u}$ and $\surreal{w}$
+                            by \auto{surreal_left_elim,surreal_right_elim}.
+                        \begin{byCase}
+                            \caseOf{$u\in\surrealLeft{a}$ and
+                                $w\in\surrealRight{y}$.}
+                                $\surrealLt{u}{a}$ and
+                                    $\surrealLt{y}{w}$
+                                    by \auto{surreal_left_elim,surreal_right_elim}.
+                                Take $w'\in B$ such that
+                                    $\surrealLe{w'}{w}$
+                                    by \auto{surreal_cut_right_interpolation}.
+                                $\surreal{w'}$ and
+                                    $\surrealLt{\surrealOne}{
+                                        \surrealMul{a}{w'}}$
+                                    by \auto{surreal_reciprocal_upper_options_invariant}.
+                                \begin{byCase}
+                                    \caseOf{$\surrealLt{\surrealZero}{u}$.}
+                                        $\birthday{u}\in\birthday{a}$
+                                            by \obv{surreal_left_elim}.
+                                        Let $v=\Apply{g}{u}$.
+                                        Hence $\surreal{v}$ and
+                                            $\surrealMul{u}{v}
+                                                =\surrealOne$
+                                            by \auto.
+                                        $u\in\surrealReciprocalPositiveLeft{a}$
+                                            by \obv{surreal_reciprocal_positive_left}.
+                                        Let $z=\surrealReciprocalUpdate
+                                            {w'}{a}{u}{v}$.
+                                        $z\in A$ by
+                                            \auto{surreal_reciprocal_lower_options_from_upper_left}.
+                                        Hence $\surrealLt{z}{y}$
+                                            by \auto{surreal_cut_pair_left}.
+                                        $\surrealLt{\surrealZero}{
+                                            \surrealAdd{\surrealNeg{u}}{a}}$
+                                            by \auto{surreal_subtraction_positive,surreal_add_commutative,surreal_negation_is_surreal}.
+                                        Hence $\surrealLe{
+                                            \surrealMul{
+                                                \surrealAdd{\surrealNeg{u}}{a}}{w'}}{
+                                            \surrealMul{
+                                                \surrealAdd{\surrealNeg{u}}{a}}{w}}$
+                                            by \obv{surreal_nonneg_mul_le_left,surreal_le,surreal_add_is_surreal,surreal_negation_is_surreal}.
+                                        $\surrealLt{\surrealOne}{\surrealOne}$
+                                            by \auto{surreal_reciprocal_lower_update_contradiction}.
+                                        Contradiction by
+                                            \obv{surreal_lt_irreflexive,surreal_one_is_surreal}.
+                                    \caseOf{not $\surrealLt{\surrealZero}{u}$.}
+                                        $\surrealLe{u}{\surrealZero}$
+                                            by \auto{surreal_le_total,surreal_le,empty_surreal}.
+                                        $\surrealLe{\surrealMul{a}{w'}}{
+                                            \surrealMul{a}{w}}$
+                                            by \obv{surreal_nonneg_mul_le_left,surreal_le,empty_surreal}.
+                                        $\surrealLe{\surrealMul{a}{w}}{
+                                            \surrealOne}$
+                                            by \auto{surreal_reciprocal_nonpositive_lower_interpolation}.
+                                        Hence $\surrealLt{\surrealOne}{\surrealOne}$
+                                            by \auto{surreal_lt_le_transitive,surreal_le_transitive,surreal_one_is_surreal,surreal_mul_is_surreal}.
+                                        Contradiction by
+                                            \obv{surreal_lt_irreflexive,surreal_one_is_surreal}.
+                                \end{byCase}
+                            \caseOf{$\lnot(u\in\surrealLeft{a}\land
+                                w\in\surrealRight{y})$.}
+                                Hence $u\in\surrealRight{a}$ and
+                                    $w\in\surrealLeft{y}$.
+                                $\surrealLt{a}{u}$ and
+                                    $\surrealLt{w}{y}$
+                                    by \auto{surreal_right_elim,surreal_left_elim}.
+                                Take $w'\in A$ such that
+                                    $\surrealLe{w}{w'}$
+                                    by \auto{surreal_cut_left_interpolation}.
+                                $\surreal{w'}$ by
+                                    \obv{surreal_cut_pair}.
+                                $\surrealLt{\surrealZero}{u}$
+                                    by \auto{surreal_lt_transitive,empty_surreal}.
+                                $\birthday{u}\in\birthday{a}$
+                                    by \obv{surreal_right_elim}.
+                                Let $v=\Apply{g}{u}$.
+                                Hence $\surreal{v}$ and
+                                    $\surrealMul{u}{v}
+                                        =\surrealOne$
+                                    by \auto.
+                                Let $z=\surrealReciprocalUpdate
+                                    {w'}{a}{u}{v}$.
+                                $z\in A$ by
+                                    \auto{surreal_reciprocal_lower_options_from_lower_right}.
+                                Hence $\surrealLt{z}{y}$
+                                    by \auto{surreal_cut_pair_left}.
+                                $\surrealLt{
+                                    \surrealAdd{\surrealNeg{u}}{a}}{
+                                    \surrealZero}$
+                                    by \auto{surreal_subtraction_negative,surreal_add_commutative,surreal_negation_is_surreal}.
+                                Hence $\surrealLe{
+                                    \surrealAdd{\surrealNeg{u}}{a}}{
+                                    \surrealZero}$ by \obv{surreal_le}.
+                                Hence $\surrealLe{
+                                    \surrealMul{
+                                        \surrealAdd{\surrealNeg{u}}{a}}{w'}}{
+                                    \surrealMul{
+                                        \surrealAdd{\surrealNeg{u}}{a}}{w}}$
+                                    by \obv{surreal_nonpos_mul_le_left,surreal_add_is_surreal,surreal_negation_is_surreal,empty_surreal}.
+                                $\surrealLt{\surrealOne}{\surrealOne}$
+                                    by \auto{surreal_reciprocal_lower_update_contradiction}.
+                                Contradiction by
+                                    \obv{surreal_lt_irreflexive,surreal_one_is_surreal}.
+                        \end{byCase}
+                    \caseOf{not $\surrealLt{p}{\surrealOne}$.}
+                        Hence $\surrealLt{\surrealOne}{p}$
+                            by \auto.
+                        $\birthday{\surrealOne}\in\birthday{p}$
+                            by \obv{surreal_one_birthday_before_positive_nonunit}.
+                        Hence $\surrealOne\in\surrealLeft{p}$
+                            by \obv{surreal_left_intro,surreal_one_is_surreal}.
+                        Take $u,w$ such that
+                            (($u\in\surrealLeft{a}$ and
+                                $w\in\surrealLeft{y}$) or
+                             ($u\in\surrealRight{a}$ and
+                                $w\in\surrealRight{y}$)) and
+                            $\surrealLe{
+                                \surrealAdd{\surrealOne}{
+                                    \surrealMul{u}{w}}}{
+                                \surrealAdd{\surrealMul{u}{y}}{
+                                    \surrealMul{a}{w}}}$
+                            by \auto{surreal_mul_left_interpolation}.
+                        $\surreal{u}$ and $\surreal{w}$
+                            by \auto{surreal_left_elim,surreal_right_elim}.
+                        \begin{byCase}
+                            \caseOf{$u\in\surrealLeft{a}$ and
+                                $w\in\surrealLeft{y}$.}
+                                $\surrealLt{u}{a}$ and
+                                    $\surrealLt{w}{y}$
+                                    by \auto{surreal_left_elim}.
+                                Take $w'\in A$ such that
+                                    $\surrealLe{w}{w'}$
+                                    by \auto{surreal_cut_left_interpolation}.
+                                $\surreal{w'}$ and
+                                    $\surrealLt{
+                                        \surrealMul{a}{w'}}{\surrealOne}$
+                                    by \auto{surreal_reciprocal_lower_options_invariant}.
+                                \begin{byCase}
+                                    \caseOf{$\surrealLt{\surrealZero}{u}$.}
+                                        $\birthday{u}\in\birthday{a}$
+                                            by \obv{surreal_left_elim}.
+                                        Let $v=\Apply{g}{u}$.
+                                        Hence $\surreal{v}$ and
+                                            $\surrealMul{u}{v}
+                                                =\surrealOne$
+                                            by \auto.
+                                        $u\in\surrealReciprocalPositiveLeft{a}$
+                                            by \obv{surreal_reciprocal_positive_left}.
+                                        Let $z=\surrealReciprocalUpdate
+                                            {w'}{a}{u}{v}$.
+                                        $z\in B$ by
+                                            \auto{surreal_reciprocal_upper_options_from_lower_left}.
+                                        Hence $\surrealLt{y}{z}$
+                                            by \auto{surreal_cut_pair_right}.
+                                        $\surrealLt{\surrealZero}{
+                                            \surrealAdd{\surrealNeg{u}}{a}}$
+                                            by \auto{surreal_subtraction_positive,surreal_add_commutative,surreal_negation_is_surreal}.
+                                        Hence $\surrealLe{
+                                            \surrealMul{
+                                                \surrealAdd{\surrealNeg{u}}{a}}{w}}{
+                                            \surrealMul{
+                                                \surrealAdd{\surrealNeg{u}}{a}}{w'}}$
+                                            by \obv{surreal_nonneg_mul_le_left,surreal_le,surreal_add_is_surreal,surreal_negation_is_surreal}.
+                                        $\surrealLt{\surrealOne}{\surrealOne}$
+                                            by \auto{surreal_reciprocal_upper_update_contradiction}.
+                                        Contradiction by
+                                            \obv{surreal_lt_irreflexive,surreal_one_is_surreal}.
+                                    \caseOf{not $\surrealLt{\surrealZero}{u}$.}
+                                        $\surrealLe{u}{\surrealZero}$
+                                            by \auto{surreal_le_total,surreal_le,empty_surreal}.
+                                        $\surrealLe{\surrealMul{a}{w}}{
+                                            \surrealMul{a}{w'}}$
+                                            by \obv{surreal_nonneg_mul_le_left,surreal_le,empty_surreal}.
+                                        $\surrealLe{\surrealOne}{
+                                            \surrealMul{a}{w}}$
+                                            by \auto{surreal_reciprocal_nonpositive_upper_interpolation}.
+                                        Hence $\surrealLt{\surrealOne}{\surrealOne}$
+                                            by \auto{surreal_le_lt_transitive,surreal_le_transitive,surreal_one_is_surreal,surreal_mul_is_surreal}.
+                                        Contradiction by
+                                            \obv{surreal_lt_irreflexive,surreal_one_is_surreal}.
+                                \end{byCase}
+                            \caseOf{$\lnot(u\in\surrealLeft{a}\land
+                                w\in\surrealLeft{y})$.}
+                                Hence $u\in\surrealRight{a}$ and
+                                    $w\in\surrealRight{y}$.
+                                $\surrealLt{a}{u}$ and
+                                    $\surrealLt{y}{w}$
+                                    by \auto{surreal_right_elim}.
+                                Take $w'\in B$ such that
+                                    $\surrealLe{w'}{w}$
+                                    by \auto{surreal_cut_right_interpolation}.
+                                $\surreal{w'}$ by
+                                    \auto{surreal_reciprocal_upper_options_invariant}.
+                                $\surrealLt{\surrealZero}{u}$
+                                    by \auto{surreal_lt_transitive,empty_surreal}.
+                                $\birthday{u}\in\birthday{a}$
+                                    by \obv{surreal_right_elim}.
+                                Let $v=\Apply{g}{u}$.
+                                Hence $\surreal{v}$ and
+                                    $\surrealMul{u}{v}
+                                        =\surrealOne$
+                                    by \auto.
+                                Let $z=\surrealReciprocalUpdate
+                                    {w'}{a}{u}{v}$.
+                                $z\in B$ by
+                                    \auto{surreal_reciprocal_upper_options_from_upper_right}.
+                                Hence $\surrealLt{y}{z}$
+                                    by \auto{surreal_cut_pair_right}.
+                                $\surrealLt{
+                                    \surrealAdd{\surrealNeg{u}}{a}}{
+                                    \surrealZero}$
+                                    by \auto{surreal_subtraction_negative,surreal_add_commutative,surreal_negation_is_surreal}.
+                                Hence $\surrealLe{
+                                    \surrealAdd{\surrealNeg{u}}{a}}{
+                                    \surrealZero}$ by \obv{surreal_le}.
+                                Hence $\surrealLe{
+                                    \surrealMul{
+                                        \surrealAdd{\surrealNeg{u}}{a}}{w}}{
+                                    \surrealMul{
+                                        \surrealAdd{\surrealNeg{u}}{a}}{w'}}$
+                                    by \obv{surreal_nonpos_mul_le_left,surreal_add_is_surreal,surreal_negation_is_surreal,empty_surreal}.
+                                $\surrealLt{\surrealOne}{\surrealOne}$
+                                    by \auto{surreal_reciprocal_upper_update_contradiction}.
+                                Contradiction by
+                                    \obv{surreal_lt_irreflexive,surreal_one_is_surreal}.
+                        \end{byCase}
+                \end{byCase}
+            \end{subproof}
+            Follows by \auto.
+        \end{subproof}
+    \end{subproof}
+
+    $\forall a:\Set.\ \surreal{a}\implies\Apply{P}{a}$
+        by \auto{surreal_induction}.
+    Hence $\Apply{P}{x}$.
+\end{proof}
+
+\subsection{Reciprocal and division operations}
+
+\begin{definition}\label{surreal_reciprocal_typed}
+    $\surrealReciprocalOp:\Set\to\Set
+        =\fun{x:\Set}{
+            \Apply{\logicalIfSetOp}{
+                \surrealLt{\surrealZero}{x},
+                \surrealPositiveReciprocal{x},
+                \Apply{\logicalIfSetOp}{
+                    \surrealLt{x}{\surrealZero},
+                    \surrealNeg{
+                        \surrealPositiveReciprocal{\surrealNeg{x}}},
+                    \surrealZero}}}$.
+\end{definition}
+
+\begin{definition}\label{surreal_reciprocal}
+    $\surrealReciprocal{x}=\Apply{\surrealReciprocalOp}{x}$.
+\end{definition}
+
+\begin{proposition}\label{surreal_reciprocal_positive_equation}
+    Suppose $\surrealLt{\surrealZero}{x}$.
+    Then $\surrealReciprocal{x}=\surrealPositiveReciprocal{x}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \obv{surreal_reciprocal,surreal_reciprocal_typed,logical_if_set_true}.
+\end{proof}
+
+\begin{proposition}\label{surreal_reciprocal_negative_equation}
+    Suppose $\surreal{x}$ and $\surrealLt{x}{\surrealZero}$.
+    Then $\surrealReciprocal{x}
+        =\surrealNeg{\surrealPositiveReciprocal{\surrealNeg{x}}}$.
+\end{proposition}
+\begin{proof}
+    Show that not $\surrealLt{\surrealZero}{x}$.
+    \begin{subproof}
+        Suppose $\surrealLt{\surrealZero}{x}$.
+        Hence $\surrealLt{\surrealZero}{\surrealZero}$
+            by \obv{surreal_lt_transitive,empty_surreal}.
+        Contradiction by \obv{surreal_lt_irreflexive,empty_surreal}.
+    \end{subproof}
+    Follows by
+        \auto{surreal_reciprocal,surreal_reciprocal_typed,logical_if_set_false,logical_if_set_true}.
+\end{proof}
+
+\begin{proposition}\label{surreal_reciprocal_zero}
+    $\surrealReciprocal{\surrealZero}=\surrealZero$.
+\end{proposition}
+\begin{proof}
+    $\lnot\surrealLt{\surrealZero}{\surrealZero}$
+        by \obv{surreal_lt_irreflexive,empty_surreal}.
+    Follows by
+        \auto{surreal_reciprocal,surreal_reciprocal_typed,logical_if_set_false}.
+\end{proof}
+
+\begin{theorem}\label{surreal_reciprocal_is_surreal}
+    Suppose $\surreal{x}$.
+    Then $\surreal{\surrealReciprocal{x}}$.
+\end{theorem}
+\begin{proof}
+    $\surrealLt{x}{\surrealZero}$ or $x=\surrealZero$ or
+        $\surrealLt{\surrealZero}{x}$
+        by \obv{surreal_lt_trichotomy,empty_surreal}.
+    \begin{byCase}
+        \caseOf{$\surrealLt{\surrealZero}{x}$.}
+            $\surreal{\surrealPositiveReciprocal{x}}$
+                by \auto{surreal_positive_reciprocal_inverse}.
+            Follows by \obv{surreal_reciprocal_positive_equation}.
+        \caseOf{not $\surrealLt{\surrealZero}{x}$.}
+            \begin{byCase}
+                \caseOf{$\surrealLt{x}{\surrealZero}$.}
+                    $\surreal{\surrealNeg{x}}$
+                        by \obv{surreal_negation_is_surreal}.
+                    $\surrealLt{\surrealZero}{\surrealNeg{x}}$
+                        by \auto{surreal_negation_lt_reverses,surreal_negation_empty,empty_surreal}.
+                    Hence $\surreal{
+                        \surrealPositiveReciprocal{\surrealNeg{x}}}$
+                        by \auto{surreal_positive_reciprocal_inverse}.
+                    Hence $\surreal{
+                        \surrealNeg{
+                            \surrealPositiveReciprocal{\surrealNeg{x}}}}$
+                        by \obv{surreal_negation_is_surreal}.
+                    Follows by
+                        \obv{surreal_reciprocal_negative_equation}.
+                \caseOf{not $\surrealLt{x}{\surrealZero}$.}
+                    Hence $x=\surrealZero$.
+                    Follows by \obv{surreal_reciprocal_zero,empty_surreal}.
+            \end{byCase}
+    \end{byCase}
+\end{proof}
+
+\begin{theorem}\label{surreal_reciprocal_inverse}
+    Suppose $\surreal{x}$ and $x\neq\surrealZero$.
+    Then $\surrealMul{x}{\surrealReciprocal{x}}=\surrealOne$.
+\end{theorem}
+\begin{proof}
+    $\surrealLt{x}{\surrealZero}$ or $x=\surrealZero$ or
+        $\surrealLt{\surrealZero}{x}$
+        by \obv{surreal_lt_trichotomy,empty_surreal}.
+    \begin{byCase}
+        \caseOf{$\surrealLt{\surrealZero}{x}$.}
+            $\surrealMul{x}{\surrealPositiveReciprocal{x}}
+                =\surrealOne$
+                by \obv{surreal_positive_reciprocal_inverse}.
+            Follows by \auto{surreal_reciprocal_positive_equation}.
+        \caseOf{not $\surrealLt{\surrealZero}{x}$.}
+            Hence $\surrealLt{x}{\surrealZero}$.
+            Let $q=\surrealNeg{x}$.
+            $\surreal{q}$ by \obv{surreal_negation_is_surreal}.
+            $\surrealLt{\surrealZero}{q}$
+                by \auto{surreal_negation_lt_reverses,surreal_negation_empty,empty_surreal}.
+            Let $r=\surrealPositiveReciprocal{q}$.
+            $\surreal{r}$ and $\surrealMul{q}{r}=\surrealOne$
+                by \auto{surreal_positive_reciprocal_inverse}.
+            $\surrealReciprocal{x}=\surrealNeg{r}$
+                by \auto{surreal_reciprocal_negative_equation}.
+            $\surrealMul{x}{\surrealNeg{r}}=\surrealMul{q}{r}$
+                by \auto{surreal_mul_both_negated,surreal_negation_involutive,surreal_negation_is_surreal}.
+            Follows by \auto.
+    \end{byCase}
+\end{proof}
+
+\begin{corollary}\label{surreal_reciprocal_inverse_right}
+    Suppose $\surreal{x}$ and $x\neq\surrealZero$.
+    Then $\surrealMul{\surrealReciprocal{x}}{x}=\surrealOne$.
+\end{corollary}
+\begin{proof}
+    Follows by
+        \auto{surreal_reciprocal_inverse,surreal_mul_commutative,surreal_reciprocal_is_surreal}.
+\end{proof}
+
+\begin{theorem}\label{surreal_reciprocal_positive}
+    Suppose $\surreal{x}$ and
+        $\surrealLt{\surrealZero}{x}$.
+    Then
+        $\surrealLt{\surrealZero}{\surrealReciprocal{x}}$.
+\end{theorem}
+\begin{proof}
+    Let $r=\surrealReciprocal{x}$.
+    $\surreal{r}$ by \obv{surreal_reciprocal_is_surreal}.
+    Show that $x\neq\surrealZero$.
+    \begin{subproof}
+        Suppose $x=\surrealZero$.
+        Hence $\surrealLt{\surrealZero}{\surrealZero}$.
+        Contradiction by
+            \obv{surreal_lt_irreflexive,empty_surreal}.
+    \end{subproof}
+    Hence $\surrealMul{x}{r}=\surrealOne$
+        by \auto{surreal_reciprocal_inverse}.
+    $\surrealLt{r}{\surrealZero}$ or $r=\surrealZero$ or
+        $\surrealLt{\surrealZero}{r}$
+        by \auto{surreal_lt_trichotomy,empty_surreal}.
+    \begin{byCase}
+        \caseOf{$\surrealLt{r}{\surrealZero}$.}
+            $\surrealLt{\surrealMul{x}{r}}{\surrealZero}$
+                by \obv{surreal_mul_pos_neg}.
+            Hence $\surrealLt{\surrealOne}{\surrealZero}$.
+            Contradiction by
+                \obv{surreal_zero_lt_one,surreal_lt_asymmetric,empty_surreal,surreal_one_is_surreal}.
+        \caseOf{not $\surrealLt{r}{\surrealZero}$.}
+            \begin{byCase}
+                \caseOf{$r=\surrealZero$.}
+                    $\surrealMul{x}{r}=\surrealZero$
+                        by \auto{surreal_mul_zero_right}.
+                    Hence $\surrealOne=\surrealZero$.
+                    Contradiction by
+                        \obv{surreal_zero_lt_one,surreal_lt_irreflexive,empty_surreal}.
+                \caseOf{$r\neq\surrealZero$.}
+                    Follows.
+            \end{byCase}
+    \end{byCase}
+\end{proof}
+
+\begin{corollary}\label{surreal_reciprocal_nonzero}
+    Suppose $\surreal{x}$ and $x\neq\surrealZero$.
+    Then $\surrealReciprocal{x}\neq\surrealZero$.
+\end{corollary}
+\begin{proof}
+    Suppose $\surrealReciprocal{x}=\surrealZero$.
+    Hence $\surrealMul{x}{\surrealReciprocal{x}}=\surrealZero$
+        by \auto{surreal_mul_zero_right}.
+    Hence $\surrealOne=\surrealZero$
+        by \auto{surreal_reciprocal_inverse}.
+    Contradiction by
+        \obv{surreal_zero_lt_one,surreal_lt_irreflexive,empty_surreal}.
+\end{proof}
+
+\begin{theorem}\label{surreal_reciprocal_unique}
+    Suppose $\surreal{x}$ and $\surreal{y}$.
+    Suppose $\surrealMul{x}{y}=\surrealOne$.
+    Then $x\neq\surrealZero$ and
+        $y=\surrealReciprocal{x}$.
+\end{theorem}
+\begin{proof}
+    Show that $x\neq\surrealZero$.
+    \begin{subproof}
+        Suppose $x=\surrealZero$.
+        Hence $\surrealMul{x}{y}=\surrealZero$
+            by \auto{surreal_mul_zero_left}.
+        Hence $\surrealOne=\surrealZero$.
+        Contradiction by
+            \obv{surreal_zero_lt_one,surreal_lt_irreflexive,empty_surreal}.
+    \end{subproof}
+    $\surreal{\surrealReciprocal{x}}$
+        by \obv{surreal_reciprocal_is_surreal}.
+    $\surrealMul{x}{\surrealReciprocal{x}}=\surrealOne$
+        by \obv{surreal_reciprocal_inverse}.
+    Hence $\surrealMul{x}{y}
+        =\surrealMul{x}{\surrealReciprocal{x}}$.
+    Hence $y=\surrealReciprocal{x}$
+        by \obv{surreal_mul_nonzero_cancel_left}.
+\end{proof}
+
+\begin{corollary}\label{surreal_reciprocal_involutive}
+    Suppose $\surreal{x}$ and $x\neq\surrealZero$.
+    Then $\surrealReciprocal{\surrealReciprocal{x}}=x$.
+\end{corollary}
+\begin{proof}
+    $\surreal{\surrealReciprocal{x}}$
+        by \obv{surreal_reciprocal_is_surreal}.
+    $\surrealMul{\surrealReciprocal{x}}{x}=\surrealOne$
+        by \obv{surreal_reciprocal_inverse_right}.
+    Hence $x=\surrealReciprocal{\surrealReciprocal{x}}$
+        by \obv{surreal_reciprocal_unique}.
+\end{proof}
+
+\begin{corollary}\label{surreal_reciprocal_one}
+    $\surrealReciprocal{\surrealOne}=\surrealOne$.
+\end{corollary}
+\begin{proof}
+    $\surrealMul{\surrealOne}{\surrealOne}=\surrealOne$
+        by \obv{surreal_mul_one_left,surreal_one_is_surreal}.
+    Follows by
+        \auto{surreal_reciprocal_unique,surreal_one_is_surreal}.
+\end{proof}
+
+\begin{lemma}\label{surreal_mul_nonzero}
+    Suppose $\surreal{x}$ and $\surreal{y}$.
+    Suppose $x\neq\surrealZero$ and $y\neq\surrealZero$.
+    Then $\surrealMul{x}{y}\neq\surrealZero$.
+\end{lemma}
+\begin{proof}
+    Suppose $\surrealMul{x}{y}=\surrealZero$.
+    $\surrealMul{x}{\surrealZero}=\surrealZero$
+        by \obv{surreal_mul_zero_right}.
+    Hence $\surrealMul{x}{y}=\surrealMul{x}{\surrealZero}$.
+    Hence $y=\surrealZero$
+        by \obv{surreal_mul_nonzero_cancel_left,empty_surreal}.
+    Contradiction.
+\end{proof}
+
+\begin{theorem}\label{surreal_reciprocal_multiplicative}
+    Suppose $\surreal{x}$ and $\surreal{y}$.
+    Suppose $x\neq\surrealZero$ and $y\neq\surrealZero$.
+    Then
+        $\surrealReciprocal{\surrealMul{x}{y}}
+        =\surrealMul{\surrealReciprocal{x}}{
+            \surrealReciprocal{y}}$.
+\end{theorem}
+\begin{proof}
+    $\surreal{\surrealReciprocal{x}}$ and
+        $\surreal{\surrealReciprocal{y}}$
+        by \obv{surreal_reciprocal_is_surreal}.
+    $\surrealMul{x}{\surrealReciprocal{x}}=\surrealOne$ and
+        $\surrealMul{y}{\surrealReciprocal{y}}=\surrealOne$
+        by \obv{surreal_reciprocal_inverse}.
+    $\surrealMul{\surrealMul{x}{y}}{
+        \surrealMul{\surrealReciprocal{x}}{
+            \surrealReciprocal{y}}}=\surrealOne$
+        by \auto{surreal_mul_associative,surreal_mul_commutative,surreal_mul_one_left,surreal_mul_one_right,surreal_one_is_surreal,surreal_mul_is_surreal}.
+    Hence $\surrealMul{\surrealReciprocal{x}}{
+        \surrealReciprocal{y}}
+        =\surrealReciprocal{\surrealMul{x}{y}}$
+        by \auto{surreal_reciprocal_unique,surreal_mul_is_surreal}.
+\end{proof}
+
+\begin{definition}\label{surreal_division}
+    $\surrealDiv{x}{y}=\surrealMul{x}{\surrealReciprocal{y}}$.
+\end{definition}
+
+\begin{theorem}\label{surreal_division_is_surreal}
+    Suppose $\surreal{x}$ and $\surreal{y}$.
+    Then $\surreal{\surrealDiv{x}{y}}$.
+\end{theorem}
+\begin{proof}
+    Follows by
+        \auto{surreal_division,surreal_reciprocal_is_surreal,surreal_mul_is_surreal}.
+\end{proof}
+
+\begin{proposition}\label{surreal_division_one}
+    Suppose $\surreal{x}$.
+    Then $\surrealDiv{x}{\surrealOne}=x$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{surreal_division,surreal_reciprocal_one,surreal_mul_one_right}.
+\end{proof}
+
+\begin{theorem}\label{surreal_division_cancel_right}
+    Suppose $\surreal{x}$ and $\surreal{y}$ and
+        $y\neq\surrealZero$.
+    Then $\surrealMul{\surrealDiv{x}{y}}{y}=x$.
+\end{theorem}
+\begin{proof}
+    Follows by
+        \auto{surreal_division,surreal_reciprocal_inverse_right,surreal_mul_associative,surreal_mul_one_right,surreal_reciprocal_is_surreal}.
+\end{proof}
+
+\begin{theorem}\label{surreal_division_positive}
+    Suppose $\surreal{x}$ and $\surreal{y}$.
+    Suppose $\surrealLt{\surrealZero}{x}$ and
+        $\surrealLt{\surrealZero}{y}$.
+    Then $\surrealLt{\surrealZero}{\surrealDiv{x}{y}}$.
+\end{theorem}
+\begin{proof}
+    $\surreal{\surrealReciprocal{y}}$ and
+        $\surrealLt{\surrealZero}{\surrealReciprocal{y}}$
+        by
+        \obv{surreal_reciprocal_is_surreal,surreal_reciprocal_positive}.
+    Follows by \auto{surreal_division,surreal_mul_pos_pos}.
+\end{proof}
+
+\begin{theorem}\label{surreal_division_nonnegative}
+    Suppose $\surreal{x}$ and $\surreal{y}$.
+    Suppose $\surrealLe{\surrealZero}{x}$ and
+        $\surrealLt{\surrealZero}{y}$.
+    Then $\surrealLe{\surrealZero}{\surrealDiv{x}{y}}$.
+\end{theorem}
+\begin{proof}
+    $\surreal{\surrealReciprocal{y}}$ and
+        $\surrealLt{\surrealZero}{\surrealReciprocal{y}}$
+        by
+        \obv{surreal_reciprocal_is_surreal,surreal_reciprocal_positive}.
+    Hence $\surrealLe{\surrealZero}{\surrealReciprocal{y}}$
+        by \obv{surreal_le}.
+    Follows by
+        \auto{surreal_division,surreal_mul_nonneg_nonneg}.
+\end{proof}
+
+\begin{corollary}\label{surreal_division_self}
+    Suppose $\surreal{x}$ and $x\neq\surrealZero$.
+    Then $\surrealDiv{x}{x}=\surrealOne$.
+\end{corollary}
+\begin{proof}
+    Follows by \obv{surreal_division,surreal_reciprocal_inverse}.
+\end{proof}

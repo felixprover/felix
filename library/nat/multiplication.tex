@@ -1,0 +1,292 @@
+\section{Natural multiplication}
+
+\import{recursion/natural.tex}
+
+Natural multiplication is primitive recursion in its second argument.  The
+recursor is the checked logical natural recursor; this module adds no arithmetic
+axiom and leaves the set-coded addition graph as the underlying additive
+operation.  Its arithmetic laws are stated on natural numbers.  If the second
+argument is not natural, the recursor's explicit totalization makes the value
+$\emptyset$.
+
+\begin{definition}\label{natural_multiplication_step}
+    $\naturalMultiplicationStepOp:\Set\to\Set\to\Set\to\Set
+        =\fun{x,n,p:\Set}{p+x}$.
+\end{definition}
+
+\begin{definition}\label{natural_multiplication}
+    $\naturalMul{x}{y}=
+        \Apply{\naturalRecOp}{\emptyset,
+                    \Apply{\naturalMultiplicationStepOp}{x},y}$.
+\end{definition}
+
+\begin{proposition}\label{natural_multiplication_zero_right}
+    $\naturalMul{x}{\emptyset}=\emptyset$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \obv{natural_multiplication,natural_recursion_zero}.
+\end{proof}
+
+\begin{proposition}\label{natural_multiplication_off_domain}
+    Suppose $y$ is not a natural number.
+    Then $\naturalMul{x}{y}=\emptyset$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \obv{natural_multiplication,natural_recursion_off_domain}.
+\end{proof}
+
+\begin{proposition}\label{natural_multiplication_successor_right}
+    Suppose $y$ is a natural number.
+    Then $\naturalMul{x}{\suc{y}}=\naturalMul{x}{y}+x$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{natural_multiplication,natural_multiplication_step,natural_recursion_successor}.
+\end{proof}
+
+\begin{theorem}\label{natural_multiplication_closed}
+    Let $x,y$ be natural numbers.
+    Then $\naturalMul{x}{y}$ is a natural number.
+\end{theorem}
+\begin{proof}
+    Let $C=\{n\in\naturals\mid
+        \naturalMul{x}{n}\in\naturals\}$.
+    $\emptyset\in C$
+        by \obv{omega_empty,natural_multiplication_zero_right}.
+    Show that for every $n\in C$ we have $\suc{n}\in C$.
+    \begin{subproof}
+        Fix $n\in C$.
+        Then $n$ and $\naturalMul{x}{n}$ are natural numbers.
+        Hence $\naturalMul{x}{n}+x$ is a natural number
+            by \obv{num_addition_on_naturals}.
+        $\suc{n}$ is a natural number by \obv{omega_successor}.
+        Follows by
+            \obv{natural_multiplication_successor_right}.
+    \end{subproof}
+    Hence $C$ is an inductive set by \obv{inductive_set}.
+    Hence every natural number is an element of $C$
+        by \obv{omega_minimal}.
+    Thus $y\in C$.
+\end{proof}
+
+\begin{proposition}\label{natural_multiplication_zero_left}
+    Let $y$ be a natural number.
+    Then $\naturalMul{\emptyset}{y}=\emptyset$.
+\end{proposition}
+\begin{proof}
+    Let $C=\{n\in\naturals\mid
+        \text{$\naturalMul{\emptyset}{n}=\emptyset$}\}$.
+    $\emptyset\in C$
+        by \obv{omega_empty,natural_multiplication_zero_right}.
+    Show that for every $n\in C$ we have $\suc{n}\in C$.
+    \begin{subproof}
+        Fix $n\in C$.
+        Then $n$ is a natural number and
+            $\naturalMul{\emptyset}{n}=\emptyset$.
+        $\naturalMul{\emptyset}{\suc{n}}
+            =\naturalMul{\emptyset}{n}+\emptyset$
+            by \obv{natural_multiplication_successor_right}.
+        Hence $\naturalMul{\emptyset}{\suc{n}}=\emptyset$
+            by \auto{num_addition_zero_right,omega_empty}.
+        $\suc{n}$ is a natural number by \obv{omega_successor}.
+    \end{subproof}
+    Hence $C$ is an inductive set by \obv{inductive_set}.
+    Hence every natural number is an element of $C$
+        by \obv{omega_minimal}.
+    Thus $y\in C$.
+\end{proof}
+
+\begin{theorem}\label{natural_multiplication_successor_left}
+    Let $x,y$ be natural numbers.
+    Then $\naturalMul{\suc{x}}{y}=\naturalMul{x}{y}+y$.
+\end{theorem}
+\begin{proof}
+    Let $C=\{n\in\naturals\mid
+        \text{$\naturalMul{\suc{x}}{n}=\naturalMul{x}{n}+n$}\}$.
+    $\emptyset\in C$
+        by \auto{omega_empty,natural_multiplication_zero_right,num_addition_zero_right}.
+    Show that for every $n\in C$ we have $\suc{n}\in C$.
+    \begin{subproof}
+        Fix $n\in C$.
+        Then $n$ is a natural number and
+            $\naturalMul{\suc{x}}{n}=\naturalMul{x}{n}+n$.
+        $\naturalMul{x}{n}$ is a natural number
+            by \obv{natural_multiplication_closed}.
+        $\naturalMul{\suc{x}}{\suc{n}}
+            =(\naturalMul{x}{n}+n)+\suc{x}$
+            by \auto{natural_multiplication_successor_right}.
+        $n+x=x+n$ by \obv{natural_addition_commutative}.
+        \begin{align*}
+            (\naturalMul{x}{n}+n)+x
+                &= \naturalMul{x}{n}+(n+x)
+                    \explanation{by \obv{natural_addition_associative}}
+                \\
+                &= \naturalMul{x}{n}+(x+n)
+                \\
+                &= (\naturalMul{x}{n}+x)+n
+                    \explanation{by \obv{natural_addition_associative}}
+        \end{align*}
+        $(\naturalMul{x}{n}+n)+\suc{x}
+            =\suc{(\naturalMul{x}{n}+n)+x}$ and
+            $(\naturalMul{x}{n}+x)+\suc{n}
+            =\suc{(\naturalMul{x}{n}+x)+n}$
+            by \obv{num_addition_on_naturals,num_addition_successor_right}.
+        Hence $(\naturalMul{x}{n}+n)+\suc{x}
+            =(\naturalMul{x}{n}+x)+\suc{n}$.
+        $\naturalMul{x}{\suc{n}}=\naturalMul{x}{n}+x$
+            by \obv{natural_multiplication_successor_right}.
+        Hence $\naturalMul{\suc{x}}{\suc{n}}
+            =\naturalMul{x}{\suc{n}}+\suc{n}$.
+        $\suc{n}$ is a natural number by \obv{omega_successor}.
+    \end{subproof}
+    Hence $C$ is an inductive set by \obv{inductive_set}.
+    Hence every natural number is an element of $C$
+        by \obv{omega_minimal}.
+    Thus $y\in C$.
+\end{proof}
+
+\begin{theorem}\label{natural_multiplication_commutative}
+    Let $x,y$ be natural numbers.
+    Then $\naturalMul{x}{y}=\naturalMul{y}{x}$.
+\end{theorem}
+\begin{proof}
+    Let $C=\{n\in\naturals\mid
+        \text{$\naturalMul{x}{n}=\naturalMul{n}{x}$}\}$.
+    $\emptyset\in C$
+        by \obv{omega_empty,natural_multiplication_zero_right,natural_multiplication_zero_left}.
+    Show that for every $n\in C$ we have $\suc{n}\in C$.
+    \begin{subproof}
+        Fix $n\in C$.
+        Then $n$ is a natural number and
+            $\naturalMul{x}{n}=\naturalMul{n}{x}$.
+        $\naturalMul{x}{\suc{n}}=\naturalMul{x}{n}+x$
+            by \obv{natural_multiplication_successor_right}.
+        $\naturalMul{\suc{n}}{x}=\naturalMul{n}{x}+x$
+            by \obv{natural_multiplication_successor_left}.
+        $\suc{n}$ is a natural number by \obv{omega_successor}.
+        Follows by
+            \obv{natural_multiplication_successor_left,natural_multiplication_successor_right}.
+    \end{subproof}
+    Hence $C$ is an inductive set by \obv{inductive_set}.
+    Hence every natural number is an element of $C$
+        by \obv{omega_minimal}.
+    Thus $y\in C$.
+\end{proof}
+
+\begin{proposition}\label{natural_multiplication_one_right}
+    Let $x$ be a natural number.
+    Then $\naturalMul{x}{\suc{\emptyset}}=x$.
+\end{proposition}
+\begin{proof}
+    $\naturalMul{x}{\suc{\emptyset}}
+        =\naturalMul{x}{\emptyset}+x$
+        by \obv{omega_empty,natural_multiplication_successor_right}.
+    Follows by
+        \auto{natural_multiplication_zero_right,num_addition_zero_left}.
+\end{proof}
+
+\begin{proposition}\label{natural_multiplication_one_left}
+    Let $x$ be a natural number.
+    Then $\naturalMul{\suc{\emptyset}}{x}=x$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{natural_multiplication_commutative,natural_multiplication_one_right,omega_empty,omega_successor}.
+\end{proof}
+
+\begin{theorem}\label{natural_multiplication_distributive_left}
+    Let $x,y,z$ be natural numbers.
+    Then $\naturalMul{x}{y+z}
+        =\naturalMul{x}{y}+\naturalMul{x}{z}$.
+\end{theorem}
+\begin{proof}
+    Let $C=\{n\in\naturals\mid
+        \text{$\naturalMul{x}{y+n}
+            =\naturalMul{x}{y}+\naturalMul{x}{n}$}\}$.
+    $y+\emptyset=y$ and
+        $\naturalMul{x}{\emptyset}=\emptyset$
+        by \obv{num_addition_zero_right,natural_multiplication_zero_right}.
+    Hence $\emptyset\in C$
+        by \auto{omega_empty,num_addition_zero_right,natural_multiplication_closed}.
+    Show that for every $n\in C$ we have $\suc{n}\in C$.
+    \begin{subproof}
+        Fix $n\in C$.
+        Then $n$ is a natural number and
+            $\naturalMul{x}{y+n}
+                =\naturalMul{x}{y}+\naturalMul{x}{n}$.
+        $y+n$, $\naturalMul{x}{y}$, and $\naturalMul{x}{n}$
+            are natural numbers
+            by \obv{num_addition_on_naturals,natural_multiplication_closed}.
+        $y+\suc{n}=\suc{y+n}$
+            by \obv{num_addition_successor_right}.
+        Hence $\naturalMul{x}{y+\suc{n}}
+            =\naturalMul{x}{y+n}+x$
+            by \auto{natural_multiplication_successor_right}.
+        Hence $\naturalMul{x}{y+\suc{n}}
+            =(\naturalMul{x}{y}+\naturalMul{x}{n})+x$.
+        Hence $\naturalMul{x}{y+\suc{n}}
+            =\naturalMul{x}{y}+(\naturalMul{x}{n}+x)$
+            by \auto{natural_addition_associative}.
+        $\naturalMul{x}{\suc{n}}=\naturalMul{x}{n}+x$
+            by \obv{natural_multiplication_successor_right}.
+        $\suc{n}$ is a natural number by \obv{omega_successor}.
+        Follows by
+            \obv{natural_multiplication_successor_right}.
+    \end{subproof}
+    Hence $C$ is an inductive set by \obv{inductive_set}.
+    Hence every natural number is an element of $C$
+        by \obv{omega_minimal}.
+    Thus $z\in C$.
+\end{proof}
+
+\begin{corollary}\label{natural_multiplication_distributive_right}
+    Let $x,y,z$ be natural numbers.
+    Then $\naturalMul{x+y}{z}
+        =\naturalMul{x}{z}+\naturalMul{y}{z}$.
+\end{corollary}
+\begin{proof}
+    $x+y$ is a natural number by \obv{num_addition_on_naturals}.
+    Follows by
+        \auto{natural_multiplication_commutative,natural_multiplication_distributive_left}.
+\end{proof}
+
+\begin{theorem}\label{natural_multiplication_associative}
+    Let $x,y,z$ be natural numbers.
+    Then $\naturalMul{x}{\naturalMul{y}{z}}
+        =\naturalMul{\naturalMul{x}{y}}{z}$.
+\end{theorem}
+\begin{proof}
+    Let $C=\{n\in\naturals\mid
+        \text{$\naturalMul{x}{\naturalMul{y}{n}}
+            =\naturalMul{\naturalMul{x}{y}}{n}$}\}$.
+    $\emptyset\in C$
+        by \auto{omega_empty,natural_multiplication_zero_right,natural_multiplication_zero_left}.
+    Show that for every $n\in C$ we have $\suc{n}\in C$.
+    \begin{subproof}
+        Fix $n\in C$.
+        Then $n$ is a natural number and
+            $\naturalMul{x}{\naturalMul{y}{n}}
+                =\naturalMul{\naturalMul{x}{y}}{n}$.
+        $\naturalMul{y}{n}$ is a natural number
+            by \obv{natural_multiplication_closed}.
+        $\naturalMul{y}{\suc{n}}=\naturalMul{y}{n}+y$
+            by \obv{natural_multiplication_successor_right}.
+        Hence $\naturalMul{x}{\naturalMul{y}{\suc{n}}}
+            =\naturalMul{x}{\naturalMul{y}{n}}
+                +\naturalMul{x}{y}$
+            by \auto{natural_multiplication_distributive_left}.
+        Hence $\naturalMul{x}{\naturalMul{y}{\suc{n}}}
+            =\naturalMul{\naturalMul{x}{y}}{n}
+                +\naturalMul{x}{y}$.
+        Hence $\naturalMul{x}{\naturalMul{y}{\suc{n}}}
+            =\naturalMul{\naturalMul{x}{y}}{\suc{n}}$
+            by \auto{natural_multiplication_successor_right}.
+        $\suc{n}$ is a natural number by \obv{omega_successor}.
+    \end{subproof}
+    Hence $C$ is an inductive set by \obv{inductive_set}.
+    Hence every natural number is an element of $C$
+        by \obv{omega_minimal}.
+    Thus $z\in C$.
+\end{proof}

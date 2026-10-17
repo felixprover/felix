@@ -1,0 +1,759 @@
+\import{order/well-ordering.tex}
+\import{relation/trace.tex}
+\import{order/well-order.tex}
+\import{recursion/well-founded.tex}
+\import{ordinal.tex}
+\import{set/universe.tex}
+\import{set/logical-graph.tex}
+\import{logic/conditional.tex}
+\import{order/morphism.tex}
+
+\section{Order types of well-orders}
+
+\begin{proposition}\label{membership_relation_binary_on}
+    $\memrel{A}$ is a binary relation on $A$.
+\end{proposition}
+\begin{proof}
+    Show that every element of $\memrel{A}$ is an element of $A\times A$.
+    \begin{subproof}
+        Fix $w\in\memrel{A}$.
+        Take $x,y\in A$ such that $w=(x,y)$ and $x\in y$
+            by \obv{memrel_elem_inspect}.
+        $(x,y)\in A\times A$ by \obv{times_tuple_intro}.
+    \end{subproof}
+    Follows by \obv{subseteq}.
+\end{proof}
+
+\begin{proposition}\label{strict_well_order_is_well_founded}
+    Suppose $R$ is a strict well order on $A$.
+    Then $R$ is well-founded on $A$.
+\end{proposition}
+\begin{proof}
+    $R$ is a binary relation on $A$ by
+        \auto{strict_well_order,strict_linear_order}.
+    Hence $R$ is a relation by
+        \auto{relation,subseteq,times_elem_is_tuple}.
+    Show that for every $X$ such that $X$ is inhabited and $X\subseteq A$
+        there exists $m\in X$ such that for every $y\in X$
+        we have $y\not\mathrel{R}m$.
+    \begin{subproof}
+        Fix $X$.
+        Assume $X$ is inhabited and $X\subseteq A$.
+        Take $m\in X$ such that $m$ is a least element of $X$
+            with respect to $R$ by \obv{strict_well_order}.
+        Show that for every $y\in X$ we have $y\not\mathrel{R}m$.
+        \begin{subproof}
+            Fix $y\in X$.
+            Suppose $y\mathrel{R}m$.
+            $m\mathrel{R}y$ or $m=y$ by \obv{least_element}.
+            Contradiction by
+                \auto{strict_well_order,strict_linear_order,asymmetric}.
+        \end{subproof}
+        Follows by \auto.
+    \end{subproof}
+    Follows by \obv{well_founded_on}.
+\end{proof}
+
+\begin{definition}\label{set_function_predicate}
+    $\setFunctionPredicate{p}$ iff $p$ is a function.
+\end{definition}
+
+\begin{definition}\label{set_function_predicate_op}
+    $\setFunctionPredicateOp:\Set\to\Prop
+        =\fun{p:\Set}{\setFunctionPredicate{p}}$.
+\end{definition}
+
+\begin{definition}\label{order_collapse_step_op}
+    $\orderCollapseStepOp:\Set\to\Set
+        =\fun{q:\Set}{
+            \Apply{\logicalIfSetOp}
+                {\Apply{\setFunctionPredicateOp}{\snd{q}},\ran{\snd{q}},\emptyset}}$.
+\end{definition}
+
+\begin{definition}\label{order_collapse_step_graph}
+    $\orderCollapseStepGraph{A}=
+        \Apply{\graphOnOp}
+            {A\times\pow{A\times\cumul{A}},\cumul{A},\orderCollapseStepOp}$.
+\end{definition}
+
+\begin{proposition}\label{order_collapse_step_value_type}
+    Let $q\in A\times\pow{A\times\cumul{A}}$.
+    Then $\Apply{\orderCollapseStepOp}{q}\in\cumul{A}$.
+\end{proposition}
+\begin{proof}
+    $\snd{q}\in\pow{A\times\cumul{A}}$
+        by \obv{snd_type}.
+    Hence $\snd{q}\subseteq A\times\cumul{A}$
+        by \obv{powerset_elim}.
+    \begin{byCase}
+        \caseOf{$\snd{q}$ is a function.}
+            $A\in\cumul{A}$ by \obv{universe_contains}.
+            Hence $\ran{\snd{q}}\in\cumul{A}$
+                by \obv{universe_contains_function_range}.
+            Follows by
+                \auto{order_collapse_step_op,set_function_predicate_op,set_function_predicate,logical_if_set_true}.
+        \caseOf{$\snd{q}$ is not a function.}
+            $\emptyset\in\cumul{A}$
+                by \obv{universe_contains_emptyset}.
+            Follows by
+                \auto{order_collapse_step_op,set_function_predicate_op,set_function_predicate,logical_if_set_false}.
+    \end{byCase}
+\end{proof}
+
+\begin{proposition}\label{order_collapse_step_graph_type}
+    $\orderCollapseStepGraph{A}
+        \in\funs{A\times\pow{A\times\cumul{A}}}{\cumul{A}}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{order_collapse_step_graph,logical_graph_on_function,order_collapse_step_value_type}.
+\end{proof}
+
+\begin{proposition}\label{order_collapse_step_graph_application}
+    Let $q\in A\times\pow{A\times\cumul{A}}$.
+    Then
+        $\apply{\orderCollapseStepGraph{A}}{q}
+            =\Apply{\orderCollapseStepOp}{q}$.
+\end{proposition}
+\begin{proof}
+    $(q,\Apply{\orderCollapseStepOp}{q})
+        \in\orderCollapseStepGraph{A}$
+        by
+        \auto{order_collapse_step_graph,logical_graph_on_membership}.
+    Follows by
+        \auto{order_collapse_step_graph_type,funs_is_function,function_apply_intro}.
+\end{proof}
+
+\begin{definition}\label{order_collapse}
+    $\orderCollapse{A}{R}=
+        \wfrec{A}{\cumul{A}}{R}{\orderCollapseStepGraph{A}}$.
+\end{definition}
+
+\begin{proposition}\label{order_collapse_type}
+    Suppose $R$ is a strict well order on $A$.
+    Then $\orderCollapse{A}{R}\in\funs{A}{\cumul{A}}$.
+\end{proposition}
+\begin{proof}
+    $R$ is a binary relation on $A$
+        by
+        \auto{strict_well_order,strict_linear_order}.
+    $R$ is well-founded on $A$
+        by \obv{strict_well_order_is_well_founded}.
+    Follows by
+        \auto{order_collapse,wfrec_type,order_collapse_step_graph_type}.
+\end{proof}
+
+\begin{proposition}\label{order_collapse_equation}
+    Suppose $R$ is a strict well order on $A$.
+    Let $x\in A$.
+    Then
+        $\apply{\orderCollapse{A}{R}}{x}
+            =\img{\orderCollapse{A}{R}}{\downward{R}{x}}$.
+\end{proposition}
+\begin{proof}
+    Let $f=\orderCollapse{A}{R}$.
+    $R$ is a binary relation on $A$
+        by
+        \auto{strict_well_order,strict_linear_order}.
+    $R$ is well-founded on $A$
+        by \obv{strict_well_order_is_well_founded}.
+    $f\in\funs{A}{\cumul{A}}$ by \auto{order_collapse_type}.
+    Hence $f$ is a function by \obv{funs_is_function}.
+    $f\in\rels{A}{\cumul{A}}$
+        by \obv{funs_subseteq_rels,subseteq}.
+    Hence $f\subseteq A\times\cumul{A}$ by \obv{rels_elim}.
+    Let $p=\restrl{f}{\downward{R}{x}}$.
+    $p$ is a function by \obv{restrl_of_function_is_function}.
+    $p\subseteq A\times\cumul{A}$
+        by \auto{restrl_subseteq,subseteq_transitive}.
+    Hence $p\in\pow{A\times\cumul{A}}$
+        by \obv{powerset_intro}.
+    Hence $(x,p)\in A\times\pow{A\times\cumul{A}}$
+        by \obv{times_tuple_intro}.
+    $\apply{f}{x}
+        =\apply{\orderCollapseStepGraph{A}}{(x,p)}$
+        by
+        \auto{order_collapse,wfrec_equation,order_collapse_step_graph_type}.
+    Hence $\apply{f}{x}=\Apply{\orderCollapseStepOp}{(x,p)}$
+        by \obv{order_collapse_step_graph_application}.
+    Hence $\apply{f}{x}=\ran{p}$
+        by
+        \auto{order_collapse_step_op,set_function_predicate_op,set_function_predicate,logical_if_set_true,snd_eq}.
+    $\downward{R}{x}\subseteq A$
+        by
+        \auto{subseteq,downward_closure_iff,strict_well_order,strict_linear_order,times_tuple_elim}.
+    Hence $\downward{R}{x}\subseteq\dom{f}$ by \obv{funs}.
+    $\ran{p}=\img{f}{\downward{R}{x}}$
+        by \auto{restrl_ran}.
+\end{proof}
+
+\begin{proposition}\label{order_collapse_preserves_forward}
+    Suppose $R$ is a strict well order on $A$.
+    Let $x,y\in A$.
+    Suppose $x\mathrel{R}y$.
+    Then
+        $\apply{\orderCollapse{A}{R}}{x}
+            \in\apply{\orderCollapse{A}{R}}{y}$.
+\end{proposition}
+\begin{proof}
+    Let $f=\orderCollapse{A}{R}$.
+    $f\in\funs{A}{\cumul{A}}$ by \auto{order_collapse_type}.
+    Hence $f$ is a function and $\dom{f}=A$
+        by \obv{funs_is_function,funs}.
+    $x\in\downward{R}{y}$ by \obv{downward_closure_iff}.
+    $(x,f(x))\in f$ by \obv{function_apply_elim}.
+    Hence $f(x)\in\img{f}{\downward{R}{y}}$
+        by \auto{img_iff}.
+    Follows by \auto{order_collapse_equation}.
+\end{proof}
+
+\begin{proposition}\label{order_collapse_injective}
+    Suppose $R$ is a strict well order on $A$.
+    Then $\orderCollapse{A}{R}$ is injective.
+\end{proposition}
+\begin{proof}
+    Let $f=\orderCollapse{A}{R}$.
+    $f\in\funs{A}{\cumul{A}}$ by \auto{order_collapse_type}.
+    Hence $f$ is a function and $\dom{f}=A$
+        by \obv{funs_is_function,funs}.
+    Show that
+        $\forall x,y:\Set.
+            (x\in\dom{f}\land y\in\dom{f}\land f(x)=f(y))
+            \implies x=y$.
+    \begin{subproof}
+        Fix $x,y$.
+        Assume $x\in\dom{f}\land y\in\dom{f}\land f(x)=f(y)$.
+        Suppose not.
+        $x\mathrel{R}y$ or $y\mathrel{R}x$
+            by
+            \auto{strict_well_order,strict_linear_order,connex}.
+        Hence $f(x)\in f(y)$ or $f(y)\in f(x)$
+            by \auto{order_collapse_preserves_forward}.
+        Contradiction by \obv{in_irrefl}.
+    \end{subproof}
+    Follows by \auto{injective_function}.
+\end{proof}
+
+\begin{proposition}\label{order_collapse_relation_iff}
+    Suppose $R$ is a strict well order on $A$.
+    Let $x,y\in A$.
+    Then
+        $x\mathrel{R}y$ iff
+        $\apply{\orderCollapse{A}{R}}{x}
+            \in\apply{\orderCollapse{A}{R}}{y}$.
+\end{proposition}
+\begin{proof}
+    Let $f=\orderCollapse{A}{R}$.
+    $f\in\funs{A}{\cumul{A}}$ by \auto{order_collapse_type}.
+    Hence $f$ is a function and $\dom{f}=A$
+        by \obv{funs_is_function,funs}.
+    $f$ is injective by \obv{order_collapse_injective}.
+    Show that if $x\mathrel{R}y$, then $f(x)\in f(y)$.
+    \begin{subproof}
+        Assume $x\mathrel{R}y$.
+        Follows by \auto{order_collapse_preserves_forward}.
+    \end{subproof}
+    Show that if $f(x)\in f(y)$, then $x\mathrel{R}y$.
+    \begin{subproof}
+        Assume $f(x)\in f(y)$.
+        $f(y)=\img{f}{\downward{R}{y}}$
+            by \auto{order_collapse_equation}.
+        Hence $f(x)\in\img{f}{\downward{R}{y}}$.
+        Take $z\in\downward{R}{y}$ such that $(z,f(x))\in f$
+            by \obv{img_iff}.
+        $z\in\dom{f}$ by \auto{dom_iff}.
+        Hence $z\in A$.
+        $z\mathrel{R}y$ by \obv{downward_closure_iff}.
+        $f(z)=f(x)$ by \obv{function_apply_intro}.
+        Hence $z=x$ by \auto{injective_function}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{definition}\label{order_type}
+    $\orderType{A}{R}=\ran{\orderCollapse{A}{R}}$.
+\end{definition}
+
+\begin{theorem}\label{order_type_is_ordinal}
+    Suppose $R$ is a strict well order on $A$.
+    Then $\orderType{A}{R}$ is an ordinal.
+\end{theorem}
+\begin{proof}
+    Let $f=\orderCollapse{A}{R}$.
+    Let $\alpha=\orderType{A}{R}$.
+    $f\in\funs{A}{\cumul{A}}$ by \auto{order_collapse_type}.
+    Hence $f$ is a function and $\dom{f}=A$
+        by \obv{funs_is_function,funs}.
+    $\alpha=\ran{f}$ by \obv{order_type}.
+    Show that $\alpha$ is \in-transitive.
+    \begin{subproof}
+        Show that for every $v\in\alpha$ we have $v\subseteq\alpha$.
+        \begin{subproof}
+            Fix $v\in\alpha$.
+            Take $y\in A$ such that $v=f(y)$
+                by \auto{fun_ran_iff}.
+            Show that every element of $v$ is an element of $\alpha$.
+            \begin{subproof}
+                Fix $u\in v$.
+                $v=\img{f}{\downward{R}{y}}$
+                    by \auto{order_collapse_equation}.
+                Take $x\in\downward{R}{y}$ such that $(x,u)\in f$
+                    by \auto{img_iff}.
+                Hence $u\in\ran{f}$ by \auto{ran_iff}.
+            \end{subproof}
+            Follows by \obv{subseteq}.
+        \end{subproof}
+        Follows by \obv{transitiveset_iff_subseteq}.
+    \end{subproof}
+    Show that every element of $\alpha$ is \in-transitive.
+    \begin{subproof}
+        Fix $v\in\alpha$.
+        Take $y\in A$ such that $v=f(y)$
+            by \auto{fun_ran_iff}.
+        Show that for every $u\in v$ we have $u\subseteq v$.
+        \begin{subproof}
+            Fix $u\in v$.
+            $v=\img{f}{\downward{R}{y}}$
+                by \auto{order_collapse_equation}.
+            Take $x\in\downward{R}{y}$ such that $(x,u)\in f$
+                by \auto{img_iff}.
+            $x\in\dom{f}$ by \auto{dom_iff}.
+            Hence $x\in A$.
+            $x\mathrel{R}y$ by \obv{downward_closure_iff}.
+            $u=f(x)$ by \obv{function_apply_intro}.
+            Show that every element of $u$ is an element of $v$.
+            \begin{subproof}
+                Fix $w\in u$.
+                $u=\img{f}{\downward{R}{x}}$
+                    by \auto{order_collapse_equation}.
+                Take $z\in\downward{R}{x}$ such that $(z,w)\in f$
+                    by \auto{img_iff}.
+                $z\in\dom{f}$ by \auto{dom_iff}.
+                Hence $z\in A$.
+                $z\mathrel{R}x$ by \obv{downward_closure_iff}.
+                Hence $z\mathrel{R}y$
+                    by
+                    \auto{strict_well_order,strict_linear_order,transitive}.
+                $w=f(z)$ by \obv{function_apply_intro}.
+                Hence $w\in f(y)$
+                    by \auto{order_collapse_preserves_forward}.
+            \end{subproof}
+            Follows by \obv{subseteq}.
+        \end{subproof}
+        Follows by \obv{transitiveset_iff_subseteq}.
+    \end{subproof}
+    Follows by \obv{ordinal_intro}.
+\end{proof}
+
+\begin{theorem}\label{order_collapse_is_isomorphism}
+    Suppose $R$ is a strict well order on $A$.
+    Then
+        $\orderIsomorphism{\orderCollapse{A}{R}}
+            {A}{R}{\orderType{A}{R}}{\memrel{\orderType{A}{R}}}$.
+\end{theorem}
+\begin{proof}
+    Let $f=\orderCollapse{A}{R}$.
+    Let $\alpha=\orderType{A}{R}$.
+    $f\in\funs{A}{\cumul{A}}$ by \auto{order_collapse_type}.
+    Hence $f$ is a function and $\dom{f}=A$
+        by \obv{funs_is_function,funs}.
+    $\ran{f}=\alpha$ by \obv{order_type}.
+    Hence $f\in\surj{A}{\alpha}$ by \auto{fun_to_surj}.
+    $f$ is injective by \obv{order_collapse_injective}.
+    Hence $f\in\bijections{A}{\alpha}$
+        by \obv{bijections}.
+    $R$ is a binary relation on $A$
+        by \auto{strict_well_order,strict_linear_order}.
+    $\memrel{\alpha}$ is a binary relation on $\alpha$
+        by \obv{membership_relation_binary_on}.
+    For all $x,y\in A$ we have
+        $x\mathrel{R}y$ iff $f(x)\in f(y)$
+        by \auto{order_collapse_relation_iff}.
+    For all $x\in A$ we have $f(x)\in\alpha$
+        by \auto{fun_ran_iff}.
+    Hence for all $x,y\in A$ we have
+        $x\mathrel{R}y$ iff
+        $f(x)\mathrel{\memrel{\alpha}}f(y)$
+        by \auto{memrel}.
+    Follows by \auto{order_isomorphism}.
+\end{proof}
+
+\begin{theorem}\label{strict_well_order_has_ordinal_order_type}
+    Suppose $R$ is a strict well order on $A$.
+    Then there exists an ordinal $\alpha$ such that
+        $\orderIsomorphic{A}{R}{\alpha}{\memrel{\alpha}}$.
+\end{theorem}
+\begin{proof}
+    $\orderType{A}{R}$ is an ordinal
+        by \obv{order_type_is_ordinal}.
+    $\orderIsomorphism{\orderCollapse{A}{R}}
+        {A}{R}{\orderType{A}{R}}{\memrel{\orderType{A}{R}}}$
+        by \obv{order_collapse_is_isomorphism}.
+    Follows by \obv{order_isomorphic}.
+\end{proof}
+
+\begin{theorem}\label{ordinal_order_isomorphism_unique}
+    Let $\alpha,\beta$ be ordinals.
+    Suppose
+        $\orderIsomorphism{f}{\alpha}{\memrel{\alpha}}
+            {\beta}{\memrel{\beta}}$.
+    Then $\alpha=\beta$.
+\end{theorem}
+\begin{proof}
+    $f\in\bijections{\alpha}{\beta}$
+        by \obv{order_isomorphism}.
+    Hence $f$ is a function and $\dom{f}=\alpha$ and $\ran{f}=\beta$
+        by
+        \auto{bijection_is_function,bijections_dom,bijections,ran_of_surj}.
+    Let $C=\{x\in\alpha\mid f(x)=x\}$.
+    $C\subseteq\alpha$ by \obv{subseteq}.
+    Show that $C$ is progressive for $\memrel{\alpha}$ on $\alpha$.
+    \begin{subproof}
+        Show that for every $x\in\alpha$ we have if for every
+            $y\in\alpha$ such that
+            $y\mathrel{\memrel{\alpha}}x$ we have $y\in C$, then
+            $x\in C$.
+        \begin{subproof}
+            Fix $x\in\alpha$.
+            Assume for every $y\in\alpha$ such that
+                $y\mathrel{\memrel{\alpha}}x$ we have $y\in C$.
+            Show that every element of $f(x)$ is an element of $x$.
+            \begin{subproof}
+                Fix $u\in f(x)$.
+                $f(x)\in\beta$ by \auto{fun_ran_iff}.
+                Hence $u\in\beta$
+                    by \auto{ordinal,transitiveset}.
+                Take $y\in\alpha$ such that $f(y)=u$
+                    by \auto{fun_ran_iff}.
+                $f(y)\mathrel{\memrel{\beta}}f(x)$
+                    by \obv{memrel_elem_intro}.
+                Hence $y\mathrel{\memrel{\alpha}}x$
+                    by \auto{order_isomorphism}.
+                Hence $y\in C$.
+                Hence $f(y)=y$.
+                Follows by \auto{memrel}.
+            \end{subproof}
+            Show that every element of $x$ is an element of $f(x)$.
+            \begin{subproof}
+                Fix $u\in x$.
+                Hence $u\in\alpha$
+                    by \auto{ordinal,transitiveset}.
+                $u\mathrel{\memrel{\alpha}}x$
+                    by \obv{memrel_elem_intro}.
+                Hence $u\in C$.
+                Hence $f(u)=u$.
+                $f(u)\mathrel{\memrel{\beta}}f(x)$
+                    by \auto{order_isomorphism}.
+                Follows by \auto{memrel}.
+            \end{subproof}
+            Hence $f(x)=x$ by set extensionality.
+        \end{subproof}
+        Follows by \obv{progressive_on}.
+    \end{subproof}
+    $\memrel{\alpha}$ is well-founded on $\alpha$
+        by \obv{membership_is_well_founded_on}.
+    Hence $\alpha\subseteq C$
+        by \obv{well_founded_induction_set}.
+    Hence for every $x\in\alpha$ we have $f(x)=x$
+        by \auto{subseteq}.
+    Show that every element of $\alpha$ is an element of $\beta$.
+    \begin{subproof}
+        Fix $x\in\alpha$.
+        $f(x)=x$.
+        $f(x)\in\ran{f}$ by \auto{fun_ran_iff}.
+    \end{subproof}
+    Show that every element of $\beta$ is an element of $\alpha$.
+    \begin{subproof}
+        Fix $y\in\beta$.
+        Take $x\in\alpha$ such that $f(x)=y$
+            by \auto{fun_ran_iff}.
+        $f(x)=x$.
+    \end{subproof}
+    Follows by set extensionality.
+\end{proof}
+
+\begin{theorem}\label{ordinal_order_type_unique}
+    Suppose $R$ is a strict well order on $A$.
+    Let $\alpha$ be an ordinal.
+    Suppose $\orderIsomorphic{A}{R}{\alpha}{\memrel{\alpha}}$.
+    Then $\alpha=\orderType{A}{R}$.
+\end{theorem}
+\begin{proof}
+    Take $f$ such that
+        $\orderIsomorphism{f}{A}{R}{\alpha}{\memrel{\alpha}}$
+        by \obv{order_isomorphic}.
+    Let $\beta=\orderType{A}{R}$.
+    $\beta$ is an ordinal by \obv{order_type_is_ordinal}.
+    $\orderIsomorphism{\converse{f}}{\alpha}{\memrel{\alpha}}{A}{R}$
+        by \obv{order_isomorphism_inverse}.
+    $\orderIsomorphism{\orderCollapse{A}{R}}
+        {A}{R}{\beta}{\memrel{\beta}}$
+        by \auto{order_collapse_is_isomorphism}.
+    Hence
+        $\orderIsomorphism{
+            \orderCollapse{A}{R}\circ\converse{f}}
+            {\alpha}{\memrel{\alpha}}{\beta}{\memrel{\beta}}$
+        by \obv{order_isomorphism_composition}.
+    Follows by \obv{ordinal_order_isomorphism_unique}.
+\end{proof}
+
+\begin{theorem}\label{ordinal_membership_is_strict_well_order}
+    Let $\alpha$ be an ordinal.
+    Then $\memrel{\alpha}$ is a strict well order on $\alpha$.
+\end{theorem}
+\begin{proof}
+    $\memrel{\alpha}$ is a binary relation on $\alpha$
+        by \obv{membership_relation_binary_on}.
+    $\memrel{\alpha}$ is transitive
+        by
+        \auto{transitive,memrel,ordinal_transitivity,elem_of_ordinal_is_ordinal}.
+    $\memrel{\alpha}$ is asymmetric
+        by \auto{asymmetric,memrel,in_asymmetric}.
+    $\memrel{\alpha}$ is connex on $\alpha$
+        by
+        \auto{connex,memrel,ordinal_elem_connex,elem_of_ordinal_is_ordinal}.
+    Show that for every $X$ such that $X\subseteq\alpha$ and
+        $X\neq\emptyset$ there exists $m\in X$ such that for every
+        $x\in X$ we have $m\mathrel{\memrel{\alpha}}x$ or $m=x$.
+    \begin{subproof}
+        Fix $X$.
+        Assume $X\subseteq\alpha$ and $X\neq\emptyset$.
+        Hence $X$ is inhabited by \obv{nonempty_inhabited}.
+        Take $m$ such that $m$ is an \in-minimal element of $X$
+            by \obv{regularity}.
+        Hence $m\in X$ and $m\notmeets X$.
+        Hence $m\in\alpha$ by \obv{subseteq}.
+        Show that for every $x\in X$ we have
+            $m\mathrel{\memrel{\alpha}}x$ or $m=x$.
+        \begin{subproof}
+            Fix $x\in X$.
+            Hence $x\in\alpha$ by \obv{subseteq}.
+            $m$ and $x$ are ordinals
+                by \obv{elem_of_ordinal_is_ordinal}.
+            $m\in x$ or $x\in m$ or $m=x$
+                by \obv{ordinal_elem_connex}.
+            $x\notin m$ by \auto{disjoint}.
+            Follows by \obv{memrel_elem_intro}.
+        \end{subproof}
+        Follows by \auto.
+    \end{subproof}
+    Follows by \auto{strict_well_order_iff}.
+\end{proof}
+
+\begin{theorem}\label{ordinal_subset_strict_well_order}
+    Let $\alpha$ be an ordinal.
+    Suppose $A\subseteq\alpha$.
+    Then $\memrel{A}$ is a strict well order on $A$.
+\end{theorem}
+\begin{proof}
+    $\memrel{\alpha}$ is a strict well order on $\alpha$ by
+        \obv{ordinal_membership_is_strict_well_order}.
+    Hence $\relationTrace{\memrel{\alpha}}{A}$ is a strict well order
+        on $A$ by \obv{relation_trace_strict_well_order}.
+    $\relationTrace{\memrel{\alpha}}{A}=\memrel{A}$ by
+        \obv{membership_relation_trace}.
+\end{proof}
+
+\begin{theorem}\label{ordinal_subset_order_type_bound}
+    Let $\alpha$ be an ordinal.
+    Suppose $A\subseteq\alpha$.
+    Then $\orderType{A}{\memrel{A}}\subseteq\alpha$.
+\end{theorem}
+\begin{proof}
+    $\memrel{A}$ is a strict well order on $A$ by
+        \obv{ordinal_subset_strict_well_order}.
+    $\orderCollapse{A}{\memrel{A}}\in\funs{A}{\cumul{A}}$ by
+        \obv{order_collapse_type}.
+    Let $f=\orderCollapse{A}{\memrel{A}}$.
+    Let $\beta=\orderType{A}{\memrel{A}}$.
+    Then $f\in\funs{A}{\cumul{A}}$.
+    Hence $f$ is a function and $\dom{f}=A$ by
+        \obv{funs_is_function,funs}.
+    $\beta=\ran{f}$ by \obv{order_type}.
+    $\beta$ is an ordinal by \obv{order_type_is_ordinal}.
+    Let $C=\{x\in A\mid f(x)\subseteq x\}$.
+    $C\subseteq A$ by \obv{subseteq}.
+    Show that $C$ is progressive for $\memrel{A}$ on $A$.
+    \begin{subproof}
+        Show that for every $x\in A$ we have if for every $y\in A$
+            such that $y\mathrel{\memrel{A}}x$ we have $y\in C$,
+            then $x\in C$.
+        \begin{subproof}
+            Fix $x\in A$.
+            Assume for every $y\in A$ such that
+                $y\mathrel{\memrel{A}}x$ we have $y\in C$.
+            Show that $f(x)\subseteq x$.
+            \begin{subproof}
+                Show that every element of $f(x)$ is an element of $x$.
+                \begin{subproof}
+                    Fix $u\in f(x)$.
+                    $\apply{\orderCollapse{A}{\memrel{A}}}{x}
+                        =\img{\orderCollapse{A}{\memrel{A}}}
+                            {\downward{\memrel{A}}{x}}$ by
+                        \obv{order_collapse_equation}.
+                    Hence $f(x)=\img{f}{\downward{\memrel{A}}{x}}$.
+                    Hence $u\in\img{f}{\downward{\memrel{A}}{x}}$.
+                    Take $y\in\downward{\memrel{A}}{x}$ such that
+                        $(y,u)\in f$ by \obv{img_iff}.
+                    $y\in\dom{f}$ by \auto{dom_iff}.
+                    Hence $y\in A$.
+                    $y\mathrel{\memrel{A}}x$ by
+                        \obv{downward_closure_iff}.
+                    Hence $y\in C$.
+                    Hence $f(y)\subseteq y$.
+                    $(y,u)\in\orderCollapse{A}{\memrel{A}}$.
+                    Hence
+                        $\apply{\orderCollapse{A}{\memrel{A}}}{y}=u$ by
+                        \obv{function_apply_intro,funs_is_function}.
+                    Hence $u=f(y)$.
+                    Hence $u\subseteq y$.
+                    $u\in\ran{f}$ by \auto{ran_iff}.
+                    Hence $u\in\beta$.
+                    Hence $u$ is an ordinal by
+                        \obv{elem_of_ordinal_is_ordinal}.
+                    $y\in\alpha$ by \obv{elem_subseteq}.
+                    Hence $y$ is an ordinal by
+                        \obv{elem_of_ordinal_is_ordinal}.
+                    Hence $u\in y$ or $u=y$ by
+                        \obv{ordinal_subseteq_implies_elem_or_eq}.
+                    $y\in x$ by
+                        \auto{memrel_elem_inspect,pair_eq_iff}.
+                    $x\in\alpha$ by \obv{elem_subseteq}.
+                    Hence $x$ is an ordinal by
+                        \obv{elem_of_ordinal_is_ordinal}.
+                    Follows by \obv{ordinal_transitivity}.
+                \end{subproof}
+                Follows by \obv{subseteq}.
+            \end{subproof}
+            Hence $x\in C$.
+        \end{subproof}
+        Follows by \obv{progressive_on}.
+    \end{subproof}
+    $\memrel{A}$ is well-founded on $A$ by
+        \obv{strict_well_order_is_well_founded}.
+    Hence $A\subseteq C$ by \obv{well_founded_induction_set}.
+    Show that every element of $\beta$ is an element of $\alpha$.
+    \begin{subproof}
+        Fix $u\in\beta$.
+        Hence $u\in\ran{f}$.
+        Take $x\in A$ such that $f(x)=u$ by \auto{fun_ran_iff}.
+        Hence $x\in C$ by \obv{elem_subseteq}.
+        Hence $f(x)\subseteq x$.
+        Hence $u\subseteq x$.
+        $u$ is an ordinal by \obv{elem_of_ordinal_is_ordinal}.
+        $x\in\alpha$ by \obv{elem_subseteq}.
+        Hence $x$ is an ordinal by \obv{elem_of_ordinal_is_ordinal}.
+        Hence $u\in x$ or $u=x$ by
+            \obv{ordinal_subseteq_implies_elem_or_eq}.
+        Follows by \obv{ordinal_transitivity}.
+    \end{subproof}
+    Follows by \obv{subseteq}.
+\end{proof}
+
+\begin{theorem}\label{order_isomorphism_preserves_strict_well_order}
+    Suppose $R$ is a strict well order on $A$.
+    Suppose $\orderIsomorphism{f}{A}{R}{B}{S}$.
+    Then $S$ is a strict well order on $B$.
+\end{theorem}
+\begin{proof}
+    $S$ is a binary relation on $B$ and $f\in\bijections{A}{B}$
+        by \obv{order_isomorphism}.
+    Hence $\converse{f}\in\bijections{B}{A}$
+        by \obv{bijection_converse_is_bijection}.
+    Hence $\converse{f}\in\funs{B}{A}$ and
+        $\converse{f}$ is a function and $\dom{\converse{f}}=B$
+        by
+        \obv{bijections_to_funs,bijection_is_function,bijections_dom}.
+    $\converse{f}$ is injective by \obv{bijections}.
+    $\orderIsomorphism{\converse{f}}{B}{S}{A}{R}$
+        by \obv{order_isomorphism_inverse}.
+    Show that $S$ is transitive.
+    \begin{subproof}
+        It suffices to show that for all $u,v,w$ such that
+            $u\mathrel{S}v\mathrel{S}w$ we have $u\mathrel{S}w$
+            by \obv{transitive}.
+        Fix $u,v,w$.
+        Assume $u\mathrel{S}v\mathrel{S}w$.
+        Hence $u,v,w\in B$
+            by \obv{order_isomorphism,subseteq,times_tuple_elim}.
+        Hence $(\converse{f})(u)\mathrel{R}(\converse{f})(v)$ and
+            $(\converse{f})(v)\mathrel{R}(\converse{f})(w)$
+            by \auto{order_isomorphism}.
+        Thus $(\converse{f})(u)\mathrel{R}(\converse{f})(w)$
+            by
+            \auto{strict_well_order,strict_linear_order,transitive}.
+        Follows by \auto{order_isomorphism}.
+    \end{subproof}
+    Show that $S$ is asymmetric.
+    \begin{subproof}
+        It suffices to show that for all $u,v$ such that $u\mathrel{S}v$
+            we have $v\not\mathrel{S}u$ by \obv{asymmetric}.
+        Fix $u,v$.
+        Assume $u\mathrel{S}v$.
+        Hence $u,v\in B$
+            by \obv{order_isomorphism,subseteq,times_tuple_elim}.
+        Hence $(\converse{f})(u)\mathrel{R}(\converse{f})(v)$
+            by \obv{order_isomorphism}.
+        Hence $(\converse{f})(v)\not\mathrel{R}(\converse{f})(u)$
+            by
+            \auto{strict_well_order,strict_linear_order,asymmetric}.
+        Follows by \auto{order_isomorphism}.
+    \end{subproof}
+    Show that $S$ is connex on $B$.
+    \begin{subproof}
+        It suffices to show that for all $u,v$ such that
+            $u\in B$ and $v\in B$ and $u\neq v$ we have
+            $u\mathrel{S}v$ or $v\mathrel{S}u$ by \obv{connex}.
+        Fix $u,v$.
+        Assume $u\in B$ and $v\in B$ and $u\neq v$.
+        $(\converse{f})(u),(\converse{f})(v)\in A$
+            by \obv{funs_type_apply}.
+        $(\converse{f})(u)\neq(\converse{f})(v)$
+            by \auto{injective_function}.
+        Hence $(\converse{f})(u)\mathrel{R}(\converse{f})(v)$ or
+            $(\converse{f})(v)\mathrel{R}(\converse{f})(u)$
+            by
+            \auto{strict_well_order,strict_linear_order,connex}.
+        Follows by \auto{order_isomorphism}.
+    \end{subproof}
+    Show that for every $X$ such that $X\subseteq B$ and $X\neq\emptyset$
+        there exists $m\in X$ such that for every $y\in X$ we have
+        $m\mathrel{S}y$ or $m=y$.
+    \begin{subproof}
+        Fix $X$.
+        Assume $X\subseteq B$ and $X\neq\emptyset$.
+        Hence $X$ is inhabited by \obv{nonempty_inhabited}.
+        Let $Y=\img{\converse{f}}{X}$.
+        $Y\subseteq A$
+            by \auto{img_subseteq_ran,funs_ran,subseteq_transitive}.
+        Take $x$ such that $x\in X$.
+        Hence $x\in B$ by \obv{subseteq}.
+        $(x,(\converse{f})(x))\in\converse{f}$
+            by \obv{function_apply_elim}.
+        Hence $(\converse{f})(x)\in Y$ by \auto{img_iff}.
+        Thus $Y$ is inhabited.
+        Take $a\in Y$ such that $a$ is a least element of $Y$
+            with respect to $R$ by \obv{strict_well_order}.
+        Take $m\in X$ such that $(m,a)\in\converse{f}$
+            by \obv{img_iff}.
+        Hence $m\in B$ by \obv{subseteq}.
+        Hence $(a,m)\in f$ by \obv{converse_iff}.
+        Show that for every $y\in X$ we have $m\mathrel{S}y$ or $m=y$.
+        \begin{subproof}
+            Fix $y\in X$.
+            Hence $y\in B$ by \obv{subseteq}.
+            $(y,(\converse{f})(y))\in\converse{f}$
+                by \obv{function_apply_elim}.
+            Hence $(\converse{f})(y)\in Y$
+                by \auto{img_iff}.
+            $a\mathrel{R}(\converse{f})(y)$ or
+                $a=(\converse{f})(y)$
+                by \auto{least_element}.
+            $(\converse{f})(m)=a$
+                by \obv{function_apply_intro}.
+            Follows by \auto{order_isomorphism,injective_function}.
+        \end{subproof}
+        Follows by \auto.
+    \end{subproof}
+    Follows by \auto{strict_well_order_iff}.
+\end{proof}

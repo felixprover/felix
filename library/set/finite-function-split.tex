@@ -1,0 +1,359 @@
+\section{Splitting finite function powers}
+
+\import{set/function-split.tex}
+\import{set/natural-shift.tex}
+
+The first block retains its indices. Translation identifies the second block
+with its own finite ordinal, so concatenation does not encode dimensions by
+nested pairs. Both maps are defined explicitly, including empty blocks.
+
+\begin{definition}\label{finite_function_split}
+    $\finiteFunctionSplit{m}{n}{A}
+        =\productMap{\funs{m}{A}}{\funs{(m+n)\setminus m}{A}}{
+            \identity{\funs{m}{A}}}{
+            \functionReindex{(m+n)\setminus m}{n}{A}{\finiteIndexShift{m}{n}}}
+            \circ\functionSplit{m}{(m+n)\setminus m}{A}$.
+\end{definition}
+
+\begin{definition}\label{finite_function_join}
+    $\finiteFunctionJoin{m}{n}{A}
+        =\functionJoin{m}{(m+n)\setminus m}{A}\circ
+            \productMap{\funs{m}{A}}{\funs{n}{A}}{
+                \identity{\funs{m}{A}}}{
+                \functionReindex{n}{(m+n)\setminus m}{A}{\converse{\finiteIndexShift{m}{n}}}}$.
+\end{definition}
+
+\begin{theorem}\label{finite_function_split_bijection}
+    Let $m,n$ be natural numbers.
+    Then $\finiteFunctionSplit{m}{n}{A}\in
+        \bijections{\funs{m+n}{A}}{\funs{m}{A}\times\funs{n}{A}}$.
+\end{theorem}
+\begin{proof}
+    Let $D=(m+n)\setminus m$ and $e=\finiteIndexShift{m}{n}$.
+    $m\subseteq m+n$ by \obv{natural_addition_left_subseteq_sum}.
+    Hence $m\union D=m+n$ by \auto{setminus_partition}.
+    $m$ is disjoint from $D$ by \auto{disjoint,setminus}.
+    Hence $\functionSplit{m}{D}{A}\in
+        \bijections{\funs{m+n}{A}}{\funs{m}{A}\times\funs{D}{A}}$ by
+        \auto{function_split_bijection}.
+    $e\in\bijections{n}{D}$ by \auto{finite_index_shift_bijection}.
+    Hence $\functionReindex{D}{n}{A}{e}\in\bijections{\funs{D}{A}}{\funs{n}{A}}$ by
+        \obv{function_reindex_bijection}.
+    $\identity{\funs{m}{A}}\in\bijections{\funs{m}{A}}{\funs{m}{A}}$ by
+        \obv{id_elem_bijections}.
+    Hence $\productMap{\funs{m}{A}}{\funs{D}{A}}{
+        \identity{\funs{m}{A}}}{\functionReindex{D}{n}{A}{e}}\in
+        \bijections{\funs{m}{A}\times\funs{D}{A}}{\funs{m}{A}\times\funs{n}{A}}$ by
+        \obv{product_map_bijection}.
+    Follows by \auto{finite_function_split,bijection_circ}.
+\end{proof}
+
+\begin{theorem}\label{finite_function_split_converse}
+    Let $m,n$ be natural numbers.
+    Then $\converse{\finiteFunctionSplit{m}{n}{A}}=\finiteFunctionJoin{m}{n}{A}$.
+\end{theorem}
+\begin{proof}
+    Let $D=(m+n)\setminus m$ and $e=\finiteIndexShift{m}{n}$.
+    $m$ is disjoint from $D$ by \auto{disjoint,setminus}.
+    $\converse{\functionSplit{m}{D}{A}}=\functionJoin{m}{D}{A}$ by
+        \obv{function_split_converse}.
+    $e\in\bijections{n}{D}$ by \auto{finite_index_shift_bijection}.
+    $\functionReindex{D}{n}{A}{e}\in\bijections{\funs{D}{A}}{\funs{n}{A}}$ by
+        \obv{function_reindex_bijection}.
+    $\converse{\functionReindex{D}{n}{A}{e}}=\functionReindex{n}{D}{A}{\converse{e}}$ by
+        \obv{function_reindex_converse}.
+    $\identity{\funs{m}{A}}\in\bijections{\funs{m}{A}}{\funs{m}{A}}$ by
+        \obv{id_elem_bijections}.
+    $\converse{\productMap{\funs{m}{A}}{\funs{D}{A}}{
+        \identity{\funs{m}{A}}}{\functionReindex{D}{n}{A}{e}}}
+        =\productMap{\funs{m}{A}}{\funs{n}{A}}{
+            \identity{\funs{m}{A}}}{\functionReindex{n}{D}{A}{\converse{e}}}$ by
+        \auto{product_map_converse,converse_identity}.
+    Follows by \auto{finite_function_split,finite_function_join,circ_converse}.
+\end{proof}
+
+\begin{corollary}\label{finite_function_join_bijection}
+    Let $m,n$ be natural numbers.
+    Then $\finiteFunctionJoin{m}{n}{A}\in
+        \bijections{\funs{m}{A}\times\funs{n}{A}}{\funs{m+n}{A}}$.
+\end{corollary}
+\begin{proof}
+    Follows by \auto{finite_function_split_bijection,finite_function_split_converse,
+        bijection_converse_is_bijection}.
+\end{proof}
+
+\begin{corollary}\label{finite_function_join_converse}
+    Let $m,n$ be natural numbers.
+    Then $\converse{\finiteFunctionJoin{m}{n}{A}}=\finiteFunctionSplit{m}{n}{A}$.
+\end{corollary}
+\begin{proof}
+    $\finiteFunctionSplit{m}{n}{A}$ is a relation by
+        \auto{finite_function_split_bijection,bijections_to_funs,funs_is_relation}.
+    Follows by \auto{finite_function_split_converse,converse_converse_eq}.
+\end{proof}
+
+\begin{theorem}\label{finite_function_join_split}
+    Let $m,n$ be natural numbers.
+    Then $\finiteFunctionJoin{m}{n}{A}\circ\finiteFunctionSplit{m}{n}{A}
+        =\identity{\funs{m+n}{A}}$.
+\end{theorem}
+\begin{proof}
+    Follows by \auto{finite_function_split_bijection,finite_function_split_converse,
+        bijection_converse_circ}.
+\end{proof}
+
+\begin{theorem}\label{finite_function_split_join}
+    Let $m,n$ be natural numbers.
+    Then $\finiteFunctionSplit{m}{n}{A}\circ\finiteFunctionJoin{m}{n}{A}
+        =\identity{\funs{m}{A}\times\funs{n}{A}}$.
+\end{theorem}
+\begin{proof}
+    Follows by \auto{finite_function_split_bijection,finite_function_split_converse,
+        bijection_circ_converse}.
+\end{proof}
+
+\subsection{The coordinate formulas}
+
+\begin{theorem}\label{finite_function_split_apply}
+    Let $m,n$ be natural numbers and $x\in\funs{m+n}{A}$.
+    Then $(\finiteFunctionSplit{m}{n}{A})(x)
+        =(\restrl{x}{m},x\circ\finiteIndexShift{m}{n})$.
+\end{theorem}
+\begin{proof}
+    Let $D=(m+n)\setminus m$ and $e=\finiteIndexShift{m}{n}$.
+    Let $r=\functionReindex{D}{n}{A}{e}$ and $s=\functionSplit{m}{D}{A}$.
+    Let $P=\productMap{\funs{m}{A}}{\funs{D}{A}}{\identity{\funs{m}{A}}}{r}$.
+    $m\subseteq m+n$ by \obv{natural_addition_left_subseteq_sum}.
+    $D\subseteq m+n$ by \auto{setminus_subseteq}.
+    $m\union D=m+n$ by \auto{setminus_partition}.
+    $e\in\funs{n}{D}$ by \auto{finite_index_shift_type}.
+    Hence $e\in\funs{n}{m+n}$ by \obv{funs_weaken_codom}.
+    $r\in\funs{\funs{D}{A}}{\funs{n}{A}}$ by \auto{function_reindex_type}.
+    $\identity{\funs{m}{A}}\in\funs{\funs{m}{A}}{\funs{m}{A}}$ by \obv{id_elem_funs}.
+    $P\in\funs{\funs{m}{A}\times\funs{D}{A}}{\funs{m}{A}\times\funs{n}{A}}$ by
+        \auto{product_map_type}.
+    $s\in\funs{\funs{m+n}{A}}{\funs{m}{A}\times\funs{D}{A}}$ by
+        \auto{function_split_type}.
+    $s(x)=(\restrl{x}{m},\restrl{x}{D})$ by \auto{function_split_apply}.
+    $\restrl{x}{m}\in\funs{m}{A}$ and $\restrl{x}{D}\in\funs{D}{A}$ by \obv{funs_restrl}.
+    $r(\restrl{x}{D})=(\restrl{x}{D})\circ e$ by \auto{function_reindex_apply}.
+    $s(x)\in\funs{m}{A}\times\funs{D}{A}$ by \obv{funs_type_apply}.
+    Hence $P(s(x))=(\restrl{x}{m},(\restrl{x}{D})\circ e)$ by
+        \auto{product_map_apply,id_apply,fst_eq,snd_eq}.
+    $(\restrl{x}{D})\circ e\in\funs{n}{A}$ and $x\circ e\in\funs{n}{A}$ by
+        \obv{funs_circ}.
+    For every $k\in n$ we have $((\restrl{x}{D})\circ e)(k)=(x\circ e)(k)$ by
+        \auto{circ_apply,restrl_of_function_apply,funs_type_apply,funs_is_function,funs,funs_ran}.
+    Hence $(\restrl{x}{D})\circ e=x\circ e$ by
+        \obv{typed_functions_equal_from_agreement}.
+    $(P\circ s)(x)=P(s(x))$ by \auto{circ_apply,funs_is_function,funs,funs_ran}.
+    Follows by \auto{finite_function_split}.
+\end{proof}
+
+\begin{theorem}\label{finite_function_join_apply}
+    Let $m,n$ be natural numbers and $p\in\funs{m}{A}\times\funs{n}{A}$.
+    Then $(\finiteFunctionJoin{m}{n}{A})(p)
+        =\fst{p}\union((\snd{p})\circ\converse{\finiteIndexShift{m}{n}})$.
+\end{theorem}
+\begin{proof}
+    Let $D=(m+n)\setminus m$ and $e=\finiteIndexShift{m}{n}$.
+    Let $r=\functionReindex{n}{D}{A}{\converse{e}}$ and $j=\functionJoin{m}{D}{A}$.
+    Let $P=\productMap{\funs{m}{A}}{\funs{n}{A}}{\identity{\funs{m}{A}}}{r}$.
+    $e\in\bijections{n}{D}$ by \auto{finite_index_shift_bijection}.
+    Hence $\converse{e}\in\funs{D}{n}$ by
+        \obv{bijection_converse_is_bijection,bijections_to_funs}.
+    $r\in\funs{\funs{n}{A}}{\funs{D}{A}}$ by \auto{function_reindex_type}.
+    $\identity{\funs{m}{A}}\in\funs{\funs{m}{A}}{\funs{m}{A}}$ by \obv{id_elem_funs}.
+    $P\in\funs{\funs{m}{A}\times\funs{n}{A}}{\funs{m}{A}\times\funs{D}{A}}$ by
+        \auto{product_map_type}.
+    $\fst{p}\in\funs{m}{A}$ and $\snd{p}\in\funs{n}{A}$ by \obv{fst_type,snd_type}.
+    $r(\snd{p})=(\snd{p})\circ\converse{e}$ by \auto{function_reindex_apply}.
+    $P(p)=(\fst{p},(\snd{p})\circ\converse{e})$ by \auto{product_map_apply,id_apply}.
+    $P(p)\in\funs{m}{A}\times\funs{D}{A}$ by \obv{funs_type_apply}.
+    Hence $j(P(p))=\fst{p}\union((\snd{p})\circ\converse{e})$ by
+        \auto{function_join_apply,fst_eq,snd_eq}.
+    $m$ is disjoint from $D$ by \auto{disjoint,setminus}.
+    $j\in\funs{\funs{m}{A}\times\funs{D}{A}}{\funs{m\union D}{A}}$ by
+        \auto{function_join_type}.
+    $(j\circ P)(p)=j(P(p))$ by \auto{circ_apply,funs_is_function,funs,funs_ran}.
+    Follows by \auto{finite_function_join}.
+\end{proof}
+
+\begin{theorem}\label{finite_function_join_components}
+    Let $m,n$ be natural numbers and $p\in\funs{m}{A}\times\funs{n}{A}$.
+    Then $\restrl{(\finiteFunctionJoin{m}{n}{A})(p)}{m}=\fst{p}$ and
+        $((\finiteFunctionJoin{m}{n}{A})(p))\circ\finiteIndexShift{m}{n}=\snd{p}$.
+\end{theorem}
+\begin{proof}
+    Let $s=\finiteFunctionSplit{m}{n}{A}$ and $j=\finiteFunctionJoin{m}{n}{A}$.
+    $s\in\funs{\funs{m+n}{A}}{\funs{m}{A}\times\funs{n}{A}}$ and
+        $j\in\funs{\funs{m}{A}\times\funs{n}{A}}{\funs{m+n}{A}}$ by
+        \auto{finite_function_split_bijection,finite_function_join_bijection,bijections_to_funs}.
+    $s\circ j=\identity{\funs{m}{A}\times\funs{n}{A}}$ by
+        \auto{finite_function_split_join}.
+    Hence $s(j(p))=p$ by \auto{circ_apply,id_apply,funs_is_function,funs,funs_ran}.
+    $j(p)\in\funs{m+n}{A}$ by \obv{funs_type_apply}.
+    Hence $s(j(p))=(\restrl{j(p)}{m},j(p)\circ\finiteIndexShift{m}{n})$ by
+        \auto{finite_function_split_apply}.
+    Follows by \auto{fst_eq,snd_eq}.
+\end{proof}
+
+\begin{proposition}\label{finite_function_join_left_coordinate}
+    Let $m,n$ be natural numbers and $p\in\funs{m}{A}\times\funs{n}{A}$.
+    Let $i\in m$.
+    Then $\apply{(\finiteFunctionJoin{m}{n}{A})(p)}{i}=(\fst{p})(i)$.
+\end{proposition}
+\begin{proof}
+    Let $x=(\finiteFunctionJoin{m}{n}{A})(p)$.
+    $x\in\funs{m+n}{A}$ by
+        \auto{finite_function_join_bijection,bijections_to_funs,funs_type_apply}.
+    $\restrl{x}{m}=\fst{p}$ by \auto{finite_function_join_components}.
+    $m\subseteq m+n$ by \obv{natural_addition_left_subseteq_sum}.
+    Hence $i\in m+n$ by \obv{subseteq}.
+    Follows by \auto{restrl_of_function_apply,funs_is_function,funs}.
+\end{proof}
+
+\begin{proposition}\label{finite_function_join_right_coordinate}
+    Let $m,n$ be natural numbers and $p\in\funs{m}{A}\times\funs{n}{A}$.
+    Let $k\in n$.
+    Then $\apply{(\finiteFunctionJoin{m}{n}{A})(p)}{m+k}=(\snd{p})(k)$.
+\end{proposition}
+\begin{proof}
+    Let $x=(\finiteFunctionJoin{m}{n}{A})(p)$ and $e=\finiteIndexShift{m}{n}$.
+    $x\in\funs{m+n}{A}$ by
+        \auto{finite_function_join_bijection,bijections_to_funs,funs_type_apply}.
+    $e\in\funs{n}{(m+n)\setminus m}$ by \auto{finite_index_shift_type}.
+    Hence $e\in\funs{n}{m+n}$ by \auto{funs_weaken_codom,setminus_subseteq}.
+    $x\circ e=\snd{p}$ by \auto{finite_function_join_components}.
+    $e(k)=m+k$ by \auto{finite_index_shift_apply}.
+    Follows by \auto{circ_apply,funs_is_function,funs,funs_ran}.
+\end{proof}
+
+\subsection{Empty blocks}
+
+\begin{proposition}\label{finite_function_split_zero_left_apply}
+    Let $n$ be a natural number and $x\in\funs{n}{A}$.
+    Then $(\finiteFunctionSplit{\emptyset}{n}{A})(x)=(\emptyset,x)$.
+\end{proposition}
+\begin{proof}
+    $\emptyset$ is a natural number by \obv{omega_empty}.
+    $\emptyset+n=n$ by \obv{num_addition_zero_left}.
+    $\finiteIndexShift{\emptyset}{n}=\identity{n}$ by \obv{finite_index_shift_zero}.
+    $x\circ\identity{n}=x$ by \obv{funs_circ_identity_right}.
+    $\emptyset\subseteq n$ by \obv{emptyset_subseteq}.
+    $\restrl{x}{\emptyset}\in\funs{\emptyset}{A}$ by \obv{funs_restrl}.
+    Hence $\restrl{x}{\emptyset}=\emptyset$ by
+        \auto{empty_domain_function_space,singleton_iff}.
+    Follows by \auto{finite_function_split_apply}.
+\end{proof}
+
+\begin{proposition}\label{finite_function_split_zero_right_apply}
+    Let $n$ be a natural number and $x\in\funs{n}{A}$.
+    Then $(\finiteFunctionSplit{n}{\emptyset}{A})(x)=(x,\emptyset)$.
+\end{proposition}
+\begin{proof}
+    $\emptyset$ is a natural number by \obv{omega_empty}.
+    $n+\emptyset=n$ by \obv{num_addition_zero_right}.
+    $\finiteIndexShift{n}{\emptyset}\in\funs{\emptyset}{n\setminus n}$ by
+        \auto{finite_index_shift_type}.
+    Hence $\finiteIndexShift{n}{\emptyset}\in\funs{\emptyset}{n}$ by
+        \auto{funs_weaken_codom,setminus_subseteq}.
+    $x\circ\finiteIndexShift{n}{\emptyset}\in\funs{\emptyset}{A}$ by \obv{funs_circ}.
+    Hence $x\circ\finiteIndexShift{n}{\emptyset}=\emptyset$ by
+        \auto{empty_domain_function_space,singleton_iff}.
+    $\restrl{x}{n}=x$ by \auto{restrl_by_dom,funs_is_relation,funs}.
+    Follows by \auto{finite_function_split_apply}.
+\end{proof}
+
+\begin{proposition}\label{finite_function_join_zero_left_apply}
+    Let $n$ be a natural number and $x\in\funs{n}{A}$.
+    Then $(\finiteFunctionJoin{\emptyset}{n}{A})((\emptyset,x))=x$.
+\end{proposition}
+\begin{proof}
+    Let $s=\finiteFunctionSplit{\emptyset}{n}{A}$ and $j=\finiteFunctionJoin{\emptyset}{n}{A}$.
+    $\emptyset$ is a natural number by \obv{omega_empty}.
+    $\emptyset+n=n$ by \obv{num_addition_zero_left}.
+    $s\in\funs{\funs{n}{A}}{\funs{\emptyset}{A}\times\funs{n}{A}}$ and
+        $j\in\funs{\funs{\emptyset}{A}\times\funs{n}{A}}{\funs{n}{A}}$ by
+        \auto{finite_function_split_bijection,finite_function_join_bijection,bijections_to_funs}.
+    $j\circ s=\identity{\funs{n}{A}}$ by \auto{finite_function_join_split}.
+    Hence $j(s(x))=x$ by \auto{circ_apply,id_apply,funs_is_function,funs,funs_ran}.
+    Follows by \auto{finite_function_split_zero_left_apply}.
+\end{proof}
+
+\begin{proposition}\label{finite_function_join_zero_right_apply}
+    Let $n$ be a natural number and $x\in\funs{n}{A}$.
+    Then $(\finiteFunctionJoin{n}{\emptyset}{A})((x,\emptyset))=x$.
+\end{proposition}
+\begin{proof}
+    Let $s=\finiteFunctionSplit{n}{\emptyset}{A}$ and $j=\finiteFunctionJoin{n}{\emptyset}{A}$.
+    $\emptyset$ is a natural number by \obv{omega_empty}.
+    $n+\emptyset=n$ by \obv{num_addition_zero_right}.
+    $s\in\funs{\funs{n}{A}}{\funs{n}{A}\times\funs{\emptyset}{A}}$ and
+        $j\in\funs{\funs{n}{A}\times\funs{\emptyset}{A}}{\funs{n}{A}}$ by
+        \auto{finite_function_split_bijection,finite_function_join_bijection,bijections_to_funs}.
+    $j\circ s=\identity{\funs{n}{A}}$ by \auto{finite_function_join_split}.
+    Hence $j(s(x))=x$ by \auto{circ_apply,id_apply,funs_is_function,funs,funs_ran}.
+    Follows by \auto{finite_function_split_zero_right_apply}.
+\end{proof}
+
+\subsection{Three consecutive blocks}
+
+\begin{theorem}\label{finite_function_join_associative}
+    Let $m,n,k$ be natural numbers.
+    Let $f\in\funs{m}{A}$ and $g\in\funs{n}{A}$.
+    Let $h\in\funs{k}{A}$.
+    Then $(\finiteFunctionJoin{m+n}{k}{A})(((\finiteFunctionJoin{m}{n}{A})((f,g)),h))
+        =(\finiteFunctionJoin{m}{n+k}{A})((f,(\finiteFunctionJoin{n}{k}{A})((g,h))))$.
+\end{theorem}
+\begin{proof}
+    Let $u=(\finiteFunctionJoin{m}{n}{A})((f,g))$ and
+        $v=(\finiteFunctionJoin{n}{k}{A})((g,h))$.
+    Let $l=(\finiteFunctionJoin{m+n}{k}{A})((u,h))$ and
+        $r=(\finiteFunctionJoin{m}{n+k}{A})((f,v))$.
+    $m+n$ and $n+k$ are natural numbers by \obv{num_addition_on_naturals}.
+    $(m+n)+k=m+(n+k)$ by \obv{natural_addition_associative}.
+    $(f,g)\in\funs{m}{A}\times\funs{n}{A}$ and
+        $(g,h)\in\funs{n}{A}\times\funs{k}{A}$ by \obv{times_tuple_intro}.
+    $u\in\funs{m+n}{A}$ and $v\in\funs{n+k}{A}$ by
+        \auto{finite_function_join_bijection,bijections_to_funs,funs_type_apply}.
+    $(u,h)\in\funs{m+n}{A}\times\funs{k}{A}$ and
+        $(f,v)\in\funs{m}{A}\times\funs{n+k}{A}$ by \obv{times_tuple_intro}.
+    $l\in\funs{m+(n+k)}{A}$ and $r\in\funs{m+(n+k)}{A}$ by
+        \auto{finite_function_join_bijection,bijections_to_funs,funs_type_apply}.
+    Show that for every $i\in m+(n+k)$ we have $l(i)=r(i)$.
+    \begin{subproof}
+        Fix $i\in m+(n+k)$.
+        $i\in m$ or there exists $j\in n+k$ such that $i=m+j$ by
+            \obv{natural_sum_member_iff}.
+        \begin{byCase}
+            \caseOf{$i\in m$.}
+                $m\subseteq m+n$ by \obv{natural_addition_left_subseteq_sum}.
+                Hence $i\in m+n$ by \obv{subseteq}.
+                $l(i)=u(i)$ and $r(i)=f(i)$ by
+                    \auto{finite_function_join_left_coordinate,fst_eq}.
+                $u(i)=f(i)$ by \auto{finite_function_join_left_coordinate,fst_eq}.
+            \caseOf{There exists $j\in n+k$ such that $i=m+j$.}
+                Take $j\in n+k$ such that $i=m+j$.
+                $r(i)=v(j)$ by \auto{finite_function_join_right_coordinate,snd_eq}.
+                $j\in n$ or there exists $t\in k$ such that $j=n+t$ by
+                    \obv{natural_sum_member_iff}.
+                \begin{byCase}
+                    \caseOf{$j\in n$.}
+                        $i\in m+n$ by \auto{natural_sum_member_iff}.
+                        $l(i)=u(i)$ by \auto{finite_function_join_left_coordinate,fst_eq}.
+                        $u(i)=g(j)$ by \auto{finite_function_join_right_coordinate,snd_eq}.
+                        $v(j)=g(j)$ by \auto{finite_function_join_left_coordinate,fst_eq}.
+                    \caseOf{There exists $t\in k$ such that $j=n+t$.}
+                        Take $t\in k$ such that $j=n+t$.
+                        $k\subseteq\naturals$ by
+                            \auto{naturals_is_transitive_set,transitiveset_iff_subseteq}.
+                        Hence $t$ is a natural number by \obv{subseteq}.
+                        $i=(m+n)+t$ by \auto{natural_addition_associative}.
+                        $l(i)=h(t)$ and $v(j)=h(t)$ by
+                            \auto{finite_function_join_right_coordinate,snd_eq}.
+                \end{byCase}
+        \end{byCase}
+    \end{subproof}
+    Follows by \auto{typed_functions_equal_from_agreement}.
+\end{proof}

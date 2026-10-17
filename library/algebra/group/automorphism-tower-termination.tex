@@ -1,0 +1,125 @@
+\import{algebra/group/automorphism-tower-invariance.tex}
+\import{algebra/group/complete.tex}
+
+\section{Termination of automorphism-tower segments}
+
+Termination is first a bounded property of an explicit segment: the current
+stage and its successor must both occur in the segment, and the successor bond
+must be an isomorphism.  The unbounded-looking convenience predicate below is
+defined through the least canonical segment containing those two stages.  No
+total tower-height term is introduced.
+
+\begin{definition}\label{segment_terminates_at}
+    $\segmentTerminatesAt{T}{\alpha}$ iff
+        $\groupTowerSegmentData{T}$ and
+        $\alpha\in\carrier[T]$ and
+        $\suc{\alpha}\in\carrier[T]$ and
+        $\groupIsomorphism{\towerBond{T}{\alpha}{\suc{\alpha}}}
+            {\towerStage{T}{\alpha}}
+            {\towerStage{T}{\suc{\alpha}}}$.
+\end{definition}
+
+\begin{proposition}\label{segment_terminates_at_isomorphism}
+    Suppose $\segmentTerminatesAt{T}{\alpha}$.
+    Then $\groupIsomorphism{\towerBond{T}{\alpha}{\suc{\alpha}}}
+        {\towerStage{T}{\alpha}}
+        {\towerStage{T}{\suc{\alpha}}}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{segment_terminates_at}.
+\end{proof}
+
+\begin{theorem}\label{segment_terminates_at_iff_complete}
+    Suppose $\towerSegmentDiagram{T}{G}{\theta}$.
+    Let $\alpha\in\theta$.
+    Suppose $\suc{\alpha}\in\theta$.
+    Then $\segmentTerminatesAt{T}{\alpha}$ iff
+        $\completeGroup{\towerStage{T}{\alpha}}$.
+\end{theorem}
+\begin{proof}
+    $\groupTowerSegmentData{T}$ by
+        \obv{tower_segment_diagram_is_group_data}.
+    $\carrier[T]=\theta$ by
+        \obv{tower_segment_diagram_data}.
+    $\towerBond{T}{\alpha}{\suc{\alpha}}=
+        \innerMap{\towerStage{T}{\alpha}}$ and
+        $\towerStage{T}{\suc{\alpha}}=
+        \automorphismGroup{\towerStage{T}{\alpha}}$ by
+        \obv{tower_segment_successor}.
+    Show that if $\segmentTerminatesAt{T}{\alpha}$, then
+        $\completeGroup{\towerStage{T}{\alpha}}$.
+    \begin{subproof}
+        Assume $\segmentTerminatesAt{T}{\alpha}$.
+        Hence $\groupIsomorphism{\towerBond{T}{\alpha}{\suc{\alpha}}}
+            {\towerStage{T}{\alpha}}
+            {\towerStage{T}{\suc{\alpha}}}$ by
+            \obv{segment_terminates_at_isomorphism}.
+        Hence $\groupIsomorphism{\innerMap{\towerStage{T}{\alpha}}}
+            {\towerStage{T}{\alpha}}
+            {\automorphismGroup{\towerStage{T}{\alpha}}}$.
+        Follows by \obv{complete_group_iff_inner_map_isomorphism}.
+    \end{subproof}
+    Show that if $\completeGroup{\towerStage{T}{\alpha}}$, then
+        $\segmentTerminatesAt{T}{\alpha}$.
+    \begin{subproof}
+        Assume $\completeGroup{\towerStage{T}{\alpha}}$.
+        Hence $\groupIsomorphism{\innerMap{\towerStage{T}{\alpha}}}
+            {\towerStage{T}{\alpha}}
+            {\automorphismGroup{\towerStage{T}{\alpha}}}$ by
+            \obv{complete_group_iff_inner_map_isomorphism}.
+        Hence $\groupIsomorphism{\towerBond{T}{\alpha}{\suc{\alpha}}}
+            {\towerStage{T}{\alpha}}
+            {\towerStage{T}{\suc{\alpha}}}$.
+        Follows by \obv{segment_terminates_at}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{definition}\label{tower_terminates_at}
+    $\towerTerminatesAt{G}{\alpha}$ iff
+        $\segmentTerminatesAt
+            {\automorphismTowerSegment{G}{\suc{\suc{\alpha}}}}{\alpha}$.
+\end{definition}
+
+\begin{proposition}\label{tower_termination_segment_context}
+    Let $G$ be a group.
+    Let $\alpha$ be an ordinal.
+    Let $T=\automorphismTowerSegment{G}{\suc{\suc{\alpha}}}$.
+    Then $\towerSegmentDiagram{T}{G}{\suc{\suc{\alpha}}}$ and
+        $\alpha\in\suc{\suc{\alpha}}$ and
+        $\suc{\alpha}\in\suc{\suc{\alpha}}$ and
+        $\automorphismTowerStage{G}{\alpha}=\towerStage{T}{\alpha}$.
+\end{proposition}
+\begin{proof}
+    $\suc{\suc{\alpha}}$ is an ordinal by \obv{suc_ordinal}.
+    Hence $\canonicalTowerSegment{T}{G}{\suc{\suc{\alpha}}}$ by
+        \auto{automorphism_tower_segment_is_canonical}.
+    Hence $\towerSegmentDiagram{T}{G}{\suc{\suc{\alpha}}}$ by
+        \obv{canonical_tower_segment_diagram}.
+    $\alpha\in\suc{\alpha}$ and
+        $\suc{\alpha}\in\suc{\suc{\alpha}}$ by
+        \obv{suc_intro_self}.
+    Hence $\alpha\in\suc{\suc{\alpha}}$ by
+        \obv{ordinal_transitivity}.
+    $\automorphismTowerStage{G}{\alpha}=\towerStage{T}{\alpha}$ by
+        \auto{automorphism_tower_stage_on_segment}.
+\end{proof}
+
+\begin{theorem}\label{tower_terminates_at_iff_complete}
+    Let $G$ be a group.
+    Let $\alpha$ be an ordinal.
+    Then $\towerTerminatesAt{G}{\alpha}$ iff
+        $\completeGroup{\automorphismTowerStage{G}{\alpha}}$.
+\end{theorem}
+\begin{proof}
+    Let $T=\automorphismTowerSegment{G}{\suc{\suc{\alpha}}}$.
+    $\towerSegmentDiagram{T}{G}{\suc{\suc{\alpha}}}$ and
+        $\alpha\in\suc{\suc{\alpha}}$ and
+        $\suc{\alpha}\in\suc{\suc{\alpha}}$ and
+        $\automorphismTowerStage{G}{\alpha}=\towerStage{T}{\alpha}$ by
+        \obv{tower_termination_segment_context}.
+    $\segmentTerminatesAt{T}{\alpha}$ iff
+        $\completeGroup{\towerStage{T}{\alpha}}$ by
+        \obv{segment_terminates_at_iff_complete}.
+    Follows by \obv{tower_terminates_at}.
+\end{proof}

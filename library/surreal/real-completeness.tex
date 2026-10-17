@@ -1,0 +1,716 @@
+\import{surreal/real-order.tex}
+
+\section{Completeness of the surreal reals}
+
+\subsection{Finite points between real points}
+
+\begin{lemma}\label{finite_surreal_between_reals}
+    Suppose $x,y\in\reals$ and $\surrealLt{x}{y}$.
+    Then there exists $q\in\surrealStage{\naturals}$ such that
+        $\surrealLt{x}{q}$ and $\surrealLt{q}{y}$.
+\end{lemma}
+\begin{proof}
+    $\surrealNeg{x}\in\reals$
+        by \obv{surreal_real_negation_closed}.
+    Let $d=\surrealAdd{y}{\surrealNeg{x}}$.
+    $d\in\reals$ by \auto{surreal_real_addition_closed}.
+    $\surrealLt{\surrealZero}{d}$
+        by
+        \obv{surreal_subtraction_positive,surreal_real_is_surreal}.
+    Take a natural number $n$ such that
+        $\surrealLt
+            {\surrealMul{\surrealEpsilon{n}}{\surrealOne}}{d}$
+        by
+        \obv{positive_real_scaled_epsilon_below,surreal_one_is_real,surreal_zero_lt_one}.
+    Let $e=\surrealEpsilon{n}$.
+    $\surrealMul{e}{\surrealOne}=e$
+        by
+        \auto{surreal_mul_one_right,surreal_epsilon_is_surreal,natural_number_is_ordinal}.
+    Hence $\surrealLt{e}{d}$.
+    Hence $\surrealLt{\surrealAdd{e}{x}}{y}$
+        by
+        \auto{surreal_lt_subtract_add,surreal_epsilon_is_surreal,surreal_real_is_surreal,natural_number_is_ordinal}.
+    Take $q\in\surrealStage{\naturals}$ such that
+        $\surrealLt{q}{y}$ and
+        $\surrealLt{y}{\surrealAdd{q}{e}}$
+        by \auto{surreal_real_dyadic_interval,natural_number_is_ordinal}.
+    $\surreal{q}$ and $\surreal{e}$
+        by
+        \auto{surreal_stage_characterization,omega_is_ordinal,surreal_epsilon_is_surreal,natural_number_is_ordinal}.
+    Show that $\surrealLt{x}{q}$.
+    \begin{subproof}
+        Suppose not.
+        Hence $\surrealLe{q}{x}$
+            by \auto{surreal_le_total,surreal_le,surreal_real_is_surreal}.
+        Hence $\surrealLe{\surrealAdd{q}{e}}{\surrealAdd{x}{e}}$
+            by
+            \obv{surreal_add_le_left,surreal_real_is_surreal}.
+        $\surrealAdd{x}{e}=\surrealAdd{e}{x}$
+            by
+            \obv{surreal_add_commutative,surreal_real_is_surreal}.
+        Hence $\surrealLt{\surrealAdd{q}{e}}{y}$
+            by
+            \auto{surreal_le_lt_transitive,surreal_add_is_surreal,surreal_real_is_surreal}.
+        Contradiction by
+            \obv{surreal_lt_asymmetric,surreal_add_is_surreal,surreal_real_is_surreal}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\subsection{The supremum cut}
+
+\begin{definition}\label{surreal_real_sup_lower}
+    $\realSupLower{A}=
+        \{q\in\surrealStage{\naturals}\mid
+            \text{there exists $a\in A$ such that $\surrealLt{q}{a}$}\}$.
+\end{definition}
+
+\begin{definition}\label{surreal_real_sup_upper}
+    $\realSupUpper{A}=
+        \{q\in\surrealStage{\naturals}\mid
+            \text{there exists $r\in\surrealStage{\naturals}$ such that
+                $\surrealLt{r}{q}$ and for every $a\in A$ we have
+                $\surrealLt{a}{r}$}\}$.
+\end{definition}
+
+\begin{proposition}\label{surreal_real_sup_lower_iff}
+    $q\in\realSupLower{A}$ iff
+        $q\in\surrealStage{\naturals}$ and
+        there exists $a\in A$ such that $\surrealLt{q}{a}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{surreal_real_sup_lower}.
+\end{proof}
+
+\begin{proposition}\label{surreal_real_sup_upper_iff}
+    $q\in\realSupUpper{A}$ iff
+        $q\in\surrealStage{\naturals}$ and
+        there exists $r\in\surrealStage{\naturals}$ such that
+            $\surrealLt{r}{q}$ and
+            for every $a\in A$ we have $\surrealLt{a}{r}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{surreal_real_sup_upper}.
+\end{proof}
+
+\begin{proposition}\label{surreal_real_sup_bounds_finite_stage}
+    $\realSupLower{A}\union\realSupUpper{A}
+        \subseteq\surrealStage{\naturals}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{subseteq,union_iff,surreal_real_sup_lower_iff,surreal_real_sup_upper_iff}.
+\end{proof}
+
+\begin{proposition}\label{surreal_real_sup_cut_pair}
+    Suppose $A\subseteq\reals$.
+    Then $\surrealCutPair{\realSupLower{A}}{\realSupUpper{A}}$.
+\end{proposition}
+\begin{proof}
+    Show that for every $q\in\realSupLower{A}$ we have $\surreal{q}$.
+    \begin{subproof}
+        Follows by
+            \auto{surreal_real_sup_lower_iff,surreal_stage_characterization,omega_is_ordinal}.
+    \end{subproof}
+    Show that for every $q\in\realSupUpper{A}$ we have $\surreal{q}$.
+    \begin{subproof}
+        Follows by
+            \auto{surreal_real_sup_upper_iff,surreal_stage_characterization,omega_is_ordinal}.
+    \end{subproof}
+    Show that for every $q\in\realSupLower{A}$ we have
+        for every $s\in\realSupUpper{A}$ we have $\surrealLt{q}{s}$.
+    \begin{subproof}
+        Fix $q\in\realSupLower{A}$.
+        Fix $s\in\realSupUpper{A}$.
+        Take $a\in A$ such that $\surrealLt{q}{a}$
+            by \obv{surreal_real_sup_lower_iff}.
+        Take $r\in\surrealStage{\naturals}$ such that
+            $\surrealLt{r}{s}$ and
+            for every $u\in A$ we have $\surrealLt{u}{r}$
+            by \obv{surreal_real_sup_upper_iff}.
+        $a\in\reals$ by \obv{subseteq}.
+        $\surrealLt{a}{r}$.
+        $\surreal{q}$ and $\surreal{r}$ and $\surreal{s}$
+            by
+            \auto{surreal_real_sup_lower_iff,surreal_real_sup_upper_iff,surreal_stage_characterization,omega_is_ordinal}.
+        Follows by
+            \auto{surreal_lt_transitive,surreal_real_is_surreal}.
+    \end{subproof}
+    Follows by \obv{surreal_cut_pair}.
+\end{proof}
+
+\begin{proposition}\label{surreal_real_sup_lower_inhabited}
+    Suppose $A\subseteq\reals$ and $A$ is inhabited.
+    Then $\realSupLower{A}$ is inhabited.
+\end{proposition}
+\begin{proof}
+    Take $a$ such that $a\in A$.
+    $a\in\reals$ by \obv{subseteq}.
+    Take $q\in\surrealStage{\naturals}$ such that
+        $\surrealLt{q}{a}$ and
+        $\surrealLt{a}{
+            \surrealAdd{q}{\surrealEpsilon{\emptyset}}}$
+        by
+        \obv{surreal_real_dyadic_interval,emptyset_is_ordinal,omega_empty}.
+    Hence $q\in\realSupLower{A}$
+        by \auto{surreal_real_sup_lower_iff}.
+    Follows by \auto.
+\end{proof}
+
+\begin{proposition}\label{surreal_real_sup_upper_inhabited}
+    Suppose $A\subseteq\reals$.
+    Suppose $b\in\reals$ and for every $a\in A$ we have
+        $\surrealLe{a}{b}$.
+    Then $\realSupUpper{A}$ is inhabited.
+\end{proposition}
+\begin{proof}
+    $b\in\surrealStage{\suc{\naturals}}$ and
+        $\surrealLt{b}{\ordinalSurreal{\naturals}}$
+        by \auto{surreal_real_elim,surreal_real_bounds}.
+    Take a natural number $N$ such that
+        $\surrealLt{b}{\ordinalSurreal{N}}$
+        by \obv{successor_omega_surreal_natural_bound_above}.
+    Let $r=\ordinalSurreal{N}$.
+    $\surreal{r}$ and $\birthday{r}=N$
+        by
+        \auto{ordinal_surreal_is_surreal,ordinal_surreal_birthday,natural_number_is_ordinal}.
+    Hence $r\in\surrealStage{\naturals}$
+        by
+        \auto{surreal_stage_characterization,omega_is_ordinal}.
+    Let $q=\surrealAdd{r}{\surrealOne}$.
+    $\surrealOne\in\surrealStage{\naturals}$
+        by
+        \auto{surreal_stage_characterization,surreal_one_is_surreal,ordinal_surreal_birthday,omega_empty,omega_successor,omega_is_ordinal}.
+    Hence $q\in\surrealStage{\naturals}$
+        by \auto{surreal_addition_finite_stage}.
+    Show that for every $a\in A$ we have $\surrealLt{a}{r}$.
+    \begin{subproof}
+        Fix $a\in A$.
+        $a\in\reals$ by \obv{subseteq}.
+        $\surrealLe{a}{b}$.
+        Follows by
+            \obv{surreal_le_lt_transitive,surreal_real_is_surreal}.
+    \end{subproof}
+    $\surrealLt{r}{q}$
+        by
+        \auto{surreal_add_lt_right,surreal_add_zero_right,surreal_zero_lt_one,empty_surreal,surreal_one_is_surreal}.
+    Hence $q\in\realSupUpper{A}$
+        by \obv{surreal_real_sup_upper_iff}.
+\end{proof}
+
+\begin{proposition}\label{surreal_real_sup_lower_no_maximum}
+    Suppose $A\subseteq\reals$.
+    Then for every $q\in\realSupLower{A}$ there exists
+        $r\in\realSupLower{A}$ such that $\surrealLt{q}{r}$.
+\end{proposition}
+\begin{proof}
+    Fix $q\in\realSupLower{A}$.
+    $q\in\surrealStage{\naturals}$
+        by \obv{surreal_real_sup_lower_iff}.
+    Hence $q\in\reals$
+        by \obv{finite_surreal_stage_subset_reals,subseteq}.
+    Take $a\in A$ such that $\surrealLt{q}{a}$
+        by \obv{surreal_real_sup_lower_iff}.
+    $a\in\reals$ by \obv{subseteq}.
+    $\surrealNeg{q}\in\reals$
+        by \obv{surreal_real_negation_closed}.
+    Let $d=\surrealAdd{a}{\surrealNeg{q}}$.
+    $d\in\reals$ by \auto{surreal_real_addition_closed}.
+    $\surrealLt{\surrealZero}{d}$
+        by
+        \obv{surreal_subtraction_positive,surreal_real_is_surreal}.
+    Take a natural number $n$ such that
+        $\surrealLt
+            {\surrealMul{\surrealEpsilon{n}}{\surrealOne}}{d}$
+        by
+        \obv{positive_real_scaled_epsilon_below,surreal_one_is_real,surreal_zero_lt_one}.
+    Let $e=\surrealEpsilon{n}$.
+    $e\in\surrealStage{\naturals}$
+        by \auto{surreal_epsilon_in_finite_stage}.
+    $\surrealMul{e}{\surrealOne}=e$
+        by
+        \auto{surreal_mul_one_right,surreal_epsilon_is_surreal,natural_number_is_ordinal}.
+    Hence $\surrealLt{e}{d}$.
+    Hence $\surrealLt{\surrealAdd{e}{q}}{a}$
+        by
+        \auto{surreal_lt_subtract_add,surreal_epsilon_is_surreal,surreal_real_is_surreal,natural_number_is_ordinal}.
+    Let $r=\surrealAdd{q}{e}$.
+    $r\in\surrealStage{\naturals}$
+        by \auto{surreal_addition_finite_stage}.
+    $\surrealAdd{e}{q}=r$
+        by
+        \auto{surreal_add_commutative,surreal_stage_characterization,omega_is_ordinal,surreal_epsilon_is_surreal,natural_number_is_ordinal}.
+    Hence $\surrealLt{r}{a}$.
+    Hence $r\in\realSupLower{A}$
+        by \obv{surreal_real_sup_lower_iff}.
+    $\surrealLt{q}{r}$
+        by
+        \auto{surreal_add_lt_right,surreal_add_zero_right,surreal_epsilon_positive,empty_surreal,natural_number_is_ordinal,surreal_stage_characterization,omega_is_ordinal}.
+\end{proof}
+
+\begin{proposition}\label{surreal_real_sup_upper_no_minimum}
+    Suppose $A\subseteq\reals$.
+    Then for every $q\in\realSupUpper{A}$ there exists
+        $s\in\realSupUpper{A}$ such that $\surrealLt{s}{q}$.
+\end{proposition}
+\begin{proof}
+    Fix $q\in\realSupUpper{A}$.
+    Take $r\in\surrealStage{\naturals}$ such that
+        $\surrealLt{r}{q}$ and
+        for every $a\in A$ we have $\surrealLt{a}{r}$
+        by \obv{surreal_real_sup_upper_iff}.
+    $q\in\surrealStage{\naturals}$
+        by \obv{surreal_real_sup_upper_iff}.
+    Hence $q,r\in\reals$
+        by \obv{finite_surreal_stage_subset_reals,subseteq}.
+    $\surrealNeg{r}\in\reals$
+        by \obv{surreal_real_negation_closed}.
+    Let $d=\surrealAdd{q}{\surrealNeg{r}}$.
+    $d\in\reals$ by \auto{surreal_real_addition_closed}.
+    $\surrealLt{\surrealZero}{d}$
+        by
+        \obv{surreal_subtraction_positive,surreal_real_is_surreal}.
+    Take a natural number $n$ such that
+        $\surrealLt
+            {\surrealMul{\surrealEpsilon{n}}{\surrealOne}}{d}$
+        by
+        \obv{positive_real_scaled_epsilon_below,surreal_one_is_real,surreal_zero_lt_one}.
+    Let $e=\surrealEpsilon{n}$.
+    $e\in\surrealStage{\naturals}$
+        by \auto{surreal_epsilon_in_finite_stage}.
+    $\surreal{e}$ and $\surrealLt{\surrealZero}{e}$
+        by
+        \auto{surreal_epsilon_is_surreal,surreal_epsilon_positive,natural_number_is_ordinal}.
+    $\surrealMul{e}{\surrealOne}=e$
+        by \obv{surreal_mul_one_right}.
+    Hence $\surrealLt{e}{d}$.
+    Hence $\surrealLt{\surrealAdd{e}{r}}{q}$
+        by
+        \obv{surreal_lt_subtract_add,surreal_real_is_surreal}.
+    Let $s=\surrealAdd{q}{\surrealNeg{e}}$.
+    $\surrealNeg{e}\in\surrealStage{\naturals}$
+        by \obv{surreal_negation_finite_stage}.
+    Hence $s\in\surrealStage{\naturals}$
+        by \auto{surreal_addition_finite_stage}.
+    $\surrealLt{
+        \surrealAdd{\surrealAdd{e}{r}}{\surrealNeg{e}}}{s}$
+        by
+        \obv{surreal_add_lt_left,surreal_add_is_surreal,surreal_negation_is_surreal,surreal_real_is_surreal}.
+    Hence $\surrealLt{r}{s}$
+        by
+        \auto{surreal_add_associative,surreal_add_commutative,surreal_add_inverse_right,surreal_add_zero_right,surreal_negation_is_surreal,surreal_real_is_surreal}.
+    Hence $s\in\realSupUpper{A}$
+        by \auto{surreal_real_sup_upper_iff}.
+    $\surrealLt{\surrealNeg{e}}{\surrealZero}$
+        by
+        \obv{surreal_negation_lt_reverses,surreal_negation_empty,empty_surreal}.
+    Hence $\surrealLt{s}{q}$
+        by
+        \auto{surreal_add_lt_right,surreal_add_zero_right,empty_surreal,surreal_negation_is_surreal,surreal_real_is_surreal}.
+\end{proof}
+
+\begin{theorem}\label{surreal_real_sup_cut_is_real}
+    Suppose $A\subseteq\reals$ and $A$ is inhabited.
+    Suppose $b\in\reals$ and for every $a\in A$ we have
+        $\surrealLe{a}{b}$.
+    Then
+        $\surrealCut{\realSupLower{A}}{\realSupUpper{A}}
+            \in\reals$.
+\end{theorem}
+\begin{proof}
+    Follows by
+        \obv{dense_finite_stage_surreal_cut_is_real,surreal_real_sup_bounds_finite_stage,surreal_real_sup_cut_pair,surreal_real_sup_lower_inhabited,surreal_real_sup_upper_inhabited,surreal_real_sup_lower_no_maximum,surreal_real_sup_upper_no_minimum}.
+\end{proof}
+
+\begin{theorem}\label{surreal_real_sup_cut_upper_bound}
+    Suppose $A\subseteq\reals$ and $A$ is inhabited.
+    Suppose $b\in\reals$ and for every $a\in A$ we have
+        $\surrealLe{a}{b}$.
+    Let $s=\surrealCut{\realSupLower{A}}{\realSupUpper{A}}$.
+    Then for every $a\in A$ we have $\surrealLe{a}{s}$.
+\end{theorem}
+\begin{proof}
+    $s\in\reals$ by \auto{surreal_real_sup_cut_is_real}.
+    Fix $a\in A$.
+    $a\in\reals$ by \obv{subseteq}.
+    $\surrealLt{a}{s}$ or $a=s$ or $\surrealLt{s}{a}$
+        by \obv{surreal_lt_trichotomy,surreal_real_is_surreal}.
+    \begin{byCase}
+        \caseOf{$\surrealLt{s}{a}$.}
+            Take $q\in\surrealStage{\naturals}$ such that
+                $\surrealLt{s}{q}$ and $\surrealLt{q}{a}$
+                by \obv{finite_surreal_between_reals}.
+            Hence $q\in\realSupLower{A}$
+                by \obv{surreal_real_sup_lower_iff}.
+            Hence $\surrealLt{q}{s}$
+                by
+                \obv{surreal_cut_pair_left,surreal_real_sup_cut_pair}.
+            Contradiction by
+                \auto{surreal_lt_asymmetric,surreal_real_is_surreal,surreal_stage_characterization,omega_is_ordinal}.
+        \caseOf{not $\surrealLt{s}{a}$.}
+            Hence $\surrealLt{a}{s}$ or $a=s$.
+            Follows by \obv{surreal_le}.
+    \end{byCase}
+\end{proof}
+
+\begin{theorem}\label{surreal_real_sup_cut_least}
+    Suppose $A\subseteq\reals$ and $A$ is inhabited.
+    Suppose $b\in\reals$ and for every $a\in A$ we have
+        $\surrealLe{a}{b}$.
+    Let $s=\surrealCut{\realSupLower{A}}{\realSupUpper{A}}$.
+    Suppose $u\in\reals$ and for every $a\in A$ we have
+        $\surrealLe{a}{u}$.
+    Then $\surrealLe{s}{u}$.
+\end{theorem}
+\begin{proof}
+    $s\in\reals$ by \auto{surreal_real_sup_cut_is_real}.
+    \begin{byCase}
+        \caseOf{$\surrealLt{u}{s}$.}
+            Take $q\in\surrealStage{\naturals}$ such that
+                $\surrealLt{u}{q}$ and $\surrealLt{q}{s}$
+                by \obv{finite_surreal_between_reals}.
+            $q\in\reals$
+                by \obv{finite_surreal_stage_subset_reals,subseteq}.
+            Take $r\in\surrealStage{\naturals}$ such that
+                $\surrealLt{q}{r}$ and $\surrealLt{r}{s}$
+                by \obv{finite_surreal_between_reals}.
+            Show that for every $a\in A$ we have $\surrealLt{a}{q}$.
+            \begin{subproof}
+                Fix $a\in A$.
+                $a\in\reals$ by \obv{subseteq}.
+                $\surrealLe{a}{u}$.
+                Follows by
+                    \obv{surreal_le_lt_transitive,surreal_real_is_surreal,surreal_stage_characterization,omega_is_ordinal}.
+            \end{subproof}
+            Hence $r\in\realSupUpper{A}$
+                by \auto{surreal_real_sup_upper_iff}.
+            Hence $\surrealLt{s}{r}$
+                by
+                \auto{surreal_cut_pair_right,surreal_real_sup_cut_pair}.
+            Contradiction by
+                \auto{surreal_lt_asymmetric,surreal_real_is_surreal,surreal_stage_characterization,omega_is_ordinal}.
+        \caseOf{not $\surrealLt{u}{s}$.}
+            $\surrealLe{s}{u}$
+                by
+                \auto{surreal_le_total,surreal_le,surreal_real_is_surreal}.
+    \end{byCase}
+\end{proof}
+
+\begin{definition}\label{real_supremum}
+    $\realSupremum{A}=
+        \surrealCut{\realSupLower{A}}{\realSupUpper{A}}$.
+\end{definition}
+
+\begin{corollary}\label{real_supremum_is_real}
+    Suppose $A\subseteq\reals$ and $A$ is inhabited.
+    Suppose $b\in\reals$ and for every $a\in A$ we have
+        $\surrealLe{a}{b}$.
+    Then $\realSupremum{A}\in\reals$.
+\end{corollary}
+\begin{proof}
+    Follows by
+        \auto{real_supremum,surreal_real_sup_cut_is_real}.
+\end{proof}
+
+\begin{corollary}\label{real_supremum_upper_bound}
+    Suppose $A\subseteq\reals$ and $A$ is inhabited.
+    Suppose $b\in\reals$ and for every $z\in A$ we have
+        $\surrealLe{z}{b}$.
+    Let $a\in A$.
+    Then $\surrealLe{a}{\realSupremum{A}}$.
+\end{corollary}
+\begin{proof}
+    Follows by
+        \obv{real_supremum,surreal_real_sup_cut_upper_bound}.
+\end{proof}
+
+\begin{corollary}\label{real_supremum_least}
+    Suppose $A\subseteq\reals$ and $A$ is inhabited.
+    Suppose $b\in\reals$ and for every $z\in A$ we have
+        $\surrealLe{z}{b}$.
+    Suppose $u\in\reals$ and for every $v\in A$ we have
+        $\surrealLe{v}{u}$.
+    Then $\surrealLe{\realSupremum{A}}{u}$.
+\end{corollary}
+\begin{proof}
+    Follows by
+        \obv{real_supremum,surreal_real_sup_cut_least}.
+\end{proof}
+
+\begin{theorem}\label{surreal_reals_least_upper_bound}
+    Suppose $A\subseteq\reals$ and $A$ is inhabited.
+    Suppose there exists $b\in\reals$ such that for every $a\in A$
+        we have $\surrealLe{a}{b}$.
+    Then there exists $s\in\reals$ such that
+        (for every $a\in A$ we have $\surrealLe{a}{s}$) and
+        (for every $u\in\reals$ such that for every $r\in A$ we have
+            $\surrealLe{r}{u}$ we have $\surrealLe{s}{u}$).
+\end{theorem}
+\begin{proof}
+    Take $b\in\reals$ such that for every $a\in A$ we have
+        $\surrealLe{a}{b}$.
+    Let $s=\surrealCut{\realSupLower{A}}{\realSupUpper{A}}$.
+    $s\in\reals$ by \auto{surreal_real_sup_cut_is_real}.
+    Show that for every $a\in A$ we have $\surrealLe{a}{s}$.
+    \begin{subproof}
+        Follows by \obv{surreal_real_sup_cut_upper_bound}.
+    \end{subproof}
+    Show that $\forall u:\Set.
+        (u\in\reals\land
+         (\forall a:\Set.\ a\in A\implies\surrealLe{a}{u}))
+        \implies\surrealLe{s}{u}$.
+    \begin{subproof}
+        Fix $u$.
+        Assume $u\in\reals$ and
+            for every $a\in A$ we have $\surrealLe{a}{u}$.
+        Follows by \obv{surreal_real_sup_cut_least}.
+    \end{subproof}
+\end{proof}
+
+\subsection{Nested real intervals}
+
+\begin{theorem}\label{surreal_real_interval_separation}
+    $\forall a,b:\Set\to\Set.
+        (\forall n:\Set.\ n\in\naturals\implies
+            (\Apply{a}{n}\in\reals\land\Apply{b}{n}\in\reals))
+        \implies
+        ((\forall m,n:\Set.
+            (m\in\naturals\land n\in\naturals)
+            \implies
+            \surrealLe{\Apply{a}{m}}{\Apply{b}{n}})
+        \implies
+        (\exists x:\Set.\ x\in\reals\land
+            (\forall n:\Set.\ n\in\naturals\implies
+                (\surrealLe{\Apply{a}{n}}{x}\land
+                 \surrealLe{x}{\Apply{b}{n}}))))$.
+\end{theorem}
+\begin{proof}
+    Fix $a,b$.
+    Assume $\forall n:\Set.\ n\in\naturals\implies
+        (\Apply{a}{n}\in\reals\land\Apply{b}{n}\in\reals)$.
+    Assume $\forall m,n:\Set.
+        (m\in\naturals\land n\in\naturals)
+        \implies\surrealLe{\Apply{a}{m}}{\Apply{b}{n}}$.
+    Let $A=\{\Apply{a}{n}\mid n\in\naturals\}$.
+    Show that $A\subseteq\reals$.
+    \begin{subproof}
+        Show that for every $y\in A$ we have $y\in\reals$.
+        \begin{subproof}
+            Fix $y\in A$.
+            Take $n\in\naturals$ such that
+                $y=\Apply{a}{n}$.
+            Follows by \auto.
+        \end{subproof}
+        Follows by \obv{subseteq}.
+    \end{subproof}
+    $\emptyset\in\naturals$ by \obv{omega_empty}.
+    Hence $\Apply{a}{\emptyset}\in A$
+        by \obv{logical_replacement_iff}.
+    Hence $A$ is inhabited by \obv{logical_replacement_iff}.
+    Let $b_0=\Apply{b}{\emptyset}$.
+    $b_0\in\reals$ by \auto.
+    Show that for every $y\in A$ we have
+        $\surrealLe{y}{b_0}$.
+    \begin{subproof}
+        Fix $y\in A$.
+        Take $n\in\naturals$ such that
+            $y=\Apply{a}{n}$.
+        Follows by \auto.
+    \end{subproof}
+    Let $s=\surrealCut{\realSupLower{A}}{\realSupUpper{A}}$.
+    $s\in\reals$ by \auto{surreal_real_sup_cut_is_real}.
+    Show that for every natural number $n$ we have
+        $\surrealLe{\Apply{a}{n}}{s}$ and
+        $\surrealLe{s}{\Apply{b}{n}}$.
+    \begin{subproof}
+        Fix $n\in\naturals$.
+        $\Apply{a}{n}\in A$ by \auto{logical_replacement_iff}.
+        Hence $\surrealLe{\Apply{a}{n}}{s}$
+            by \obv{surreal_real_sup_cut_upper_bound}.
+        $\Apply{b}{n}\in\reals$.
+        Show that for every $y\in A$ we have
+            $\surrealLe{y}{\Apply{b}{n}}$.
+        \begin{subproof}
+            Fix $y\in A$.
+            Take $m\in\naturals$ such that
+                $y=\Apply{a}{m}$.
+            Follows by \auto.
+        \end{subproof}
+        Hence $\surrealLe{s}{\Apply{b}{n}}$
+            by \obv{surreal_real_sup_cut_least}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{surreal_real_nested_intervals}
+    $\forall a,b:\Set\to\Set.
+        (\forall n:\Set.\ n\in\naturals\implies
+            (\Apply{a}{n}\in\reals\land
+             \Apply{b}{n}\in\reals\land
+             \surrealLe{\Apply{a}{n}}{\Apply{b}{n}}))
+        \implies
+        ((\forall m,n:\Set.
+            (m\in\naturals\land n\in\naturals\land m\in n)
+            \implies
+            (\surrealLe{\Apply{a}{m}}{\Apply{a}{n}}\land
+             \surrealLe{\Apply{b}{n}}{\Apply{b}{m}}))
+        \implies
+        (\exists x:\Set.\ x\in\reals\land
+            (\forall n:\Set.\ n\in\naturals\implies
+                (\surrealLe{\Apply{a}{n}}{x}\land
+                 \surrealLe{x}{\Apply{b}{n}}))))$.
+\end{theorem}
+\begin{proof}
+    Fix $a,b$.
+    Assume $\forall n:\Set.\ n\in\naturals\implies
+        (\Apply{a}{n}\in\reals\land
+         \Apply{b}{n}\in\reals\land
+         \surrealLe{\Apply{a}{n}}{\Apply{b}{n}})$.
+    Assume $\forall m,n:\Set.
+        (m\in\naturals\land n\in\naturals\land m\in n)
+        \implies
+        (\surrealLe{\Apply{a}{m}}{\Apply{a}{n}}\land
+         \surrealLe{\Apply{b}{n}}{\Apply{b}{m}})$.
+    Show that $\forall m,n:\Set.
+        (m\in\naturals\land n\in\naturals)
+        \implies\surrealLe{\Apply{a}{m}}{\Apply{b}{n}}$.
+    \begin{subproof}
+        Fix $m,n$.
+        Assume $m\in\naturals$ and $n\in\naturals$.
+        $m$ and $n$ are ordinals by \obv{natural_number_is_ordinal}.
+        $m\in n$ or $m=n$ or $n\in m$
+            by \obv{ordinal_in_trichotomy}.
+        \begin{byCase}
+            \caseOf{$m=n$.}
+                Follows by \auto.
+            \caseOf{$m\neq n$.}
+                \begin{byCase}
+                    \caseOf{$m\in n$.}
+                        $\surrealLe{\Apply{a}{m}}{\Apply{a}{n}}$
+                            by \auto.
+                        $\surrealLe{\Apply{a}{n}}{\Apply{b}{n}}$
+                            by \auto.
+                        Follows by
+                            \auto{surreal_le_transitive,surreal_real_is_surreal}.
+                    \caseOf{$m\notin n$.}
+                        Hence $n\in m$.
+                        $\surrealLe{\Apply{a}{m}}{\Apply{b}{m}}$
+                            by \auto.
+                        $\surrealLe{\Apply{b}{m}}{\Apply{b}{n}}$
+                            by \auto.
+                        Follows by
+                            \auto{surreal_le_transitive,surreal_real_is_surreal}.
+                \end{byCase}
+        \end{byCase}
+    \end{subproof}
+    Follows by \auto{surreal_real_interval_separation}.
+\end{proof}
+
+\begin{lemma}\label{surreal_real_adjacent_sequences_monotone}
+    $\forall a,b:\Set\to\Set.
+        (\forall n:\Set.\ n\in\naturals\implies
+            (\Apply{a}{n}\in\reals\land\Apply{b}{n}\in\reals))
+        \implies
+        ((\forall n:\Set.\ n\in\naturals\implies
+            (\surrealLe{\Apply{a}{n}}{\Apply{a}{\suc{n}}}\land
+             \surrealLe{\Apply{b}{\suc{n}}}{\Apply{b}{n}}))
+        \implies
+        (\forall n:\Set.\ n\in\naturals\implies
+            (\forall m:\Set.\ m\in n\implies
+                (\surrealLe{\Apply{a}{m}}{\Apply{a}{n}}\land
+                 \surrealLe{\Apply{b}{n}}{\Apply{b}{m}}))))$.
+\end{lemma}
+\begin{proof}
+    Fix $a,b$.
+    Assume $\forall n:\Set.\ n\in\naturals\implies
+        (\Apply{a}{n}\in\reals\land\Apply{b}{n}\in\reals)$.
+    Assume $\forall n:\Set.\ n\in\naturals\implies
+        (\surrealLe{\Apply{a}{n}}{\Apply{a}{\suc{n}}}\land
+         \surrealLe{\Apply{b}{\suc{n}}}{\Apply{b}{n}})$.
+    Let $P:\Set\to\Prop=\fun{n:\Set}{
+        \forall m:\Set.\ m\in n\implies
+            (\surrealLe{\Apply{a}{m}}{\Apply{a}{n}}\land
+             \surrealLe{\Apply{b}{n}}{\Apply{b}{m}})}$.
+    Show that $\forall n:\Set.\ n\in\naturals\implies
+        ((\forall k:\Set.\ k\in n\implies\Apply{P}{k})
+         \implies\Apply{P}{n})$.
+    \begin{subproof}
+        Fix $n\in\naturals$.
+        Assume $\forall k:\Set.\ k\in n\implies\Apply{P}{k}$.
+        $n=\emptyset$ or there exists a natural number $k$ such that
+            $n=\suc{k}$ by \obv{natural_zero_or_successor}.
+        \begin{byCase}
+            \caseOf{$n=\emptyset$.}
+                $\forall m:\Set.\ m\in n\implies
+                    (\surrealLe{\Apply{a}{m}}{\Apply{a}{n}}\land
+                     \surrealLe{\Apply{b}{n}}{\Apply{b}{m}})$
+                    by \auto{emptyset}.
+            \caseOf{$n\neq\emptyset$.}
+                Take $k\in\naturals$ such that $n=\suc{k}$.
+                $k\in n$ by \obv{suc_intro_self}.
+                Hence $\Apply{P}{k}$.
+                Hence $\forall m:\Set.\ m\in k\implies
+                    (\surrealLe{\Apply{a}{m}}{\Apply{a}{k}}\land
+                     \surrealLe{\Apply{b}{k}}{\Apply{b}{m}})$.
+                $\surrealLe{\Apply{a}{k}}{\Apply{a}{n}}$ and
+                    $\surrealLe{\Apply{b}{n}}{\Apply{b}{k}}$
+                    by \auto.
+                Show that $\forall m:\Set.\ m\in n\implies
+                    (\surrealLe{\Apply{a}{m}}{\Apply{a}{n}}\land
+                     \surrealLe{\Apply{b}{n}}{\Apply{b}{m}})$.
+                \begin{subproof}
+                    Fix $m\in n$.
+                    $m=k$ or $m\in k$ by \auto{suc_iff}.
+                    \begin{byCase}
+                        \caseOf{$m=k$.}
+                            Follows.
+                        \caseOf{$m\neq k$.}
+                            Hence $m\in k$.
+                            $m\in\naturals$
+                                by
+                                \obv{naturals_is_transitive_set,transitiveset_iff_subseteq,subseteq}.
+                            $\surrealLe{\Apply{a}{m}}{\Apply{a}{k}}$ and
+                                $\surrealLe{\Apply{b}{k}}{\Apply{b}{m}}$.
+                            Follows by
+                                \auto{surreal_le_transitive,surreal_real_is_surreal}.
+                    \end{byCase}
+                \end{subproof}
+        \end{byCase}
+    \end{subproof}
+    $\naturals$ is an ordinal by \obv{omega_is_ordinal}.
+    Follows by \auto{bounded_transfinite_induction}.
+\end{proof}
+
+\begin{theorem}\label{surreal_real_nested_interval_sequences}
+    $\forall a,b:\Set\to\Set.
+        (\forall n:\Set.\ n\in\naturals\implies
+            (\Apply{a}{n}\in\reals\land
+             \Apply{b}{n}\in\reals\land
+             \surrealLe{\Apply{a}{n}}{\Apply{b}{n}}))
+        \implies
+        ((\forall n:\Set.\ n\in\naturals\implies
+            (\surrealLe{\Apply{a}{n}}{\Apply{a}{\suc{n}}}\land
+             \surrealLe{\Apply{b}{\suc{n}}}{\Apply{b}{n}}))
+        \implies
+        (\exists x:\Set.\ x\in\reals\land
+            (\forall n:\Set.\ n\in\naturals\implies
+                (\surrealLe{\Apply{a}{n}}{x}\land
+                 \surrealLe{x}{\Apply{b}{n}}))))$.
+\end{theorem}
+\begin{proof}
+    Fix $a,b$.
+    Assume $\forall n:\Set.\ n\in\naturals\implies
+        (\Apply{a}{n}\in\reals\land
+         \Apply{b}{n}\in\reals\land
+         \surrealLe{\Apply{a}{n}}{\Apply{b}{n}})$.
+    Assume $\forall n:\Set.\ n\in\naturals\implies
+        (\surrealLe{\Apply{a}{n}}{\Apply{a}{\suc{n}}}\land
+         \surrealLe{\Apply{b}{\suc{n}}}{\Apply{b}{n}})$.
+    $\forall m,n:\Set.
+        (m\in\naturals\land n\in\naturals\land m\in n)
+        \implies
+        (\surrealLe{\Apply{a}{m}}{\Apply{a}{n}}\land
+         \surrealLe{\Apply{b}{n}}{\Apply{b}{m}})$
+        by \auto{surreal_real_adjacent_sequences_monotone}.
+    Follows by \obv{surreal_real_nested_intervals}.
+\end{proof}

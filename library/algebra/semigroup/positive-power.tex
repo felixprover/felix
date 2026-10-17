@@ -1,0 +1,318 @@
+\import{algebra/semigroup.tex}
+\import{set/iteration.tex}
+\import{set/finite-ordinal.tex}
+
+\section{Positive powers in semigroups}
+
+Positive powers start at the element itself.  Their recursion uses the
+right-multiplication graph inline, so it introduces no second named
+translation beside the monoid construction.
+
+\begin{theorem}\label{semigroup_positive_power_step_type}
+    Let $M$ be a semigroup and $x\in\carrier[M]$.
+    Then
+        $\{(y,\mul[M](y,x))\mid y\in\carrier[M]\}
+            \in\funs{\carrier[M]}{\carrier[M]}$.
+\end{theorem}
+\begin{proof}
+    Let $f=\{(y,\mul[M](y,x))\mid y\in\carrier[M]\}$.
+    $f$ is a relation by \auto{relation}.
+    $f$ is right-unique by \auto{rightunique,pair_eq_iff}.
+    $\dom{f}=\carrier[M]$ by \auto{setext,dom_iff,pair_eq_iff}.
+    Show that for every $y\in\dom{f}$ we have $f(y)\in\carrier[M]$.
+    \begin{subproof}
+        Fix $y\in\dom{f}$.
+        Hence $y\in\carrier[M]$.
+        $(y,\mul[M](y,x))\in f$ by \obv{pair_eq_iff}.
+        Hence $f(y)=\mul[M](y,x)$ by \obv{function_apply_intro}.
+        $\mul[M](y,x)\in\carrier[M]$ by \obv{magma_welldef}.
+    \end{subproof}
+    Hence $f$ is a function to $\carrier[M]$.
+    Follows by \auto{funs_intro}.
+\end{proof}
+
+\begin{definition}\label{semigroup_positive_power}
+    $\semigroupPositivePower{M}{x}{n}
+        =\iterationAt{
+            \{(y,\mul[M](y,x))\mid y\in\carrier[M]\}}
+            {x}{\unions{n}}$.
+\end{definition}
+
+\begin{proposition}\label{semigroup_positive_power_type}
+    Let $M$ be a semigroup and $x\in\carrier[M]$.
+    Let $n$ be a natural number.
+    Suppose $n\neq\emptyset$.
+    Then $\semigroupPositivePower{M}{x}{n}\in\carrier[M]$.
+\end{proposition}
+\begin{proof}
+    $\unions{n}$ is a natural number and
+        $n=\suc{\unions{n}}$ by
+        \obv{natural_nonzero_successor_of_union}.
+    $\{(y,\mul[M](y,x))\mid y\in\carrier[M]\}
+        \in\funs{\carrier[M]}{\carrier[M]}$ by
+        \obv{semigroup_positive_power_step_type}.
+    Follows by
+        \auto{semigroup_positive_power,iteration_at_closed}.
+\end{proof}
+
+\begin{proposition}\label{semigroup_positive_power_one}
+    Let $M$ be a semigroup and $x\in\carrier[M]$.
+    Then $\semigroupPositivePower{M}{x}{\suc{\emptyset}}=x$.
+\end{proposition}
+\begin{proof}
+    $\emptyset$ is \in-transitive by \obv{emptyset_transitiveset}.
+    Hence $\unions{\suc{\emptyset}}=\emptyset$ by
+        \obv{transitiveset_iff_unions_suc}.
+    Follows by
+        \auto{semigroup_positive_power,iteration_at_zero}.
+\end{proof}
+
+\begin{proposition}\label{semigroup_positive_power_successor}
+    Let $M$ be a semigroup and $x\in\carrier[M]$.
+    Let $n$ be a natural number.
+    Suppose $n\neq\emptyset$.
+    Then $\semigroupPositivePower{M}{x}{\suc{n}}
+        =\mul[M](\semigroupPositivePower{M}{x}{n},x)$.
+\end{proposition}
+\begin{proof}
+    Let $f=\{(y,\mul[M](y,x))\mid y\in\carrier[M]\}$.
+    $n$ is an ordinal by \obv{natural_number_is_ordinal}.
+    Hence $n$ is \in-transitive by \obv{ordinal_is_transitiveset}.
+    $\unions{\suc{n}}=n$ by
+        \obv{transitiveset_iff_unions_suc}.
+    $\unions{n}$ is a natural number and
+        $n=\suc{\unions{n}}$ by
+        \obv{natural_nonzero_successor_of_union}.
+    Hence $\iterationAt{f}{x}{n}
+        =f(\iterationAt{f}{x}{\unions{n}})$ by
+        \auto{iteration_at_successor}.
+    $\semigroupPositivePower{M}{x}{n}\in\carrier[M]$ by
+        \obv{semigroup_positive_power_type}.
+    $f\in\funs{\carrier[M]}{\carrier[M]}$ by
+        \auto{semigroup_positive_power_step_type}.
+    Hence $f$ is a function by \obv{funs_is_function}.
+    $(\semigroupPositivePower{M}{x}{n},
+        \mul[M](\semigroupPositivePower{M}{x}{n},x))\in f$ by
+        \obv{pair_eq_iff}.
+    Hence $f(\semigroupPositivePower{M}{x}{n})
+        =\mul[M](\semigroupPositivePower{M}{x}{n},x)$ by
+        \obv{function_apply_intro}.
+    Follows by \auto{semigroup_positive_power}.
+\end{proof}
+
+\begin{theorem}\label{semigroup_positive_power_addition}
+    Let $M$ be a semigroup and $x\in\carrier[M]$.
+    Let $m,n$ be natural numbers.
+    Suppose $m\neq\emptyset$ and $n\neq\emptyset$.
+    Then $\semigroupPositivePower{M}{x}{m+n}
+        =\mul[M](\semigroupPositivePower{M}{x}{m},
+            \semigroupPositivePower{M}{x}{n})$.
+\end{theorem}
+\begin{proof}
+    Let $C=\{k\in\naturals\mid
+        \text{$\semigroupPositivePower{M}{x}{m+\suc{k}}
+            =\mul[M](\semigroupPositivePower{M}{x}{m},
+                \semigroupPositivePower{M}{x}{\suc{k}})$}\}$.
+
+    $\emptyset$ is a natural number by \obv{omega_empty}.
+    $m+\emptyset=m$ by \obv{num_addition_zero_right}.
+    $m+\suc{\emptyset}=\suc{m+\emptyset}$ by
+        \obv{num_addition_successor_right}.
+    Hence $m+\suc{\emptyset}=\suc{m}$.
+    $\semigroupPositivePower{M}{x}{\suc{m}}
+        =\mul[M](\semigroupPositivePower{M}{x}{m},x)$ by
+        \obv{semigroup_positive_power_successor}.
+    $\semigroupPositivePower{M}{x}{\suc{\emptyset}}=x$ by
+        \obv{semigroup_positive_power_one}.
+    Hence $\emptyset\in C$ by \obv{omega_empty}.
+
+    Show that for every $k\in C$ we have $\suc{k}\in C$.
+    \begin{subproof}
+        Fix $k\in C$.
+        Hence $k$ is a natural number and
+            $\semigroupPositivePower{M}{x}{m+\suc{k}}
+                =\mul[M](\semigroupPositivePower{M}{x}{m},
+                    \semigroupPositivePower{M}{x}{\suc{k}})$.
+        $\suc{k}$ is a natural number and $\suc{k}\neq\emptyset$ by
+            \obv{omega_successor,suc_neq_emptyset}.
+        $m+k$ is a natural number by
+            \obv{num_addition_on_naturals}.
+        $m+\suc{k}=\suc{m+k}$ by
+            \obv{num_addition_successor_right}.
+        $\suc{m+k}$ is a natural number and
+            $\suc{m+k}\neq\emptyset$ by
+            \obv{omega_successor,suc_neq_emptyset}.
+        Hence $m+\suc{k}$ is a natural number and
+            $m+\suc{k}\neq\emptyset$.
+        $m+\suc{\suc{k}}=\suc{m+\suc{k}}$ by
+            \obv{num_addition_successor_right}.
+        Hence $\semigroupPositivePower{M}{x}{m+\suc{\suc{k}}}
+            =\mul[M](\semigroupPositivePower{M}{x}{m+\suc{k}},x)$ by
+            \auto{semigroup_positive_power_successor}.
+        Hence $\semigroupPositivePower{M}{x}{m+\suc{\suc{k}}}
+            =\mul[M](
+                \mul[M](\semigroupPositivePower{M}{x}{m},
+                    \semigroupPositivePower{M}{x}{\suc{k}}),x)$.
+        $\semigroupPositivePower{M}{x}{\suc{\suc{k}}}
+            =\mul[M](\semigroupPositivePower{M}{x}{\suc{k}},x)$ by
+            \obv{semigroup_positive_power_successor}.
+        $\semigroupPositivePower{M}{x}{m},
+            \semigroupPositivePower{M}{x}{\suc{k}},x\in\carrier[M]$ by
+            \obv{semigroup_positive_power_type}.
+        Hence $\semigroupPositivePower{M}{x}{m+\suc{\suc{k}}}
+            =\mul[M](\semigroupPositivePower{M}{x}{m},
+                \semigroupPositivePower{M}{x}{\suc{\suc{k}}})$ by
+            \auto{semigroup_assoc}.
+        $\suc{\suc{k}}$ is a natural number by \obv{omega_successor}.
+    \end{subproof}
+    Hence $C$ is an inductive set by \obv{inductive_set}.
+    Hence every natural number is an element of $C$ by
+        \obv{omega_minimal}.
+    $\unions{n}$ is a natural number and
+        $n=\suc{\unions{n}}$ by
+        \obv{natural_nonzero_successor_of_union}.
+    Hence $\unions{n}\in C$.
+\end{proof}
+
+\begin{theorem}\label{semigroup_positive_power_of_commuting_product}
+    Let $M$ be a semigroup and $x,y\in\carrier[M]$.
+    Suppose $\mul[M](x,y)=\mul[M](y,x)$.
+    Let $n$ be a natural number.
+    Suppose $n\neq\emptyset$.
+    Then
+        $\semigroupPositivePower{M}{\mul[M](x,y)}{n}
+            =\mul[M](\semigroupPositivePower{M}{x}{n},
+                \semigroupPositivePower{M}{y}{n})$.
+\end{theorem}
+\begin{proof}
+    $\mul[M](x,y)\in\carrier[M]$ by \obv{magma_welldef}.
+
+    Show that for every $r$ such that $r$ is a natural number and
+        $r\neq\emptyset$ we have
+        $\mul[M](\semigroupPositivePower{M}{y}{r},x)
+            =\mul[M](x,\semigroupPositivePower{M}{y}{r})$.
+    \begin{subproof}
+        Let $D=\{k\in\naturals\mid
+            \text{$\mul[M](
+                    \semigroupPositivePower{M}{y}{\suc{k}},x)
+                =\mul[M](x,
+                    \semigroupPositivePower{M}{y}{\suc{k}})$}\}$.
+        $\semigroupPositivePower{M}{y}{\suc{\emptyset}}=y$ by
+            \obv{semigroup_positive_power_one}.
+        Hence $\emptyset\in D$ by \obv{omega_empty}.
+
+        Show that for every $k\in D$ we have $\suc{k}\in D$.
+        \begin{subproof}
+            Fix $k\in D$.
+            Hence $k$ is a natural number and
+                $\mul[M](\semigroupPositivePower{M}{y}{\suc{k}},x)
+                    =\mul[M](x,
+                        \semigroupPositivePower{M}{y}{\suc{k}})$.
+            Let $a=\semigroupPositivePower{M}{y}{\suc{k}}$.
+            $\suc{k}$ is a natural number and $\suc{k}\neq\emptyset$ by
+                \obv{omega_successor,suc_neq_emptyset}.
+            Hence $a\in\carrier[M]$ by
+                \auto{semigroup_positive_power_type}.
+            $\semigroupPositivePower{M}{y}{\suc{\suc{k}}}
+                =\mul[M](a,y)$ by
+                \auto{semigroup_positive_power_successor}.
+            $\mul[M](\mul[M](a,y),x)
+                =\mul[M](a,\mul[M](y,x))$ by
+                \obv{semigroup_assoc}.
+            $\mul[M](a,\mul[M](y,x))
+                =\mul[M](a,\mul[M](x,y))$.
+            $\mul[M](a,\mul[M](x,y))
+                =\mul[M](\mul[M](a,x),y)$ by
+                \obv{semigroup_assoc}.
+            $\mul[M](\mul[M](a,x),y)
+                =\mul[M](\mul[M](x,a),y)$.
+            $\mul[M](\mul[M](x,a),y)
+                =\mul[M](x,\mul[M](a,y))$ by
+                \obv{semigroup_assoc}.
+            Hence
+                $\mul[M](
+                    \semigroupPositivePower{M}{y}{\suc{\suc{k}}},x)
+                =\mul[M](x,
+                    \semigroupPositivePower{M}{y}{\suc{\suc{k}}})$.
+            $\suc{\suc{k}}$ is a natural number by
+                \obv{omega_successor}.
+        \end{subproof}
+        Hence $D$ is an inductive set by \obv{inductive_set}.
+        Hence every natural number is an element of $D$ by
+            \obv{omega_minimal}.
+
+        Fix $r$.
+        Assume $r$ is a natural number and $r\neq\emptyset$.
+        $\unions{r}$ is a natural number and
+            $r=\suc{\unions{r}}$ by
+            \obv{natural_nonzero_successor_of_union}.
+        Hence $\unions{r}\in D$.
+    \end{subproof}
+
+    Let $C=\{k\in\naturals\mid
+        \text{$\semigroupPositivePower{M}{\mul[M](x,y)}{\suc{k}}
+            =\mul[M](\semigroupPositivePower{M}{x}{\suc{k}},
+                \semigroupPositivePower{M}{y}{\suc{k}})$}\}$.
+    $\semigroupPositivePower{M}{\mul[M](x,y)}{\suc{\emptyset}}
+        =\mul[M](x,y)$ by \obv{semigroup_positive_power_one}.
+    $\semigroupPositivePower{M}{x}{\suc{\emptyset}}=x$ and
+        $\semigroupPositivePower{M}{y}{\suc{\emptyset}}=y$ by
+        \obv{semigroup_positive_power_one}.
+    Hence $\emptyset\in C$ by \obv{omega_empty}.
+
+    Show that for every $k\in C$ we have $\suc{k}\in C$.
+    \begin{subproof}
+        Fix $k\in C$.
+        Hence $k$ is a natural number and
+            $\semigroupPositivePower{M}{\mul[M](x,y)}{\suc{k}}
+                =\mul[M](\semigroupPositivePower{M}{x}{\suc{k}},
+                    \semigroupPositivePower{M}{y}{\suc{k}})$.
+        Let $r=\suc{k}$.
+        Let $a=\semigroupPositivePower{M}{x}{r}$ and
+            $b=\semigroupPositivePower{M}{y}{r}$.
+        $r$ is a natural number and $r\neq\emptyset$ by
+            \auto{omega_successor,suc_neq_emptyset}.
+        Hence $a,b\in\carrier[M]$ by
+            \auto{semigroup_positive_power_type}.
+        $\mul[M](x,y),\mul[M](b,y)\in\carrier[M]$ by
+            \obv{magma_welldef}.
+        $\semigroupPositivePower{M}{\mul[M](x,y)}{\suc{r}}
+            =\mul[M](
+                \semigroupPositivePower{M}{\mul[M](x,y)}{r},
+                \mul[M](x,y))$ by
+            \obv{semigroup_positive_power_successor}.
+        Hence $\semigroupPositivePower{M}{\mul[M](x,y)}{\suc{r}}
+            =\mul[M](\mul[M](a,b),\mul[M](x,y))$.
+        $\mul[M](\mul[M](a,b),\mul[M](x,y))
+            =\mul[M](a,\mul[M](b,\mul[M](x,y)))$ by
+            \obv{semigroup_assoc}.
+        $\mul[M](b,\mul[M](x,y))
+            =\mul[M](\mul[M](b,x),y)$ by
+            \obv{semigroup_assoc}.
+        $\mul[M](b,x)=\mul[M](x,b)$ by \auto.
+        $\mul[M](\mul[M](x,b),y)
+            =\mul[M](x,\mul[M](b,y))$ by
+            \obv{semigroup_assoc}.
+        Hence $\mul[M](a,\mul[M](b,\mul[M](x,y)))
+            =\mul[M](a,\mul[M](x,\mul[M](b,y)))$.
+        $\mul[M](a,\mul[M](x,\mul[M](b,y)))
+            =\mul[M](\mul[M](a,x),\mul[M](b,y))$ by
+            \obv{semigroup_assoc}.
+        $\semigroupPositivePower{M}{x}{\suc{r}}=\mul[M](a,x)$ and
+            $\semigroupPositivePower{M}{y}{\suc{r}}=\mul[M](b,y)$ by
+            \auto{semigroup_positive_power_successor}.
+        Hence
+            $\semigroupPositivePower{M}{\mul[M](x,y)}{\suc{r}}
+                =\mul[M](\semigroupPositivePower{M}{x}{\suc{r}},
+                    \semigroupPositivePower{M}{y}{\suc{r}})$.
+        $\suc{k}$ is a natural number by \obv{omega_successor}.
+        Follows by \auto.
+    \end{subproof}
+    Hence $C$ is an inductive set by \obv{inductive_set}.
+    Hence every natural number is an element of $C$ by
+        \obv{omega_minimal}.
+    $\unions{n}$ is a natural number and
+        $n=\suc{\unions{n}}$ by
+        \obv{natural_nonzero_successor_of_union}.
+    Hence $\unions{n}\in C$.
+\end{proof}

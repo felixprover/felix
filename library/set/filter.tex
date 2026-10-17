@@ -1,0 +1,366 @@
+\import{set.tex}
+\import{set/powerset.tex}
+
+\section{Filters}
+
+\subsection{Definition and basic properties of filters}
+
+A filter records sets which are large relative to a fixed carrier.  We admit
+the improper filter: properness is the additional assertion that the empty set
+is not large.  With this convention every principal family is a filter and the
+improper case has one canonical value.
+
+\begin{abbreviation}\label{upwardclosed}
+    $F$ is upward-closed in $S$ iff
+    for all $A, B$ such that $A\subseteq B\subseteq S$ and $A\in F$ we have $B\in F$.
+\end{abbreviation}
+
+\begin{definition}\label{filter}
+    $F$ is a filter on $S$ iff
+    $F$ is a family of subsets of $S$
+    and $S\in F$
+    and $F$ is closed under binary intersections
+    and $F$ is upward-closed in $S$.
+\end{definition}
+
+\begin{definition}\label{proper_filter}
+    $F$ is a proper filter on $S$ iff
+        $F$ is a filter on $S$ and $\emptyset\notin F$.
+\end{definition}
+
+\begin{definition}\label{improper_filter}
+    $F$ is an improper filter on $S$ iff
+        $F$ is a filter on $S$ and $\emptyset\in F$.
+\end{definition}
+
+\begin{classification}\label{proper_filter_is_filter}
+    Suppose $F$ is a proper filter on $S$.
+    Then $F$ is a filter on $S$.
+\end{classification}
+\begin{proof}
+    Follows by \obv{proper_filter}.
+\end{proof}
+
+\begin{proposition}\label{proper_filter_excludes_emptyset}
+    Suppose $F$ is a proper filter on $S$.
+    Then $\emptyset\notin F$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{proper_filter}.
+\end{proof}
+
+\begin{proposition}\label{powerset_is_filter}
+    $\pow{S}$ is a filter on $S$.
+\end{proposition}
+\begin{proof}
+    $\pow{S}$ is a family of subsets of $S$
+        by \obv{pow_iff,subseteq}.
+    $S\in\pow{S}$ by \auto{pow_iff,subseteq_refl}.
+    For all $A,B\in\pow{S}$ we have $A\inter B\in\pow{S}$
+        by \auto{pow_iff,inter_subseteq,subseteq}.
+    $\pow{S}$ is upward-closed in $S$
+        by \auto{pow_iff,subseteq}.
+    Follows by \obv{filter}.
+\end{proof}
+
+\begin{theorem}\label{improper_filter_iff_emptyset_in}
+    Let $F$ be a filter on $S$.
+    Then $F$ is an improper filter on $S$ iff $\emptyset\in F$.
+\end{theorem}
+\begin{proof}
+    Follows by \auto{improper_filter}.
+\end{proof}
+
+\begin{theorem}\label{improper_filter_iff_powerset}
+    Let $F$ be a filter on $S$.
+    Then $F$ is an improper filter on $S$ iff $F=\pow{S}$.
+\end{theorem}
+\begin{proof}
+    Show that if $F$ is an improper filter on $S$, then $F=\pow{S}$.
+    \begin{subproof}
+        Assume $F$ is an improper filter on $S$.
+        $F\subseteq\pow{S}$ by \auto{filter,pow_iff,subseteq}.
+        Show that $\pow{S}\subseteq F$.
+        \begin{subproof}
+            It suffices to show that every element of $\pow{S}$ is an
+                element of $F$ by \obv{subseteq}.
+            Fix $A\in\pow{S}$.
+            Hence $A\subseteq S$ by \obv{powerset_elim}.
+            $\emptyset\in F$ by \obv{improper_filter}.
+            $\emptyset\subseteq A$ by \obv{emptyset_subseteq}.
+            Follows by \obv{filter}.
+        \end{subproof}
+        Follows by \obv{subseteq_antisymmetric}.
+    \end{subproof}
+
+    Show that if $F=\pow{S}$, then $F$ is an improper filter on $S$.
+    \begin{subproof}
+        Assume $F=\pow{S}$.
+        Hence $F$ is a filter on $S$ by \obv{powerset_is_filter}.
+        $\emptyset\in\pow{S}$ by \auto{pow_iff,emptyset_subseteq}.
+        Hence $\emptyset\in F$.
+        Follows by \obv{improper_filter}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{proper_filter_iff_not_powerset}
+    Let $F$ be a filter on $S$.
+    Then $F$ is a proper filter on $S$ iff $F\neq\pow{S}$.
+\end{theorem}
+\begin{proof}
+    $F$ is a proper filter on $S$ iff
+        $F$ is not an improper filter on $S$
+        by \auto{proper_filter,improper_filter}.
+    Follows by \auto{improper_filter_iff_powerset}.
+\end{proof}
+
+\begin{proposition}\label{proper_filter_carrier_inhabited}
+    Suppose $F$ is a proper filter on $S$.
+    Then $S$ is inhabited.
+\end{proposition}
+\begin{proof}
+    $S\in F$ and $\emptyset\notin F$
+        by \auto{proper_filter,filter}.
+    Hence $S\neq\emptyset$.
+    Follows by \obv{nonempty_inhabited}.
+\end{proof}
+
+\begin{proposition}\label{filter_ext_complement}
+    Let $F, G$ be filters on $S$.
+    Suppose for all $A\subseteq S$ we have $S\setminus A\in F$ iff $S\setminus A\in G$.
+    Then $F = G$.
+\end{proposition}
+\begin{proof}
+    We have for all $X\in F$ we have $X\in G$
+        by \auto{filter,setminus_subseteq,double_relative_complement}.
+    We have for all $X\in G$ we have $X\in F$
+        by \auto{filter,setminus_subseteq,double_relative_complement}.
+    Follows by set extensionality.
+\end{proof}
+
+\begin{proposition}\label{filter_inter_in_iff}
+    Let $F$ be a filter on $S$.
+    Suppose $A, B\subseteq S$.
+    Then $A\inter B\in F$ iff $A, B\in F$.
+\end{proposition}
+\begin{proof}
+    We have $A\inter B\subseteq A, B$ by \obv{inter,subseteq}.
+    Follows by \auto{filter}.
+\end{proof}
+
+\begin{proposition}\label{filter_setminus_in}
+    Let $F$ be a filter on $S$.
+    Suppose $A\in F$.
+    Suppose $B\subseteq S$ and $S\setminus B\in F$.
+    Then $A\setminus B\in F$.
+\end{proposition}
+\begin{proof}
+    We have $A\subseteq S$ by \obv{filter}.
+    Thus $A\setminus B = A\inter (S\setminus B)$ by \obv{setminus_eq_inter_complement}.
+    Now $S\setminus B\subseteq S$ by \obv{setminus_subseteq}.
+    Follows by \auto{filter_inter_in_iff}.
+\end{proof}
+
+\begin{proposition}\label{filter_in_iff_exists_subset}
+    Let $F$ be a filter on $S$.
+    Suppose $B\subseteq S$.
+    Then $B\in F$ iff there exists $A\subseteq B$ such that $A\in F$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{filter,subseteq_refl}.
+\end{proof}
+
+
+\subsection{Principal filters over a set}
+
+\begin{definition}\label{principalfilter}
+    $\principalfilter{S}{A} = \{X\in\pow{S}\mid A\subseteq X\}$.
+\end{definition}
+
+\begin{proposition}\label{principalfilter_iff}
+    Suppose $A, B\subseteq S$.
+    Then $B\in\principalfilter{S}{A}$ iff $A\subseteq B$.
+\end{proposition}
+\begin{proof}
+    We have $B\subseteq S$.
+    We have $B\in\pow{S}$ by \obv{pow_iff,subseteq}.
+    Follows by \auto{principalfilter}.
+\end{proof}
+
+\begin{proposition}\label{principalfilter_bottom}
+    Suppose $A\subseteq S$.
+    Then $A\in\principalfilter{S}{A}$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{principalfilter_iff,subseteq_refl}.
+\end{proof}
+
+\begin{proposition}\label{principalfilter_top}
+    Suppose $A\subseteq S$.
+    Then $S\in\principalfilter{S}{A}$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{principalfilter_iff,subseteq_refl}.
+\end{proof}
+
+\begin{proposition}\label{principalfilter_is_filter}
+    Suppose $A\subseteq S$.
+    Then $\principalfilter{S}{A}$ is a filter on $S$.
+\end{proposition}
+\begin{proof}
+    $\principalfilter{S}{A}$ is a family of subsets of $S$
+        by \auto{principalfilter,pow_iff,subseteq}.
+    $S\in \principalfilter{S}{A}$ by \obv{principalfilter_top}.
+    $\principalfilter{S}{A}$ is closed under binary intersections
+        by \auto{principalfilter_iff,subseteq_inter_iff,inter_subseteq}.
+    $\principalfilter{S}{A}$ is upward-closed in $S$
+        by \obv{principalfilter_iff,subseteq_transitive}.
+    Follows by \obv{filter}.
+\end{proof}
+
+\begin{theorem}\label{principalfilter_is_proper_iff}
+    Suppose $A\subseteq S$.
+    Then $\principalfilter{S}{A}$ is a proper filter on $S$ iff
+        $A$ is inhabited.
+\end{theorem}
+\begin{proof}
+    $\principalfilter{S}{A}$ is a filter on $S$
+        by \obv{principalfilter_is_filter}.
+    $\principalfilter{S}{A}$ is a proper filter on $S$ iff
+        $\emptyset\notin\principalfilter{S}{A}$
+        by \auto{proper_filter}.
+    $\emptyset\in\principalfilter{S}{A}$ iff $A\subseteq\emptyset$
+        by \obv{principalfilter_iff,emptyset_subseteq}.
+    $A\subseteq\emptyset$ iff $A=\emptyset$
+        by \obv{subseteq_emptyset_iff}.
+    If $A$ is inhabited, then $A\neq\emptyset$ by \obv{emptyset}.
+    If $A\neq\emptyset$, then $A$ is inhabited
+        by \obv{nonempty_inhabited}.
+    Follows by \auto.
+\end{proof}
+
+\begin{proposition}\label{principalfilter_emptyset}
+    $\principalfilter{S}{\emptyset}=\pow{S}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{principalfilter,pow_iff,emptyset_subseteq,setext}.
+\end{proof}
+
+\begin{proposition}\label{principalfilter_carrier}
+    $\principalfilter{S}{S}=\{S\}$.
+\end{proposition}
+\begin{proof}
+    Show that for every $A$ we have
+        $A\in\principalfilter{S}{S}$ iff $A\in\{S\}$.
+    \begin{subproof}
+        Fix $A$.
+        $A\in\principalfilter{S}{S}$ iff
+            $A\subseteq S$ and $S\subseteq A$
+            by \auto{principalfilter,pow_iff,subseteq}.
+        Hence $A\in\principalfilter{S}{S}$ iff $A=S$
+            by \auto{subseteq_antisymmetric,subseteq_refl}.
+        Follows by \obv{singleton_iff}.
+    \end{subproof}
+    Follows by set extensionality.
+\end{proof}
+
+\begin{proposition}\label{principalfilter_elem_generator}
+    Suppose $A\subseteq S$.
+    $A\in\principalfilter{S}{A}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{principalfilter_bottom}.
+\end{proof}
+
+\begin{proposition}\label{principalfilter_notelem_implies_notsupseteq}
+    Let $X\in\pow{S}$.
+    Suppose $X\notin\principalfilter{S}{A}$.
+    Then $A\not\subseteq X$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{principalfilter}.
+\end{proof}
+
+\begin{definition}\label{pure_filter}
+    $\pureFilter{S}{a}=\principalfilter{S}{\{a\}}$.
+\end{definition}
+
+\begin{proposition}\label{pure_filter_iff}
+    Suppose $a\in S$ and $A\subseteq S$.
+    Then $A\in\pureFilter{S}{a}$ iff $a\in A$.
+\end{proposition}
+\begin{proof}
+    $A\in\pureFilter{S}{a}$ iff $\{a\}\subseteq A$ by
+        \auto{pure_filter,principalfilter_iff,singleton_subset_intro}.
+    Follows by \auto{singleton_subset_intro,singleton_subset_elim}.
+\end{proof}
+
+\begin{definition}\label{maximalfilter}
+    $F$ is a maximal proper filter on $S$ iff
+    $F$ is a proper filter on $S$ and there exists no proper filter $F'$ on $S$ such that $F\subset F'$.
+\end{definition}
+
+\begin{proposition}\label{principalfilter_singleton_is_filter}
+    Suppose $a\in S$.
+    Then $\principalfilter{S}{\{a\}}$ is a filter on $S$.
+\end{proposition}
+\begin{proof}
+    $\{a\}\subseteq S$ by \obv{singleton_subset_intro}.
+    Follows by \obv{principalfilter_is_filter}.
+\end{proof}
+
+\begin{proposition}\label{principalfilter_singleton_is_maximal_proper_filter}
+    Suppose $a\in S$.
+    Then $\principalfilter{S}{\{a\}}$ is a maximal proper filter on $S$.
+\end{proposition}
+\begin{proof}
+    $\{a\}\subseteq S$ by \obv{singleton_subset_intro}.
+    $\{a\}$ is inhabited by \auto{cons_iff}.
+    Thus $\principalfilter{S}{\{a\}}$ is a proper filter on $S$
+        by \obv{principalfilter_is_proper_iff}.
+    Show for all $F'$ such that $F'$ is a proper filter on $S$
+        and $\principalfilter{S}{\{a\}}\subseteq F'$
+        we have $F'\subseteq\principalfilter{S}{\{a\}}$.
+    \begin{subproof}
+        Fix $F'$.
+        Assume $F'$ is a proper filter on $S$
+            and $\principalfilter{S}{\{a\}}\subseteq F'$.
+        Hence $F'$ is a filter on $S$ by \obv{proper_filter}.
+        We have $\{a\}\in F'$
+            by \obv{principalfilter_bottom,elem_subseteq}.
+        Show for all $X\in F'$ we have $X\in\principalfilter{S}{\{a\}}$.
+        \begin{subproof}
+            Fix $X$.
+            Assume $X\in F'$.
+            We have $X\inter\{a\}\in F'$
+                by \obv{filter,filter_inter_in_iff}.
+            $\emptyset\notin F'$ by \obv{proper_filter}.
+            Thus $X\inter\{a\}\neq\emptyset$.
+            Take $b$ such that $b\in X\inter\{a\}$
+                by \auto{emptyset,setext}.
+            We have $b\in X$ by \obv{inter}.
+            We have $b = a$ by \auto{inter,cons_iff,emptyset}.
+            Thus $a\in X$.
+            Thus $\{a\}\subseteq X$ by \obv{singleton_subset_intro}.
+            Follows by \auto{filter,principalfilter_iff}.
+        \end{subproof}
+        Follows by \obv{subseteq}.
+    \end{subproof}
+    We have for all $F'$ such that $F'$ is a proper filter on $S$
+        and $\principalfilter{S}{\{a\}}\subseteq F'$
+        we have $F'=\principalfilter{S}{\{a\}}$
+        by \obv{subseteq_antisymmetric}.
+    Follows by \obv{maximalfilter,subset}.
+\end{proof}
+
+\begin{corollary}\label{pure_filter_is_maximal_proper_filter}
+    Suppose $a\in S$.
+    Then $\pureFilter{S}{a}$ is a maximal proper filter on $S$.
+\end{corollary}
+\begin{proof}
+    $\principalfilter{S}{\{a\}}$ is a maximal proper filter on $S$ by
+        \obv{principalfilter_singleton_is_maximal_proper_filter}.
+    $\pureFilter{S}{a}=\principalfilter{S}{\{a\}}$ by
+        \obv{pure_filter}.
+\end{proof}

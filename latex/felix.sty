@@ -1,0 +1,411 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{felix}[2021/02/04 Typesetting for Felix formalizations]
+
+\RequirePackage{amsmath}
+\RequirePackage{amssymb}
+\RequirePackage{amsthm}
+\RequirePackage{etoolbox}
+\RequirePackage{thmtools}
+\RequirePackage{nameref,cleveref}
+
+% command for importing theories, no visible rendering
+\newcommand{\import}[1]{}
+\newcommand{\verbbase}[1]{}
+\newcommand{\explanation}[1]{\quad\text{[#1]}}
+\usepackage{pbox}
+\newcommand{\textbox}[1]{\pbox{28em}{#1}}
+
+
+
+\newtheoremstyle{formalized}% name of the style to be used
+    {4pt}% measure of space to leave above the theorem. E.g.: 3pt
+    {4pt}% measure of space to leave below the theorem. E.g.: 3pt
+    {\normalfont} % name of font to use in the body of the theorem
+    {0pt}% measure of space to indent
+    {\bfseries}% name of head font
+    {}% punctuation between head and body
+    { }% space after theorem head; " " = normal inter-word space
+    {\thmname{#1}\thmnumber{ #2}. \thmnote{ (#3) }}
+
+\theoremstyle{formalized}
+\newcounter{theoremcount}
+
+\newtheorem{abbreviation}[theoremcount]{Abbreviation}
+\newtheorem{axiom}[theoremcount]{Axiom}
+\newtheorem{corollary}[theoremcount]{Corollary}
+\newtheorem{classification}[theoremcount]{Classification}
+\newtheorem{definition}[theoremcount]{Definition}
+\newtheorem{instance}[theoremcount]{Instance}
+\newtheorem{construction}[theoremcount]{Construction}
+\newtheorem{struct}[theoremcount]{Struct}
+\newtheorem{fact}[theoremcount]{Fact}
+\newtheorem{lemma}[theoremcount]{Lemma}
+\newtheorem{proposition}[theoremcount]{Proposition}
+\newtheorem{composition}[theoremcount]{Proposition}
+\newtheorem{remark}[theoremcount]{Remark}
+\newtheorem{signature}[theoremcount]{Signature}
+\newtheorem{theorem}[theoremcount]{Theorem}
+\newtheorem{inductive}[theoremcount]{Inductive}
+
+% Theorem environments without numbering.
+\newtheorem*{quotedaxiom}{Axiom}
+\newtheorem*{quotedcorollary}{Corollary}
+\newtheorem*{quotedclassification}{Classification}
+\newtheorem*{quoteddefinition}{Definition}
+\newtheorem*{quotedstruct}{Struct}
+\newtheorem*{quotedfact}{Fact}
+\newtheorem*{quotedlemma}{Lemma}
+\newtheorem*{quotedproposition}{Proposition}
+\newtheorem*{quotedremark}{Remark}
+\newtheorem*{quotedsignature}{Signature}
+\newtheorem*{quotedtheorem}{Theorem}
+
+\crefname{axiom}{axiom}{axioms}
+\crefname{claim}{claim}{claims}
+\crefname{classification}{classification}{classifications}
+\crefname{theorem}{theorem}{theorems}
+\crefname{definition}{definition}{definitions}
+\crefname{instance}{instance}{instances}
+\crefname{construction}{construction}{constructions}
+\crefname{abbreviation}{abbreviation}{abbreviations}
+\crefname{proposition}{proposition}{propositions}
+\crefname{composition}{proposition}{propositions}
+\crefname{lemma}{lemma}{lemmas}
+
+\newcommand{\fun}[1]{\operatorname{\mathsf{#1}}}
+\newcommand{\logicalIfSetOp}{\fun{IfSet}}
+\newcommand{\logicalIfOneOp}{\fun{IfOne}}
+
+
+\newenvironment{byCase}{}{}
+\newcommand{\caseOf}[1]{\par{}Case:\ #1}
+
+\newenvironment{subproof}{\textit{Subproof.\ }}{$\square$}
+
+
+
+
+% Symbols
+% =======
+
+\newcommand{\addNat}{+_{\naturals}}
+\newcommand{\apply}[2]{#1(#2)}
+\newcommand{\bipartitions}[1]{\fun{Bipartitions}#1}
+\newcommand{\bijections}[2]{\fun{Bi}(#1,#2)}
+\newcommand{\cons}[2]{\fun{cons}(#1,#2)}
+\newcommand{\choice}[1]{\fun{choice}(#1)}
+\newcommand{\converse}[1]{{#1^{\mathsf{T}}}}
+\newcommand{\dom}[1]{\fun{dom}#1}
+\newcommand{\downward}[2]{#2^{\downarrow #1}}
+\newcommand{\equivalenceClass}[2]{[#2]_{#1}}
+\newcommand{\equivfrompartition}[1]{E_{#1}}
+\newcommand{\fld}[1]{\fun{field}#1}
+\newcommand{\fst}[1]{\fun{fst}#1}
+\newcommand{\funs}[2]{\fun{Fun}(#1,#2)}
+\newcommand{\genOpens}[2]{\mathcal{O}_{#2}(#1)}
+\newcommand{\idempotents}[1]{\fun{Idempotent}(#1)}
+\newcommand{\identity}[1]{\fun{id}_{#1}}
+\newcommand{\img}[2]{#1^{\to}(#2)}
+\newcommand{\inj}[2]{\fun{Inj}(#1,#2)}
+\newcommand{\inter}{\cap}
+\newcommand{\inters}[1]{\bigcap #1}
+\newcommand{\leNat}{\leq_{\naturals}}
+\newcommand{\meets}{\mathrel{\supset\!\!\!\subset}}
+\newcommand{\memrel}[1]{{\in_{#1}}}
+\newcommand{\monusNat}{-_{\naturals}}
+\newcommand{\naturals}{\mathcal{N}}
+\newcommand{\naturalsPlus}{\mathcal{N}_{+}}
+\newcommand{\notmeets}{\mathrel{\not\meets}}
+\newcommand{\pow}[1]{\fun{Pow}(#1)}
+\newcommand{\precedes}{<}
+\newcommand{\precedeseq}{\leq}
+\newcommand{\preimg}[2]{#1^{\leftarrow}(#2)}
+\newcommand{\principalfilter}[2]{{\uparrow_{#1}}#2}
+\newcommand{\quotient}[2]{#1/#2}
+\newcommand{\ran}[1]{\fun{ran}#1}
+\newcommand{\reals}{\mathcal{R}}
+\newcommand{\realHalf}{\fun{RealHalf}}
+\newcommand{\realQuarter}{\fun{RealQuarter}}
+\newcommand{\realThreeQuarters}{\fun{RealThreeQuarters}}
+\newcommand{\realClosedInterval}[2]{\fun{RealClosedInterval}(#1,#2)}
+\newcommand{\realOpenInterval}[2]{\fun{RealOpenInterval}(#1,#2)}
+\newcommand{\realClosedLowerRay}[1]{\fun{RealClosedLowerRay}(#1)}
+\newcommand{\realClosedUpperRay}[1]{\fun{RealClosedUpperRay}(#1)}
+\newcommand{\realOpenLowerRay}[1]{\fun{RealOpenLowerRay}(#1)}
+\newcommand{\realOpenUpperRay}[1]{\fun{RealOpenUpperRay}(#1)}
+\newcommand{\realClosedSymmetricInterval}[1]{\fun{RealClosedSymmetricInterval}(#1)}
+\newcommand{\realOpenSymmetricInterval}[1]{\fun{RealOpenSymmetricInterval}(#1)}
+\newcommand{\RealOpenSymmetricUnitInterval}{\fun{RealOpenSymmetricUnitInterval}}
+\newcommand{\realClosedIntervalTopology}[2]{\fun{RealClosedIntervalTopology}(#1,#2)}
+\newcommand{\realOpenIntervalTopology}[2]{\fun{RealOpenIntervalTopology}(#1,#2)}
+\newcommand{\RealOpenSymmetricUnitIntervalTopology}{\fun{RealOpenSymmetricUnitIntervalTopology}}
+\newcommand{\realZeroMap}[1]{\fun{RealZeroMap}(#1)}
+\newcommand{\realMapNeg}[2]{\fun{RealMapNeg}(#1,#2)}
+\newcommand{\realMapAdd}[3]{\fun{RealMapAdd}(#1,#2,#3)}
+\newcommand{\realMapSub}[3]{\fun{RealMapSub}(#1,#2,#3)}
+\newcommand{\realMapScale}[3]{\fun{RealMapScale}(#1,#2,#3)}
+\newcommand{\realMapAffine}[4]{\fun{RealMapAffine}(#1,#2,#3,#4)}
+\newcommand{\realScaledSequence}[2]{\fun{RealScaledSequence}(#1,#2)}
+\newcommand{\surrealEpsilonSequence}{\fun{SurrealEpsilonSequence}}
+\newcommand{\realCauchyWitnessSet}[2]{\fun{RealCauchyWitnessSet}(#1,#2)}
+\newcommand{\realCauchyIndex}[2]{\fun{RealCauchyIndex}(#1,#2)}
+\newcommand{\realCauchyCentre}[2]{\fun{RealCauchyCentre}(#1,#2)}
+\newcommand{\realCauchyLowerEndpoint}[2]{\fun{RealCauchyLowerEndpoint}(#1,#2)}
+\newcommand{\realCauchyUpperEndpoint}[2]{\fun{RealCauchyUpperEndpoint}(#1,#2)}
+\newcommand{\uniformMapEntourage}[3]{\fun{UniformMapEntourage}(#1,#2,#3)}
+\newcommand{\uniformMapEntourageBasis}[2]{\fun{UniformMapEntourageBasis}(#1,#2)}
+\newcommand{\uniformMapSpace}[2]{\fun{UniformMapSpace}(#1,#2)}
+\newcommand{\uniformMapConverges}[4]{\pred{UniformMapConverges}(#1,#2,#3,#4)}
+\newcommand{\uniformMapCauchy}[3]{\pred{UniformMapCauchy}(#1,#2,#3)}
+\newcommand{\mapSequenceAt}[2]{\fun{MapSequenceAt}(#1,#2)}
+\newcommand{\metricLimitPredicate}[3]{\pred{MetricLimitPredicate}(#1,#2,#3)}
+\newcommand{\metricLimitValue}[2]{\fun{MetricLimitValue}(#1,#2)}
+\newcommand{\pointwiseMetricLimitMap}[3]{\fun{PointwiseMetricLimitMap}(#1,#2,#3)}
+\newcommand{\normalShrinkerSeparator}[4]{\fun{NormalShrinkerSeparator}(#1,#2,#3,#4)}
+\newcommand{\tietzeLowSet}[3]{\fun{TietzeLowSet}(#1,#2,#3)}
+\newcommand{\tietzeHighSet}[3]{\fun{TietzeHighSet}(#1,#2,#3)}
+\newcommand{\tietzeCorrection}[5]{\fun{TietzeCorrection}(#1,#2,#3,#4,#5)}
+\newcommand{\tietzeRadiusStepOp}{\fun{TietzeRadiusStepOp}}
+\newcommand{\tietzeRadius}[2]{\fun{TietzeRadius}(#1,#2)}
+\newcommand{\tietzeBudgetSequence}[1]{\fun{TietzeBudgetSequence}(#1)}
+\newcommand{\tietzeResidualFrom}[3]{\fun{TietzeResidualFrom}(#1,#2,#3)}
+\newcommand{\tietzeCorrectionFrom}[7]{\fun{TietzeCorrectionFrom}(#1,#2,#3,#4,#5,#6,#7)}
+\newcommand{\tietzeStep}[7]{\fun{TietzeStep}(#1,#2,#3,#4,#5,#6,#7)}
+\newcommand{\tietzePartialSumAt}[6]{\fun{TietzePartialSumAt}(#1,#2,#3,#4,#5,#6)}
+\newcommand{\tietzeResidualAt}[6]{\fun{TietzeResidualAt}(#1,#2,#3,#4,#5,#6)}
+\newcommand{\tietzeCorrectionAt}[6]{\fun{TietzeCorrectionAt}(#1,#2,#3,#4,#5,#6)}
+\newcommand{\tietzePartialSums}[5]{\fun{TietzePartialSums}(#1,#2,#3,#4,#5)}
+\newcommand{\tietzeStageInvariant}[6]{\pred{TietzeStageInvariant}(#1,#2,#3,#4,#5,#6)}
+\newcommand{\tietzeBoundedLimit}[5]{\fun{TietzeBoundedLimit}(#1,#2,#3,#4,#5)}
+\newcommand{\realClampValue}[3]{\fun{RealClampValue}(#1,#2,#3)}
+\newcommand{\realClamp}[2]{\fun{RealClamp}(#1,#2)}
+\newcommand{\realMapAbs}[2]{\fun{RealMapAbs}(#1,#2)}
+\newcommand{\realMapMul}[3]{\fun{RealMapMul}(#1,#2,#3)}
+\newcommand{\realMapReciprocal}[2]{\fun{RealMapReciprocal}(#1,#2)}
+\newcommand{\realMapDiv}[3]{\fun{RealMapDiv}(#1,#2,#3)}
+\newcommand{\realSquash}{\fun{RealSquash}}
+\newcommand{\realUnsquash}{\fun{RealUnsquash}}
+\newcommand{\closedUnitEndpoints}{\fun{ClosedUnitEndpoints}}
+\newcommand{\endpointSet}[1]{\fun{EndpointSet}(#1)}
+\newcommand{\endpointPushOffMap}[4]{\fun{EndpointPushOffMap}(#1,#2,#3,#4)}
+\newcommand{\refines}{\leq}
+\newcommand{\reflexiveClosure}[2]{\fun{ReflCl}_{#1}(#2)}
+\newcommand{\transitiveClosure}[1]{\fun{TransCl}(#1)}
+\newcommand{\transitiveSupersets}[1]{\fun{TransSup}(#1)}
+\newcommand{\reflexiveTransitiveClosure}[2]{\fun{ReflTransCl}_{#1}(#2)}
+\newcommand{\joinabilityRelation}[2]{\fun{Join}_{#1}(#2)}
+\newcommand{\progressiveSubsets}[2]{\fun{Progressive}_{#1}(#2)}
+\newcommand{\accessiblePart}[2]{\fun{Acc}_{#1}(#2)}
+\newcommand{\wellFoundedOn}[2]{\fun{WellFounded}_{#1}(#2)}
+\newcommand{\wellFounded}[1]{\fun{WellFounded}(#1)}
+\newcommand{\ReductionSystem}[2]{\fun{ARS}(#1,#2)}
+\newcommand{\reductionPlus}[1]{\mathord{\to}^{+}_{#1}}
+\newcommand{\reductionStar}[1]{\mathord{\to}^{*}_{#1}}
+\newcommand{\recursivePartials}[4]{\fun{RecPart}_{#1,#2}(#3,#4)}
+\newcommand{\recursiveFunctions}[4]{\fun{RecFun}_{#1,#2}(#3,#4)}
+\newcommand{\wfrec}[4]{\fun{wfrec}_{#1,#2}(#3,#4)}
+\newcommand{\ordinalRecursion}[3]{\fun{OrdRec}_{#1,#2}(#3)}
+\newcommand{\pnoEqOp}{\fun{PNoEq}}
+\newcommand{\pnoLtInitialOp}{\fun{PNoLtInitial}}
+\newcommand{\surrealSigns}{\fun{SNoSigns}}
+\newcommand{\surrealSignFlip}{\fun{SNoSignFlip}}
+\newcommand{\surrealNeg}[1]{\fun{SNoNeg}(#1)}
+\newcommand{\surrealNegSet}[1]{\fun{SNoNegSet}(#1)}
+\newcommand{\surrealAddStepLeftOp}{\fun{SNoAddStepLeft}}
+\newcommand{\surrealAddStepRightOp}{\fun{SNoAddStepRight}}
+\newcommand{\surrealAddStepOp}{\fun{SNoAddStep}}
+\newcommand{\surrealAddOp}{\fun{SNoAddOp}}
+\newcommand{\surrealAdd}[2]{\fun{SNoAdd}(#1,#2)}
+\newcommand{\surrealAddLeft}[2]{\fun{SNoAddLeft}(#1,#2)}
+\newcommand{\surrealAddRight}[2]{\fun{SNoAddRight}(#1,#2)}
+\newcommand{\surrealAddPropertyOp}{\fun{SNoAddProperty}}
+\newcommand{\surrealMulTermOp}{\fun{SNoMulTerm}}
+\newcommand{\surrealMulOption}[3]{\fun{SNoMulOption}(#1,#2,#3)}
+\newcommand{\surrealMulStepLeftOp}{\fun{SNoMulStepLeft}}
+\newcommand{\surrealMulStepRightOp}{\fun{SNoMulStepRight}}
+\newcommand{\surrealMulStepOp}{\fun{SNoMulStep}}
+\newcommand{\surrealMulOp}{\fun{SNoMulOp}}
+\newcommand{\surrealMul}[2]{\fun{SNoMul}(#1,#2)}
+\newcommand{\surrealMulLL}[2]{\fun{SNoMulLL}(#1,#2)}
+\newcommand{\surrealMulRR}[2]{\fun{SNoMulRR}(#1,#2)}
+\newcommand{\surrealMulLR}[2]{\fun{SNoMulLR}(#1,#2)}
+\newcommand{\surrealMulRL}[2]{\fun{SNoMulRL}(#1,#2)}
+\newcommand{\surrealMulLeft}[2]{\fun{SNoMulLeft}(#1,#2)}
+\newcommand{\surrealMulRight}[2]{\fun{SNoMulRight}(#1,#2)}
+\newcommand{\surrealMulPropertyOp}{\fun{SNoMulProperty}}
+\newcommand{\surrealMulAvailableOp}{\fun{SNoMulAvailable}}
+\newcommand{\surrealAt}[2]{\fun{SNoAt}(#1,#2)}
+\newcommand{\surreal}[1]{\fun{SNo}(#1)}
+\newcommand{\birthday}[1]{\fun{birthday}(#1)}
+\newcommand{\surrealStage}[1]{\fun{SNoStage}(#1)}
+\newcommand{\surrealEq}[3]{\fun{SNoEq}_{#1}(#2,#3)}
+\newcommand{\surrealDifferences}[3]{\fun{SNoDiff}_{#1}(#2,#3)}
+\newcommand{\surrealLtCommon}[3]{\fun{SNoLtCommon}_{#1}(#2,#3)}
+\newcommand{\surrealLtLeftShort}[2]{\fun{SNoLtLeftShort}(#1,#2)}
+\newcommand{\surrealLtRightShort}[2]{\fun{SNoLtRightShort}(#1,#2)}
+\newcommand{\surrealLt}[2]{\fun{SNoLt}(#1,#2)}
+\newcommand{\surrealLe}[2]{\fun{SNoLe}(#1,#2)}
+\newcommand{\ordinalSurreal}[1]{\fun{NoOrd}(#1)}
+\newcommand{\surrealLeft}[1]{\fun{SNoL}(#1)}
+\newcommand{\surrealRight}[1]{\fun{SNoR}(#1)}
+\newcommand{\surrealCutPair}[2]{\fun{SNoCutPair}(#1,#2)}
+\newcommand{\surrealCutCandidate}[3]{\fun{SNoCutCandidate}(#1,#2,#3)}
+\newcommand{\surrealCutAdmissible}[2]{\fun{SNoCutAdmissible}(#1,#2)}
+\newcommand{\surrealCut}[2]{\fun{SNoCut}(#1,#2)}
+\newcommand{\surrealCutLengths}[2]{\fun{SNoCutLengths}(#1,#2)}
+\newcommand{\surrealCutBound}[2]{\fun{SNoCutBound}(#1,#2)}
+\newcommand{\surrealCutPlus}[3]{\fun{SNoCutPlus}_{#2}(#1,#3)}
+\newcommand{\surrealCutStep}[2]{\fun{SNoCutStep}_{#2}(#1)}
+\newcommand{\surrealCutWitness}[2]{\fun{SNoCutWitness}(#1,#2)}
+\newcommand{\surrealCutInterveners}[3]{\fun{SNoInterveners}_{#3}(#1,#2)}
+\newcommand{\surrealCutBirthdays}[3]{\fun{SNoIntervenerBirthdays}_{#3}(#1,#2)}
+\newcommand{\surrealEarlier}[1]{\fun{SNoEarlier}_{#1}}
+\newcommand{\surrealPredecessors}[2]{\fun{SNoPred}_{#1}(#2)}
+\newcommand{\surrealStageRec}[3]{\fun{SNoStageRec}_{#1,#2}(#3)}
+\newcommand{\surrealRecFunctionalOp}{\fun{SNoRecFunctional}}
+\newcommand{\surrealRecSolutionOp}{\fun{SNoRecSolution}}
+\newcommand{\surrealRecAdmissibleOp}{\fun{SNoRecAdmissible}}
+\newcommand{\surrealRecOp}{\fun{SNoRec}}
+\newcommand{\surrealUnaryRecStageOp}{\fun{SNoUnaryRecStage}}
+\newcommand{\surrealUnaryRecConstructedOp}{\fun{SNoUnaryRecConstructed}}
+\newcommand{\surrealFunctionRecFunctionalOp}{\fun{SNoFunctionRecFunctional}}
+\newcommand{\surrealFunctionRecStageOp}{\fun{SNoFunctionRecStage}}
+\newcommand{\surrealFunctionRecOp}{\fun{SNoFunctionRec}}
+\newcommand{\surrealBinaryRecFunctionalOp}{\fun{SNoBinaryRecFunctional}}
+\newcommand{\surrealBinaryPatchOp}{\fun{SNoBinaryPatch}}
+\newcommand{\surrealBinaryInnerStepOp}{\fun{SNoBinaryInnerStep}}
+\newcommand{\surrealBinaryInnerRecOp}{\fun{SNoBinaryInnerRec}}
+\newcommand{\surrealBinaryOuterStepOp}{\fun{SNoBinaryOuterStep}}
+\newcommand{\surrealBinaryRecOp}{\fun{SNoBinaryRec}}
+\newcommand{\membershipRecOneClosureOp}{\fun{InRecOneClosure}}
+\newcommand{\membershipRecOneInversionOp}{\fun{InRecOneInversion}}
+\newcommand{\membershipRecOneFunctionalOp}{\fun{InRecOneFunctional}}
+\newcommand{\membershipRecOneOp}{\fun{InRecOne}}
+\newcommand{\membershipRecTwoClosureOp}{\fun{InRecTwoClosure}}
+\newcommand{\membershipRecTwoInversionOp}{\fun{InRecTwoInversion}}
+\newcommand{\membershipRecTwoFunctionalOp}{\fun{InRecTwoFunctional}}
+\newcommand{\membershipRecTwoOp}{\fun{InRecTwo}}
+\newcommand{\reflexiveReduction}[2]{\fun{ReflReduc}_{#1}(#2)}
+\newcommand{\relcomp}{;}
+\newcommand{\rels}[2]{\fun{Rel}(#1,#2)}
+\newcommand{\remove}[2]{#2\setminus\{#1\}}
+\newcommand{\snd}[1]{\fun{snd}#1}
+\newcommand{\subseteqrel}[1]{{\subseteq_{#1}}}
+\newcommand{\suc}[1]{#1^{+}}
+\newcommand{\sucNat}[1]{\suc{#1}}
+\newcommand{\surj}[2]{\fun{Surj}(#1,#2)}
+\newcommand{\symdiff}{\mathbin{\triangle}}
+\newcommand{\symmetricClosure}[1]{\fun{SymCl}(#1)}
+\newcommand{\toorder}[2]{\fun{OrderFromStrictOrder}_{#1}(#2)}
+\newcommand{\tostrictorder}[1]{\fun{StrictOrderFromOrder}(#1)}
+\newcommand{\union}{\cup}
+\newcommand{\unions}[1]{\bigcup #1}
+\newcommand{\Univ}[1]{\fun{Univ}(#1)}
+\newcommand{\upward}[2]{#2^{\uparrow #1}}
+\newcommand{\LeftOrb}[2]{#2\cdot #1}
+\newcommand{\integers}{\mathcal{Z}}
+\newcommand{\zero}{0}
+\newcommand{\one}{1}
+\newcommand{\rmul}{\cdot}
+\newcommand{\inv}[1]{#1^{-1}}
+\newcommand{\rfrac}[2]{\frac{#1}{#2}}
+\newcommand{\rationals}{\mathcal{Q}}
+\newcommand{\rminus}{-_{\mathcal{R}}}
+\newcommand{\seq}[2]{\{#1, ... ,#2\}}
+\newcommand{\indexx}[2][]{index_{#1}(#2)}
+\newcommand{\indexxset}[1]{#1}
+\newcommand{\topoBasisReals}{\mathbb{B}_{\mathcal{R}}}
+\newcommand{\intervalopen}[2]{(#1, #2)}
+\newcommand{\intervalclosed}[2]{[#1, #2]}
+\newcommand{\epsBall}[2]{\mathcal{B}_{#1,#2}}
+\newcommand{\realsplus}{\reals_{+}}
+\newcommand{\rless}{<}
+\newcommand{\two}{2}
+\newcommand{\powerOfTwoSet}{\mathbb{P}_{2^{}}}
+\newcommand{\pot}{\powerOfTwoSet}
+\newcommand{\chain}[1]{#1}
+\newcommand{\refine}{\text{ finer than }}
+\newcommand{\abs}[1]{\left\lvert#1\right\rvert}
+\newcommand{\realsminus}{\reals_{-}}
+\newcommand{\at}[2]{#1(#2)}
+\newcommand{\intervalopenInfiniteLeft}[1]{(-\infty, #1)}
+\newcommand{\intervalopenInfiniteRight}[1]{(#1, \infty)}
+
+
+\newcommand\restrl[2]{{% we make the whole thing an ordinary symbol
+  \left.\kern-\nulldelimiterspace % automatically resize the bar with \right
+  #1 % the function
+  \vphantom{\big|} % pretend it's a little taller at normal size
+  \right|_{#2} % this is the delimiter
+  }}
+\let\mathonlyin\in
+\renewcommand{\in}{\texorpdfstring{\ensuremath{\mathonlyin}}{∈}}
+
+\let\mathonlysubseteq\subseteq
+%\renewcommand{\subseteq}{\ensuremath{\mathonlysubseteq}}
+\renewcommand{\subseteq}{\texorpdfstring{\ensuremath{\mathonlysubseteq}}{⊆}}
+
+
+% Structure operations
+
+\newcommand{\structure}[2][]{\left\langle #2\right\rangle}
+\newcommand{\carrier}[1][]{#1}
+\newcommand{\reduction}[1][]{\mathord{\to}_{#1}}
+\newcommand{\mul}[1][]{\textsf{mul}_{#1}}
+\newcommand{\neutral}[1][]{\textsf{e}_{#1}}
+\newcommand{\lt}[1][]{\leq_{#1}}
+\newcommand{\opens}[1][]{\mathcal{O}_{#1}}
+\newcommand{\meet}[1][]{\sqcap_{#1}}
+\newcommand{\join}[1][]{\sqcup_{#1}}
+\newcommand{\ldiv}[1][]{\mathbin{\backslash}_{#1}}
+\newcommand{\rdiv}[1][]{\mathbin{/}_{#1}}
+\newcommand{\groupInv}[1][]{\operatorname{inv}_{#1}}
+\newcommand{\ringAdd}[1][]{\operatorname{add}_{#1}}
+\newcommand{\ringZero}[1][]{0_{#1}}
+\newcommand{\ringNeg}[1][]{\operatorname{neg}_{#1}}
+\newcommand{\ringMul}[1][]{\operatorname{mul}_{#1}}
+\newcommand{\ringOne}[1][]{1_{#1}}
+\newcommand{\ringInv}[1][]{\operatorname{inv}_{#1}}
+\newcommand{\scalarMul}[1][]{\operatorname{smul}_{#1}}
+\newcommand{\vectorAdd}[1][]{\operatorname{add}_{#1}}
+\newcommand{\vectorZero}[1][]{0_{#1}}
+\newcommand{\vectorNeg}[1][]{\operatorname{neg}_{#1}}
+\newcommand{\metricDistance}[1][]{d_{#1}}
+\newcommand{\uniformity}[1][]{\mathcal{U}_{#1}}
+\newcommand{\graphOnOp}{\fun{GraphOn}}
+\newcommand{\binaryGraphOnOp}{\fun{BinaryGraphOn}}
+\newcommand{\relationOnOp}{\fun{RelationOn}}
+\newcommand{\phaseFiveLogicalIdentityOp}{\fun{PhaseFiveLogicalIdentity}}
+\newcommand{\phaseFiveIdentityGraph}[1]{\fun{PhaseFiveIdentityGraph}_{#1}}
+\newcommand{\phaseFiveLogicalEqualityOp}{\fun{PhaseFiveLogicalEquality}}
+\newcommand{\phaseFiveDiagonalRelation}[1]{\fun{PhaseFiveDiagonalRelation}_{#1}}
+
+\newcommand{\closeds}[1]{\mathcal{C}_{#1}}
+\newcommand{\interiors}[2]{\fun{Int}_{#2}{#1}}
+\newcommand{\interior}[2]{\fun{int}_{#2}{#1}}
+\newcommand{\closures}[2]{\fun{Cl}_{#2}{#1}}
+\newcommand{\closure}[2]{\fun{cl}_{#2}{#1}}
+\newcommand{\frontier}[2]{\fun{fr}_{#2}{#1}}
+\newcommand{\neighbourhoods}[2]{\textsf{N}_{#2}{#1}}
+\newcommand{\neighbourhoodsSet}[2]{\textsf{N}_{SET #2}{#1}}
+\newcommand{\disconnections}[1]{\fun{Disconnections}{#1}}
+
+\newcommand{\teezero}{\ensuremath{T_0}} % Kolmogorov
+\newcommand{\teeone}{\ensuremath{T_1}} % accessible/Frechet
+\newcommand{\teetwo}{\ensuremath{T_2}} % separated/Hausdorff
+\newcommand{\teetwoandahalf}{\ensuremath{T_{2\frac{1}{2}}}} % Urysohn
+\newcommand{\teethree}{\ensuremath{T_3}} % regular Hausdorff
+\newcommand{\teefour}{\ensuremath{T_4}} % normal T1
+
+
+% Options
+% =======
+
+\DeclareOption{numberswithinsection}{%
+    \counterwithin{theoremcount}{section}
+}
+\DeclareOption{numberswithinsubsection}{%
+    \counterwithin{theoremcount}{subsection}
+}
+\DeclareOption*{\PackageWarning{felix}{Unknown ‘\CurrentOption’}}
+\ProcessOptions\relax

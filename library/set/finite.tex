@@ -1,0 +1,650 @@
+\section{Finite sets}
+
+\import{set/cons.tex}
+\import{set/powerset.tex}
+\import{function.tex}
+\import{nat.tex}
+
+The finite sets are the sets enumerated without repetition by a von Neumann
+natural number.  In particular, this definition is independent of any later
+construction of integers or real numbers.
+
+\begin{proposition}\label{powerset_cons_image}
+    Suppose $g$ is a function on $\pow{A}$.
+    Suppose for all $B\in\pow{A}$ we have $g(B)=\cons{b}{B}$.
+    Then $\pow{\cons{b}{A}}=\pow{A}\union\img{g}{\pow{A}}$.
+\end{proposition}
+\begin{proof}
+    Show that $\pow{\cons{b}{A}}\subseteq
+        \pow{A}\union\img{g}{\pow{A}}$.
+    \begin{subproof}
+        It suffices to show that every element of $\pow{\cons{b}{A}}$ is
+            an element of $\pow{A}\union\img{g}{\pow{A}}$
+            by \obv{subseteq}.
+        Fix $C\in\pow{\cons{b}{A}}$.
+        $C\subseteq\cons{b}{A}$ by \obv{pow_iff,subseteq}.
+        \begin{byCase}
+        \caseOf{$b\in C$.}
+            Let $B=C\setminus\{b\}$.
+            $B\subseteq A$ by \auto{subseteq,setminus,cons_iff}.
+            Thus $B\in\pow{A}$ by \obv{pow_iff,subseteq}.
+            Hence $B\in\dom{g}$.
+            $C=\cons{b}{B}$ by \auto{cons_remove}.
+            Hence $C=g(B)$.
+            Thus $C\in\img{g}{\pow{A}}$
+                by \auto{img_of_function_intro,inter_intro}.
+            Follows by \auto{union_iff}.
+        \caseOf{$b\notin C$.}
+            $C\subseteq A$ by \auto{subseteq,cons_iff}.
+            Thus $C\in\pow{A}$ by \obv{pow_iff,subseteq}.
+            Follows by \auto{union_iff}.
+        \end{byCase}
+    \end{subproof}
+
+    Show that $\pow{A}\union\img{g}{\pow{A}}
+        \subseteq\pow{\cons{b}{A}}$.
+    \begin{subproof}
+        It suffices to show that every element of
+            $\pow{A}\union\img{g}{\pow{A}}$ is an element of
+            $\pow{\cons{b}{A}}$ by \obv{subseteq}.
+        Fix $C\in\pow{A}\union\img{g}{\pow{A}}$.
+        \begin{byCase}
+        \caseOf{$C\in\pow{A}$.}
+            $C\subseteq A$ by \obv{pow_iff,subseteq}.
+            Thus $C\subseteq\cons{b}{A}$ by \auto{subseteq,cons_iff}.
+            Follows by \obv{pow_iff,subseteq}.
+        \caseOf{$C\notin\pow{A}$.}
+            $C\in\img{g}{\pow{A}}$ by \auto{union_iff}.
+            Take $B\in\pow{A}$ such that $C=g(B)$
+                by \auto{img_of_function_elim,inter_elim_right}.
+            $C=\cons{b}{B}$.
+            $B\subseteq A$ by \obv{pow_iff,subseteq}.
+            Thus $C\subseteq\cons{b}{A}$
+                by \auto{subseteq,cons_iff}.
+            Follows by \obv{pow_iff,subseteq}.
+        \end{byCase}
+    \end{subproof}
+    Follows by \obv{subseteq_antisymmetric}.
+\end{proof}
+
+\begin{definition}\label{finite}
+    $X$ is finite iff there exists a natural number $n$ such that
+        there exists a bijection from $n$ to $X$.
+\end{definition}
+
+\begin{abbreviation}\label{infinite}
+    $X$ is infinite iff $X$ is not finite.
+\end{abbreviation}
+
+\begin{definition}\label{finite_subsets}
+    $\finiteSubsets{X}=\{F\in\pow{X}\mid \text{$F$ is finite}\}$.
+\end{definition}
+
+\begin{definition}\label{infinite_subsets}
+    $\infiniteSubsets{X}=\{A\in\pow{X}\mid \text{$A$ is infinite}\}$.
+\end{definition}
+
+\begin{proposition}\label{finite_subsets_iff}
+    $F\in\finiteSubsets{X}$ iff $F\subseteq X$ and $F$ is finite.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{finite_subsets,pow_iff,subseteq}.
+\end{proof}
+
+\begin{proposition}\label{infinite_subsets_iff}
+    $A\in\infiniteSubsets{X}$ iff $A\subseteq X$ and $A$ is infinite.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{infinite_subsets,pow_iff,subseteq}.
+\end{proof}
+
+\begin{proposition}\label{finite_subsets_subset_powerset}
+    $\finiteSubsets{X}\subseteq\pow{X}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{finite_subsets_iff,pow_iff,subseteq}.
+\end{proof}
+
+\begin{proposition}\label{infinite_subsets_subset_powerset}
+    $\infiniteSubsets{X}\subseteq\pow{X}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{infinite_subsets_iff,pow_iff,subseteq}.
+\end{proof}
+
+\begin{classification}\label{emptyset_is_finite}
+    $\emptyset$ is finite.
+\end{classification}
+\begin{proof}
+    $\identity{\emptyset}\in\bijections{\emptyset}{\emptyset}$
+        by \obv{id_elem_bijections}.
+    Follows by \obv{finite,omega_empty}.
+\end{proof}
+
+\begin{proposition}\label{infinite_is_inhabited}
+    Suppose $X$ is infinite.
+    Then $X$ is inhabited.
+\end{proposition}
+\begin{proof}
+    Suppose not.
+    Hence $X=\emptyset$ by \obv{nonempty_inhabited}.
+    $\emptyset$ is finite by \obv{emptyset_is_finite}.
+    Hence $X$ is finite.
+    Contradiction.
+\end{proof}
+
+\begin{proposition}\label{bijection_cons}
+    Suppose $f\in\bijections{A}{B}$.
+    Suppose $a\notin A$ and $b\notin B$.
+    Then $\cons{(a,b)}{f}\in\bijections{\cons{a}{A}}{\cons{b}{B}}$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{bijections_dom,dom_intro,bijection_is_function,relation,cons_iff,rightunique,pair_eq_iff,function_rightunique,ran_of_surj,dom_cons,ran_cons,function_apply_elim,ran_intro,funs_intro,funs_surj_iff,injective,bijections}.
+\end{proof}
+
+\begin{proposition}\label{finite_cons}
+    Suppose $X$ is finite.
+    Then $\cons{x}{X}$ is finite.
+\end{proposition}
+\begin{proof}
+    Take $n$ such that $n$ is a natural number and
+        there exists $f\in\bijections{n}{X}$ by \auto{finite}.
+    Take $f$ such that $f\in\bijections{n}{X}$ by \auto.
+    \begin{byCase}
+    \caseOf{$x\in X$.}
+        $\cons{x}{X}=X$ by \obv{cons_absorb}.
+        Thus $\cons{x}{X}$ is finite.
+    \caseOf{$x\notin X$.}
+        $n\notin n$ by \obv{in_irrefl}.
+        $\cons{(n,x)}{f}\in\bijections{\cons{n}{n}}{\cons{x}{X}}$
+            by \obv{bijection_cons}.
+        $\cons{n}{n}=\suc{n}$ by \obv{suc,cons_iff,setext}.
+        $\suc{n}$ is a natural number by \obv{omega_successor}.
+        Thus $\cons{x}{X}$ is finite by \auto{finite}.
+    \end{byCase}
+\end{proof}
+
+\begin{corollary}\label{singleton_is_finite}
+    $\{x\}$ is finite.
+\end{corollary}
+\begin{proof}
+    $\cons{x}{\emptyset}$ is finite
+        by \obv{emptyset_is_finite,finite_cons}.
+    Every element of $\cons{x}{\emptyset}$ is an element of $\{x\}$
+        by \obv{cons_iff,singleton_iff}.
+    Every element of $\{x\}$ is an element of $\cons{x}{\emptyset}$
+        by \obv{cons_iff,singleton_iff}.
+    Hence $\cons{x}{\emptyset}=\{x\}$ by set extensionality.
+\end{proof}
+
+\begin{corollary}\label{pair_is_finite}
+    $\{x,y\}$ is finite.
+\end{corollary}
+\begin{proof}
+    $\cons{y}{\emptyset}$ is finite
+        by \obv{emptyset_is_finite,finite_cons}.
+    Thus $\cons{x}{\cons{y}{\emptyset}}$ is finite by \obv{finite_cons}.
+    $\{x,y\}=\cons{x}{\cons{y}{\emptyset}}$
+        by \auto{setext,pairset_iff,cons_iff,emptyset}.
+\end{proof}
+
+\begin{proposition}\label{bijection_remove_successor}
+    Suppose $f\in\bijections{\suc{n}}{Y}$.
+    Then $\restrl{f}{n}\in\bijections{n}{Y\setminus\{f(n)\}}$.
+\end{proposition}
+\begin{proof}
+    Let $g=\restrl{f}{n}$.
+    $f$ is a function by \obv{bijection_is_function}.
+    $f$ is injective by \obv{bijections}.
+    $\dom{f}=\suc{n}$ by \obv{bijections_dom}.
+    $\ran{f}=Y$ by \obv{bijections,ran_of_surj}.
+    $n\subseteq\suc{n}$ by \obv{subseteq_self_suc_intro}.
+    $g$ is a function by \obv{restrl_of_function_is_function}.
+    $\dom{g}=n$ by \auto{dom_of_restrl_eq_inter,inter_absorb_supseteq_left}.
+
+    Show that $\ran{g}\subseteq Y\setminus\{f(n)\}$.
+    \begin{subproof}
+        It suffices to show that every element of $\ran{g}$ is an element
+            of $Y\setminus\{f(n)\}$ by \obv{subseteq}.
+        Fix $z\in\ran{g}$.
+        Take $a$ such that $(a,z)\in g$ by \obv{ran_iff}.
+        Then $(a,z)\in f$ and $a\in n$ by \obv{restrl_iff}.
+        Thus $z\in Y$ by \obv{ran_intro}.
+        Show that $z\neq f(n)$.
+        \begin{subproof}
+            Suppose not.
+            $n\in\dom{f}$ by \obv{suc_intro_self}.
+            Thus $(n,f(n))\in f$ by \obv{function_apply_elim}.
+            Hence $a=n$ by \auto{injective}.
+            Contradiction by \obv{in_irrefl}.
+        \end{subproof}
+        Follows by \auto{setminus_intro,singleton_iff}.
+    \end{subproof}
+
+    Show that $Y\setminus\{f(n)\}\subseteq\ran{g}$.
+    \begin{subproof}
+        It suffices to show that every element of $Y\setminus\{f(n)\}$ is
+            an element of $\ran{g}$ by \obv{subseteq}.
+        Fix $z\in Y\setminus\{f(n)\}$.
+        Then $z\neq f(n)$ by \obv{setminus_elim_right,singleton_iff}.
+        $z\in Y$ by \obv{setminus_elim_left}.
+        Take $a\in\dom{f}$ such that $f(a)=z$ by \auto{fun_ran_iff}.
+        $a=n$ or $a\in n$ by \obv{suc_iff}.
+        Thus $a\in n$.
+        $(a,z)\in f$ by \auto{function_apply_elim}.
+        Hence $(a,z)\in g$ by \obv{restrl_iff}.
+        Follows by \obv{ran_intro}.
+    \end{subproof}
+    Hence $\ran{g}=Y\setminus\{f(n)\}$ by \obv{subseteq_antisymmetric}.
+    For all $a\in\dom{g}$ we have $g(a)\in Y\setminus\{f(n)\}$
+        by \auto{function_apply_elim,ran_intro}.
+    Thus $g$ is a function to $Y\setminus\{f(n)\}$.
+    Hence $g\in\funs{n}{Y\setminus\{f(n)\}}$ by \obv{funs_intro}.
+    Thus $g\in\surj{n}{Y\setminus\{f(n)\}}$ by \obv{funs_surj_iff}.
+    $g$ is injective by \obv{restrl_injective}.
+    Follows by \obv{bijections}.
+\end{proof}
+
+\begin{theorem}\label{finite_induction}
+    Suppose $X$ is finite.
+    Suppose $\emptyset\in C$.
+    Suppose for all $Y,y$ such that $Y\in C$ and $y\in X$ we have
+        $\cons{y}{Y}\in C$.
+    Then $X\in C$.
+\end{theorem}
+\begin{proof}
+    Let $S=\{n\in\naturals\mid
+        \text{for all $Y,f$ such that $Y\subseteq X$ and
+            $f\in\bijections{n}{Y}$ we have $Y\in C$}\}$.
+
+    Show that $\emptyset\in S$.
+    \begin{subproof}
+        $\emptyset\in\naturals$ by \obv{omega_empty}.
+        For all $Y,f$ such that $Y\subseteq X$ and
+            $f\in\bijections{\emptyset}{Y}$ we have $Y=\emptyset$
+            by \auto{bijections,surj,emptyset,setext}.
+    \end{subproof}
+
+    Show that for all $n\in S$ we have $\suc{n}\in S$.
+    \begin{subproof}
+        Fix $n\in S$.
+        Show that for all $Y,f$ such that $Y\subseteq X$ and
+            $f\in\bijections{\suc{n}}{Y}$ we have $Y\in C$.
+        \begin{subproof}
+            Fix $Y$.
+            Fix $f$.
+            Assume $Y\subseteq X$ and $f\in\bijections{\suc{n}}{Y}$.
+            $f$ is a function by \obv{bijection_is_function}.
+            $\dom{f}=\suc{n}$ by \obv{bijections_dom}.
+            Let $y=f(n)$.
+            $n\in\dom{f}$ by \obv{suc_intro_self}.
+            Thus $y\in Y$ by \auto{function_apply_elim,ran_intro,bijections,ran_of_surj}.
+            Hence $y\in X$ by \obv{elem_subseteq}.
+            $\restrl{f}{n}\in\bijections{n}{Y\setminus\{y\}}$
+                by \auto{bijection_remove_successor}.
+            $Y\setminus\{y\}\subseteq X$
+                by \obv{setminus_subseteq,subseteq_transitive}.
+            Thus $Y\setminus\{y\}\in C$.
+            Hence $\cons{y}{Y\setminus\{y\}}\in C$.
+            $\cons{y}{Y\setminus\{y\}}=Y$ by \obv{cons_remove}.
+            Thus $Y\in C$.
+        \end{subproof}
+        Follows by \obv{omega_successor}.
+    \end{subproof}
+
+    Thus $S$ is an inductive set by \obv{inductive_set}.
+    Take $n$ such that $n$ is a natural number and
+        there exists $f\in\bijections{n}{X}$ by \auto{finite}.
+    Take $f$ such that $f\in\bijections{n}{X}$ by \auto.
+    $n\in S$ by \obv{omega_minimal}.
+    Follows by \auto{subseteq_refl}.
+\end{proof}
+
+\begin{proposition}\label{subseteq_finite_is_finite}
+    Suppose $A\subseteq B$.
+    Suppose $B$ is finite.
+    Then $A$ is finite.
+\end{proposition}
+\begin{proof}
+    Let $C=\{Y\in\pow{B}\mid
+        \text{for all $D$ such that $D\subseteq Y$ we have $D$ is finite}\}$.
+    Thus $A$ is finite by \auto{powerset_bottom,subseteq_emptyset_iff,emptyset_is_finite,powerset_elim,cons_subseteq_intro,powerset_intro,subseteq_cons_elim,finite_cons,cons_remove,finite_induction}.
+\end{proof}
+
+\begin{theorem}\label{infinite_superset}
+    Suppose $A\subseteq B$ and $A$ is infinite.
+    Then $B$ is infinite.
+\end{theorem}
+\begin{proof}
+    Suppose not.
+    Then $A$ is finite by \obv{subseteq_finite_is_finite}.
+    Contradiction.
+\end{proof}
+
+\begin{corollary}\label{finite_intersection}
+    Suppose $A$ is finite or $B$ is finite.
+    Then $A\inter B$ is finite.
+\end{corollary}
+\begin{proof}
+    Follows by \auto{inter_lower_left,inter_lower_right,subseteq_finite_is_finite}.
+\end{proof}
+
+\begin{proposition}\label{union_of_finite_is_finite}
+    Suppose $A$ is finite and $B$ is finite.
+    Then $A\union B$ is finite.
+\end{proposition}
+\begin{proof}
+    Let $C=\{Y\in\pow{A}\mid \text{$Y\union B$ is finite}\}$.
+    Thus $A\union B$ is finite by \auto{powerset_bottom,union_comm,union_emptyset,powerset_elim,cons_subseteq_intro,powerset_intro,finite_cons,union_cons,finite_induction}.
+\end{proof}
+
+\begin{theorem}\label{infinite_minus_finite_is_infinite}
+    Suppose $A$ is infinite and $F$ is finite.
+    Then $A\setminus F$ is infinite.
+\end{theorem}
+\begin{proof}
+    Suppose not.
+    $A\inter F$ is finite by \obv{finite_intersection}.
+    $A=(A\setminus F)\union(A\inter F)$
+        by \auto{setext,setminus,inter,union_iff}.
+    Hence $A$ is finite by \obv{union_of_finite_is_finite}.
+    Contradiction.
+\end{proof}
+
+\begin{corollary}\label{infinite_minus_finite_inhabited}
+    Suppose $A$ is infinite and $F$ is finite.
+    Then $A\setminus F$ is inhabited.
+\end{corollary}
+\begin{proof}
+    $A\setminus F$ is infinite by \obv{infinite_minus_finite_is_infinite}.
+    Suppose not.
+    Then $A\setminus F=\emptyset$ by \obv{nonempty_inhabited}.
+    Hence $A\setminus F$ is finite by \obv{emptyset_is_finite}.
+    Contradiction.
+\end{proof}
+
+\begin{theorem}\label{finite_union_has_finite_trace}
+    Suppose $F$ is finite.
+    Suppose for every $U\in F$ we have $U\inter D$ is finite.
+    Then $\unions{F}\inter D$ is finite.
+\end{theorem}
+\begin{proof}
+    Let $C=\{G\in\pow{F}\mid
+        \text{$\unions{G}\inter D$ is finite}\}$.
+    $\emptyset\subseteq F$ by \obv{emptyset_subseteq}.
+    Hence $\emptyset\in\pow{F}$ by \obv{pow_iff,subseteq}.
+    \begin{align*}
+        \unions{\emptyset}\inter D
+            &= \emptyset\inter D
+                \explanation{by \obv{unions_emptyset}}
+            \\
+            &= D\inter\emptyset
+                \explanation{by \obv{inter_comm}}
+            \\
+            &= \emptyset
+                \explanation{by \obv{inter_emptyset}}
+    \end{align*}
+    Hence $\unions{\emptyset}\inter D$ is finite
+        by \obv{emptyset_is_finite}.
+    Thus $\emptyset\in C$.
+    Show that for all $G,U$ such that $G\in C$ and $U\in F$ we have
+        $\cons{U}{G}\in C$.
+    \begin{subproof}
+        Fix $G,U$.
+        Assume $G\in C$ and $U\in F$.
+        $G\subseteq F$ by \obv{pow_iff,subseteq}.
+        Hence $\cons{U}{G}\subseteq F$ by \obv{cons_subseteq_intro}.
+        Hence $\cons{U}{G}\in\pow{F}$ by \obv{pow_iff,subseteq}.
+        $U\inter D$ is finite.
+        $\unions{G}\inter D$ is finite.
+        \begin{align*}
+            \unions{\cons{U}{G}}\inter D
+                &= (U\union\unions{G})\inter D
+                    \explanation{by \obv{unions_cons}}
+                \\
+                &= (U\inter D)\union(\unions{G}\inter D)
+                    \explanation{by \auto{inter_distrib_union,inter_comm}}
+        \end{align*}
+        Hence $\unions{\cons{U}{G}}\inter D$ is finite
+            by \obv{union_of_finite_is_finite}.
+    \end{subproof}
+    $F\in C$ by \obv{finite_induction,subseteq_refl,pow_iff}.
+\end{proof}
+
+\begin{proposition}\label{unions_of_finite_family_is_finite}
+    Suppose $F$ is finite.
+    Suppose every element of $F$ is finite.
+    Then $\unions{F}$ is finite.
+\end{proposition}
+\begin{proof}
+    Let $C=\{G\in\pow{F}\mid \text{$\unions{G}$ is finite}\}$.
+    $\emptyset\in C$ by \obv{powerset_bottom,unions_emptyset,emptyset_is_finite}.
+    For all $G,X$ such that $G\in C$ and $X\in F$ we have
+        $\cons{X}{G}\in C$
+        by \auto{powerset_elim,cons_subseteq_intro,powerset_intro,unions_cons,union_of_finite_is_finite}.
+    Follows by \auto{finite_induction}.
+\end{proof}
+
+\begin{theorem}\label{finite_family_union_in_binary_union_closed_family}
+    Suppose $\emptyset\in F$.
+    Suppose for all $A,C\in F$ we have $A\union C\in F$.
+    Suppose $H\subseteq F$ and $H$ is finite.
+    Then $\unions{H}\in F$.
+\end{theorem}
+\begin{proof}
+    Let $C=\{G\in\pow{F}\mid \unions{G}\in F\}$.
+    $\emptyset\in\pow{F}$ by \obv{powerset_bottom}.
+    $\unions{\emptyset}=\emptyset$ by \obv{unions_emptyset}.
+    Hence $\emptyset\in C$.
+    Show that for all $G,A$ such that $G\in C$ and $A\in H$ we have
+        $\cons{A}{G}\in C$.
+    \begin{subproof}
+        Fix $G,A$.
+        Assume $G\in C$ and $A\in H$.
+        $G\subseteq F$ by \obv{pow_iff,subseteq}.
+        $A\in F$ by \obv{subseteq}.
+        Hence $\cons{A}{G}\subseteq F$ by
+            \obv{cons_subseteq_intro}.
+        Thus $\cons{A}{G}\in\pow{F}$ by
+            \obv{powerset_intro}.
+        $\unions{G}\in F$.
+        Hence $A\union\unions{G}\in F$.
+        $\unions{\cons{A}{G}}=A\union\unions{G}$ by
+            \obv{unions_cons}.
+    \end{subproof}
+    Hence $H\in C$ by \obv{finite_induction}.
+\end{proof}
+
+\begin{proposition}\label{finite_function_image}
+    Suppose $f$ is a function.
+    Suppose $X$ is finite and $X\subseteq\dom{f}$.
+    Then $\img{f}{X}$ is finite.
+\end{proposition}
+\begin{proof}
+    Let $C=\{Y\in\pow{X}\mid \text{$\img{f}{Y}$ is finite}\}$.
+    $\emptyset\in C$ by \obv{powerset_bottom,img_emptyset,emptyset_is_finite}.
+    Show that for all $Y,x$ such that $Y\in C$ and $x\in X$ we have
+        $\cons{x}{Y}\in C$.
+    \begin{subproof}
+        Fix $Y$.
+        Fix $x$.
+        Assume $Y\in C$ and $x\in X$.
+        $x\in\dom{f}$ by \obv{elem_subseteq}.
+        $\img{f}{\{x\}}=\{f(x)\}$
+            by \auto{setext,img_iff,singleton_iff,function_apply_iff}.
+        $\img{f}{\cons{x}{Y}}=\cons{f(x)}{\img{f}{Y}}$
+            by \auto{union_eq_cons,img_union}.
+        $\img{f}{Y}$ is finite.
+        Thus $\img{f}{\cons{x}{Y}}$ is finite by \auto{finite_cons}.
+        $\cons{x}{Y}\in\pow{X}$
+            by \obv{powerset_elim,cons_subseteq_intro,powerset_intro}.
+    \end{subproof}
+    Follows by \auto{finite_induction}.
+\end{proof}
+
+\begin{classification}\label{finite_powerset}
+    Suppose $X$ is finite.
+    Then $\pow{X}$ is finite.
+\end{classification}
+\begin{proof}
+    Let $C=\{Y\in\pow{X}\mid \text{$\pow{Y}$ is finite}\}$.
+    $\pow{\emptyset}$ is finite
+        by \auto{powerset_emptyset,singleton_is_finite}.
+    Thus $\emptyset\in C$ by \obv{powerset_bottom}.
+
+    Show that for all $Y,y$ such that $Y\in C$ and $y\in X$ we have
+        $\cons{y}{Y}\in C$.
+    \begin{subproof}
+        Fix $Y$.
+        Fix $y$.
+        Assume $Y\in C$ and $y\in X$.
+        $Y\subseteq X$ by \obv{pow_iff,subseteq}.
+        $\pow{Y}$ is finite.
+
+        Let $g=\{(B,\cons{y}{B})\mid B\in\pow{Y}\}$.
+        $g$ is a relation by \auto{relation}.
+        $g$ is right-unique by \auto{rightunique,pair_eq_iff}.
+        $\dom{g}=\pow{Y}$ by \auto{setext,dom_iff,pair_eq_iff}.
+        Hence $g$ is a function on $\pow{Y}$.
+        For all $B\in\pow{Y}$ we have $g(B)=\cons{y}{B}$
+            by \obv{function_apply_intro}.
+
+        $\img{g}{\pow{Y}}$ is finite
+            by \obv{finite_function_image,subseteq_refl}.
+        $\pow{\cons{y}{Y}}=\pow{Y}\union\img{g}{\pow{Y}}$
+            by \obv{powerset_cons_image}.
+        Thus $\pow{\cons{y}{Y}}$ is finite
+            by \obv{union_of_finite_is_finite}.
+        $\cons{y}{Y}\subseteq X$ by \obv{cons_subseteq_intro}.
+        Hence $\cons{y}{Y}\in\pow{X}$ by \obv{pow_iff,subseteq}.
+    \end{subproof}
+    $X\in C$ by \obv{finite_induction}.
+\end{proof}
+
+\begin{proposition}\label{times_cons_left}
+    $\cons{x}{X}\times Y=(\{x\}\times Y)\union(X\times Y)$.
+\end{proposition}
+\begin{proof}
+    Every element of $\cons{x}{X}\times Y$ is an element of
+        $(\{x\}\times Y)\union(X\times Y)$
+        by \auto{times,cons_iff,singleton_iff,union_iff,pair_eq_iff}.
+    Every element of $(\{x\}\times Y)\union(X\times Y)$ is an element of
+        $\cons{x}{X}\times Y$
+        by \auto{times,cons_iff,singleton_iff,union_iff,pair_eq_iff}.
+    Follows by set extensionality.
+\end{proof}
+
+\begin{proposition}\label{times_cons_right}
+    $X\times\cons{y}{Y}=(X\times\{y\})\union(X\times Y)$.
+\end{proposition}
+\begin{proof}
+    Every element of $X\times\cons{y}{Y}$ is an element of
+        $(X\times\{y\})\union(X\times Y)$
+        by \auto{times,cons_iff,singleton_iff,union_iff,pair_eq_iff}.
+    Every element of $(X\times\{y\})\union(X\times Y)$ is an element of
+        $X\times\cons{y}{Y}$
+        by \auto{times,cons_iff,singleton_iff,union_iff,pair_eq_iff}.
+    Follows by set extensionality.
+\end{proof}
+
+\begin{proposition}\label{times_singletons}
+    $\{x\}\times\{y\}=\{(x,y)\}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{setext,times,singleton_iff,pair_eq_iff}.
+\end{proof}
+
+\begin{lemma}\label{singleton_times_finite}
+    Suppose $Y$ is finite.
+    Then $\{x\}\times Y$ is finite.
+\end{lemma}
+\begin{proof}
+    Let $C=\{Z\in\pow{Y}\mid
+        \text{$\{x\}\times Z$ is finite}\}$.
+    $\emptyset\in C$
+        by
+        \obv{powerset_bottom,times_empty_right,emptyset_is_finite}.
+    Show that for all $Z,z$ such that $Z\in C$ and $z\in Y$ we have
+        $\cons{z}{Z}\in C$.
+    \begin{subproof}
+        Fix $Z,z$.
+        Assume $Z\in C$ and $z\in Y$.
+        $Z\subseteq Y$ by \obv{powerset_elim}.
+        Hence $\cons{z}{Z}\subseteq Y$
+            by \obv{cons_subseteq_intro}.
+        Hence $\cons{z}{Z}\in\pow{Y}$ by \obv{powerset_intro}.
+        $\{x\}\times\cons{z}{Z}
+            =\cons{(x,z)}{\{x\}\times Z}$
+            by
+            \auto{times_cons_right,times_singletons,union_eq_cons}.
+        $\{x\}\times Z$ is finite.
+        Hence $\{x\}\times\cons{z}{Z}$ is finite
+            by \auto{finite_cons}.
+    \end{subproof}
+    $Y\in C$ by \obv{finite_induction}.
+\end{proof}
+
+\begin{theorem}\label{finite_times}
+    Suppose $X$ is finite and $Y$ is finite.
+    Then $X\times Y$ is finite.
+\end{theorem}
+\begin{proof}
+    Let $C=\{Z\in\pow{X}\mid \text{$Z\times Y$ is finite}\}$.
+    $\emptyset\in C$
+        by
+        \obv{powerset_bottom,times_empty_left,emptyset_is_finite}.
+    Show that for all $Z,z$ such that $Z\in C$ and $z\in X$ we have
+        $\cons{z}{Z}\in C$.
+    \begin{subproof}
+        Fix $Z,z$.
+        Assume $Z\in C$ and $z\in X$.
+        $Z\subseteq X$ by \obv{powerset_elim}.
+        Hence $\cons{z}{Z}\subseteq X$
+            by \obv{cons_subseteq_intro}.
+        Hence $\cons{z}{Z}\in\pow{X}$ by \obv{powerset_intro}.
+        $\{z\}\times Y$ is finite
+            by \obv{singleton_times_finite}.
+        $Z\times Y$ is finite.
+        $\cons{z}{Z}\times Y
+            =(\{z\}\times Y)\union(Z\times Y)$
+            by \obv{times_cons_left}.
+        Hence $\cons{z}{Z}\times Y$ is finite
+            by \obv{union_of_finite_is_finite}.
+    \end{subproof}
+    $X\in C$ by \obv{finite_induction}.
+\end{proof}
+
+\begin{definition}\label{enumeration}
+    $f$ is an enumeration of $X$ iff there exists a natural number $n$
+        such that $f\in\bijections{n}{X}$.
+\end{definition}
+
+\begin{proposition}\label{finite_iff_has_enumeration}
+    $X$ is finite iff there exists $f$ such that $f$ is an enumeration of $X$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{finite,enumeration}.
+\end{proof}
+
+\begin{definition}\label{finite_sequence}
+    $s$ is a finite sequence in $A$ iff there exists a natural number $n$
+        such that $s\in\funs{n}{A}$.
+\end{definition}
+
+\begin{proposition}\label{emptyset_finite_sequence}
+    $\emptyset$ is a finite sequence in $A$.
+\end{proposition}
+\begin{proof}
+    $\emptyset\in\funs{\emptyset}{A}$
+        by \obv{codom_of_emptyset_can_be_anything,dom_emptyset,funs_intro}.
+    Follows by \obv{finite_sequence,omega_empty}.
+\end{proof}
+
+\begin{proposition}\label{finite_sequence_domain}
+    Suppose $s$ is a finite sequence in $A$.
+    Then $\dom{s}$ is a natural number and $s\in\funs{\dom{s}}{A}$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{finite_sequence,funs_elim}.
+\end{proof}

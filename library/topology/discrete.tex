@@ -1,0 +1,314 @@
+\section{Discrete spaces}
+
+\import{topology/topological-space.tex}
+\import{topology/subspace.tex}
+\import{topology/continuity.tex}
+
+\begin{definition}\label{discrete_opens}
+    $\discreteOpens{A}=\pow{A}$.
+\end{definition}
+
+\begin{definition}\label{discrete_topology}
+    $\discreteTopology{A}=\TopologicalSpaceOn{A}{\discreteOpens{A}}$.
+\end{definition}
+
+\begin{proposition}\label{subsingleton_powerset_is_indiscrete_opens}
+    Suppose $A$ is a subsingleton.
+    Then $\pow{A}=\indiscreteOpens{A}$.
+\end{proposition}
+\begin{proof}
+    Show that every element of $\pow{A}$ is an element of
+        $\indiscreteOpens{A}$.
+    \begin{subproof}
+        Fix $U\in\pow{A}$.
+        Hence $U\subseteq A$ by \obv{powerset_elim}.
+        \begin{byCase}
+        \caseOf{$U=\emptyset$.}
+            Follows by \auto{indiscrete_opens,cons_iff}.
+        \caseOf{$U\neq\emptyset$.}
+            Take $u$ such that $u\in U$ by \obv{nonempty_inhabited}.
+            Hence $u\in A$.
+            Show that every element of $A$ is an element of $U$.
+            \begin{subproof}
+                Fix $a\in A$.
+                $a=u$.
+            \end{subproof}
+            Hence $A\subseteq U$ by \obv{subseteq}.
+            Hence $U=A$ by \obv{subseteq_antisymmetric}.
+            Follows by
+                \auto{indiscrete_opens,cons_iff,singleton_iff}.
+        \end{byCase}
+    \end{subproof}
+    Hence $\pow{A}\subseteq\indiscreteOpens{A}$ by \obv{subseteq}.
+    $\indiscreteOpens{A}\subseteq\pow{A}$ by
+        \obv{indiscrete_opens_type}.
+    Follows by \obv{subseteq_antisymmetric}.
+\end{proof}
+
+\begin{theorem}\label{subsingleton_indiscrete_space_is_discrete_topology}
+    Suppose $A$ is a subsingleton.
+    Then $\indiscreteSpace{A}=\discreteTopology{A}$.
+\end{theorem}
+\begin{proof}
+    $\pow{A}=\indiscreteOpens{A}$ by
+        \obv{subsingleton_powerset_is_indiscrete_opens}.
+    Hence $\indiscreteOpens{A}=\discreteOpens{A}$ by
+        \obv{discrete_opens}.
+    Follows by \obv{indiscrete_space,discrete_topology}.
+\end{proof}
+
+\begin{theorem}\label{discrete_opens_form_topology}
+    $\discreteOpens{A}$ is a topology on $A$.
+\end{theorem}
+\begin{proof}
+    $\discreteOpens{A}=\pow{A}$ by \obv{discrete_opens}.
+    $\discreteOpens{A}\subseteq\pow{A}$ by \obv{subseteq_refl}.
+    $A\in\discreteOpens{A}$ by \obv{powerset_top}.
+    For all $U,V\in\discreteOpens{A}$ we have
+        $U\inter V\in\discreteOpens{A}$ by \obv{inter_powerset}.
+    For every $F\subseteq\discreteOpens{A}$ we have
+        $\unions{F}\in\discreteOpens{A}$
+        by \obv{powerset_closed_unions}.
+    Follows by \obv{topology_family}.
+\end{proof}
+
+\begin{theorem}\label{discrete_topology_is_topological_space}
+    $\discreteTopology{A}$ is a topological space.
+\end{theorem}
+\begin{proof}
+    $\discreteOpens{A}$ is a topology on $A$
+        by \obv{discrete_opens_form_topology}.
+    Follows by
+        \auto{discrete_topology,topological_space_on_is_topological_space}.
+\end{proof}
+
+\begin{proposition}\label{discrete_topology_carrier}
+    $\carrier[\discreteTopology{A}]=A$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{discrete_topology,topological_space_on_carrier}.
+\end{proof}
+
+\begin{proposition}\label{discrete_topology_opens}
+    $\opens[\discreteTopology{A}]=\discreteOpens{A}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{discrete_topology,topological_space_on_opens}.
+\end{proof}
+
+\begin{definition}\label{is_discrete}
+    Let $X$ be a topological space.
+    $X$ is discrete iff $\opens[X]=\pow{\carrier[X]}$.
+\end{definition}
+
+\begin{proposition}\label{discrete_topology_is_discrete}
+    Suppose $\discreteTopology{A}$ is a topological space.
+    Then $\discreteTopology{A}$ is discrete.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{is_discrete,discrete_topology_carrier,
+            discrete_topology_opens,discrete_opens}.
+\end{proof}
+
+\begin{theorem}\label{discrete_iff_every_singleton_open}
+    Let $X$ be a topological space.
+    Then $X$ is discrete iff for every $x\in\carrier[X]$ we have
+        $\{x\}\in\opens[X]$.
+\end{theorem}
+\begin{proof}
+    Show that if $X$ is discrete, then for every $x\in\carrier[X]$ we have
+        $\{x\}\in\opens[X]$.
+    \begin{subproof}
+        Assume $X$ is discrete.
+        Fix $x\in\carrier[X]$.
+        $\{x\}\subseteq\carrier[X]$ by \obv{singleton_subset_intro}.
+        Hence $\{x\}\in\pow{\carrier[X]}$ by \obv{pow_iff,subseteq}.
+        Follows by \obv{is_discrete}.
+    \end{subproof}
+    Show that if for every $x\in\carrier[X]$ we have
+        $\{x\}\in\opens[X]$, then $X$ is discrete.
+    \begin{subproof}
+        Assume for every $x\in\carrier[X]$ we have
+            $\{x\}\in\opens[X]$.
+        Show that every element of $\pow{\carrier[X]}$ is an element of
+            $\opens[X]$.
+        \begin{subproof}
+            Fix $A\in\pow{\carrier[X]}$.
+            Let $F=\{V\in\pow{\carrier[X]}\mid
+                \text{there exists $x\in A$ such that $V=\{x\}$}\}$.
+            Show that $F\subseteq\opens[X]$.
+            \begin{subproof}
+                It suffices to show that every element of $F$ is an element of
+                    $\opens[X]$ by \obv{subseteq}.
+                Fix $V\in F$.
+                Take $x\in A$ such that $V=\{x\}$.
+                $A\subseteq\carrier[X]$ by \obv{pow_iff,subseteq}.
+                Hence $x\in\carrier[X]$ by \obv{subseteq}.
+                Follows by \auto.
+            \end{subproof}
+            Hence $\unions{F}\in\opens[X]$ by \obv{opens_unions}.
+            Show that $\unions{F}=A$.
+            \begin{subproof}
+                Show that every element of $\unions{F}$ is an element of $A$.
+                \begin{subproof}
+                    Fix $x\in\unions{F}$.
+                    Take $V\in F$ such that $x\in V$ by \obv{unions_iff}.
+                    Take $y\in A$ such that $V=\{y\}$.
+                    $x=y$ by \obv{singleton_iff}.
+                \end{subproof}
+                Show that every element of $A$ is an element of $\unions{F}$.
+                \begin{subproof}
+                    Fix $x\in A$.
+                    $\{x\}\subseteq\carrier[X]$
+                        by \auto{pow_iff,subseteq,singleton_subset_intro}.
+                    Hence $\{x\}\in\pow{\carrier[X]}$
+                        by \obv{pow_iff,subseteq}.
+                    Hence $\{x\}\in F$.
+                    $x\in\{x\}$ by \auto{singleton_iff}.
+                    Follows by \auto{unions_iff}.
+                \end{subproof}
+                Follows by set extensionality.
+            \end{subproof}
+        \end{subproof}
+        Hence $\pow{\carrier[X]}\subseteq\opens[X]$ by \obv{subseteq}.
+        $\opens[X]\subseteq\pow{\carrier[X]}$ by \obv{opens_family}.
+        Hence $\opens[X]=\pow{\carrier[X]}$
+            by \obv{subseteq_antisymmetric}.
+        Follows by \obv{is_discrete}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{proposition}\label{every_subset_open_in_discrete_space}
+    Let $X$ be a topological space.
+    Suppose $X$ is discrete.
+    Suppose $A\subseteq\carrier[X]$.
+    Then $A\in\opens[X]$.
+\end{proposition}
+\begin{proof}
+    $A\in\pow{\carrier[X]}$ by \obv{pow_iff,subseteq}.
+    Follows by \obv{is_discrete}.
+\end{proof}
+
+\begin{proposition}\label{every_subset_closed_in_discrete_space}
+    Let $X$ be a topological space.
+    Suppose $X$ is discrete.
+    Suppose $A\subseteq\carrier[X]$.
+    Then $A$ is closed in $X$.
+\end{proposition}
+\begin{proof}
+    $A\in\pow{\carrier[X]}$ by \obv{pow_iff,subseteq}.
+    $\carrier[X]\setminus A\subseteq\carrier[X]$
+        by \obv{setminus_subseteq}.
+    Hence $\carrier[X]\setminus A\in\opens[X]$
+        by \obv{every_subset_open_in_discrete_space}.
+    Follows by \obv{is_closed_in,closeds}.
+\end{proof}
+
+\begin{theorem}\label{map_from_discrete_space_is_continuous}
+    Let $X$ be a topological space.
+    Let $Y$ be a topological space.
+    Suppose $X$ is discrete.
+    Let $f\in\funs{\carrier[X]}{\carrier[Y]}$.
+    Then $f$ is continuous from $X$ to $Y$.
+\end{theorem}
+\begin{proof}
+    Show that for every $V\in\opens[Y]$ we have
+        $\preimg{f}{V}\in\opens[X]$.
+    \begin{subproof}
+        Fix $V\in\opens[Y]$.
+        $\preimg{f}{V}\subseteq\dom{f}$ by \obv{preimg_subseteq_dom}.
+        $\dom{f}=\carrier[X]$ by \obv{funs}.
+        Hence $\preimg{f}{V}\subseteq\carrier[X]$.
+        Follows by \obv{every_subset_open_in_discrete_space}.
+    \end{subproof}
+    Follows by \obv{continuous_map}.
+\end{proof}
+
+\begin{definition}\label{is_discrete_in}
+    Let $X$ be a topological space.
+    $D$ is discrete in $X$ iff
+        $D\subseteq\carrier[X]$ and
+        $\subspaceTopology{X}{D}$ is discrete.
+\end{definition}
+
+\begin{theorem}\label{discrete_in_iff_ambient_open_singletons}
+    Let $X$ be a topological space.
+    Then $D$ is discrete in $X$ iff
+        $D\subseteq\carrier[X]$ and
+        for every $x\in D$ there exists $U\in\opens[X]$ such that
+            $U\inter D=\{x\}$.
+\end{theorem}
+\begin{proof}
+    Show that if $D$ is discrete in $X$, then
+        $D\subseteq\carrier[X]$ and
+        for every $x\in D$ there exists $U\in\opens[X]$ such that
+            $U\inter D=\{x\}$.
+    \begin{subproof}
+        Assume $D$ is discrete in $X$.
+        $D\subseteq\carrier[X]$ by \obv{is_discrete_in}.
+        $\carrier[\subspaceTopology{X}{D}]=D$
+            by \obv{subspace_topology_carrier_of_subset}.
+        $\subspaceTopology{X}{D}$ is discrete by \obv{is_discrete_in}.
+        Show that for every $x\in D$ there exists $U\in\opens[X]$ such that
+            $U\inter D=\{x\}$.
+        \begin{subproof}
+            Fix $x\in D$.
+            $\{x\}\subseteq D$ by \obv{singleton_subset_intro}.
+            Hence $\{x\}\in\opens[\subspaceTopology{X}{D}]$
+                by \obv{every_subset_open_in_discrete_space}.
+            Take $U\in\opens[X]$ such that
+                $\{x\}=U\inter\carrier[\subspaceTopology{X}{D}]$
+                by \obv{subspace_open_iff}.
+            Follows by \auto{inter_comm}.
+        \end{subproof}
+    \end{subproof}
+    Show that if $D\subseteq\carrier[X]$ and
+        for every $x\in D$ there exists $U\in\opens[X]$ such that
+            $U\inter D=\{x\}$, then $D$ is discrete in $X$.
+    \begin{subproof}
+        Assume $D\subseteq\carrier[X]$ and
+            for every $x\in D$ there exists $U\in\opens[X]$ such that
+                $U\inter D=\{x\}$.
+        $\subspaceTopology{X}{D}$ is a topological space
+            by \obv{subspace_topology_is_topological_space}.
+        $\carrier[\subspaceTopology{X}{D}]=D$
+            by \obv{subspace_topology_carrier_of_subset}.
+        Show that for every $x\in\carrier[\subspaceTopology{X}{D}]$ we have
+            $\{x\}\in\opens[\subspaceTopology{X}{D}]$.
+        \begin{subproof}
+            Fix $x\in\carrier[\subspaceTopology{X}{D}]$.
+            Hence $x\in D$.
+            Take $U\in\opens[X]$ such that $U\inter D=\{x\}$.
+            Follows by \auto{subspace_open_iff}.
+        \end{subproof}
+        Hence $\subspaceTopology{X}{D}$ is discrete
+            by \obv{discrete_iff_every_singleton_open}.
+        Follows by \obv{is_discrete_in}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{discrete_in_subset}
+    Let $X$ be a topological space.
+    Suppose $D$ is discrete in $X$ and $C\subseteq D$.
+    Then $C$ is discrete in $X$.
+\end{theorem}
+\begin{proof}
+    $D\subseteq\carrier[X]$ by \obv{is_discrete_in}.
+    Hence $C\subseteq\carrier[X]$ by \obv{subseteq_transitive}.
+    Show that for every $x\in C$ there exists $U\in\opens[X]$ such that
+        $U\inter C=\{x\}$.
+    \begin{subproof}
+        Fix $x\in C$.
+        Hence $x\in D$ by \obv{subseteq}.
+        Take $U\in\opens[X]$ such that $U\inter D=\{x\}$
+            by \auto{discrete_in_iff_ambient_open_singletons}.
+        $U\inter C=\{x\}$
+            by \auto{setext,inter,singleton_iff,subseteq}.
+    \end{subproof}
+    Follows by \auto{discrete_in_iff_ambient_open_singletons}.
+\end{proof}

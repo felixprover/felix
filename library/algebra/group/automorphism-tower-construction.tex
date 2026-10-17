@@ -1,0 +1,2369 @@
+\import{algebra/group/automorphism-tower-data.tex}
+\import{logic/conditional.tex}
+\import{recursion/transfinite-unbounded.tex}
+\import{set/function-space.tex}
+
+\section{Construction of automorphism-tower segments}
+
+The recursive step receives the complete graph of predecessor packages.  All
+branch constructors are total set terms.  Their mathematical laws are stated
+only under the tower-history invariant, so no group structure is inferred
+from a totalized value away from the intended ordinal inputs.
+
+\subsection{Completing an incoming family}
+
+\begin{definition}\label{tower_complete_incoming}
+    $\towerCompleteIncoming{\alpha}{H}{q}=
+        \cons{(\alpha,\identity{\carrier[H]})}{q}$.
+\end{definition}
+
+\begin{proposition}\label{tower_complete_incoming_function}
+    Suppose $q$ is a function and $\dom{q}=\alpha$.
+    Then $\towerCompleteIncoming{\alpha}{H}{q}$ is a function and
+        $\dom{\towerCompleteIncoming{\alpha}{H}{q}}=\suc{\alpha}$.
+\end{proposition}
+\begin{proof}
+    $\alpha\notin\alpha$ by \obv{in_irrefl}.
+    Hence $\alpha\notin\dom{q}$.
+    $\towerCompleteIncoming{\alpha}{H}{q}$ is a function and
+        $\dom{\towerCompleteIncoming{\alpha}{H}{q}}=
+            \cons{\alpha}{\dom{q}}$ by
+        \auto{tower_complete_incoming,
+            extend_set_function_at_new_point}.
+    $\cons{\alpha}{\dom{q}}=\suc{\alpha}$ by
+        \obv{suc_eq_cons}.
+\end{proof}
+
+\begin{proposition}\label{tower_complete_incoming_current}
+    Suppose $q$ is a function and $\dom{q}=\alpha$.
+    Then $\apply{\towerCompleteIncoming{\alpha}{H}{q}}{\alpha}=
+        \identity{\carrier[H]}$.
+\end{proposition}
+\begin{proof}
+    Let $r=\towerCompleteIncoming{\alpha}{H}{q}$.
+    $r$ is a function by
+        \auto{tower_complete_incoming_function}.
+    $(\alpha,\identity{\carrier[H]})\in r$ by
+        \auto{tower_complete_incoming,cons_iff}.
+    Follows by \obv{function_apply_intro}.
+\end{proof}
+
+\begin{proposition}\label{tower_complete_incoming_earlier}
+    Suppose $q$ is a function and $\dom{q}=\alpha$.
+    Let $\beta\in\alpha$.
+    Then $\apply{\towerCompleteIncoming{\alpha}{H}{q}}{\beta}
+        =q(\beta)$.
+\end{proposition}
+\begin{proof}
+    Let $r=\towerCompleteIncoming{\alpha}{H}{q}$.
+    $r$ is a function by
+        \auto{tower_complete_incoming_function}.
+    $(\beta,q(\beta))\in q$ by
+        \obv{function_apply_elim}.
+    Hence $(\beta,q(\beta))\in r$ by
+        \auto{tower_complete_incoming,cons_iff}.
+    Follows by \obv{function_apply_intro}.
+\end{proof}
+
+\subsection{The direct system extracted from a history}
+
+\begin{definition}\label{tower_history_stage_value_op}
+    $\towerHistoryStageValueOp:\Set\to\Set\to\Set
+        =\fun{p,\beta:\Set}{
+            \towerStageGroup[\apply{p}{\beta}]}$.
+\end{definition}
+
+\begin{definition}\label{tower_history_stages}
+    $\towerHistoryStages{\alpha}{p}=
+        \Apply{\graphOnDomainOp}{\alpha,
+            \Apply{\towerHistoryStageValueOp}{p}}$.
+\end{definition}
+
+\begin{proposition}\label{tower_history_stages_type}
+    $\towerHistoryStages{\alpha}{p}\in
+        \funs{\alpha}{\ran{\towerHistoryStages{\alpha}{p}}}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{tower_history_stages,logical_graph_on_domain_function}.
+\end{proof}
+
+\begin{proposition}\label{tower_history_stages_apply}
+    Let $\beta\in\alpha$.
+    Then $\apply{\towerHistoryStages{\alpha}{p}}{\beta}=
+        \towerStageGroup[p(\beta)]$.
+\end{proposition}
+\begin{proof}
+    $\apply{\towerHistoryStages{\alpha}{p}}{\beta}
+        =\Apply{\towerHistoryStageValueOp}{p,\beta}$ by
+        \auto{tower_history_stages,logical_graph_on_domain_apply}.
+    $\Apply{\towerHistoryStageValueOp}{p,\beta}
+        =\towerStageGroup[p(\beta)]$ by
+        \obv{tower_history_stage_value_op}.
+\end{proof}
+
+\begin{definition}\label{tower_history_bond_value_op}
+    $\towerHistoryBondValueOp:\Set\to\Set\to\Set
+        =\fun{p,z:\Set}{
+            \towerIncomingMap
+                {\apply{p}{\snd{z}}}{\fst{z}}}$.
+\end{definition}
+
+\begin{definition}\label{tower_history_bonds}
+    $\towerHistoryBonds{\alpha}{p}=
+        \Apply{\graphOnDomainOp}{\subseteqrel{\alpha},
+            \Apply{\towerHistoryBondValueOp}{p}}$.
+\end{definition}
+
+\begin{proposition}\label{tower_history_bonds_type}
+    $\towerHistoryBonds{\alpha}{p}\in
+        \funs{\subseteqrel{\alpha}}{
+            \ran{\towerHistoryBonds{\alpha}{p}}}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{tower_history_bonds,logical_graph_on_domain_function}.
+\end{proof}
+
+\begin{proposition}\label{tower_history_bonds_apply}
+    Let $\gamma,\beta\in\alpha$.
+    Suppose $\gamma\subseteq\beta$.
+    Then $\apply{\towerHistoryBonds{\alpha}{p}}{(\gamma,\beta)}=
+        \towerIncomingMap{p(\beta)}{\gamma}$.
+\end{proposition}
+\begin{proof}
+    $(\gamma,\beta)\in\subseteqrel{\alpha}$ by
+        \obv{subseteqrel}.
+    $\fst{(\gamma,\beta)}=\gamma$ and
+        $\snd{(\gamma,\beta)}=\beta$ by
+        \obv{fst_eq,snd_eq}.
+    $\apply{\towerHistoryBonds{\alpha}{p}}{(\gamma,\beta)}
+        =\Apply{\towerHistoryBondValueOp}{p,(\gamma,\beta)}$ by
+        \auto{tower_history_bonds,logical_graph_on_domain_apply}.
+    $\Apply{\towerHistoryBondValueOp}{p,(\gamma,\beta)}=
+        \towerIncomingMap{p(\beta)}{\gamma}$ by
+        \obv{tower_history_bond_value_op}.
+\end{proof}
+
+\begin{proposition}\label{tower_history_bonds_apply_congruent}
+    Suppose $\theta\subseteq\eta$.
+    Let $\alpha,\beta\in\theta$.
+    Suppose $\alpha\subseteq\beta$.
+    Suppose $p(\beta)=q(\beta)$.
+    Then $\apply{\towerHistoryBonds{\theta}{p}}{(\alpha,\beta)}=
+        \apply{\towerHistoryBonds{\eta}{q}}{(\alpha,\beta)}$.
+\end{proposition}
+\begin{proof}
+    $\alpha,\beta\in\eta$ by \obv{subseteq}.
+    Follows by \auto{tower_history_bonds_apply}.
+\end{proof}
+
+\begin{abbreviation}\label{tower_history_system}
+    $\towerHistorySystem{\alpha}{p}=
+        \groupDirectSystemStructure
+            {\ordinalDirectedQuasiorder{\alpha}}
+            {\towerHistoryStages{\alpha}{p}}
+            {\towerHistoryBonds{\alpha}{p}}$.
+\end{abbreviation}
+
+\begin{proposition}\label{tower_history_system_carrier}
+    $\carrier[\towerHistorySystem{\alpha}{p}]=\alpha$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{group_direct_system_structure_carrier,
+            ordinal_directed_quasiorder_carrier}.
+\end{proof}
+
+\begin{proposition}\label{tower_history_system_order}
+    $\leq[\towerHistorySystem{\alpha}{p}]=
+        \subseteqrel{\alpha}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{group_direct_system_structure_order,
+            ordinal_directed_quasiorder_relation}.
+\end{proof}
+
+\begin{proposition}\label{tower_history_system_group_raw}
+    $\directSystemGroup{\towerHistorySystem{\alpha}{p}}{\beta}
+        =\apply{\towerHistoryStages{\alpha}{p}}{\beta}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \obv{direct_system_group,
+            group_direct_system_structure_groups}.
+\end{proof}
+
+\begin{proposition}\label{tower_history_system_bond_raw}
+    $\directSystemBond{\towerHistorySystem{\alpha}{p}}{\gamma}{\beta}
+        =\apply{\towerHistoryBonds{\alpha}{p}}{(\gamma,\beta)}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \obv{direct_system_bond,
+            group_direct_system_structure_bonds}.
+\end{proof}
+
+\begin{proposition}\label{tower_history_system_group}
+    Let $\beta\in\alpha$.
+    Then $\directSystemGroup{\towerHistorySystem{\alpha}{p}}{\beta}
+        =\towerStageGroup[p(\beta)]$.
+\end{proposition}
+\begin{proof}
+    $\directSystemGroups[\towerHistorySystem{\alpha}{p}]
+        =\towerHistoryStages{\alpha}{p}$ by
+        \obv{group_direct_system_structure_groups}.
+    Follows by
+        \auto{direct_system_group,tower_history_stages_apply}.
+\end{proof}
+
+\begin{proposition}\label{tower_history_system_bond}
+    Let $\gamma,\beta\in\alpha$.
+    Suppose $\gamma\subseteq\beta$.
+    Then $\directSystemBond{\towerHistorySystem{\alpha}{p}}
+        {\gamma}{\beta}=\towerIncomingMap{p(\beta)}{\gamma}$.
+\end{proposition}
+\begin{proof}
+    $\directSystemBonds[\towerHistorySystem{\alpha}{p}]
+        =\towerHistoryBonds{\alpha}{p}$ by
+        \obv{group_direct_system_structure_bonds}.
+    Follows by
+        \auto{direct_system_bond,tower_history_bonds_apply}.
+\end{proof}
+
+\begin{proposition}\label{tower_history_system_stage_group}
+    Suppose $\towerHistory{G}{\alpha}{p}$.
+    Let $\beta\in\alpha$.
+    Then $\directSystemGroup{\towerHistorySystem{\alpha}{p}}{\beta}$
+        is a group.
+\end{proposition}
+\begin{proof}
+    $\validTowerStagePackage
+        {p(\beta)}{G}{\beta}{\restrl{p}{\beta}}$ by
+        \obv{tower_history_value_valid}.
+    Hence $\towerStageGroup[p(\beta)]$ is a group by
+        \auto{valid_tower_stage_package_data}.
+    Follows by \obv{tower_history_system_group}.
+\end{proof}
+
+\begin{proposition}\label{tower_history_system_bond_hom}
+    Suppose $\towerHistory{G}{\alpha}{p}$.
+    Let $\gamma,\beta\in\alpha$.
+    Suppose $\gamma\subseteq\beta$.
+    Then $\groupHom
+        {\directSystemBond{\towerHistorySystem{\alpha}{p}}
+            {\gamma}{\beta}}
+        {\directSystemGroup{\towerHistorySystem{\alpha}{p}}{\gamma}}
+        {\directSystemGroup{\towerHistorySystem{\alpha}{p}}{\beta}}$.
+\end{proposition}
+\begin{proof}
+    $\gamma$ and $\beta$ are ordinals by
+        \obv{tower_history_ordinal,elem_of_ordinal_is_ordinal}.
+    $\gamma\in\beta$ or $\gamma=\beta$ by
+        \obv{ordinal_subseteq_implies_elem_or_eq}.
+    $\beta\subseteq\alpha$ by
+        \obv{tower_history_ordinal,ordinal_elem_implies_subseteq}.
+    If $\gamma\in\beta$, then
+        $\validTowerStagePackage
+            {p(\beta)}{G}{\beta}{\restrl{p}{\beta}}$ by
+        \obv{tower_history_value_valid}.
+    If $\gamma\in\beta$, then
+        $\apply{\restrl{p}{\beta}}{\gamma}=p(\gamma)$ by
+        \obv{tower_history_function,restrl_of_function_apply}.
+    If $\gamma\in\beta$, then
+        $\groupHom
+            {\towerIncomingMap{p(\beta)}{\gamma}}
+            {\towerStageGroup[p(\gamma)]}
+            {\towerStageGroup[p(\beta)]}$ by
+        \auto{valid_tower_stage_package_incoming_hom}.
+    If $\gamma=\beta$, then
+        $\validTowerStagePackage
+            {p(\beta)}{G}{\beta}{\restrl{p}{\beta}}$ by
+        \obv{tower_history_value_valid}.
+    If $\gamma=\beta$, then
+        $\towerIncomingMap{p(\beta)}{\beta}
+            =\identity{\carrier[\towerStageGroup[p(\beta)]]}$ by
+        \obv{valid_tower_stage_package_identity}.
+    If $\gamma=\beta$, then $\towerStageGroup[p(\beta)]$ is a group by
+        \auto{valid_tower_stage_package_data}.
+    If $\gamma=\beta$, then
+        $\groupHom
+            {\towerIncomingMap{p(\beta)}{\beta}}
+            {\towerStageGroup[p(\beta)]}
+            {\towerStageGroup[p(\beta)]}$ by
+        \auto{identity_group_hom}.
+    Follows by
+        \auto{tower_history_system_group,tower_history_system_bond}.
+\end{proof}
+
+\begin{proposition}\label{tower_history_system_bond_identity}
+    Suppose $\towerHistory{G}{\alpha}{p}$.
+    Let $\beta\in\alpha$.
+    Then $\directSystemBond{\towerHistorySystem{\alpha}{p}}
+            {\beta}{\beta}
+        =\identity{
+            \carrier[
+                \directSystemGroup{\towerHistorySystem{\alpha}{p}}{\beta}]}$.
+\end{proposition}
+\begin{proof}
+    $\validTowerStagePackage
+        {p(\beta)}{G}{\beta}{\restrl{p}{\beta}}$ by
+        \obv{tower_history_value_valid}.
+    $\towerIncomingMap{p(\beta)}{\beta}
+        =\identity{\carrier[\towerStageGroup[p(\beta)]]}$ by
+        \obv{valid_tower_stage_package_identity}.
+    $\beta\subseteq\beta$ by \obv{subseteq_refl}.
+    Follows by
+        \auto{tower_history_system_group,tower_history_system_bond}.
+\end{proof}
+
+\begin{proposition}\label{tower_history_system_bond_composition_stationary}
+    Suppose $\towerHistory{G}{\alpha}{p}$.
+    Let $\gamma,\beta\in\alpha$.
+    Suppose $\gamma\subseteq\beta$.
+    Then $\directSystemBond{\towerHistorySystem{\alpha}{p}}
+            {\gamma}{\beta}
+        =\directSystemBond{\towerHistorySystem{\alpha}{p}}
+            {\beta}{\beta}\circ
+         \directSystemBond{\towerHistorySystem{\alpha}{p}}
+            {\gamma}{\beta}$.
+\end{proposition}
+\begin{proof}
+    $\groupHom
+        {\directSystemBond{\towerHistorySystem{\alpha}{p}}
+            {\gamma}{\beta}}
+        {\directSystemGroup{\towerHistorySystem{\alpha}{p}}{\gamma}}
+        {\directSystemGroup{\towerHistorySystem{\alpha}{p}}{\beta}}$ by
+        \obv{tower_history_system_bond_hom}.
+    Hence $\directSystemBond{\towerHistorySystem{\alpha}{p}}
+            {\gamma}{\beta}
+        \in\funs{
+            \carrier[
+                \directSystemGroup{\towerHistorySystem{\alpha}{p}}{
+                    \gamma}]}
+            {\carrier[
+                \directSystemGroup{\towerHistorySystem{\alpha}{p}}{
+                    \beta}]}$ by
+        \obv{group_hom_type}.
+    Hence $\identity{
+            \carrier[
+                \directSystemGroup{\towerHistorySystem{\alpha}{p}}{\beta}]}
+        \circ
+        \directSystemBond{\towerHistorySystem{\alpha}{p}}{\gamma}{\beta}
+        =\directSystemBond{\towerHistorySystem{\alpha}{p}}
+            {\gamma}{\beta}$ by
+        \obv{funs_identity_circ_left}.
+    $\directSystemBond{\towerHistorySystem{\alpha}{p}}{\beta}{\beta}
+        =\identity{
+            \carrier[
+                \directSystemGroup{\towerHistorySystem{\alpha}{p}}{\beta}]}$
+        by \obv{tower_history_system_bond_identity}.
+\end{proof}
+
+\begin{proposition}\label{tower_history_system_bond_composition_strict}
+    Suppose $\towerHistory{G}{\alpha}{p}$.
+    Let $\gamma,\beta,\delta\in\alpha$.
+    Suppose $\gamma\subseteq\beta$ and $\beta\in\delta$.
+    Then $\directSystemBond{\towerHistorySystem{\alpha}{p}}
+            {\gamma}{\delta}
+        =\directSystemBond{\towerHistorySystem{\alpha}{p}}
+            {\beta}{\delta}\circ
+         \directSystemBond{\towerHistorySystem{\alpha}{p}}
+            {\gamma}{\beta}$.
+\end{proposition}
+\begin{proof}
+    $\gamma$, $\beta$, and $\delta$ are ordinals by
+        \obv{tower_history_ordinal,elem_of_ordinal_is_ordinal}.
+    $\gamma\in\beta$ or $\gamma=\beta$ by
+        \obv{ordinal_subseteq_implies_elem_or_eq}.
+    If $\gamma\in\beta$, then
+        $\gamma\in\delta$ by
+        \obv{ordinal_transitivity}.
+    If $\gamma=\beta$, then
+        $\gamma\in\delta$.
+    $\beta\subseteq\delta$ by
+        \obv{ordinal_elem_implies_subseteq}.
+    $\gamma\subseteq\delta$ by
+        \obv{subseteq_transitive}.
+    $\validTowerStagePackage
+        {p(\delta)}{G}{\delta}{\restrl{p}{\delta}}$ by
+        \obv{tower_history_value_valid}.
+    $\delta\subseteq\alpha$ by
+        \obv{tower_history_ordinal,ordinal_elem_implies_subseteq}.
+    $\apply{\restrl{p}{\delta}}{\beta}=p(\beta)$ by
+        \obv{tower_history_function,restrl_of_function_apply}.
+    $\towerIncomingMap{p(\delta)}{\gamma}
+        =\towerIncomingMap{p(\delta)}{\beta}\circ
+            \towerIncomingMap{p(\beta)}{\gamma}$ by
+        \auto{valid_tower_stage_package_coherence}.
+    Follows by
+        \auto{tower_history_system_bond}.
+\end{proof}
+
+\begin{proposition}\label{tower_history_system_bond_composition}
+    Suppose $\towerHistory{G}{\alpha}{p}$.
+    Let $\gamma,\beta,\delta\in\alpha$.
+    Suppose $\gamma\subseteq\beta$ and $\beta\subseteq\delta$.
+    Then $\directSystemBond{\towerHistorySystem{\alpha}{p}}
+            {\gamma}{\delta}
+        =\directSystemBond{\towerHistorySystem{\alpha}{p}}
+            {\beta}{\delta}\circ
+         \directSystemBond{\towerHistorySystem{\alpha}{p}}
+            {\gamma}{\beta}$.
+\end{proposition}
+\begin{proof}
+    $\beta$ and $\delta$ are ordinals by
+        \obv{tower_history_ordinal,elem_of_ordinal_is_ordinal}.
+    $\beta\in\delta$ or $\beta=\delta$ by
+        \obv{ordinal_subseteq_implies_elem_or_eq}.
+    If $\beta\in\delta$, then
+        $\directSystemBond{\towerHistorySystem{\alpha}{p}}
+                {\gamma}{\delta}
+            =\directSystemBond{\towerHistorySystem{\alpha}{p}}
+                {\beta}{\delta}\circ
+             \directSystemBond{\towerHistorySystem{\alpha}{p}}
+                {\gamma}{\beta}$ by
+        \obv{tower_history_system_bond_composition_strict}.
+    If $\beta=\delta$, then
+        $\directSystemBond{\towerHistorySystem{\alpha}{p}}
+                {\gamma}{\delta}
+            =\directSystemBond{\towerHistorySystem{\alpha}{p}}
+                {\beta}{\delta}\circ
+             \directSystemBond{\towerHistorySystem{\alpha}{p}}
+                {\gamma}{\beta}$ by
+        \auto{tower_history_system_bond_composition_stationary}.
+\end{proof}
+
+The following constructor-facing lemmas keep the public laws above independent
+of the chosen record representation while giving the structure constructor
+premises in their exact syntactic form.
+
+\begin{proposition}\label{tower_history_index_is_directed}
+    Suppose $\towerHistory{G}{\alpha}{p}$ and
+        $\alpha\neq\emptyset$.
+    Then $\ordinalDirectedQuasiorder{\alpha}$ is an exact
+        directed quasiordered set.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \obv{tower_history_ordinal,
+            ordinal_directed_quasiorder_is_exact}.
+\end{proof}
+
+\begin{proposition}\label{tower_history_stage_family_type}
+    $\towerHistoryStages{\alpha}{p}\in
+        \funs{\carrier[\ordinalDirectedQuasiorder{\alpha}]}{
+            \ran{\towerHistoryStages{\alpha}{p}}}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{tower_history_stages_type,
+            ordinal_directed_quasiorder_carrier}.
+\end{proof}
+
+\begin{proposition}\label{tower_history_stage_family_group}
+    Suppose $\towerHistory{G}{\alpha}{p}$.
+    Let $\beta\in\carrier[\ordinalDirectedQuasiorder{\alpha}]$.
+    Then $\apply{\towerHistoryStages{\alpha}{p}}{\beta}$ is a group.
+\end{proposition}
+\begin{proof}
+    $\beta\in\alpha$ by
+        \obv{ordinal_directed_quasiorder_carrier}.
+    $\directSystemGroup{\towerHistorySystem{\alpha}{p}}{\beta}$
+        is a group by
+        \obv{tower_history_system_stage_group}.
+    Follows by
+        \obv{tower_history_system_group_raw}.
+\end{proof}
+
+\begin{proposition}\label{tower_history_bond_family_type}
+    $\towerHistoryBonds{\alpha}{p}\in
+        \funs{\leq[\ordinalDirectedQuasiorder{\alpha}]}{
+            \ran{\towerHistoryBonds{\alpha}{p}}}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{tower_history_bonds_type,
+            ordinal_directed_quasiorder_relation}.
+\end{proof}
+
+\begin{proposition}\label{tower_history_bond_family_hom}
+    Suppose $\towerHistory{G}{\alpha}{p}$.
+    Let $\gamma,\beta\in
+        \carrier[\ordinalDirectedQuasiorder{\alpha}]$.
+    Suppose $\gamma\mathrel{
+        \leq[\ordinalDirectedQuasiorder{\alpha}]}\beta$.
+    Then $\groupHom
+        {\apply{\towerHistoryBonds{\alpha}{p}}{(\gamma,\beta)}}
+        {\apply{\towerHistoryStages{\alpha}{p}}{\gamma}}
+        {\apply{\towerHistoryStages{\alpha}{p}}{\beta}}$.
+\end{proposition}
+\begin{proof}
+    $\gamma,\beta\in\alpha$ and $\gamma\subseteq\beta$ by
+        \auto{ordinal_directed_quasiorder_carrier,
+            ordinal_directed_quasiorder_relation,subseteqrel}.
+    $\groupHom
+        {\directSystemBond{\towerHistorySystem{\alpha}{p}}
+            {\gamma}{\beta}}
+        {\directSystemGroup{\towerHistorySystem{\alpha}{p}}{\gamma}}
+        {\directSystemGroup{\towerHistorySystem{\alpha}{p}}{\beta}}$ by
+        \obv{tower_history_system_bond_hom}.
+    $\apply{\towerHistoryBonds{\alpha}{p}}{(\gamma,\beta)}
+        =\directSystemBond{\towerHistorySystem{\alpha}{p}}
+            {\gamma}{\beta}$ by
+        \obv{tower_history_system_bond_raw}.
+    $\apply{\towerHistoryStages{\alpha}{p}}{\gamma}
+        =\directSystemGroup{\towerHistorySystem{\alpha}{p}}{\gamma}$ by
+        \obv{tower_history_system_group_raw}.
+    $\apply{\towerHistoryStages{\alpha}{p}}{\beta}
+        =\directSystemGroup{\towerHistorySystem{\alpha}{p}}{\beta}$ by
+        \obv{tower_history_system_group_raw}.
+\end{proof}
+
+\begin{proposition}\label{tower_history_bond_family_identity}
+    Suppose $\towerHistory{G}{\alpha}{p}$.
+    Let $\beta\in\carrier[\ordinalDirectedQuasiorder{\alpha}]$.
+    Then $\apply{\towerHistoryBonds{\alpha}{p}}{(\beta,\beta)}
+        =\identity{\carrier[
+            \apply{\towerHistoryStages{\alpha}{p}}{\beta}]}$.
+\end{proposition}
+\begin{proof}
+    $\beta\in\alpha$ by
+        \obv{ordinal_directed_quasiorder_carrier}.
+    $\directSystemBond{\towerHistorySystem{\alpha}{p}}{\beta}{\beta}
+        =\identity{\carrier[
+            \directSystemGroup{\towerHistorySystem{\alpha}{p}}{\beta}]}$
+        by \obv{tower_history_system_bond_identity}.
+    Follows by
+        \auto{tower_history_system_group_raw,
+            tower_history_system_bond_raw}.
+\end{proof}
+
+\begin{proposition}\label{tower_history_bond_family_composition_bridge}
+    Suppose
+        $\directSystemBond{\towerHistorySystem{\alpha}{p}}{\gamma}{\delta}
+        =\directSystemBond{\towerHistorySystem{\alpha}{p}}{\beta}{\delta}
+            \circ
+         \directSystemBond{\towerHistorySystem{\alpha}{p}}{\gamma}{\beta}$.
+    Then $\apply{\towerHistoryBonds{\alpha}{p}}{(\gamma,\delta)}
+        =\apply{\towerHistoryBonds{\alpha}{p}}{(\beta,\delta)}\circ
+            \apply{\towerHistoryBonds{\alpha}{p}}{(\gamma,\beta)}$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{tower_history_system_bond_raw}.
+\end{proof}
+
+\begin{proposition}\label{tower_history_bond_family_composition_on_ordinal}
+    Suppose $\towerHistory{G}{\alpha}{p}$.
+    Let $\gamma,\beta,\delta\in\alpha$.
+    Suppose $\gamma\subseteq\beta$ and $\beta\subseteq\delta$.
+    Then $\apply{\towerHistoryBonds{\alpha}{p}}{(\gamma,\delta)}
+        =\apply{\towerHistoryBonds{\alpha}{p}}{(\beta,\delta)}\circ
+            \apply{\towerHistoryBonds{\alpha}{p}}{(\gamma,\beta)}$.
+\end{proposition}
+\begin{proof}
+    $\directSystemBond{\towerHistorySystem{\alpha}{p}}{\gamma}{\delta}
+        =\directSystemBond{\towerHistorySystem{\alpha}{p}}{\beta}{\delta}
+            \circ
+         \directSystemBond{\towerHistorySystem{\alpha}{p}}{\gamma}{\beta}$
+        by \obv{tower_history_system_bond_composition}.
+    Follows by
+        \obv{tower_history_bond_family_composition_bridge}.
+\end{proof}
+
+\begin{proposition}\label{tower_history_bond_family_composition}
+    Suppose $\towerHistory{G}{\alpha}{p}$.
+    Let $\gamma,\beta,\delta\in
+        \carrier[\ordinalDirectedQuasiorder{\alpha}]$.
+    Suppose $\gamma\mathrel{
+        \leq[\ordinalDirectedQuasiorder{\alpha}]}\beta$ and
+        $\beta\mathrel{
+        \leq[\ordinalDirectedQuasiorder{\alpha}]}\delta$.
+    Then $\apply{\towerHistoryBonds{\alpha}{p}}{(\gamma,\delta)}
+        =\apply{\towerHistoryBonds{\alpha}{p}}{(\beta,\delta)}\circ
+            \apply{\towerHistoryBonds{\alpha}{p}}{(\gamma,\beta)}$.
+\end{proposition}
+\begin{proof}
+    $\gamma,\beta,\delta\in\alpha$ by
+        \obv{ordinal_directed_quasiorder_carrier}.
+    $\gamma\subseteq\beta$ and $\beta\subseteq\delta$ by
+        \auto{ordinal_directed_quasiorder_relation,subseteqrel}.
+    Follows by
+        \obv{tower_history_bond_family_composition_on_ordinal}.
+\end{proof}
+
+\subsection{Assembling the history system}
+
+The constructor application is staged by mathematical dependency.  Each
+intermediate rule retains only the family laws not yet supplied by the history
+invariant; this keeps the quantified constructor interface explicit without
+repeating any of the underlying group-theoretic proofs.
+
+\begin{theorem}\label{tower_history_system_after_index}
+    Suppose $\towerHistory{G}{\alpha}{p}$ and
+        $\alpha\neq\emptyset$.
+    Let $I=\ordinalDirectedQuasiorder{\alpha}$.
+    Let $A=\towerHistoryStages{\alpha}{p}$.
+    Let $\Phi=\towerHistoryBonds{\alpha}{p}$.
+    Suppose $A\in\funs{\carrier[I]}{\ran{A}}$.
+    Suppose for every $i\in\carrier[I]$ we have $A(i)$ is a group.
+    Suppose $\Phi\in\funs{\leq[I]}{\ran{\Phi}}$.
+    Suppose for all $i,j\in\carrier[I]$ such that
+        $i\mathrel{\leq[I]}j$ we have
+        $\groupHom{\Phi((i,j))}{A(i)}{A(j)}$.
+    Suppose for every $i\in\carrier[I]$ we have
+        $\Phi((i,i))=\identity{\carrier[A(i)]}$.
+    Suppose for all $i,j,k\in\carrier[I]$ such that
+        $i\mathrel{\leq[I]}j$ and $j\mathrel{\leq[I]}k$ we have
+        $\Phi((i,k))=\Phi((j,k))\circ\Phi((i,j))$.
+    Then $\groupDirectSystemStructure{I}{A}{\Phi}$ is an exact
+        group direct system.
+\end{theorem}
+\begin{proof}
+    $I$ is a directed quasiordered set by
+        \auto{tower_history_index_is_directed}.
+    Follows by \obv{group_direct_system_structure_is_system}.
+\end{proof}
+
+\begin{theorem}\label{tower_history_system_after_group_family}
+    Suppose $\towerHistory{G}{\alpha}{p}$ and
+        $\alpha\neq\emptyset$.
+    Let $I=\ordinalDirectedQuasiorder{\alpha}$.
+    Let $A=\towerHistoryStages{\alpha}{p}$.
+    Let $\Phi=\towerHistoryBonds{\alpha}{p}$.
+    Suppose $\Phi\in\funs{\leq[I]}{\ran{\Phi}}$.
+    Suppose for all $i,j\in\carrier[I]$ such that
+        $i\mathrel{\leq[I]}j$ we have
+        $\groupHom{\Phi((i,j))}{A(i)}{A(j)}$.
+    Suppose for every $i\in\carrier[I]$ we have
+        $\Phi((i,i))=\identity{\carrier[A(i)]}$.
+    Suppose for all $i,j,k\in\carrier[I]$ such that
+        $i\mathrel{\leq[I]}j$ and $j\mathrel{\leq[I]}k$ we have
+        $\Phi((i,k))=\Phi((j,k))\circ\Phi((i,j))$.
+    Then $\groupDirectSystemStructure{I}{A}{\Phi}$ is an exact
+        group direct system.
+\end{theorem}
+\begin{proof}
+    $A\in\funs{\carrier[I]}{\ran{A}}$ by
+        \auto{tower_history_stage_family_type}.
+    For every $i\in\carrier[I]$ we have $A(i)$ is a group by
+        \auto{tower_history_stage_family_group}.
+    Follows by \obv{tower_history_system_after_index}.
+\end{proof}
+
+\begin{theorem}\label{tower_history_system_after_bond_homs}
+    Suppose $\towerHistory{G}{\alpha}{p}$ and
+        $\alpha\neq\emptyset$.
+    Let $I=\ordinalDirectedQuasiorder{\alpha}$.
+    Let $A=\towerHistoryStages{\alpha}{p}$.
+    Let $\Phi=\towerHistoryBonds{\alpha}{p}$.
+    Suppose for every $i\in\carrier[I]$ we have
+        $\Phi((i,i))=\identity{\carrier[A(i)]}$.
+    Suppose for all $i,j,k\in\carrier[I]$ such that
+        $i\mathrel{\leq[I]}j$ and $j\mathrel{\leq[I]}k$ we have
+        $\Phi((i,k))=\Phi((j,k))\circ\Phi((i,j))$.
+    Then $\groupDirectSystemStructure{I}{A}{\Phi}$ is an exact
+        group direct system.
+\end{theorem}
+\begin{proof}
+    $\Phi\in\funs{\leq[I]}{\ran{\Phi}}$ by
+        \auto{tower_history_bond_family_type}.
+    For all $i,j\in\carrier[I]$ such that
+        $i\mathrel{\leq[I]}j$ we have
+        $\groupHom{\Phi((i,j))}{A(i)}{A(j)}$ by
+        \auto{tower_history_bond_family_hom}.
+    Follows by \obv{tower_history_system_after_group_family}.
+\end{proof}
+
+\begin{theorem}\label{tower_history_system_constructed}
+    Suppose $\towerHistory{G}{\alpha}{p}$ and
+        $\alpha\neq\emptyset$.
+    Let $I=\ordinalDirectedQuasiorder{\alpha}$.
+    Let $A=\towerHistoryStages{\alpha}{p}$.
+    Let $\Phi=\towerHistoryBonds{\alpha}{p}$.
+    Then $\groupDirectSystemStructure{I}{A}{\Phi}$ is an exact
+        group direct system.
+\end{theorem}
+\begin{proof}
+    For every $i\in\carrier[I]$ we have
+        $\Phi((i,i))=\identity{\carrier[A(i)]}$ by
+        \auto{tower_history_bond_family_identity}.
+    For all $i,j,k\in\carrier[I]$ such that
+        $i\mathrel{\leq[I]}j$ and $j\mathrel{\leq[I]}k$ we have
+        $\Phi((i,k))=\Phi((j,k))\circ\Phi((i,j))$ by
+        \auto{tower_history_bond_family_composition}.
+    Follows by \obv{tower_history_system_after_bond_homs}.
+\end{proof}
+
+\begin{corollary}\label{tower_history_system_is_system}
+    Suppose $\towerHistory{G}{\alpha}{p}$ and
+        $\alpha\neq\emptyset$.
+    Let $I=\ordinalDirectedQuasiorder{\alpha}$.
+    Let $A=\towerHistoryStages{\alpha}{p}$.
+    Let $\Phi=\towerHistoryBonds{\alpha}{p}$.
+    Then $\towerHistorySystem{\alpha}{p}$ is an exact
+        group direct system.
+\end{corollary}
+\begin{proof}
+    Follows by \obv{tower_history_system_constructed}.
+\end{proof}
+
+\subsection{The zero step}
+
+\begin{definition}\label{tower_zero_step}
+    $\towerZeroStep{G}=
+        \towerStagePackage{\emptyset}{G}{
+            \towerCompleteIncoming{\emptyset}{G}{\emptyset}}$.
+\end{definition}
+
+\begin{proposition}\label{tower_zero_step_group}
+    $\towerStageGroup[\towerZeroStep{G}]=G$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{tower_zero_step,tower_stage_package_structure_group}.
+\end{proof}
+
+\begin{proposition}\label{tower_zero_step_incoming}
+    $\towerIncoming[\towerZeroStep{G}]=
+        \towerCompleteIncoming{\emptyset}{G}{\emptyset}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{tower_zero_step,tower_stage_package_structure_incoming}.
+\end{proof}
+
+\begin{proposition}\label{tower_zero_step_data}
+    Let $G$ be a group.
+    Let $P=\towerZeroStep{G}$.
+    Then $\emptyset$ is an ordinal and
+        $P=\towerStagePackage{\emptyset}
+            {\towerStageGroup[P]}{\towerIncoming[P]}$ and
+        $\carrier[P]=\suc{\emptyset}$ and
+        $\emptyset$ is a function and $\dom{\emptyset}=\emptyset$ and
+        $\towerStageGroup[P]$ is a group and
+        $\towerStageGroup[P]=G$.
+\end{proposition}
+\begin{proof}
+    $\emptyset$ is an ordinal by \obv{emptyset_is_ordinal}.
+    $\emptyset$ is a function and $\dom{\emptyset}=\emptyset$ by
+        \obv{emptyset_is_function,dom_emptyset}.
+    $P=\towerStagePackage{\emptyset}
+        {\towerStageGroup[P]}{\towerIncoming[P]}$ and
+        $\carrier[P]=\suc{\emptyset}$ and
+        $\towerStageGroup[P]=G$ by
+        \auto{tower_zero_step,tower_zero_step_group,
+            tower_zero_step_incoming,
+            tower_stage_package_structure_carrier}.
+\end{proof}
+
+\begin{proposition}\label{tower_zero_step_incoming_type}
+    Let $G$ be a group.
+    Let $P=\towerZeroStep{G}$.
+    Then $\towerIncoming[P]\in
+        \funs{\suc{\emptyset}}{\ran{\towerIncoming[P]}}$.
+\end{proposition}
+\begin{proof}
+    Let $q=\towerCompleteIncoming{\emptyset}{G}{\emptyset}$.
+    $\emptyset$ is a function and $\dom{\emptyset}=\emptyset$ by
+        \obv{emptyset_is_function,dom_emptyset}.
+    $q$ is a function and $\dom{q}=\suc{\emptyset}$ by
+        \auto{tower_complete_incoming_function}.
+    Show that $q$ is a function to $\ran{q}$.
+    \begin{subproof}
+        For every $i\in\dom{q}$ we have $q(i)\in\ran{q}$ by
+            \auto{fun_ran_iff}.
+    \end{subproof}
+    Hence $q\in\funs{\suc{\emptyset}}{\ran{q}}$ by
+        \obv{funs_intro}.
+    Follows by \auto{tower_zero_step_incoming}.
+\end{proof}
+
+\begin{proposition}\label{tower_zero_step_identity_raw}
+    Let $G$ be a group.
+    Then $\apply{
+            \towerCompleteIncoming{\emptyset}{G}{\emptyset}}
+            {\emptyset}=
+        \identity{\carrier[G]}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \obv{emptyset_is_function,dom_emptyset,
+            tower_complete_incoming_current}.
+\end{proof}
+
+\begin{proposition}\label{tower_zero_step_identity}
+    Let $G$ be a group.
+    Let $P=\towerZeroStep{G}$.
+    Then $\towerIncomingMap{P}{\emptyset}=
+        \identity{\carrier[\towerStageGroup[P]]}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{tower_incoming_map,tower_zero_step_incoming,
+            tower_zero_step_group,tower_zero_step_identity_raw}.
+\end{proof}
+
+\begin{proposition}\label{tower_zero_step_vacuous_laws}
+    Let $P=\towerZeroStep{G}$.
+    Then (for every $\beta\in\emptyset$ we have
+            $\apply{\emptyset}{\beta}=\towerStagePackage{\beta}
+                {\towerStageGroup[\apply{\emptyset}{\beta}]}
+                {\towerIncoming[\apply{\emptyset}{\beta}]}$ and
+            $\carrier[\apply{\emptyset}{\beta}]=\suc{\beta}$ and
+            $\groupHom
+                {\towerIncomingMap{P}{\beta}}
+                {\towerStageGroup[\apply{\emptyset}{\beta}]}
+                {\towerStageGroup[P]}$) and
+        (for all $\gamma,\beta\in\emptyset$ such that
+            $\gamma\subseteq\beta$ we have
+            $\towerIncomingMap{P}{\gamma}=
+                \towerIncomingMap{P}{\beta}\circ
+                    \towerIncomingMap{\apply{\emptyset}{\beta}}{\gamma}$).
+\end{proposition}
+\begin{proof}
+    Follows by \auto{emptyset}.
+\end{proof}
+
+\begin{proposition}\label{tower_zero_step_well_formed}
+    Let $G$ be a group.
+    Then $\towerStagePackageWellFormed
+        {\towerZeroStep{G}}{G}{\emptyset}{\emptyset}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{tower_zero_step_data,tower_zero_step_incoming_type,
+            tower_zero_step_identity,
+            tower_stage_package_well_formed}.
+\end{proof}
+
+\begin{proposition}\label{tower_zero_step_incoming_maps}
+    $\towerStagePackageIncomingMaps
+        {\towerZeroStep{G}}{\emptyset}{\emptyset}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{tower_zero_step_vacuous_laws,
+            tower_stage_package_incoming_maps}.
+\end{proof}
+
+\begin{proposition}\label{tower_zero_step_is_coherent}
+    $\towerStagePackageCoherent
+        {\towerZeroStep{G}}{\emptyset}{\emptyset}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{tower_zero_step_vacuous_laws,
+            tower_stage_package_coherent}.
+\end{proof}
+
+\begin{proposition}\label{tower_zero_step_compatible}
+    $\towerStagePackageCompatible
+        {\towerZeroStep{G}}{\emptyset}{\emptyset}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \obv{tower_zero_step_incoming_maps,
+            tower_zero_step_is_coherent,
+            tower_stage_package_compatible}.
+\end{proof}
+
+\begin{theorem}\label{tower_zero_step_valid}
+    Let $G$ be a group.
+    Then $\validTowerStagePackage
+        {\towerZeroStep{G}}{G}{\emptyset}{\emptyset}$.
+\end{theorem}
+\begin{proof}
+    Follows by
+        \obv{tower_zero_step_well_formed,
+            tower_zero_step_compatible,
+            valid_tower_stage_package}.
+\end{proof}
+
+\subsection{The successor step}
+
+For a predecessor package $P$ at $\beta$, every old incoming map is
+postcomposed with the inner map of its current group.  The resulting family
+already includes the map from stage $\beta$; the completion operation adds
+only the identity at the new stage $\beta+1$.
+
+\begin{definition}\label{tower_successor_incoming_family}
+    $\towerSuccessorIncomingFamily{\beta}{P}=
+        \pointwiseCompositionFamily{\suc{\beta}}
+            {\suc{\beta}\times\{\innerMap{\towerStageGroup[P]}\}}
+            {\towerIncoming[P]}$.
+\end{definition}
+
+\begin{proposition}\label{tower_successor_incoming_family_type}
+    $\towerSuccessorIncomingFamily{\beta}{P}\in
+        \funs{\suc{\beta}}{
+            \ran{\towerSuccessorIncomingFamily{\beta}{P}}}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{tower_successor_incoming_family,
+            pointwise_composition_family_type}.
+\end{proof}
+
+\begin{proposition}\label{tower_successor_incoming_family_apply}
+    Let $\gamma\in\suc{\beta}$.
+    Then $\apply{\towerSuccessorIncomingFamily{\beta}{P}}{\gamma}=
+        \innerMap{\towerStageGroup[P]}\circ
+            \towerIncomingMap{P}{\gamma}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{tower_successor_incoming_family,
+            pointwise_composition_family_apply,
+            constant_graph_application,tower_incoming_map}.
+\end{proof}
+
+\begin{definition}\label{tower_successor_step}
+    $\towerSuccessorStep{\beta}{p}=
+        \towerStagePackage{\suc{\beta}}
+            {\automorphismGroup{\towerStageGroup[p(\beta)]}}
+            {\towerCompleteIncoming{\suc{\beta}}
+                {\automorphismGroup{\towerStageGroup[p(\beta)]}}
+                {\towerSuccessorIncomingFamily{\beta}{p(\beta)}}}$.
+\end{definition}
+
+\begin{proposition}\label{tower_successor_step_group}
+    $\towerStageGroup[\towerSuccessorStep{\beta}{p}]=
+        \automorphismGroup{\towerStageGroup[p(\beta)]}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{tower_successor_step,
+            tower_stage_package_structure_group}.
+\end{proof}
+
+\begin{proposition}\label{tower_successor_step_incoming}
+    $\towerIncoming[\towerSuccessorStep{\beta}{p}]=
+        \towerCompleteIncoming{\suc{\beta}}
+            {\automorphismGroup{\towerStageGroup[p(\beta)]}}
+            {\towerSuccessorIncomingFamily{\beta}{p(\beta)}}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{tower_successor_step,
+            tower_stage_package_structure_incoming}.
+\end{proof}
+
+\begin{proposition}\label{tower_successor_predecessor_incoming_hom}
+    Suppose $\towerHistory{G}{\suc{\beta}}{p}$.
+    Let $\gamma\in\suc{\beta}$.
+    Then $\groupHom
+        {\towerIncomingMap{p(\beta)}{\gamma}}
+        {\towerStageGroup[p(\gamma)]}
+        {\towerStageGroup[p(\beta)]}$.
+\end{proposition}
+\begin{proof}
+    $\gamma\in\beta$ or $\gamma=\beta$ by
+        \auto{suc_iff}.
+    Let $P=p(\beta)$.
+    $\validTowerStagePackage{P}{G}{\beta}{\restrl{p}{\beta}}$ by
+        \auto{tower_history_value_valid,suc_iff}.
+    Hence $\towerStageGroup[P]$ is a group by
+        \auto{valid_tower_stage_package_data}.
+    If $\gamma\in\beta$, then $\beta\subseteq\suc{\beta}$ by
+        \obv{subseteq_self_suc_intro}.
+    If $\gamma\in\beta$, then
+        $\apply{\restrl{p}{\beta}}{\gamma}=p(\gamma)$ by
+        \obv{tower_history_function,restrl_of_function_apply}.
+    If $\gamma\in\beta$, then
+        $\groupHom
+            {\towerIncomingMap{P}{\gamma}}
+            {\towerStageGroup[p(\gamma)]}
+            {\towerStageGroup[P]}$ by
+        \auto{valid_tower_stage_package_incoming_hom}.
+    If $\gamma=\beta$, then
+        $\towerIncomingMap{P}{\gamma}=
+            \identity{\carrier[\towerStageGroup[P]]}$ by
+        \auto{valid_tower_stage_package_identity}.
+    If $\gamma=\beta$, then
+        $\groupHom
+            {\towerIncomingMap{P}{\gamma}}
+            {\towerStageGroup[p(\gamma)]}
+            {\towerStageGroup[P]}$ by
+        \auto{identity_group_hom}.
+\end{proof}
+
+\begin{proposition}\label{tower_successor_incoming_hom}
+    Suppose $\towerHistory{G}{\suc{\beta}}{p}$.
+    Let $\gamma\in\suc{\beta}$.
+    Then $\groupHom
+        {\apply{\towerSuccessorIncomingFamily{\beta}{p(\beta)}}{\gamma}}
+        {\towerStageGroup[p(\gamma)]}
+        {\automorphismGroup{\towerStageGroup[p(\beta)]}}$.
+\end{proposition}
+\begin{proof}
+    $\groupHom
+        {\towerIncomingMap{p(\beta)}{\gamma}}
+        {\towerStageGroup[p(\gamma)]}
+        {\towerStageGroup[p(\beta)]}$ by
+        \obv{tower_successor_predecessor_incoming_hom}.
+    $\groupHom
+        {\innerMap{\towerStageGroup[p(\beta)]}}
+        {\towerStageGroup[p(\beta)]}
+        {\automorphismGroup{\towerStageGroup[p(\beta)]}}$ by
+        \obv{inner_map_group_hom}.
+    Hence $\groupHom
+        {\innerMap{\towerStageGroup[p(\beta)]}\circ
+            \towerIncomingMap{p(\beta)}{\gamma}}
+        {\towerStageGroup[p(\gamma)]}
+        {\automorphismGroup{\towerStageGroup[p(\beta)]}}$ by
+        \obv{group_hom_composition}.
+    Follows by \obv{tower_successor_incoming_family_apply}.
+\end{proof}
+
+\begin{proposition}\label{tower_successor_incoming_at_predecessor}
+    Suppose $\towerHistory{G}{\suc{\beta}}{p}$.
+    Then $\apply{\towerSuccessorIncomingFamily{\beta}{p(\beta)}}{\beta}
+        =\innerMap{\towerStageGroup[p(\beta)]}$.
+\end{proposition}
+\begin{proof}
+    Let $P=p(\beta)$.
+    $\validTowerStagePackage{P}{G}{\beta}{\restrl{p}{\beta}}$ by
+        \auto{tower_history_value_valid,suc_iff}.
+    Hence $\towerIncomingMap{P}{\beta}=
+        \identity{\carrier[\towerStageGroup[P]]}$ by
+        \obv{valid_tower_stage_package_identity}.
+    $\towerStageGroup[P]$ is a group by
+        \auto{valid_tower_stage_package_data}.
+    Hence $\groupHom
+        {\innerMap{\towerStageGroup[P]}}
+        {\towerStageGroup[P]}
+        {\automorphismGroup{\towerStageGroup[P]}}$ by
+        \obv{inner_map_group_hom}.
+    Hence $\innerMap{\towerStageGroup[P]}\in
+        \funs{\carrier[\towerStageGroup[P]]}{
+            \carrier[\automorphismGroup{\towerStageGroup[P]}]}$ by
+        \obv{group_hom_type}.
+    $\innerMap{\towerStageGroup[P]}\circ
+        \identity{\carrier[\towerStageGroup[P]]}
+        =\innerMap{\towerStageGroup[P]}$ by
+        \obv{funs_circ_identity_right}.
+    $\beta\in\suc{\beta}$ by \auto{suc_iff}.
+    Follows by \auto{tower_successor_incoming_family_apply}.
+\end{proof}
+
+\begin{proposition}\label{tower_successor_incoming_coherence}
+    Suppose $\towerHistory{G}{\suc{\beta}}{p}$.
+    Let $\gamma,\delta\in\suc{\beta}$.
+    Suppose $\gamma\subseteq\delta$.
+    Then $\apply{\towerSuccessorIncomingFamily{\beta}{p(\beta)}}
+            {\gamma}
+        =\apply{\towerSuccessorIncomingFamily{\beta}{p(\beta)}}
+            {\delta}\circ
+         \towerIncomingMap{p(\delta)}{\gamma}$.
+\end{proposition}
+\begin{proof}
+    Hence $\beta$, $\gamma$, and $\delta$ are ordinals by
+        \obv{suc_ordinal_implies_ordinal,elem_of_ordinal_is_ordinal}.
+    $\delta\in\beta$ or $\delta=\beta$ by \auto{suc_iff}.
+    Let $P=p(\beta)$.
+
+    If $\delta=\beta$, then
+        $\apply{\towerSuccessorIncomingFamily{\beta}{P}}{\delta}
+            =\innerMap{\towerStageGroup[P]}$ by
+        \auto{tower_successor_incoming_at_predecessor}.
+    If $\delta=\beta$, then
+        $\apply{\towerSuccessorIncomingFamily{\beta}{P}}{\gamma}
+            =\innerMap{\towerStageGroup[P]}\circ
+                \towerIncomingMap{P}{\gamma}$ by
+        \obv{tower_successor_incoming_family_apply}.
+
+    If $\delta\in\beta$, then
+        $\gamma\in\delta$ or $\gamma=\delta$ by
+        \obv{ordinal_subseteq_implies_elem_or_eq}.
+    If $\delta\in\beta$ and $\gamma\in\delta$, then
+        $\gamma\in\beta$ by \obv{ordinal_transitivity}.
+    If $\delta\in\beta$ and $\gamma=\delta$, then
+        $\gamma\in\beta$.
+    If $\delta\in\beta$, then
+        $\validTowerStagePackage{P}{G}{\beta}{\restrl{p}{\beta}}$ by
+        \auto{tower_history_value_valid,suc_iff}.
+    $\beta\subseteq\suc{\beta}$ by \obv{subseteq_self_suc_intro}.
+    If $\delta\in\beta$, then
+        $\apply{\restrl{p}{\beta}}{\delta}=p(\delta)$ by
+        \obv{tower_history_function,restrl_of_function_apply}.
+    If $\delta\in\beta$, then
+        $\towerIncomingMap{P}{\gamma}=
+            \towerIncomingMap{P}{\delta}\circ
+                \towerIncomingMap{p(\delta)}{\gamma}$ by
+        \auto{valid_tower_stage_package_coherence}.
+    If $\delta\in\beta$, then
+        $\innerMap{\towerStageGroup[P]}\circ
+            \towerIncomingMap{P}{\gamma}
+        =(\innerMap{\towerStageGroup[P]}\circ
+            \towerIncomingMap{P}{\delta})\circ
+                \towerIncomingMap{p(\delta)}{\gamma}$ by
+        \auto{circ_assoc}.
+    If $\delta\in\beta$, then
+        $\apply{\towerSuccessorIncomingFamily{\beta}{P}}{\gamma}
+            =\innerMap{\towerStageGroup[P]}\circ
+                \towerIncomingMap{P}{\gamma}$ and
+        $\apply{\towerSuccessorIncomingFamily{\beta}{P}}{\delta}
+            =\innerMap{\towerStageGroup[P]}\circ
+                \towerIncomingMap{P}{\delta}$ by
+        \obv{tower_successor_incoming_family_apply}.
+\end{proof}
+
+\begin{proposition}\label{tower_successor_step_incoming_earlier_raw}
+    Let $\gamma\in\suc{\beta}$.
+    Let $q=\towerSuccessorIncomingFamily{\beta}{p(\beta)}$.
+    Then $\apply{
+            \towerCompleteIncoming{\suc{\beta}}
+                {\automorphismGroup{\towerStageGroup[p(\beta)]}}{q}}
+            {\gamma}=\apply{q}{\gamma}$.
+\end{proposition}
+\begin{proof}
+    $q$ is a function and $\dom{q}=\suc{\beta}$ by
+        \auto{tower_successor_incoming_family_type,funs_elim}.
+    Follows by \obv{tower_complete_incoming_earlier}.
+\end{proof}
+
+\begin{proposition}\label{tower_successor_step_incoming_earlier}
+    Let $\gamma\in\suc{\beta}$.
+    Then $\towerIncomingMap{\towerSuccessorStep{\beta}{p}}{\gamma}=
+        \apply{\towerSuccessorIncomingFamily{\beta}{p(\beta)}}{\gamma}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{tower_incoming_map,tower_successor_step_incoming,
+            tower_successor_step_incoming_earlier_raw}.
+\end{proof}
+
+\begin{proposition}\label{tower_successor_step_incoming_at_predecessor}
+    Suppose $\towerHistory{G}{\suc{\beta}}{p}$.
+    Then $\towerIncomingMap{\towerSuccessorStep{\beta}{p}}{\beta}=
+        \innerMap{\towerStageGroup[p(\beta)]}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{tower_successor_step_incoming_earlier,
+            tower_successor_incoming_at_predecessor,suc_intro_self}.
+\end{proof}
+
+\begin{proposition}\label{tower_successor_step_incoming_current_raw}
+    Let $q=\towerSuccessorIncomingFamily{\beta}{p(\beta)}$.
+    Then $\apply{
+        \towerCompleteIncoming{\suc{\beta}}
+            {\automorphismGroup{\towerStageGroup[p(\beta)]}}{q}}
+        {\suc{\beta}}=
+        \identity{\carrier[
+            \automorphismGroup{\towerStageGroup[p(\beta)]}]}$.
+\end{proposition}
+\begin{proof}
+    $q$ is a function and $\dom{q}=\suc{\beta}$ by
+        \auto{tower_successor_incoming_family_type,funs_elim}.
+    Follows by \obv{tower_complete_incoming_current}.
+\end{proof}
+
+\begin{proposition}\label{tower_successor_step_incoming_current}
+    $\towerIncomingMap{\towerSuccessorStep{\beta}{p}}{\suc{\beta}}=
+        \identity{\carrier[
+            \towerStageGroup[\towerSuccessorStep{\beta}{p}]]}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{tower_incoming_map,tower_successor_step_incoming,
+            tower_successor_step_group,
+            tower_successor_step_incoming_current_raw}.
+\end{proof}
+
+\begin{proposition}\label{tower_successor_step_incoming_type}
+    $\towerIncoming[\towerSuccessorStep{\beta}{p}]\in
+        \funs{\suc{\suc{\beta}}}{
+            \ran{\towerIncoming[\towerSuccessorStep{\beta}{p}]}}$.
+\end{proposition}
+\begin{proof}
+    Let $q=\towerSuccessorIncomingFamily{\beta}{p(\beta)}$.
+    Let $r=\towerCompleteIncoming{\suc{\beta}}
+        {\automorphismGroup{\towerStageGroup[p(\beta)]}}{q}$.
+    $q$ is a function and $\dom{q}=\suc{\beta}$ by
+        \auto{tower_successor_incoming_family_type,funs_elim}.
+    Hence $r$ is a function and $\dom{r}=\suc{\suc{\beta}}$ by
+        \auto{tower_complete_incoming_function}.
+    Show that $r$ is a function to $\ran{r}$.
+    \begin{subproof}
+        For every $i\in\dom{r}$ we have $r(i)\in\ran{r}$ by
+            \auto{fun_ran_iff}.
+    \end{subproof}
+    Hence $r\in\funs{\suc{\suc{\beta}}}{\ran{r}}$ by
+        \obv{funs_intro}.
+    Follows by \auto{tower_successor_step_incoming}.
+\end{proof}
+
+\begin{proposition}\label{tower_successor_history_shape}
+    Suppose $\towerHistory{G}{\suc{\beta}}{p}$.
+    Let $\gamma\in\suc{\beta}$.
+    Then $p(\gamma)=\towerStagePackage{\gamma}
+            {\towerStageGroup[p(\gamma)]}{\towerIncoming[p(\gamma)]}$ and
+        $\carrier[p(\gamma)]=\suc{\gamma}$.
+\end{proposition}
+\begin{proof}
+    $\validTowerStagePackage
+        {p(\gamma)}{G}{\gamma}{\restrl{p}{\gamma}}$ by
+        \obv{tower_history_value_valid}.
+    Follows by \auto{valid_tower_stage_package_data}.
+\end{proof}
+
+\begin{proposition}\label{tower_successor_step_history_data}
+    Suppose $\towerHistory{G}{\suc{\beta}}{p}$.
+    Then $\suc{\beta}$ is an ordinal and
+        $p$ is a function and $\dom{p}=\suc{\beta}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \obv{tower_history_ordinal,tower_history_function}.
+\end{proof}
+
+\begin{proposition}\label{tower_successor_step_exact_data}
+    Let $Q=\towerSuccessorStep{\beta}{p}$.
+    Then $Q=\towerStagePackage{\suc{\beta}}
+            {\towerStageGroup[Q]}{\towerIncoming[Q]}$ and
+        $\carrier[Q]=\suc{\suc{\beta}}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{tower_successor_step,tower_successor_step_group,
+            tower_successor_step_incoming,
+            tower_stage_package_structure_carrier}.
+\end{proof}
+
+\begin{proposition}\label{tower_successor_step_group_is_group}
+    Suppose $\towerHistory{G}{\suc{\beta}}{p}$.
+    Then $\towerStageGroup[\towerSuccessorStep{\beta}{p}]$ is a group.
+\end{proposition}
+\begin{proof}
+    $\beta\in\suc{\beta}$ by \auto{suc_iff}.
+    $\validTowerStagePackage
+        {p(\beta)}{G}{\beta}{\restrl{p}{\beta}}$ by
+        \obv{tower_history_value_valid}.
+    Hence $\towerStageGroup[p(\beta)]$ is a group by
+        \auto{valid_tower_stage_package_data}.
+    Hence $\automorphismGroup{\towerStageGroup[p(\beta)]}$ is a group by
+        \obv{automorphism_group_is_group}.
+    Follows by \obv{tower_successor_step_group}.
+\end{proof}
+
+\begin{proposition}\label{tower_successor_step_base_vacuous}
+    $\suc{\beta}=\emptyset\implies
+        \towerStageGroup[\towerSuccessorStep{\beta}{p}]=G$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{suc_neq_emptyset}.
+\end{proof}
+
+\begin{proposition}\label{tower_successor_step_incoming_hom}
+    Suppose $\towerHistory{G}{\suc{\beta}}{p}$.
+    Let $\gamma\in\suc{\beta}$.
+    Then $\groupHom
+        {\towerIncomingMap{\towerSuccessorStep{\beta}{p}}{\gamma}}
+        {\towerStageGroup[p(\gamma)]}
+        {\towerStageGroup[\towerSuccessorStep{\beta}{p}]}$.
+\end{proposition}
+\begin{proof}
+    $\groupHom
+        {\apply{\towerSuccessorIncomingFamily{\beta}{p(\beta)}}{\gamma}}
+        {\towerStageGroup[p(\gamma)]}
+        {\automorphismGroup{\towerStageGroup[p(\beta)]}}$ by
+        \obv{tower_successor_incoming_hom}.
+    Follows by
+        \obv{tower_successor_step_incoming_earlier,
+            tower_successor_step_group}.
+\end{proof}
+
+\begin{proposition}\label{tower_successor_step_coherence}
+    Suppose $\towerHistory{G}{\suc{\beta}}{p}$.
+    Let $\gamma,\delta\in\suc{\beta}$.
+    Suppose $\gamma\subseteq\delta$.
+    Then $\towerIncomingMap{\towerSuccessorStep{\beta}{p}}{\gamma}=
+        \towerIncomingMap{\towerSuccessorStep{\beta}{p}}{\delta}\circ
+            \towerIncomingMap{p(\delta)}{\gamma}$.
+\end{proposition}
+\begin{proof}
+    $\apply{\towerSuccessorIncomingFamily{\beta}{p(\beta)}}{\gamma}
+        =\apply{\towerSuccessorIncomingFamily{\beta}{p(\beta)}}{\delta}
+            \circ\towerIncomingMap{p(\delta)}{\gamma}$ by
+        \obv{tower_successor_incoming_coherence}.
+    Follows by \auto{tower_successor_step_incoming_earlier}.
+\end{proof}
+
+\begin{proposition}\label{tower_successor_step_predecessor_laws}
+    Suppose $\towerHistory{G}{\suc{\beta}}{p}$.
+    Let $Q=\towerSuccessorStep{\beta}{p}$.
+    Then for every $\gamma\in\suc{\beta}$ we have
+        $p(\gamma)=\towerStagePackage{\gamma}
+            {\towerStageGroup[p(\gamma)]}{\towerIncoming[p(\gamma)]}$ and
+        $\carrier[p(\gamma)]=\suc{\gamma}$ and
+        $\groupHom
+            {\towerIncomingMap{Q}{\gamma}}
+            {\towerStageGroup[p(\gamma)]}
+            {\towerStageGroup[Q]}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{tower_successor_history_shape,
+            tower_successor_step_incoming_hom}.
+\end{proof}
+
+\begin{proposition}\label{tower_successor_step_well_formed}
+    Suppose $\towerHistory{G}{\suc{\beta}}{p}$.
+    Then $\towerStagePackageWellFormed
+        {\towerSuccessorStep{\beta}{p}}{G}{\suc{\beta}}{p}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{tower_successor_step_history_data,
+            tower_successor_step_exact_data,
+            tower_successor_step_group_is_group,
+            tower_successor_step_incoming_type,
+            tower_successor_step_base_vacuous,
+            tower_successor_step_incoming_current,
+            tower_stage_package_well_formed}.
+\end{proof}
+
+\begin{proposition}\label{tower_successor_step_incoming_maps}
+    Suppose $\towerHistory{G}{\suc{\beta}}{p}$.
+    Then $\towerStagePackageIncomingMaps
+        {\towerSuccessorStep{\beta}{p}}{\suc{\beta}}{p}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \obv{tower_successor_step_predecessor_laws,
+            tower_stage_package_incoming_maps}.
+\end{proof}
+
+\begin{proposition}\label{tower_successor_step_is_coherent}
+    Suppose $\towerHistory{G}{\suc{\beta}}{p}$.
+    Then $\towerStagePackageCoherent
+        {\towerSuccessorStep{\beta}{p}}{\suc{\beta}}{p}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \obv{tower_successor_step_coherence,
+            tower_stage_package_coherent}.
+\end{proof}
+
+\begin{proposition}\label{tower_successor_step_compatible}
+    Suppose $\towerHistory{G}{\suc{\beta}}{p}$.
+    Then $\towerStagePackageCompatible
+        {\towerSuccessorStep{\beta}{p}}{\suc{\beta}}{p}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \obv{tower_successor_step_incoming_maps,
+            tower_successor_step_is_coherent,
+            tower_stage_package_compatible}.
+\end{proof}
+
+\begin{theorem}\label{tower_successor_step_valid}
+    Suppose $\towerHistory{G}{\suc{\beta}}{p}$.
+    Then $\validTowerStagePackage
+        {\towerSuccessorStep{\beta}{p}}{G}{\suc{\beta}}{p}$.
+\end{theorem}
+\begin{proof}
+    Follows by
+        \obv{tower_successor_step_well_formed,
+            tower_successor_step_compatible,
+            valid_tower_stage_package}.
+\end{proof}
+
+\subsection{The nonzero limit step}
+
+At a nonzero limit stage the earlier history is a genuine directed system.
+The new group is its concrete direct limit, and the earlier incoming maps are
+the canonical cocone maps.  The constructor itself is total; nonemptiness is
+needed only for its group and compatibility laws.
+
+\begin{definition}\label{tower_limit_step}
+    $\towerLimitStep{\alpha}{p}=
+        \towerStagePackage{\alpha}
+            {\groupDirectLimit{\towerHistorySystem{\alpha}{p}}}
+            {\towerCompleteIncoming{\alpha}
+                {\groupDirectLimit{\towerHistorySystem{\alpha}{p}}}
+                {\directLimitCanonicalFamily{
+                    \towerHistorySystem{\alpha}{p}}}}$.
+\end{definition}
+
+\begin{proposition}\label{tower_limit_step_group}
+    $\towerStageGroup[\towerLimitStep{\alpha}{p}]=
+        \groupDirectLimit{\towerHistorySystem{\alpha}{p}}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{tower_limit_step,
+            tower_stage_package_structure_group}.
+\end{proof}
+
+\begin{proposition}\label{tower_limit_step_incoming}
+    $\towerIncoming[\towerLimitStep{\alpha}{p}]=
+        \towerCompleteIncoming{\alpha}
+            {\groupDirectLimit{\towerHistorySystem{\alpha}{p}}}
+            {\directLimitCanonicalFamily{
+                \towerHistorySystem{\alpha}{p}}}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{tower_limit_step,
+            tower_stage_package_structure_incoming}.
+\end{proof}
+
+\begin{proposition}\label{tower_limit_canonical_family_data}
+    Let $S=\towerHistorySystem{\alpha}{p}$.
+    Let $q=\directLimitCanonicalFamily{S}$.
+    Then $q$ is a function and $\dom{q}=\alpha$.
+\end{proposition}
+\begin{proof}
+    $q\in\funs{\carrier[S]}{\ran{q}}$ by
+        \auto{direct_limit_canonical_family_type}.
+    Hence $q$ is a function and $\dom{q}=\carrier[S]$ by
+        \auto{funs_elim}.
+    Follows by \auto{tower_history_system_carrier}.
+\end{proof}
+
+\begin{proposition}\label{tower_limit_step_incoming_earlier_raw}
+    Let $\beta\in\alpha$.
+    Let $S=\towerHistorySystem{\alpha}{p}$.
+    Then $\towerIncomingMap{\towerLimitStep{\alpha}{p}}{\beta}=
+        \apply{\directLimitCanonicalFamily{S}}{\beta}$.
+\end{proposition}
+\begin{proof}
+    Let $q=\directLimitCanonicalFamily{S}$.
+    $q$ is a function and $\dom{q}=\alpha$ by
+        \obv{tower_limit_canonical_family_data}.
+    Hence $\apply{
+            \towerCompleteIncoming{\alpha}{\groupDirectLimit{S}}{q}}
+            {\beta}=q(\beta)$ by
+        \obv{tower_complete_incoming_earlier}.
+    Follows by
+        \auto{tower_incoming_map,tower_limit_step_incoming}.
+\end{proof}
+
+\begin{proposition}\label{tower_limit_step_incoming_earlier}
+    Let $\beta\in\alpha$.
+    Let $S=\towerHistorySystem{\alpha}{p}$.
+    Then $\towerIncomingMap{\towerLimitStep{\alpha}{p}}{\beta}=
+        \directSystemCanonicalMap{S}{\beta}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{tower_limit_step_incoming_earlier_raw,
+            tower_history_system_carrier,
+            direct_limit_canonical_family_apply}.
+\end{proof}
+
+\begin{proposition}\label{tower_limit_step_incoming_current}
+    $\towerIncomingMap{\towerLimitStep{\alpha}{p}}{\alpha}=
+        \identity{\carrier[
+            \towerStageGroup[\towerLimitStep{\alpha}{p}]]}$.
+\end{proposition}
+\begin{proof}
+    Let $S=\towerHistorySystem{\alpha}{p}$.
+    Let $q=\directLimitCanonicalFamily{S}$.
+    $q$ is a function and $\dom{q}=\alpha$ by
+        \obv{tower_limit_canonical_family_data}.
+    Hence $\apply{
+            \towerCompleteIncoming{\alpha}{\groupDirectLimit{S}}{q}}
+            {\alpha}=\identity{\carrier[\groupDirectLimit{S}]}$ by
+        \obv{tower_complete_incoming_current}.
+    Follows by
+        \auto{tower_incoming_map,tower_limit_step_incoming,
+            tower_limit_step_group}.
+\end{proof}
+
+\begin{proposition}\label{tower_limit_step_incoming_type}
+    $\towerIncoming[\towerLimitStep{\alpha}{p}]\in
+        \funs{\suc{\alpha}}{
+            \ran{\towerIncoming[\towerLimitStep{\alpha}{p}]}}$.
+\end{proposition}
+\begin{proof}
+    Let $S=\towerHistorySystem{\alpha}{p}$.
+    Let $q=\directLimitCanonicalFamily{S}$.
+    Let $r=\towerCompleteIncoming{\alpha}{\groupDirectLimit{S}}{q}$.
+    $q$ is a function and $\dom{q}=\alpha$ by
+        \obv{tower_limit_canonical_family_data}.
+    Hence $r$ is a function and $\dom{r}=\suc{\alpha}$ by
+        \auto{tower_complete_incoming_function}.
+    Show that $r$ is a function to $\ran{r}$.
+    \begin{subproof}
+        For every $i\in\dom{r}$ we have $r(i)\in\ran{r}$ by
+            \auto{fun_ran_iff}.
+    \end{subproof}
+    Hence $r\in\funs{\suc{\alpha}}{\ran{r}}$ by
+        \obv{funs_intro}.
+    Follows by \auto{tower_limit_step_incoming}.
+\end{proof}
+
+\begin{proposition}\label{tower_limit_step_exact_data}
+    Let $Q=\towerLimitStep{\alpha}{p}$.
+    Then $Q=\towerStagePackage{\alpha}
+            {\towerStageGroup[Q]}{\towerIncoming[Q]}$ and
+        $\carrier[Q]=\suc{\alpha}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{tower_limit_step,tower_limit_step_group,
+            tower_limit_step_incoming,
+            tower_stage_package_structure_carrier}.
+\end{proof}
+
+\begin{proposition}\label{tower_limit_step_group_is_group}
+    Suppose $\towerHistory{G}{\alpha}{p}$ and
+        $\alpha\neq\emptyset$.
+    Then $\towerStageGroup[\towerLimitStep{\alpha}{p}]$ is a group.
+\end{proposition}
+\begin{proof}
+    $\towerHistorySystem{\alpha}{p}$ is a group direct system by
+        \auto{tower_history_system_is_system}.
+    Hence $\groupDirectLimit{\towerHistorySystem{\alpha}{p}}$
+        is a group by \obv{group_direct_limit_is_group}.
+    Follows by \obv{tower_limit_step_group}.
+\end{proof}
+
+\begin{proposition}\label{tower_limit_step_base_vacuous}
+    Suppose $\alpha\neq\emptyset$.
+    Then $\alpha=\emptyset\implies
+        \towerStageGroup[\towerLimitStep{\alpha}{p}]=G$.
+\end{proposition}
+\begin{proof}
+\end{proof}
+
+\begin{proposition}\label{tower_limit_history_shape}
+    Suppose $\towerHistory{G}{\alpha}{p}$.
+    Let $\beta\in\alpha$.
+    Then $p(\beta)=\towerStagePackage{\beta}
+            {\towerStageGroup[p(\beta)]}{\towerIncoming[p(\beta)]}$ and
+        $\carrier[p(\beta)]=\suc{\beta}$.
+\end{proposition}
+\begin{proof}
+    $\validTowerStagePackage
+        {p(\beta)}{G}{\beta}{\restrl{p}{\beta}}$ by
+        \obv{tower_history_value_valid}.
+    Follows by \auto{valid_tower_stage_package_data}.
+\end{proof}
+
+\begin{proposition}\label{tower_limit_step_incoming_hom_bridge}
+    Let $\beta\in\alpha$.
+    Let $S=\towerHistorySystem{\alpha}{p}$.
+    Suppose $\groupHom
+        {\directSystemCanonicalMap{S}{\beta}}
+        {\directSystemGroup{S}{\beta}}
+        {\groupDirectLimit{S}}$.
+    Then $\groupHom
+        {\towerIncomingMap{\towerLimitStep{\alpha}{p}}{\beta}}
+        {\towerStageGroup[p(\beta)]}
+        {\towerStageGroup[\towerLimitStep{\alpha}{p}]}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{tower_limit_step_incoming_earlier,
+            tower_history_system_group,tower_limit_step_group}.
+\end{proof}
+
+\begin{proposition}\label{tower_limit_step_incoming_hom}
+    Suppose $\towerHistory{G}{\alpha}{p}$ and
+        $\alpha\neq\emptyset$.
+    Let $\beta\in\alpha$.
+    Then $\groupHom
+        {\towerIncomingMap{\towerLimitStep{\alpha}{p}}{\beta}}
+        {\towerStageGroup[p(\beta)]}
+        {\towerStageGroup[\towerLimitStep{\alpha}{p}]}$.
+\end{proposition}
+\begin{proof}
+    Let $S=\towerHistorySystem{\alpha}{p}$.
+    $S$ is a group direct system by
+        \auto{tower_history_system_is_system}.
+    $\beta\in\carrier[S]$ by
+        \auto{tower_history_system_carrier}.
+    Hence $\groupHom
+        {\directSystemCanonicalMap{S}{\beta}}
+        {\directSystemGroup{S}{\beta}}
+        {\groupDirectLimit{S}}$ by
+        \obv{direct_system_canonical_map_hom}.
+    Follows by \obv{tower_limit_step_incoming_hom_bridge}.
+\end{proof}
+
+\begin{proposition}\label{tower_history_canonical_cocone}
+    Suppose $\towerHistory{G}{\alpha}{p}$ and
+        $\alpha\neq\emptyset$.
+    Let $S=\towerHistorySystem{\alpha}{p}$.
+    Then $\groupCocone
+        {S}{\groupDirectLimit{S}}{\directLimitCanonicalFamily{S}}$.
+\end{proposition}
+\begin{proof}
+    $S$ is a group direct system by
+        \auto{tower_history_system_is_system}.
+    Follows by \obv{group_direct_limit_canonical_cocone}.
+\end{proof}
+
+\begin{proposition}\label{tower_history_system_index_relation}
+    Let $\gamma,\beta\in\alpha$.
+    Suppose $\gamma\subseteq\beta$.
+    Let $S=\towerHistorySystem{\alpha}{p}$.
+    Then $\gamma,\beta\in\carrier[S]$ and
+        $\gamma\mathrel{\leq[S]}\beta$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{tower_history_system_carrier,
+            tower_history_system_order,subseteqrel}.
+\end{proof}
+
+\begin{proposition}\label{tower_history_canonical_family_compatibility}
+    Suppose $\towerHistory{G}{\alpha}{p}$ and
+        $\alpha\neq\emptyset$.
+    Let $\gamma,\beta\in\alpha$.
+    Suppose $\gamma\subseteq\beta$.
+    Let $S=\towerHistorySystem{\alpha}{p}$.
+    Then $\apply{\directLimitCanonicalFamily{S}}{\beta}\circ
+            \directSystemBond{S}{\gamma}{\beta}
+        =\apply{\directLimitCanonicalFamily{S}}{\gamma}$.
+\end{proposition}
+\begin{proof}
+    $\groupCocone
+        {S}{\groupDirectLimit{S}}{\directLimitCanonicalFamily{S}}$ by
+        \obv{tower_history_canonical_cocone}.
+    $\gamma,\beta\in\carrier[S]$ and
+        $\gamma\mathrel{\leq[S]}\beta$ by
+        \obv{tower_history_system_index_relation}.
+    $\apply{\directLimitCanonicalFamily{S}}{\beta}\circ
+            \directSystemBond{S}{\gamma}{\beta}
+        =\apply{\directLimitCanonicalFamily{S}}{\gamma}$ by
+        \obv{group_cocone_compatibility}.
+\end{proof}
+
+\begin{proposition}\label{tower_limit_step_coherence_bridge}
+    Let $\gamma,\beta\in\alpha$.
+    Suppose $\gamma\subseteq\beta$.
+    Let $S=\towerHistorySystem{\alpha}{p}$.
+    Suppose $\apply{\directLimitCanonicalFamily{S}}{\beta}\circ
+            \directSystemBond{S}{\gamma}{\beta}
+        =\apply{\directLimitCanonicalFamily{S}}{\gamma}$.
+    Then $\towerIncomingMap{\towerLimitStep{\alpha}{p}}{\gamma}=
+        \towerIncomingMap{\towerLimitStep{\alpha}{p}}{\beta}\circ
+            \towerIncomingMap{p(\beta)}{\gamma}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{tower_limit_step_incoming_earlier_raw,
+            tower_history_system_bond}.
+\end{proof}
+
+\begin{proposition}\label{tower_limit_step_coherence}
+    Suppose $\towerHistory{G}{\alpha}{p}$ and
+        $\alpha\neq\emptyset$.
+    Let $\gamma,\beta\in\alpha$.
+    Suppose $\gamma\subseteq\beta$.
+    Then $\towerIncomingMap{\towerLimitStep{\alpha}{p}}{\gamma}=
+        \towerIncomingMap{\towerLimitStep{\alpha}{p}}{\beta}\circ
+            \towerIncomingMap{p(\beta)}{\gamma}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{tower_history_canonical_family_compatibility,
+            tower_limit_step_coherence_bridge}.
+\end{proof}
+
+\begin{proposition}\label{tower_limit_step_predecessor_laws}
+    Suppose $\towerHistory{G}{\alpha}{p}$ and
+        $\alpha\neq\emptyset$.
+    Let $Q=\towerLimitStep{\alpha}{p}$.
+    Then for every $\beta\in\alpha$ we have
+        $p(\beta)=\towerStagePackage{\beta}
+            {\towerStageGroup[p(\beta)]}{\towerIncoming[p(\beta)]}$ and
+        $\carrier[p(\beta)]=\suc{\beta}$ and
+        $\groupHom
+            {\towerIncomingMap{Q}{\beta}}
+            {\towerStageGroup[p(\beta)]}
+            {\towerStageGroup[Q]}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{tower_limit_history_shape,
+            tower_limit_step_incoming_hom}.
+\end{proof}
+
+\begin{proposition}\label{tower_limit_step_well_formed}
+    Suppose $\towerHistory{G}{\alpha}{p}$ and
+        $\alpha\neq\emptyset$.
+    Then $\towerStagePackageWellFormed
+        {\towerLimitStep{\alpha}{p}}{G}{\alpha}{p}$.
+\end{proposition}
+\begin{proof}
+    $\towerLimitStep{\alpha}{p}=
+        \towerStagePackage{\alpha}
+            {\towerStageGroup[\towerLimitStep{\alpha}{p}]}
+            {\towerIncoming[\towerLimitStep{\alpha}{p}]}$ and
+        $\carrier[\towerLimitStep{\alpha}{p}]=\suc{\alpha}$ by
+        \auto{tower_limit_step_exact_data}.
+    $p$ is a function and $\dom{p}=\alpha$ by
+        \obv{tower_history_function}.
+    $\towerStageGroup[\towerLimitStep{\alpha}{p}]$ is a group by
+        \obv{tower_limit_step_group_is_group}.
+    $\towerIncoming[\towerLimitStep{\alpha}{p}]\in
+        \funs{\suc{\alpha}}{
+            \ran{\towerIncoming[\towerLimitStep{\alpha}{p}]}}$ by
+        \obv{tower_limit_step_incoming_type}.
+    $\alpha=\emptyset\implies
+        \towerStageGroup[\towerLimitStep{\alpha}{p}]=G$ by
+        \obv{tower_limit_step_base_vacuous}.
+    $\towerIncomingMap{\towerLimitStep{\alpha}{p}}{\alpha}=
+        \identity{\carrier[
+            \towerStageGroup[\towerLimitStep{\alpha}{p}]]}$ by
+        \obv{tower_limit_step_incoming_current}.
+    Follows by \obv{tower_stage_package_well_formed}.
+\end{proof}
+
+\begin{proposition}\label{tower_limit_step_incoming_maps}
+    Suppose $\towerHistory{G}{\alpha}{p}$ and
+        $\alpha\neq\emptyset$.
+    Then $\towerStagePackageIncomingMaps
+        {\towerLimitStep{\alpha}{p}}{\alpha}{p}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \obv{tower_limit_step_predecessor_laws,
+            tower_stage_package_incoming_maps}.
+\end{proof}
+
+\begin{proposition}\label{tower_limit_step_is_coherent}
+    Suppose $\towerHistory{G}{\alpha}{p}$ and
+        $\alpha\neq\emptyset$.
+    Then $\towerStagePackageCoherent
+        {\towerLimitStep{\alpha}{p}}{\alpha}{p}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \obv{tower_limit_step_coherence,
+            tower_stage_package_coherent}.
+\end{proof}
+
+\begin{proposition}\label{tower_limit_step_compatible}
+    Suppose $\towerHistory{G}{\alpha}{p}$ and
+        $\alpha\neq\emptyset$.
+    Then $\towerStagePackageCompatible
+        {\towerLimitStep{\alpha}{p}}{\alpha}{p}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \obv{tower_limit_step_incoming_maps,
+            tower_limit_step_is_coherent,
+            tower_stage_package_compatible}.
+\end{proof}
+
+\begin{theorem}\label{tower_limit_step_valid}
+    Suppose $\towerHistory{G}{\alpha}{p}$ and
+        $\alpha\neq\emptyset$.
+    Then $\validTowerStagePackage
+        {\towerLimitStep{\alpha}{p}}{G}{\alpha}{p}$.
+\end{theorem}
+\begin{proof}
+    Follows by
+        \obv{tower_limit_step_well_formed,
+            tower_limit_step_compatible,
+            valid_tower_stage_package}.
+\end{proof}
+
+\subsection{The total recursive step}
+
+The logical step operator branches first at zero and then on successor
+ordinals.  Thus its limit branch is also a total set term, while the theorem
+below records the intended ordinal behaviour under the history invariant.
+
+\begin{definition}\label{tower_successor_case}
+    $\towerSuccessorCase{\alpha}$ iff
+        $\alpha$ is a successor ordinal.
+\end{definition}
+
+\begin{definition}\label{tower_nonzero_step}
+    $\towerNonzeroStep{\alpha}{p}=
+        \Apply{\logicalIfSetOp}
+            {\towerSuccessorCase{\alpha},\towerSuccessorStep{\unions{\alpha}}{p},\towerLimitStep{\alpha}{p}}$.
+\end{definition}
+
+\begin{definition}\label{tower_step_op}
+    $\towerStepOp:\Set\to\Set\to\Set\to\Set
+        =\fun{G,\alpha,p:\Set}{
+            \Apply{\logicalIfSetOp}{(\alpha=\emptyset),\towerZeroStep{G},
+                \towerNonzeroStep{\alpha}{p}}}$.
+\end{definition}
+
+\begin{abbreviation}\label{tower_step}
+    $\towerStep{G}{\alpha}{p}=
+        \Apply{\towerStepOp}{G,\alpha,p}$.
+\end{abbreviation}
+
+\begin{proposition}\label{tower_step_zero}
+    $\towerStep{G}{\emptyset}{p}=\towerZeroStep{G}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \obv{tower_step_op,logical_if_set_true}.
+\end{proof}
+
+\begin{proposition}\label{tower_step_nonzero}
+    Suppose $\alpha\neq\emptyset$.
+    Then $\towerStep{G}{\alpha}{p}=\towerNonzeroStep{\alpha}{p}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \obv{tower_step_op,logical_if_set_false}.
+\end{proof}
+
+\begin{proposition}\label{tower_nonzero_step_successor_case}
+    Suppose $\towerSuccessorCase{\alpha}$.
+    Then $\towerNonzeroStep{\alpha}{p}=
+        \towerSuccessorStep{\unions{\alpha}}{p}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \obv{tower_nonzero_step,logical_if_set_true}.
+\end{proof}
+
+\begin{proposition}\label{tower_nonzero_step_limit_case}
+    Suppose $\lnot\towerSuccessorCase{\alpha}$.
+    Then $\towerNonzeroStep{\alpha}{p}=\towerLimitStep{\alpha}{p}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \obv{tower_nonzero_step,logical_if_set_false}.
+\end{proof}
+
+\begin{proposition}\label{tower_step_successor_ordinal}
+    Let $\alpha$ be a successor ordinal.
+    Then $\towerStep{G}{\alpha}{p}=
+        \towerSuccessorStep{\unions{\alpha}}{p}$.
+\end{proposition}
+\begin{proof}
+    $\alpha\neq\emptyset$ by
+        \obv{zero_not_successorordinal}.
+    $\towerSuccessorCase{\alpha}$ by
+        \obv{tower_successor_case}.
+    $\towerStep{G}{\alpha}{p}=\towerNonzeroStep{\alpha}{p}$ by
+        \obv{tower_step_nonzero}.
+    $\towerNonzeroStep{\alpha}{p}=
+        \towerSuccessorStep{\unions{\alpha}}{p}$ by
+        \obv{tower_nonzero_step_successor_case}.
+\end{proof}
+
+\begin{corollary}\label{tower_step_successor}
+    Let $\beta$ be an ordinal.
+    Then $\towerStep{G}{\suc{\beta}}{p}=
+        \towerSuccessorStep{\beta}{p}$.
+\end{corollary}
+\begin{proof}
+    Follows by
+        \auto{ordinal_successor_data,
+            tower_step_successor_ordinal}.
+\end{proof}
+
+\begin{proposition}\label{tower_step_nonzero_nonsuccessor}
+    Suppose $\alpha\neq\emptyset$ and
+        $\alpha$ is not a successor ordinal.
+    Then $\towerStep{G}{\alpha}{p}=\towerLimitStep{\alpha}{p}$.
+\end{proposition}
+\begin{proof}
+    $\lnot\towerSuccessorCase{\alpha}$ by
+        \obv{tower_successor_case}.
+    $\towerStep{G}{\alpha}{p}=\towerNonzeroStep{\alpha}{p}$ by
+        \obv{tower_step_nonzero}.
+    $\towerNonzeroStep{\alpha}{p}=\towerLimitStep{\alpha}{p}$ by
+        \obv{tower_nonzero_step_limit_case}.
+\end{proof}
+
+\begin{corollary}\label{tower_step_limit}
+    Let $\alpha$ be a limit ordinal.
+    Then $\towerStep{G}{\alpha}{p}=\towerLimitStep{\alpha}{p}$.
+\end{corollary}
+\begin{proof}
+    $\alpha\neq\emptyset$ by
+        \obv{zero_not_limitordinal}.
+    $\alpha$ is not a successor ordinal by
+        \obv{limit_ordinal_is_not_successor_ordinal}.
+    Follows by \obv{tower_step_nonzero_nonsuccessor}.
+\end{proof}
+
+\begin{proposition}\label{tower_empty_history_is_empty}
+    Suppose $\towerHistory{G}{\emptyset}{p}$.
+    Then $p=\emptyset$.
+\end{proposition}
+\begin{proof}
+    $p$ is a function and $\dom{p}=\emptyset$ by
+        \obv{tower_history_function}.
+    Show that every element of $p$ is an element of $\emptyset$.
+    \begin{subproof}
+        Fix $z\in p$.
+        Take $x,y$ such that $z=(x,y)$ by \obv{relation}.
+        Hence $x\in\dom{p}$ by \auto{dom_iff}.
+        Contradiction by \obv{emptyset}.
+    \end{subproof}
+    Hence $p\subseteq\emptyset$ by \obv{subseteq}.
+    Follows by \obv{subseteq_emptyset_iff}.
+\end{proof}
+
+\begin{theorem}\label{tower_step_valid}
+    Let $G$ be a group.
+    Suppose $\towerHistory{G}{\alpha}{p}$.
+    Then $\validTowerStagePackage
+        {\towerStep{G}{\alpha}{p}}{G}{\alpha}{p}$.
+\end{theorem}
+\begin{proof}
+    \begin{byCase}
+        \caseOf{$\alpha=\emptyset$.}
+            $p=\emptyset$ by
+                \auto{tower_empty_history_is_empty}.
+            $\towerStep{G}{\alpha}{p}=\towerZeroStep{G}$ by
+                \auto{tower_step_zero}.
+            $\validTowerStagePackage
+                {\towerZeroStep{G}}{G}{\emptyset}{\emptyset}$ by
+                \obv{tower_zero_step_valid}.
+        \caseOf{$\alpha\neq\emptyset$.}
+            \begin{byCase}
+                \caseOf{$\towerSuccessorCase{\alpha}$.}
+                    $\alpha$ is a successor ordinal by
+                        \obv{tower_successor_case}.
+                    $\alpha=\suc{\unions{\alpha}}$ by
+                        \obv{successor_ordinal_eq_suc_unions}.
+                    $\towerHistory{G}{\suc{\unions{\alpha}}}{p}$.
+                    $\towerStep{G}{\alpha}{p}=
+                        \towerSuccessorStep{\unions{\alpha}}{p}$ by
+                        \obv{tower_step_successor_ordinal}.
+                    $\validTowerStagePackage
+                        {\towerSuccessorStep{\unions{\alpha}}{p}}
+                        {G}{\suc{\unions{\alpha}}}{p}$ by
+                        \obv{tower_successor_step_valid}.
+                \caseOf{$\lnot\towerSuccessorCase{\alpha}$.}
+                    $\alpha$ is not a successor ordinal by
+                        \obv{tower_successor_case}.
+                    $\towerStep{G}{\alpha}{p}=
+                        \towerLimitStep{\alpha}{p}$ by
+                        \obv{tower_step_nonzero_nonsuccessor}.
+                    $\validTowerStagePackage
+                        {\towerLimitStep{\alpha}{p}}{G}{\alpha}{p}$ by
+                        \obv{tower_limit_step_valid}.
+            \end{byCase}
+    \end{byCase}
+\end{proof}
+
+\subsection{Extending a valid history}
+
+\begin{definition}\label{tower_history_extension}
+    $\towerHistoryExtension{G}{\alpha}{p}=
+        \cons{(\alpha,\towerStep{G}{\alpha}{p})}{p}$.
+\end{definition}
+
+\begin{proposition}\label{tower_history_extension_function}
+    Suppose $\towerHistory{G}{\alpha}{p}$.
+    Then $\towerHistoryExtension{G}{\alpha}{p}$ is a function and
+        $\dom{\towerHistoryExtension{G}{\alpha}{p}}=\suc{\alpha}$.
+\end{proposition}
+\begin{proof}
+    $p$ is a function and $\dom{p}=\alpha$ by
+        \obv{tower_history_function}.
+    $\alpha\notin\dom{p}$ by \obv{in_irrefl}.
+    Hence $\cons{(\alpha,\towerStep{G}{\alpha}{p})}{p}$
+        is a function and
+        $\dom{\cons{(\alpha,\towerStep{G}{\alpha}{p})}{p}}=
+            \cons{\alpha}{\dom{p}}$ by
+        \obv{extend_set_function_at_new_point}.
+    $\cons{\alpha}{\dom{p}}=\suc{\alpha}$ by
+        \obv{suc_eq_cons}.
+    Follows by \auto{tower_history_extension}.
+\end{proof}
+
+\begin{proposition}\label{tower_history_extension_new_value}
+    Suppose $\towerHistory{G}{\alpha}{p}$.
+    Then $\apply{\towerHistoryExtension{G}{\alpha}{p}}{\alpha}=
+        \towerStep{G}{\alpha}{p}$.
+\end{proposition}
+\begin{proof}
+    $p$ is a function and $\dom{p}=\alpha$ by
+        \obv{tower_history_function}.
+    $\alpha\notin\dom{p}$ by \obv{in_irrefl}.
+    Follows by
+        \auto{tower_history_extension,
+            extend_set_function_at_new_point_new_value}.
+\end{proof}
+
+\begin{proposition}\label{tower_history_extension_old_value}
+    Suppose $\towerHistory{G}{\alpha}{p}$.
+    Let $\beta\in\alpha$.
+    Then $\apply{\towerHistoryExtension{G}{\alpha}{p}}{\beta}=p(\beta)$.
+\end{proposition}
+\begin{proof}
+    $p$ is a function and $\dom{p}=\alpha$ by
+        \obv{tower_history_function}.
+    $\alpha\notin\dom{p}$ by \obv{in_irrefl}.
+    Follows by
+        \auto{tower_history_extension,
+            extend_set_function_at_new_point_old_value}.
+\end{proof}
+
+\begin{proposition}\label{tower_history_extension_restriction}
+    Suppose $\towerHistory{G}{\alpha}{p}$.
+    Then $\restrl{\towerHistoryExtension{G}{\alpha}{p}}{\alpha}=p$.
+\end{proposition}
+\begin{proof}
+    $p$ is a function and $\dom{p}=\alpha$ by
+        \obv{tower_history_function}.
+    $\alpha\notin\dom{p}$ by \obv{in_irrefl}.
+    $\restrl{
+            \cons{(\alpha,\towerStep{G}{\alpha}{p})}{p}}
+            {\alpha}=p$ by
+        \obv{extend_set_function_at_new_point_restriction_at}.
+    Follows by
+        \auto{tower_history_extension}.
+\end{proof}
+
+\begin{proposition}\label{tower_history_extension_earlier_restriction}
+    Suppose $\towerHistory{G}{\alpha}{p}$.
+    Let $\beta\in\alpha$.
+    Then $\restrl{\towerHistoryExtension{G}{\alpha}{p}}{\beta}=
+        \restrl{p}{\beta}$.
+\end{proposition}
+\begin{proof}
+    $\beta$ is an ordinal by
+        \obv{elem_of_ordinal_is_ordinal}.
+    Hence $\beta\subseteq\alpha$ by
+        \obv{ordinal_elem_implies_subseteq}.
+    $\restrl{
+            \restrl{\towerHistoryExtension{G}{\alpha}{p}}{\alpha}}
+            {\beta}
+        =\restrl{\towerHistoryExtension{G}{\alpha}{p}}{\beta}$ by
+        \obv{restrl_restrl}.
+    $\restrl{\towerHistoryExtension{G}{\alpha}{p}}{\alpha}=p$ by
+        \obv{tower_history_extension_restriction}.
+    Hence $\restrl{
+            \restrl{\towerHistoryExtension{G}{\alpha}{p}}{\alpha}}
+            {\beta}=\restrl{p}{\beta}$.
+\end{proof}
+
+\begin{theorem}\label{tower_history_extension_is_history}
+    Let $G$ be a group.
+    Suppose $\towerHistory{G}{\alpha}{p}$.
+    Then $\towerHistory
+        {G}{\suc{\alpha}}{\towerHistoryExtension{G}{\alpha}{p}}$.
+\end{theorem}
+\begin{proof}
+    Let $q=\towerHistoryExtension{G}{\alpha}{p}$.
+    Hence $\suc{\alpha}$ is an ordinal by \obv{suc_ordinal}.
+    $q$ is a function and $\dom{q}=\suc{\alpha}$ by
+        \auto{tower_history_extension_function}.
+    Show that for every $\beta\in\suc{\alpha}$ we have
+        $\validTowerStagePackage
+            {q(\beta)}{G}{\beta}{\restrl{q}{\beta}}$.
+    \begin{subproof}
+        Fix $\beta\in\suc{\alpha}$.
+        $\beta\in\alpha$ or $\beta=\alpha$ by \auto{suc_iff}.
+        If $\beta\in\alpha$, then
+            $q(\beta)=p(\beta)$ by
+            \auto{tower_history_extension_old_value}.
+        If $\beta\in\alpha$, then
+            $\restrl{q}{\beta}=\restrl{p}{\beta}$ by
+            \auto{tower_history_extension_earlier_restriction}.
+        If $\beta\in\alpha$, then
+            $\validTowerStagePackage
+                {p(\beta)}{G}{\beta}{\restrl{p}{\beta}}$ by
+            \obv{tower_history_value_valid}.
+        If $\beta=\alpha$, then
+            $q(\beta)=\towerStep{G}{\alpha}{p}$ by
+            \auto{tower_history_extension_new_value}.
+        If $\beta=\alpha$, then
+            $\restrl{q}{\beta}=p$ by
+            \auto{tower_history_extension_restriction}.
+        If $\beta=\alpha$, then
+            $\validTowerStagePackage
+                {\towerStep{G}{\alpha}{p}}{G}{\alpha}{p}$ by
+            \obv{tower_step_valid}.
+    \end{subproof}
+    Follows by \auto{tower_history}.
+\end{proof}
+
+\section{Set-sized automorphism-tower recursion}
+
+\subsection{The canonical package history}
+
+\begin{definition}\label{tower_package_history}
+    $\towerPackageHistory{G}{\theta}=
+        \Apply{\unboundedOrdinalRecursionOp}
+            {\theta,\Apply{\towerStepOp}{G}}$.
+\end{definition}
+
+\begin{proposition}\label{tower_package_history_function}
+    Let $\theta$ be an ordinal.
+    Then $\towerPackageHistory{G}{\theta}$ is a function.
+\end{proposition}
+\begin{proof}
+    Let $f=\Apply{\unboundedOrdinalRecursionOp}
+        {\theta,\Apply{\towerStepOp}{G}}$.
+    $\Apply{\recursiveSetFunctionOp}{f}$ by
+        \obv{unbounded_ordinal_recursion_function}.
+    $f=\towerPackageHistory{G}{\theta}$ by
+        \obv{tower_package_history}.
+    Hence
+        $\Apply{\recursiveSetFunctionOp}{\towerPackageHistory{G}{\theta}}$.
+    Hence $\recursiveSetFunction{\towerPackageHistory{G}{\theta}}$ by
+        \obv{recursive_set_function_op}.
+    Follows by \obv{recursive_set_function}.
+\end{proof}
+
+\begin{proposition}\label{tower_package_history_domain}
+    Let $\theta$ be an ordinal.
+    Then $\dom{\towerPackageHistory{G}{\theta}}=\theta$.
+\end{proposition}
+\begin{proof}
+    Let $f=\Apply{\unboundedOrdinalRecursionOp}
+        {\theta,\Apply{\towerStepOp}{G}}$.
+    $\dom{f}=\theta$ by
+        \auto{unbounded_ordinal_recursion_domain}.
+    $f=\towerPackageHistory{G}{\theta}$ by
+        \obv{tower_package_history}.
+\end{proof}
+
+\begin{proposition}\label{tower_package_history_equation}
+    Let $\theta$ be an ordinal.
+    Let $\alpha\in\theta$.
+    Then $\apply{\towerPackageHistory{G}{\theta}}{\alpha}=
+        \towerStep{G}{\alpha}{
+            \restrl{\towerPackageHistory{G}{\theta}}{\alpha}}$.
+\end{proposition}
+\begin{proof}
+    Let $f=\Apply{\unboundedOrdinalRecursionOp}
+        {\theta,\Apply{\towerStepOp}{G}}$.
+    $f(\alpha)=
+        \Apply{\towerStepOp}{G,\alpha,
+            \restrl{f}{\alpha}}$ by
+        \auto{unbounded_ordinal_recursion_equation}.
+    $f=\towerPackageHistory{G}{\theta}$ by
+        \obv{tower_package_history}.
+    $\Apply{\towerStepOp}{G,\alpha,
+            \restrl{f}{\alpha}}
+        =\towerStep{G}{\alpha}{\restrl{f}{\alpha}}$ by
+        \obv{tower_step_op}.
+\end{proof}
+
+\begin{proposition}\label{tower_package_history_zero_value}
+    Let $\theta$ be an ordinal.
+    Suppose $\emptyset\in\theta$.
+    Then $\apply{\towerPackageHistory{G}{\theta}}{\emptyset}=
+        \towerZeroStep{G}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{tower_package_history_equation,tower_step_zero}.
+\end{proof}
+
+\begin{proposition}\label{tower_package_history_zero_group}
+    Let $\theta$ be an ordinal.
+    Suppose $\emptyset\in\theta$.
+    Then $\towerStageGroup[
+        \apply{\towerPackageHistory{G}{\theta}}{\emptyset}]=G$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{tower_package_history_zero_value,
+            tower_zero_step_group}.
+\end{proof}
+
+\begin{theorem}\label{tower_package_history_segment}
+    Let $\theta,\eta$ be ordinals.
+    Suppose $\theta\subseteq\eta$.
+    Then $\towerPackageHistory{G}{\theta}=
+        \restrl{\towerPackageHistory{G}{\eta}}{\theta}$.
+\end{theorem}
+\begin{proof}
+    Let $f=\Apply{\unboundedOrdinalRecursionOp}
+        {\theta,\Apply{\towerStepOp}{G}}$.
+    Let $g=\Apply{\unboundedOrdinalRecursionOp}
+        {\eta,\Apply{\towerStepOp}{G}}$.
+    $f=\restrl{g}{\theta}$ by
+        \auto{unbounded_ordinal_recursion_segment}.
+    $f=\towerPackageHistory{G}{\theta}$ by
+        \obv{tower_package_history}.
+    $g=\towerPackageHistory{G}{\eta}$ by
+        \obv{tower_package_history}.
+\end{proof}
+
+\begin{theorem}\label{tower_package_history_value_stability}
+    Let $\theta,\eta$ be ordinals.
+    Suppose $\theta\subseteq\eta$.
+    Let $\alpha\in\theta$.
+    Then $\apply{\towerPackageHistory{G}{\theta}}{\alpha}=
+        \apply{\towerPackageHistory{G}{\eta}}{\alpha}$.
+\end{theorem}
+\begin{proof}
+    Follows by
+        \auto{tower_package_history,
+            unbounded_ordinal_recursion_value_stability}.
+\end{proof}
+
+\begin{proposition}\label{tower_package_history_step}
+    Let $\theta$ be an ordinal.
+    Let $\alpha\in\theta$.
+    Then $\apply{\towerPackageHistory{G}{\theta}}{\alpha}=
+        \towerStep{G}{\alpha}{\towerPackageHistory{G}{\alpha}}$.
+\end{proposition}
+\begin{proof}
+    $\alpha$ is an ordinal and $\alpha\subseteq\theta$ by
+        \obv{elem_of_ordinal_is_ordinal,
+            ordinal_elem_implies_subseteq}.
+    Hence $\towerPackageHistory{G}{\alpha}=
+        \restrl{\towerPackageHistory{G}{\theta}}{\alpha}$ by
+        \obv{tower_package_history_segment}.
+    Follows by \auto{tower_package_history_equation}.
+\end{proof}
+
+\begin{proposition}\label{tower_package_history_successor_group}
+    Let $\theta$ be an ordinal.
+    Let $\alpha\in\theta$.
+    Suppose $\suc{\alpha}\in\theta$.
+    Then $\towerStageGroup[
+            \apply{\towerPackageHistory{G}{\theta}}{\suc{\alpha}}]=
+        \automorphismGroup{\towerStageGroup[
+            \apply{\towerPackageHistory{G}{\theta}}{\alpha}]}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{elem_of_ordinal_is_ordinal,suc_ordinal,
+            ordinal_elem_implies_subseteq,suc_intro_self,
+            tower_package_history_step,tower_step_successor,
+            tower_package_history_value_stability,
+            tower_successor_step_group}.
+\end{proof}
+
+\begin{proposition}\label{tower_package_history_successor_value}
+    Let $\theta$ be an ordinal.
+    Let $\alpha\in\theta$.
+    Suppose $\suc{\alpha}\in\theta$.
+    Then $\apply{\towerPackageHistory{G}{\theta}}{\suc{\alpha}}=
+        \towerSuccessorStep{\alpha}{
+            \towerPackageHistory{G}{\suc{\alpha}}}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{elem_of_ordinal_is_ordinal,
+            tower_package_history_step,tower_step_successor}.
+\end{proof}
+
+\begin{proposition}\label{tower_package_history_predecessor_value}
+    Let $\theta$ be an ordinal.
+    Let $\alpha\in\theta$.
+    Suppose $\suc{\alpha}\in\theta$.
+    Then $\apply{\towerPackageHistory{G}{\suc{\alpha}}}{\alpha}=
+        \apply{\towerPackageHistory{G}{\theta}}{\alpha}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \obv{elem_of_ordinal_is_ordinal,suc_ordinal,
+            ordinal_elem_implies_subseteq,suc_intro_self,
+            tower_package_history_value_stability}.
+\end{proof}
+
+\begin{proposition}\label{tower_package_history_limit_value}
+    Let $\theta$ be an ordinal.
+    Let $\lambda\in\theta$.
+    Suppose $\lambda$ is a limit ordinal.
+    Then $\apply{\towerPackageHistory{G}{\theta}}{\lambda}=
+        \towerLimitStep{\lambda}{\towerPackageHistory{G}{\lambda}}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{tower_package_history_step,tower_step_limit}.
+\end{proof}
+
+\begin{proposition}\label{tower_package_history_limit_group}
+    Let $\theta$ be an ordinal.
+    Let $\lambda\in\theta$.
+    Suppose $\lambda$ is a limit ordinal.
+    Then $\towerStageGroup[
+            \apply{\towerPackageHistory{G}{\theta}}{\lambda}]=
+        \groupDirectLimit{\towerHistorySystem{\lambda}{
+            \towerPackageHistory{G}{\lambda}}}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{tower_package_history_limit_value,
+            tower_limit_step_group}.
+\end{proof}
+
+\begin{proposition}\label{tower_package_history_limit_incoming}
+    Let $\theta$ be an ordinal.
+    Let $\lambda\in\theta$.
+    Suppose $\lambda$ is a limit ordinal.
+    Let $\beta\in\lambda$.
+    Then $\towerIncomingMap{
+            \apply{\towerPackageHistory{G}{\theta}}{\lambda}}{\beta}=
+        \directSystemCanonicalMap{
+            \towerHistorySystem{\lambda}{
+                \towerPackageHistory{G}{\lambda}}}{\beta}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{tower_package_history_limit_value,
+            tower_limit_step_incoming_earlier}.
+\end{proof}
+
+\begin{theorem}\label{tower_package_history_is_history}
+    Let $\theta$ be an ordinal.
+    Let $G$ be a group.
+    Then $\towerHistory{G}{\theta}{\towerPackageHistory{G}{\theta}}$.
+\end{theorem}
+\begin{proof}[Proof by transfinite induction]
+    Let $f=\towerPackageHistory{G}{\theta}$.
+    $f$ is a function by \auto{tower_package_history_function}.
+    $\dom{f}=\theta$ by \auto{tower_package_history_domain}.
+    Show that for every $\alpha\in\theta$ we have
+        $\validTowerStagePackage
+            {f(\alpha)}{G}{\alpha}{\restrl{f}{\alpha}}$.
+    \begin{subproof}
+        Fix $\alpha\in\theta$.
+        $\alpha$ is an ordinal by
+            \obv{elem_of_ordinal_is_ordinal}.
+        Hence $\alpha\subseteq\theta$ by
+            \obv{ordinal_elem_implies_subseteq}.
+        $\towerHistory{G}{\alpha}{\towerPackageHistory{G}{\alpha}}$.
+        Let $p=\towerPackageHistory{G}{\alpha}$.
+        $p=\restrl{f}{\alpha}$ by
+            \auto{tower_package_history_segment}.
+        Hence $\towerHistory{G}{\alpha}{p}$.
+        $f(\alpha)=\towerStep{G}{\alpha}{\restrl{f}{\alpha}}$ by
+            \auto{tower_package_history_equation}.
+        $\validTowerStagePackage
+            {\towerStep{G}{\alpha}{p}}{G}{\alpha}{p}$ by
+            \obv{tower_step_valid}.
+    \end{subproof}
+    Follows by \auto{tower_history}.
+\end{proof}
+
+\begin{proposition}\label{tower_package_history_successor_bond}
+    Let $G$ be a group.
+    Let $\theta$ be an ordinal.
+    Let $\alpha\in\theta$.
+    Suppose $\suc{\alpha}\in\theta$.
+    Then $\towerIncomingMap{
+            \apply{\towerPackageHistory{G}{\theta}}{\suc{\alpha}}}
+            {\alpha}=
+        \innerMap{\towerStageGroup[
+            \apply{\towerPackageHistory{G}{\theta}}{\alpha}]}$.
+\end{proposition}
+\begin{proof}
+    $\alpha$ is an ordinal by
+        \obv{elem_of_ordinal_is_ordinal}.
+    Hence $\suc{\alpha}$ is an ordinal by \obv{suc_ordinal}.
+    Let $p=\towerPackageHistory{G}{\suc{\alpha}}$.
+    $\towerHistory{G}{\suc{\alpha}}{p}$ by
+        \obv{tower_package_history_is_history}.
+    Hence
+        $\towerIncomingMap{\towerSuccessorStep{\alpha}{p}}{\alpha}=
+            \innerMap{\towerStageGroup[p(\alpha)]}$ by
+        \obv{tower_successor_step_incoming_at_predecessor}.
+    $\apply{\towerPackageHistory{G}{\theta}}{\suc{\alpha}}=
+        \towerSuccessorStep{\alpha}{p}$ by
+        \auto{tower_package_history_successor_value}.
+    $p(\alpha)=\apply{\towerPackageHistory{G}{\theta}}{\alpha}$ by
+        \auto{tower_package_history_predecessor_value}.
+\end{proof}

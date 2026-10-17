@@ -1,0 +1,183 @@
+\section{The Erdős--Dushnik--Miller theorem}
+
+\import{combinatorics/simple-graph.tex}
+\import{combinatorics/edm-statement.tex}
+\import{combinatorics/edm-large-neighbourhood.tex}
+\import{combinatorics/edm-regular.tex}
+\import{combinatorics/edm-singular.tex}
+\import{cardinal.tex}
+\import{cardinal/infinite.tex}
+\import{cardinal/cofinality.tex}
+
+\subsection{The small-degree alternative}
+
+\begin{proposition}\label{failure_of_large_neighbourhood_gives_small_degree}
+    Suppose $\lnot\largeNeighbourhood{E}{X}{\kappa}$.
+    Then there exists $S$ such that $S\subseteq X$ and $S\approx\kappa$ and
+        for every $x\in S$ we have
+            $\cardLt{\graphNeighbourhood{E}{x}{S}}{\kappa}$.
+\end{proposition}
+\begin{proof}
+    Take $S$ such that $S\subseteq X$ and $S\approx\kappa$ and
+        there exists no $x\in S$ such that
+            $\graphNeighbourhood{E}{x}{S}\approx\kappa$ by
+        \auto{large_neighbourhood}.
+    Show that for every $x\in S$ we have
+        $\cardLt{\graphNeighbourhood{E}{x}{S}}{\kappa}$.
+    \begin{subproof}
+        Fix $x\in S$.
+        $\graphNeighbourhood{E}{x}{S}\subseteq S$ by
+            \obv{graph_neighbourhood_subseteq}.
+        Hence $\cardLe{\graphNeighbourhood{E}{x}{S}}{S}$ by
+            \obv{subseteq_cardinal_le}.
+        $\cardLe{S}{\kappa}$ by \auto{equinum_cardinal_le}.
+        Hence $\cardLe{\graphNeighbourhood{E}{x}{S}}{\kappa}$ by
+            \obv{cardinal_le_transitive}.
+        $\lnot(\graphNeighbourhood{E}{x}{S}\approx\kappa)$ by
+            \auto.
+        Follows by \obv{cardinal_lt}.
+    \end{subproof}
+\end{proof}
+
+\subsection{Cardinal induction}
+
+\begin{theorem}\label{erdos_dushnik_miller_step}
+    Let $\kappa$ be an infinite cardinal.
+    Suppose for every infinite cardinal $\rho\in\kappa$ we have $\edmAt{\rho}$.
+    Then $\edmAt{\kappa}$.
+\end{theorem}
+\begin{proof}
+    Show that for every $X,E$ such that $X\approx\kappa$ and
+        $E$ is a simple graph on $X$ we have
+        $E$ has an independent set in $X$ equinumerous with $\kappa$ or
+        $E$ has a countably infinite clique in $X$.
+    \begin{subproof}
+        Fix $X,E$.
+        Assume $X\approx\kappa$ and $E$ is a simple graph on $X$.
+        \begin{byCase}
+            \caseOf{$\largeNeighbourhood{E}{X}{\kappa}$.}
+                $E$ has a countably infinite clique in $X$ by
+                    \obv{large_neighbourhood_gives_clique}.
+            \caseOf{$\lnot\largeNeighbourhood{E}{X}{\kappa}$.}
+                Take $S$ such that $S\subseteq X$ and $S\approx\kappa$ and
+                    for every $x\in S$ we have
+                        $\cardLt{\graphNeighbourhood{E}{x}{S}}{\kappa}$ by
+                    \obv{failure_of_large_neighbourhood_gives_small_degree}.
+                Let $F=\relationTrace{E}{S}$.
+                $\relationTrace{E}{S}$ is a simple graph on $S$ by
+                    \obv{induced_simple_graph}.
+                Hence $F$ is a simple graph on $S$.
+                Show that for every $x\in S$ we have
+                    $\cardLt{\graphNeighbourhood{F}{x}{S}}{\kappa}$.
+                \begin{subproof}
+                    Fix $x\in S$.
+                    $\graphNeighbourhood{\relationTrace{E}{S}}{x}{S}
+                        =\graphNeighbourhood{E}{x}{S}$ by
+                        \obv{induced_graph_neighbourhood}.
+                    Hence $\graphNeighbourhood{F}{x}{S}
+                        =\graphNeighbourhood{E}{x}{S}$.
+                    Follows by \auto.
+                \end{subproof}
+                \begin{byCase}
+                    \caseOf{$F$ has a countably infinite clique in $S$.}
+                        Take a countably infinite clique $C$ in $S$
+                            with respect to $F$.
+                        Hence $C\subseteq S$ by \obv{clique_subseteq}.
+                        $C$ is a clique in $X$ with respect to $E$ by
+                            \auto{induced_clique_iff}.
+                    \caseOf{$F$ does not have a countably infinite clique in $S$.}
+                        \begin{byCase}
+                            \caseOf{$\kappa$ is a regular cardinal.}
+                                Take an independent set $H$ in $S$ with
+                                    respect to $F$ such that $H\approx\kappa$ by
+                                    \obv{regular_small_degree_independent}.
+                                Hence $H\subseteq S$ by
+                                    \obv{independent_subseteq}.
+                                $H$ is an independent set in $X$ with
+                                    respect to $E$ by
+                                    \auto{induced_independent_iff}.
+                            \caseOf{$\kappa$ is not a regular cardinal.}
+                                Hence $\kappa$ is a singular cardinal by
+                                    \obv{singular_cardinal}.
+                                Let $\lambda=\cofinality{\kappa}$.
+                                Take an independent set $H$ in $S$ with
+                                    respect to $F$ such that $H\approx\kappa$ by
+                                    \obv{singular_small_degree_independent}.
+                                Hence $H\subseteq S$ by
+                                    \obv{independent_subseteq}.
+                                $H$ is an independent set in $X$ with
+                                    respect to $E$ by
+                                    \auto{induced_independent_iff}.
+                        \end{byCase}
+                \end{byCase}
+        \end{byCase}
+    \end{subproof}
+    Follows by \obv{edm_at_intro}.
+\end{proof}
+
+\begin{theorem}\label{erdos_dushnik_miller_cardinal}
+    Let $\kappa$ be an infinite cardinal.
+    Then $\edmAt{\kappa}$.
+\end{theorem}
+\begin{proof}[Proof by \in-induction on $\kappa$]
+    Follows by \obv{erdos_dushnik_miller_step}.
+\end{proof}
+
+\subsection{Graph forms}
+
+\begin{theorem}\label{erdos_dushnik_miller_graph}
+    Suppose $X$ is infinite.
+    Suppose $E$ is a simple graph on $X$.
+    Then $E$ has an independent set in $X$ equinumerous with $X$
+        or $E$ has a countably infinite clique in $X$.
+\end{theorem}
+\begin{proof}
+    Let $\kappa=\card{X}$.
+    $\card{X}$ is an infinite cardinal by
+        \obv{card_of_infinite_set_is_infinite_cardinal}.
+    $\edmAt{\kappa}$ by \obv{erdos_dushnik_miller_cardinal}.
+    $X\approx\card{X}$ by \obv{equinumerous_card}.
+    Hence $X\approx\kappa$.
+    Hence $E$ has an independent set in $X$ equinumerous with $\kappa$ or
+        $E$ has a countably infinite clique in $X$ by
+        \obv{edm_at_elim}.
+    \begin{byCase}
+        \caseOf{$E$ has an independent set in $X$ equinumerous with $\kappa$.}
+            Take an independent set $H$ in $X$ with respect to $E$
+                such that $H\approx\kappa$.
+            $H\approx\card{X}$.
+            $\card{X}\approx X$ by \obv{card_equinumerous}.
+            Hence $H\approx\card{X}\approx X$.
+            Hence $H\approx X$ by \obv{equinum_tran}.
+        \caseOf{$E$ has a countably infinite clique in $X$.}
+            Follows by \auto.
+    \end{byCase}
+\end{proof}
+
+\begin{theorem}\label{erdos_dushnik_miller_complementary_graph}
+    Suppose $X$ is infinite.
+    Suppose $E$ is a simple graph on $X$.
+    Then $E$ has a clique in $X$ equinumerous with $X$ or
+        $E$ has a countably infinite independent set in $X$.
+\end{theorem}
+\begin{proof}
+    $\graphComplement{E}{X}$ is a simple graph on $X$ by
+        \obv{graph_complement_simple}.
+    Hence $\graphComplement{E}{X}$ has an independent set in $X$
+            equinumerous with $X$ or
+        $\graphComplement{E}{X}$ has a countably infinite clique in $X$ by
+        \obv{erdos_dushnik_miller_graph}.
+    \begin{byCase}
+        \caseOf{$\graphComplement{E}{X}$ has an independent set in $X$
+            equinumerous with $X$.}
+            Take an independent set $H$ in $X$ with respect to
+                $\graphComplement{E}{X}$ such that $H\approx X$.
+            Hence $H$ is a clique in $X$ with respect to $E$ by
+                \obv{graph_complement_independent_iff}.
+        \caseOf{$\graphComplement{E}{X}$ has a countably infinite clique in $X$.}
+            Take a countably infinite clique $K$ in $X$ with respect to
+                $\graphComplement{E}{X}$.
+            Hence $K$ is an independent set in $X$ with respect to $E$ by
+                \obv{graph_complement_clique_iff}.
+    \end{byCase}
+\end{proof}

@@ -1,0 +1,655 @@
+\import{topology/uniform-map-convergence.tex}
+\import{surreal/real-metric-sequences.tex}
+\import{set/finite-ordinal.tex}
+
+\section{Map convergence from a remaining budget}
+
+The reserve left after a step controls both that step and every later tail.
+The argument uses only the metric triangle inequality and ordered-real
+addition; no additive structure on the target is required.
+
+\subsection{Budget data}
+
+\begin{definition}\label{metric_map_remaining_budget_def}
+    $\metricMapRemainingBudget{M}{D}{S}{b}$ iff
+        $M$ is a metric space and
+        $S\in\funs{\naturals}{\funs{D}{\carrier[M]}}$ and
+        $b\in\funs{\naturals}{\reals}$ and
+        (for every $i\in\naturals$ we have
+            $\surrealLe{\surrealZero}{b(i)}$) and
+        for every $i\in\naturals$ we have for every $x\in D$ we have
+            $\surrealLe{
+                \surrealAdd{
+                    \metricDistance[M]
+                        (\apply{\apply{S}{\suc{i}}}{x},
+                         \apply{\apply{S}{i}}{x})}
+                    {b(\suc{i})}}
+                {b(i)}$.
+\end{definition}
+
+\begin{definition}\label{metric_map_tail_budget_def}
+    $\metricMapTailBudget{M}{D}{S}{b}$ iff
+        $\metricMapRemainingBudget{M}{D}{S}{b}$ and
+        $\metricConverges{\RealMetric}{b}{\surrealZero}$.
+\end{definition}
+
+Neither predicate asserts that $D$ is inhabited.  If $D$ is empty, the
+one-step spending condition is vacuous and the scalar budget need not be
+antitone, while the pointwise tail and convergence conclusions remain valid.
+Consequently only the two antitonicity results below require inhabitedness.
+
+\begin{proposition}\label{metric_map_remaining_budget_intro}
+    Let $M$ be a metric space.
+    Suppose $S\in\funs{\naturals}{\funs{D}{\carrier[M]}}$ and
+        $b\in\funs{\naturals}{\reals}$.
+    Suppose for every $i\in\naturals$ we have
+        $\surrealLe{\surrealZero}{b(i)}$.
+    Suppose for every $i\in\naturals$ we have for every $x\in D$ we have
+        $\surrealLe{
+            \surrealAdd{
+                \metricDistance[M]
+                    (\apply{\apply{S}{\suc{i}}}{x},
+                     \apply{\apply{S}{i}}{x})}
+                {b(\suc{i})}}
+            {b(i)}$.
+    Then $\metricMapRemainingBudget{M}{D}{S}{b}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{metric_map_remaining_budget_def}.
+\end{proof}
+
+\begin{proposition}\label{metric_map_remaining_budget_metric_space}
+    Suppose $\metricMapRemainingBudget{M}{D}{S}{b}$.
+    Then $M$ is a metric space.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{metric_map_remaining_budget_def}.
+\end{proof}
+
+\begin{proposition}\label{metric_map_remaining_budget_map_sequence}
+    Suppose $\metricMapRemainingBudget{M}{D}{S}{b}$.
+    Then $S\in\funs{\naturals}{\funs{D}{\carrier[M]}}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{metric_map_remaining_budget_def}.
+\end{proof}
+
+\begin{proposition}\label{metric_map_remaining_budget_real_sequence}
+    Suppose $\metricMapRemainingBudget{M}{D}{S}{b}$.
+    Then $b\in\funs{\naturals}{\reals}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{metric_map_remaining_budget_def}.
+\end{proof}
+
+\begin{proposition}\label{metric_map_remaining_budget_nonnegative}
+    Suppose $\metricMapRemainingBudget{M}{D}{S}{b}$.
+    Then for every $i\in\naturals$ we have
+        $\surrealLe{\surrealZero}{b(i)}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{metric_map_remaining_budget_def}.
+\end{proof}
+
+\begin{proposition}\label{metric_map_remaining_budget_spending}
+    Suppose $\metricMapRemainingBudget{M}{D}{S}{b}$.
+    Then for every $i\in\naturals$ we have for every $x\in D$ we have
+        $\surrealLe{
+            \surrealAdd{
+                \metricDistance[M]
+                    (\apply{\apply{S}{\suc{i}}}{x},
+                     \apply{\apply{S}{i}}{x})}
+                {b(\suc{i})}}
+            {b(i)}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{metric_map_remaining_budget_def}.
+\end{proof}
+
+\begin{proposition}\label{metric_map_tail_budget_intro}
+    Suppose $\metricMapRemainingBudget{M}{D}{S}{b}$ and
+        $\metricConverges{\RealMetric}{b}{\surrealZero}$.
+    Then $\metricMapTailBudget{M}{D}{S}{b}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{metric_map_tail_budget_def}.
+\end{proof}
+
+\begin{proposition}\label{metric_map_tail_budget_remaining}
+    Suppose $\metricMapTailBudget{M}{D}{S}{b}$.
+    Then $\metricMapRemainingBudget{M}{D}{S}{b}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{metric_map_tail_budget_def}.
+\end{proof}
+
+\begin{proposition}\label{metric_map_tail_budget_converges_zero}
+    Suppose $\metricMapTailBudget{M}{D}{S}{b}$.
+    Then $\metricConverges{\RealMetric}{b}{\surrealZero}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{metric_map_tail_budget_def}.
+\end{proof}
+
+\subsection{Finite tail estimates}
+
+\begin{lemma}\label{real_remaining_budget_step}
+    Let $t,a,c,p,q,r\in\reals$.
+    Suppose $\surrealLe{t}{\surrealAdd{a}{c}}$ and
+        $\surrealLe{\surrealAdd{a}{p}}{q}$ and
+        $\surrealLe{\surrealAdd{c}{q}}{r}$.
+    Then $\surrealLe{\surrealAdd{t}{p}}{r}$.
+\end{lemma}
+\begin{proof}
+    $\surrealLe{\surrealAdd{t}{p}}
+        {\surrealAdd{\surrealAdd{a}{c}}{p}}$
+        by \obv{surreal_add_le_left,surreal_real_is_surreal,surreal_add_is_surreal}.
+    $\surrealAdd{\surrealAdd{a}{c}}{p}
+        =\surrealAdd{\surrealAdd{a}{p}}{c}$
+        by
+        \auto{surreal_add_associative,surreal_add_commutative,surreal_real_is_surreal}.
+    $\surrealLe{\surrealAdd{\surrealAdd{a}{p}}{c}}
+        {\surrealAdd{q}{c}}$
+        by \obv{surreal_add_le_left,surreal_real_is_surreal,surreal_add_is_surreal}.
+    $\surrealAdd{q}{c}=\surrealAdd{c}{q}$
+        by \obv{surreal_add_commutative,surreal_real_is_surreal}.
+    Follows by
+        \auto{surreal_le_transitive,surreal_add_is_surreal,surreal_real_is_surreal}.
+\end{proof}
+
+\begin{proposition}\label{metric_map_budget_antitone_successor}
+    Suppose $\metricMapRemainingBudget{M}{D}{S}{b}$.
+    Suppose $D$ is inhabited.
+    Let $n\in\naturals$.
+    Then $\surrealLe{b(\suc{n})}{b(n)}$.
+\end{proposition}
+\begin{proof}
+    $S\in\funs{\naturals}{\funs{D}{\carrier[M]}}$
+        by \obv{metric_map_remaining_budget_map_sequence}.
+    $b\in\funs{\naturals}{\reals}$
+        by \obv{metric_map_remaining_budget_real_sequence}.
+    For every $i\in\naturals$ we have for every $x\in D$ we have
+        $\surrealLe{
+            \surrealAdd{
+                \metricDistance[M]
+                    (\apply{\apply{S}{\suc{i}}}{x},
+                     \apply{\apply{S}{i}}{x})}
+                {b(\suc{i})}}
+            {b(i)}$
+        by \obv{metric_map_remaining_budget_spending}.
+    Take $x$ such that $x\in D$ by assumption.
+    $\apply{\apply{S}{\suc{n}}}{x},
+        \apply{\apply{S}{n}}{x}\in\carrier[M]$
+        by \auto{funs_type_apply,omega_successor}.
+    $b(\suc{n})\in\reals$ and
+        $\metricDistance[M]
+            (\apply{\apply{S}{\suc{n}}}{x},
+             \apply{\apply{S}{n}}{x})\in\reals$
+        by \obv{funs_type_apply,omega_successor,metric_distance_type}.
+    $\surrealLe{\surrealZero}{
+        \metricDistance[M]
+            (\apply{\apply{S}{\suc{n}}}{x},
+             \apply{\apply{S}{n}}{x})}$
+        by \obv{metric_distance_nonnegative}.
+    $\surreal{\surrealZero}$ and $\surreal{b(\suc{n})}$ and
+        $\surreal{\metricDistance[M]
+            (\apply{\apply{S}{\suc{n}}}{x},
+             \apply{\apply{S}{n}}{x})}$
+        by \obv{empty_surreal,surreal_real_is_surreal}.
+    Hence
+        $\surrealLe{\surrealAdd{\surrealZero}{b(\suc{n})}}
+            {\surrealAdd{
+                \metricDistance[M]
+                    (\apply{\apply{S}{\suc{n}}}{x},
+                     \apply{\apply{S}{n}}{x})}
+                {b(\suc{n})}}$
+        by
+        \obv{surreal_add_le_left,metric_distance_type,surreal_real_is_surreal}.
+    $\surrealAdd{\surrealZero}{b(\suc{n})}=b(\suc{n})$
+        by \obv{surreal_add_zero_left,surreal_real_is_surreal}.
+    Hence
+        $\surrealLe{b(\suc{n})}
+            {\surrealAdd{
+                \metricDistance[M]
+                    (\apply{\apply{S}{\suc{n}}}{x},
+                     \apply{\apply{S}{n}}{x})}
+                {b(\suc{n})}}$.
+    $\surrealLe{
+        \surrealAdd{
+            \metricDistance[M]
+                (\apply{\apply{S}{\suc{n}}}{x},
+                 \apply{\apply{S}{n}}{x})}
+            {b(\suc{n})}}
+        {b(n)}$.
+    $b(n)\in\reals$ by \obv{funs_type_apply}.
+    Follows by
+        \auto{surreal_le_transitive,surreal_real_is_surreal,surreal_add_is_surreal}.
+\end{proof}
+
+\begin{theorem}\label{metric_map_budget_antitone}
+    Suppose $\metricMapRemainingBudget{M}{D}{S}{b}$.
+    Suppose $D$ is inhabited.
+    Let $n,m\in\naturals$.
+    Suppose $n\subseteq m$.
+    Then $\surrealLe{b(m)}{b(n)}$.
+\end{theorem}
+\begin{proof}
+    $b\in\funs{\naturals}{\reals}$
+        by \obv{metric_map_remaining_budget_real_sequence}.
+    Take $k\in\naturals$ such that $m=n+k$
+        by \obv{natural_subseteq_iff_additive_difference}.
+    Let $P:\Set\to\Prop=\fun{j:\Set}{
+        \surrealLe{b(n+j)}{b(n)}}$.
+    $\Apply{P}{\emptyset}$
+        by
+        \obv{num_addition_zero_right,surreal_le_reflexive,funs_type_apply,surreal_real_is_surreal}.
+    Show that for every $j\in\naturals$ such that $\Apply{P}{j}$
+        we have $\Apply{P}{\suc{j}}$.
+    \begin{subproof}
+        Fix $j\in\naturals$.
+        Assume $\Apply{P}{j}$.
+        $n+j\in\naturals$ by \obv{num_addition_on_naturals}.
+        $\surrealLe{b(n+j)}{b(n)}$.
+        $\surrealLe{b(\suc{n+j})}{b(n+j)}$
+            by \obv{metric_map_budget_antitone_successor}.
+        $b(\suc{n+j}),b(n+j),b(n)\in\reals$
+            by \obv{funs_type_apply,omega_successor}.
+        Hence $\surrealLe{b(\suc{n+j})}{b(n)}$
+            by
+            \obv{surreal_le_transitive,funs_type_apply,surreal_real_is_surreal}.
+        Follows by \obv{num_addition_successor_right}.
+    \end{subproof}
+    Let $C=\sep{\naturals}{P}$.
+    $\emptyset\in C$ by \auto{logical_separation_iff,omega_empty}.
+    For every $j\in C$ we have $\suc{j}\in C$
+        by \auto{logical_separation_iff,omega_successor}.
+    Hence $C$ is an inductive set by \obv{inductive_set}.
+    Hence every natural number is an element of $C$
+        by \obv{omega_minimal}.
+    Hence $\Apply{P}{k}$ by \auto{logical_separation_iff}.
+\end{proof}
+
+\begin{theorem}\label{metric_map_finite_remaining_budget}
+    Suppose $\metricMapRemainingBudget{M}{D}{S}{b}$.
+    Let $n,k\in\naturals$ and $x\in D$.
+    Then
+        $\surrealLe{
+            \surrealAdd{
+                \metricDistance[M]
+                    (\apply{\apply{S}{n+k}}{x},
+                     \apply{\apply{S}{n}}{x})}
+                {b(n+k)}}
+            {b(n)}$.
+\end{theorem}
+\begin{proof}
+    $M$ is a metric space
+        by \obv{metric_map_remaining_budget_metric_space}.
+    $S\in\funs{\naturals}{\funs{D}{\carrier[M]}}$
+        by \obv{metric_map_remaining_budget_map_sequence}.
+    $b\in\funs{\naturals}{\reals}$
+        by \obv{metric_map_remaining_budget_real_sequence}.
+    For every $i\in\naturals$ we have for every $y\in D$ we have
+        $\surrealLe{
+            \surrealAdd{
+                \metricDistance[M]
+                    (\apply{\apply{S}{\suc{i}}}{y},
+                     \apply{\apply{S}{i}}{y})}
+                {b(\suc{i})}}
+            {b(i)}$
+        by \obv{metric_map_remaining_budget_spending}.
+    Let $P:\Set\to\Prop=\fun{j:\Set}{
+        \surrealLe{
+            \surrealAdd{
+                \metricDistance[M]
+                    (\apply{\apply{S}{n+j}}{x},
+                     \apply{\apply{S}{n}}{x})}
+                {b(n+j)}}
+            {b(n)}}$.
+    $\apply{\apply{S}{n}}{x}\in\carrier[M]$
+        by \auto{funs_type_apply}.
+    $\metricDistance[M]
+        (\apply{\apply{S}{n}}{x},\apply{\apply{S}{n}}{x})
+        =\surrealZero$
+        by \obv{metric_distance_zero_iff}.
+    $b(n)\in\reals$ by \obv{funs_type_apply}.
+    Hence $\Apply{P}{\emptyset}$
+        by
+        \auto{num_addition_zero_right,surreal_add_zero_left,surreal_le_reflexive,surreal_real_is_surreal}.
+    Show that for every $j\in\naturals$ such that $\Apply{P}{j}$
+        we have $\Apply{P}{\suc{j}}$.
+    \begin{subproof}
+        Fix $j\in\naturals$.
+        Assume $\Apply{P}{j}$.
+        Let $q=n+j$.
+        $q\in\naturals$ and $\suc{q}\in\naturals$
+            by \auto{num_addition_on_naturals,omega_successor}.
+        $\apply{\apply{S}{\suc{q}}}{x},
+            \apply{\apply{S}{q}}{x},
+            \apply{\apply{S}{n}}{x}\in\carrier[M]$
+            by \auto{funs_type_apply}.
+        $\surrealLe{
+            \metricDistance[M]
+                (\apply{\apply{S}{\suc{q}}}{x},
+                 \apply{\apply{S}{n}}{x})}
+            {\surrealAdd{
+                \metricDistance[M]
+                    (\apply{\apply{S}{\suc{q}}}{x},
+                     \apply{\apply{S}{q}}{x})}
+                {\metricDistance[M]
+                    (\apply{\apply{S}{q}}{x},
+                     \apply{\apply{S}{n}}{x})}}$
+            by \obv{metric_triangle}.
+        $\surrealLe{
+            \surrealAdd{
+                \metricDistance[M]
+                    (\apply{\apply{S}{\suc{q}}}{x},
+                     \apply{\apply{S}{q}}{x})}
+                {b(\suc{q})}}
+            {b(q)}$.
+        $\surrealLe{
+            \surrealAdd{
+                \metricDistance[M]
+                    (\apply{\apply{S}{q}}{x},
+                     \apply{\apply{S}{n}}{x})}
+                {b(q)}}
+            {b(n)}$.
+        $\metricDistance[M]
+            (\apply{\apply{S}{\suc{q}}}{x},
+             \apply{\apply{S}{n}}{x})\in\reals$
+            by \obv{metric_distance_type}.
+        $\metricDistance[M]
+            (\apply{\apply{S}{\suc{q}}}{x},
+             \apply{\apply{S}{q}}{x})\in\reals$
+            by \obv{metric_distance_type}.
+        $\metricDistance[M]
+            (\apply{\apply{S}{q}}{x},
+             \apply{\apply{S}{n}}{x})\in\reals$
+            by \obv{metric_distance_type}.
+        $b(\suc{q}),b(q),b(n)\in\reals$
+            by \obv{funs_type_apply}.
+        Hence
+            $\surrealLe{
+                \surrealAdd{
+                    \metricDistance[M]
+                        (\apply{\apply{S}{\suc{q}}}{x},
+                         \apply{\apply{S}{n}}{x})}
+                    {b(\suc{q})}}
+                {b(n)}$
+            by \obv{real_remaining_budget_step}.
+        Follows by \auto{num_addition_successor_right}.
+    \end{subproof}
+    Let $C=\sep{\naturals}{P}$.
+    $\emptyset\in C$ by \auto{logical_separation_iff,omega_empty}.
+    For every $j\in C$ we have $\suc{j}\in C$
+        by \auto{logical_separation_iff,omega_successor}.
+    Hence $C$ is an inductive set by \obv{inductive_set}.
+    Hence every natural number is an element of $C$
+        by \obv{omega_minimal}.
+    Hence $\Apply{P}{k}$ by \auto{logical_separation_iff}.
+\end{proof}
+
+\begin{corollary}\label{metric_map_finite_tail_bound}
+    Suppose $\metricMapRemainingBudget{M}{D}{S}{b}$.
+    Let $n,k\in\naturals$ and $x\in D$.
+    Then
+        $\surrealLe{
+            \metricDistance[M]
+                (\apply{\apply{S}{n+k}}{x},
+                 \apply{\apply{S}{n}}{x})}
+            {b(n)}$.
+\end{corollary}
+\begin{proof}
+    $M$ is a metric space
+        by \obv{metric_map_remaining_budget_metric_space}.
+    $S\in\funs{\naturals}{\funs{D}{\carrier[M]}}$
+        by \obv{metric_map_remaining_budget_map_sequence}.
+    $b\in\funs{\naturals}{\reals}$
+        by \obv{metric_map_remaining_budget_real_sequence}.
+    For every $i\in\naturals$ we have
+        $\surrealLe{\surrealZero}{b(i)}$
+        by \obv{metric_map_remaining_budget_nonnegative}.
+    $n+k\in\naturals$ by \obv{num_addition_on_naturals}.
+    $\surrealLe{\surrealZero}{b(n+k)}$.
+    $\apply{\apply{S}{n+k}}{x},
+        \apply{\apply{S}{n}}{x}\in\carrier[M]$
+        by \auto{funs_type_apply}.
+    Let $d=\metricDistance[M]
+        (\apply{\apply{S}{n+k}}{x},\apply{\apply{S}{n}}{x})$.
+    $d,b(n+k)\in\reals$
+        by \auto{metric_distance_type,funs_type_apply}.
+    $\surrealLe{\surrealAdd{d}{\surrealZero}}
+        {\surrealAdd{d}{b(n+k)}}$
+        by
+        \obv{surreal_add_le_right,empty_surreal,surreal_real_is_surreal}.
+    $\surrealAdd{d}{\surrealZero}=d$
+        by \obv{surreal_add_zero_right,surreal_real_is_surreal}.
+    Hence
+        $\surrealLe{
+            \metricDistance[M]
+                (\apply{\apply{S}{n+k}}{x},
+                 \apply{\apply{S}{n}}{x})}
+            {\surrealAdd{
+                \metricDistance[M]
+                    (\apply{\apply{S}{n+k}}{x},
+                     \apply{\apply{S}{n}}{x})}
+                {b(n+k)}}$.
+    $\surrealLe{
+        \surrealAdd{
+            \metricDistance[M]
+                (\apply{\apply{S}{n+k}}{x},
+                 \apply{\apply{S}{n}}{x})}
+            {b(n+k)}}
+        {b(n)}$
+        by \obv{metric_map_finite_remaining_budget}.
+    Follows by
+        \auto{surreal_le_transitive,metric_distance_type,surreal_real_is_surreal,surreal_add_is_surreal,funs_type_apply}.
+\end{proof}
+
+\begin{theorem}\label{metric_map_remaining_budget}
+    Suppose $\metricMapRemainingBudget{M}{D}{S}{b}$.
+    Let $n,m\in\naturals$ and $x\in D$.
+    Suppose $n\subseteq m$.
+    Then
+        $\surrealLe{
+            \surrealAdd{
+                \metricDistance[M]
+                    (\apply{\apply{S}{m}}{x},
+                     \apply{\apply{S}{n}}{x})}
+                {b(m)}}
+            {b(n)}$.
+\end{theorem}
+\begin{proof}
+    Take $k\in\naturals$ such that $m=n+k$
+        by \obv{natural_subseteq_iff_additive_difference}.
+    Follows by \auto{metric_map_finite_remaining_budget}.
+\end{proof}
+
+\begin{corollary}\label{metric_map_tail_bound}
+    Suppose $\metricMapRemainingBudget{M}{D}{S}{b}$.
+    Let $n,m\in\naturals$ and $x\in D$.
+    Suppose $n\subseteq m$.
+    Then
+        $\surrealLe{
+            \metricDistance[M]
+                (\apply{\apply{S}{m}}{x},
+                 \apply{\apply{S}{n}}{x})}
+            {b(n)}$.
+\end{corollary}
+\begin{proof}
+    Take $k\in\naturals$ such that $m=n+k$
+        by \obv{natural_subseteq_iff_additive_difference}.
+    Follows by \auto{metric_map_finite_tail_bound}.
+\end{proof}
+
+\subsection{Convergence and limits}
+
+\begin{theorem}\label{uniform_map_cauchy_from_tail_budget}
+    Suppose $\metricMapTailBudget{M}{D}{S}{b}$.
+    Then $\uniformMapCauchy{\metricUniformSpace{M}}{D}{S}$.
+\end{theorem}
+\begin{proof}
+    $\metricMapRemainingBudget{M}{D}{S}{b}$
+        by \obv{metric_map_tail_budget_remaining}.
+    $M$ is a metric space
+        by \obv{metric_map_remaining_budget_metric_space}.
+    $S\in\funs{\naturals}{\funs{D}{\carrier[M]}}$
+        by \obv{metric_map_remaining_budget_map_sequence}.
+    $b\in\funs{\naturals}{\reals}$
+        by \obv{metric_map_remaining_budget_real_sequence}.
+    For every $i\in\naturals$ we have
+        $\surrealLe{\surrealZero}{b(i)}$
+        by \obv{metric_map_remaining_budget_nonnegative}.
+    $\metricConverges{\RealMetric}{b}{\surrealZero}$
+        by \obv{metric_map_tail_budget_converges_zero}.
+    Show that for every $e\in\reals$ such that
+        $\surrealLt{\surrealZero}{e}$ there exists $N\in\naturals$
+        such that for all $m,n\in\naturals$ such that
+            $N\subseteq m$ and $N\subseteq n$ we have
+            for every $x\in D$ we have
+            $\surrealLt{\metricDistance[M]
+                (\apply{\apply{S}{m}}{x},
+                 \apply{\apply{S}{n}}{x})}{e}$.
+    \begin{subproof}
+        Fix $e\in\reals$.
+        Assume $\surrealLt{\surrealZero}{e}$.
+        Take $N\in\naturals$ such that for every $j\in\naturals$
+            such that $N\subseteq j$ we have $\surrealLt{b(j)}{e}$
+            by
+            \auto{nonnegative_real_sequence_converges_zero_iff_eventually_below}.
+        Show that for all $m,n\in\naturals$ such that
+            $N\subseteq m$ and $N\subseteq n$ we have
+            for every $x\in D$ we have
+            $\surrealLt{\metricDistance[M]
+                (\apply{\apply{S}{m}}{x},
+                 \apply{\apply{S}{n}}{x})}{e}$.
+        \begin{subproof}
+            Fix $m,n\in\naturals$.
+            Assume $N\subseteq m$ and $N\subseteq n$.
+            Fix $x\in D$.
+            $m\subseteq n$ or $n\subseteq m$
+                by
+                \auto{ordinal_subset_trichotomy,subset,subseteq_refl,natural_number_is_ordinal}.
+            \begin{byCase}
+                \caseOf{$n\subseteq m$.}
+                    $\surrealLe{\metricDistance[M]
+                        (\apply{\apply{S}{m}}{x},
+                         \apply{\apply{S}{n}}{x})}{b(n)}$
+                        by \obv{metric_map_tail_bound}.
+                    $\surrealLt{b(n)}{e}$.
+                    Follows by
+                        \auto{surreal_le_lt_transitive,metric_distance_type,funs_type_apply,surreal_real_is_surreal}.
+                \caseOf{$n\not\subseteq m$.}
+                    Hence $m\subseteq n$.
+                    $\surrealLe{\metricDistance[M]
+                        (\apply{\apply{S}{n}}{x},
+                         \apply{\apply{S}{m}}{x})}{b(m)}$
+                        by \obv{metric_map_tail_bound}.
+                    $\surrealLt{b(m)}{e}$.
+                    Hence $\surrealLt{\metricDistance[M]
+                        (\apply{\apply{S}{n}}{x},
+                         \apply{\apply{S}{m}}{x})}{e}$
+                        by
+                        \auto{surreal_le_lt_transitive,metric_distance_type,funs_type_apply,surreal_real_is_surreal}.
+                    $\apply{\apply{S}{m}}{x},
+                        \apply{\apply{S}{n}}{x}\in\carrier[M]$
+                        by \auto{funs_type_apply}.
+                    Follows by \obv{metric_distance_symmetric}.
+            \end{byCase}
+        \end{subproof}
+        Follows by \auto.
+    \end{subproof}
+    Follows by \obv{metric_uniform_map_cauchy_iff}.
+\end{proof}
+
+\begin{theorem}\label{metric_map_limit_tail_bound}
+    Suppose $M$ is sequentially complete metric.
+    Suppose $\metricMapTailBudget{M}{D}{S}{b}$.
+    Let $g=\pointwiseMetricLimitMap{M}{D}{S}$.
+    Then for every $n\in\naturals$ we have for every $x\in D$ we have
+        $\surrealLe{\metricDistance[M]
+            (g(x),\apply{\apply{S}{n}}{x})}{b(n)}$.
+\end{theorem}
+\begin{proof}
+    $\metricMapRemainingBudget{M}{D}{S}{b}$
+        by \obv{metric_map_tail_budget_remaining}.
+    $b\in\funs{\naturals}{\reals}$
+        by \obv{metric_map_remaining_budget_real_sequence}.
+    $\uniformMapCauchy{\metricUniformSpace{M}}{D}{S}$
+        by \obv{uniform_map_cauchy_from_tail_budget}.
+    $g\in\funs{D}{\carrier[M]}$ and
+        $\uniformMapConverges{\metricUniformSpace{M}}{D}{S}{g}$
+        by
+        \obv{uniformly_cauchy_maps_have_uniform_limit_in_sequentially_complete_metric}.
+    Fix $n\in\naturals$.
+    Show that there exists $N\in\naturals$ such that for every
+        $m\in\naturals$ such that $N\subseteq m$ we have
+        for every $x\in D$ we have
+        $\surrealLe{\metricDistance[M]
+            (\apply{\apply{S}{m}}{x},
+             \apply{\apply{S}{n}}{x})}{b(n)}$.
+    \begin{subproof}
+        Let $N=n$.
+        $N\in\naturals$.
+        For every $m\in\naturals$ such that $N\subseteq m$ we have
+            for every $x\in D$ we have
+            $\surrealLe{\metricDistance[M]
+                (\apply{\apply{S}{m}}{x},
+                 \apply{\apply{S}{n}}{x})}{b(n)}$
+            by \obv{metric_map_tail_bound}.
+    \end{subproof}
+    $b(n)\in\reals$ by \obv{funs_type_apply}.
+    Follows by \obv{uniform_map_limit_closed_tail_bound}.
+\end{proof}
+
+\begin{theorem}\label{metric_map_limit_from_tail_budget}
+    Suppose $M$ is sequentially complete metric.
+    Suppose $\metricMapTailBudget{M}{D}{S}{b}$.
+    Let $g=\pointwiseMetricLimitMap{M}{D}{S}$.
+    Then
+        $\uniformMapCauchy{\metricUniformSpace{M}}{D}{S}$ and
+        $g\in\funs{D}{\carrier[M]}$ and
+        $\uniformMapConverges{\metricUniformSpace{M}}{D}{S}{g}$ and
+        for every $n\in\naturals$ we have for every $x\in D$ we have
+            $\surrealLe{\metricDistance[M]
+                (g(x),\apply{\apply{S}{n}}{x})}{b(n)}$.
+\end{theorem}
+\begin{proof}
+    $\uniformMapCauchy{\metricUniformSpace{M}}{D}{S}$
+        by \obv{uniform_map_cauchy_from_tail_budget}.
+    $g\in\funs{D}{\carrier[M]}$ and
+        $\uniformMapConverges{\metricUniformSpace{M}}{D}{S}{g}$
+        by
+        \obv{uniformly_cauchy_maps_have_uniform_limit_in_sequentially_complete_metric}.
+    For every $n\in\naturals$ we have for every $x\in D$ we have
+        $\surrealLe{\metricDistance[M]
+            (g(x),\apply{\apply{S}{n}}{x})}{b(n)}$
+        by \obv{metric_map_limit_tail_bound}.
+\end{proof}
+
+\begin{corollary}\label{continuous_metric_map_limit_from_tail_budget}
+    Let $X$ be a topological space.
+    Suppose $M$ is sequentially complete metric.
+    Suppose $\metricMapTailBudget{M}{\carrier[X]}{S}{b}$.
+    Suppose for every $n\in\naturals$ we have
+        $\apply{S}{n}$ is continuous from $X$ to $\metricTopology{M}$.
+    Let $g=\pointwiseMetricLimitMap{M}{\carrier[X]}{S}$.
+    Then $g\in\funs{\carrier[X]}{\carrier[M]}$ and
+        $g$ is continuous from $X$ to $\metricTopology{M}$ and
+        for every $n\in\naturals$ we have for every
+            $x\in\carrier[X]$ we have
+            $\surrealLe{\metricDistance[M]
+                (g(x),\apply{\apply{S}{n}}{x})}{b(n)}$.
+\end{corollary}
+\begin{proof}
+    $\uniformMapConverges
+        {\metricUniformSpace{M}}{\carrier[X]}{S}{g}$ and
+        $g\in\funs{\carrier[X]}{\carrier[M]}$
+        by \auto{metric_map_limit_from_tail_budget}.
+    $g$ is continuous from $X$ to $\metricTopology{M}$
+        by \obv{uniform_limit_of_continuous_maps}.
+    For every $n\in\naturals$ we have for every
+        $x\in\carrier[X]$ we have
+        $\surrealLe{\metricDistance[M]
+            (g(x),\apply{\apply{S}{n}}{x})}{b(n)}$
+        by \obv{metric_map_limit_tail_bound}.
+\end{proof}

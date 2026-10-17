@@ -1,0 +1,750 @@
+\import{surreal/real-multiplication.tex}
+
+\section{Reciprocals and division of surreal reals}
+
+\subsection{Finite dyadic scales}
+
+\begin{lemma}\label{surreal_epsilon_has_finite_weak_inverse}
+    Let $n$ be an ordinal.
+    Suppose $n$ is a natural number.
+    Then there exists $q\in\surrealStage{\naturals}$ such that
+        $\surrealLt{\surrealZero}{q}$ and
+        $\surrealLe{\surrealOne}
+            {\surrealMul{q}{\surrealEpsilon{n}}}$.
+\end{lemma}
+\begin{proof}[Proof by transfinite induction]
+    $n=\emptyset$ or there exists a natural number $k$ such that
+        $n=\suc{k}$ by \obv{natural_zero_or_successor}.
+    \begin{byCase}
+        \caseOf{$n=\emptyset$.}
+            $\surrealOne\in\surrealStage{\naturals}$
+                by
+                \auto{surreal_stage_characterization,surreal_one_is_surreal,ordinal_surreal_birthday,omega_empty,omega_successor,omega_is_ordinal}.
+            $\surrealLt{\surrealZero}{\surrealOne}$
+                by \obv{surreal_zero_lt_one}.
+            $\surrealMul{\surrealOne}{\surrealEpsilon{n}}
+                =\surrealOne$
+                by
+                \auto{surreal_epsilon_zero,surreal_mul_one_left,surreal_one_is_surreal}.
+            $\surrealLe{\surrealOne}{\surrealOne}$
+                by \obv{surreal_le,surreal_one_is_surreal}.
+        \caseOf{$n\neq\emptyset$.}
+            Take $k$ such that $k$ is a natural number and
+                $n=\suc{k}$.
+            $k\in n$ by \obv{suc_intro_self}.
+            Take $q\in\surrealStage{\naturals}$ such that
+                $\surrealLt{\surrealZero}{q}$ and
+                $\surrealLe{\surrealOne}
+                    {\surrealMul{q}{\surrealEpsilon{k}}}$.
+            Let $r=\surrealAdd{q}{q}$.
+            $r\in\surrealStage{\naturals}$
+                by \auto{surreal_addition_finite_stage}.
+            $\surreal{q}$
+                by
+                \auto{surreal_stage_characterization,omega_is_ordinal}.
+            $\surrealLt{q}{r}$
+                by
+                \auto{surreal_add_lt_right,surreal_add_zero_right,empty_surreal}.
+            Hence $\surrealLt{\surrealZero}{r}$
+                by
+                \obv{surreal_lt_transitive,surreal_add_is_surreal,empty_surreal}.
+            $\surrealAdd{\surrealEpsilon{n}}{\surrealEpsilon{n}}
+                =\surrealEpsilon{k}$
+                by
+                \auto{surreal_epsilon_halving,natural_number_is_ordinal}.
+            Hence
+                $\surrealMul{r}{\surrealEpsilon{n}}
+                    =\surrealMul{q}{\surrealEpsilon{k}}$
+                by
+                \auto{surreal_mul_distributive_right,surreal_mul_distributive_left,surreal_mul_commutative,surreal_epsilon_is_surreal,surreal_add_is_surreal}.
+            Hence
+                $\surrealLe{\surrealOne}
+                    {\surrealMul{r}{\surrealEpsilon{n}}}$.
+    \end{byCase}
+\end{proof}
+
+\begin{lemma}\label{positive_real_scaled_epsilon_below}
+    Suppose $x,d\in\reals$.
+    Suppose $\surrealLt{\surrealZero}{x}$ and
+        $\surrealLt{\surrealZero}{d}$.
+    Then there exists a natural number $n$ such that
+        $\surrealLt{\surrealMul{\surrealEpsilon{n}}{x}}{d}$.
+\end{lemma}
+\begin{proof}
+    Take a natural number $i$ such that
+        $\surrealLt{\surrealMul{\surrealEpsilon{i}}{x}}
+            {\surrealOne}$
+        by \obv{positive_real_scaled_epsilon_bound}.
+    $\surrealZero\in\surrealStage{\naturals}$
+        by
+        \auto{surreal_stage_characterization,empty_surreal,omega_empty,omega_is_ordinal}.
+    Take a natural number $j$ such that
+        $\surrealLe{\surrealEpsilon{j}}{d}$
+        by
+        \auto{real_lower_epsilon_gap,surreal_negation_empty,surreal_add_zero_right,surreal_real_is_surreal,empty_surreal}.
+    Let $n=j+i$.
+    $n$ is a natural number by \auto{num_addition_on_naturals}.
+    $\surrealEpsilon{n}
+        =\surrealMul{\surrealEpsilon{j}}{\surrealEpsilon{i}}$
+        by
+        \auto{surreal_epsilon_product,natural_number_is_ordinal}.
+    $\surrealLt{\surrealZero}{\surrealEpsilon{j}}$
+        by \obv{surreal_epsilon_positive}.
+    Hence
+        $\surrealLt
+            {\surrealMul{\surrealEpsilon{j}}
+                {\surrealMul{\surrealEpsilon{i}}{x}}}
+            {\surrealMul{\surrealEpsilon{j}}{\surrealOne}}$
+        by
+        \auto{surreal_pos_mul_lt_left,surreal_epsilon_is_surreal,surreal_real_is_surreal,surreal_mul_is_surreal,surreal_one_is_surreal}.
+    Hence
+        $\surrealLt{\surrealMul{\surrealEpsilon{n}}{x}}
+            {\surrealEpsilon{j}}$
+        by
+        \auto{surreal_mul_associative,surreal_mul_one_right,surreal_epsilon_is_surreal,surreal_real_is_surreal}.
+    Follows by
+        \auto{surreal_lt_le_transitive,surreal_mul_is_surreal,surreal_epsilon_is_surreal,surreal_real_is_surreal}.
+\end{proof}
+
+\subsection{The positive reciprocal cut}
+
+\begin{definition}\label{surreal_real_reciprocal_lower}
+    $\realReciprocalLower{x}=
+        \{q\in\surrealStage{\naturals}\mid
+            \surrealLt{\surrealZero}{q}\land
+            \surrealLt{\surrealMul{q}{x}}{\surrealOne}\}$.
+\end{definition}
+
+\begin{definition}\label{surreal_real_reciprocal_upper}
+    $\realReciprocalUpper{x}=
+        \{q\in\surrealStage{\naturals}\mid
+            \surrealLt{\surrealZero}{q}\land
+            \surrealLt{\surrealOne}{\surrealMul{q}{x}}\}$.
+\end{definition}
+
+\begin{proposition}\label{surreal_real_reciprocal_lower_iff}
+    $q\in\realReciprocalLower{x}$ iff
+        $q\in\surrealStage{\naturals}$ and
+        $\surrealLt{\surrealZero}{q}$ and
+        $\surrealLt{\surrealMul{q}{x}}{\surrealOne}$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{surreal_real_reciprocal_lower}.
+\end{proof}
+
+\begin{proposition}\label{surreal_real_reciprocal_upper_iff}
+    $q\in\realReciprocalUpper{x}$ iff
+        $q\in\surrealStage{\naturals}$ and
+        $\surrealLt{\surrealZero}{q}$ and
+        $\surrealLt{\surrealOne}{\surrealMul{q}{x}}$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{surreal_real_reciprocal_upper}.
+\end{proof}
+
+\begin{lemma}\label{natural_common_strict_upper_bound}
+    Let $i,j$ be natural numbers.
+    Then there exists a natural number $n$ such that
+        $i\in n$ and $j\in n$.
+\end{lemma}
+\begin{proof}
+    Let $h=i\union j$.
+    $i\subseteq j$ or $j\subseteq i$
+        by
+        \obv{ordinal_subseteq_or_subseteq,natural_number_is_ordinal}.
+    Hence $h=i$ or $h=j$
+        by
+        \obv{union_absorb_subseteq_left,union_absorb_subseteq_right}.
+    Let $n=\suc{h}$.
+    $n$ is a natural number by \auto{omega_successor}.
+    $i\subseteq h$ and $j\subseteq h$
+        by \obv{union_upper_left,union_upper_right}.
+    $i\in h$ or $i=h$
+        by
+        \obv{ordinal_subseteq_implies_elem_or_eq,natural_number_is_ordinal}.
+    $j\in h$ or $j=h$
+        by
+        \obv{ordinal_subseteq_implies_elem_or_eq,natural_number_is_ordinal}.
+    Hence $i\in n$ and $j\in n$ by \auto{suc_iff}.
+\end{proof}
+
+\begin{proposition}\label{surreal_real_reciprocal_bounds_finite_stage}
+    $\realReciprocalLower{x}\union\realReciprocalUpper{x}
+        \subseteq\surrealStage{\naturals}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{subseteq,union_iff,surreal_real_reciprocal_lower_iff,surreal_real_reciprocal_upper_iff}.
+\end{proof}
+
+\begin{proposition}\label{surreal_real_reciprocal_cut_pair}
+    Suppose $x\in\reals$ and
+        $\surrealLt{\surrealZero}{x}$.
+    Then
+        $\surrealCutPair{\realReciprocalLower{x}}
+            {\realReciprocalUpper{x}}$.
+\end{proposition}
+\begin{proof}
+    Show that for every $q\in\realReciprocalLower{x}$ we have
+        $\surreal{q}$.
+    \begin{subproof}
+        Follows by
+            \auto{surreal_real_reciprocal_lower_iff,surreal_stage_characterization,omega_is_ordinal}.
+    \end{subproof}
+    Show that for every $r\in\realReciprocalUpper{x}$ we have
+        $\surreal{r}$.
+    \begin{subproof}
+        Follows by
+            \auto{surreal_real_reciprocal_upper_iff,surreal_stage_characterization,omega_is_ordinal}.
+    \end{subproof}
+    Show that for every $q\in\realReciprocalLower{x}$ we have
+        for every $r\in\realReciprocalUpper{x}$ we have
+            $\surrealLt{q}{r}$.
+    \begin{subproof}
+        Fix $q\in\realReciprocalLower{x}$.
+        Fix $r\in\realReciprocalUpper{x}$.
+        $q,r\in\surrealStage{\naturals}$ and
+            $\surrealLt{\surrealMul{q}{x}}{\surrealOne}$ and
+            $\surrealLt{\surrealOne}{\surrealMul{r}{x}}$
+            by
+            \obv{surreal_real_reciprocal_lower_iff,surreal_real_reciprocal_upper_iff}.
+        Hence $\surreal{q}$ and $\surreal{r}$
+            by
+            \obv{surreal_stage_characterization,omega_is_ordinal}.
+        Hence
+            $\surrealLt{\surrealMul{q}{x}}{\surrealMul{r}{x}}$
+            by
+            \auto{surreal_lt_transitive,surreal_mul_is_surreal,surreal_real_is_surreal,surreal_one_is_surreal}.
+        Suppose not.
+        $\surrealLe{r}{q}$
+            by \auto{surreal_le_total,surreal_le}.
+        $\surrealLe{\surrealZero}{x}$ by \obv{surreal_le}.
+        Hence
+            $\surrealLe{\surrealMul{r}{x}}{\surrealMul{q}{x}}$
+            by
+            \obv{surreal_nonneg_mul_le_right,surreal_real_is_surreal}.
+        Contradiction by
+            \auto{surreal_le,surreal_lt_asymmetric,surreal_mul_is_surreal,surreal_real_is_surreal}.
+    \end{subproof}
+    Follows by \obv{surreal_cut_pair}.
+\end{proof}
+
+\begin{proposition}\label{surreal_real_reciprocal_lower_inhabited}
+    Suppose $x\in\reals$ and
+        $\surrealLt{\surrealZero}{x}$.
+    Then $\realReciprocalLower{x}$ is inhabited.
+\end{proposition}
+\begin{proof}
+    Take a natural number $n$ such that
+        $\surrealLt{\surrealMul{\surrealEpsilon{n}}{x}}
+            {\surrealOne}$
+        by \obv{positive_real_scaled_epsilon_bound}.
+    $\surrealEpsilon{n}\in\surrealStage{\naturals}$
+        by \obv{surreal_epsilon_in_finite_stage}.
+    $\surrealLt{\surrealZero}{\surrealEpsilon{n}}$
+        by \obv{surreal_epsilon_positive}.
+    Hence $\surrealEpsilon{n}\in\realReciprocalLower{x}$
+        by \obv{surreal_real_reciprocal_lower_iff}.
+\end{proof}
+
+\begin{proposition}\label{surreal_real_reciprocal_upper_inhabited}
+    Suppose $x\in\reals$ and
+        $\surrealLt{\surrealZero}{x}$.
+    Then $\realReciprocalUpper{x}$ is inhabited.
+\end{proposition}
+\begin{proof}
+    Take $p$ such that $p\in\realPositiveLower{x}$
+        by \obv{surreal_real_positive_lower_inhabited}.
+    $p\in\surrealStage{\naturals}$ and
+        $\surrealLt{\surrealZero}{p}$ and $\surrealLt{p}{x}$
+        by \auto{surreal_real_positive_lower_iff}.
+    Hence $\surreal{p}$ and $\birthday{p}\in\naturals$
+        by
+        \auto{surreal_stage_characterization,omega_is_ordinal}.
+    $p\in\surrealStage{\suc{\birthday{p}}}$
+        by \obv{surreal_in_successor_stage}.
+    Hence
+        $\surrealLt{\surrealEpsilon{\birthday{p}}}{p}$
+        by \obv{positive_finite_surreal_dominates_epsilon}.
+    Hence
+        $\surrealLt{\surrealEpsilon{\birthday{p}}}{x}$
+        by
+        \auto{surreal_lt_transitive,surreal_epsilon_is_surreal,surreal_real_is_surreal}.
+    Take $q\in\surrealStage{\naturals}$ such that
+        $\surrealLt{\surrealZero}{q}$ and
+        $\surrealLe{\surrealOne}
+            {\surrealMul{q}{\surrealEpsilon{\birthday{p}}}}$
+        by
+        \obv{surreal_epsilon_has_finite_weak_inverse,natural_number_is_ordinal}.
+    $\surreal{q}$
+        by
+        \auto{surreal_stage_characterization,omega_is_ordinal}.
+    Hence
+        $\surrealLt
+            {\surrealMul{q}{\surrealEpsilon{\birthday{p}}}}
+            {\surrealMul{q}{x}}$
+        by
+        \auto{surreal_pos_mul_lt_left,surreal_epsilon_is_surreal,surreal_real_is_surreal}.
+    Hence $\surrealLt{\surrealOne}{\surrealMul{q}{x}}$
+        by
+        \auto{surreal_le_lt_transitive,surreal_mul_is_surreal,surreal_one_is_surreal,surreal_real_is_surreal,surreal_epsilon_is_surreal,natural_number_is_ordinal}.
+    Hence $q\in\realReciprocalUpper{x}$
+        by \obv{surreal_real_reciprocal_upper_iff}.
+\end{proof}
+
+\begin{proposition}\label{surreal_real_reciprocal_lower_no_maximum}
+    Suppose $x\in\reals$ and
+        $\surrealLt{\surrealZero}{x}$.
+    Then for every $q\in\realReciprocalLower{x}$ there exists
+        $q'\in\realReciprocalLower{x}$ such that
+        $\surrealLt{q}{q'}$.
+\end{proposition}
+\begin{proof}
+    Fix $q\in\realReciprocalLower{x}$.
+    $q\in\surrealStage{\naturals}$ and
+        $\surrealLt{\surrealZero}{q}$ and
+        $\surrealLt{\surrealMul{q}{x}}{\surrealOne}$
+        by \obv{surreal_real_reciprocal_lower_iff}.
+    Hence $\surreal{q}$
+        by
+        \auto{surreal_stage_characterization,omega_is_ordinal}.
+    $q\in\reals$
+        by \obv{finite_surreal_stage_subset_reals,subseteq}.
+    Hence $\surrealMul{q}{x}\in\reals$
+        by \obv{surreal_real_multiplication_closed}.
+    Hence $\surrealNeg{\surrealMul{q}{x}}\in\reals$
+        by \obv{surreal_real_negation_closed}.
+    Let $d=\surrealAdd{\surrealOne}
+        {\surrealNeg{\surrealMul{q}{x}}}$.
+    $d\in\reals$
+        by \auto{surreal_real_addition_closed,surreal_one_is_real}.
+    $\surrealLt{\surrealZero}{d}$
+        by
+        \obv{surreal_subtraction_positive,surreal_mul_is_surreal,surreal_real_is_surreal,surreal_one_is_surreal}.
+    Take a natural number $n$ such that
+        $\surrealLt{\surrealMul{\surrealEpsilon{n}}{x}}{d}$
+        by \obv{positive_real_scaled_epsilon_below}.
+    Let $e=\surrealEpsilon{n}$.
+    Let $q'=\surrealAdd{q}{e}$.
+    $e\in\surrealStage{\naturals}$
+        by \auto{surreal_epsilon_in_finite_stage}.
+    Hence $q'\in\surrealStage{\naturals}$
+        by \auto{surreal_addition_finite_stage}.
+    $\surreal{e}$ and $\surrealLt{\surrealZero}{e}$
+        by
+        \auto{surreal_epsilon_is_surreal,surreal_epsilon_positive,natural_number_is_ordinal}.
+    Hence $\surrealLt{q}{q'}$
+        by
+        \auto{surreal_add_lt_right,surreal_add_zero_right,empty_surreal}.
+    Hence $\surrealLt{\surrealZero}{q'}$
+        by
+        \obv{surreal_lt_transitive,surreal_add_is_surreal,empty_surreal}.
+    $\surrealLt
+        {\surrealAdd{\surrealMul{\surrealEpsilon{n}}{x}}
+            {\surrealMul{q}{x}}}{\surrealOne}$
+        by
+        \obv{surreal_lt_subtract_add,surreal_mul_is_surreal,surreal_real_is_surreal,surreal_one_is_surreal}.
+    Hence $\surrealLt{\surrealMul{q'}{x}}{\surrealOne}$
+        by
+        \auto{surreal_mul_distributive_right,surreal_add_commutative,surreal_mul_is_surreal,surreal_add_is_surreal,surreal_real_is_surreal}.
+    Hence $q'\in\realReciprocalLower{x}$
+        by \obv{surreal_real_reciprocal_lower_iff}.
+\end{proof}
+
+\begin{proposition}\label{surreal_real_reciprocal_upper_no_minimum}
+    Suppose $x\in\reals$ and
+        $\surrealLt{\surrealZero}{x}$.
+    Then for every $q\in\realReciprocalUpper{x}$ there exists
+        $q'\in\realReciprocalUpper{x}$ such that
+        $\surrealLt{q'}{q}$.
+\end{proposition}
+\begin{proof}
+    Fix $q\in\realReciprocalUpper{x}$.
+    $q\in\surrealStage{\naturals}$ and
+        $\surrealLt{\surrealZero}{q}$ and
+        $\surrealLt{\surrealOne}{\surrealMul{q}{x}}$
+        by \obv{surreal_real_reciprocal_upper_iff}.
+    Hence $\surreal{q}$ and $\birthday{q}\in\naturals$
+        by
+        \auto{surreal_stage_characterization,omega_is_ordinal}.
+    $q\in\reals$
+        by \obv{finite_surreal_stage_subset_reals,subseteq}.
+    Hence $\surrealMul{q}{x}\in\reals$
+        by \obv{surreal_real_multiplication_closed}.
+    Hence $\surrealNeg{\surrealOne}\in\reals$
+        by \obv{surreal_real_negation_closed,surreal_one_is_real}.
+    Let $d=\surrealAdd{\surrealMul{q}{x}}
+        {\surrealNeg{\surrealOne}}$.
+    $d\in\reals$
+        by \auto{surreal_real_addition_closed}.
+    $\surrealLt{\surrealZero}{d}$
+        by
+        \obv{surreal_subtraction_positive,surreal_mul_is_surreal,surreal_real_is_surreal,surreal_one_is_surreal}.
+    Take a natural number $i$ such that
+        $\surrealLt{\surrealMul{\surrealEpsilon{i}}{x}}{d}$
+        by \obv{positive_real_scaled_epsilon_below}.
+    Take a natural number $n$ such that
+        $i\in n$ and $\birthday{q}\in n$
+        by \obv{natural_common_strict_upper_bound}.
+    Let $e=\surrealEpsilon{n}$.
+    $\surrealLt{e}{\surrealEpsilon{i}}$ and
+        $\surrealLt{e}{\surrealEpsilon{\birthday{q}}}$
+        by \auto{surreal_epsilon_decreasing}.
+    $q\in\surrealStage{\suc{\birthday{q}}}$
+        by \obv{surreal_in_successor_stage}.
+    Hence $\surrealLt{\surrealEpsilon{\birthday{q}}}{q}$
+        by \obv{positive_finite_surreal_dominates_epsilon}.
+    Hence $\surrealLt{e}{q}$
+        by
+        \auto{surreal_lt_transitive,surreal_epsilon_is_surreal}.
+    $\surreal{e}$ and $\surrealLt{\surrealZero}{e}$
+        by
+        \auto{surreal_epsilon_is_surreal,surreal_epsilon_positive,natural_number_is_ordinal}.
+    Hence
+        $\surrealLt{\surrealMul{e}{x}}
+            {\surrealMul{\surrealEpsilon{i}}{x}}$
+        by
+        \auto{surreal_pos_mul_lt_right,surreal_epsilon_is_surreal,surreal_real_is_surreal}.
+    Hence $\surrealLt{\surrealMul{e}{x}}{d}$
+        by
+        \auto{surreal_lt_transitive,surreal_mul_is_surreal,surreal_real_is_surreal,surreal_epsilon_is_surreal,natural_number_is_ordinal}.
+    Let $q'=\surrealAdd{q}{\surrealNeg{e}}$.
+    $e\in\surrealStage{\naturals}$
+        by \auto{surreal_epsilon_in_finite_stage}.
+    Hence $\surrealNeg{e}\in\surrealStage{\naturals}$
+        by \obv{surreal_negation_finite_stage}.
+    Hence $q'\in\surrealStage{\naturals}$
+        by \auto{surreal_addition_finite_stage}.
+    $\surrealLt{\surrealNeg{e}}{\surrealZero}$
+        by
+        \obv{surreal_negation_lt_reverses,surreal_negation_empty,empty_surreal}.
+    Hence $\surrealLt{q'}{q}$
+        by
+        \auto{surreal_add_lt_right,surreal_add_zero_right,empty_surreal,surreal_negation_is_surreal}.
+    $\surrealLt{\surrealZero}{q'}$
+        by \obv{surreal_subtraction_positive}.
+    $\surrealLt
+        {\surrealAdd{\surrealMul{e}{x}}{\surrealOne}}
+        {\surrealMul{q}{x}}$
+        by
+        \obv{surreal_lt_subtract_add,surreal_mul_is_surreal,surreal_real_is_surreal,surreal_one_is_surreal,surreal_negation_is_surreal,surreal_stage_characterization,omega_is_ordinal}.
+    Hence
+        $\surrealLt{\surrealOne}
+            {\surrealAdd{\surrealMul{q}{x}}
+                {\surrealNeg{\surrealMul{e}{x}}}}$
+        by
+        \auto{surreal_add_subtract_lt,surreal_add_commutative,surreal_add_zero_right,surreal_negation_empty,surreal_mul_is_surreal,surreal_negation_is_surreal,surreal_one_is_surreal,surreal_real_is_surreal,empty_surreal}.
+    Hence $\surrealLt{\surrealOne}{\surrealMul{q'}{x}}$
+        by
+        \auto{surreal_mul_distributive_right,surreal_mul_neg_left,surreal_add_is_surreal,surreal_mul_is_surreal,surreal_negation_is_surreal,surreal_real_is_surreal}.
+    Hence $q'\in\realReciprocalUpper{x}$
+        by \obv{surreal_real_reciprocal_upper_iff}.
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{surreal_positive_real_reciprocal_cut_is_real}
+    Suppose $x\in\reals$ and
+        $\surrealLt{\surrealZero}{x}$.
+    Then
+        $\surrealCut{\realReciprocalLower{x}}
+            {\realReciprocalUpper{x}}\in\reals$.
+\end{theorem}
+\begin{proof}
+    Follows by
+        \obv{dense_finite_stage_surreal_cut_is_real,surreal_real_reciprocal_bounds_finite_stage,surreal_real_reciprocal_cut_pair,surreal_real_reciprocal_lower_inhabited,surreal_real_reciprocal_upper_inhabited,surreal_real_reciprocal_lower_no_maximum,surreal_real_reciprocal_upper_no_minimum}.
+\end{proof}
+
+\begin{proposition}\label{surreal_positive_real_reciprocal_cut_positive}
+    Suppose $x\in\reals$ and
+        $\surrealLt{\surrealZero}{x}$.
+    Then
+        $\surrealLt{\surrealZero}
+            {\surrealCut{\realReciprocalLower{x}}
+                {\realReciprocalUpper{x}}}$.
+\end{proposition}
+\begin{proof}
+    Take $q$ such that $q\in\realReciprocalLower{x}$
+        by \obv{surreal_real_reciprocal_lower_inhabited}.
+    $\surrealLt{\surrealZero}{q}$
+        by \obv{surreal_real_reciprocal_lower_iff}.
+    $q\in\surrealStage{\naturals}$
+        by \obv{surreal_real_reciprocal_lower_iff}.
+    Hence $\surreal{q}$
+        by \auto{surreal_stage_characterization,omega_is_ordinal}.
+    $\surrealLt{q}
+        {\surrealCut{\realReciprocalLower{x}}
+            {\realReciprocalUpper{x}}}$
+        by
+        \obv{surreal_cut_pair_left,surreal_real_reciprocal_cut_pair}.
+    Follows by
+        \obv{surreal_lt_transitive,empty_surreal,surreal_cut_pair_is_surreal,surreal_real_reciprocal_cut_pair}.
+\end{proof}
+
+\begin{theorem}\label{surreal_positive_real_reciprocal_cut_inverse}
+    Suppose $x\in\reals$ and
+        $\surrealLt{\surrealZero}{x}$.
+    Let
+        $c=\surrealCut{\realReciprocalLower{x}}
+            {\realReciprocalUpper{x}}$.
+    Then $\surrealMul{c}{x}=\surrealOne$.
+\end{theorem}
+\begin{proof}
+    $c\in\reals$
+        by \auto{surreal_positive_real_reciprocal_cut_is_real}.
+    $\surrealLt{\surrealZero}{c}$
+        by \obv{surreal_positive_real_reciprocal_cut_positive}.
+    Let $p=\surrealMul{c}{x}$.
+    $p\in\reals$
+        by \auto{surreal_real_multiplication_closed}.
+    Hence $\surreal{p}$
+        by \obv{surreal_real_is_surreal}.
+    $\surrealLt{p}{\surrealOne}$ or $p=\surrealOne$ or
+        $\surrealLt{\surrealOne}{p}$
+        by \auto{surreal_lt_trichotomy,surreal_one_is_surreal}.
+    \begin{byCase}
+        \caseOf{$p=\surrealOne$.}
+            Follows.
+        \caseOf{$p\neq\surrealOne$.}
+            \begin{byCase}
+                \caseOf{$\surrealLt{p}{\surrealOne}$.}
+                    $\surrealNeg{p}\in\reals$
+                        by \obv{surreal_real_negation_closed}.
+                    Let $d=\surrealAdd{\surrealOne}{\surrealNeg{p}}$.
+                    $d\in\reals$
+                        by
+                        \auto{surreal_real_addition_closed,surreal_one_is_real}.
+                    $\surrealLt{\surrealZero}{d}$
+                        by
+                        \obv{surreal_subtraction_positive,surreal_one_is_surreal}.
+                    Take a natural number $n$ such that
+                        $\surrealLt
+                            {\surrealMul{\surrealEpsilon{n}}{x}}{d}$
+                        by \obv{positive_real_scaled_epsilon_below}.
+                    Take $a\in\realPositiveLower{c}$ such that
+                        $\surrealLt{c}
+                            {\surrealAdd{a}{\surrealEpsilon{n}}}$
+                        by
+                        \obv{positive_real_dyadic_interval,natural_number_is_ordinal}.
+                    $a\in\surrealStage{\naturals}$ and
+                        $\surrealLt{\surrealZero}{a}$ and
+                        $\surrealLt{a}{c}$
+                        by \auto{surreal_real_positive_lower_iff}.
+                    Hence $\surreal{a}$
+                        by
+                        \auto{surreal_stage_characterization,omega_is_ordinal}.
+                    Let $e=\surrealEpsilon{n}$.
+                    $\surreal{e}$ and
+                        $e\in\surrealStage{\naturals}$
+                        by
+                        \auto{surreal_epsilon_is_surreal,surreal_epsilon_in_finite_stage,natural_number_is_ordinal}.
+                    Let $r=\surrealAdd{a}{e}$.
+                    $r\in\surrealStage{\naturals}$
+                        by \auto{surreal_addition_finite_stage}.
+                    Hence $\surreal{r}$
+                        by
+                        \auto{surreal_stage_characterization,omega_is_ordinal}.
+                    $\surrealLt{\surrealZero}{r}$
+                        by
+                        \auto{surreal_lt_transitive,surreal_add_lt_right,surreal_add_zero_right,surreal_epsilon_positive,surreal_add_is_surreal,empty_surreal,natural_number_is_ordinal}.
+                    $\surrealLt{\surrealMul{a}{x}}{p}$
+                        by
+                        \auto{surreal_pos_mul_lt_right,surreal_real_is_surreal}.
+                    Hence
+                        $\surrealLt
+                            {\surrealAdd{\surrealMul{a}{x}}
+                                {\surrealMul{e}{x}}}
+                            {\surrealAdd{p}{\surrealMul{e}{x}}}$
+                        by
+                        \obv{surreal_add_lt_left,surreal_mul_is_surreal,surreal_real_is_surreal}.
+                    $\surrealLt
+                        {\surrealAdd{\surrealMul{e}{x}}{p}}
+                        {\surrealOne}$
+                        by
+                        \auto{surreal_lt_subtract_add,surreal_mul_is_surreal,surreal_real_is_surreal,surreal_one_is_surreal}.
+                    Hence
+                        $\surrealLt
+                            {\surrealAdd{p}{\surrealMul{e}{x}}}
+                            {\surrealOne}$
+                        by
+                        \auto{surreal_add_commutative,surreal_mul_is_surreal,surreal_real_is_surreal}.
+                    Hence
+                        $\surrealLt{\surrealMul{r}{x}}{\surrealOne}$
+                        by
+                        \auto{surreal_lt_transitive,surreal_mul_distributive_right,surreal_add_is_surreal,surreal_mul_is_surreal,surreal_real_is_surreal,surreal_one_is_surreal}.
+                    Hence $r\in\realReciprocalLower{x}$
+                        by \obv{surreal_real_reciprocal_lower_iff}.
+                    Hence $\surrealLt{r}{c}$
+                        by
+                        \auto{surreal_cut_pair_left,surreal_real_reciprocal_cut_pair}.
+                    Contradiction by
+                        \obv{surreal_lt_asymmetric,surreal_add_is_surreal,surreal_real_is_surreal}.
+                \caseOf{not $\surrealLt{p}{\surrealOne}$.}
+                    Hence $\surrealLt{\surrealOne}{p}$.
+                    $\surrealNeg{\surrealOne}\in\reals$
+                        by
+                        \obv{surreal_real_negation_closed,surreal_one_is_real}.
+                    Let $d=\surrealAdd{p}{\surrealNeg{\surrealOne}}$.
+                    $d\in\reals$
+                        by \auto{surreal_real_addition_closed}.
+                    $\surrealLt{\surrealZero}{d}$
+                        by
+                        \obv{surreal_subtraction_positive,surreal_one_is_surreal}.
+                    Take a natural number $n$ such that
+                        $\surrealLt
+                            {\surrealMul{\surrealEpsilon{n}}{x}}{d}$
+                        by \obv{positive_real_scaled_epsilon_below}.
+                    Take $a\in\realPositiveLower{c}$ such that
+                        $\surrealLt{c}
+                            {\surrealAdd{a}{\surrealEpsilon{n}}}$
+                        by
+                        \obv{positive_real_dyadic_interval,natural_number_is_ordinal}.
+                    $a\in\surrealStage{\naturals}$ and
+                        $\surrealLt{\surrealZero}{a}$ and
+                        $\surrealLt{a}{c}$
+                        by \auto{surreal_real_positive_lower_iff}.
+                    Hence $\surreal{a}$
+                        by
+                        \auto{surreal_stage_characterization,omega_is_ordinal}.
+                    Let $e=\surrealEpsilon{n}$.
+                    $\surreal{e}$ and
+                        $e\in\surrealStage{\naturals}$
+                        by
+                        \auto{surreal_epsilon_is_surreal,surreal_epsilon_in_finite_stage,natural_number_is_ordinal}.
+                    Let $r=\surrealAdd{a}{e}$.
+                    $r\in\surrealStage{\naturals}$
+                        by \auto{surreal_addition_finite_stage}.
+                    Hence $\surreal{r}$
+                        by
+                        \auto{surreal_stage_characterization,omega_is_ordinal}.
+                    $\surrealLt{\surrealZero}{r}$
+                        by
+                        \auto{surreal_lt_transitive,surreal_add_lt_right,surreal_add_zero_right,surreal_epsilon_positive,surreal_add_is_surreal,empty_surreal,natural_number_is_ordinal}.
+                    $\surrealLt{p}{\surrealMul{r}{x}}$
+                        by
+                        \auto{surreal_pos_mul_lt_right,surreal_real_is_surreal}.
+                    Hence
+                        $\surrealLt{p}
+                            {\surrealAdd{\surrealMul{a}{x}}
+                                {\surrealMul{e}{x}}}$
+                        by
+                        \auto{surreal_mul_distributive_right,surreal_add_is_surreal,surreal_mul_is_surreal,surreal_real_is_surreal}.
+                    $\surrealLt
+                        {\surrealAdd{\surrealMul{e}{x}}{\surrealOne}}
+                        {p}$
+                        by
+                        \auto{surreal_lt_subtract_add,surreal_mul_is_surreal,surreal_real_is_surreal,surreal_one_is_surreal}.
+                    Hence
+                        $\surrealLt
+                            {\surrealAdd{\surrealOne}
+                                {\surrealMul{e}{x}}}
+                            {\surrealAdd{\surrealMul{a}{x}}
+                                {\surrealMul{e}{x}}}$
+                        by
+                        \auto{surreal_lt_transitive,surreal_add_commutative,surreal_add_is_surreal,surreal_mul_is_surreal,surreal_real_is_surreal,surreal_one_is_surreal}.
+                    Hence $\surrealLt{\surrealOne}{\surrealMul{a}{x}}$
+                        by
+                        \auto{surreal_add_lt_cancel_right,surreal_mul_is_surreal,surreal_real_is_surreal,surreal_one_is_surreal}.
+                    Hence $a\in\realReciprocalUpper{x}$
+                        by \obv{surreal_real_reciprocal_upper_iff}.
+                    Hence $\surrealLt{c}{a}$
+                        by
+                        \auto{surreal_cut_pair_right,surreal_real_reciprocal_cut_pair}.
+                    Contradiction by
+                        \obv{surreal_lt_asymmetric,surreal_real_is_surreal}.
+            \end{byCase}
+    \end{byCase}
+\end{proof}
+
+\begin{theorem}\label{surreal_positive_real_reciprocal_cut_equation}
+    Suppose $x\in\reals$ and
+        $\surrealLt{\surrealZero}{x}$.
+    Then
+        $\surrealCut{\realReciprocalLower{x}}
+            {\realReciprocalUpper{x}}
+        =\surrealReciprocal{x}$.
+\end{theorem}
+\begin{proof}
+    Let
+        $c=\surrealCut{\realReciprocalLower{x}}
+            {\realReciprocalUpper{x}}$.
+    $c\in\reals$
+        by \auto{surreal_positive_real_reciprocal_cut_is_real}.
+    Hence $\surreal{c}$
+        by \obv{surreal_real_is_surreal}.
+    $\surrealMul{c}{x}=\surrealOne$
+        by \obv{surreal_positive_real_reciprocal_cut_inverse}.
+    Hence $\surrealMul{x}{c}=\surrealOne$
+        by
+        \auto{surreal_mul_commutative,surreal_real_is_surreal}.
+    Follows by
+        \auto{surreal_reciprocal_unique,surreal_real_is_surreal}.
+\end{proof}
+
+\begin{theorem}\label{surreal_positive_real_reciprocal_closed}
+    Suppose $x\in\reals$ and
+        $\surrealLt{\surrealZero}{x}$.
+    Then $\surrealReciprocal{x}\in\reals$.
+\end{theorem}
+\begin{proof}
+    $\surrealCut{\realReciprocalLower{x}}
+        {\realReciprocalUpper{x}}\in\reals$
+        by \obv{surreal_positive_real_reciprocal_cut_is_real}.
+    Follows by
+        \obv{surreal_positive_real_reciprocal_cut_equation}.
+\end{proof}
+
+\begin{theorem}\label{surreal_real_reciprocal_closed}
+    Suppose $x\in\reals$.
+    Then $\surrealReciprocal{x}\in\reals$.
+\end{theorem}
+\begin{proof}
+    $\surreal{x}$ by \obv{surreal_real_is_surreal}.
+    $\surrealLt{\surrealZero}{x}$ or $x=\surrealZero$ or
+        $\surrealLt{x}{\surrealZero}$
+        by \obv{surreal_lt_trichotomy,empty_surreal}.
+    \begin{byCase}
+        \caseOf{$x=\surrealZero$.}
+            $\surrealReciprocal{x}=\surrealZero$
+                by \obv{surreal_reciprocal_zero}.
+            Follows by \obv{surreal_zero_is_real}.
+        \caseOf{$x\neq\surrealZero$.}
+            \begin{byCase}
+                \caseOf{$\surrealLt{\surrealZero}{x}$.}
+                    Follows by
+                        \obv{surreal_positive_real_reciprocal_closed}.
+                \caseOf{not $\surrealLt{\surrealZero}{x}$.}
+                    Hence $\surrealLt{x}{\surrealZero}$.
+                    Hence
+                        $\surrealLt{\surrealZero}{\surrealNeg{x}}$
+                        by
+                        \auto{surreal_negation_lt_reverses,surreal_negation_empty,empty_surreal}.
+                    $\surrealNeg{x}\in\reals$
+                        by \obv{surreal_real_negation_closed}.
+                    Hence
+                        $\surrealReciprocal{\surrealNeg{x}}\in\reals$
+                        by
+                        \obv{surreal_positive_real_reciprocal_closed}.
+                    Hence
+                        $\surrealNeg{\surrealReciprocal{\surrealNeg{x}}}
+                            \in\reals$
+                        by \obv{surreal_real_negation_closed}.
+                    $\surrealReciprocal{x}
+                        =\surrealNeg{
+                            \surrealReciprocal{\surrealNeg{x}}}$
+                        by
+                        \auto{surreal_reciprocal_negative_equation,surreal_reciprocal_positive_equation,surreal_negation_is_surreal}.
+            \end{byCase}
+    \end{byCase}
+\end{proof}
+
+\begin{theorem}\label{surreal_real_division_closed}
+    Suppose $x,y\in\reals$.
+    Then $\surrealDiv{x}{y}\in\reals$.
+\end{theorem}
+\begin{proof}
+    $\surrealReciprocal{y}\in\reals$
+        by \obv{surreal_real_reciprocal_closed}.
+    Follows by
+        \auto{surreal_division,surreal_real_multiplication_closed}.
+\end{proof}
+

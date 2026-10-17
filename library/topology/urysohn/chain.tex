@@ -1,0 +1,846 @@
+\section{Finite open chains}
+
+\import{topology/normality.tex}
+\import{set/finite-interleave.tex}
+\import{set/logical-graph.tex}
+\import{set/iteration.tex}
+
+A finite open chain is a sequence of open sets in which the closure of each
+set lies in the next. The indices run from zero to $r$, so there are $r$
+steps and one more entry than steps. A chain with no steps is allowed.
+In a normal space, we can insert an open set between adjacent entries while
+preserving closure nesting.
+
+The definition specifies the sequence's exact domain. Its topological laws
+below assume that $X$ is a topological space.
+
+\begin{definition}[Finite open chains]\label{finite_open_chain}
+    $c$ is a finite open chain with $r$ steps in $X$ iff
+        $r$ is a natural number and
+        $c\in\funs{\suc{r}}{\opens[X]}$ and
+        for every $i\in r$ we have
+        $\closure{c(i)}{X}\subseteq c(\suc{i})$.
+\end{definition}
+
+\begin{proposition}\label{finite_open_chain_type}
+    Suppose $c$ is a finite open chain with $r$ steps in $X$.
+    Then $r$ is a natural number and
+        $c\in\funs{\suc{r}}{\opens[X]}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{finite_open_chain}.
+\end{proof}
+
+\begin{proposition}\label{finite_open_chain_nesting}
+    Suppose $c$ is a finite open chain with $r$ steps in $X$.
+    Let $i\in r$.
+    Then $\closure{c(i)}{X}\subseteq c(\suc{i})$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{finite_open_chain}.
+\end{proof}
+
+\begin{proposition}\label{finite_open_chain_adjacent}
+    Let $X$ be a topological space.
+    Suppose $c$ is a finite open chain with $r$ steps in $X$.
+    Let $i\in r$.
+    Then $c(i)\subseteq c(\suc{i})$.
+\end{proposition}
+\begin{proof}
+    $r$ is a natural number and
+        $c\in\funs{\suc{r}}{\opens[X]}$
+        by \obv{finite_open_chain_type}.
+    $i\in\suc{r}$ by \obv{suc_intro_in}.
+    Hence $c(i)\in\opens[X]$ by \obv{funs_type_apply}.
+    Hence $c(i)\subseteq\carrier[X]$ by \obv{opens_type,subseteq}.
+    Thus $c(i)\subseteq\closure{c(i)}{X}$
+        by \obv{set_is_subseteq_to_closure_of_the_set}.
+    $\closure{c(i)}{X}\subseteq c(\suc{i})$
+        by \obv{finite_open_chain_nesting}.
+    Follows by \obv{subseteq_transitive}.
+\end{proof}
+
+\begin{theorem}\label{finite_open_chain_monotone}
+    Let $X$ be a topological space.
+    Suppose $c$ is a finite open chain with $r$ steps in $X$.
+    Let $i,j\in\suc{r}$.
+    Suppose $i\subseteq j$.
+    Then $c(i)\subseteq c(j)$.
+\end{theorem}
+\begin{proof}
+    $r$ is a natural number by \obv{finite_open_chain_type}.
+    Let $C=\{q\in\naturals\mid
+        \text{if $q\in\suc{r}$, then
+            for every $p\in\suc{q}$ we have $c(p)\subseteq c(q)$}\}$.
+    Show that $\emptyset\in C$.
+    \begin{subproof}
+        $\emptyset$ is a natural number by \obv{omega_empty}.
+        Show that if $\emptyset\in\suc{r}$, then
+            for every $p\in\suc{\emptyset}$ we have
+                $c(p)\subseteq c(\emptyset)$.
+        \begin{subproof}
+            Assume $\emptyset\in\suc{r}$.
+            Fix $p\in\suc{\emptyset}$.
+            Hence $p=\emptyset$ by \auto{suc_iff,emptyset}.
+            Follows by \obv{subseteq_refl}.
+        \end{subproof}
+    \end{subproof}
+    Show that for every $q\in C$ we have $\suc{q}\in C$.
+    \begin{subproof}
+        Fix $q\in C$.
+        $\suc{q}$ is a natural number by \obv{omega_successor}.
+        Show that if $\suc{q}\in\suc{r}$, then
+            for every $p\in\suc{\suc{q}}$ we have
+                $c(p)\subseteq c(\suc{q})$.
+        \begin{subproof}
+            Assume $\suc{q}\in\suc{r}$.
+            $q\in\suc{q}$ by \obv{suc_intro_self}.
+            Hence $q\in\suc{r}$
+                by
+                \obv{natural_number_is_ordinal,suc_ordinal,ordinal_transitivity}.
+            Hence for every $p\in\suc{q}$ we have
+                $c(p)\subseteq c(q)$.
+            $\suc{q}\in r$ or $\suc{q}=r$ by \auto{suc_iff}.
+            Hence $\suc{q}\subseteq r$
+                by
+                \obv{ordinal_elem_implies_subseteq,subseteq_refl,natural_number_is_ordinal,suc_ordinal}.
+            $q\in\suc{q}$ by \obv{suc_intro_self}.
+            Hence $q\in r$ by \obv{subseteq}.
+            Thus $c(q)\subseteq c(\suc{q})$
+                by \obv{finite_open_chain_adjacent}.
+            Fix $p\in\suc{\suc{q}}$.
+            $p=\suc{q}$ or $p\in\suc{q}$ by \obv{suc_iff}.
+            \begin{byCase}
+                \caseOf{$p=\suc{q}$.}
+                    Follows by \obv{subseteq_refl}.
+                \caseOf{$p\neq\suc{q}$.}
+                    Hence $p\in\suc{q}$.
+                    $c(p)\subseteq c(q)$.
+                    Follows by \obv{subseteq_transitive}.
+            \end{byCase}
+        \end{subproof}
+    \end{subproof}
+    Hence $C$ is an inductive set by \obv{inductive_set}.
+    Hence $\naturals\subseteq C$ by \obv{omega_minimal,subseteq}.
+    $\suc{r}$ is a natural number by \obv{omega_successor}.
+    Hence $j$ is a natural number
+        by
+        \obv{naturals_is_transitive_set,transitiveset_iff_subseteq,subseteq}.
+    Hence $j\in C$ by \obv{subseteq}.
+    $i$ and $j$ are ordinals
+        by \obv{natural_number_is_ordinal,elem_of_ordinal_is_ordinal}.
+    Hence $i\in j$ or $i=j$
+        by \obv{ordinal_subseteq_implies_elem_or_eq}.
+    Thus $i\in\suc{j}$ by \auto{suc_iff}.
+\end{proof}
+
+\begin{definition}\label{open_chain_states}
+    $\openChainStates{X}{U}{W}=
+        \{p\in\naturals\times\finiteSequences{\opens[X]}\mid
+            \text{$\fst{p}\neq\emptyset$ and
+            $\snd{p}$ is a finite open chain with $\fst{p}$ steps in $X$ and
+            $\apply{\snd{p}}{\emptyset}=U$ and
+            $\apply{\snd{p}}{\fst{p}}=W$}\}$.
+\end{definition}
+
+\begin{proposition}\label{open_chain_state_elim}
+    Let $p\in\openChainStates{X}{U}{W}$.
+    Then $p=(\fst{p},\snd{p})$ and
+        $\fst{p}\neq\emptyset$ and
+        $\snd{p}$ is a finite open chain with $\fst{p}$ steps in $X$ and
+        $\apply{\snd{p}}{\emptyset}=U$ and
+        $\apply{\snd{p}}{\fst{p}}=W$.
+\end{proposition}
+\begin{proof}
+    $p\in\naturals\times\finiteSequences{\opens[X]}$ and
+        $\fst{p}\neq\emptyset$ and
+        $\snd{p}$ is a finite open chain with $\fst{p}$ steps in $X$ and
+        $\apply{\snd{p}}{\emptyset}=U$ and
+        $\apply{\snd{p}}{\fst{p}}=W$
+        by \obv{open_chain_states}.
+    Follows by \auto{times_elem_is_tuple}.
+\end{proof}
+
+\begin{proposition}\label{open_chain_state_intro}
+    Suppose $r\neq\emptyset$.
+    Suppose $c$ is a finite open chain with $r$ steps in $X$.
+    Suppose $c(\emptyset)=U$ and $c(r)=W$.
+    Then $(r,c)\in\openChainStates{X}{U}{W}$.
+\end{proposition}
+\begin{proof}
+    $r$ is a natural number and
+        $c\in\funs{\suc{r}}{\opens[X]}$
+        by \obv{finite_open_chain_type}.
+    $\suc{r}$ is a natural number by \obv{omega_successor}.
+    Hence $c$ is a finite sequence in $\opens[X]$
+        by \obv{finite_sequence}.
+    Hence $c\in\finiteSequences{\opens[X]}$
+        by \obv{finite_sequences_iff}.
+    $(r,c)\in\naturals\times\finiteSequences{\opens[X]}$
+        by \obv{times_tuple_intro}.
+    $\fst{(r,c)}=r$ and $\snd{(r,c)}=c$ by \obv{fst_eq,snd_eq}.
+    Follows by \obv{open_chain_states}.
+\end{proof}
+
+\begin{definition}\label{initial_open_chain}
+    $\initialOpenChain{U}{W}=
+        \sequenceAppend{\sequenceAppend{\emptyset}{U}}{W}$.
+\end{definition}
+
+\begin{definition}\label{initial_open_chain_state}
+    $\initialOpenChainState{U}{W}=
+        (\suc{\emptyset},\initialOpenChain{U}{W})$.
+\end{definition}
+
+\begin{proposition}\label{initial_open_chain_zero}
+    $\apply{\initialOpenChain{U}{W}}{\emptyset}=U$.
+\end{proposition}
+\begin{proof}
+    $\emptyset$ is a function by \obv{emptyset_is_function}.
+    $\sequenceAppend{\emptyset}{U}$ is a function
+        by \auto{sequence_append_function,funs_is_function}.
+    $\dom{\emptyset}=\emptyset$ by \obv{dom_emptyset}.
+    Hence $\apply{\sequenceAppend{\emptyset}{U}}{\emptyset}=U$
+        by \auto{sequence_append_last_value}.
+    $\dom{\sequenceAppend{\emptyset}{U}}=\suc{\emptyset}$
+        by \auto{sequence_append_domain}.
+    Hence $\emptyset\in\dom{\sequenceAppend{\emptyset}{U}}$
+        by \obv{suc_intro_self}.
+    Thus $\apply{\sequenceAppend{\sequenceAppend{\emptyset}{U}}{W}}
+            {\emptyset}=U$
+        by \auto{sequence_append_old_value}.
+    Follows by \auto{initial_open_chain}.
+\end{proof}
+
+\begin{proposition}\label{initial_open_chain_last}
+    $\apply{\initialOpenChain{U}{W}}{\suc{\emptyset}}=W$.
+\end{proposition}
+\begin{proof}
+    $\emptyset$ is a function by \obv{emptyset_is_function}.
+    Hence $\sequenceAppend{\emptyset}{U}$ is a function
+        by \auto{sequence_append_function,funs_is_function}.
+    $\dom{\emptyset}=\emptyset$ by \obv{dom_emptyset}.
+    $\dom{\sequenceAppend{\emptyset}{U}}=\suc{\emptyset}$
+        by \auto{sequence_append_domain}.
+    Hence $\apply{\sequenceAppend{\sequenceAppend{\emptyset}{U}}{W}}
+            {\suc{\emptyset}}=W$
+        by \auto{sequence_append_last_value}.
+    Follows by \auto{initial_open_chain}.
+\end{proof}
+
+\begin{proposition}\label{initial_open_chain_typed}
+    Let $U,W\in\opens[X]$.
+    Then $\initialOpenChain{U}{W}
+        \in\funs{\suc{\suc{\emptyset}}}{\opens[X]}$.
+\end{proposition}
+\begin{proof}
+    $\emptyset\in\funs{\emptyset}{\opens[X]}$
+        by \obv{emptyset_is_function_on_emptyset,codom_of_emptyset_can_be_anything,funs_intro}.
+    Hence $\sequenceAppend{\emptyset}{U}
+        \in\funs{\suc{\emptyset}}{\opens[X]}$
+        by \obv{sequence_append_typed}.
+    Hence $\sequenceAppend{\sequenceAppend{\emptyset}{U}}{W}
+        \in\funs{\suc{\suc{\emptyset}}}{\opens[X]}$
+        by \obv{sequence_append_typed}.
+    Follows by \obv{initial_open_chain}.
+\end{proof}
+
+\begin{proposition}\label{initial_open_chain_is_finite_open_chain}
+    Let $X$ be a topological space.
+    Let $U,W\in\opens[X]$.
+    Suppose $\closure{U}{X}\subseteq W$.
+    Then $\initialOpenChain{U}{W}$ is a finite open chain with
+        $\suc{\emptyset}$ steps in $X$.
+\end{proposition}
+\begin{proof}
+    $\suc{\emptyset}$ is a natural number
+        by \obv{omega_empty,omega_successor}.
+    $\initialOpenChain{U}{W}
+        \in\funs{\suc{\suc{\emptyset}}}{\opens[X]}$
+        by \obv{initial_open_chain_typed}.
+    Show that for every $i\in\suc{\emptyset}$ we have
+        $\closure{\apply{\initialOpenChain{U}{W}}{i}}{X}
+            \subseteq\apply{\initialOpenChain{U}{W}}{\suc{i}}$.
+    \begin{subproof}
+        Fix $i\in\suc{\emptyset}$.
+        Hence $i=\emptyset$ by \auto{suc_iff,emptyset}.
+        Follows by \auto{initial_open_chain_zero,initial_open_chain_last}.
+    \end{subproof}
+    Follows by \obv{finite_open_chain}.
+\end{proof}
+
+\begin{proposition}\label{initial_open_chain_state_in}
+    Let $X$ be a topological space.
+    Let $U,W\in\opens[X]$.
+    Suppose $\closure{U}{X}\subseteq W$.
+    Then $\initialOpenChainState{U}{W}
+        \in\openChainStates{X}{U}{W}$.
+\end{proposition}
+\begin{proof}
+    $\suc{\emptyset}\neq\emptyset$ by \obv{suc_neq_emptyset}.
+    $\initialOpenChain{U}{W}$ is a finite open chain with
+        $\suc{\emptyset}$ steps in $X$
+        by \obv{initial_open_chain_is_finite_open_chain}.
+    $\apply{\initialOpenChain{U}{W}}{\emptyset}=U$ and
+        $\apply{\initialOpenChain{U}{W}}{\suc{\emptyset}}=W$
+        by \obv{initial_open_chain_zero,initial_open_chain_last}.
+    $(\suc{\emptyset},\initialOpenChain{U}{W})
+        \in\openChainStates{X}{U}{W}$
+        by \obv{open_chain_state_intro}.
+    Follows by \obv{initial_open_chain_state}.
+\end{proof}
+
+\subsection{Deterministic refinement}
+
+Fix a normal shrinker $h$. Between $c(i)$ and $c(\suc{i})$ we insert
+$h((\closure{c(i)}{X},c(\suc{i})))$. The shrinking law ensures closure
+nesting on both sides of the new entry. Interleaving the old and new entries
+therefore doubles the number of steps and preserves the endpoints.
+
+The constructors are total set-theoretic terms; their chain properties are
+proved under the stated hypotheses. Refinement and iteration use the same
+$h$ throughout, with no further choice.
+
+\begin{definition}\label{open_chain_insertions}
+    $\openChainInsertions{X}{h}{r}{c}=
+        \{(i,h((\closure{c(i)}{X},c(\suc{i}))))\mid i\in r\}$.
+\end{definition}
+
+\begin{proposition}\label{open_chain_insertions_membership}
+    $(i,V)\in\openChainInsertions{X}{h}{r}{c}$ iff
+        $i\in r$ and
+        $V=h((\closure{c(i)}{X},c(\suc{i})))$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{open_chain_insertions,pair_eq_iff}.
+\end{proof}
+
+\begin{proposition}\label{open_chain_insertions_function}
+    $\openChainInsertions{X}{h}{r}{c}\in
+        \funs{r}{\ran{\openChainInsertions{X}{h}{r}{c}}}$.
+\end{proposition}
+\begin{proof}
+    Let $m=\openChainInsertions{X}{h}{r}{c}$.
+    $m$ is a relation by \auto{relation,open_chain_insertions}.
+    $m$ is right-unique
+        by \auto{rightunique,open_chain_insertions_membership}.
+    $\dom{m}=r$
+        by \auto{setext,dom_iff,open_chain_insertions_membership}.
+    $m\in\funs{\dom{m}}{\ran{m}}$
+        by \obv{function_exact_type_to_range}.
+\end{proof}
+
+\begin{proposition}\label{open_chain_insertions_value}
+    Let $i\in r$.
+    Then $\apply{\openChainInsertions{X}{h}{r}{c}}{i}
+        =h((\closure{c(i)}{X},c(\suc{i})))$.
+\end{proposition}
+\begin{proof}
+    $\openChainInsertions{X}{h}{r}{c}$ is a function
+        by \auto{open_chain_insertions_function,funs_is_function}.
+    $(i,h((\closure{c(i)}{X},c(\suc{i}))))
+        \in\openChainInsertions{X}{h}{r}{c}$
+        by \obv{open_chain_insertions_membership}.
+    Follows by \obv{function_apply_intro}.
+\end{proof}
+
+\begin{proposition}\label{open_chain_insertions_typed}
+    Let $X$ be a topological space.
+    Let $h$ be a normal shrinker for $X$.
+    Suppose $c$ is a finite open chain with $r$ steps in $X$.
+    Then $\openChainInsertions{X}{h}{r}{c}
+        \in\funs{r}{\opens[X]}$.
+\end{proposition}
+\begin{proof}
+    $r$ is a natural number and
+        $c\in\funs{\suc{r}}{\opens[X]}$
+        by \obv{finite_open_chain_type}.
+    Let $m=\openChainInsertions{X}{h}{r}{c}$.
+    $m\in\funs{r}{\ran{m}}$ by \auto{open_chain_insertions_function}.
+    Hence $m$ is a function and $\dom{m}=r$ by \auto{funs_elim}.
+    Show that for every $i\in\dom{m}$ we have $m(i)\in\opens[X]$.
+    \begin{subproof}
+        Fix $i\in\dom{m}$.
+        Hence $i\in r$.
+        $r\subseteq\naturals$
+            by \obv{naturals_is_transitive_set,transitiveset_iff_subseteq}.
+        $i\in\suc{r}$ by \obv{suc_intro_in}.
+        Hence $c(i)\in\opens[X]$ by \obv{funs_type_apply}.
+        $\suc{i}\in\suc{r}$
+            by \obv{natural_successor_in_successor_bound}.
+        Hence $c(\suc{i})\in\opens[X]$ by \obv{funs_type_apply}.
+        $\closure{c(i)}{X}\in\closeds{X}$
+            by \obv{closure_elem_closeds}.
+        $\closure{c(i)}{X}\subseteq c(\suc{i})$
+            by \obv{finite_open_chain_nesting}.
+        Hence $h((\closure{c(i)}{X},c(\suc{i})))\in\opens[X]$
+            by \auto{normal_shrinker_apply_pair}.
+        $m(i)=h((\closure{c(i)}{X},c(\suc{i})))$
+            by \auto{open_chain_insertions_value}.
+    \end{subproof}
+    Hence $m$ is a function to $\opens[X]$.
+    Follows by \auto{funs_intro}.
+\end{proof}
+
+\begin{proposition}\label{open_chain_insertions_apply}
+    Let $X$ be a topological space.
+    Let $h$ be a normal shrinker for $X$.
+    Suppose $c$ is a finite open chain with $r$ steps in $X$.
+    Let $i\in r$.
+    Then $\apply{\openChainInsertions{X}{h}{r}{c}}{i}\in\opens[X]$ and
+        $\closure{c(i)}{X}
+            \subseteq\apply{\openChainInsertions{X}{h}{r}{c}}{i}
+            \subseteq\closure{\apply{\openChainInsertions{X}{h}{r}{c}}{i}}{X}
+            \subseteq c(\suc{i})$.
+\end{proposition}
+\begin{proof}
+    $r$ is a natural number and
+        $c\in\funs{\suc{r}}{\opens[X]}$
+        by \obv{finite_open_chain_type}.
+    $i\in\suc{r}$ by \obv{suc_intro_in}.
+    Hence $c(i)\in\opens[X]$ by \obv{funs_type_apply}.
+    $r\subseteq\naturals$
+        by \obv{naturals_is_transitive_set,transitiveset_iff_subseteq}.
+    $\suc{i}\in\suc{r}$
+        by \obv{natural_successor_in_successor_bound}.
+    Hence $c(\suc{i})\in\opens[X]$ by \obv{funs_type_apply}.
+    $\closure{c(i)}{X}\in\closeds{X}$
+        by \obv{closure_elem_closeds}.
+    $\closure{c(i)}{X}\subseteq c(\suc{i})$
+        by \obv{finite_open_chain_nesting}.
+    Let $V=h((\closure{c(i)}{X},c(\suc{i})))$.
+    $V\in\opens[X]$ and
+        $\closure{c(i)}{X}\subseteq V\subseteq\closure{V}{X}
+            \subseteq c(\suc{i})$
+        by \auto{normal_shrinker_apply_pair}.
+    Let $m=\openChainInsertions{X}{h}{r}{c}$.
+    $m\in\funs{r}{\opens[X]}$
+        by \auto{open_chain_insertions_typed}.
+    $(i,V)\in m$ by \obv{open_chain_insertions_membership}.
+    Hence $m(i)=V$ by \obv{funs_is_function,function_apply_intro}.
+\end{proof}
+
+\begin{definition}\label{open_chain_refinement}
+    $\openChainRefinement{X}{h}{r}{c}=
+        \finiteInterleave{c}{\openChainInsertions{X}{h}{r}{c}}$.
+\end{definition}
+
+\begin{proposition}\label{open_chain_refinement_function}
+    Let $r$ be a natural number.
+    Suppose $\dom{c}=\suc{r}$.
+    Then $\openChainRefinement{X}{h}{r}{c}\in
+        \funs{\suc{r+r}}{\ran{\openChainRefinement{X}{h}{r}{c}}}$.
+\end{proposition}
+\begin{proof}
+    Let $m=\openChainInsertions{X}{h}{r}{c}$.
+    $m\in\funs{r}{\ran{m}}$ by \auto{open_chain_insertions_function}.
+    Hence $\dom{m}=r$ by \obv{funs_elim}.
+    $\finiteInterleave{c}{m}\in
+        \funs{\suc{r+r}}{\ran{\finiteInterleave{c}{m}}}$
+        by \obv{finite_interleave_function}.
+    Follows by \auto{open_chain_refinement}.
+\end{proof}
+
+\begin{proposition}\label{open_chain_refinement_even}
+    Let $r$ be a natural number.
+    Suppose $\dom{c}=\suc{r}$.
+    Let $i\in\suc{r}$.
+    Then $\apply{\openChainRefinement{X}{h}{r}{c}}{i+i}=c(i)$.
+\end{proposition}
+\begin{proof}
+    $\openChainInsertions{X}{h}{r}{c}
+        \in\funs{r}{\ran{\openChainInsertions{X}{h}{r}{c}}}$
+        by \obv{open_chain_insertions_function}.
+    Hence $\dom{\openChainInsertions{X}{h}{r}{c}}=r$
+        by \obv{funs_elim}.
+    Follows by \auto{open_chain_refinement,finite_interleave_even}.
+\end{proof}
+
+\begin{proposition}\label{open_chain_refinement_odd}
+    Let $r$ be a natural number.
+    Suppose $\dom{c}=\suc{r}$.
+    Let $i\in r$.
+    Then $\apply{\openChainRefinement{X}{h}{r}{c}}{\suc{i+i}}
+        =\apply{\openChainInsertions{X}{h}{r}{c}}{i}$.
+\end{proposition}
+\begin{proof}
+    $\openChainInsertions{X}{h}{r}{c}
+        \in\funs{r}{\ran{\openChainInsertions{X}{h}{r}{c}}}$
+        by \obv{open_chain_insertions_function}.
+    Hence $\dom{\openChainInsertions{X}{h}{r}{c}}=r$
+        by \obv{funs_elim}.
+    Follows by \auto{open_chain_refinement,finite_interleave_odd}.
+\end{proof}
+
+\begin{proposition}\label{open_chain_refinement_typed}
+    Let $X$ be a topological space.
+    Let $h$ be a normal shrinker for $X$.
+    Suppose $c$ is a finite open chain with $r$ steps in $X$.
+    Then $\openChainRefinement{X}{h}{r}{c}
+        \in\funs{\suc{r+r}}{\opens[X]}$.
+\end{proposition}
+\begin{proof}
+    $r$ is a natural number and
+        $c\in\funs{\suc{r}}{\opens[X]}$
+        by \obv{finite_open_chain_type}.
+    $\openChainInsertions{X}{h}{r}{c}
+        \in\funs{r}{\opens[X]}$
+        by \obv{open_chain_insertions_typed}.
+    $\finiteInterleave{c}{\openChainInsertions{X}{h}{r}{c}}
+        \in\funs{\suc{r+r}}{\opens[X]}$
+        by \obv{finite_interleave_typed}.
+    Follows by \obv{open_chain_refinement}.
+\end{proof}
+
+\begin{theorem}\label{open_chain_refinement_is_finite_open_chain}
+    Let $X$ be a topological space.
+    Let $h$ be a normal shrinker for $X$.
+    Suppose $c$ is a finite open chain with $r$ steps in $X$.
+    Then $\openChainRefinement{X}{h}{r}{c}$ is a finite open chain with
+        $r+r$ steps in $X$.
+\end{theorem}
+\begin{proof}
+    $r$ is a natural number and
+        $c\in\funs{\suc{r}}{\opens[X]}$
+        by \obv{finite_open_chain_type}.
+    Hence $\dom{c}=\suc{r}$ by \obv{funs_elim}.
+    Hence $r+r$ is a natural number by \obv{num_addition_on_naturals}.
+    Let $m=\openChainInsertions{X}{h}{r}{c}$.
+    Let $d=\openChainRefinement{X}{h}{r}{c}$.
+    $d\in\funs{\suc{r+r}}{\opens[X]}$
+        by \auto{open_chain_refinement_typed}.
+    Show that for every $j\in r+r$ we have
+        $\closure{d(j)}{X}\subseteq d(\suc{j})$.
+    \begin{subproof}
+        Fix $j\in r+r$.
+        $j\in\suc{r+r}$ by \obv{suc_intro_in}.
+        Hence $j\in\finiteEvenIndices{r}\union\finiteOddIndices{r}$
+            by \obv{finite_double_index_partition}.
+        \begin{byCase}
+        \caseOf{$j\in\finiteEvenIndices{r}$.}
+            Take $i\in\suc{r}$ such that $j=i+i$
+                by \obv{finite_even_indices}.
+            $i\in r$ or $i=r$ by \auto{suc_iff}.
+            Show that $i\in r$.
+            \begin{subproof}
+                Suppose not.
+                Hence $i=r$.
+                Then $j=r+r$.
+                Contradiction by \obv{in_irrefl}.
+            \end{subproof}
+            $d(i+i)=c(i)$ by \auto{open_chain_refinement_even}.
+            $d(\suc{i+i})=m(i)$
+                by \auto{open_chain_refinement_odd}.
+            $\closure{c(i)}{X}\subseteq m(i)$
+                by \auto{open_chain_insertions_apply}.
+        \caseOf{$j\notin\finiteEvenIndices{r}$.}
+            Hence $j\in\finiteOddIndices{r}$ by \auto{union_iff}.
+            Take $i\in r$ such that $j=\suc{i+i}$
+                by \obv{finite_odd_indices}.
+            $r\subseteq\naturals$
+                by \obv{naturals_is_transitive_set,transitiveset_iff_subseteq}.
+            Hence $i$ is a natural number by \obv{subseteq}.
+            $\suc{i}$ is a natural number by \obv{omega_successor}.
+            $\suc{i}\in\suc{r}$
+                by \obv{natural_successor_in_successor_bound}.
+            $\suc{i}+\suc{i}=\suc{\suc{i+i}}$
+                by \auto{num_addition_successor_left,num_addition_successor_right}.
+            $d(\suc{i+i})=m(i)$
+                by \auto{open_chain_refinement_odd}.
+            $d(\suc{i}+\suc{i})=c(\suc{i})$
+                by \auto{open_chain_refinement_even}.
+            $\closure{m(i)}{X}\subseteq c(\suc{i})$
+                by \auto{open_chain_insertions_apply}.
+        \end{byCase}
+    \end{subproof}
+    Follows by \auto{finite_open_chain}.
+\end{proof}
+
+\begin{definition}\label{open_chain_refined_state}
+    $\openChainRefinedState{X}{h}{p}=
+        (\fst{p}+\fst{p},
+            \openChainRefinement{X}{h}{\fst{p}}{\snd{p}})$.
+\end{definition}
+
+\begin{theorem}\label{open_chain_refined_state_in}
+    Let $X$ be a topological space.
+    Let $h$ be a normal shrinker for $X$.
+    Let $p\in\openChainStates{X}{U}{W}$.
+    Then $\openChainRefinedState{X}{h}{p}
+        \in\openChainStates{X}{U}{W}$.
+\end{theorem}
+\begin{proof}
+    Let $r=\fst{p}$.
+    Let $c=\snd{p}$.
+    $p=(r,c)$ and $r\neq\emptyset$ and
+        $c$ is a finite open chain with $r$ steps in $X$ and
+        $c(\emptyset)=U$ and $c(r)=W$
+        by \auto{open_chain_state_elim}.
+    $r$ is a natural number and
+        $c\in\funs{\suc{r}}{\opens[X]}$
+        by \obv{finite_open_chain_type}.
+    Hence $\dom{c}=\suc{r}$ by \obv{funs_elim}.
+    Take a natural number $q$ such that $r=\suc{q}$
+        by \obv{natural_zero_or_successor}.
+    $r+r=\suc{\suc{q+q}}$
+        by \auto{num_addition_successor_left,num_addition_successor_right}.
+    Hence $r+r\neq\emptyset$ by \auto{suc_neq_emptyset}.
+    Let $d=\openChainRefinement{X}{h}{r}{c}$.
+    $d$ is a finite open chain with $r+r$ steps in $X$
+        by \auto{open_chain_refinement_is_finite_open_chain}.
+    $\emptyset\in r$ by \obv{natural_nonzero_contains_zero}.
+    Hence $\emptyset\in\suc{r}$ by \obv{suc_intro_in}.
+    $\emptyset+\emptyset=\emptyset$
+        by \obv{omega_empty,num_addition_zero_right}.
+    $d(\emptyset)=c(\emptyset)$
+        by \auto{open_chain_refinement_even}.
+    Hence $d(\emptyset)=U$.
+    $r\in\suc{r}$ by \obv{suc_intro_self}.
+    $d(r+r)=c(r)$ by \auto{open_chain_refinement_even}.
+    Hence $d(r+r)=W$.
+    $(r+r,d)\in\openChainStates{X}{U}{W}$
+        by \obv{open_chain_state_intro}.
+    $\fst{p}+\fst{p}=r+r$ and
+        $\openChainRefinement{X}{h}{\fst{p}}{\snd{p}}=d$.
+    Follows by \auto{open_chain_refined_state}.
+\end{proof}
+
+\begin{definition}\label{open_chain_refiner}
+    $\openChainRefiner{X}{h}{U}{W}=
+        \Apply{\graphOnDomainOp}
+            {\openChainStates{X}{U}{W},
+                \fun{p:\Set}{\openChainRefinedState{X}{h}{p}}}$.
+\end{definition}
+
+\begin{proposition}\label{open_chain_refiner_apply}
+    Let $p\in\openChainStates{X}{U}{W}$.
+    Then $\apply{\openChainRefiner{X}{h}{U}{W}}{p}
+        =\openChainRefinedState{X}{h}{p}$.
+\end{proposition}
+\begin{proof}
+    Let $S=\openChainStates{X}{U}{W}$.
+    $\openChainRefiner{X}{h}{U}{W}=\Apply{\graphOnDomainOp}
+        {S,\fun{q:\Set}{\openChainRefinedState{X}{h}{q}}}$
+        by \obv{open_chain_refiner}.
+    Follows by \auto{logical_graph_on_domain_apply}.
+\end{proof}
+
+\begin{theorem}\label{open_chain_refiner_typed}
+    Let $X$ be a topological space.
+    Let $h$ be a normal shrinker for $X$.
+    Then $\openChainRefiner{X}{h}{U}{W}
+        \in\funs{\openChainStates{X}{U}{W}}
+            {\openChainStates{X}{U}{W}}$.
+\end{theorem}
+\begin{proof}
+    Let $S=\openChainStates{X}{U}{W}$.
+    For every $p\in S$ we have $\openChainRefinedState{X}{h}{p}\in S$
+        by \obv{open_chain_refined_state_in}.
+    Hence $\Apply{\graphOnDomainOp}
+            {S,\fun{p:\Set}{\openChainRefinedState{X}{h}{p}}}
+        \in\funs{S}{S}$
+        by \obv{logical_graph_on_domain_type}.
+    Follows by \auto{open_chain_refiner}.
+\end{proof}
+
+\subsection{Successive refinements}
+
+Start with the two-entry chain from $U$ to $W$ and refine it repeatedly.
+A state records both the chain and its step count. The endpoints remain
+fixed, while the step count doubles at each stage.
+
+\begin{definition}\label{open_chain_levels}
+    $\openChainLevels{X}{h}{U}{W}=
+        \iterationSet{\openChainRefiner{X}{h}{U}{W}}
+            {\initialOpenChainState{U}{W}}$.
+\end{definition}
+
+\begin{definition}\label{open_chain_level}
+    $\openChainLevel{X}{h}{U}{W}{n}=
+        \apply{\openChainLevels{X}{h}{U}{W}}{n}$.
+\end{definition}
+
+\begin{definition}\label{open_chain_step_count}
+    $\openChainStepCount{X}{h}{U}{W}{n}=
+        \fst{\openChainLevel{X}{h}{U}{W}{n}}$.
+\end{definition}
+
+\begin{definition}\label{open_chain_at_level}
+    $\openChainAtLevel{X}{h}{U}{W}{n}=
+        \snd{\openChainLevel{X}{h}{U}{W}{n}}$.
+\end{definition}
+
+\begin{corollary}\label{open_chain_levels_zero}
+    $\openChainLevel{X}{h}{U}{W}{\emptyset}
+        =\initialOpenChainState{U}{W}$.
+\end{corollary}
+\begin{proof}
+    Follows by
+        \auto{open_chain_level,open_chain_levels,iteration_set_zero}.
+\end{proof}
+
+\begin{corollary}\label{open_chain_levels_successor_apply}
+    Let $n$ be a natural number.
+    Then $\openChainLevel{X}{h}{U}{W}{\suc{n}}
+        =\apply{\openChainRefiner{X}{h}{U}{W}}
+            {\openChainLevel{X}{h}{U}{W}{n}}$.
+\end{corollary}
+\begin{proof}
+    Follows by
+        \auto{open_chain_level,open_chain_levels,iteration_set_successor}.
+\end{proof}
+
+\begin{corollary}\label{open_chain_levels_successor}
+    Let $n$ be a natural number.
+    Suppose $\openChainLevel{X}{h}{U}{W}{n}
+        \in\openChainStates{X}{U}{W}$.
+    Then $\openChainLevel{X}{h}{U}{W}{\suc{n}}
+        =\openChainRefinedState{X}{h}
+            {\openChainLevel{X}{h}{U}{W}{n}}$.
+\end{corollary}
+\begin{proof}
+    $\openChainLevel{X}{h}{U}{W}{\suc{n}}
+        =\apply{\openChainRefiner{X}{h}{U}{W}}
+            {\openChainLevel{X}{h}{U}{W}{n}}$
+        by \obv{open_chain_levels_successor_apply}.
+    $\apply{\openChainRefiner{X}{h}{U}{W}}
+            {\openChainLevel{X}{h}{U}{W}{n}}
+        =\openChainRefinedState{X}{h}
+            {\openChainLevel{X}{h}{U}{W}{n}}$
+        by \obv{open_chain_refiner_apply}.
+\end{proof}
+
+\begin{corollary}\label{open_chain_step_count_zero}
+    $\openChainStepCount{X}{h}{U}{W}{\emptyset}
+        =\suc{\emptyset}$.
+\end{corollary}
+\begin{proof}
+    $\openChainLevel{X}{h}{U}{W}{\emptyset}
+        =\initialOpenChainState{U}{W}$
+        by \obv{open_chain_levels_zero}.
+    $\initialOpenChainState{U}{W}
+        =(\suc{\emptyset},\initialOpenChain{U}{W})$
+        by \obv{initial_open_chain_state}.
+    Follows by \auto{open_chain_step_count,fst_eq}.
+\end{proof}
+
+\begin{corollary}\label{open_chain_at_level_zero}
+    $\openChainAtLevel{X}{h}{U}{W}{\emptyset}
+        =\initialOpenChain{U}{W}$.
+\end{corollary}
+\begin{proof}
+    $\openChainLevel{X}{h}{U}{W}{\emptyset}
+        =\initialOpenChainState{U}{W}$
+        by \obv{open_chain_levels_zero}.
+    $\initialOpenChainState{U}{W}
+        =(\suc{\emptyset},\initialOpenChain{U}{W})$
+        by \obv{initial_open_chain_state}.
+    Follows by \auto{open_chain_at_level,snd_eq}.
+\end{proof}
+
+\begin{corollary}\label{open_chain_step_count_successor}
+    Let $n$ be a natural number.
+    Suppose $\openChainLevel{X}{h}{U}{W}{n}
+        \in\openChainStates{X}{U}{W}$.
+    Then $\openChainStepCount{X}{h}{U}{W}{\suc{n}}
+        =\openChainStepCount{X}{h}{U}{W}{n}
+            +\openChainStepCount{X}{h}{U}{W}{n}$.
+\end{corollary}
+\begin{proof}
+    Let $p=\openChainLevel{X}{h}{U}{W}{n}$.
+    $\openChainLevel{X}{h}{U}{W}{\suc{n}}
+        =\openChainRefinedState{X}{h}{p}$
+        by \auto{open_chain_levels_successor}.
+    $\openChainRefinedState{X}{h}{p}
+        =(\fst{p}+\fst{p},
+            \openChainRefinement{X}{h}{\fst{p}}{\snd{p}})$
+        by \obv{open_chain_refined_state}.
+    $\openChainStepCount{X}{h}{U}{W}{n}=\fst{p}$
+        by \obv{open_chain_step_count}.
+    Follows by \auto{open_chain_step_count,fst_eq}.
+\end{proof}
+
+\begin{corollary}\label{open_chain_at_level_successor}
+    Let $n$ be a natural number.
+    Suppose $\openChainLevel{X}{h}{U}{W}{n}
+        \in\openChainStates{X}{U}{W}$.
+    Then $\openChainAtLevel{X}{h}{U}{W}{\suc{n}}
+        =\openChainRefinement{X}{h}
+            {\openChainStepCount{X}{h}{U}{W}{n}}
+            {\openChainAtLevel{X}{h}{U}{W}{n}}$.
+\end{corollary}
+\begin{proof}
+    Let $p=\openChainLevel{X}{h}{U}{W}{n}$.
+    $\openChainLevel{X}{h}{U}{W}{\suc{n}}
+        =\openChainRefinedState{X}{h}{p}$
+        by \auto{open_chain_levels_successor}.
+    $\openChainRefinedState{X}{h}{p}
+        =(\fst{p}+\fst{p},
+            \openChainRefinement{X}{h}{\fst{p}}{\snd{p}})$
+        by \obv{open_chain_refined_state}.
+    $\openChainStepCount{X}{h}{U}{W}{n}=\fst{p}$ and
+        $\openChainAtLevel{X}{h}{U}{W}{n}=\snd{p}$
+        by \obv{open_chain_step_count,open_chain_at_level}.
+    Follows by \auto{open_chain_at_level,snd_eq}.
+\end{proof}
+
+\begin{theorem}\label{open_chain_levels_typed}
+    Let $X$ be a topological space.
+    Let $h$ be a normal shrinker for $X$.
+    Let $U,W\in\opens[X]$.
+    Suppose $\closure{U}{X}\subseteq W$.
+    Then $\openChainLevels{X}{h}{U}{W}
+        \in\funs{\naturals}{\openChainStates{X}{U}{W}}$.
+\end{theorem}
+\begin{proof}
+    Let $S=\openChainStates{X}{U}{W}$.
+    Let $g=\openChainRefiner{X}{h}{U}{W}$.
+    Let $a=\initialOpenChainState{U}{W}$.
+    $g\in\funs{S}{S}$ by \auto{open_chain_refiner_typed}.
+    $a\in S$ by \auto{initial_open_chain_state_in}.
+    Hence $\iterationSet{g}{a}\in\funs{\naturals}{S}$
+        by \obv{iteration_set_type}.
+    Follows by \auto{open_chain_levels}.
+\end{proof}
+
+\begin{corollary}\label{open_chain_level_is_state}
+    Let $X$ be a topological space.
+    Let $h$ be a normal shrinker for $X$.
+    Let $U,W\in\opens[X]$.
+    Suppose $\closure{U}{X}\subseteq W$.
+    Let $n$ be a natural number.
+    Then $\openChainLevel{X}{h}{U}{W}{n}
+        \in\openChainStates{X}{U}{W}$.
+\end{corollary}
+\begin{proof}
+    Follows by
+        \auto{open_chain_level,open_chain_levels_typed,funs_type_apply}.
+\end{proof}
+
+\begin{corollary}\label{open_chain_level_components}
+    Let $X$ be a topological space.
+    Let $h$ be a normal shrinker for $X$.
+    Let $U,W\in\opens[X]$.
+    Suppose $\closure{U}{X}\subseteq W$.
+    Let $n$ be a natural number.
+    Then $\openChainStepCount{X}{h}{U}{W}{n}$ is a natural number and
+        $\openChainStepCount{X}{h}{U}{W}{n}\neq\emptyset$ and
+        $\openChainAtLevel{X}{h}{U}{W}{n}$ is a finite open chain with
+            $\openChainStepCount{X}{h}{U}{W}{n}$ steps in $X$ and
+        $\apply{\openChainAtLevel{X}{h}{U}{W}{n}}{\emptyset}=U$ and
+        $\apply{\openChainAtLevel{X}{h}{U}{W}{n}}
+            {\openChainStepCount{X}{h}{U}{W}{n}}=W$.
+\end{corollary}
+\begin{proof}
+    Let $p=\openChainLevel{X}{h}{U}{W}{n}$.
+    $p\in\openChainStates{X}{U}{W}$
+        by \auto{open_chain_level_is_state}.
+    $p=(\fst{p},\snd{p})$ and $\fst{p}\neq\emptyset$ and
+        $\snd{p}$ is a finite open chain with $\fst{p}$ steps in $X$ and
+        $\apply{\snd{p}}{\emptyset}=U$ and
+        $\apply{\snd{p}}{\fst{p}}=W$
+        by \obv{open_chain_state_elim}.
+    $\openChainStepCount{X}{h}{U}{W}{n}=\fst{p}$ and
+        $\openChainAtLevel{X}{h}{U}{W}{n}=\snd{p}$
+        by \obv{open_chain_step_count,open_chain_at_level}.
+\end{proof}

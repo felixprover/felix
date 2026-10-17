@@ -1,0 +1,401 @@
+\import{algebra/magma.tex}
+
+\section{Magma homomorphisms}
+
+Magma homomorphisms are set-coded function graphs with explicit source and
+target structures.  In particular, a graph does not carry hidden endpoint
+data.
+
+\begin{definition}\label{magma_hom}
+    $f$ is a magma homomorphism from $A$ to $B$ iff
+        $A$ is a magma and $B$ is a magma and
+        $f\in\funs{\carrier[A]}{\carrier[B]}$ and
+        for all $x,y\in\carrier[A]$ we have
+            $f(\mul[A](x,y))=\mul[B](f(x),f(y))$.
+\end{definition}
+
+\begin{proposition}\label{magma_hom_source_magma}
+    Suppose $f$ is a magma homomorphism from $A$ to $B$.
+    Then $A$ is a magma.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{magma_hom}.
+\end{proof}
+
+\begin{proposition}\label{magma_hom_target_magma}
+    Suppose $f$ is a magma homomorphism from $A$ to $B$.
+    Then $B$ is a magma.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{magma_hom}.
+\end{proof}
+
+\begin{proposition}\label{magma_hom_type}
+    Suppose $f$ is a magma homomorphism from $A$ to $B$.
+    Then $f\in\funs{\carrier[A]}{\carrier[B]}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{magma_hom}.
+\end{proof}
+
+\begin{corollary}\label{magma_hom_is_function}
+    Suppose $f$ is a magma homomorphism from $A$ to $B$.
+    Then $f$ is a function.
+\end{corollary}
+\begin{proof}
+    Follows by \obv{magma_hom_type,funs_is_function}.
+\end{proof}
+
+\begin{corollary}\label{magma_hom_apply_type}
+    Suppose $f$ is a magma homomorphism from $A$ to $B$.
+    Let $x\in\carrier[A]$.
+    Then $f(x)\in\carrier[B]$.
+\end{corollary}
+\begin{proof}
+    Follows by \obv{magma_hom_type,funs_type_apply}.
+\end{proof}
+
+\begin{proposition}\label{magma_hom_mul}
+    Suppose $f$ is a magma homomorphism from $A$ to $B$.
+    Let $x,y\in\carrier[A]$.
+    Then $f(\mul[A](x,y))=\mul[B](f(x),f(y))$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{magma_hom}.
+\end{proof}
+
+\begin{proposition}\label{identity_magma_hom}
+    Let $A$ be a magma.
+    Then $\identity{\carrier[A]}$ is a magma homomorphism from $A$ to $A$.
+\end{proposition}
+\begin{proof}
+    $\identity{\carrier[A]}\in
+        \funs{\carrier[A]}{\carrier[A]}$ by
+        \obv{id_elem_funs}.
+    Show that for all $x,y\in\carrier[A]$ we have
+        $(\identity{\carrier[A]})(\mul[A](x,y))=
+            \mul[A]((\identity{\carrier[A]})(x),
+                (\identity{\carrier[A]})(y))$.
+    \begin{subproof}
+        Fix $x,y\in\carrier[A]$.
+        $\mul[A](x,y)\in\carrier[A]$ by \obv{magma_welldef}.
+        Follows by \obv{id_apply}.
+    \end{subproof}
+    Follows by \obv{magma_hom}.
+\end{proof}
+
+\begin{theorem}\label{magma_hom_composition}
+    Suppose $f$ is a magma homomorphism from $A$ to $B$ and
+        $g$ is a magma homomorphism from $B$ to $C$.
+    Then $g\circ f$ is a magma homomorphism from $A$ to $C$.
+\end{theorem}
+\begin{proof}
+    $f\in\funs{\carrier[A]}{\carrier[B]}$ and
+        $g\in\funs{\carrier[B]}{\carrier[C]}$ by
+        \obv{magma_hom_type}.
+    Hence $g\circ f\in\funs{\carrier[A]}{\carrier[C]}$ by
+        \obv{funs_circ}.
+    $f$ and $g$ are functions and $g$ is composable with $f$ by
+        \auto{funs_is_function,funs_ran,funs}.
+    Show that for all $x,y\in\carrier[A]$ we have
+        $(g\circ f)(\mul[A](x,y))=
+            \mul[C]((g\circ f)(x),(g\circ f)(y))$.
+    \begin{subproof}
+        Fix $x,y\in\carrier[A]$.
+        $\mul[A](x,y)\in\carrier[A]$ by \obv{magma_welldef}.
+        $f(x),f(y)\in\carrier[B]$ by
+            \obv{magma_hom_apply_type}.
+        $(g\circ f)(\mul[A](x,y))=g(f(\mul[A](x,y)))$ by
+            \obv{circ_apply,funs}.
+        Hence
+            $(g\circ f)(\mul[A](x,y))=
+                g(\mul[B](f(x),f(y)))$ by
+            \obv{magma_hom_mul}.
+        Hence
+            $(g\circ f)(\mul[A](x,y))=
+                \mul[C](g(f(x)),g(f(y)))$ by
+            \obv{magma_hom_mul}.
+        $(g\circ f)(x)=g(f(x))$ and
+            $(g\circ f)(y)=g(f(y))$ by \auto{circ_apply,funs}.
+    \end{subproof}
+    Follows by \obv{magma_hom}.
+\end{proof}
+
+\begin{theorem}\label{magma_hom_extensionality}
+    Suppose $f$ is a magma homomorphism from $A$ to $B$ and
+        $g$ is a magma homomorphism from $A$ to $B$.
+    Suppose for every $x\in\carrier[A]$ we have $f(x)=g(x)$.
+    Then $f=g$.
+\end{theorem}
+\begin{proof}
+    $f,g\in\funs{\carrier[A]}{\carrier[B]}$ by
+        \obv{magma_hom_type}.
+    Hence $f$ and $g$ are functions and
+        $\dom{f}=\carrier[A]=\dom{g}$ by
+        \obv{funs_elim}.
+    Show that $f\subseteq g$.
+    \begin{subproof}
+        $\dom{f}\subseteq\dom{g}$ by \obv{subseteq_refl}.
+        For every $x\in\dom{f}$ we have $f(x)=g(x)$.
+        Follows by \obv{fun_subseteq}.
+    \end{subproof}
+    Show that $g\subseteq f$.
+    \begin{subproof}
+        $\dom{g}\subseteq\dom{f}$ by \obv{subseteq_refl}.
+        For every $x\in\dom{g}$ we have $g(x)=f(x)$.
+        Follows by \obv{fun_subseteq}.
+    \end{subproof}
+    Follows by \obv{subseteq_antisymmetric}.
+\end{proof}
+
+\subsection{Embeddings, surjections, and isomorphisms}
+
+\begin{definition}\label{magma_embedding}
+    $f$ is a magma embedding from $A$ to $B$ iff
+        $f$ is a magma homomorphism from $A$ to $B$ and
+        $f$ is injective.
+\end{definition}
+
+\begin{definition}\label{magma_surjection}
+    $f$ is a magma surjection from $A$ to $B$ iff
+        $f$ is a magma homomorphism from $A$ to $B$ and
+        $f\in\surj{\carrier[A]}{\carrier[B]}$.
+\end{definition}
+
+\begin{definition}\label{magma_isomorphism}
+    $f$ is a magma isomorphism from $A$ to $B$ iff
+        $f$ is a magma homomorphism from $A$ to $B$ and
+        $f\in\bijections{\carrier[A]}{\carrier[B]}$.
+\end{definition}
+
+\begin{proposition}\label{magma_embedding_is_hom}
+    Suppose $f$ is a magma embedding from $A$ to $B$.
+    Then $f$ is a magma homomorphism from $A$ to $B$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{magma_embedding}.
+\end{proof}
+
+\begin{proposition}\label{magma_embedding_injective}
+    Suppose $f$ is a magma embedding from $A$ to $B$.
+    Then $f$ is injective.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{magma_embedding}.
+\end{proof}
+
+\begin{proposition}\label{magma_surjection_is_hom}
+    Suppose $f$ is a magma surjection from $A$ to $B$.
+    Then $f$ is a magma homomorphism from $A$ to $B$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{magma_surjection}.
+\end{proof}
+
+\begin{proposition}\label{magma_surjection_is_surjection}
+    Suppose $f$ is a magma surjection from $A$ to $B$.
+    Then $f\in\surj{\carrier[A]}{\carrier[B]}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{magma_surjection}.
+\end{proof}
+
+\begin{proposition}\label{magma_isomorphism_is_hom}
+    Suppose $f$ is a magma isomorphism from $A$ to $B$.
+    Then $f$ is a magma homomorphism from $A$ to $B$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{magma_isomorphism}.
+\end{proof}
+
+\begin{proposition}\label{magma_isomorphism_is_bijection}
+    Suppose $f$ is a magma isomorphism from $A$ to $B$.
+    Then $f\in\bijections{\carrier[A]}{\carrier[B]}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{magma_isomorphism}.
+\end{proof}
+
+\begin{corollary}\label{magma_isomorphism_is_embedding}
+    Suppose $f$ is a magma isomorphism from $A$ to $B$.
+    Then $f$ is a magma embedding from $A$ to $B$.
+\end{corollary}
+\begin{proof}
+    $f$ is injective by
+        \auto{magma_isomorphism_is_bijection,bijections}.
+    Follows by
+        \obv{magma_embedding,magma_isomorphism_is_hom}.
+\end{proof}
+
+\begin{corollary}\label{magma_isomorphism_is_surjection}
+    Suppose $f$ is a magma isomorphism from $A$ to $B$.
+    Then $f$ is a magma surjection from $A$ to $B$.
+\end{corollary}
+\begin{proof}
+    $f\in\surj{\carrier[A]}{\carrier[B]}$ by
+        \auto{magma_isomorphism_is_bijection,bijections}.
+    Follows by
+        \obv{magma_surjection,magma_isomorphism_is_hom}.
+\end{proof}
+
+\begin{proposition}\label{identity_magma_isomorphism}
+    Let $A$ be a magma.
+    Then $\identity{\carrier[A]}$ is a magma isomorphism from $A$ to $A$.
+\end{proposition}
+\begin{proof}
+    $\identity{\carrier[A]}$ is a magma homomorphism from $A$ to $A$ by
+        \obv{identity_magma_hom}.
+    $\identity{\carrier[A]}\in
+        \bijections{\carrier[A]}{\carrier[A]}$ by
+        \obv{id_elem_bijections}.
+    Follows by \obv{magma_isomorphism}.
+\end{proof}
+
+\begin{theorem}\label{magma_embedding_composition}
+    Suppose $f$ is a magma embedding from $A$ to $B$ and
+        $g$ is a magma embedding from $B$ to $C$.
+    Then $g\circ f$ is a magma embedding from $A$ to $C$.
+\end{theorem}
+\begin{proof}
+    $f$ is a magma homomorphism from $A$ to $B$ and
+        $g$ is a magma homomorphism from $B$ to $C$ by
+        \obv{magma_embedding_is_hom}.
+    Hence $g\circ f$ is a magma homomorphism from $A$ to $C$ by
+        \obv{magma_hom_composition}.
+    $f$ and $g$ are injective by
+        \obv{magma_embedding_injective}.
+    Hence $g\circ f$ is injective by \obv{circ_injective}.
+    Follows by \obv{magma_embedding}.
+\end{proof}
+
+\begin{theorem}\label{magma_surjection_composition}
+    Suppose $f$ is a magma surjection from $A$ to $B$ and
+        $g$ is a magma surjection from $B$ to $C$.
+    Then $g\circ f$ is a magma surjection from $A$ to $C$.
+\end{theorem}
+\begin{proof}
+    $f$ is a magma homomorphism from $A$ to $B$ and
+        $g$ is a magma homomorphism from $B$ to $C$ by
+        \obv{magma_surjection_is_hom}.
+    Hence $g\circ f$ is a magma homomorphism from $A$ to $C$ by
+        \obv{magma_hom_composition}.
+    $f\in\surj{\carrier[A]}{\carrier[B]}$ and
+        $g\in\surj{\carrier[B]}{\carrier[C]}$ by
+        \obv{magma_surjection_is_surjection}.
+    Hence $g\circ f\in\surj{\carrier[A]}{\carrier[C]}$ by
+        \obv{surjections_circ}.
+    Follows by \obv{magma_surjection}.
+\end{proof}
+
+\begin{theorem}\label{magma_isomorphism_composition}
+    Suppose $f$ is a magma isomorphism from $A$ to $B$ and
+        $g$ is a magma isomorphism from $B$ to $C$.
+    Then $g\circ f$ is a magma isomorphism from $A$ to $C$.
+\end{theorem}
+\begin{proof}
+    $f$ is a magma homomorphism from $A$ to $B$ and
+        $g$ is a magma homomorphism from $B$ to $C$ by
+        \obv{magma_isomorphism_is_hom}.
+    Hence $g\circ f$ is a magma homomorphism from $A$ to $C$ by
+        \obv{magma_hom_composition}.
+    $f\in\bijections{\carrier[A]}{\carrier[B]}$ and
+        $g\in\bijections{\carrier[B]}{\carrier[C]}$ by
+        \obv{magma_isomorphism_is_bijection}.
+    Hence $g\circ f\in\bijections{\carrier[A]}{\carrier[C]}$ by
+        \obv{bijection_circ}.
+    Follows by \obv{magma_isomorphism}.
+\end{proof}
+
+\begin{theorem}\label{magma_isomorphism_converse_hom}
+    Suppose $f$ is a magma isomorphism from $A$ to $B$.
+    Then $\converse{f}$ is a magma homomorphism from $B$ to $A$.
+\end{theorem}
+\begin{proof}
+    $f$ is a magma homomorphism from $A$ to $B$ by
+        \obv{magma_isomorphism_is_hom}.
+    Hence $A$ is a magma and $B$ is a magma by
+        \obv{magma_hom_source_magma,magma_hom_target_magma}.
+    $f\in\bijections{\carrier[A]}{\carrier[B]}$ by
+        \obv{magma_isomorphism_is_bijection}.
+    Hence $\converse{f}\in\funs{\carrier[B]}{\carrier[A]}$ by
+        \obv{bijective_converse_are_funs}.
+    Hence $\converse{f}$ is a function and
+        $\dom{\converse{f}}=\carrier[B]$ by \obv{funs_elim}.
+    $f$ is a function and $\dom{f}=\carrier[A]$ by
+        \obv{magma_hom_type,funs_elim}.
+    Show that for all $a,b\in\carrier[B]$ we have
+        $(\converse{f})(\mul[B](a,b))=
+            \mul[A]((\converse{f})(a),(\converse{f})(b))$.
+    \begin{subproof}
+        Fix $a,b\in\carrier[B]$.
+        Let $x=(\converse{f})(a)$.
+        Let $y=(\converse{f})(b)$.
+        $x,y\in\carrier[A]$ by \auto{funs_type_apply}.
+        $(a,x),(b,y)\in\converse{f}$ by
+            \auto{function_apply_elim}.
+        Hence $(x,a),(y,b)\in f$ by \obv{converse_iff}.
+        Hence $f(x)=a$ and $f(y)=b$ by
+            \obv{function_apply_intro}.
+        $\mul[A](x,y)\in\carrier[A]$ by \obv{magma_welldef}.
+        $f(\mul[A](x,y))=\mul[B](f(x),f(y))$ by
+            \obv{magma_hom_mul}.
+        Hence $f(\mul[A](x,y))=\mul[B](a,b)$.
+        Hence $(\mul[A](x,y),\mul[B](a,b))\in f$ by
+            \auto{function_apply_elim}.
+        Hence $(\mul[B](a,b),\mul[A](x,y))\in\converse{f}$ by
+            \obv{converse_iff}.
+        Hence
+            $(\converse{f})(\mul[B](a,b))=\mul[A](x,y)$ by
+            \obv{function_apply_intro}.
+    \end{subproof}
+    Follows by \obv{magma_hom}.
+\end{proof}
+
+\begin{theorem}\label{magma_isomorphism_converse}
+    Suppose $f$ is a magma isomorphism from $A$ to $B$.
+    Then $\converse{f}$ is a magma isomorphism from $B$ to $A$.
+\end{theorem}
+\begin{proof}
+    $\converse{f}$ is a magma homomorphism from $B$ to $A$ by
+        \obv{magma_isomorphism_converse_hom}.
+    $f\in\bijections{\carrier[A]}{\carrier[B]}$ by
+        \obv{magma_isomorphism_is_bijection}.
+    Hence $\converse{f}\in\bijections{\carrier[B]}{\carrier[A]}$ by
+        \obv{bijection_converse_is_bijection}.
+    Follows by \obv{magma_isomorphism}.
+\end{proof}
+
+\subsection{Homomorphism sets}
+
+\begin{definition}\label{magma_hom_set}
+    Let $A$ be a magma.
+    Let $B$ be a magma.
+    $\magmaHomSet{A}{B}=
+        \{f\in\funs{\carrier[A]}{\carrier[B]}\mid
+            \text{$f$ is a magma homomorphism from $A$ to $B$}\}$.
+\end{definition}
+
+\begin{proposition}\label{magma_hom_set_iff}
+    Let $A$ be a magma.
+    Let $B$ be a magma.
+    Then $f\in\magmaHomSet{A}{B}$ iff
+        $f$ is a magma homomorphism from $A$ to $B$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{magma_hom_set,magma_hom,magma_hom_type}.
+\end{proof}
+
+\begin{definition}\label{magma_endomorphism_set}
+    Let $A$ be a magma.
+    $\magmaEndomorphismSet{A}=\magmaHomSet{A}{A}$.
+\end{definition}
+
+\begin{proposition}\label{magma_endomorphism_set_iff}
+    Let $A$ be a magma.
+    Then $f\in\magmaEndomorphismSet{A}$ iff
+        $f$ is a magma homomorphism from $A$ to $A$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{magma_endomorphism_set,magma_hom_set_iff}.
+\end{proof}

@@ -1,0 +1,1676 @@
+\section{Clubs and stationary subsets of ordinals}
+
+\import{cardinal/normal-map.tex}
+\import{set/indexed-family.tex}
+\import{set/iteration.tex}
+
+All predicates in this section carry their ambient ordinal explicitly.  In
+particular, a club is not a global class object and stationarity is a
+predicate on a bounded subset. Diagonal intersection and normal-map preimage
+are deliberately total bounded trace constructors; their mathematical laws
+provide the ordinal and function hypotheses where needed.
+
+\begin{definition}\label{ordinal_unbounded}
+    $\ordinalUnbounded{C}{\alpha}$ iff $C\subseteq\alpha$ and
+        for every $\beta\in\alpha$ there exists $\gamma\in C$ such that
+            $\beta\in\gamma$.
+\end{definition}
+
+\begin{definition}\label{ordinal_closed}
+    $\ordinalClosed{C}{\alpha}$ iff $C\subseteq\alpha$ and
+        for every limit ordinal $\gamma\in\alpha$ such that
+            $\ordinalUnbounded{C\inter\gamma}{\gamma}$
+        we have $\gamma\in C$.
+\end{definition}
+
+\begin{definition}\label{club_in}
+    $\clubIn{C}{\alpha}$ iff $\alpha$ is a limit ordinal and
+        $\ordinalUnbounded{C}{\alpha}$ and $\ordinalClosed{C}{\alpha}$.
+\end{definition}
+
+\begin{definition}\label{stationary_in}
+    $\stationaryIn{S}{\alpha}$ iff $\alpha$ is a limit ordinal and
+        $S\subseteq\alpha$ and for every $C$ such that $\clubIn{C}{\alpha}$
+            we have $S\meets C$.
+\end{definition}
+
+\begin{abbreviation}\label{stationary_in_phrase}
+    $S$ is stationary in $\alpha$ iff $\stationaryIn{S}{\alpha}$.
+\end{abbreviation}
+
+\begin{definition}\label{nonstationary_in}
+    $\nonstationaryIn{S}{\alpha}$ iff $\alpha$ is a limit ordinal and
+        $S\subseteq\alpha$ and there exists $C$ such that
+            $\clubIn{C}{\alpha}$ and $S\notmeets C$.
+\end{definition}
+
+\begin{definition}\label{ordinal_bounded}
+    $\ordinalBounded{B}{\alpha}$ iff $B\subseteq\alpha$ and
+        there exists $\beta\in\alpha$ such that $B\subseteq\beta$.
+\end{definition}
+
+\begin{definition}\label{ordinal_tail}
+    $\ordinalTail{\beta}{\alpha}=\alpha\setminus\beta$.
+\end{definition}
+
+\begin{definition}\label{limit_ordinals_below}
+    $\limitOrdinalsBelow{\alpha}
+        =\{\gamma\in\alpha\mid \text{$\gamma$ is a limit ordinal}\}$.
+\end{definition}
+
+\begin{definition}\label{diagonal_intersection}
+    $\diagonalIntersection{F}{\alpha}
+        =\{\beta\in\alpha\mid
+            \text{for every $i\in\beta$ we have $\beta\in F(i)$}\}$.
+\end{definition}
+
+\begin{definition}\label{normal_map_preimage}
+    $\normalMapPreimage{c}{S}{\lambda}
+        =\{i\in\lambda\mid c(i)\in S\}$.
+\end{definition}
+
+\begin{definition}\label{club_upper}
+    $\clubUpper{C}{\beta}{\alpha}
+        =\{\gamma\in C\mid \beta\in\gamma\}$.
+\end{definition}
+
+\begin{definition}\label{least_member_above}
+    $\leastMemberAbove{C}{\beta}{\alpha}
+        =\inters{\clubUpper{C}{\beta}{\alpha}}$.
+\end{definition}
+
+\begin{definition}\label{club_intermediate}
+    $\clubIntermediate{C}{\beta}{\alpha}
+        =\choice{\clubUpper{C}{\beta}{\alpha}}$.
+\end{definition}
+
+\begin{definition}\label{club_intersection_advance}
+    $\clubIntersectionAdvance{C}{D}{\alpha}
+        =\{(\beta,
+            \choice{\clubUpper{D}{\clubIntermediate{C}{\beta}{\alpha}}{\alpha}})
+            \mid \beta\in\alpha\}$.
+\end{definition}
+
+\begin{proposition}\label{club_in_elim}
+    Suppose $\clubIn{C}{\alpha}$.
+    Then $\alpha$ is a limit ordinal and $C\subseteq\alpha$ and
+        $\ordinalUnbounded{C}{\alpha}$ and $\ordinalClosed{C}{\alpha}$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{club_in,ordinal_unbounded,ordinal_closed}.
+\end{proof}
+
+\begin{proposition}\label{stationary_in_elim}
+    Suppose $S$ is stationary in $\alpha$.
+    Then $\alpha$ is a limit ordinal and $S\subseteq\alpha$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{stationary_in}.
+\end{proof}
+
+\begin{proposition}\label{cofinal_map_into_limit_has_unbounded_range}
+    Let $\alpha$ be a limit ordinal.
+    Suppose $\cofinalMap{f}{D}{\alpha}$.
+    Then $\ordinalUnbounded{\ran{f}}{\alpha}$.
+\end{proposition}
+\begin{proof}
+    $f\in\funs{D}{\alpha}$ and $\cofinalIn{\ran{f}}{\alpha}$
+        by \obv{cofinal_map}.
+    Hence $\ran{f}\subseteq\alpha$ by \obv{funs_ran}.
+    Show that for every $\beta\in\alpha$ there exists
+        $\gamma\in\ran{f}$ such that $\beta\in\gamma$.
+    \begin{subproof}
+        Fix $\beta\in\alpha$.
+        $\suc{\beta}\in\alpha$ by \obv{suc_elem_limitordinal}.
+        Take $\gamma\in\ran{f}$ such that $\suc{\beta}\subseteq\gamma$
+            by \obv{cofinal_in}.
+        $\beta\in\suc{\beta}$ by \obv{suc_intro_self}.
+        Hence $\beta\in\gamma$ by \obv{subseteq}.
+    \end{subproof}
+    Follows by \obv{ordinal_unbounded}.
+\end{proof}
+
+\begin{proposition}\label{ordinal_unbounded_iff_union}
+    Let $\alpha$ be a limit ordinal.
+    Suppose $C\subseteq\alpha$.
+    Then $\ordinalUnbounded{C}{\alpha}$ iff $\unions{C}=\alpha$.
+\end{proposition}
+\begin{proof}
+    Show that if $\ordinalUnbounded{C}{\alpha}$, then
+        $\unions{C}=\alpha$.
+    \begin{subproof}
+        Assume $\ordinalUnbounded{C}{\alpha}$.
+        Show that every element of $\unions{C}$ is an element of $\alpha$.
+        \begin{subproof}
+            Fix $x\in\unions{C}$.
+            Take $\gamma\in C$ such that $x\in\gamma$
+                by \obv{unions_iff}.
+            Hence $\gamma\in\alpha$ by \obv{subseteq}.
+            Follows by \obv{ordinal_transitivity,limit_ordinal}.
+        \end{subproof}
+        Hence $\unions{C}\subseteq\alpha$ by \obv{subseteq}.
+        Show that every element of $\alpha$ is an element of $\unions{C}$.
+        \begin{subproof}
+            Fix $\beta\in\alpha$.
+            Take $\gamma\in C$ such that $\beta\in\gamma$
+                by \obv{ordinal_unbounded}.
+            Follows by \obv{unions_iff}.
+        \end{subproof}
+        Hence $\alpha\subseteq\unions{C}$ by \obv{subseteq}.
+        Follows by \obv{subseteq_antisymmetric}.
+    \end{subproof}
+    Show that if $\unions{C}=\alpha$, then
+        $\ordinalUnbounded{C}{\alpha}$.
+    \begin{subproof}
+        Assume $\unions{C}=\alpha$.
+        Show that for every $\beta\in\alpha$ there exists $\gamma\in C$
+            such that $\beta\in\gamma$.
+        \begin{subproof}
+            Fix $\beta\in\alpha$.
+            $\suc{\beta}\in\alpha$ by \obv{suc_elem_limitordinal}.
+            Hence $\suc{\beta}\in\unions{C}$.
+            Take $\gamma\in C$ such that $\suc{\beta}\in\gamma$
+                by \obv{unions_iff}.
+            $\beta\in\suc{\beta}$ by \obv{suc_intro_self}.
+            $\gamma$ is an ordinal
+                by \obv{subseteq,elem_of_ordinal_is_ordinal,limit_ordinal}.
+            Hence $\beta\in\gamma$ by \obv{ordinal_transitivity}.
+        \end{subproof}
+        Follows by \obv{ordinal_unbounded}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{proposition}\label{ordinal_unbounded_superset}
+    Suppose $\ordinalUnbounded{C}{\alpha}$.
+    Suppose $C\subseteq D\subseteq\alpha$.
+    Then $\ordinalUnbounded{D}{\alpha}$.
+\end{proposition}
+\begin{proof}
+    For every $\beta\in\alpha$ there exists $\gamma\in C$ such that
+        $\beta\in\gamma$ by \obv{ordinal_unbounded}.
+    Hence for every $\beta\in\alpha$ there exists $\gamma\in D$ such that
+        $\beta\in\gamma$ by \auto{subseteq}.
+    Follows by \obv{ordinal_unbounded}.
+\end{proof}
+
+\begin{proposition}\label{positive_ordinal_with_unbounded_subset_is_limit}
+    Let $\alpha$ be an ordinal.
+    Suppose $\alpha$ is inhabited.
+    Suppose $\ordinalUnbounded{C}{\alpha}$.
+    Then $\alpha$ is a limit ordinal.
+\end{proposition}
+\begin{proof}
+    $\alpha\neq\emptyset$ by \auto{nonempty_inhabited}.
+    Hence $\emptyset\in\alpha$
+        by \obv{ordinal_empty_or_emptyset_elem}.
+    Show that for every $\beta\in\alpha$ we have $\suc{\beta}\in\alpha$.
+    \begin{subproof}
+        Fix $\beta\in\alpha$.
+        Take $\gamma\in C$ such that $\beta\in\gamma$
+            by \obv{ordinal_unbounded}.
+        $C\subseteq\alpha$ by \obv{ordinal_unbounded}.
+        Hence $\gamma\in\alpha$ by \obv{subseteq}.
+        Hence $\gamma$ is an ordinal by \obv{elem_of_ordinal_is_ordinal}.
+        Hence $\suc{\beta}\subseteq\gamma$
+            by \obv{ordinal_suc_subseteq}.
+        $\beta$ is an ordinal by \obv{elem_of_ordinal_is_ordinal}.
+        Hence $\suc{\beta}$ is an ordinal by \obv{suc_ordinal}.
+        Hence $\suc{\beta}\in\gamma$ or $\suc{\beta}=\gamma$
+            by \obv{ordinal_subseteq_implies_elem_or_eq}.
+        Follows by \obv{ordinal_transitivity}.
+    \end{subproof}
+    Hence $\emptyset\precedes\alpha$.
+    Follows by \obv{limit_ordinal}.
+\end{proof}
+
+\begin{proposition}\label{ordinal_tail_is_club}
+    Let $\alpha$ be a limit ordinal.
+    Let $\beta\in\alpha$.
+    Then $\clubIn{\ordinalTail{\beta}{\alpha}}{\alpha}$.
+\end{proposition}
+\begin{proof}
+    Let $T=\ordinalTail{\beta}{\alpha}$.
+    $T=\alpha\setminus\beta$ by \obv{ordinal_tail}.
+    Hence $T\subseteq\alpha$ by \auto{setminus_subseteq}.
+    Show that $\ordinalUnbounded{T}{\alpha}$.
+    \begin{subproof}
+        Show that for every $\delta\in\alpha$ there exists $\gamma\in T$
+            such that $\delta\in\gamma$.
+        \begin{subproof}
+            Fix $\delta\in\alpha$.
+            Hence $\delta$ and $\beta$ are ordinals
+                by \obv{elem_of_ordinal_is_ordinal}.
+            Let $m=\delta\union\beta$.
+            $\delta\subseteq\beta$ or $\beta\subseteq\delta$
+                by \obv{ordinal_subseteq_or_subseteq}.
+            Hence $m=\delta$ or $m=\beta$
+                by \obv{union_absorb_subseteq_left,union_absorb_subseteq_right}.
+            Hence $m\in\alpha$.
+            Let $\gamma=\suc{m}$.
+            $\gamma\in\alpha$ by \auto{suc_elem_limitordinal}.
+            $\delta\subseteq m$ and $\beta\subseteq m$
+                by \obv{union_upper_left,union_upper_right}.
+            Hence $\delta\in m$ or $\delta=m$
+                by \obv{ordinal_subseteq_implies_elem_or_eq}.
+            Hence $\delta\in\gamma$ by \auto{suc_iff}.
+            Show that $\gamma\notin\beta$.
+            \begin{subproof}
+                Suppose $\gamma\in\beta$.
+                $\beta\subseteq m$.
+                Hence $\gamma\in m$ by \obv{subseteq}.
+                $m\in\gamma$ by \obv{suc_intro_self}.
+                Contradiction by \obv{in_asymmetric}.
+            \end{subproof}
+            Hence $\gamma\in\alpha\setminus\beta$
+                by \obv{setminus_intro}.
+            Hence $\gamma\in T$.
+        \end{subproof}
+        Follows by \obv{ordinal_unbounded}.
+    \end{subproof}
+    Show that $\ordinalClosed{T}{\alpha}$.
+    \begin{subproof}
+        Show that for every limit ordinal $\gamma\in\alpha$ such that
+            $\ordinalUnbounded{T\inter\gamma}{\gamma}$
+            we have $\gamma\in T$.
+        \begin{subproof}
+            Fix $\gamma$.
+            Assume $\gamma\in\alpha$.
+            Assume $\gamma$ is a limit ordinal.
+            Assume $\ordinalUnbounded{T\inter\gamma}{\gamma}$.
+            Show that $\gamma\notin\beta$.
+            \begin{subproof}
+                Suppose $\gamma\in\beta$.
+                $\emptyset\in\gamma$ by \obv{limit_ordinal}.
+                Take $\eta\in T\inter\gamma$ such that $\emptyset\in\eta$
+                    by \obv{ordinal_unbounded}.
+                Hence $\eta\in T$ and $\eta\in\gamma$
+                    by \obv{inter_elim_left,inter_elim_right}.
+                $\beta$ is an ordinal
+                    by \obv{elem_of_ordinal_is_ordinal,limit_ordinal}.
+                Hence $\eta\in\beta$ by \obv{ordinal_transitivity}.
+                $\eta\notin\beta$ by \auto{ordinal_tail,setminus_elim_right}.
+                Contradiction.
+            \end{subproof}
+            Hence $\gamma\in\alpha\setminus\beta$
+                by \obv{setminus_intro}.
+            Follows by \obv{ordinal_tail}.
+        \end{subproof}
+        Follows by \obv{ordinal_closed}.
+    \end{subproof}
+    Follows by \obv{club_in}.
+\end{proof}
+
+\begin{proposition}\label{ordinal_closed_intersection}
+    Let $\alpha$ be an ordinal.
+    Suppose $\ordinalClosed{C}{\alpha}$ and
+        $\ordinalClosed{D}{\alpha}$.
+    Then $\ordinalClosed{C\inter D}{\alpha}$.
+\end{proposition}
+\begin{proof}
+    $C\subseteq\alpha$ and $D\subseteq\alpha$
+        by \obv{ordinal_closed}.
+    Hence $C\inter D\subseteq\alpha$ by \obv{subseteq,inter}.
+    Show that for every limit ordinal $\gamma\in\alpha$ such that
+        $\ordinalUnbounded{(C\inter D)\inter\gamma}{\gamma}$
+        we have $\gamma\in C\inter D$.
+    \begin{subproof}
+        Fix $\gamma$.
+        Assume $\gamma\in\alpha$.
+        Assume $\gamma$ is a limit ordinal.
+        Assume $\ordinalUnbounded{(C\inter D)\inter\gamma}{\gamma}$.
+        $(C\inter D)\inter\gamma\subseteq C\inter\gamma$ and
+            $(C\inter D)\inter\gamma\subseteq D\inter\gamma$
+            by \auto{subseteq,inter}.
+        $C\inter\gamma\subseteq\gamma$ and $D\inter\gamma\subseteq\gamma$
+            by \obv{subseteq,inter}.
+        Hence $\ordinalUnbounded{C\inter\gamma}{\gamma}$ and
+            $\ordinalUnbounded{D\inter\gamma}{\gamma}$
+            by \obv{ordinal_unbounded_superset}.
+        Hence $\gamma\in C$ and $\gamma\in D$
+            by \obv{ordinal_closed}.
+        Follows by \obv{inter_intro}.
+    \end{subproof}
+    Follows by \obv{ordinal_closed}.
+\end{proof}
+
+\begin{proposition}\label{stationary_is_unbounded}
+    Suppose $S$ is stationary in $\alpha$.
+    Then $\ordinalUnbounded{S}{\alpha}$.
+\end{proposition}
+\begin{proof}
+    $\alpha$ is a limit ordinal and $S\subseteq\alpha$
+        by \obv{stationary_in_elim}.
+    Show that for every $\beta\in\alpha$ there exists $\gamma\in S$
+        such that $\beta\in\gamma$.
+    \begin{subproof}
+        Fix $\beta\in\alpha$.
+        $\suc{\beta}\in\alpha$ by \obv{suc_elem_limitordinal}.
+        $\clubIn{\ordinalTail{\suc{\beta}}{\alpha}}{\alpha}$
+            by \obv{ordinal_tail_is_club}.
+        Hence $S\meets\ordinalTail{\suc{\beta}}{\alpha}$
+            by \obv{stationary_in}.
+        Take $\gamma$ such that $\gamma\in S$ and
+            $\gamma\in\ordinalTail{\suc{\beta}}{\alpha}$
+            by \auto{disjoint}.
+        Hence $\gamma\in\alpha$ by \obv{subseteq}.
+        $\gamma\notin\suc{\beta}$
+            by \auto{ordinal_tail,setminus_elim_right}.
+        Hence $\beta$ and $\gamma$ are ordinals
+            by \obv{elem_of_ordinal_is_ordinal}.
+        $\gamma\notin\beta$ and $\gamma\neq\beta$
+            by \auto{suc_iff}.
+        Hence $\beta\in\gamma$ by \obv{ordinal_elem_connex}.
+    \end{subproof}
+    Follows by \obv{ordinal_unbounded}.
+\end{proof}
+
+\begin{proposition}\label{stationary_superset}
+    Suppose $S$ is stationary in $\alpha$.
+    Suppose $S\subseteq T\subseteq\alpha$.
+    Then $T$ is stationary in $\alpha$.
+\end{proposition}
+\begin{proof}
+    Show that for every $C$ such that $\clubIn{C}{\alpha}$
+        we have $T\meets C$.
+    \begin{subproof}
+        Fix $C$.
+        Assume $\clubIn{C}{\alpha}$.
+        Hence $S\meets C$ by \obv{stationary_in}.
+        Take $x$ such that $x\in S$ and $x\in C$
+            by \auto{disjoint}.
+        Hence $x\in T$ by \obv{subseteq}.
+        Follows by \auto{disjoint}.
+    \end{subproof}
+    Follows by \obv{stationary_in}.
+\end{proof}
+
+\begin{proposition}\label{bounded_is_nonstationary}
+    Let $\alpha$ be a limit ordinal.
+    Suppose $\ordinalBounded{B}{\alpha}$.
+    Then $\nonstationaryIn{B}{\alpha}$.
+\end{proposition}
+\begin{proof}
+    $B\subseteq\alpha$ by \obv{ordinal_bounded}.
+    Take $\beta\in\alpha$ such that $B\subseteq\beta$
+        by \obv{ordinal_bounded}.
+    Let $T=\ordinalTail{\beta}{\alpha}$.
+    $\clubIn{T}{\alpha}$ by \auto{ordinal_tail_is_club}.
+    Show that $B\notmeets T$.
+    \begin{subproof}
+        Show that there exists no $x$ such that $x\in B,T$.
+        \begin{subproof}
+            Suppose there exists $x$ such that $x\in B,T$.
+            Take $x$ such that $x\in B,T$.
+            Hence $x\in\beta$ by \obv{subseteq}.
+            $x\notin\beta$ by \auto{ordinal_tail,setminus_elim_right}.
+            Contradiction.
+        \end{subproof}
+        Follows by \obv{disjoint}.
+    \end{subproof}
+    Follows by \obv{nonstationary_in}.
+\end{proof}
+
+\begin{proposition}\label{club_upper_inhabited}
+    Suppose $\ordinalUnbounded{C}{\alpha}$.
+    Let $\beta\in\alpha$.
+    Then $\clubUpper{C}{\beta}{\alpha}$ is inhabited.
+\end{proposition}
+\begin{proof}
+    Take $\gamma\in C$ such that $\beta\in\gamma$
+        by \obv{ordinal_unbounded}.
+    Hence $\gamma\in\clubUpper{C}{\beta}{\alpha}$
+        by \obv{club_upper}.
+\end{proof}
+
+\begin{proposition}\label{club_upper_are_ordinals}
+    Let $\alpha$ be an ordinal.
+    Suppose $C\subseteq\alpha$.
+    For every $\gamma\in\clubUpper{C}{\beta}{\alpha}$ we have
+        $\gamma$ is an ordinal.
+\end{proposition}
+\begin{proof}
+    Fix $\gamma\in\clubUpper{C}{\beta}{\alpha}$.
+    Hence $\gamma\in C$ by \obv{club_upper}.
+    Hence $\gamma\in\alpha$ by \obv{subseteq}.
+    Follows by \obv{elem_of_ordinal_is_ordinal}.
+\end{proof}
+
+\begin{proposition}\label{least_member_above_properties}
+    Let $\alpha$ be an ordinal.
+    Suppose $\ordinalUnbounded{C}{\alpha}$.
+    Let $\beta\in\alpha$.
+    Then $\leastMemberAbove{C}{\beta}{\alpha}\in C$ and
+        $\beta\in\leastMemberAbove{C}{\beta}{\alpha}$ and
+        $\leastMemberAbove{C}{\beta}{\alpha}\in\alpha$ and
+        for every $\gamma\in C$ such that $\beta\in\gamma$ we have
+            $\leastMemberAbove{C}{\beta}{\alpha}\subseteq\gamma$.
+\end{proposition}
+\begin{proof}
+    Let $U=\clubUpper{C}{\beta}{\alpha}$.
+    $C\subseteq\alpha$ by \obv{ordinal_unbounded}.
+    $U$ is inhabited by \auto{club_upper_inhabited}.
+    For every $\gamma\in U$ we have $\gamma$ is an ordinal
+        by \auto{club_upper_are_ordinals}.
+    Hence $\inters{U}\in U$ by \obv{inters_of_ordinals_elem}.
+    Hence $\inters{U}\in C$ and $\beta\in\inters{U}$
+        by \obv{club_upper}.
+    Hence $\inters{U}\in\alpha$ by \obv{subseteq}.
+    For every $\gamma\in C$ such that $\beta\in\gamma$ we have
+        $\inters{U}\subseteq\gamma$
+        by \obv{club_upper,inters_of_ordinals_subseteq}.
+    Follows by \auto{least_member_above}.
+\end{proof}
+
+\begin{proposition}\label{least_member_above_candidates_inhabited}
+    Suppose $\ordinalUnbounded{C}{\alpha}$.
+    Let $\beta\in\alpha$.
+    Then $\clubUpper{C}{\beta}{\alpha}$ is inhabited.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{club_upper_inhabited}.
+\end{proof}
+
+\begin{proposition}\label{least_member_above_mem}
+    Let $\alpha$ be an ordinal.
+    Suppose $\ordinalUnbounded{C}{\alpha}$.
+    Let $\beta\in\alpha$.
+    Then $\leastMemberAbove{C}{\beta}{\alpha}\in C$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{least_member_above_properties}.
+\end{proof}
+
+\begin{proposition}\label{least_member_above_strict}
+    Let $\alpha$ be an ordinal.
+    Suppose $\ordinalUnbounded{C}{\alpha}$.
+    Let $\beta\in\alpha$.
+    Then $\beta\in\leastMemberAbove{C}{\beta}{\alpha}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{least_member_above_properties}.
+\end{proof}
+
+\begin{proposition}\label{least_member_above_below_ambient}
+    Let $\alpha$ be an ordinal.
+    Suppose $\ordinalUnbounded{C}{\alpha}$.
+    Let $\beta\in\alpha$.
+    Then $\leastMemberAbove{C}{\beta}{\alpha}\in\alpha$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{least_member_above_properties}.
+\end{proof}
+
+\begin{proposition}\label{least_member_above_least}
+    Let $\alpha$ be an ordinal.
+    Suppose $\ordinalUnbounded{C}{\alpha}$.
+    Let $\beta\in\alpha$.
+    For every $\gamma\in C$ such that $\beta\in\gamma$ we have
+        $\leastMemberAbove{C}{\beta}{\alpha}\subseteq\gamma$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{least_member_above_properties}.
+\end{proof}
+
+\begin{proposition}\label{least_member_above_unique}
+    Let $\alpha$ be an ordinal.
+    Suppose $\ordinalUnbounded{C}{\alpha}$.
+    Let $\beta\in\alpha$.
+    Let $\eta\in C$.
+    Suppose $\beta\in\eta$.
+    Suppose for every $\gamma\in C$ such that $\beta\in\gamma$ we have
+        $\eta\subseteq\gamma$.
+    Then $\eta=\leastMemberAbove{C}{\beta}{\alpha}$.
+\end{proposition}
+\begin{proof}
+    $\leastMemberAbove{C}{\beta}{\alpha}\subseteq\eta$
+        by \obv{least_member_above_properties}.
+    $\leastMemberAbove{C}{\beta}{\alpha}\in C$ and
+        $\beta\in\leastMemberAbove{C}{\beta}{\alpha}$
+        by \obv{least_member_above_properties}.
+    Hence $\eta\subseteq\leastMemberAbove{C}{\beta}{\alpha}$.
+    Follows by \obv{subseteq_antisymmetric}.
+\end{proof}
+
+\begin{theorem}\label{closed_club_gap_straddles}
+    Suppose $\clubIn{C}{\beta}$.
+    Let $\alpha\in\beta$.
+    Suppose $\alpha$ is a limit ordinal and $\alpha\notin C$.
+    Let $\xi=\unions{C\inter\alpha}$.
+    Then $\xi\in\alpha$ and
+        $\alpha\in\leastMemberAbove{C}{\xi}{\beta}$ and
+        $\leastMemberAbove{C}{\xi}{\beta}\in\beta$.
+\end{theorem}
+\begin{proof}
+    $\beta$ is a limit ordinal and $C\subseteq\beta$ and
+        $\ordinalUnbounded{C}{\beta}$ and $\ordinalClosed{C}{\beta}$
+        by \obv{club_in_elim}.
+    Hence $\beta$ is an ordinal by \obv{limit_ordinal}.
+    $C\inter\alpha\subseteq\alpha$ by \obv{subseteq,inter}.
+    Every element of $C\inter\alpha$ is an ordinal
+        by \obv{inter_elim_right,elem_of_ordinal_is_ordinal,limit_ordinal}.
+    Hence $\xi$ is an ordinal by \obv{union_of_ordinals_is_ordinal}.
+    Show that every element of $\xi$ is an element of $\alpha$.
+    \begin{subproof}
+        Fix $x\in\xi$.
+        Take $\gamma\in C\inter\alpha$ such that $x\in\gamma$
+            by \obv{unions_iff}.
+        Hence $\gamma\in\alpha$ by \obv{inter_elim_right}.
+        Follows by \obv{ordinal_transitivity,limit_ordinal}.
+    \end{subproof}
+    Hence $\xi\subseteq\alpha$ by \obv{subseteq}.
+    Show that $\xi\neq\alpha$.
+    \begin{subproof}
+        Suppose $\xi=\alpha$.
+        Hence $\ordinalUnbounded{C\inter\alpha}{\alpha}$
+            by \auto{ordinal_unbounded_iff_union}.
+        Hence $\alpha\in C$ by \obv{ordinal_closed}.
+        Contradiction.
+    \end{subproof}
+    Hence $\xi\in\alpha$
+        by \obv{ordinal_subseteq_implies_elem_or_eq,limit_ordinal}.
+    Hence $\xi\in\beta$ by \obv{ordinal_transitivity}.
+    Let $\eta=\leastMemberAbove{C}{\xi}{\beta}$.
+    $\eta\in C$ and $\xi\in\eta$ and $\eta\in\beta$
+        by \auto{least_member_above_properties}.
+    Hence $\eta$ is an ordinal
+        by \obv{elem_of_ordinal_is_ordinal}.
+    Show that $\alpha\in\eta$.
+    \begin{subproof}
+        Suppose not.
+        Hence $\eta\in\alpha$ or $\alpha=\eta$
+            by \obv{ordinal_elem_connex,limit_ordinal}.
+        $\alpha\neq\eta$.
+        Hence $\eta\in\alpha$.
+        Hence $\eta\in C\inter\alpha$ by \obv{inter_intro}.
+        Hence $\eta\subseteq\xi$ by \auto{subseteq,unions_iff}.
+        Hence $\xi\in\xi$ by \obv{subseteq}.
+        Contradiction by \obv{in_irrefl}.
+    \end{subproof}
+\end{proof}
+
+\begin{proposition}\label{club_intermediate_properties}
+    Suppose $\ordinalUnbounded{C}{\alpha}$.
+    Let $\beta\in\alpha$.
+    Then $\clubIntermediate{C}{\beta}{\alpha}\in C$ and
+        $\beta\in\clubIntermediate{C}{\beta}{\alpha}$.
+\end{proposition}
+\begin{proof}
+    $\clubUpper{C}{\beta}{\alpha}$ is inhabited
+        by \obv{club_upper_inhabited}.
+    Hence $\choice{\clubUpper{C}{\beta}{\alpha}}
+        \in\clubUpper{C}{\beta}{\alpha}$ by \obv{choice_in}.
+    Follows by \obv{club_intermediate,club_upper}.
+\end{proof}
+
+\begin{theorem}\label{club_intersection_advance_type}
+    Suppose $\ordinalUnbounded{C}{\alpha}$ and
+        $\ordinalUnbounded{D}{\alpha}$.
+    Then $\clubIntersectionAdvance{C}{D}{\alpha}
+        \in\funs{\alpha}{\alpha}$.
+\end{theorem}
+\begin{proof}
+    Let $f=\clubIntersectionAdvance{C}{D}{\alpha}$.
+    $C\subseteq\alpha$ and $D\subseteq\alpha$
+        by \obv{ordinal_unbounded}.
+    $f$ is a relation by \auto{relation,club_intersection_advance}.
+    $f$ is right-unique
+        by \auto{rightunique,club_intersection_advance,pair_eq_iff}.
+    $\dom{f}=\alpha$
+        by \auto{setext,dom_iff,club_intersection_advance,pair_eq_iff}.
+    Show that for every $\beta\in\dom{f}$ we have $f(\beta)\in\alpha$.
+    \begin{subproof}
+        Fix $\beta\in\dom{f}$.
+        Hence $\beta\in\alpha$.
+        $\clubIntermediate{C}{\beta}{\alpha}\in C$
+            by \obv{club_intermediate_properties}.
+        Hence $\clubIntermediate{C}{\beta}{\alpha}\in\alpha$
+            by \obv{subseteq}.
+        $\clubUpper{D}{\clubIntermediate{C}{\beta}{\alpha}}{\alpha}$
+            is inhabited by \obv{club_upper_inhabited}.
+        Hence $\choice{\clubUpper{D}{
+            \clubIntermediate{C}{\beta}{\alpha}}{\alpha}}
+            \in\clubUpper{D}{
+                \clubIntermediate{C}{\beta}{\alpha}}{\alpha}$
+            by \obv{choice_in}.
+        Hence $\choice{\clubUpper{D}{
+            \clubIntermediate{C}{\beta}{\alpha}}{\alpha}}\in D$
+            by \obv{club_upper}.
+        Hence $\choice{\clubUpper{D}{
+            \clubIntermediate{C}{\beta}{\alpha}}{\alpha}}\in\alpha$
+            by \obv{subseteq}.
+        $(\beta,\choice{\clubUpper{D}{
+            \clubIntermediate{C}{\beta}{\alpha}}{\alpha}})\in f$
+            by \obv{club_intersection_advance}.
+        Hence $f(\beta)=\choice{\clubUpper{D}{
+            \clubIntermediate{C}{\beta}{\alpha}}{\alpha}}$
+            by \obv{function_apply_intro}.
+    \end{subproof}
+    Hence $f$ is a function to $\alpha$.
+    Follows by \auto{funs_intro}.
+\end{proof}
+
+\begin{proposition}\label{club_intersection_advance_properties}
+    Let $\alpha$ be an ordinal.
+    Suppose $\ordinalUnbounded{C}{\alpha}$ and
+        $\ordinalUnbounded{D}{\alpha}$.
+    Let $\beta\in\alpha$.
+    Let $f=\clubIntersectionAdvance{C}{D}{\alpha}$.
+    Then $f(\beta)\in D$ and
+        $\clubIntermediate{C}{\beta}{\alpha}\in f(\beta)$ and
+        $\beta\in f(\beta)$.
+\end{proposition}
+\begin{proof}
+    $C\subseteq\alpha$ by \obv{ordinal_unbounded}.
+    $\clubIntermediate{C}{\beta}{\alpha}\in C$ and
+        $\beta\in\clubIntermediate{C}{\beta}{\alpha}$
+        by \obv{club_intermediate_properties}.
+    Hence $\clubIntermediate{C}{\beta}{\alpha}\in\alpha$
+        by \obv{subseteq}.
+    $\clubUpper{D}{\clubIntermediate{C}{\beta}{\alpha}}{\alpha}$
+        is inhabited by \obv{club_upper_inhabited}.
+    Hence $\choice{\clubUpper{D}{
+        \clubIntermediate{C}{\beta}{\alpha}}{\alpha}}
+        \in\clubUpper{D}{
+            \clubIntermediate{C}{\beta}{\alpha}}{\alpha}$
+        by \obv{choice_in}.
+    Hence $\choice{\clubUpper{D}{
+        \clubIntermediate{C}{\beta}{\alpha}}{\alpha}}\in D$ and
+        $\clubIntermediate{C}{\beta}{\alpha}
+            \in\choice{\clubUpper{D}{
+                \clubIntermediate{C}{\beta}{\alpha}}{\alpha}}$
+        by \obv{club_upper}.
+    $f$ is a function
+        by \auto{club_intersection_advance_type,funs_is_function}.
+    $(\beta,\choice{\clubUpper{D}{
+        \clubIntermediate{C}{\beta}{\alpha}}{\alpha}})\in f$
+        by \obv{club_intersection_advance}.
+    Hence $f(\beta)=\choice{\clubUpper{D}{
+        \clubIntermediate{C}{\beta}{\alpha}}{\alpha}}$
+        by \obv{function_apply_intro}.
+    Hence $f(\beta)\in D$.
+    $D\subseteq\alpha$ by \obv{ordinal_unbounded}.
+    Hence $f(\beta)\in\alpha$ by \obv{subseteq}.
+    $f(\beta)$ is an ordinal
+        by \obv{elem_of_ordinal_is_ordinal}.
+    Hence $\beta\in f(\beta)$ by \obv{ordinal_transitivity}.
+\end{proof}
+
+\begin{proposition}\label{club_intersection_iteration_properties}
+    Let $\alpha$ be an ordinal.
+    Suppose $\ordinalUnbounded{C}{\alpha}$ and
+        $\ordinalUnbounded{D}{\alpha}$.
+    Let $\beta\in\alpha$.
+    Let $f=\clubIntersectionAdvance{C}{D}{\alpha}$.
+    Let $a=f(\beta)$.
+    Let $s=\iterationSet{f}{a}$.
+    Then $s\in\funs{\naturals}{\alpha}$ and
+        for every natural number $n$ we have
+            $s(n)\in D$ and $s(n)\in s(\suc{n})$ and
+            $\clubIntermediate{C}{s(n)}{\alpha}\in s(\suc{n})$.
+\end{proposition}
+\begin{proof}
+    $f\in\funs{\alpha}{\alpha}$
+        by \auto{club_intersection_advance_type}.
+    $a\in\alpha$ by \auto{funs_type_apply}.
+    $s\in\funs{\naturals}{\alpha}$
+        by \auto{iteration_set_type}.
+    Hence $s$ is a function and $\dom{s}=\naturals$
+        by \obv{funs_is_function,funs}.
+    Let $N=\{n\in\naturals\mid
+        s(n)\in D\land s(n)\in s(\suc{n})\land
+        \clubIntermediate{C}{s(n)}{\alpha}\in s(\suc{n})\}$.
+    Show that $\emptyset\in N$.
+    \begin{subproof}
+        $s(\emptyset)=a$ by \auto{iteration_set_zero}.
+        $a\in D$ by \auto{club_intersection_advance_properties}.
+        $\emptyset$ is a natural number by \obv{omega_empty}.
+        $s(\suc{\emptyset})=f(s(\emptyset))$
+            by \auto{iteration_set_successor}.
+        $s(\emptyset)\in\alpha$ by \obv{funs_type_apply}.
+        $f(s(\emptyset))\in D$ and
+            $\clubIntermediate{C}{s(\emptyset)}{\alpha}
+                \in f(s(\emptyset))$ and
+            $s(\emptyset)\in f(s(\emptyset))$
+            by \obv{club_intersection_advance_properties}.
+    \end{subproof}
+    Show that for every $n\in N$ we have $\suc{n}\in N$.
+    \begin{subproof}
+        Fix $n\in N$.
+        Hence $\suc{n}$ is a natural number by \obv{omega_successor}.
+        $s(n)\in\alpha$ by \obv{funs_type_apply}.
+        $s(\suc{n})=f(s(n))$
+            by \auto{iteration_set_successor}.
+        $f(s(n))\in D$ by
+            \obv{club_intersection_advance_properties}.
+        Hence $s(\suc{n})\in D$.
+        $s(\suc{n})\in\alpha$ by \obv{funs_type_apply}.
+        $s(\suc{\suc{n}})=f(s(\suc{n}))$
+            by \auto{iteration_set_successor}.
+        $f(s(\suc{n}))\in D$ and
+            $\clubIntermediate{C}{s(\suc{n})}{\alpha}
+                \in f(s(\suc{n}))$ and
+            $s(\suc{n})\in f(s(\suc{n}))$
+            by \obv{club_intersection_advance_properties}.
+        Hence $s(\suc{n})\in s(\suc{\suc{n}})$.
+        $\clubIntermediate{C}{s(\suc{n})}{\alpha}
+            \in s(\suc{\suc{n}})$.
+    \end{subproof}
+    Hence $N$ is an inductive set by \obv{inductive_set}.
+    Hence every natural number is an element of $N$
+        by \obv{omega_minimal}.
+    Show that for every natural number $n$ we have
+        $s(n)\in D$ and $s(n)\in s(\suc{n})$ and
+        $\clubIntermediate{C}{s(n)}{\alpha}\in s(\suc{n})$.
+    \begin{subproof}
+        Fix $n\in\naturals$.
+        $n\in N$.
+    \end{subproof}
+\end{proof}
+
+\begin{theorem}\label{two_clubs_have_common_limit_point_above}
+    Let $\alpha$ be a limit ordinal.
+    Suppose $\naturals\in\cofinality{\alpha}$.
+    Suppose $\clubIn{C}{\alpha}$ and $\clubIn{D}{\alpha}$.
+    Let $\beta\in\alpha$.
+    Then there exists $x\in\alpha$ such that $\beta\in x$ and
+        $x$ is a limit ordinal and
+        $\ordinalUnbounded{C\inter x}{x}$ and
+        $\ordinalUnbounded{D\inter x}{x}$.
+\end{theorem}
+\begin{proof}
+    $\alpha$ is an ordinal by \obv{limit_ordinal}.
+    $\ordinalUnbounded{C}{\alpha}$ and
+        $\ordinalClosed{C}{\alpha}$ and
+        $\ordinalUnbounded{D}{\alpha}$ and
+        $\ordinalClosed{D}{\alpha}$
+        by \obv{club_in_elim}.
+    Let $f=\clubIntersectionAdvance{C}{D}{\alpha}$.
+    $f\in\funs{\alpha}{\alpha}$
+        by \auto{club_intersection_advance_type}.
+    Let $a=f(\beta)$.
+    $a\in\alpha$ by \auto{funs_type_apply}.
+    Let $s=\iterationSet{f}{a}$.
+    $s\in\funs{\naturals}{\alpha}$ and
+        for every natural number $n$ we have
+            $s(n)\in D$ and $s(n)\in s(\suc{n})$ and
+            $\clubIntermediate{C}{s(n)}{\alpha}\in s(\suc{n})$
+        by \obv{club_intersection_iteration_properties}.
+    Hence $s$ is a function and $\dom{s}=\naturals$
+        by \obv{funs_is_function,funs}.
+    Let $x=\unions{\ran{s}}$.
+    $x\in\alpha$ by \auto{small_domain_range_union_below}.
+    $\ran{s}\subseteq\alpha$ by \obv{funs_ran}.
+    Hence every element of $\ran{s}$ is an ordinal
+        by \obv{subseteq,elem_of_ordinal_is_ordinal}.
+    Hence $x$ is an ordinal by \obv{union_of_ordinals_is_ordinal}.
+    $\emptyset$ is a natural number by \obv{omega_empty}.
+    Hence $s(\emptyset)\in s(\suc{\emptyset})$
+        by \auto{club_intersection_iteration_properties}.
+    $\suc{\emptyset}$ is a natural number by \obv{omega_successor}.
+    Hence $s(\suc{\emptyset})\in\ran{s}$ by \auto{fun_ran_iff}.
+    Hence $s(\emptyset)\in x$ by \auto{unions_iff}.
+    Hence $x\neq\emptyset$ by \auto{emptyset}.
+    Hence $\emptyset\in x$
+        by \obv{ordinal_empty_or_emptyset_elem}.
+    Show that for every $\rho\in x$ we have $\suc{\rho}\in x$.
+    \begin{subproof}
+        Fix $\rho\in x$.
+        Take $y\in\ran{s}$ such that $\rho\in y$
+            by \obv{unions_iff}.
+        Take $n\in\dom{s}$ such that $s(n)=y$
+            by \obv{fun_ran_iff}.
+        Hence $n$ is a natural number.
+        Hence $s(n)\in s(\suc{n})$
+            by \auto{club_intersection_iteration_properties}.
+        $s(n)$ is an ordinal
+            by \obv{funs_type_apply,elem_of_ordinal_is_ordinal}.
+        Hence $\rho$ is an ordinal by \obv{elem_of_ordinal_is_ordinal}.
+        Hence $\suc{\rho}\subseteq s(n)$
+            by \obv{ordinal_suc_subseteq}.
+        $\suc{\rho}$ is an ordinal by \obv{suc_ordinal}.
+        Hence $\suc{\rho}\in s(n)$ or $\suc{\rho}=s(n)$
+            by \obv{ordinal_subseteq_implies_elem_or_eq}.
+        $s(\suc{n})$ is an ordinal
+            by \obv{funs_type_apply,omega_successor,elem_of_ordinal_is_ordinal}.
+        Hence $\suc{\rho}\in s(\suc{n})$
+            by \obv{ordinal_transitivity}.
+        $\suc{n}$ is a natural number by \obv{omega_successor}.
+        Hence $s(\suc{n})\in\ran{s}$ by \auto{fun_ran_iff}.
+        Follows by \auto{unions_iff}.
+    \end{subproof}
+    Hence $\emptyset\precedes x$.
+    Hence $x$ is a limit ordinal by \obv{limit_ordinal}.
+    Show that $\ordinalUnbounded{C\inter x}{x}$.
+    \begin{subproof}
+        $C\inter x\subseteq x$ by \obv{subseteq,inter}.
+        Show that for every $\rho\in x$ there exists $m\in C\inter x$
+            such that $\rho\in m$.
+        \begin{subproof}
+            Fix $\rho\in x$.
+            Take $y\in\ran{s}$ such that $\rho\in y$
+                by \obv{unions_iff}.
+            Take $n\in\dom{s}$ such that $s(n)=y$
+                by \obv{fun_ran_iff}.
+            Hence $n$ is a natural number.
+            Let $m=\clubIntermediate{C}{s(n)}{\alpha}$.
+            $s(n)\in\alpha$ by \obv{funs_type_apply}.
+            Hence $m\in C$ and $s(n)\in m$
+                by \auto{club_intermediate_properties}.
+            $m\in s(\suc{n})$
+                by \auto{club_intersection_iteration_properties}.
+            $\suc{n}$ is a natural number by \obv{omega_successor}.
+            Hence $s(\suc{n})\in\ran{s}$ by \auto{fun_ran_iff}.
+            Hence $m\in x$ by \auto{unions_iff}.
+            Hence $m\in C\inter x$ by \obv{inter_intro}.
+            $C\subseteq\alpha$ by \obv{ordinal_unbounded}.
+            Hence $m\in\alpha$ by \obv{subseteq}.
+            Hence $m$ is an ordinal by \obv{elem_of_ordinal_is_ordinal}.
+            $\rho\in s(n)$.
+            Hence $\rho\in m$ by \obv{ordinal_transitivity}.
+        \end{subproof}
+        Follows by \obv{ordinal_unbounded}.
+    \end{subproof}
+    Show that $\ordinalUnbounded{D\inter x}{x}$.
+    \begin{subproof}
+        $D\inter x\subseteq x$ by \obv{subseteq,inter}.
+        Show that for every $\rho\in x$ there exists $z\in D\inter x$
+            such that $\rho\in z$.
+        \begin{subproof}
+            Fix $\rho\in x$.
+            Take $y\in\ran{s}$ such that $\rho\in y$
+                by \obv{unions_iff}.
+            Take $n\in\dom{s}$ such that $s(n)=y$
+                by \obv{fun_ran_iff}.
+            Hence $n$ is a natural number.
+            $s(\suc{n})\in D$
+                by \auto{club_intersection_iteration_properties,omega_successor}.
+            $s(n)\in s(\suc{n})$
+                by \auto{club_intersection_iteration_properties}.
+            Let $z=s(\suc{n})$.
+            Hence $z\in D$.
+            $s(n)\in z$.
+            $\suc{n}$ is a natural number by \obv{omega_successor}.
+            Hence $z\in s(\suc{\suc{n}})$
+                by \auto{club_intersection_iteration_properties,omega_successor}.
+            $\suc{\suc{n}}$ is a natural number
+                by \obv{omega_successor}.
+            Hence $s(\suc{\suc{n}})\in\ran{s}$
+                by \auto{fun_ran_iff}.
+            Hence $z\in x$ by \auto{unions_iff}.
+            Hence $z\in D\inter x$ by \obv{inter_intro}.
+            $D\subseteq\alpha$ by \obv{ordinal_unbounded}.
+            Hence $z\in\alpha$ by \obv{subseteq}.
+            Hence $z$ is an ordinal by \obv{elem_of_ordinal_is_ordinal}.
+            $\rho\in s(n)$.
+            Hence $\rho\in z$ by \auto{ordinal_transitivity}.
+            Follows by \auto.
+        \end{subproof}
+        Follows by \obv{ordinal_unbounded}.
+    \end{subproof}
+    Hence $x\in C$ and $x\in D$ by \obv{ordinal_closed}.
+    Hence $x\in C\inter D$ by \obv{inter_intro}.
+    $\beta\in a$ by \auto{club_intersection_advance_properties}.
+    $s(\emptyset)=a$ by \auto{iteration_set_zero}.
+    Hence $\beta\in s(\emptyset)$.
+    Hence $\beta\in x$ by \auto{ordinal_transitivity}.
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{two_clubs_have_common_point_above}
+    Let $\alpha$ be a limit ordinal.
+    Suppose $\naturals\in\cofinality{\alpha}$.
+    Suppose $\clubIn{C}{\alpha}$ and $\clubIn{D}{\alpha}$.
+    Let $\beta\in\alpha$.
+    Then there exists $x\in C\inter D$ such that
+        $\beta\in x$ and $x$ is a limit ordinal.
+\end{theorem}
+\begin{proof}
+    Take $x\in\alpha$ such that $\beta\in x$ and
+        $x$ is a limit ordinal and
+        $\ordinalUnbounded{C\inter x}{x}$ and
+        $\ordinalUnbounded{D\inter x}{x}$
+        by \obv{two_clubs_have_common_limit_point_above}.
+    $\ordinalClosed{C}{\alpha}$ and $\ordinalClosed{D}{\alpha}$
+        by \obv{club_in_elim}.
+    Hence $x\in C$ and $x\in D$ by \obv{ordinal_closed}.
+    Hence $x\in C\inter D$ by \obv{inter_intro}.
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{two_club_intersection}
+    Let $\alpha$ be a limit ordinal.
+    Suppose $\naturals\in\cofinality{\alpha}$.
+    Suppose $\clubIn{C}{\alpha}$ and $\clubIn{D}{\alpha}$.
+    Then $\clubIn{C\inter D}{\alpha}$.
+\end{theorem}
+\begin{proof}
+    $C\subseteq\alpha$ and $D\subseteq\alpha$
+        by \auto{club_in_elim}.
+    Hence $C\inter D\subseteq\alpha$ by \obv{subseteq,inter}.
+    Show that $\ordinalUnbounded{C\inter D}{\alpha}$.
+    \begin{subproof}
+        For every $\beta\in\alpha$ there exists $x\in C\inter D$ such that
+            $\beta\in x$ by \auto{two_clubs_have_common_point_above}.
+        Follows by \obv{ordinal_unbounded}.
+    \end{subproof}
+    $\ordinalClosed{C}{\alpha}$ and $\ordinalClosed{D}{\alpha}$
+        by \obv{club_in_elim}.
+    Hence $\ordinalClosed{C\inter D}{\alpha}$
+        by \obv{ordinal_closed_intersection}.
+    Follows by \obv{club_in}.
+\end{proof}
+
+\begin{proposition}\label{club_is_stationary}
+    Let $\alpha$ be a limit ordinal.
+    Suppose $\naturals\in\cofinality{\alpha}$.
+    Suppose $\clubIn{C}{\alpha}$.
+    Then $C$ is stationary in $\alpha$.
+\end{proposition}
+\begin{proof}
+    $C\subseteq\alpha$ by \auto{club_in_elim}.
+    Show that for every $D$ such that $\clubIn{D}{\alpha}$
+        we have $C\meets D$.
+    \begin{subproof}
+        Fix $D$.
+        Assume $\clubIn{D}{\alpha}$.
+        $\emptyset\in\alpha$ by \obv{limit_ordinal}.
+        Take $x\in C\inter D$ such that $\emptyset\in x$
+            by \auto{two_clubs_have_common_point_above}.
+        Hence $x\in C$ and $x\in D$
+            by \obv{inter_elim_left,inter_elim_right}.
+        Follows by \auto{disjoint}.
+    \end{subproof}
+    Follows by \obv{stationary_in}.
+\end{proof}
+
+\begin{proposition}\label{nonstationary_iff_not_stationary}
+    Let $\alpha$ be a limit ordinal.
+    Suppose $S\subseteq\alpha$.
+    Then $\nonstationaryIn{S}{\alpha}$ iff
+        $S$ is not stationary in $\alpha$.
+\end{proposition}
+\begin{proof}
+    Show that if $\nonstationaryIn{S}{\alpha}$, then
+        $S$ is not stationary in $\alpha$.
+    \begin{subproof}
+        Assume $\nonstationaryIn{S}{\alpha}$.
+        Take $C$ such that $\clubIn{C}{\alpha}$ and $S\notmeets C$
+            by \obv{nonstationary_in}.
+        Suppose $S$ is stationary in $\alpha$.
+        Hence $S\meets C$ by \obv{stationary_in}.
+        Contradiction.
+    \end{subproof}
+    Show that if $S$ is not stationary in $\alpha$, then
+        $\nonstationaryIn{S}{\alpha}$.
+    \begin{subproof}
+        Assume $S$ is not stationary in $\alpha$.
+        Take $C$ such that $\clubIn{C}{\alpha}$ and
+            $\lnot(S\meets C)$ by \auto{stationary_in}.
+        Hence $S\notmeets C$.
+        Follows by \auto{nonstationary_in}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{proposition}\label{nonstationary_union}
+    Let $\alpha$ be a limit ordinal.
+    Suppose $\naturals\in\cofinality{\alpha}$.
+    Suppose $\nonstationaryIn{S}{\alpha}$ and
+        $\nonstationaryIn{T}{\alpha}$.
+    Then $\nonstationaryIn{S\union T}{\alpha}$.
+\end{proposition}
+\begin{proof}
+    $S\subseteq\alpha$ and $T\subseteq\alpha$
+        by \obv{nonstationary_in}.
+    Hence $S\union T\subseteq\alpha$ by \auto{subseteq_union_iff}.
+    Take $C$ such that $\clubIn{C}{\alpha}$ and $S\notmeets C$
+        by \obv{nonstationary_in}.
+    Take $D$ such that $\clubIn{D}{\alpha}$ and $T\notmeets D$
+        by \obv{nonstationary_in}.
+    $\clubIn{C\inter D}{\alpha}$ by \obv{two_club_intersection}.
+    Show that $(S\union T)\notmeets(C\inter D)$.
+    \begin{subproof}
+        Show that there exists no $x$ such that
+            $x\in S\union T,C\inter D$.
+        \begin{subproof}
+            Suppose there exists $x$ such that
+                $x\in S\union T,C\inter D$.
+            Take $x$ such that $x\in S\union T,C\inter D$.
+            Hence $x\in S$ or $x\in T$ by \auto{union_iff}.
+            $x\in C$ and $x\in D$
+                by \obv{inter_elim_left,inter_elim_right}.
+            Contradiction by \auto{disjoint}.
+        \end{subproof}
+        Follows by \obv{disjoint}.
+    \end{subproof}
+    Follows by \auto{nonstationary_in}.
+\end{proof}
+
+\begin{proposition}\label{nonstationary_subset}
+    Suppose $\nonstationaryIn{N}{\alpha}$ and $A\subseteq N$.
+    Then $\nonstationaryIn{A}{\alpha}$.
+\end{proposition}
+\begin{proof}
+    $\alpha$ is a limit ordinal and $N\subseteq\alpha$
+        by \obv{nonstationary_in}.
+    Hence $A\subseteq\alpha$ by \obv{subseteq_transitive}.
+    Take $C$ such that $\clubIn{C}{\alpha}$ and $N\notmeets C$
+        by \obv{nonstationary_in}.
+    Show that $A\notmeets C$.
+    \begin{subproof}
+        Suppose not.
+        Take $x$ such that $x\in A,C$ by \auto{disjoint}.
+        Hence $x\in N$ by \obv{subseteq}.
+        Contradiction by \auto{disjoint}.
+    \end{subproof}
+    Follows by \auto{nonstationary_in}.
+\end{proof}
+
+\begin{theorem}\label{stationary_remove_nonstationary}
+    Let $\alpha$ be a limit ordinal.
+    Suppose $\naturals\in\cofinality{\alpha}$.
+    Suppose $S$ is stationary in $\alpha$ and
+        $\nonstationaryIn{N}{\alpha}$.
+    Then $S\setminus N$ is stationary in $\alpha$.
+\end{theorem}
+\begin{proof}
+    $S\subseteq\alpha$ by \obv{stationary_in_elim}.
+    Hence $S\setminus N\subseteq\alpha$
+        by \obv{setminus_subseteq,subseteq_transitive}.
+    Take $C$ such that $\clubIn{C}{\alpha}$ and $N\notmeets C$
+        by \obv{nonstationary_in}.
+    Show that for every $D$ such that $\clubIn{D}{\alpha}$
+        we have $(S\setminus N)\meets D$.
+    \begin{subproof}
+        Fix $D$.
+        Assume $\clubIn{D}{\alpha}$.
+        $\clubIn{C\inter D}{\alpha}$ by \obv{two_club_intersection}.
+        Hence $S\meets(C\inter D)$ by \obv{stationary_in}.
+        Take $x$ such that $x\in S$ and $x\in C\inter D$
+            by \auto{disjoint}.
+        Hence $x\in C$ and $x\in D$
+            by \obv{inter_elim_left,inter_elim_right}.
+        Hence $x\notin N$ by \auto{disjoint}.
+        Hence $x\in S\setminus N$ by \obv{setminus_intro}.
+        Follows by \auto{disjoint}.
+    \end{subproof}
+    Follows by \obv{stationary_in}.
+\end{proof}
+
+\begin{proposition}\label{stationary_union_component}
+    Let $\alpha$ be a limit ordinal.
+    Suppose $\naturals\in\cofinality{\alpha}$.
+    Suppose $S\subseteq\alpha$.
+    Suppose $T\subseteq\alpha$.
+    Suppose $S\union T$ is stationary in $\alpha$.
+    Then $S$ is stationary in $\alpha$ or $T$ is stationary in $\alpha$.
+\end{proposition}
+\begin{proof}
+    Suppose not.
+    Hence $S$ is not stationary in $\alpha$ and
+        $T$ is not stationary in $\alpha$.
+    Hence $\nonstationaryIn{S}{\alpha}$ and
+        $\nonstationaryIn{T}{\alpha}$
+        by \obv{nonstationary_iff_not_stationary}.
+    Hence $\nonstationaryIn{S\union T}{\alpha}$
+        by \obv{nonstationary_union}.
+    $S\union T\subseteq\alpha$ by \obv{subseteq_union_iff}.
+    Hence $S\union T$ is not stationary in $\alpha$
+        by \obv{nonstationary_iff_not_stationary}.
+    Contradiction.
+\end{proof}
+
+\begin{theorem}\label{stationary_remove_bounded}
+    Let $\alpha$ be a limit ordinal.
+    Suppose $\naturals\in\cofinality{\alpha}$.
+    Suppose $S$ is stationary in $\alpha$ and
+        $\ordinalBounded{B}{\alpha}$.
+    Then $S\setminus B$ is stationary in $\alpha$.
+\end{theorem}
+\begin{proof}
+    $S\subseteq\alpha$ by \obv{stationary_in_elim}.
+    Hence $S\setminus B\subseteq\alpha$
+        by \obv{setminus_subseteq,subseteq_transitive}.
+    Take $\beta\in\alpha$ such that $B\subseteq\beta$
+        by \obv{ordinal_bounded}.
+    Let $T=\ordinalTail{\beta}{\alpha}$.
+    $\clubIn{T}{\alpha}$ by \auto{ordinal_tail_is_club}.
+    Show that for every $C$ such that $\clubIn{C}{\alpha}$
+        we have $(S\setminus B)\meets C$.
+    \begin{subproof}
+        Fix $C$.
+        Assume $\clubIn{C}{\alpha}$.
+        $\clubIn{C\inter T}{\alpha}$
+            by \obv{two_club_intersection}.
+        Hence $S\meets(C\inter T)$ by \obv{stationary_in}.
+        Take $x$ such that $x\in S$ and $x\in C\inter T$
+            by \auto{disjoint}.
+        Hence $x\in C$ and $x\in T$
+            by \obv{inter_elim_left,inter_elim_right}.
+        $x\notin\beta$ by \auto{ordinal_tail,setminus_elim_right}.
+        Hence $x\notin B$ by \auto{subseteq}.
+        Hence $x\in S\setminus B$ by \obv{setminus_intro}.
+        Follows by \auto{disjoint}.
+    \end{subproof}
+    Follows by \obv{stationary_in}.
+\end{proof}
+
+\begin{corollary}\label{stationary_strict_tail}
+    Let $\alpha$ be a limit ordinal.
+    Suppose $\naturals\in\cofinality{\alpha}$.
+    Suppose $S$ is stationary in $\alpha$.
+    Let $\beta\in\alpha$.
+    Then $S\setminus\suc{\beta}$ is stationary in $\alpha$.
+\end{corollary}
+\begin{proof}
+    $\suc{\beta}\in\alpha$ by \obv{suc_elem_limitordinal}.
+    $\beta$ is an ordinal by \obv{elem_of_ordinal_is_ordinal}.
+    Hence $\suc{\beta}$ is an ordinal by \obv{suc_ordinal}.
+    Hence $\suc{\beta}\subseteq\alpha$
+        by \obv{ordinal_elem_implies_subseteq}.
+    $\suc{\beta}\subseteq\suc{\beta}$ by \obv{subseteq_refl}.
+    Hence there exists $\gamma\in\alpha$ such that
+        $\suc{\beta}\subseteq\gamma$ by \auto.
+    Hence $\ordinalBounded{\suc{\beta}}{\alpha}$
+        by \auto{ordinal_bounded}.
+    Follows by \obv{stationary_remove_bounded}.
+\end{proof}
+
+\begin{theorem}\label{stationary_intersection_club}
+    Let $\alpha$ be a limit ordinal.
+    Suppose $\naturals\in\cofinality{\alpha}$.
+    Suppose $S$ is stationary in $\alpha$ and $\clubIn{C}{\alpha}$.
+    Then $S\inter C$ is stationary in $\alpha$.
+\end{theorem}
+\begin{proof}
+    $S\subseteq\alpha$ and $C\subseteq\alpha$
+        by \auto{stationary_in_elim,club_in_elim}.
+    Hence $S\inter C\subseteq\alpha$ by \obv{subseteq,inter}.
+    Show that for every $D$ such that $\clubIn{D}{\alpha}$
+        we have $(S\inter C)\meets D$.
+    \begin{subproof}
+        Fix $D$.
+        Assume $\clubIn{D}{\alpha}$.
+        $\clubIn{C\inter D}{\alpha}$
+            by \obv{two_club_intersection}.
+        Hence $S\meets(C\inter D)$ by \obv{stationary_in}.
+        Take $x$ such that $x\in S$ and $x\in C\inter D$
+            by \auto{disjoint}.
+        Hence $x\in C$ and $x\in D$
+            by \obv{inter_elim_left,inter_elim_right}.
+        Hence $x\in S\inter C$ by \obv{inter_intro}.
+        Follows by \auto{disjoint}.
+    \end{subproof}
+    Follows by \obv{stationary_in}.
+\end{proof}
+
+\begin{proposition}\label{limit_ordinal_is_club_in_itself}
+    Let $\alpha$ be a limit ordinal.
+    Then $\clubIn{\alpha}{\alpha}$.
+\end{proposition}
+\begin{proof}
+    Show that $\ordinalUnbounded{\alpha}{\alpha}$.
+    \begin{subproof}
+        $\alpha\subseteq\alpha$ by \obv{subseteq_refl}.
+        For every $\beta\in\alpha$ there exists $\gamma\in\alpha$ such that
+            $\beta\in\gamma$ by \auto{suc_elem_limitordinal,suc_intro_self}.
+        Follows by \obv{ordinal_unbounded}.
+    \end{subproof}
+    Show that $\ordinalClosed{\alpha}{\alpha}$.
+    \begin{subproof}
+        $\alpha\subseteq\alpha$ by \obv{subseteq_refl}.
+        For every limit ordinal $\gamma\in\alpha$ such that
+            $\ordinalUnbounded{\alpha\inter\gamma}{\gamma}$
+            we have $\gamma\in\alpha$.
+        Follows by \obv{ordinal_closed}.
+    \end{subproof}
+    Follows by \obv{club_in}.
+\end{proof}
+
+\begin{theorem}\label{limit_ordinals_below_is_club}
+    Let $\alpha$ be a limit ordinal.
+    Suppose $\naturals\in\cofinality{\alpha}$.
+    Then $\clubIn{\limitOrdinalsBelow{\alpha}}{\alpha}$.
+\end{theorem}
+\begin{proof}
+    Let $L=\limitOrdinalsBelow{\alpha}$.
+    $L\subseteq\alpha$ by \auto{limit_ordinals_below,subseteq}.
+    Show that $\ordinalUnbounded{L}{\alpha}$.
+    \begin{subproof}
+        Show that for every $\beta\in\alpha$ there exists $\gamma\in L$
+            such that $\beta\in\gamma$.
+        \begin{subproof}
+            Fix $\beta\in\alpha$.
+            $\clubIn{\alpha}{\alpha}$
+                by \obv{limit_ordinal_is_club_in_itself}.
+            Take $\gamma\in\alpha\inter\alpha$ such that
+                $\beta\in\gamma$ and $\gamma$ is a limit ordinal
+                by \obv{two_clubs_have_common_point_above}.
+            Hence $\gamma\in\alpha$ by \obv{inter_elim_left}.
+            Hence $\gamma\in L$ by \obv{limit_ordinals_below}.
+            Follows by \auto.
+        \end{subproof}
+        Follows by \obv{ordinal_unbounded}.
+    \end{subproof}
+    Show that $\ordinalClosed{L}{\alpha}$.
+    \begin{subproof}
+        Show that for every limit ordinal $\gamma\in\alpha$ such that
+            $\ordinalUnbounded{L\inter\gamma}{\gamma}$
+            we have $\gamma\in L$.
+        \begin{subproof}
+            Fix $\gamma$.
+            Assume $\gamma\in\alpha$.
+            Assume $\gamma$ is a limit ordinal.
+            Assume $\ordinalUnbounded{L\inter\gamma}{\gamma}$.
+            Follows by \obv{limit_ordinals_below}.
+        \end{subproof}
+        Follows by \obv{ordinal_closed}.
+    \end{subproof}
+    Follows by \auto{club_in}.
+\end{proof}
+
+\begin{proposition}\label{normal_map_reflects_order}
+    Suppose $\normalMap{c}{\lambda}{\kappa}$.
+    Let $i,j\in\lambda$.
+    Suppose $c(i)\in c(j)$.
+    Then $i\in j$.
+\end{proposition}
+\begin{proof}
+    $\lambda$ is an ordinal by \auto{normal_map_type}.
+    $i$ and $j$ are ordinals by \obv{elem_of_ordinal_is_ordinal}.
+    $i\in j$ or $j\in i$ or $i=j$ by \obv{ordinal_elem_connex}.
+    Show that $j\notin i$.
+    \begin{subproof}
+        Suppose $j\in i$.
+        Hence $c(j)\in c(i)$
+            by \obv{normal_map_increasing_elim}.
+        Contradiction by \obv{in_asymmetric}.
+    \end{subproof}
+    $i\neq j$ by \auto{in_irrefl}.
+\end{proof}
+
+\begin{theorem}\label{normal_cofinal_map_range_is_club}
+    Let $\kappa$ be a limit ordinal.
+    Suppose $\normalCofinalMap{c}{\lambda}{\kappa}$.
+    Then $\clubIn{\ran{c}}{\kappa}$.
+\end{theorem}
+\begin{proof}
+    $c\in\funs{\lambda}{\kappa}$ and
+        $\cofinalMap{c}{\lambda}{\kappa}$
+        by \obv{normal_cofinal_map_type,normal_cofinal_map_is_cofinal}.
+    $\lambda$ is an ordinal by \obv{normal_cofinal_map_type}.
+    $\normalMap{c}{\lambda}{\kappa}$
+        by \obv{normal_cofinal_map_is_normal}.
+    Hence $c$ is a function and $\dom{c}=\lambda$
+        by \obv{funs_is_function,funs}.
+    $\ran{c}\subseteq\kappa$ by \obv{funs_ran}.
+    $\ordinalUnbounded{\ran{c}}{\kappa}$
+        by \obv{cofinal_map_into_limit_has_unbounded_range}.
+    Show that $\ordinalClosed{\ran{c}}{\kappa}$.
+    \begin{subproof}
+        Show that for every limit ordinal $\gamma\in\kappa$ such that
+            $\ordinalUnbounded{(\ran{c})\inter\gamma}{\gamma}$
+            we have $\gamma\in\ran{c}$.
+        \begin{subproof}
+            Fix $\gamma$.
+            Assume $\gamma\in\kappa$.
+            Assume $\gamma$ is a limit ordinal.
+            Assume $\ordinalUnbounded{(\ran{c})\inter\gamma}{\gamma}$.
+            Let $A=\{i\in\lambda\mid c(i)\in\gamma\}$.
+            $A\subseteq\lambda$ by \obv{subseteq}.
+            Show that $A$ is inhabited.
+            \begin{subproof}
+                $\emptyset\in\gamma$ by \obv{limit_ordinal}.
+                Take $y\in(\ran{c})\inter\gamma$ such that
+                    $\emptyset\in y$ by \obv{ordinal_unbounded}.
+                Hence $y\in\ran{c}$ and $y\in\gamma$
+                    by \obv{inter_elim_left,inter_elim_right}.
+                Take $i\in\dom{c}$ such that $c(i)=y$
+                    by \auto{fun_ran_iff}.
+                Hence $i\in\lambda$.
+                Hence $c(i)\in\gamma$.
+                Hence $i\in A$.
+                Follows by \auto.
+            \end{subproof}
+            Show that for every $i\in A$ there exists $j\in A$ such that
+                $i\in j$.
+            \begin{subproof}
+                Fix $i\in A$.
+                Hence $i\in\lambda$ and $c(i)\in\gamma$.
+                Take $y\in(\ran{c})\inter\gamma$ such that $c(i)\in y$
+                    by \obv{ordinal_unbounded}.
+                Hence $y\in\ran{c}$ and $y\in\gamma$
+                    by \obv{inter_elim_left,inter_elim_right}.
+                Take $j\in\dom{c}$ such that $c(j)=y$
+                    by \auto{fun_ran_iff}.
+                Hence $j\in\lambda$.
+                Hence $c(j)\in\gamma$.
+                Hence $j\in A$.
+                $c(i)\in c(j)$.
+                Hence $i\in j$
+                    by \obv{normal_map_reflects_order}.
+                Follows by \auto.
+            \end{subproof}
+            Let $l=\unions{A}$.
+            Every element of $A$ is an ordinal
+                by \obv{subseteq,elem_of_ordinal_is_ordinal}.
+            Hence $l$ is an ordinal by \auto{union_of_ordinals_is_ordinal}.
+            Show that $A\subseteq l$.
+            \begin{subproof}
+                Show that every element of $A$ is an element of $l$.
+                \begin{subproof}
+                    Fix $i\in A$.
+                    Take $j\in A$ such that $i\in j$.
+                    Follows by \auto{unions_iff}.
+                \end{subproof}
+                Follows by \obv{subseteq}.
+            \end{subproof}
+            Hence $l$ is inhabited by \auto.
+            Hence $l\neq\emptyset$ by \auto{nonempty_inhabited}.
+            Hence $\emptyset\in l$
+                by \obv{ordinal_empty_or_emptyset_elem}.
+            Show that for every $r\in l$ we have $\suc{r}\in l$.
+            \begin{subproof}
+                Fix $r\in l$.
+                Take $i\in A$ such that $r\in i$ by \auto{unions_iff}.
+                Take $j\in A$ such that $i\in j$.
+                Hence $r$ is an ordinal by \obv{elem_of_ordinal_is_ordinal}.
+                Hence $\suc{r}\subseteq i$ by \obv{ordinal_suc_subseteq}.
+                $\suc{r}$ is an ordinal by \obv{suc_ordinal}.
+                Hence $\suc{r}\in i$ or $\suc{r}=i$
+                    by \obv{ordinal_subseteq_implies_elem_or_eq}.
+                Hence $\suc{r}\in j$ by \auto{ordinal_transitivity}.
+                Follows by \auto{unions_iff}.
+            \end{subproof}
+            Hence $\emptyset\precedes l$.
+            Hence $l$ is a limit ordinal by \obv{limit_ordinal}.
+            $\suc{\gamma}\in\kappa$ by \obv{suc_elem_limitordinal}.
+            $\cofinalIn{\ran{c}}{\kappa}$ by \obv{cofinal_map}.
+            Take $y_0\in\ran{c}$ such that $\suc{\gamma}\subseteq y_0$
+                by \obv{cofinal_in}.
+            Take $i_0\in\dom{c}$ such that $c(i_0)=y_0$
+                by \auto{fun_ran_iff}.
+            Hence $i_0\in\lambda$.
+            $\gamma\in\suc{\gamma}$ by \obv{suc_intro_self}.
+            Hence $\gamma\in c(i_0)$ by \auto{subseteq}.
+            Show that $A\subseteq i_0$.
+            \begin{subproof}
+                Show that every element of $A$ is an element of $i_0$.
+                \begin{subproof}
+                    Fix $i\in A$.
+                    Hence $i\in\lambda$ and $c(i)\in\gamma$.
+                    $c(i_0)\in\kappa$ by \obv{funs_type_apply}.
+                    Hence $c(i_0)$ is an ordinal
+                        by \auto{elem_of_ordinal_is_ordinal,limit_ordinal}.
+                    Hence $c(i)\in c(i_0)$
+                        by \auto{ordinal_transitivity}.
+                    Follows by
+                        \obv{normal_map_reflects_order}.
+                \end{subproof}
+                Follows by \obv{subseteq}.
+            \end{subproof}
+            Show that $l\subseteq i_0$.
+            \begin{subproof}
+                Show that every element of $l$ is an element of $i_0$.
+                \begin{subproof}
+                    Fix $r\in l$.
+                    Take $i\in A$ such that $r\in i$
+                        by \auto{unions_iff}.
+                    Hence $i\in i_0$ by \obv{subseteq}.
+                    $i_0$ is an ordinal
+                        by \obv{elem_of_ordinal_is_ordinal}.
+                    Follows by \auto{ordinal_transitivity}.
+                \end{subproof}
+                Follows by \obv{subseteq}.
+            \end{subproof}
+            $i_0$ is an ordinal by \obv{elem_of_ordinal_is_ordinal}.
+            Hence $l\in i_0$ or $l=i_0$
+                by \obv{ordinal_subseteq_implies_elem_or_eq}.
+            Hence $l\in\lambda$ by \auto{ordinal_transitivity}.
+            Show that $\ordinalUnbounded{A}{l}$.
+            \begin{subproof}
+                For every $r\in l$ there exists $i\in A$ such that
+                    $r\in i$ by \auto{unions_iff}.
+                Follows by \obv{ordinal_unbounded}.
+            \end{subproof}
+            $l\subseteq\lambda$ by \obv{ordinal_elem_implies_subseteq}.
+            Let $g=\restrl{c}{l}$.
+            $g\in\funs{l}{\kappa}$ by \auto{funs_restrl}.
+            Hence $g$ is a function and $\dom{g}=l$
+                by \obv{funs_is_function,funs}.
+            For every $i\in l$ we have $g(i)=c(i)$
+                by \auto{restrl_of_function_apply}.
+            Let $U=\unions{\ran{g}}$.
+            Show that $U\subseteq\gamma$.
+            \begin{subproof}
+                Show that every element of $U$ is an element of $\gamma$.
+                \begin{subproof}
+                    Fix $r\in U$.
+                    Take $z\in\ran{g}$ such that $r\in z$
+                        by \auto{unions_iff}.
+                    Take $i\in\dom{g}$ such that $g(i)=z$
+                        by \auto{fun_ran_iff}.
+                    Hence $i\in l$.
+                    Take $j\in A$ such that $i\in j$
+                        by \obv{ordinal_unbounded}.
+                    Hence $j\in\lambda$ and $c(j)\in\gamma$.
+                    Hence $c(i)\in c(j)$
+                        by \obv{normal_cofinal_map_increasing}.
+                    $g(i)=c(i)$.
+                    Hence $z\in c(j)$.
+                    $\gamma$ is an ordinal by \auto{limit_ordinal}.
+                    Hence $z\in\gamma$ by \auto{ordinal_transitivity}.
+                    Hence $r\in\gamma$ by \auto{ordinal_transitivity}.
+                \end{subproof}
+                Follows by \obv{subseteq}.
+            \end{subproof}
+            Show that $\gamma\subseteq U$.
+            \begin{subproof}
+                Show that every element of $\gamma$ is an element of $U$.
+                \begin{subproof}
+                    Fix $r\in\gamma$.
+                    Take $z\in(\ran{c})\inter\gamma$ such that $r\in z$
+                        by \obv{ordinal_unbounded}.
+                    Hence $z\in\ran{c}$ and $z\in\gamma$
+                        by \obv{inter_elim_left,inter_elim_right}.
+                    Take $i\in\dom{c}$ such that $c(i)=z$
+                        by \auto{fun_ran_iff}.
+                    Hence $i\in\lambda$.
+                    Hence $c(i)\in\gamma$.
+                    Hence $i\in A$.
+                    Hence $i\in l$ by \obv{subseteq}.
+                    Hence $g(i)=c(i)$.
+                    $g(i)\in\ran{g}$ by \auto{fun_ran_iff}.
+                    Hence $z\in\ran{g}$.
+                    Follows by \auto{unions_iff}.
+                \end{subproof}
+                Follows by \obv{subseteq}.
+            \end{subproof}
+            Hence $U=\gamma$ by \obv{subseteq_antisymmetric}.
+            $c(l)=\unions{\ran{\restrl{c}{l}}}$
+                by \obv{normal_cofinal_map_continuous}.
+            Hence $c(l)=U$.
+            Hence $c(l)=\gamma$.
+            $c(l)\in\ran{c}$ by \auto{fun_ran_iff}.
+        \end{subproof}
+        Follows by \obv{ordinal_closed}.
+    \end{subproof}
+    Follows by \obv{club_in}.
+\end{proof}
+
+\begin{theorem}\label{normal_cofinal_map_club_image}
+    Let $\kappa$ be a limit ordinal.
+    Suppose $\normalCofinalMap{c}{\lambda}{\kappa}$.
+    Suppose $\clubIn{D}{\lambda}$.
+    Then $\clubIn{\img{c}{D}}{\kappa}$.
+\end{theorem}
+\begin{proof}
+    $\lambda$ is a limit ordinal and $D\subseteq\lambda$ and
+        $\ordinalUnbounded{D}{\lambda}$ and
+        $\ordinalClosed{D}{\lambda}$
+        by \obv{club_in_elim}.
+    $c\in\funs{\lambda}{\kappa}$ and
+        $\cofinalMap{c}{\lambda}{\kappa}$
+        by \obv{normal_cofinal_map_type,normal_cofinal_map_is_cofinal}.
+    $\normalMap{c}{\lambda}{\kappa}$
+        by \obv{normal_cofinal_map_is_normal}.
+    Hence $c$ is a function and $\dom{c}=\lambda$
+        by \obv{funs_is_function,funs}.
+    $\img{c}{D}\subseteq\ran{c}$ by \obv{img_subseteq_ran}.
+    $\ran{c}\subseteq\kappa$ by \obv{funs_ran}.
+    Hence $\img{c}{D}\subseteq\kappa$
+        by \obv{subseteq_transitive}.
+    Show that $\ordinalUnbounded{\img{c}{D}}{\kappa}$.
+    \begin{subproof}
+        Show that for every $\beta\in\kappa$ there exists
+            $z\in\img{c}{D}$ such that $\beta\in z$.
+        \begin{subproof}
+            Fix $\beta\in\kappa$.
+            $\suc{\beta}\in\kappa$ by \obv{suc_elem_limitordinal}.
+            $\cofinalIn{\ran{c}}{\kappa}$ by \obv{cofinal_map}.
+            Take $y\in\ran{c}$ such that $\suc{\beta}\subseteq y$
+                by \obv{cofinal_in}.
+            Take $i\in\dom{c}$ such that $c(i)=y$
+                by \auto{fun_ran_iff}.
+            Hence $i\in\lambda$.
+            Take $j\in D$ such that $i\in j$
+                by \obv{ordinal_unbounded}.
+            Hence $j\in\lambda$ by \obv{subseteq}.
+            Hence $c(i)\in c(j)$
+                by \obv{normal_cofinal_map_increasing}.
+            $c(j)\in\kappa$ by \obv{funs_type_apply}.
+            Hence $c(j)$ is an ordinal
+                by \auto{elem_of_ordinal_is_ordinal,limit_ordinal}.
+            $\beta\in\suc{\beta}$ by \obv{suc_intro_self}.
+            Hence $\beta\in c(i)$ by \auto{subseteq}.
+            Hence $\beta\in c(j)$ by \auto{ordinal_transitivity}.
+            $c(j)\in\img{c}{D}$
+                by \auto{img_iff,function_apply_iff}.
+            Follows by \auto.
+        \end{subproof}
+        Follows by \obv{ordinal_unbounded}.
+    \end{subproof}
+    Show that $\ordinalClosed{\img{c}{D}}{\kappa}$.
+    \begin{subproof}
+        Show that for every limit ordinal $\gamma\in\kappa$ such that
+            $\ordinalUnbounded{(\img{c}{D})\inter\gamma}{\gamma}$
+            we have $\gamma\in\img{c}{D}$.
+        \begin{subproof}
+            Fix $\gamma$.
+            Assume $\gamma\in\kappa$.
+            Assume $\gamma$ is a limit ordinal.
+            Assume $\ordinalUnbounded{(\img{c}{D})\inter\gamma}{\gamma}$.
+            $(\img{c}{D})\inter\gamma
+                \subseteq(\ran{c})\inter\gamma$
+                by \obv{subseteq,inter}.
+            $(\ran{c})\inter\gamma\subseteq\gamma$
+                by \obv{subseteq,inter}.
+            Hence $\ordinalUnbounded{(\ran{c})\inter\gamma}{\gamma}$
+                by \obv{ordinal_unbounded_superset}.
+            $\clubIn{\ran{c}}{\kappa}$
+                by \obv{normal_cofinal_map_range_is_club}.
+            Hence $\ordinalClosed{\ran{c}}{\kappa}$
+                by \obv{club_in_elim}.
+            Hence $\gamma\in\ran{c}$ by \obv{ordinal_closed}.
+            Take $l\in\dom{c}$ such that $c(l)=\gamma$
+                by \auto{fun_ran_iff}.
+            Hence $l\in\lambda$.
+            Hence $l$ is an ordinal by \obv{elem_of_ordinal_is_ordinal}.
+            Show that $(D\inter l)$ is inhabited.
+            \begin{subproof}
+                $\emptyset\in\gamma$ by \obv{limit_ordinal}.
+                Take $y\in(\img{c}{D})\inter\gamma$ such that
+                    $\emptyset\in y$ by \obv{ordinal_unbounded}.
+                Hence $y\in\img{c}{D}$ and $y\in\gamma$
+                    by \obv{inter_elim_left,inter_elim_right}.
+                Take $j\in D$ such that $(j,y)\in c$
+                    by \obv{img_iff}.
+                Hence $j\in\dom{c}$ by \auto{dom_iff}.
+                Hence $j\in\lambda$.
+                Hence $c(j)=y$ by \auto{function_apply_iff}.
+                Hence $c(j)\in c(l)$.
+                Hence $j\in l$
+                    by \obv{normal_map_reflects_order}.
+                Hence $j\in D\inter l$ by \obv{inter_intro}.
+                Follows by \auto.
+            \end{subproof}
+            Take $j_0$ such that $j_0\in D\inter l$.
+            Hence $j_0\in l$ by \obv{inter_elim_right}.
+            Hence $l$ is inhabited by \auto.
+            Show that $\ordinalUnbounded{D\inter l}{l}$.
+            \begin{subproof}
+                $D\inter l\subseteq l$ by \obv{subseteq,inter}.
+                Show that for every $i\in l$ there exists $j\in D\inter l$
+                    such that $i\in j$.
+                \begin{subproof}
+                    Fix $i\in l$.
+                    $l\subseteq\lambda$
+                        by \obv{ordinal_elem_implies_subseteq}.
+                    Hence $i\in\lambda$ by \obv{subseteq}.
+                    Hence $c(i)\in c(l)$
+                        by \obv{normal_cofinal_map_increasing}.
+                    Hence $c(i)\in\gamma$.
+                    Take $y\in(\img{c}{D})\inter\gamma$ such that
+                        $c(i)\in y$ by \obv{ordinal_unbounded}.
+                    Hence $y\in\img{c}{D}$ and $y\in\gamma$
+                        by \obv{inter_elim_left,inter_elim_right}.
+                    Take $j\in D$ such that $(j,y)\in c$
+                        by \obv{img_iff}.
+                    Hence $j\in\dom{c}$ by \auto{dom_iff}.
+                    Hence $j\in\lambda$.
+                    Hence $c(j)=y$ by \auto{function_apply_iff}.
+                    Hence $c(i)\in c(j)$.
+                    Hence $i\in j$
+                        by \obv{normal_map_reflects_order}.
+                    $c(j)\in c(l)$.
+                    Hence $j\in l$
+                        by \obv{normal_map_reflects_order}.
+                    Hence $j\in D\inter l$ by \obv{inter_intro}.
+                    Follows by \auto.
+                \end{subproof}
+                Follows by \obv{ordinal_unbounded}.
+            \end{subproof}
+            Hence $l$ is a limit ordinal
+                by \obv{positive_ordinal_with_unbounded_subset_is_limit}.
+            Hence $l\in D$ by \obv{ordinal_closed}.
+            $(l,c(l))\in c$ by \obv{function_apply_elim}.
+            Hence $c(l)\in\img{c}{D}$ by \auto{img_iff}.
+        \end{subproof}
+        Follows by \obv{ordinal_closed}.
+    \end{subproof}
+    Follows by \obv{club_in}.
+\end{proof}
+
+\begin{theorem}\label{normal_cofinal_map_stationary_pullback}
+    Let $\lambda$ be a limit ordinal.
+    Suppose $\normalCofinalMap{c}{\lambda}{\kappa}$.
+    Suppose $S$ is stationary in $\kappa$.
+    Then $\normalMapPreimage{c}{S}{\lambda}$ is stationary in $\lambda$.
+\end{theorem}
+\begin{proof}
+    Let $T=\normalMapPreimage{c}{S}{\lambda}$.
+    $T\subseteq\lambda$ by \auto{normal_map_preimage,subseteq}.
+    Show that for every $D$ such that $\clubIn{D}{\lambda}$
+        we have $T\meets D$.
+    \begin{subproof}
+        Fix $D$.
+        Assume $\clubIn{D}{\lambda}$.
+        $\clubIn{\img{c}{D}}{\kappa}$
+            by \obv{normal_cofinal_map_club_image}.
+        Hence $S\meets\img{c}{D}$ by \obv{stationary_in}.
+        Take $y$ such that $y\in S$ and $y\in\img{c}{D}$
+            by \auto{disjoint}.
+        Take $i\in D$ such that $(i,y)\in c$ by \obv{img_iff}.
+        $c\in\funs{\lambda}{\kappa}$
+            by \obv{normal_cofinal_map_type}.
+        Hence $c$ is a function by \obv{funs_is_function}.
+        Hence $i\in\dom{c}$ and $c(i)=y$
+            by \auto{dom_iff,function_apply_iff}.
+        Hence $i\in\lambda$ by \auto{funs}.
+        Hence $c(i)\in S$.
+        Hence $i\in T$ by \obv{normal_map_preimage}.
+        Follows by \auto{disjoint}.
+    \end{subproof}
+    Follows by \auto{stationary_in}.
+\end{proof}

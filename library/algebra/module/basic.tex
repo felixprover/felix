@@ -1,0 +1,878 @@
+\import{algebra/group.tex}
+\import{algebra/group/homomorphism.tex}
+\import{algebra/ring/reducts.tex}
+\import{algebra/ring/natural.tex}
+\import{algebra/monoid/finite-fold.tex}
+\import{set/function-space.tex}
+
+\section{Modules and vector spaces}
+
+Modules are left modules unless explicitly stated otherwise. Their additive
+structure is an inherited commutative group, while the scalar ring is an
+explicit structure parameter rather than a stored field.
+
+\begin{struct}\label{left_module}
+    Let $R$ be a ring.
+    A left module $M$ over $R$ is a commutative group equipped with
+    \begin{enumerate}
+        \item\label{module_scalar_graph}
+            a scalar multiplication
+            $\scalarMul[M]:
+                \carrier[R]\times\carrier[M]\to\carrier[M]$;
+    \end{enumerate}
+    such that
+    \begin{enumerate}
+        \item\label{module_scalar_vector_distributive}
+            for all $a,x,y$ such that
+                $a\in\carrier[R]$ and
+                $x,y\in\carrier[M]$ we have
+                $\scalarMul[M](a,\mul[M](x,y))
+                    =\mul[M]
+                        (\scalarMul[M](a,x),\scalarMul[M](a,y))$.
+        \item\label{module_scalar_add_distributive}
+            for all $a,b,x$ such that
+                $a,b\in\carrier[R]$ and
+                $x\in\carrier[M]$ we have
+                $\scalarMul[M](\ringAdd[R](a,b),x)
+                    =\mul[M]
+                        (\scalarMul[M](a,x),\scalarMul[M](b,x))$.
+        \item\label{module_scalar_associative}
+            for all $a,b,x$ such that
+                $a,b\in\carrier[R]$ and
+                $x\in\carrier[M]$ we have
+                $\scalarMul[M]
+                    (a,\scalarMul[M](b,x))
+                    =\scalarMul[M]
+                        (\ringMul[R](a,b),x)$.
+        \item\label{module_scalar_one}
+            for all $x\in\carrier[M]$ we have
+                $\scalarMul[M](\ringOne[R],x)=x$.
+    \end{enumerate}
+\end{struct}
+
+\begin{struct}\label{vector_space}
+    Let $K$ be a field.
+    A vector space $V$ over $K$ is a left module over $K$.
+\end{struct}
+
+\begin{theorem}\label{exact_left_module_extensionality}
+    Let $R$ be a ring.
+    Let $M,N$ be sets.
+    Suppose $M$ is an exact left module over $R$ and
+        $N$ is an exact left module over $R$.
+    Suppose $\carrier[M]=\carrier[N]$.
+    Suppose $\mul[M]=\mul[N]$.
+    Suppose $\neutral[M]=\neutral[N]$.
+    Suppose $\groupInv[M]=\groupInv[N]$.
+    Suppose $\scalarMul[M]=\scalarMul[N]$.
+    Then $M=N$.
+\end{theorem}
+\begin{proof}
+    Follows by structure extensionality.
+\end{proof}
+
+\subsection{The zero module}
+
+The zero module is represented on the canonical singleton
+$\{\emptyset\}$.  Its operations are written as explicit constant graphs so
+that the construction is an exact module structure, not merely a module up
+to an unspecified carrier bijection.
+
+\begin{definition}\label{zero_module}
+    Let $R$ be a ring.
+    $\ZeroModule{R}=
+        \structure[left module over R]{
+            \carrier=\{\emptyset\},
+            \mul=(\{\emptyset\}\times\{\emptyset\})
+                \times\{\emptyset\},
+            \neutral=\emptyset,
+            \groupInv=\{\emptyset\}\times\{\emptyset\},
+            \scalarMul=(\carrier[R]\times\{\emptyset\})
+                \times\{\emptyset\}
+        }$.
+\end{definition}
+
+\begin{proposition}\label{zero_module_fields}
+    Let $R$ be a ring.
+    Let $Z=\ZeroModule{R}$.
+    Then
+        $\carrier[Z]=\{\emptyset\}$ and
+        $\mul[Z]=(\{\emptyset\}\times\{\emptyset\})
+            \times\{\emptyset\}$ and
+        $\neutral[Z]=\emptyset$ and
+        $\groupInv[Z]=\{\emptyset\}\times\{\emptyset\}$ and
+        $\scalarMul[Z]=(\carrier[R]\times\{\emptyset\})
+            \times\{\emptyset\}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{zero_module,
+            left_moduleaggregateprojection_carrier,
+            left_moduleaggregateprojection_mul,
+            left_moduleaggregateprojection_neutral,
+            left_moduleaggregateprojection_groupInv,
+            left_moduleaggregateprojection_scalarMul}.
+\end{proof}
+
+\begin{proposition}\label{zero_module_addition}
+    Let $R$ be a ring.
+    Let $x,y\in\carrier[\ZeroModule{R}]$.
+    Then $\mul[\ZeroModule{R}](x,y)=\emptyset$.
+\end{proposition}
+\begin{proof}
+    $x,y\in\{\emptyset\}$ by \auto{zero_module_fields}.
+    $(x,y)\in\{\emptyset\}\times\{\emptyset\}$ by
+        \obv{times_tuple_intro}.
+    Follows by \auto{zero_module_fields,constant_graph_application}.
+\end{proof}
+
+\begin{proposition}\label{zero_module_is_commutative_group}
+    Let $R$ be a ring.
+    Then $\ZeroModule{R}$ is a commutative group.
+\end{proposition}
+\begin{proof}
+    Let $Z=\ZeroModule{R}$.
+    $\carrier[Z]=\{\emptyset\}$ by \auto{zero_module_fields}.
+    $\mul[Z]\in
+        \funs{\carrier[Z]\times\carrier[Z]}{\carrier[Z]}$ by
+        \auto{zero_module_fields,constant_graph_type}.
+    $\neutral[Z]\in\carrier[Z]$ by
+        \auto{zero_module_fields,singleton_intro}.
+    $\groupInv[Z]\in\funs{\carrier[Z]}{\carrier[Z]}$ by
+        \auto{zero_module_fields,constant_graph_type}.
+    For every $x\in\carrier[Z]$ we have $x=\emptyset$ by
+        \obv{singleton_iff}.
+    For all $x,y\in\carrier[Z]$ we have
+        $\mul[Z](x,y)=\emptyset$ by \auto{zero_module_addition}.
+    For all $x,y,z\in\carrier[Z]$ we have
+        $\mul[Z](x,\mul[Z](y,z))
+            =\mul[Z](\mul[Z](x,y),z)$.
+    For every $x\in\carrier[Z]$ we have
+        $\mul[Z](x,\neutral[Z])=x$ and
+        $\mul[Z](\neutral[Z],x)=x$ by
+        \obv{zero_module_fields}.
+    For every $x\in\carrier[Z]$ we have
+        $\groupInv[Z](x)=\emptyset$ by
+        \auto{zero_module_fields,constant_graph_application}.
+    For every $x\in\carrier[Z]$ we have
+        $\mul[Z](x,\groupInv[Z](x))=\neutral[Z]$ and
+        $\mul[Z](\groupInv[Z](x),x)=\neutral[Z]$ by
+        \auto{zero_module_fields}.
+    Hence $Z$ is a group by
+        \auto{zero_module,left_moduleaggregateexact,
+            magma,unitalmagma,monoid,group}.
+    For all $x,y\in\carrier[Z]$ we have
+        $\mul[Z](x,y)=\mul[Z](y,x)$ by
+        \obv{zero_module_addition}.
+    Follows by \auto{group,commutative_group}.
+\end{proof}
+
+\begin{proposition}\label{zero_module_scalar_graph}
+    Let $R$ be a ring.
+    Then $\scalarMul[\ZeroModule{R}]\in
+        \funs{\carrier[R]\times\carrier[\ZeroModule{R}]}{
+            \carrier[\ZeroModule{R}]}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{zero_module_fields,constant_graph_type}.
+\end{proof}
+
+\begin{proposition}\label{zero_module_scalar}
+    Let $R$ be a ring.
+    Let $a\in\carrier[R]$ and $x\in\carrier[\ZeroModule{R}]$.
+    Then $\scalarMul[\ZeroModule{R}](a,x)=\emptyset$.
+\end{proposition}
+\begin{proof}
+    $x\in\{\emptyset\}$ by \auto{zero_module_fields}.
+    $(a,x)\in\carrier[R]\times\{\emptyset\}$ by
+        \obv{times_tuple_intro}.
+    Follows by \auto{zero_module_fields,constant_graph_application}.
+\end{proof}
+
+\begin{proposition}\label{zero_module_scalar_vector_distributive}
+    Let $R$ be a ring.
+    Let $Z=\ZeroModule{R}$.
+    For all $a,x,y$ such that $a\in\carrier[R]$ and
+        $x,y\in\carrier[Z]$ we have
+        $\scalarMul[Z](a,\mul[Z](x,y))
+            =\mul[Z](\scalarMul[Z](a,x),\scalarMul[Z](a,y))$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{zero_module_addition,zero_module_scalar,
+            zero_module_scalar_graph,funs_type_apply,
+            times_tuple_intro}.
+\end{proof}
+
+\begin{proposition}\label{zero_module_scalar_add_distributive}
+    Let $R$ be a ring.
+    Let $Z=\ZeroModule{R}$.
+    For all $a,b,x$ such that $a,b\in\carrier[R]$ and
+        $x\in\carrier[Z]$ we have
+        $\scalarMul[Z](\ringAdd[R](a,b),x)
+            =\mul[Z](\scalarMul[Z](a,x),\scalarMul[Z](b,x))$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{zero_module_addition,zero_module_scalar,
+            zero_module_scalar_graph,funs_type_apply,
+            times_tuple_intro,ring_add_type}.
+\end{proof}
+
+\begin{proposition}\label{zero_module_scalar_associative}
+    Let $R$ be a ring.
+    Let $Z=\ZeroModule{R}$.
+    For all $a,b,x$ such that $a,b\in\carrier[R]$ and
+        $x\in\carrier[Z]$ we have
+        $\scalarMul[Z](a,\scalarMul[Z](b,x))
+            =\scalarMul[Z](\ringMul[R](a,b),x)$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{zero_module_scalar,zero_module_scalar_graph,
+            funs_type_apply,times_tuple_intro,ring_mul_type}.
+\end{proof}
+
+\begin{proposition}\label{zero_module_scalar_one}
+    Let $R$ be a ring.
+    Let $Z=\ZeroModule{R}$.
+    For every $x\in\carrier[Z]$ we have
+        $\scalarMul[Z](\ringOne[R],x)=x$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{zero_module_fields,zero_module_scalar,
+            ring_one_type,singleton_iff}.
+\end{proof}
+
+\begin{theorem}\label{zero_module_is_exact}
+    Let $R$ be a ring.
+    Then $\ZeroModule{R}$ is an exact left module over $R$.
+\end{theorem}
+\begin{proof}
+    Let $Z=\ZeroModule{R}$.
+    $Z$ is a commutative group by
+        \obv{zero_module_is_commutative_group}.
+    $\scalarMul[Z]\in
+        \funs{\carrier[R]\times\carrier[Z]}{\carrier[Z]}$ by
+        \auto{zero_module_scalar_graph}.
+    For all $a,x,y$ such that $a\in\carrier[R]$ and
+        $x,y\in\carrier[Z]$ we have
+        $\scalarMul[Z](a,\mul[Z](x,y))
+            =\mul[Z](\scalarMul[Z](a,x),\scalarMul[Z](a,y))$ by
+        \obv{zero_module_scalar_vector_distributive}.
+    For all $a,b,x$ such that $a,b\in\carrier[R]$ and
+        $x\in\carrier[Z]$ we have
+        $\scalarMul[Z](\ringAdd[R](a,b),x)
+            =\mul[Z](\scalarMul[Z](a,x),\scalarMul[Z](b,x))$ by
+        \obv{zero_module_scalar_add_distributive}.
+    For all $a,b,x$ such that $a,b\in\carrier[R]$ and
+        $x\in\carrier[Z]$ we have
+        $\scalarMul[Z](a,\scalarMul[Z](b,x))
+            =\scalarMul[Z](\ringMul[R](a,b),x)$ by
+        \obv{zero_module_scalar_associative}.
+    For every $x\in\carrier[Z]$ we have
+        $\scalarMul[Z](\ringOne[R],x)=x$ by
+        \obv{zero_module_scalar_one}.
+    $Z$ is a left module over $R$ by
+        \auto{zero_module,left_moduleaggregateexact,left_module,
+            commutative_group}.
+    Follows by \auto{zero_module,left_moduleaggregateexact}.
+\end{proof}
+
+\begin{corollary}\label{zero_module_carrier}
+    Let $R$ be a ring.
+    Then $\carrier[\ZeroModule{R}]=\{\emptyset\}$.
+\end{corollary}
+\begin{proof}
+    Follows by \auto{zero_module_fields}.
+\end{proof}
+
+\begin{proposition}\label{module_scalar_ring}
+    Suppose $M$ is a left module over $R$.
+    Then $R$ is a ring.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{left_module}.
+\end{proof}
+
+\begin{proposition}\label{module_scalar_type}
+    Let $R$ be a ring.
+    Let $M$ be a left module over $R$.
+    Let $a\in\carrier[R]$.
+    Let $x\in\carrier[M]$.
+    Then $\scalarMul[M](a,x)\in\carrier[M]$.
+\end{proposition}
+\begin{proof}
+    $(a,x)\in\carrier[R]\times\carrier[M]$
+        by \obv{times_tuple_intro}.
+    Follows by \auto{module_scalar_graph,funs_type_apply}.
+\end{proof}
+
+\begin{abbreviation}\label{vector_addition}
+    $\vectorAdd[M](x,y)=\mul[M](x,y)$.
+\end{abbreviation}
+
+\begin{abbreviation}\label{vector_zero}
+    $\vectorZero[M]=\neutral[M]$.
+\end{abbreviation}
+
+\begin{abbreviation}\label{vector_negation}
+    $\vectorNeg[M](x)=\groupInv[M](x)$.
+\end{abbreviation}
+
+\begin{corollary}\label{module_is_commutative_group}
+    Suppose $M$ is a left module over $R$.
+    Then $M$ is a commutative group.
+\end{corollary}
+\begin{proof}
+    Follows by \obv{left_module}.
+\end{proof}
+
+\begin{corollary}\label{module_is_group}
+    Suppose $M$ is a left module over $R$.
+    Then $M$ is a group.
+\end{corollary}
+\begin{proof}
+    Follows by
+        \obv{module_is_commutative_group,commutative_group_is_group}.
+\end{proof}
+
+\begin{corollary}\label{vector_space_is_module}
+    Suppose $V$ is a vector space over $K$.
+    Then $V$ is a left module over $K$.
+\end{corollary}
+\begin{proof}
+    Follows by \obv{vector_space}.
+\end{proof}
+
+\subsection{The exact additive reduct}
+
+\begin{definition}\label{module_additive_group}
+    $\ModuleAdditiveGroup{M}=
+        \structure[group]{
+            \carrier=\carrier[M],
+            \mul=\mul[M],
+            \neutral=\neutral[M],
+            \groupInv=\groupInv[M]
+        }$.
+\end{definition}
+
+\begin{proposition}\label{module_additive_group_fields}
+    $\carrier[\ModuleAdditiveGroup{M}]=\carrier[M]$ and
+    $\mul[\ModuleAdditiveGroup{M}]=\mul[M]$ and
+    $\neutral[\ModuleAdditiveGroup{M}]=\neutral[M]$ and
+    $\groupInv[\ModuleAdditiveGroup{M}]=\groupInv[M]$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{module_additive_group,
+            groupaggregateprojection_carrier,groupaggregateprojection_mul,
+            groupaggregateprojection_neutral,groupaggregateprojection_groupInv}.
+\end{proof}
+
+\begin{theorem}\label{module_additive_group_is_exact_commutative_group}
+    Suppose $M$ is a left module over $R$.
+    Then $\ModuleAdditiveGroup{M}$ is an exact commutative group.
+\end{theorem}
+\begin{proof}
+    Let $G=\ModuleAdditiveGroup{M}$.
+    $M$ is a commutative group by
+        \obv{module_is_commutative_group}.
+    Hence $M$ is a group by \obv{commutative_group_is_group}.
+    Hence $M$ is a monoid by \obv{group_is_monoid}.
+    Hence $M$ is a unital magma and $M$ is a magma by
+        \obv{monoid_is_unital_magma,monoid_is_magma}.
+    $\carrier[G]=\carrier[M]$ and $\mul[G]=\mul[M]$ and
+        $\neutral[G]=\neutral[M]$ and
+        $\groupInv[G]=\groupInv[M]$ by
+        \auto{module_additive_group_fields}.
+    $\mul[G]\in\funs{\carrier[G]\times\carrier[G]}{\carrier[G]}$ by
+        \obv{magma_mul_graph}.
+    $\neutral[G]\in\carrier[G]$ by \obv{unitalmagma_type}.
+    $\groupInv[G]\in\funs{\carrier[G]}{\carrier[G]}$ by
+        \obv{group_inverse_graph}.
+    For all $x,y,z\in\carrier[G]$ we have
+        $\mul[G](x,\mul[G](y,z))=\mul[G](\mul[G](x,y),z)$ by
+        \auto{monoid_assoc}.
+    For every $x\in\carrier[G]$ we have
+        $\mul[G](x,\neutral[G])=x$ and
+        $\mul[G](\neutral[G],x)=x$ by
+        \auto{unitalmagma_right,unitalmagma_left}.
+    For every $x\in\carrier[G]$ we have
+        $\mul[G](x,\groupInv[G](x))=\neutral[G]$ and
+        $\mul[G](\groupInv[G](x),x)=\neutral[G]$ by
+        \auto{group_inverse_right,group_inverse_left}.
+    Hence $G$ is a group by
+        \auto{module_additive_group,groupaggregateexact,
+            magma,unitalmagma,monoid,group}.
+    For all $x,y\in\carrier[G]$ we have
+        $\mul[G](x,y)=\mul[G](y,x)$ by
+        \auto{commutative_group_commutative}.
+    Hence $G$ is a commutative group by
+        \obv{group,commutative_group}.
+    Follows by
+        \auto{module_additive_group,groupaggregateexact}.
+\end{proof}
+
+\begin{corollary}\label{module_additive_group_is_group}
+    Suppose $M$ is a left module over $R$.
+    Then $\ModuleAdditiveGroup{M}$ is a group.
+\end{corollary}
+\begin{proof}
+    Follows by
+        \obv{module_additive_group_is_exact_commutative_group,
+            commutative_group_is_group}.
+\end{proof}
+
+\begin{theorem}\label{module_additive_group_eq_group_reduct}
+    Suppose $M$ is a left module over $R$.
+    Then $\ModuleAdditiveGroup{M}=\reduct[group]{M}$.
+\end{theorem}
+\begin{proof}
+    $\ModuleAdditiveGroup{M}$ is an exact group by
+        \obv{module_additive_group_is_exact_commutative_group,
+            commutative_group_is_group}.
+    $M$ is a group by \obv{module_is_group}.
+    $\carrier[\ModuleAdditiveGroup{M}]=\carrier[\reduct[group]{M}]$ by
+        \auto{module_additive_group_fields,groupreductprojection_carrier}.
+    $\mul[\ModuleAdditiveGroup{M}]=\mul[\reduct[group]{M}]$ by
+        \auto{module_additive_group_fields,groupreductprojection_mul}.
+    $\neutral[\ModuleAdditiveGroup{M}]=\neutral[\reduct[group]{M}]$ by
+        \auto{module_additive_group_fields,groupreductprojection_neutral}.
+    $\groupInv[\ModuleAdditiveGroup{M}]
+        =\groupInv[\reduct[group]{M}]$ by
+        \auto{module_additive_group_fields,groupreductprojection_groupInv}.
+    $\reduct[group]{M}$ is an exact group by
+        \obv{group_reduct_is_exact_group}.
+    Follows by structure extensionality.
+\end{proof}
+
+\subsection{Elementary scalar laws}
+
+\begin{theorem}\label{module_scalar_zero}
+    Let $R$ be a ring.
+    Let $M$ be a left module over $R$.
+    Let $x\in\carrier[M]$.
+    Then $\scalarMul[M](\ringZero[R],x)=\neutral[M]$.
+\end{theorem}
+\begin{proof}
+    Let $G=\ModuleAdditiveGroup{M}$.
+    $G$ is a group by \obv{module_additive_group_is_group}.
+    $\ringZero[R]\in\carrier[R]$ by \obv{ring_zero_type}.
+    Let $z=\scalarMul[M](\ringZero[R],x)$.
+    $z\in\carrier[M]$ by \auto{module_scalar_type}.
+    Hence $z\in\carrier[G]$ by \auto{module_additive_group_fields}.
+    $\neutral[G]\in\carrier[G]$ by
+        \obv{group_is_monoid,monoid_is_unital_magma,
+            unitalmagma_type}.
+    $\ringAdd[R](\ringZero[R],\ringZero[R])=\ringZero[R]$
+        by \obv{ring_add_zero_left}.
+    Hence $z=\mul[G](z,z)$ by
+        \auto{module_scalar_add_distributive,
+            module_additive_group_fields}.
+    $\mul[G](z,\neutral[G])=z$ by
+        \obv{group_is_monoid,monoid_is_unital_magma,
+            unitalmagma_right}.
+    Hence $\mul[G](z,\neutral[G])=\mul[G](z,z)$.
+    Hence $\neutral[G]=z$ by \obv{group_cancel_left}.
+    Follows by \auto{module_additive_group_fields}.
+\end{proof}
+
+\begin{theorem}\label{module_scalar_vector_zero}
+    Let $R$ be a ring.
+    Let $M$ be a left module over $R$.
+    Let $a\in\carrier[R]$.
+    Then $\scalarMul[M](a,\neutral[M])=\neutral[M]$.
+\end{theorem}
+\begin{proof}
+    Let $G=\ModuleAdditiveGroup{M}$.
+    $G$ is a group by \obv{module_additive_group_is_group}.
+    $\neutral[G]\in\carrier[G]$ by
+        \obv{group_is_monoid,monoid_is_unital_magma,
+            unitalmagma_type}.
+    Hence $\neutral[M]\in\carrier[M]$ by
+        \obv{module_additive_group_fields}.
+    Let $z=\scalarMul[M](a,\neutral[M])$.
+    $z\in\carrier[M]$ by \auto{module_scalar_type}.
+    Hence $z\in\carrier[G]$ by \auto{module_additive_group_fields}.
+    $\mul[G](\neutral[G],\neutral[G])=\neutral[G]$ by
+        \obv{group_is_monoid,monoid_is_unital_magma,
+            unitalmagma_left}.
+    Hence $z=\mul[G](z,z)$ by
+        \auto{module_scalar_vector_distributive,
+            module_additive_group_fields}.
+    $\mul[G](z,\neutral[G])=z$ by
+        \obv{group_is_monoid,monoid_is_unital_magma,
+            unitalmagma_right}.
+    Hence $\mul[G](z,\neutral[G])=\mul[G](z,z)$.
+    Hence $\neutral[G]=z$ by \obv{group_cancel_left}.
+    Follows by \auto{module_additive_group_fields}.
+\end{proof}
+
+\begin{definition}\label{module_scalar_map}
+    $\moduleScalarMap{M}{a}
+        =\Apply{\graphOnOp}{
+            \carrier[M],\carrier[M],
+            \fun{x:\Set}{\scalarMul[M](a,x)}}$.
+\end{definition}
+
+\begin{proposition}\label{module_scalar_map_type}
+    Let $R$ be a ring.
+    Let $M$ be a left module over $R$.
+    Let $a\in\carrier[R]$.
+    Then $\moduleScalarMap{M}{a}\in
+        \funs{\carrier[M]}{\carrier[M]}$.
+\end{proposition}
+\begin{proof}
+    For every $x\in\carrier[M]$ we have
+        $\scalarMul[M](a,x)\in\carrier[M]$ by
+        \obv{module_scalar_type}.
+    Follows by \auto{module_scalar_map,logical_graph_on_function}.
+\end{proof}
+
+\begin{proposition}\label{module_scalar_map_apply}
+    Let $R$ be a ring.
+    Let $M$ be a left module over $R$.
+    Let $a\in\carrier[R]$ and $x\in\carrier[M]$.
+    Then $\apply{\moduleScalarMap{M}{a}}{x}=\scalarMul[M](a,x)$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{module_scalar_map,logical_graph_on_apply}.
+\end{proof}
+
+\begin{theorem}\label{module_scalar_map_group_hom}
+    Let $R$ be a ring.
+    Let $M$ be a left module over $R$.
+    Let $a\in\carrier[R]$.
+    Then $\groupHom{\moduleScalarMap{M}{a}}{
+        \ModuleAdditiveGroup{M}}{\ModuleAdditiveGroup{M}}$.
+\end{theorem}
+\begin{proof}
+    Let $G=\ModuleAdditiveGroup{M}$ and $s=\moduleScalarMap{M}{a}$.
+    $G$ is a group by \obv{module_additive_group_is_group}.
+    $s\in\funs{\carrier[M]}{\carrier[M]}$ by
+        \auto{module_scalar_map_type}.
+    Hence $s\in\funs{\carrier[G]}{\carrier[G]}$ by
+        \auto{module_additive_group_fields}.
+    Show that for all $x,y\in\carrier[G]$ we have
+        $s(\mul[G](x,y))=\mul[G](s(x),s(y))$.
+    \begin{subproof}
+        Fix $x,y\in\carrier[G]$.
+        Hence $x,y\in\carrier[M]$ by
+            \auto{module_additive_group_fields}.
+        $\mul[G](x,y)=\mul[M](x,y)$ by
+            \auto{module_additive_group_fields}.
+        $\mul[M](x,y)\in\carrier[M]$ by
+            \obv{module_is_group,group_is_monoid,
+                monoid_is_magma,magma_welldef}.
+        $s(\mul[M](x,y))=\scalarMul[M](a,\mul[M](x,y))$ and
+            $s(x)=\scalarMul[M](a,x)$ and
+            $s(y)=\scalarMul[M](a,y)$ by
+            \auto{module_scalar_map_apply}.
+        Follows by
+            \auto{module_scalar_vector_distributive,
+                module_additive_group_fields}.
+    \end{subproof}
+    Follows by \auto{group_hom}.
+\end{proof}
+
+\begin{theorem}\label{module_scalar_negation}
+    Let $R$ be a ring.
+    Let $M$ be a left module over $R$.
+    Let $a\in\carrier[R]$.
+    Let $x\in\carrier[M]$.
+    Then
+        $\scalarMul[M](\ringNeg[R](a),x)
+            =\groupInv[M](\scalarMul[M](a,x))$.
+\end{theorem}
+\begin{proof}
+    Let $G=\ModuleAdditiveGroup{M}$.
+    $G$ is a group by \obv{module_additive_group_is_group}.
+    $\ringNeg[R](a)\in\carrier[R]$ by \obv{ring_neg_type}.
+    $\scalarMul[M](a,x)$ and
+        $\scalarMul[M](\ringNeg[R](a),x)$ are elements of $\carrier[M]$
+        by \obv{module_scalar_type}.
+    Hence $\scalarMul[M](a,x)$ and
+        $\scalarMul[M](\ringNeg[R](a),x)$ are elements of $\carrier[G]$
+        by \auto{module_additive_group_fields}.
+    $\ringAdd[R](a,\ringNeg[R](a))=\ringZero[R]$
+        by \obv{ring_add_inverse_right}.
+    Hence
+        $\mul[G](\scalarMul[M](a,x),
+            \scalarMul[M](\ringNeg[R](a),x))
+        =\scalarMul[M](\ringZero[R],x)$ by
+        \auto{module_scalar_add_distributive,
+            module_additive_group_fields}.
+    Hence
+        $\mul[G](\scalarMul[M](a,x),
+            \scalarMul[M](\ringNeg[R](a),x))=\neutral[G]$ by
+        \auto{module_scalar_zero,module_additive_group_fields}.
+    Follows by
+        \auto{group_inverse_unique_right,module_additive_group_fields}.
+\end{proof}
+
+\begin{theorem}\label{module_vector_negation_scalar}
+    Let $R$ be a ring.
+    Let $M$ be a left module over $R$.
+    Let $a\in\carrier[R]$.
+    Let $x\in\carrier[M]$.
+    Then
+        $\scalarMul[M](a,\groupInv[M](x))
+            =\groupInv[M](\scalarMul[M](a,x))$.
+\end{theorem}
+\begin{proof}
+    Let $G=\ModuleAdditiveGroup{M}$.
+    $G$ is a group by \obv{module_additive_group_is_group}.
+    $\groupInv[M](x)\in\carrier[M]$ by
+        \obv{module_is_group,group_inverse_type}.
+    $\scalarMul[M](a,x)$ and
+        $\scalarMul[M](a,\groupInv[M](x))$ are elements of $\carrier[M]$
+        by \obv{module_scalar_type}.
+    Hence $\scalarMul[M](a,x)$ and
+        $\scalarMul[M](a,\groupInv[M](x))$ are elements of $\carrier[G]$
+        by \auto{module_additive_group_fields}.
+    $\mul[G](x,\groupInv[M](x))=\neutral[G]$ by
+        \auto{group_inverse_right,module_additive_group_fields}.
+    Hence
+        $\mul[G](\scalarMul[M](a,x),
+            \scalarMul[M](a,\groupInv[M](x)))
+        =\scalarMul[M](a,\neutral[M])$ by
+        \auto{module_scalar_vector_distributive,
+            module_additive_group_fields}.
+    Hence
+        $\mul[G](\scalarMul[M](a,x),
+            \scalarMul[M](a,\groupInv[M](x)))=\neutral[G]$ by
+        \auto{module_scalar_vector_zero,module_additive_group_fields}.
+    Follows by
+        \auto{group_inverse_unique_right,module_additive_group_fields}.
+\end{proof}
+
+\begin{theorem}\label{module_scalar_subtraction}
+    Let $R$ be a ring.
+    Let $M$ be a left module over $R$.
+    Let $a,b\in\carrier[R]$ and $x\in\carrier[M]$.
+    Then
+        $\scalarMul[M](\ringAdd[R](a,\ringNeg[R](b)),x)
+            =\mul[M](\scalarMul[M](a,x),
+                \groupInv[M](\scalarMul[M](b,x)))$.
+\end{theorem}
+\begin{proof}
+    $\ringNeg[R](b)\in\carrier[R]$ by \obv{ring_neg_type}.
+    $\scalarMul[M](\ringAdd[R](a,\ringNeg[R](b)),x)
+        =\mul[M](\scalarMul[M](a,x),
+            \scalarMul[M](\ringNeg[R](b),x))$ by
+        \obv{module_scalar_add_distributive}.
+    Follows by \obv{module_scalar_negation}.
+\end{proof}
+
+\begin{theorem}\label{module_vector_subtraction_scalar}
+    Let $R$ be a ring.
+    Let $M$ be a left module over $R$.
+    Let $a\in\carrier[R]$ and $x,y\in\carrier[M]$.
+    Then
+        $\scalarMul[M](a,\mul[M](x,\groupInv[M](y)))
+            =\mul[M](\scalarMul[M](a,x),
+                \groupInv[M](\scalarMul[M](a,y)))$.
+\end{theorem}
+\begin{proof}
+    $\groupInv[M](y)\in\carrier[M]$ by
+        \obv{module_is_group,group_inverse_type}.
+    $\scalarMul[M](a,\mul[M](x,\groupInv[M](y)))
+        =\mul[M](\scalarMul[M](a,x),
+            \scalarMul[M](a,\groupInv[M](y)))$ by
+        \obv{module_scalar_vector_distributive}.
+    Follows by \obv{module_vector_negation_scalar}.
+\end{proof}
+
+\begin{theorem}\label{module_natural_scalar}
+    Let $R$ be a ring.
+    Let $M$ be a left module over $R$.
+    Let $x\in\carrier[M]$.
+    Let $n$ be a natural number.
+    Then
+        $\scalarMul[M](\ringNatural{R}{n},x)
+            =\monoidPower{\ModuleAdditiveGroup{M}}{x}{n}$.
+\end{theorem}
+\begin{proof}
+    Let $G=\ModuleAdditiveGroup{M}$.
+    $G$ is a group by \obv{module_additive_group_is_group}.
+    Hence $G$ is a monoid by \obv{group_is_monoid}.
+    $x\in\carrier[G]$ by \auto{module_additive_group_fields}.
+    Let $C=\{k\in\naturals\mid
+        \text{$\scalarMul[M](\ringNatural{R}{k},x)
+            =\monoidPower{G}{x}{k}$}\}$.
+    $\ringNatural{R}{\emptyset}=\ringZero[R]$ by
+        \obv{ring_natural_zero}.
+    $\scalarMul[M](\ringZero[R],x)=\neutral[M]$ by
+        \obv{module_scalar_zero}.
+    $\monoidPower{G}{x}{\emptyset}=\neutral[G]$ by
+        \obv{monoid_power_zero}.
+    Hence $\emptyset\in C$ by
+        \auto{omega_empty,module_additive_group_fields}.
+    Show that for every $k\in C$ we have $\suc{k}\in C$.
+    \begin{subproof}
+        Fix $k\in C$.
+        Hence $k$ is a natural number and
+            $\scalarMul[M](\ringNatural{R}{k},x)
+                =\monoidPower{G}{x}{k}$.
+        $\ringNatural{R}{k}\in\carrier[R]$ by
+            \obv{ring_natural_type}.
+        $\ringOne[R]\in\carrier[R]$ by \obv{ring_one_type}.
+        $\ringNatural{R}{\suc{k}}
+            =\ringAdd[R](\ringNatural{R}{k},\ringOne[R])$ by
+            \obv{ring_natural_successor}.
+        Hence
+            $\scalarMul[M](\ringNatural{R}{\suc{k}},x)
+                =\mul[M](\scalarMul[M](\ringNatural{R}{k},x),x)$ by
+            \auto{module_scalar_add_distributive,module_scalar_one}.
+        $\monoidPower{G}{x}{\suc{k}}
+            =\mul[G](\monoidPower{G}{x}{k},x)$ by
+            \obv{monoid_power_successor}.
+        Follows by
+            \auto{omega_successor,module_additive_group_fields}.
+    \end{subproof}
+    Hence $C$ is an inductive set by \obv{inductive_set}.
+    Hence every natural number is an element of $C$ by
+        \obv{omega_minimal}.
+    Hence $n\in C$.
+\end{proof}
+
+\begin{theorem}\label{trivial_ring_module_carrier_singleton}
+    Let $R$ be a ring.
+    Let $M$ be a left module over $R$.
+    Suppose $\ringZero[R]=\ringOne[R]$.
+    Then $\carrier[M]=\{\neutral[M]\}$.
+\end{theorem}
+\begin{proof}
+    $\neutral[M]\in\carrier[M]$ by
+        \obv{group_is_monoid,monoid_is_unital_magma,
+            unitalmagma_type}.
+    Show that every element of $\carrier[M]$ is an element of
+        $\{\neutral[M]\}$.
+    \begin{subproof}
+        Fix $x\in\carrier[M]$.
+        $x=\scalarMul[M](\ringOne[R],x)$ by
+            \obv{module_scalar_one}.
+        Hence $x=\scalarMul[M](\ringZero[R],x)$.
+        Hence $x=\neutral[M]$ by \obv{module_scalar_zero}.
+        Follows by \auto{singleton_intro}.
+    \end{subproof}
+    $\carrier[M]\subseteq\{\neutral[M]\}$ by \obv{subseteq}.
+    $\{\neutral[M]\}\subseteq\carrier[M]$ by
+        \obv{singleton_subset_intro}.
+    Follows by \obv{subseteq_antisymmetric}.
+\end{proof}
+
+\begin{theorem}\label{module_scalar_finite_sum}
+    Let $R$ be a ring.
+    Let $M$ be a left module over $R$.
+    Let $a\in\carrier[R]$.
+    Suppose $A$ is finite and $f\in\funs{A}{\carrier[M]}$.
+    Let
+        $g=\Apply{\graphOnOp}{
+            A,\carrier[M],\fun{i:\Set}{\scalarMul[M](a,f(i))}}$.
+    Then $g\in\funs{A}{\carrier[M]}$ and
+        $\scalarMul[M](a,
+            \finiteSum{\ModuleAdditiveGroup{M}}{A}{f})
+        =\finiteSum{\ModuleAdditiveGroup{M}}{A}{g}$.
+\end{theorem}
+\begin{proof}
+    Let $G=\ModuleAdditiveGroup{M}$.
+    $G$ is an exact commutative group by
+        \auto{module_additive_group_is_exact_commutative_group}.
+    Hence $G$ is a group and $G$ is a monoid by
+        \obv{commutative_group_is_group,group_is_monoid}.
+    For all $u,v\in\carrier[G]$ we have
+        $\mul[G](u,v)=\mul[G](v,u)$ by
+        \obv{commutative_group_commutative}.
+    $f\in\funs{A}{\carrier[G]}$ by
+        \auto{module_additive_group_fields}.
+    Show that $g\in\funs{A}{\carrier[M]}$.
+    \begin{subproof}
+        For every $i\in A$ we have
+            $\scalarMul[M](a,f(i))\in\carrier[M]$ by
+            \obv{funs_type_apply,module_scalar_type}.
+        Follows by \auto{logical_graph_on_function}.
+    \end{subproof}
+    Hence $g\in\funs{A}{\carrier[G]}$ by
+        \auto{module_additive_group_fields}.
+    Let
+        $h=\Apply{\graphOnOp}{
+            \carrier[M],\carrier[M],
+            \fun{x:\Set}{\scalarMul[M](a,x)}}$.
+    $h\in\funs{\carrier[M]}{\carrier[M]}$ by
+        \auto{logical_graph_on_function,module_scalar_type}.
+    Hence $h\in\funs{\carrier[G]}{\carrier[G]}$ by
+        \auto{module_additive_group_fields}.
+    $G$ is a magma by \obv{monoid_is_magma}.
+    Show that for all $x,y\in\carrier[G]$ we have
+        $h(\mul[G](x,y))=\mul[G](h(x),h(y))$.
+    \begin{subproof}
+        Fix $x,y\in\carrier[G]$.
+        Hence $x,y\in\carrier[M]$ by
+            \auto{module_additive_group_fields}.
+        $\mul[G](x,y)\in\carrier[G]$ by
+            \obv{group_is_monoid,monoid_is_magma,magma_welldef}.
+        Hence $\mul[M](x,y)\in\carrier[M]$ by
+            \auto{module_additive_group_fields}.
+        $h(x)=\scalarMul[M](a,x)$ by
+            \auto{logical_graph_on_apply}.
+        $h(y)=\scalarMul[M](a,y)$ by
+            \auto{logical_graph_on_apply}.
+        $\mul[G](x,y)=\mul[M](x,y)$ by
+            \auto{module_additive_group_fields}.
+        $h(\mul[M](x,y))
+            =\scalarMul[M](a,\mul[M](x,y))$ by
+            \auto{logical_graph_on_apply}.
+        Follows by
+            \auto{module_scalar_vector_distributive,
+                module_additive_group_fields}.
+    \end{subproof}
+    Hence $h$ is a magma homomorphism from $G$ to $G$ by
+        \obv{magma_hom}.
+    $\neutral[G]\in\carrier[G]$ by
+        \obv{group_is_monoid,monoid_is_unital_magma,
+            unitalmagma_type}.
+    Hence $\neutral[M]\in\carrier[M]$ by
+        \obv{module_additive_group_fields}.
+    Hence $h(\neutral[G])=\scalarMul[M](a,\neutral[M])$ by
+        \auto{logical_graph_on_apply,module_additive_group_fields}.
+    Hence $h(\neutral[G])=\neutral[G]$ by
+        \auto{module_scalar_vector_zero,module_additive_group_fields}.
+    Hence $h$ is a monoid homomorphism from $G$ to $G$ by
+        \obv{monoid_hom}.
+    $h\circ f\in\funs{A}{\carrier[G]}$ by
+        \obv{monoid_hom_type,funs_circ}.
+    Show that $h\circ f=g$.
+    \begin{subproof}
+        $h\circ f$ is a function and $g$ is a function and
+            $\dom{h\circ f}=A=\dom{g}$ by
+            \auto{funs_is_function,funs}.
+        Show that for every $i\in A$ we have $(h\circ f)(i)=g(i)$.
+        \begin{subproof}
+            Fix $i\in A$.
+            $f(i)\in\carrier[M]$ by \obv{funs_type_apply}.
+            $(h\circ f)(i)=h(f(i))$ by
+                \auto{circ_apply,funs_is_function,funs_ran,funs,
+                    funs_elim}.
+            $h(f(i))=\scalarMul[M](a,f(i))$ and
+                $g(i)=\scalarMul[M](a,f(i))$ by
+                \auto{logical_graph_on_apply}.
+        \end{subproof}
+        Follows by \obv{funext_on_domain}.
+    \end{subproof}
+    $h(\finiteFold{G}{A}{f})
+        =\finiteFold{G}{A}{h\circ f}$ by
+        \obv{monoid_hom_preserves_finite_fold}.
+    $\finiteFold{G}{A}{f}\in\carrier[G]$ by
+        \auto{monoid_finite_fold_canonical}.
+    Hence $\finiteFold{G}{A}{f}\in\carrier[M]$ by
+        \auto{module_additive_group_fields}.
+    Hence
+        $h(\finiteFold{G}{A}{f})
+            =\scalarMul[M](a,\finiteFold{G}{A}{f})$ by
+        \auto{logical_graph_on_apply}.
+    Follows by \auto{finite_sum}.
+\end{proof}

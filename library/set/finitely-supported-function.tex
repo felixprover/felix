@@ -1,0 +1,1392 @@
+\import{set/support.tex}
+\import{set/function-space.tex}
+\import{set/indexed-family.tex}
+\import{set/finite.tex}
+\import{set/dependent-operation.tex}
+\import{set/function-power.tex}
+
+\section{Finitely supported functions}
+
+\begin{definition}\label{finitely_supported_functions}
+    $\finitelySupportedFunctions{I}{A}{z}
+        =\{f\in\funs{I}{A}\mid
+            \text{$\supportOn{I}{f}{z}$ is finite}\}$.
+\end{definition}
+
+\begin{proposition}\label{finitely_supported_functions_iff}
+    $f\in\finitelySupportedFunctions{I}{A}{z}$ iff
+        $f\in\funs{I}{A}$ and $\supportOn{I}{f}{z}$ is finite.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{finitely_supported_functions}.
+\end{proof}
+
+\begin{definition}\label{dependent_finitely_supported_functions}
+    $\dependentFinitelySupportedFunctions{I}{A}{z}
+        =\{f\in\dependentProduct{I}{A}\mid
+            \text{$\dependentSupport{I}{f}{z}$ is finite}\}$.
+\end{definition}
+
+\begin{proposition}\label{dependent_finitely_supported_functions_iff}
+    $f\in\dependentFinitelySupportedFunctions{I}{A}{z}$ iff
+        $f\in\dependentProduct{I}{A}$ and
+        $\dependentSupport{I}{f}{z}$ is finite.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \obv{dependent_finitely_supported_functions}.
+\end{proof}
+
+
+\begin{theorem}\label{constant_family_support}
+    Let $z\in A$ and $f\in\funs{I}{A}$.
+    Then
+        $\dependentSupport{I}{f}{I\times\{z\}}
+            =\supportOn{I}{f}{z}$.
+\end{theorem}
+\begin{proof}
+    For every $i\in I$ we have $(I\times\{z\})(i)=z$ by
+        \obv{constant_graph_application}.
+    Follows by
+        \auto{setext,dependent_support_iff,
+            support_on_iff}.
+\end{proof}
+
+\begin{theorem}\label{constant_family_finite_support_space}
+    Let $z\in A$.
+    Then
+        $\dependentFinitelySupportedFunctions
+            {I}{I\times\{A\}}{I\times\{z\}}
+        =\finitelySupportedFunctions{I}{A}{z}$.
+\end{theorem}
+\begin{proof}
+    $\dependentProduct{I}{I\times\{A\}}=\funs{I}{A}$ by
+        \obv{constant_family_dependent_product}.
+    Show that for every $f\in\funs{I}{A}$ we have
+        $\dependentSupport{I}{f}{I\times\{z\}}
+            =\supportOn{I}{f}{z}$.
+    \begin{subproof}
+        Fix $f\in\funs{I}{A}$.
+        Follows by \obv{constant_family_support}.
+    \end{subproof}
+    Follows by
+        \auto{setext,
+            dependent_finitely_supported_functions_iff,
+            finitely_supported_functions_iff}.
+\end{proof}
+
+\begin{theorem}\label{finite_preimage_under_finite_fibers}
+    Suppose $F$ is finite and $F\subseteq I$.
+    Suppose for every $i\in I$ we have $\preimg{e}{\{i\}}$ is finite.
+    Then $\preimg{e}{F}$ is finite.
+\end{theorem}
+\begin{proof}
+    Let $C=\{D\in\pow{F}\mid
+        \text{$\preimg{e}{D}$ is finite}\}$.
+    $\preimg{e}{\emptyset}=\emptyset$ by
+        \auto{setext,preimg_iff,emptyset}.
+    Hence $\preimg{e}{\emptyset}$ is finite by
+        \obv{emptyset_is_finite}.
+    $\emptyset\in\pow{F}$ by \obv{powerset_bottom}.
+    Hence $\emptyset\in C$.
+    Show that for all $D,i$ such that $D\in C$ and $i\in F$ we have
+        $\cons{i}{D}\in C$.
+    \begin{subproof}
+        Fix $D,i$.
+        Assume $D\in C$ and $i\in F$.
+        $D\subseteq F$ by \obv{powerset_elim}.
+        Hence $\cons{i}{D}\subseteq F$ by
+            \obv{cons_subseteq_intro}.
+        Hence $\cons{i}{D}\in\pow{F}$ by
+            \obv{powerset_intro}.
+        $i\in I$ by \obv{subseteq}.
+        Hence $\preimg{e}{\{i\}}$ is finite.
+        $\preimg{e}{D}$ is finite.
+        $\cons{i}{D}=\{i\}\union D$ by
+            \auto{setext,cons_iff,union_iff,singleton_iff}.
+        Hence
+            $\preimg{e}{\cons{i}{D}}
+                =\preimg{e}{\{i\}}\union\preimg{e}{D}$ by
+            \auto{preimg_union}.
+        Hence $\preimg{e}{\cons{i}{D}}$ is finite by
+            \obv{union_of_finite_is_finite}.
+    \end{subproof}
+    $F\in C$ by \obv{finite_induction}.
+\end{proof}
+
+\begin{theorem}\label{finite_support_precomposition}
+    Suppose $A$ is a function on $I$.
+    Let $e\in\funs{J}{I}$.
+    Let $z\in\dependentProduct{I}{A}$.
+    Suppose $f\in\dependentFinitelySupportedFunctions{I}{A}{z}$.
+    Suppose for every $i\in I$ we have
+        $\preimg{e}{\{i\}}$ is finite.
+    Then
+        $f\circ e\in
+            \dependentFinitelySupportedFunctions
+                {J}{A\circ e}{z\circ e}$.
+\end{theorem}
+\begin{proof}
+    $f\in\dependentProduct{I}{A}$ and
+        $\dependentSupport{I}{f}{z}$ is finite by
+        \obv{dependent_finitely_supported_functions_iff}.
+    $f\circ e\in\dependentProduct{J}{A\circ e}$ and
+        $z\circ e\in\dependentProduct{J}{A\circ e}$ by
+        \obv{dependent_precomposition_type}.
+    $\dependentSupport{I}{f}{z}\subseteq I$ by
+        \obv{dependent_support_subseteq}.
+    Hence $\preimg{e}{\dependentSupport{I}{f}{z}}$ is finite by
+        \obv{finite_preimage_under_finite_fibers}.
+    $\dependentSupport{J}{f\circ e}{z\circ e}
+        =\preimg{e}{\dependentSupport{I}{f}{z}}$ by
+        \obv{dependent_support_precomposition}.
+    Hence $\dependentSupport{J}{f\circ e}{z\circ e}$ is finite.
+    Follows by
+        \obv{dependent_finitely_supported_functions_iff}.
+\end{proof}
+
+\subsection{Point masses}
+
+\begin{definition}\label{dependent_point_mass}
+    $\dependentPointMass{I}{A}{z}{i}{a}
+        =\cons{(i,a)}{\restrl{z}{I\setminus\{i\}}}$.
+\end{definition}
+
+\begin{proposition}\label{dependent_point_mass_type}
+    Suppose $A$ is a function on $I$.
+    Let $z\in\dependentProduct{I}{A}$.
+    Let $i\in I$ and $a\in A(i)$.
+    Then
+        $\dependentPointMass{I}{A}{z}{i}{a}
+            \in\dependentProduct{I}{A}$.
+\end{proposition}
+\begin{proof}
+    Let $p=\dependentPointMass{I}{A}{z}{i}{a}$.
+    Let $D=I\setminus\{i\}$.
+    $A$ is a function and $\dom{A}=I$.
+    $z\in\funs{I}{\unions{\ran{A}}}$ by
+        \obv{dependent_product}.
+    Hence $z$ is a function and $\dom{z}=I$ by
+        \obv{funs_is_function,funs}.
+    $D\subseteq I$ by \auto{setminus,subseteq}.
+    Hence $\restrl{z}{D}\in
+        \funs{D}{\unions{\ran{A}}}$ by \obv{funs_restrl}.
+    $i\notin D$ by \auto{setminus,singleton_iff}.
+    $a\in\unions{\ran{A}}$ by
+        \obv{indexed_family_member_union}.
+    Hence
+        $p\in\funs{\cons{i}{D}}{\unions{\ran{A}}}$ by
+        \auto{dependent_point_mass,
+            extend_function_at_new_point}.
+    $\cons{i}{D}=I$ by \auto{cons_remove}.
+    Hence $p\in\funs{I}{\unions{\ran{A}}}$.
+    Show that for every $j\in I$ we have $p(j)\in A(j)$.
+    \begin{subproof}
+        Fix $j\in I$.
+        \begin{byCase}
+        \caseOf{$j=i$.}
+            $(i,a)\in p$ by
+                \auto{dependent_point_mass,cons_iff}.
+            $p$ is a function by \obv{funs_is_function}.
+            Hence $p(i)=a$ by \obv{function_apply_intro}.
+        \caseOf{$j\neq i$.}
+            Hence $j\in D$ by \auto{setminus,singleton_iff}.
+            $(j,z(j))\in z$ by \obv{function_apply_elim}.
+            Hence $(j,z(j))\in\restrl{z}{D}$ by
+                \obv{restrl_iff}.
+            Hence $(j,z(j))\in p$ by
+                \auto{dependent_point_mass,cons_iff}.
+            $p$ is a function by \obv{funs_is_function}.
+            Hence $p(j)=z(j)$ by \obv{function_apply_intro}.
+            $z(j)\in A(j)$ by
+                \obv{dependent_product_coordinate}.
+        \end{byCase}
+    \end{subproof}
+    Follows by \auto{dependent_product_iff}.
+\end{proof}
+
+\begin{proposition}\label{dependent_point_mass_selected}
+    Suppose $A$ is a function on $I$.
+    Let $z\in\dependentProduct{I}{A}$.
+    Let $i\in I$ and $a\in A(i)$.
+    Then $\apply{\dependentPointMass{I}{A}{z}{i}{a}}{i}=a$.
+\end{proposition}
+\begin{proof}
+    Let $p=\dependentPointMass{I}{A}{z}{i}{a}$.
+    $p$ is a function by
+        \auto{dependent_point_mass_type,
+            dependent_product_iff,funs_is_function}.
+    $(i,a)\in p$ by
+        \auto{dependent_point_mass,cons_iff}.
+    Follows by \obv{function_apply_intro}.
+\end{proof}
+
+\begin{proposition}\label{dependent_point_mass_other}
+    Suppose $A$ is a function on $I$.
+    Let $z\in\dependentProduct{I}{A}$.
+    Let $i,j\in I$ and $a\in A(i)$.
+    Suppose $j\neq i$.
+    Then $\apply{\dependentPointMass{I}{A}{z}{i}{a}}{j}=z(j)$.
+\end{proposition}
+\begin{proof}
+    Let $p=\dependentPointMass{I}{A}{z}{i}{a}$.
+    Let $D=I\setminus\{i\}$.
+    $z\in\funs{I}{\unions{\ran{A}}}$ by
+        \obv{dependent_product}.
+    Hence $z$ is a function and $\dom{z}=I$ by
+        \obv{funs_is_function,funs}.
+    $p$ is a function by
+        \auto{dependent_point_mass_type,
+            dependent_product_iff,funs_is_function}.
+    $j\in D$ by \auto{setminus,singleton_iff}.
+    $(j,z(j))\in z$ by \obv{function_apply_elim}.
+    Hence $(j,z(j))\in\restrl{z}{D}$ by \obv{restrl_iff}.
+    Hence $(j,z(j))\in p$ by
+        \auto{dependent_point_mass,cons_iff}.
+    Follows by \obv{function_apply_intro}.
+\end{proof}
+
+\begin{proposition}\label{dependent_point_mass_support}
+    Suppose $A$ is a function on $I$.
+    Let $z\in\dependentProduct{I}{A}$.
+    Let $i\in I$ and $a\in A(i)$.
+    Then
+        $(a=z(i)\implies
+            \dependentSupport{I}{
+                \dependentPointMass{I}{A}{z}{i}{a}}{z}=\emptyset)$ and
+        $(a\neq z(i)\implies
+            \dependentSupport{I}{
+                \dependentPointMass{I}{A}{z}{i}{a}}{z}=\{i\})$.
+\end{proposition}
+\begin{proof}
+    Let $p=\dependentPointMass{I}{A}{z}{i}{a}$.
+    \begin{byCase}
+    \caseOf{$a=z(i)$.}
+        Show that $\dependentSupport{I}{p}{z}=\emptyset$.
+        \begin{subproof}
+            Show that $\dependentSupport{I}{p}{z}\subseteq\emptyset$.
+            \begin{subproof}
+                It suffices to show that every element of
+                    $\dependentSupport{I}{p}{z}$ is an element of
+                    $\emptyset$ by \obv{subseteq}.
+                Fix $j\in\dependentSupport{I}{p}{z}$.
+                Hence $j\in I$ and $p(j)\neq z(j)$ by
+                    \obv{dependent_support_iff}.
+                $j=i$ or $j\neq i$.
+                $p(i)=a$ by
+                    \auto{dependent_point_mass_selected}.
+                If $j\neq i$, then $p(j)=z(j)$ by
+                    \auto{dependent_point_mass_other}.
+                Contradiction.
+            \end{subproof}
+            Follows by \obv{subseteq_emptyset_iff}.
+        \end{subproof}
+    \caseOf{$a\neq z(i)$.}
+        Show that $\dependentSupport{I}{p}{z}=\{i\}$.
+        \begin{subproof}
+            $p(i)=a$ by
+                \auto{dependent_point_mass_selected}.
+            Hence $i\in\dependentSupport{I}{p}{z}$ by
+                \obv{dependent_support_iff}.
+            Show that for every $j\in\dependentSupport{I}{p}{z}$
+                we have $j\in\{i\}$.
+            \begin{subproof}
+                Fix $j\in\dependentSupport{I}{p}{z}$.
+                Hence $j\in I$ and $p(j)\neq z(j)$ by
+                    \obv{dependent_support_iff}.
+                Suppose not.
+                Hence $j\neq i$ by \obv{singleton_iff}.
+                Then $p(j)=z(j)$ by
+                    \auto{dependent_point_mass_other}.
+                Contradiction.
+            \end{subproof}
+            Follows by \auto{setext,singleton_iff}.
+        \end{subproof}
+    \end{byCase}
+\end{proof}
+
+\begin{proposition}\label{dependent_point_mass_finitely_supported}
+    Suppose $A$ is a function on $I$.
+    Let $z\in\dependentProduct{I}{A}$.
+    Let $i\in I$ and $a\in A(i)$.
+    Then
+        $\dependentPointMass{I}{A}{z}{i}{a}
+            \in\dependentFinitelySupportedFunctions{I}{A}{z}$.
+\end{proposition}
+\begin{proof}
+    $\dependentPointMass{I}{A}{z}{i}{a}
+        \in\dependentProduct{I}{A}$ by
+        \obv{dependent_point_mass_type}.
+    $\dependentSupport{I}{
+        \dependentPointMass{I}{A}{z}{i}{a}}{z}$ is finite by
+        \auto{dependent_point_mass_support,
+            emptyset_is_finite,singleton_is_finite}.
+    Follows by
+        \obv{dependent_finitely_supported_functions_iff}.
+\end{proof}
+
+\begin{definition}\label{point_mass}
+    $\pointMass{I}{A}{z}{i}{a}
+        =\dependentPointMass
+            {I}{I\times\{A\}}{I\times\{z\}}{i}{a}$.
+\end{definition}
+
+\begin{proposition}\label{point_mass_finitely_supported}
+    Let $z,a\in A$ and $i\in I$.
+    Then
+        $\pointMass{I}{A}{z}{i}{a}
+            \in\finitelySupportedFunctions{I}{A}{z}$.
+\end{proposition}
+\begin{proof}
+    Let $C=I\times\{A\}$ and $q=I\times\{z\}$.
+    $C$ is a function on $I$ by
+        \auto{constant_graph_type,funs_is_function,funs}.
+    $q\in\dependentProduct{I}{C}$ by
+        \auto{constant_family_dependent_product,
+            constant_graph_type,singleton_subset_intro,
+            funs_weaken_codom}.
+    $C(i)=A$ by \auto{constant_graph_application}.
+    Hence
+        $\dependentPointMass{I}{C}{q}{i}{a}
+            \in\dependentFinitelySupportedFunctions{I}{C}{q}$ by
+        \obv{dependent_point_mass_finitely_supported}.
+    Follows by
+        \auto{point_mass,
+            constant_family_finite_support_space}.
+\end{proof}
+
+\begin{proposition}\label{point_mass_selected}
+    Let $z,a\in A$ and $i\in I$.
+    Then $\apply{\pointMass{I}{A}{z}{i}{a}}{i}=a$.
+\end{proposition}
+\begin{proof}
+    Let $C=I\times\{A\}$ and $q=I\times\{z\}$.
+    $C$ is a function on $I$ by
+        \auto{constant_graph_type,funs_is_function,funs}.
+    $q\in\dependentProduct{I}{C}$ by
+        \auto{constant_family_dependent_product,
+            constant_graph_type,singleton_subset_intro,
+            funs_weaken_codom}.
+    $C(i)=A$ by \auto{constant_graph_application}.
+    Follows by
+        \auto{point_mass,
+            dependent_point_mass_selected}.
+\end{proof}
+
+\begin{proposition}\label{point_mass_other}
+    Let $z,a\in A$ and $i,j\in I$.
+    Suppose $j\neq i$.
+    Then $\apply{\pointMass{I}{A}{z}{i}{a}}{j}=z$.
+\end{proposition}
+\begin{proof}
+    Let $C=I\times\{A\}$ and $q=I\times\{z\}$.
+    $C$ is a function on $I$ by
+        \auto{constant_graph_type,funs_is_function,funs}.
+    $q\in\dependentProduct{I}{C}$ by
+        \auto{constant_family_dependent_product,
+            constant_graph_type,singleton_subset_intro,
+            funs_weaken_codom}.
+    $C(i)=A$ and $q(j)=z$ by
+        \auto{constant_graph_application}.
+    Follows by
+        \auto{point_mass,
+            dependent_point_mass_other}.
+\end{proof}
+
+\begin{definition}\label{dependent_point_mass_map}
+    $\dependentPointMassMap{I}{A}{z}{i}
+        =\{(a,\dependentPointMass{I}{A}{z}{i}{a})\mid a\in A(i)\}$.
+\end{definition}
+
+\begin{proposition}\label{dependent_point_mass_map_type}
+    Suppose $A$ is a function on $I$.
+    Let $z\in\dependentProduct{I}{A}$ and $i\in I$.
+    Then
+        $\dependentPointMassMap{I}{A}{z}{i}
+            \in\funs{A(i)}{
+                \dependentFinitelySupportedFunctions{I}{A}{z}}$.
+\end{proposition}
+\begin{proof}
+    Let $m=\dependentPointMassMap{I}{A}{z}{i}$.
+    $m$ is a relation by
+        \auto{dependent_point_mass_map,relation}.
+    $m$ is right-unique by
+        \auto{dependent_point_mass_map,rightunique,pair_eq_iff}.
+    $\dom{m}=A(i)$ by
+        \auto{dependent_point_mass_map,setext,dom_iff,pair_eq_iff}.
+    Show that for every $a\in\dom{m}$ we have
+        $m(a)\in\dependentFinitelySupportedFunctions{I}{A}{z}$.
+    \begin{subproof}
+        Fix $a\in\dom{m}$.
+        Hence $a\in A(i)$.
+        $(a,\dependentPointMass{I}{A}{z}{i}{a})\in m$ by
+            \obv{dependent_point_mass_map,pair_eq_iff}.
+        Hence
+            $m(a)=\dependentPointMass{I}{A}{z}{i}{a}$ by
+            \obv{function_apply_intro}.
+        Follows by
+            \auto{dependent_point_mass_finitely_supported}.
+    \end{subproof}
+    Hence $m$ is a function to
+        $\dependentFinitelySupportedFunctions{I}{A}{z}$.
+    Follows by \auto{funs_intro}.
+\end{proof}
+
+\begin{proposition}\label{dependent_point_mass_map_apply}
+    Suppose $A$ is a function on $I$.
+    Let $z\in\dependentProduct{I}{A}$.
+    Let $i\in I$ and $a\in A(i)$.
+    Then
+        $\apply{\dependentPointMassMap{I}{A}{z}{i}}{a}
+            =\dependentPointMass{I}{A}{z}{i}{a}$.
+\end{proposition}
+\begin{proof}
+    Let $m=\dependentPointMassMap{I}{A}{z}{i}$.
+    $m$ is a function by
+        \auto{dependent_point_mass_map_type,funs_is_function}.
+    $(a,\dependentPointMass{I}{A}{z}{i}{a})\in m$ by
+        \obv{dependent_point_mass_map,pair_eq_iff}.
+    Follows by \obv{function_apply_intro}.
+\end{proof}
+
+\begin{proposition}\label{zero_section_is_finitely_supported}
+    Let $z\in\dependentProduct{I}{A}$.
+    Then
+        $z\in\dependentFinitelySupportedFunctions{I}{A}{z}$.
+\end{proposition}
+\begin{proof}
+    $\dependentSupport{I}{z}{z}=\emptyset$ by
+        \auto{setext,dependent_support_iff,emptyset}.
+    Hence $\dependentSupport{I}{z}{z}$ is finite by
+        \obv{emptyset_is_finite}.
+    Follows by \obv{dependent_finitely_supported_functions_iff}.
+\end{proof}
+
+\begin{proposition}\label{constant_zero_function_is_finitely_supported}
+    Let $z\in A$.
+    Then
+        $I\times\{z\}\in\finitelySupportedFunctions{I}{A}{z}$.
+\end{proposition}
+\begin{proof}
+    $I\times\{z\}\in\funs{I}{\{z\}}$ by
+        \obv{constant_graph_type}.
+    Hence $I\times\{z\}\in\funs{I}{A}$ by
+        \obv{singleton_subset_intro,funs_weaken_codom}.
+    $\supportOn{I}{I\times\{z\}}{z}=\emptyset$ by
+        \auto{setext,support_on_iff,emptyset,
+            constant_graph_application}.
+    Hence $\supportOn{I}{I\times\{z\}}{z}$ is finite by
+        \obv{emptyset_is_finite}.
+    Follows by \obv{finitely_supported_functions}.
+\end{proof}
+
+\begin{proposition}\label{finitely_supported_function_extensionality}
+    Suppose $f,g\in\finitelySupportedFunctions{I}{A}{z}$.
+    Suppose for every $i\in I$ we have $f(i)=g(i)$.
+    Then $f=g$.
+\end{proposition}
+\begin{proof}
+    $f,g\in\funs{I}{A}$ by
+        \obv{finitely_supported_functions}.
+    Hence $f$ and $g$ are functions and $\dom{f}=I=\dom{g}$ by
+        \obv{funs_is_function,funs_elim}.
+    Follows by \obv{funext_on_domain}.
+\end{proof}
+
+\begin{proposition}\label{dependent_finitely_supported_function_extensionality}
+    Suppose
+        $f,g\in\dependentFinitelySupportedFunctions{I}{A}{z}$.
+    Suppose for every $i\in I$ we have $f(i)=g(i)$.
+    Then $f=g$.
+\end{proposition}
+\begin{proof}
+    $f,g\in\dependentProduct{I}{A}$ by
+        \obv{dependent_finitely_supported_functions_iff}.
+    Hence $f,g\in\funs{I}{\unions{\ran{A}}}$ by
+        \obv{dependent_product}.
+    Hence $f$ and $g$ are functions and $\dom{f}=I=\dom{g}$ by
+        \obv{funs_is_function,funs_elim}.
+    Follows by \obv{funext_on_domain}.
+\end{proof}
+
+\begin{theorem}\label{support_of_restriction}
+    Suppose $f\in\funs{I}{A}$ and $J\subseteq I$.
+    Then
+        $\supportOn{J}{\restrl{f}{J}}{z}
+        =\supportOn{I}{f}{z}\inter J$.
+\end{theorem}
+\begin{proof}
+    $f$ is a function and $\dom{f}=I$ by
+        \obv{funs_is_function,funs_elim}.
+    Hence $J\subseteq\dom{f}$.
+    For every $j\in J$ we have
+        $\apply{\restrl{f}{J}}{j}=f(j)$ by
+        \obv{restrl_of_function_apply}.
+    Follows by
+        \auto{setext,support_on_iff,inter,subseteq}.
+\end{proof}
+
+\begin{theorem}\label{finite_support_restriction}
+    Suppose $f\in\finitelySupportedFunctions{I}{A}{z}$ and
+        $J\subseteq I$.
+    Then
+        $\restrl{f}{J}\in\finitelySupportedFunctions{J}{A}{z}$.
+\end{theorem}
+\begin{proof}
+    $f\in\funs{I}{A}$ and $\supportOn{I}{f}{z}$ is finite by
+        \obv{finitely_supported_functions}.
+    $\restrl{f}{J}\in\funs{J}{A}$ by \obv{funs_restrl}.
+    $\supportOn{J}{\restrl{f}{J}}{z}
+        =\supportOn{I}{f}{z}\inter J$ by
+        \obv{support_of_restriction}.
+    Hence $\supportOn{J}{\restrl{f}{J}}{z}$ is finite by
+        \obv{finite_intersection}.
+    Follows by \obv{finitely_supported_functions}.
+\end{proof}
+
+\begin{proposition}\label{dependent_restriction_type}
+    Suppose $A$ is a function on $I$ and $J\subseteq I$.
+    Let $f\in\dependentProduct{I}{A}$.
+    Then
+        $\restrl{f}{J}\in
+            \dependentProduct{J}{\restrl{A}{J}}$.
+\end{proposition}
+\begin{proof}
+    $A$ is a function and $\dom{A}=I$.
+    Hence $A\in\funs{I}{\ran{A}}$ by
+        \auto{function_exact_type_to_range}.
+    Thus $\restrl{A}{J}\in\funs{J}{\ran{A}}$ by
+        \obv{funs_restrl}.
+    Hence $\restrl{A}{J}$ is a function on $J$ by
+        \obv{funs_is_function,funs_elim}.
+    $f\in\funs{I}{\unions{\ran{A}}}$ by
+        \obv{dependent_product}.
+    Hence $\restrl{f}{J}\in\funs{J}{\unions{\ran{A}}}$ by
+        \obv{funs_restrl}.
+    Show that for every $j\in J$ we have
+        $\apply{\restrl{f}{J}}{j}
+            \in\apply{\restrl{A}{J}}{j}$.
+    \begin{subproof}
+        Fix $j\in J$.
+        Hence $j\in I$ by \obv{subseteq}.
+        $f$ and $A$ are functions and
+            $J\subseteq\dom{f}$ and $J\subseteq\dom{A}$ by
+            \auto{funs_is_function,funs_elim,dependent_product_iff}.
+        $\apply{\restrl{f}{J}}{j}=f(j)$ and
+            $\apply{\restrl{A}{J}}{j}=A(j)$ by
+            \obv{restrl_of_function_apply}.
+        $f(j)\in A(j)$ by \obv{dependent_product_coordinate}.
+    \end{subproof}
+    Show that $\restrl{f}{J}\in
+        \funs{J}{\unions{\ran{\restrl{A}{J}}}}$.
+    \begin{subproof}
+        $\restrl{f}{J}$ is a function on $J$ by
+            \obv{funs_is_function,funs_elim}.
+        For every $j\in J$ we have
+            $\apply{\restrl{f}{J}}{j}
+                \in\apply{\restrl{A}{J}}{j}$.
+        Hence for every $j\in J$ we have
+            $\apply{\restrl{f}{J}}{j}
+                \in\unions{\ran{\restrl{A}{J}}}$ by
+            \obv{indexed_family_member_union}.
+        Follows by \obv{funs_intro,funs_elim}.
+    \end{subproof}
+    Follows by \obv{dependent_product}.
+\end{proof}
+
+\begin{theorem}\label{dependent_support_of_restriction}
+    Suppose $f,z\in\dependentProduct{I}{A}$ and $J\subseteq I$.
+    Then
+        $\dependentSupport{J}{\restrl{f}{J}}{\restrl{z}{J}}
+        =\dependentSupport{I}{f}{z}\inter J$.
+\end{theorem}
+\begin{proof}
+    $f,z\in\funs{I}{\unions{\ran{A}}}$ by
+        \obv{dependent_product}.
+    Hence $f$ and $z$ are functions and
+        $\dom{f}=I=\dom{z}$ by
+        \obv{funs_is_function,funs_elim}.
+    Hence $J\subseteq\dom{f}$ and $J\subseteq\dom{z}$.
+    For every $j\in J$ we have
+        $\apply{\restrl{f}{J}}{j}=f(j)$ and
+        $\apply{\restrl{z}{J}}{j}=z(j)$ by
+        \obv{restrl_of_function_apply}.
+    Follows by
+        \auto{setext,dependent_support_iff,inter,subseteq}.
+\end{proof}
+
+\begin{theorem}\label{dependent_finite_support_restriction}
+    Suppose $A$ is a function on $I$ and $J\subseteq I$.
+    Let $z\in\dependentProduct{I}{A}$.
+    Suppose
+        $f\in\dependentFinitelySupportedFunctions{I}{A}{z}$.
+    Then
+        $\restrl{f}{J}\in
+            \dependentFinitelySupportedFunctions
+                {J}{\restrl{A}{J}}{\restrl{z}{J}}$.
+\end{theorem}
+\begin{proof}
+    $f\in\dependentProduct{I}{A}$ and
+        $\dependentSupport{I}{f}{z}$ is finite by
+        \obv{dependent_finitely_supported_functions_iff}.
+    $\restrl{f}{J},\restrl{z}{J}
+        \in\dependentProduct{J}{\restrl{A}{J}}$ by
+        \obv{dependent_restriction_type}.
+    $\dependentSupport{J}{\restrl{f}{J}}{\restrl{z}{J}}
+        =\dependentSupport{I}{f}{z}\inter J$ by
+        \obv{dependent_support_of_restriction}.
+    Hence
+        $\dependentSupport{J}{\restrl{f}{J}}{\restrl{z}{J}}$
+        is finite by \obv{finite_intersection}.
+    Follows by \obv{dependent_finitely_supported_functions_iff}.
+\end{proof}
+
+\begin{proposition}\label{bijection_has_finite_fibers}
+    Suppose $e\in\bijections{J}{I}$.
+    Then for every $i\in I$ we have
+        $\preimg{e}{\{i\}}$ is finite.
+\end{proposition}
+\begin{proof}
+    $e$ is a function and $e$ is injective and $\dom{e}=J$ by
+        \obv{bijection_is_function,bijections,bijections_dom}.
+    Fix $i\in I$.
+    \begin{byCase}
+    \caseOf{$\preimg{e}{\{i\}}=\emptyset$.}
+        Follows by \obv{emptyset_is_finite}.
+    \caseOf{$\preimg{e}{\{i\}}\neq\emptyset$.}
+        Take $a$ such that $a\in\preimg{e}{\{i\}}$ by
+            \auto{setext,emptyset}.
+        Show that $\preimg{e}{\{i\}}\subseteq\{a\}$.
+        \begin{subproof}
+            It suffices to show that every element of
+                $\preimg{e}{\{i\}}$ is an element of $\{a\}$ by
+                \obv{subseteq}.
+            Fix $x\in\preimg{e}{\{i\}}$.
+            $x,a\in\dom{e}$ and $e(x),e(a)\in\{i\}$ by
+                \auto{preimg_iff,function_apply_iff}.
+            Hence $e(x)=i=e(a)$ by \auto{singleton_iff}.
+            Hence $x=a$ by \auto{injective_function}.
+            Follows by \obv{singleton_iff}.
+        \end{subproof}
+        $\{a\}$ is finite by \obv{singleton_is_finite}.
+        Follows by \obv{subseteq_finite_is_finite}.
+    \end{byCase}
+\end{proof}
+
+\begin{theorem}\label{finite_support_bijective_reindex_iff}
+    Suppose $A$ is a function on $I$.
+    Suppose $e\in\bijections{J}{I}$.
+    Let $f,z\in\dependentProduct{I}{A}$.
+    Then
+        $f\in\dependentFinitelySupportedFunctions{I}{A}{z}$ iff
+        $f\circ e\in\dependentFinitelySupportedFunctions
+            {J}{A\circ e}{z\circ e}$.
+\end{theorem}
+\begin{proof}
+    $e\in\funs{J}{I}$ by \obv{bijections_to_funs}.
+    For every $i\in I$ we have $\preimg{e}{\{i\}}$ is finite by
+        \obv{bijection_has_finite_fibers}.
+    If $f\in\dependentFinitelySupportedFunctions{I}{A}{z}$, then
+        $f\circ e\in\dependentFinitelySupportedFunctions
+            {J}{A\circ e}{z\circ e}$ by
+        \obv{finite_support_precomposition}.
+    Show that if
+        $f\circ e\in\dependentFinitelySupportedFunctions
+            {J}{A\circ e}{z\circ e}$,
+        then $f\in\dependentFinitelySupportedFunctions{I}{A}{z}$.
+    \begin{subproof}
+        Assume
+            $f\circ e\in\dependentFinitelySupportedFunctions
+                {J}{A\circ e}{z\circ e}$.
+        Let $S=\dependentSupport{I}{f}{z}$.
+        Let $T=\dependentSupport{J}{f\circ e}{z\circ e}$.
+        $T$ is finite by
+            \auto{dependent_finitely_supported_functions_iff}.
+        $T=\preimg{e}{S}$ by
+            \auto{dependent_support_precomposition}.
+        Show that $S=\img{e}{T}$.
+        \begin{subproof}
+            Show that every element of $S$ is an element of $\img{e}{T}$.
+            \begin{subproof}
+                Fix $i\in S$.
+                $S\subseteq I$ by \auto{dependent_support_subseteq}.
+                Hence $i\in I$ by \obv{subseteq}.
+                Take $j\in J$ such that $e(j)=i$ by
+                    \auto{bijections,surj}.
+                $j\in\dom{e}$ by
+                    \obv{bijections_to_funs,funs_elim}.
+                $e(j)\in S$.
+                $(j,e(j))\in e$ by
+                    \obv{function_apply_elim,bijection_is_function}.
+                Hence $j\in\preimg{e}{S}$ by \obv{preimg_iff}.
+                Hence $j\in T$.
+                $(j,i)\in e$.
+                Follows by \auto{img_iff}.
+            \end{subproof}
+            Show that every element of $\img{e}{T}$ is an element of $S$.
+            \begin{subproof}
+                Fix $i\in\img{e}{T}$.
+                Take $j\in\dom{e}\inter T$ such that $i=e(j)$ by
+                    \obv{img_of_function_elim,bijection_is_function}.
+                Hence $j\in T$ and $j\in\dom{e}$ by \obv{inter}.
+                Hence $j\in\preimg{e}{S}$.
+                Take $s\in S$ such that $(j,s)\in e$ by
+                    \obv{preimg_iff}.
+                $s=e(j)$ by
+                    \auto{function_apply_iff,bijection_is_function}.
+                Hence $e(j)\in S$.
+            \end{subproof}
+            Follows by \obv{setext}.
+        \end{subproof}
+        $T\subseteq J$ by \auto{dependent_support_subseteq}.
+        $J=\dom{e}$ by \obv{bijections_dom}.
+        Hence $T\subseteq\dom{e}$.
+        $\img{e}{T}$ is finite by
+            \obv{finite_function_image,bijection_is_function}.
+        Hence $S$ is finite.
+        Follows by \obv{dependent_finitely_supported_functions_iff}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{definition}\label{dependent_finite_support_precomposition}
+    $\dependentFiniteSupportPrecomposition{I}{J}{A}{z}{e}
+        =\{(f,f\circ e)\mid
+            f\in\dependentFinitelySupportedFunctions{I}{A}{z}\}$.
+\end{definition}
+
+\begin{proposition}\label{dependent_finite_support_precomposition_type}
+    Suppose $A$ is a function on $I$.
+    Let $e\in\funs{J}{I}$ and $z\in\dependentProduct{I}{A}$.
+    Suppose for every $i\in I$ we have
+        $\preimg{e}{\{i\}}$ is finite.
+    Then
+        $\dependentFiniteSupportPrecomposition{I}{J}{A}{z}{e}
+        \in\funs{
+            \dependentFinitelySupportedFunctions{I}{A}{z}}{
+            \dependentFinitelySupportedFunctions
+                {J}{A\circ e}{z\circ e}}$.
+\end{proposition}
+\begin{proof}
+    Let $P=\dependentFiniteSupportPrecomposition{I}{J}{A}{z}{e}$.
+    $P$ is a relation by
+        \auto{dependent_finite_support_precomposition,relation}.
+    $P$ is right-unique by
+        \auto{dependent_finite_support_precomposition,
+            rightunique,pair_eq_iff}.
+    $\dom{P}=\dependentFinitelySupportedFunctions{I}{A}{z}$ by
+        \auto{dependent_finite_support_precomposition,
+            setext,dom_iff,pair_eq_iff}.
+    Show that for every $f\in\dom{P}$ we have
+        $P(f)\in\dependentFinitelySupportedFunctions
+            {J}{A\circ e}{z\circ e}$.
+    \begin{subproof}
+        Fix $f\in\dom{P}$.
+        Hence $f\in\dependentFinitelySupportedFunctions{I}{A}{z}$.
+        $(f,f\circ e)\in P$ by
+            \obv{dependent_finite_support_precomposition,pair_eq_iff}.
+        Hence $P(f)=f\circ e$ by \obv{function_apply_intro}.
+        $f\circ e\in\dependentFinitelySupportedFunctions
+            {J}{A\circ e}{z\circ e}$ by
+            \obv{finite_support_precomposition}.
+    \end{subproof}
+    Follows by \auto{funs_intro}.
+\end{proof}
+
+\begin{proposition}\label{dependent_finite_support_precomposition_apply}
+    Let $f\in\dependentFinitelySupportedFunctions{I}{A}{z}$.
+    Suppose
+        $\dependentFiniteSupportPrecomposition{I}{J}{A}{z}{e}$
+        is a function.
+    Then
+        $\apply{\dependentFiniteSupportPrecomposition{I}{J}{A}{z}{e}}{f}
+        =f\circ e$.
+\end{proposition}
+\begin{proof}
+    $(f,f\circ e)
+        \in\dependentFiniteSupportPrecomposition{I}{J}{A}{z}{e}$ by
+        \obv{dependent_finite_support_precomposition,pair_eq_iff}.
+    Follows by \obv{function_apply_intro}.
+\end{proof}
+
+\begin{theorem}\label{dependent_finite_support_bijective_precomposition}
+    Suppose $A$ is a function on $I$.
+    Suppose $e\in\bijections{J}{I}$.
+    Let $z\in\dependentProduct{I}{A}$.
+    Then
+        $\dependentFiniteSupportPrecomposition{I}{J}{A}{z}{e}
+        \in\bijections{
+            \dependentFinitelySupportedFunctions{I}{A}{z}}{
+            \dependentFinitelySupportedFunctions
+                {J}{A\circ e}{z\circ e}}$.
+\end{theorem}
+\begin{proof}
+    Let $S=\dependentFinitelySupportedFunctions{I}{A}{z}$.
+    Let $T=\dependentFinitelySupportedFunctions
+        {J}{A\circ e}{z\circ e}$.
+    Let $P=\dependentFiniteSupportPrecomposition{I}{J}{A}{z}{e}$.
+    $e\in\funs{J}{I}$ by \obv{bijections_to_funs}.
+    For every $i\in I$ we have $\preimg{e}{\{i\}}$ is finite by
+        \obv{bijection_has_finite_fibers}.
+    Hence $P\in\funs{S}{T}$ by
+        \auto{dependent_finite_support_precomposition_type}.
+    Thus $P$ is a function and $\dom{P}=S$ by
+        \obv{funs_is_function,funs_elim}.
+    Show that $P$ is injective.
+    \begin{subproof}
+        Show that for all $f,g\in\dom{P}$ such that $P(f)=P(g)$
+            we have $f=g$.
+        \begin{subproof}
+            Fix $f,g\in\dom{P}$.
+            Assume $P(f)=P(g)$.
+            Hence $f,g\in S$.
+            $P(f)=f\circ e$ and $P(g)=g\circ e$ by
+                \auto{dependent_finite_support_precomposition_apply}.
+            Hence $f\circ e=g\circ e$.
+            $f,g\in\dependentProduct{I}{A}$ by
+                \auto{dependent_finitely_supported_functions_iff}.
+            Hence $f,g\in\funs{I}{\unions{\ran{A}}}$ by
+                \obv{dependent_product}.
+            Show that for every $i\in I$ we have $f(i)=g(i)$.
+            \begin{subproof}
+                Fix $i\in I$.
+                Take $j\in J$ such that $e(j)=i$ by
+                    \auto{bijections,surj}.
+                $(f\circ e)(j)=f(e(j))$ and
+                    $(g\circ e)(j)=g(e(j))$ by
+                    \auto{circ_apply,funs_is_function,funs_ran,funs,
+                        funs_elim}.
+                \begin{align*}
+                    f(i)
+                        &= f(e(j))
+                        \\
+                        &= (f\circ e)(j)
+                        \\
+                        &= (g\circ e)(j)
+                        \\
+                        &= g(e(j))
+                        \\
+                        &= g(i)
+                \end{align*}
+                Follows by assumption.
+            \end{subproof}
+            Follows by
+                \auto{dependent_finitely_supported_function_extensionality}.
+        \end{subproof}
+        Follows by \obv{injective_function}.
+    \end{subproof}
+    Show that $P\in\surj{S}{T}$.
+    \begin{subproof}
+        Show that for every $q\in T$ there exists $g\in S$ such that
+            $P(g)=q$.
+        \begin{subproof}
+            Fix $q\in T$.
+            Let $d=\converse{e}$.
+            Let $g=q\circ d$.
+            $d\in\bijections{I}{J}$ by
+                \auto{bijection_converse_is_bijection}.
+            Hence $d\in\funs{I}{J}$ by \obv{bijections_to_funs}.
+            For every $j\in J$ we have $\preimg{d}{\{j\}}$ is finite by
+                \obv{bijection_has_finite_fibers}.
+            $A\circ e$ is a function on $J$ by
+                \auto{funs_circ,funs_is_function,funs_elim,
+                    function_exact_type_to_range}.
+            $z\circ e\in\dependentProduct{J}{A\circ e}$ by
+                \obv{dependent_precomposition_type}.
+            Hence
+                $g\in\dependentFinitelySupportedFunctions
+                    {I}{(A\circ e)\circ d}{(z\circ e)\circ d}$ by
+                \auto{finite_support_precomposition}.
+            $A\in\funs{I}{\ran{A}}$ by
+                \auto{function_exact_type_to_range}.
+            Hence $(A\circ e)\circ d=A$ by
+                \auto{bijective_reindex_round_trip}.
+            $z\in\funs{I}{\unions{\ran{A}}}$ by
+                \obv{dependent_product}.
+            Hence $(z\circ e)\circ d=z$ by
+                \auto{bijective_reindex_round_trip}.
+            Hence $g\in S$.
+            $P(g)=g\circ e$ by
+                \auto{dependent_finite_support_precomposition_apply}.
+            $q\in\dependentProduct{J}{A\circ e}$ by
+                \auto{dependent_finitely_supported_functions_iff}.
+            Hence $q\in\funs{J}{\unions{\ran{A\circ e}}}$ by
+                \obv{dependent_product}.
+            $g\circ e=(q\circ d)\circ e=q$ by
+                \auto{bijective_reverse_reindex_round_trip}.
+        \end{subproof}
+        Follows by \obv{surj}.
+    \end{subproof}
+    Follows by \obv{bijections}.
+\end{proof}
+
+\begin{theorem}\label{dependent_finite_support_bijective_precomposition_inverse}
+    Suppose $A$ is a function on $I$.
+    Suppose $e\in\bijections{J}{I}$.
+    Let $z\in\dependentProduct{I}{A}$.
+    Let $P=\dependentFiniteSupportPrecomposition{I}{J}{A}{z}{e}$.
+    Let $Q=\dependentFiniteSupportPrecomposition
+        {J}{I}{A\circ e}{z\circ e}{\converse{e}}$.
+    Let $S=\dependentFinitelySupportedFunctions{I}{A}{z}$.
+    Let $T=\dependentFinitelySupportedFunctions
+        {J}{A\circ e}{z\circ e}$.
+    Then
+        $P\in\bijections{S}{T}$ and
+        $Q\in\bijections{T}{S}$ and
+        $Q\circ P=\identity{S}$ and
+        $P\circ Q=\identity{T}$.
+\end{theorem}
+\begin{proof}
+    $e\in\funs{J}{I}$ by \obv{bijections_to_funs}.
+    $A\circ e$ is a function on $J$ by
+        \auto{funs_circ,funs_is_function,funs_elim,
+            function_exact_type_to_range}.
+    $z\circ e\in\dependentProduct{J}{A\circ e}$ by
+        \obv{dependent_precomposition_type}.
+    $\converse{e}\in\bijections{I}{J}$ by
+        \obv{bijection_converse_is_bijection}.
+    $A\in\funs{I}{\ran{A}}$ by
+        \auto{function_exact_type_to_range}.
+    Hence $(A\circ e)\circ\converse{e}=A$ by
+        \obv{bijective_reindex_round_trip}.
+    $z\in\funs{I}{\unions{\ran{A}}}$ by
+        \obv{dependent_product}.
+    Hence $(z\circ e)\circ\converse{e}=z$ by
+        \obv{bijective_reindex_round_trip}.
+    $P\in\bijections{S}{T}$ by
+        \auto{dependent_finite_support_bijective_precomposition}.
+    $Q\in\bijections{T}{S}$ by
+        \auto{dependent_finite_support_bijective_precomposition}.
+    $Q\circ P\in\funs{S}{S}$ and
+        $P\circ Q\in\funs{T}{T}$ by
+        \auto{bijections_to_funs,funs_circ}.
+    Show that $Q\circ P=\identity{S}$.
+    \begin{subproof}
+        $Q\circ P$ and $\identity{S}$ are functions and
+            $\dom{Q\circ P}=S=\dom{\identity{S}}$ by
+            \auto{funs_is_function,funs_elim,id_elem_funs}.
+        Show that for every $f\in S$ we have
+            $(Q\circ P)(f)=\apply{\identity{S}}{f}$.
+        \begin{subproof}
+            Fix $f\in S$.
+            $P(f)=f\circ e$ by
+                \auto{dependent_finite_support_precomposition_apply,
+                    bijection_is_function}.
+            $f\circ e\in T$ by
+                \auto{funs_type_apply,bijections_to_funs}.
+            $Q(f\circ e)=(f\circ e)\circ\converse{e}$ by
+                \auto{dependent_finite_support_precomposition_apply,
+                    bijection_is_function}.
+            $(f\circ e)\circ\converse{e}=f$ by
+                \auto{dependent_finitely_supported_functions_iff,
+                    dependent_product_iff,
+                    bijective_reindex_round_trip}.
+            $(Q\circ P)(f)=Q(P(f))$ by
+                \auto{circ_apply,bijection_is_function,
+                    bijections_to_funs,funs_ran,funs}.
+            $\apply{\identity{S}}{f}=f$ by \obv{id_apply}.
+            \begin{align*}
+                (Q\circ P)(f)
+                    &= Q(P(f))
+                    \\
+                    &= Q(f\circ e)
+                    \\
+                    &= (f\circ e)\circ\converse{e}
+                    \\
+                    &= f
+                    \\
+                    &= \apply{\identity{S}}{f}
+            \end{align*}
+            Follows by assumption.
+        \end{subproof}
+        Follows by \obv{funext_on_domain}.
+    \end{subproof}
+    Show that $P\circ Q=\identity{T}$.
+    \begin{subproof}
+        $P\circ Q$ and $\identity{T}$ are functions and
+            $\dom{P\circ Q}=T=\dom{\identity{T}}$ by
+            \auto{funs_is_function,funs_elim,id_elem_funs}.
+        Show that for every $q\in T$ we have
+            $(P\circ Q)(q)=\apply{\identity{T}}{q}$.
+        \begin{subproof}
+            Fix $q\in T$.
+            $Q(q)=q\circ\converse{e}$ by
+                \auto{dependent_finite_support_precomposition_apply,
+                    bijection_is_function}.
+            $q\circ\converse{e}\in S$ by
+                \auto{funs_type_apply,bijections_to_funs}.
+            $P(q\circ\converse{e})
+                =(q\circ\converse{e})\circ e$ by
+                \auto{dependent_finite_support_precomposition_apply,
+                    bijection_is_function}.
+            $(q\circ\converse{e})\circ e=q$ by
+                \auto{dependent_finitely_supported_functions_iff,
+                    dependent_product_iff,
+                    bijective_reverse_reindex_round_trip}.
+            $(P\circ Q)(q)=P(Q(q))$ by
+                \auto{circ_apply,bijection_is_function,
+                    bijections_to_funs,funs_ran,funs}.
+            $\apply{\identity{T}}{q}=q$ by \obv{id_apply}.
+            \begin{align*}
+                (P\circ Q)(q)
+                    &= P(Q(q))
+                    \\
+                    &= P(q\circ\converse{e})
+                    \\
+                    &= (q\circ\converse{e})\circ e
+                    \\
+                    &= q
+                    \\
+                    &= \apply{\identity{T}}{q}
+            \end{align*}
+            Follows by assumption.
+        \end{subproof}
+        Follows by \obv{funext_on_domain}.
+    \end{subproof}
+\end{proof}
+
+\begin{definition}\label{dependent_finite_support_extension_by_zero}
+    $\dependentFiniteSupportExtensionByZero{I}{J}{f}{z}
+        =f\union\restrl{z}{I\setminus J}$.
+\end{definition}
+
+\begin{proposition}\label{dependent_finite_support_extension_by_zero_type}
+    Suppose $A$ is a function on $I$ and $J\subseteq I$.
+    Let $z\in\dependentProduct{I}{A}$.
+    Suppose $f\in\dependentProduct{J}{\restrl{A}{J}}$.
+    Then
+        $\dependentFiniteSupportExtensionByZero{I}{J}{f}{z}
+            \in\dependentProduct{I}{A}$.
+\end{proposition}
+\begin{proof}
+    Let $D=I\setminus J$.
+    Let $c=\restrl{z}{D}$.
+    Let $h=\dependentFiniteSupportExtensionByZero{I}{J}{f}{z}$.
+    $D\subseteq I$ by \auto{setminus_subseteq}.
+    $c\in\dependentProduct{D}{\restrl{A}{D}}$ by
+        \auto{dependent_restriction_type}.
+    $f\in\funs{J}{\unions{\ran{\restrl{A}{J}}}}$ and
+        $c\in\funs{D}{\unions{\ran{\restrl{A}{D}}}}$ by
+        \obv{dependent_product}.
+    Hence $f$ and $c$ are functions and $\dom{f}=J$ and $\dom{c}=D$ by
+        \auto{funs_is_function,funs_elim}.
+    $h=f\union c$ by
+        \obv{dependent_finite_support_extension_by_zero}.
+    $h$ is a relation by \obv{union_relations_is_relation}.
+    Show that $h$ is right-unique.
+    \begin{subproof}
+        Show that for all $i,x,y$ such that $(i,x),(i,y)\in h$ we have
+            $x=y$.
+        \begin{subproof}
+            Fix $i,x,y$.
+            Assume $(i,x),(i,y)\in h$.
+            $(i,x)\in f$ or $(i,x)\in c$ by \auto{union_iff}.
+            $(i,y)\in f$ or $(i,y)\in c$ by \auto{union_iff}.
+            \begin{byCase}
+            \caseOf{$(i,x),(i,y)\in f$.}
+                Follows by \obv{function_rightunique}.
+            \caseOf{$(i,x)\in f$ and $(i,y)\in c$.}
+                $i\in J$ and $i\in D$ by \obv{dom_intro}.
+                Contradiction by \auto{setminus}.
+            \caseOf{$(i,x)\in c$ and $(i,y)\in f$.}
+                $i\in D$ and $i\in J$ by \obv{dom_intro}.
+                Contradiction by \auto{setminus}.
+            \caseOf{$(i,x),(i,y)\in c$.}
+                Follows by \obv{function_rightunique}.
+            \end{byCase}
+        \end{subproof}
+        Follows by \obv{rightunique}.
+    \end{subproof}
+    $\dom{h}=J\union D=I$ by
+        \auto{dom_union,setminus_partition}.
+    Show that for every $i\in I$ we have $h(i)\in A(i)$.
+    \begin{subproof}
+        Fix $i\in I$.
+        \begin{byCase}
+        \caseOf{$i\in J$.}
+            $f(i)\in\apply{\restrl{A}{J}}{i}$ by
+                \obv{dependent_product_coordinate}.
+            $\apply{\restrl{A}{J}}{i}=A(i)$ by
+                \obv{restrl_of_function_apply}.
+            $(i,f(i))\in f$ by \obv{function_apply_elim}.
+            Hence $(i,f(i))\in h$ by \auto{union_iff}.
+            Hence $h(i)=f(i)$ by \obv{function_apply_intro}.
+        \caseOf{$i\notin J$.}
+            Hence $i\in D$ by \obv{setminus}.
+            $z(i)\in A(i)$ by \obv{dependent_product_coordinate}.
+            $z$ is a function and $D\subseteq\dom{z}$ by
+                \auto{dependent_product_iff,funs_is_function,
+                    funs_elim}.
+            Hence $c(i)=z(i)$ by
+                \auto{restrl_of_function_apply}.
+            $(i,c(i))\in c$ by \obv{function_apply_elim}.
+            Hence $(i,c(i))\in h$ by \auto{union_iff}.
+            Hence $h(i)=c(i)$ by \obv{function_apply_intro}.
+        \end{byCase}
+    \end{subproof}
+    Show that $h\in\funs{I}{\unions{\ran{A}}}$.
+    \begin{subproof}
+        For every $i\in I$ we have $h(i)\in A(i)$.
+        Hence for every $i\in I$ we have
+            $h(i)\in\unions{\ran{A}}$ by
+            \obv{indexed_family_member_union}.
+        Follows by \obv{funs_intro}.
+    \end{subproof}
+    Follows by \auto{dependent_product_iff}.
+\end{proof}
+
+\begin{proposition}\label{dependent_finite_support_extension_by_zero_on_domain}
+    Suppose $A$ is a function on $I$ and $J\subseteq I$.
+    Let $z\in\dependentProduct{I}{A}$.
+    Suppose $f\in\dependentProduct{J}{\restrl{A}{J}}$.
+    Let $j\in J$.
+    Then
+        $\apply{\dependentFiniteSupportExtensionByZero{I}{J}{f}{z}}{j}
+        =f(j)$.
+\end{proposition}
+\begin{proof}
+    Let $h=\dependentFiniteSupportExtensionByZero{I}{J}{f}{z}$.
+    $h$ is a function by
+        \auto{dependent_finite_support_extension_by_zero_type,
+            dependent_product_iff,funs_is_function}.
+    $f$ is a function and $\dom{f}=J$ by
+        \auto{dependent_product_iff,funs_is_function,funs_elim}.
+    Hence $j\in\dom{f}$.
+    $(j,f(j))\in f$ by
+        \obv{function_apply_elim}.
+    Hence $(j,f(j))\in h$ by
+        \auto{dependent_finite_support_extension_by_zero,union_iff}.
+    Follows by \obv{function_apply_intro}.
+\end{proof}
+
+\begin{proposition}\label{dependent_finite_support_extension_by_zero_off_domain}
+    Suppose $A$ is a function on $I$ and $J\subseteq I$.
+    Let $z\in\dependentProduct{I}{A}$.
+    Suppose $f\in\dependentProduct{J}{\restrl{A}{J}}$.
+    Let $i\in I\setminus J$.
+    Then
+        $\apply{\dependentFiniteSupportExtensionByZero{I}{J}{f}{z}}{i}
+        =z(i)$.
+\end{proposition}
+\begin{proof}
+    Let $h=\dependentFiniteSupportExtensionByZero{I}{J}{f}{z}$.
+    Let $c=\restrl{z}{I\setminus J}$.
+    $h$ is a function by
+        \auto{dependent_finite_support_extension_by_zero_type,
+            dependent_product_iff,funs_is_function}.
+    $z$ is a function and $I\setminus J\subseteq\dom{z}$ by
+        \auto{dependent_product_iff,funs_is_function,funs_elim,
+            setminus_subseteq}.
+    $z\in\funs{I}{\unions{\ran{A}}}$ by
+        \obv{dependent_product}.
+    Hence $c\in\funs{I\setminus J}{\unions{\ran{A}}}$ by
+        \auto{funs_restrl,setminus_subseteq}.
+    Hence $c$ is a function and $i\in\dom{c}$ by
+        \auto{funs_is_function,funs_elim}.
+    Hence $c(i)=z(i)$ by \auto{restrl_of_function_apply}.
+    $(i,c(i))\in c$ by
+        \obv{function_apply_elim}.
+    Hence $(i,c(i))\in h$ by
+        \auto{dependent_finite_support_extension_by_zero,union_iff}.
+    Follows by \obv{function_apply_intro}.
+\end{proof}
+
+\begin{theorem}\label{dependent_support_of_extension_by_zero}
+    Suppose $A$ is a function on $I$ and $J\subseteq I$.
+    Let $z\in\dependentProduct{I}{A}$.
+    Suppose $f\in\dependentProduct{J}{\restrl{A}{J}}$.
+    Then
+        $\dependentSupport{I}{
+            \dependentFiniteSupportExtensionByZero{I}{J}{f}{z}}{z}
+        =\dependentSupport{J}{f}{\restrl{z}{J}}$.
+\end{theorem}
+\begin{proof}
+    Let $h=\dependentFiniteSupportExtensionByZero{I}{J}{f}{z}$.
+    $h\in\dependentProduct{I}{A}$ by
+        \auto{dependent_finite_support_extension_by_zero_type}.
+    $\restrl{z}{J}\in\dependentProduct{J}{\restrl{A}{J}}$ by
+        \obv{dependent_restriction_type}.
+    Show that every element of $\dependentSupport{I}{h}{z}$ is an
+        element of $\dependentSupport{J}{f}{\restrl{z}{J}}$.
+    \begin{subproof}
+        Fix $i\in\dependentSupport{I}{h}{z}$.
+        Hence $i\in I$ and $h(i)\neq z(i)$ by
+            \obv{dependent_support_iff}.
+        Show that $i\in J$.
+        \begin{subproof}
+            Suppose not.
+            Hence $i\in I\setminus J$ by \obv{setminus}.
+            $h(i)=z(i)$ by
+                \auto{dependent_finite_support_extension_by_zero_off_domain}.
+            Contradiction.
+        \end{subproof}
+        $h(i)=f(i)$ by
+            \auto{dependent_finite_support_extension_by_zero_on_domain}.
+        $z$ is a function and $J\subseteq\dom{z}$ by
+            \auto{dependent_product_iff,funs_is_function,funs_elim}.
+        $\apply{\restrl{z}{J}}{i}=z(i)$ by
+            \obv{restrl_of_function_apply}.
+        Follows by \obv{dependent_support_iff}.
+    \end{subproof}
+    Show that every element of
+        $\dependentSupport{J}{f}{\restrl{z}{J}}$ is an element of
+        $\dependentSupport{I}{h}{z}$.
+    \begin{subproof}
+        Fix $i\in\dependentSupport{J}{f}{\restrl{z}{J}}$.
+        Hence $i\in J$ and $f(i)\neq\apply{\restrl{z}{J}}{i}$ by
+            \obv{dependent_support_iff}.
+        Hence $i\in I$ by \obv{subseteq}.
+        $h(i)=f(i)$ by
+            \auto{dependent_finite_support_extension_by_zero_on_domain}.
+        $z$ is a function and $J\subseteq\dom{z}$ by
+            \auto{dependent_product_iff,funs_is_function,funs_elim}.
+        $\apply{\restrl{z}{J}}{i}=z(i)$ by
+            \obv{restrl_of_function_apply}.
+        Follows by \obv{dependent_support_iff}.
+    \end{subproof}
+    Follows by \auto{setext}.
+\end{proof}
+
+\begin{theorem}\label{dependent_finite_support_extension_by_zero_preserves_support}
+    Suppose $A$ is a function on $I$ and $J\subseteq I$.
+    Let $z\in\dependentProduct{I}{A}$.
+    Suppose
+        $f\in\dependentFinitelySupportedFunctions
+            {J}{\restrl{A}{J}}{\restrl{z}{J}}$.
+    Then
+        $\dependentFiniteSupportExtensionByZero{I}{J}{f}{z}
+            \in\dependentFinitelySupportedFunctions{I}{A}{z}$.
+\end{theorem}
+\begin{proof}
+    $f\in\dependentProduct{J}{\restrl{A}{J}}$ and
+        $\dependentSupport{J}{f}{\restrl{z}{J}}$ is finite by
+        \obv{dependent_finitely_supported_functions_iff}.
+    $\dependentFiniteSupportExtensionByZero{I}{J}{f}{z}
+        \in\dependentProduct{I}{A}$ by
+        \obv{dependent_finite_support_extension_by_zero_type}.
+    $\dependentSupport{I}{
+            \dependentFiniteSupportExtensionByZero{I}{J}{f}{z}}{z}
+        =\dependentSupport{J}{f}{\restrl{z}{J}}$ by
+        \obv{dependent_support_of_extension_by_zero}.
+    Follows by \obv{dependent_finitely_supported_functions_iff}.
+\end{proof}
+
+\begin{lemma}\label{constant_graph_restriction}
+    Suppose $J\subseteq I$.
+    Then $\restrl{I\times\{x\}}{J}=J\times\{x\}$.
+\end{lemma}
+\begin{proof}
+    Show that every element of $\restrl{I\times\{x\}}{J}$ is an
+        element of $J\times\{x\}$.
+    \begin{subproof}
+        Fix $w\in\restrl{I\times\{x\}}{J}$.
+        $w\in I\times\{x\}$ by
+            \obv{restrl_subseteq,subseteq}.
+        Take $i,y$ such that $i\in I$ and $y\in\{x\}$ and $w=(i,y)$ by
+            \auto{times}.
+        $i\in J$ by \auto{restrl_iff,pair_eq_iff}.
+        Follows by \auto{times}.
+    \end{subproof}
+    Show that every element of $J\times\{x\}$ is an element of
+        $\restrl{I\times\{x\}}{J}$.
+    \begin{subproof}
+        Fix $w\in J\times\{x\}$.
+        Take $j,y$ such that $j\in J$ and $y\in\{x\}$ and $w=(j,y)$ by
+            \auto{times}.
+        Hence $j\in I$ by \obv{subseteq}.
+        Thus $w\in I\times\{x\}$ by \auto{times}.
+        Follows by \auto{restrl_iff,pair_eq_iff}.
+    \end{subproof}
+    Follows by \obv{setext}.
+\end{proof}
+
+\begin{definition}\label{finite_support_extension_by_zero}
+    $\finiteSupportExtensionByZero{I}{J}{A}{z}{f}
+        =\dependentFiniteSupportExtensionByZero
+            {I}{J}{f}{I\times\{z\}}$.
+\end{definition}
+
+\begin{theorem}\label{finite_support_extension_by_zero_preserves_support}
+    Suppose $J\subseteq I$ and $z\in A$.
+    Let $f\in\finitelySupportedFunctions{J}{A}{z}$.
+    Then
+        $\finiteSupportExtensionByZero{I}{J}{A}{z}{f}
+            \in\finitelySupportedFunctions{I}{A}{z}$.
+\end{theorem}
+\begin{proof}
+    Let $C=I\times\{A\}$ and $q=I\times\{z\}$.
+    $C$ is a function on $I$ by
+        \auto{constant_graph_type,funs_is_function,funs_elim}.
+    $q\in\dependentProduct{I}{C}$ by
+        \auto{constant_family_dependent_product,
+            constant_graph_type,singleton_subset_intro,
+            funs_weaken_codom}.
+    $\restrl{C}{J}=J\times\{A\}$ by
+        \auto{constant_graph_restriction}.
+    $\restrl{q}{J}=J\times\{z\}$ by
+        \auto{constant_graph_restriction}.
+    Hence
+        $f\in\dependentFinitelySupportedFunctions
+            {J}{\restrl{C}{J}}{\restrl{q}{J}}$ by
+        \auto{constant_family_finite_support_space}.
+    Thus
+        $\dependentFiniteSupportExtensionByZero{I}{J}{f}{q}
+            \in\dependentFinitelySupportedFunctions{I}{C}{q}$ by
+        \obv{dependent_finite_support_extension_by_zero_preserves_support}.
+    Follows by
+        \auto{finite_support_extension_by_zero,
+            constant_family_finite_support_space}.
+\end{proof}
+
+\begin{proposition}\label{finite_support_extension_by_zero_on_domain}
+    Suppose $J\subseteq I$ and $z\in A$.
+    Let $f\in\finitelySupportedFunctions{J}{A}{z}$ and $j\in J$.
+    Then
+        $\apply{\finiteSupportExtensionByZero{I}{J}{A}{z}{f}}{j}=f(j)$.
+\end{proposition}
+\begin{proof}
+    Let $C=I\times\{A\}$ and $q=I\times\{z\}$.
+    $C$ is a function on $I$ by
+        \auto{constant_graph_type,funs_is_function,funs_elim}.
+    $q\in\dependentProduct{I}{C}$ by
+        \auto{constant_family_dependent_product,
+            constant_graph_type,singleton_subset_intro,
+            funs_weaken_codom}.
+    $\restrl{C}{J}=J\times\{A\}$ by
+        \auto{constant_graph_restriction}.
+    Hence $f\in\dependentProduct{J}{\restrl{C}{J}}$ by
+        \auto{finitely_supported_functions_iff,
+            constant_family_dependent_product}.
+    $\apply{\dependentFiniteSupportExtensionByZero{I}{J}{f}{q}}{j}
+        =f(j)$ by
+        \obv{dependent_finite_support_extension_by_zero_on_domain}.
+    Follows by \auto{finite_support_extension_by_zero}.
+\end{proof}
+
+\begin{proposition}\label{finite_support_extension_by_zero_off_domain}
+    Suppose $J\subseteq I$ and $z\in A$.
+    Let $f\in\finitelySupportedFunctions{J}{A}{z}$ and
+        $i\in I\setminus J$.
+    Then
+        $\apply{\finiteSupportExtensionByZero{I}{J}{A}{z}{f}}{i}=z$.
+\end{proposition}
+\begin{proof}
+    Let $C=I\times\{A\}$ and $q=I\times\{z\}$.
+    $C$ is a function on $I$ by
+        \auto{constant_graph_type,funs_is_function,funs_elim}.
+    $q\in\dependentProduct{I}{C}$ by
+        \auto{constant_family_dependent_product,
+            constant_graph_type,singleton_subset_intro,
+            funs_weaken_codom}.
+    $\restrl{C}{J}=J\times\{A\}$ by
+        \auto{constant_graph_restriction}.
+    Hence $f\in\dependentProduct{J}{\restrl{C}{J}}$ by
+        \auto{finitely_supported_functions_iff,
+            constant_family_dependent_product}.
+    $(I\times\{z\})(i)=z$ by
+        \obv{constant_graph_application,setminus}.
+    $\apply{\dependentFiniteSupportExtensionByZero{I}{J}{f}{q}}{i}
+        =q(i)$ by
+        \obv{dependent_finite_support_extension_by_zero_off_domain}.
+    Follows by \auto{finite_support_extension_by_zero}.
+\end{proof}

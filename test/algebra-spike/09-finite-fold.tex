@@ -1,0 +1,633 @@
+\import{algebra/monoid.tex}
+\import{set/finite-fold.tex}
+
+\section{Enumeration-independent finite folds}
+
+\begin{proposition}\label{spike_sequence_append_range}
+    Suppose $s$ is a finite sequence in $A$ and $x\in A$.
+    Then
+        $\ran{\sequenceAppend{s}{x}}=\cons{x}{\ran{s}}$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{sequence_append,ran_cons}.
+\end{proof}
+
+\begin{proposition}\label{spike_sequence_append_injective_elim}
+    Suppose $s$ is a finite sequence in $A$ and $x\in A$.
+    Suppose $\sequenceAppend{s}{x}$ is injective.
+    Then $s$ is injective and $x\notin\ran{s}$.
+\end{proposition}
+\begin{proof}
+    Let $t=\sequenceAppend{s}{x}$.
+    $t$ is injective by \auto.
+    $s$ is a function and $t$ is a function by
+        \auto{finite_sequence_domain,funs_is_function,
+            sequence_append_finite_sequence}.
+    $s\subseteq t$ by \auto{spike_sequence_append_range,sequence_append,
+        subseteq,cons_iff}.
+    Show that $s$ is injective.
+    \begin{subproof}
+        Show that for all $i,j,u$ such that $(i,u),(j,u)\in s$ we have
+            $i=j$.
+        \begin{subproof}
+            Fix $i,j,u$.
+            Assume $(i,u),(j,u)\in s$.
+            Hence $(i,u),(j,u)\in t$ by \auto{subseteq}.
+            Follows by \auto{injective}.
+        \end{subproof}
+        Follows by \auto{injective}.
+    \end{subproof}
+    Show that $x\notin\ran{s}$.
+    \begin{subproof}
+        Suppose not.
+        Take $i\in\dom{s}$ such that $s(i)=x$ by
+            \auto{fun_ran_iff}.
+        $\dom{s}\notin\dom{s}$ by \auto{in_irrefl}.
+        $i\in\dom{t}$ by
+            \auto{sequence_append_domain,subseteq_self_suc_intro,subseteq}.
+        $\dom{s}\in\dom{t}$ by
+            \auto{sequence_append_domain,suc_intro_self}.
+        $t(i)=s(i)$ by \auto{sequence_append_old_value}.
+        $t(\dom{s})=x$ by \auto{sequence_append_last_value}.
+        Hence $i=\dom{s}$ by \auto{injective_function}.
+        Contradiction.
+    \end{subproof}
+    Follows.
+\end{proof}
+
+\begin{proposition}\label{spike_sequence_append_injective_intro}
+    Suppose $s$ is a finite sequence in $A$ and $x\in A$.
+    Suppose $s$ is injective and $x\notin\ran{s}$.
+    Then $\sequenceAppend{s}{x}$ is injective.
+\end{proposition}
+\begin{proof}
+    Let $t=\sequenceAppend{s}{x}$.
+    $s$ is a function and $t$ is a function by
+        \auto{finite_sequence_domain,funs_is_function,
+            sequence_append_finite_sequence}.
+    Show that for all $i,j\in\dom{t}$ such that $t(i)=t(j)$ we have
+        $i=j$.
+    \begin{subproof}
+        Fix $i,j\in\dom{t}$.
+        Assume $t(i)=t(j)$.
+        $i\in\dom{s}$ or $i=\dom{s}$ by
+            \auto{sequence_append_domain,suc_iff}.
+        $j\in\dom{s}$ or $j=\dom{s}$ by
+            \auto{sequence_append_domain,suc_iff}.
+        \begin{byCase}
+        \caseOf{$i\in\dom{s}$ and $j\in\dom{s}$.}
+            $t(i)=s(i)$ and $t(j)=s(j)$ by
+                \auto{sequence_append_old_value}.
+            Hence $s(i)=s(j)$ by \auto.
+            Follows by \auto{injective_function}.
+        \caseOf{It is not the case that
+            $i\in\dom{s}$ and $j\in\dom{s}$.}
+            $i=\dom{s}$ or $j=\dom{s}$ by \auto.
+            \begin{byCase}
+            \caseOf{$i=\dom{s}$.}
+                $t(i)=x$ by \auto{sequence_append_last_value}.
+                Show that $j=\dom{s}$.
+                \begin{subproof}
+                    Suppose not.
+                    Hence $j\in\dom{s}$ by \auto.
+                    $t(j)=s(j)$ by \auto{sequence_append_old_value}.
+                    Hence $s(j)=x$ by \auto.
+                    Thus $x\in\ran{s}$ by \auto{fun_ran_iff}.
+                    Contradiction.
+                \end{subproof}
+                Follows by \auto.
+            \caseOf{$i\neq\dom{s}$.}
+                Hence $j=\dom{s}$ by \auto.
+                $t(j)=x$ by \auto{sequence_append_last_value}.
+                Show that $i=\dom{s}$.
+                \begin{subproof}
+                    Suppose not.
+                    Hence $i\in\dom{s}$ by \auto.
+                    $t(i)=s(i)$ by \auto{sequence_append_old_value}.
+                    Hence $s(i)=x$ by \auto.
+                    Thus $x\in\ran{s}$ by \auto{fun_ran_iff}.
+                    Contradiction.
+                \end{subproof}
+                Follows.
+            \end{byCase}
+        \end{byCase}
+    \end{subproof}
+    Follows by \auto{injective_function}.
+\end{proof}
+
+\begin{proposition}\label{spike_map_finite_sequence}
+    Suppose $s$ is a finite sequence in $A$ and $f\in\funs{A}{B}$.
+    Then $f\circ s$ is a finite sequence in $B$.
+\end{proposition}
+\begin{proof}
+    $s\in\funs{\dom{s}}{A}$ and $\dom{s}$ is a natural number by
+        \auto{finite_sequence_domain}.
+    Hence $f\circ s\in\funs{\dom{s}}{B}$ by \auto{funs_circ}.
+    Follows by \auto{finite_sequence}.
+\end{proof}
+
+\begin{proposition}\label{spike_map_sequence_append}
+    Suppose $s$ is a finite sequence in $A$.
+    Suppose $f\in\funs{A}{B}$ and $x\in A$.
+    Then
+        $f\circ\sequenceAppend{s}{x}
+            =\sequenceAppend{f\circ s}{f(x)}$.
+\end{proposition}
+\begin{proof}
+    Let $t=\sequenceAppend{s}{x}$.
+    Let $u=f\circ t$ and $v=\sequenceAppend{f\circ s}{f(x)}$.
+    $s\in\funs{\dom{s}}{A}$ by \auto{finite_sequence_domain}.
+    $f\circ s$ is a finite sequence in $B$ by
+        \auto{spike_map_finite_sequence}.
+    $f(x)\in B$ by \auto{funs_type_apply}.
+    $t$ is a finite sequence in $A$ by
+        \auto{sequence_append_finite_sequence}.
+    Hence $t\in\funs{\dom{t}}{A}$ by
+        \auto{finite_sequence_domain}.
+    $f$ is composable with $t$ and $f$ is composable with $s$ by
+        \auto{funs_ran,funs}.
+    Hence $u$ is a finite sequence in $B$ by
+        \auto{spike_map_finite_sequence}.
+    $v$ is a finite sequence in $B$ by
+        \auto{sequence_append_finite_sequence}.
+    Hence $u$ is a function by
+        \auto{finite_sequence_domain,funs_is_function}.
+    $v$ is a function by
+        \auto{finite_sequence_domain,funs_is_function}.
+    $\dom{u}=\dom{t}=\suc{\dom{s}}$ by
+        \auto{funs_circ,finite_sequence_domain,funs_elim,
+            sequence_append_domain}.
+    $\dom{v}=\suc{\dom{f\circ s}}=\suc{\dom{s}}$ by
+        \auto{sequence_append_domain,funs_circ,
+            finite_sequence_domain,funs_elim}.
+    Hence $\dom{u}=\dom{v}$ by \auto.
+    Show that for every $i\in\dom{u}$ we have $u(i)=v(i)$.
+    \begin{subproof}
+        Fix $i\in\dom{u}$.
+        Hence $i\in\suc{\dom{s}}$ by \auto.
+        $i\in\dom{s}$ or $i=\dom{s}$ by \auto{suc_iff}.
+        \begin{byCase}
+        \caseOf{$i\in\dom{s}$.}
+            Hence $i\in\dom{t}$ by
+                \auto{sequence_append_domain,
+                    subseteq_self_suc_intro,subseteq}.
+            $(f\circ t)(i)=f(t(i))$ by
+                \auto{circ_apply,funs_is_function}.
+            Hence $u(i)=f(t(i))$ by \auto.
+            $t(i)=s(i)$ by \auto{sequence_append_old_value}.
+            $i\in\dom{f\circ s}$ by
+                \auto{funs_circ,finite_sequence_domain,funs_elim}.
+            $v(i)=(f\circ s)(i)$ by
+                \auto{sequence_append_old_value}.
+            $(f\circ s)(i)=f(s(i))$ by
+                \auto{circ_apply,funs_is_function}.
+            Follows by \auto.
+        \caseOf{$i\notin\dom{s}$.}
+            Hence $i=\dom{s}$ by \auto.
+            $i\in\dom{t}$ by
+                \auto{sequence_append_domain,suc_intro_self}.
+            $(f\circ t)(i)=f(t(i))$ by
+                \auto{circ_apply,funs_is_function}.
+            Hence $u(i)=f(t(i))$ by \auto.
+            $t(i)=x$ by \auto{sequence_append_last_value}.
+            $\dom{f\circ s}=\dom{s}$ by
+                \auto{funs_circ,finite_sequence_domain,funs_elim}.
+            Hence $v(i)=f(x)$ by
+                \auto{sequence_append_last_value}.
+            Follows by \auto.
+        \end{byCase}
+    \end{subproof}
+    Follows by \auto{funext_on_domain}.
+\end{proof}
+
+\begin{proposition}\label{spike_mapped_append_fold}
+    Let $M$ be a monoid.
+    Suppose $s$ is a finite sequence in $A$.
+    Suppose $f\in\funs{A}{\carrier[M]}$ and $x\in A$.
+    Then
+        $\sequenceFold{\mul[M]}{\neutral[M]}{
+            f\circ\sequenceAppend{s}{x}}
+        =\mul[M]
+            (\sequenceFold{\mul[M]}{\neutral[M]}{f\circ s},f(x))$.
+\end{proposition}
+\begin{proof}
+    $f\circ s$ is a finite sequence in $\carrier[M]$ by
+        \auto{spike_map_finite_sequence}.
+    $f(x)\in\carrier[M]$ by \auto{funs_type_apply}.
+    Follows by
+        \auto{spike_map_sequence_append,sequence_fold_append}.
+\end{proof}
+
+\begin{proposition}\label{spike_mapped_fold_type}
+    Let $M$ be a monoid.
+    Suppose $s$ is a finite sequence in $A$.
+    Suppose $f\in\funs{A}{\carrier[M]}$.
+    Then
+        $\sequenceFold{\mul[M]}{\neutral[M]}{f\circ s}
+            \in\carrier[M]$.
+\end{proposition}
+\begin{proof}
+    $f\circ s$ is a finite sequence in $\carrier[M]$ by
+        \auto{spike_map_finite_sequence}.
+    $\neutral[M]\in\carrier[M]$ by
+        \auto{monoid_is_unital_magma,unitalmagma_type}.
+    $\mul[M]\in
+        \funs{\carrier[M]\times\carrier[M]}{\carrier[M]}$ by
+        \auto{monoid_is_magma,magma_mul_graph}.
+    Follows by \auto{sequence_fold_typed}.
+\end{proof}
+
+\begin{proposition}\label{spike_commutative_monoid_exchange}
+    Let $M$ be a monoid.
+    Suppose for all $x,y\in\carrier[M]$ we have
+        $\mul[M](x,y)=\mul[M](y,x)$.
+    Let $p,a,b\in\carrier[M]$.
+    Then
+        $\mul[M](\mul[M](p,a),b)
+            =\mul[M](\mul[M](p,b),a)$.
+\end{proposition}
+\begin{proof}
+    $\mul[M](a,b)=\mul[M](b,a)$ by \auto.
+    $\mul[M](p,\mul[M](a,b))
+        =\mul[M](\mul[M](p,a),b)$ by \auto{monoid_assoc}.
+    $\mul[M](p,\mul[M](b,a))
+        =\mul[M](\mul[M](p,b),a)$ by \auto{monoid_assoc}.
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{spike_fold_extract_value}
+    Let $M$ be a monoid.
+    Suppose for all $u,v\in\carrier[M]$ we have
+        $\mul[M](u,v)=\mul[M](v,u)$.
+    Suppose $s$ is a finite sequence in $A$ and $s$ is injective.
+    Suppose $f\in\funs{A}{\carrier[M]}$ and $x\in\ran{s}$.
+    Then there exists $r$ such that
+        $r$ is a finite sequence in $A$ and
+        $r$ is injective and
+        $\ran{r}=\ran{s}\setminus\{x\}$ and
+        $\sequenceFold{\mul[M]}{\neutral[M]}{f\circ s}
+            =\mul[M]
+                (\sequenceFold{\mul[M]}{\neutral[M]}{f\circ r},
+                 f(x))$.
+\end{theorem}
+\begin{proof}
+    Let $C=\{t\in\finiteSequences{A}\mid
+        \text{if $t$ is injective, then for every $a\in\ran{t}$
+        there exists $r$ such that
+            $r$ is a finite sequence in $A$ and
+            $r$ is injective and
+            $\ran{r}=\ran{t}\setminus\{a\}$ and
+            $\sequenceFold{\mul[M]}{\neutral[M]}{f\circ t}
+                =\mul[M]
+                    (\sequenceFold{\mul[M]}{\neutral[M]}{f\circ r},
+                     f(a))$}\}$.
+    $\emptyset\in C$ by
+        \auto{finite_sequences_iff,emptyset_finite_sequence,
+            ran_emptyset,emptyset}.
+    Show that for every $t,y$ such that
+        $t\in C$ and $y\in A$ and $t$ is a finite sequence in $A$
+        we have $\sequenceAppend{t}{y}\in C$.
+    \begin{subproof}
+        Fix $t,y$.
+        Assume $t\in C$ and $y\in A$ and
+            $t$ is a finite sequence in $A$.
+        Let $q=\sequenceAppend{t}{y}$.
+        $q$ is a finite sequence in $A$ by
+            \auto{sequence_append_finite_sequence}.
+        Hence $q\in\finiteSequences{A}$ by
+            \auto{finite_sequences_iff}.
+        Show that if $q$ is injective, then for every $a\in\ran{q}$
+            there exists $r$ such that
+                $r$ is a finite sequence in $A$ and
+                $r$ is injective and
+                $\ran{r}=\ran{q}\setminus\{a\}$ and
+                $\sequenceFold{\mul[M]}{\neutral[M]}{f\circ q}
+                    =\mul[M]
+                        (\sequenceFold{\mul[M]}{\neutral[M]}{f\circ r},
+                         f(a))$.
+        \begin{subproof}
+            Assume $q$ is injective.
+            Hence $t$ is injective and $y\notin\ran{t}$ by
+                \auto{spike_sequence_append_injective_elim}.
+            Fix $a\in\ran{q}$.
+            $\ran{q}=\cons{y}{\ran{t}}$ by
+                \auto{spike_sequence_append_range}.
+            \begin{byCase}
+            \caseOf{$a=y$.}
+                $\ran{t}=\ran{q}\setminus\{a\}$ by
+                    \auto{setext,setminus,cons_iff,singleton_iff}.
+                $\sequenceFold{\mul[M]}{\neutral[M]}{f\circ q}
+                    =\mul[M]
+                        (\sequenceFold{\mul[M]}{\neutral[M]}{f\circ t},
+                         f(a))$ by
+                    \auto{spike_mapped_append_fold}.
+                Follows by \auto.
+            \caseOf{$a\neq y$.}
+                Hence $a\in\ran{t}$ by \auto{cons_iff}.
+                Take $r$ such that
+                    $r$ is a finite sequence in $A$ and
+                    $r$ is injective and
+                    $\ran{r}=\ran{t}\setminus\{a\}$ and
+                    $\sequenceFold{\mul[M]}{\neutral[M]}{f\circ t}
+                        =\mul[M]
+                            (\sequenceFold{\mul[M]}{\neutral[M]}{f\circ r},
+                             f(a))$ by \auto.
+                $y\notin\ran{r}$ by \auto{setminus}.
+                Let $w=\sequenceAppend{r}{y}$.
+                $w$ is a finite sequence in $A$ by
+                    \auto{sequence_append_finite_sequence}.
+                $w$ is injective by
+                    \auto{spike_sequence_append_injective_intro}.
+                $\ran{w}=\cons{y}{\ran{r}}$ by
+                    \auto{spike_sequence_append_range}.
+                Hence $\ran{w}=\ran{q}\setminus\{a\}$ by
+                    \auto{setext,setminus,cons_iff,singleton_iff}.
+                Let $p=\sequenceFold{\mul[M]}{\neutral[M]}{f\circ r}$.
+                $p\in\carrier[M]$ by
+                    \auto{spike_mapped_fold_type}.
+                $a\in A$ by
+                    \auto{finite_sequence_domain,funs_ran,subseteq}.
+                Hence $f(a)\in\carrier[M]$ by
+                    \auto{funs_type_apply}.
+                $f(y)\in\carrier[M]$ by \auto{funs_type_apply}.
+                $\sequenceFold{\mul[M]}{\neutral[M]}{f\circ q}
+                    =\mul[M]
+                        (\sequenceFold{\mul[M]}{\neutral[M]}{f\circ t},
+                         f(y))$ by
+                    \auto{spike_mapped_append_fold}.
+                Hence
+                    $\sequenceFold{\mul[M]}{\neutral[M]}{f\circ q}
+                        =\mul[M](\mul[M](p,f(a)),f(y))$ by
+                    \auto.
+                $\sequenceFold{\mul[M]}{\neutral[M]}{f\circ w}
+                    =\mul[M](p,f(y))$ by
+                    \auto{spike_mapped_append_fold}.
+                $\mul[M](\mul[M](p,f(a)),f(y))
+                    =\mul[M](\mul[M](p,f(y)),f(a))$ by
+                    \auto{spike_commutative_monoid_exchange}.
+                Hence
+                    $\sequenceFold{\mul[M]}{\neutral[M]}{f\circ q}
+                        =\mul[M]
+                            (\sequenceFold{\mul[M]}{\neutral[M]}{f\circ w},
+                             f(a))$ by \auto.
+                Follows by \auto.
+            \end{byCase}
+        \end{subproof}
+        Follows by \auto.
+    \end{subproof}
+    $s\in C$ by \auto{finite_sequence_induction}.
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{spike_injective_sequence_fold_invariant}
+    Let $M$ be a monoid.
+    Suppose for all $u,v\in\carrier[M]$ we have
+        $\mul[M](u,v)=\mul[M](v,u)$.
+    Suppose $s$ is a finite sequence in $A$ and
+        $t$ is a finite sequence in $A$.
+    Suppose $s$ is injective and $t$ is injective.
+    Suppose $\ran{s}=\ran{t}$.
+    Suppose $f\in\funs{A}{\carrier[M]}$.
+    Then
+        $\sequenceFold{\mul[M]}{\neutral[M]}{f\circ s}
+            =\sequenceFold{\mul[M]}{\neutral[M]}{f\circ t}$.
+\end{theorem}
+\begin{proof}
+    Let $C=\{q\in\finiteSequences{A}\mid
+        \text{if $q$ is injective, then for every $r$ such that
+            $r$ is a finite sequence in $A$ and
+            $r$ is injective and $\ran{q}=\ran{r}$ we have
+            $\sequenceFold{\mul[M]}{\neutral[M]}{f\circ q}
+                =\sequenceFold{\mul[M]}{\neutral[M]}{f\circ r}$}\}$.
+    Show that $\emptyset\in C$.
+    \begin{subproof}
+        $\emptyset$ is a finite sequence in $A$ by
+            \auto{emptyset_finite_sequence}.
+        Hence $\emptyset\in\finiteSequences{A}$ by
+            \auto{finite_sequences_iff}.
+        $\emptyset$ is injective by \auto{emptyset,injective}.
+        Show that for every $r$ such that
+            $r$ is a finite sequence in $A$ and
+            $r$ is injective and $\ran{\emptyset}=\ran{r}$ we have
+            $\sequenceFold{\mul[M]}{\neutral[M]}{f\circ\emptyset}
+                =\sequenceFold{\mul[M]}{\neutral[M]}{f\circ r}$.
+        \begin{subproof}
+            Fix $r$.
+            Assume $r$ is a finite sequence in $A$ and
+                $r$ is injective and $\ran{\emptyset}=\ran{r}$.
+            Hence $\ran{r}=\emptyset$ by \auto{ran_emptyset}.
+            $r$ is a relation by
+                \auto{finite_sequence_domain,funs_is_relation}.
+            Hence $r=\emptyset$ by
+                \auto{setext,emptyset,relation,ran_intro}.
+            Follows by \auto.
+        \end{subproof}
+        Follows by \auto.
+    \end{subproof}
+    Show that for every $q,y$ such that
+        $q\in C$ and $y\in A$ and $q$ is a finite sequence in $A$
+        we have $\sequenceAppend{q}{y}\in C$.
+    \begin{subproof}
+        Fix $q,y$.
+        Assume $q\in C$ and $y\in A$ and
+            $q$ is a finite sequence in $A$.
+        Let $w=\sequenceAppend{q}{y}$.
+        $w$ is a finite sequence in $A$ by
+            \auto{sequence_append_finite_sequence}.
+        Hence $w\in\finiteSequences{A}$ by
+            \auto{finite_sequences_iff}.
+        Show that if $w$ is injective, then for every $r$ such that
+            $r$ is a finite sequence in $A$ and
+            $r$ is injective and $\ran{w}=\ran{r}$ we have
+            $\sequenceFold{\mul[M]}{\neutral[M]}{f\circ w}
+                =\sequenceFold{\mul[M]}{\neutral[M]}{f\circ r}$.
+        \begin{subproof}
+            Assume $w$ is injective.
+            Hence $q$ is injective and $y\notin\ran{q}$ by
+                \auto{spike_sequence_append_injective_elim}.
+            Fix $r$.
+            Assume $r$ is a finite sequence in $A$ and
+                $r$ is injective and $\ran{w}=\ran{r}$.
+            $\ran{w}=\cons{y}{\ran{q}}$ by
+                \auto{spike_sequence_append_range}.
+            Hence $y\in\ran{r}$ by \auto{cons_iff}.
+            Take $v$ such that
+                $v$ is a finite sequence in $A$ and
+                $v$ is injective and
+                $\ran{v}=\ran{r}\setminus\{y\}$ and
+                $\sequenceFold{\mul[M]}{\neutral[M]}{f\circ r}
+                    =\mul[M]
+                        (\sequenceFold{\mul[M]}{\neutral[M]}{f\circ v},
+                         f(y))$ by
+                \auto{spike_fold_extract_value}.
+            $\ran{q}=\ran{r}\setminus\{y\}$ by
+                \auto{setext,setminus,cons_iff,singleton_iff}.
+            Hence $\ran{q}=\ran{v}$ by \auto.
+            $\sequenceFold{\mul[M]}{\neutral[M]}{f\circ q}
+                =\sequenceFold{\mul[M]}{\neutral[M]}{f\circ v}$ by
+                \auto.
+            $\sequenceFold{\mul[M]}{\neutral[M]}{f\circ w}
+                =\mul[M]
+                    (\sequenceFold{\mul[M]}{\neutral[M]}{f\circ q},
+                     f(y))$ by
+                \auto{spike_mapped_append_fold}.
+            Follows by \auto.
+        \end{subproof}
+        Follows by \auto.
+    \end{subproof}
+    $s\in C$ by \auto{finite_sequence_induction}.
+    Follows by \auto.
+\end{proof}
+
+\begin{corollary}\label{spike_enumeration_fold_invariant}
+    Let $M$ be a monoid.
+    Suppose for all $u,v\in\carrier[M]$ we have
+        $\mul[M](u,v)=\mul[M](v,u)$.
+    Suppose $e$ is an enumeration of $A$ and
+        $d$ is an enumeration of $A$.
+    Suppose $f\in\funs{A}{\carrier[M]}$.
+    Then
+        $\sequenceFold{\mul[M]}{\neutral[M]}{f\circ e}
+            =\sequenceFold{\mul[M]}{\neutral[M]}{f\circ d}$.
+\end{corollary}
+\begin{proof}
+    $e$ is a finite sequence in $A$ and
+        $d$ is a finite sequence in $A$ by
+        \auto{enumeration_is_finite_sequence}.
+    $e$ is injective and $d$ is injective and
+        $\ran{e}=A=\ran{d}$ by
+        \auto{enumeration,bijections,ran_of_surj}.
+    Follows by \auto{spike_injective_sequence_fold_invariant}.
+\end{proof}
+
+\begin{definition}\label{spike_finite_fold_values}
+    $\spikeFiniteFoldValues{M}{A}{f}=
+        \{y\in\carrier[M]\mid
+            \text{there exists $e$ such that
+                $e$ is an enumeration of $A$ and
+                $y=\sequenceFold{\mul[M]}{\neutral[M]}{f\circ e}$}\}$.
+\end{definition}
+
+\begin{proposition}\label{spike_finite_fold_values_iff}
+    $y\in\spikeFiniteFoldValues{M}{A}{f}$ iff
+        $y\in\carrier[M]$ and there exists $e$ such that
+            $e$ is an enumeration of $A$ and
+            $y=\sequenceFold{\mul[M]}{\neutral[M]}{f\circ e}$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{spike_finite_fold_values}.
+\end{proof}
+
+\begin{theorem}\label{spike_finite_fold_values_inhabited_subsingleton}
+    Let $M$ be a monoid.
+    Suppose for all $u,v\in\carrier[M]$ we have
+        $\mul[M](u,v)=\mul[M](v,u)$.
+    Suppose $A$ is finite and $f\in\funs{A}{\carrier[M]}$.
+    Then $\spikeFiniteFoldValues{M}{A}{f}$ is inhabited and
+        $\spikeFiniteFoldValues{M}{A}{f}$ is a subsingleton.
+\end{theorem}
+\begin{proof}
+    Take $e$ such that $e$ is an enumeration of $A$ by
+        \auto{finite_iff_has_enumeration}.
+    $e$ is a finite sequence in $A$ by
+        \auto{enumeration_is_finite_sequence}.
+    Let $p=\sequenceFold{\mul[M]}{\neutral[M]}{f\circ e}$.
+    $p\in\carrier[M]$ by \auto{spike_mapped_fold_type}.
+    Hence $p\in\spikeFiniteFoldValues{M}{A}{f}$ by
+        \auto{spike_finite_fold_values_iff}.
+    Hence $\spikeFiniteFoldValues{M}{A}{f}$ is inhabited by \auto.
+    Show that $\spikeFiniteFoldValues{M}{A}{f}$ is a subsingleton.
+    \begin{subproof}
+        Show that for all $u,v\in\spikeFiniteFoldValues{M}{A}{f}$
+            we have $u=v$.
+        \begin{subproof}
+            Fix $u,v\in\spikeFiniteFoldValues{M}{A}{f}$.
+            Take $d$ such that $d$ is an enumeration of $A$ and
+                $u=\sequenceFold{\mul[M]}{\neutral[M]}{f\circ d}$ by
+                \auto{spike_finite_fold_values_iff}.
+            Take $q$ such that $q$ is an enumeration of $A$ and
+                $v=\sequenceFold{\mul[M]}{\neutral[M]}{f\circ q}$ by
+                \auto{spike_finite_fold_values_iff}.
+            Follows by \auto{spike_enumeration_fold_invariant}.
+        \end{subproof}
+        Follows.
+    \end{subproof}
+    Follows.
+\end{proof}
+
+\begin{theorem}\label{spike_finite_fold_values_singleton}
+    Let $M$ be a monoid.
+    Suppose for all $u,v\in\carrier[M]$ we have
+        $\mul[M](u,v)=\mul[M](v,u)$.
+    Suppose $A$ is finite and $f\in\funs{A}{\carrier[M]}$.
+    Then there exists $p\in\carrier[M]$ such that
+        $\spikeFiniteFoldValues{M}{A}{f}=\{p\}$.
+\end{theorem}
+\begin{proof}
+    $\spikeFiniteFoldValues{M}{A}{f}$ is inhabited and
+        $\spikeFiniteFoldValues{M}{A}{f}$ is a subsingleton by
+        \auto{spike_finite_fold_values_inhabited_subsingleton}.
+    Take $p$ such that
+        $p\in\spikeFiniteFoldValues{M}{A}{f}$ by \auto.
+    Hence $p\in\carrier[M]$ by
+        \auto{spike_finite_fold_values_iff}.
+    $\spikeFiniteFoldValues{M}{A}{f}=\{p\}$ by
+        \auto{singleton_iff_inhabited_subsingleton}.
+    Follows by \auto.
+\end{proof}
+
+\begin{proposition}\label{spike_unions_singleton}
+    $\unions{\{x\}}=x$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{setext,unions_iff,singleton_iff}.
+\end{proof}
+
+\begin{definition}\label{spike_finite_fold}
+    $\finiteFold{M}{A}{f}=\unions{\spikeFiniteFoldValues{M}{A}{f}}$.
+\end{definition}
+
+\begin{theorem}\label{spike_finite_fold_canonical}
+    Let $M$ be a monoid.
+    Suppose for all $u,v\in\carrier[M]$ we have
+        $\mul[M](u,v)=\mul[M](v,u)$.
+    Suppose $A$ is finite and $f\in\funs{A}{\carrier[M]}$.
+    Then
+        $\finiteFold{M}{A}{f}\in\carrier[M]$ and
+        $\spikeFiniteFoldValues{M}{A}{f}
+            =\{\finiteFold{M}{A}{f}\}$ and
+        for every $e$ such that $e$ is an enumeration of $A$ we have
+            $\finiteFold{M}{A}{f}
+                =\sequenceFold{\mul[M]}{\neutral[M]}{f\circ e}$.
+\end{theorem}
+\begin{proof}
+    Take $p\in\carrier[M]$ such that
+        $\spikeFiniteFoldValues{M}{A}{f}=\{p\}$ by
+        \auto{spike_finite_fold_values_singleton}.
+    $\finiteFold{M}{A}{f}=\unions{\{p\}}$ by
+        \auto{spike_finite_fold}.
+    Hence $\finiteFold{M}{A}{f}=p$ by
+        \auto{spike_unions_singleton}.
+    Hence $\finiteFold{M}{A}{f}\in\carrier[M]$ and
+        $\spikeFiniteFoldValues{M}{A}{f}
+            =\{\finiteFold{M}{A}{f}\}$ by \auto.
+    Show that for every $e$ such that $e$ is an enumeration of $A$
+        we have
+            $\finiteFold{M}{A}{f}
+                =\sequenceFold{\mul[M]}{\neutral[M]}{f\circ e}$.
+    \begin{subproof}
+        Fix $e$.
+        Assume $e$ is an enumeration of $A$.
+        $e$ is a finite sequence in $A$ by
+            \auto{enumeration_is_finite_sequence}.
+        Hence
+            $\sequenceFold{\mul[M]}{\neutral[M]}{f\circ e}
+                \in\carrier[M]$ by \auto{spike_mapped_fold_type}.
+        Hence
+            $\sequenceFold{\mul[M]}{\neutral[M]}{f\circ e}
+                \in\spikeFiniteFoldValues{M}{A}{f}$ by
+            \auto{spike_finite_fold_values_iff}.
+        Follows by \auto{singleton_iff}.
+    \end{subproof}
+    Follows.
+\end{proof}

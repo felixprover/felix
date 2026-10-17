@@ -1,0 +1,107 @@
+\section{Coordinate subspaces of topological powers}
+
+\import{topology/power.tex}
+\import{topology/embedding.tex}
+\import{set/function-coordinate.tex}
+
+Forgetting coordinates is continuous. Fixing one coordinate identifies the
+power on the remaining indices with the corresponding evaluation fibre,
+equipped with its subspace topology. This does not require a finite index set.
+
+\subsection{Restriction and insertion}
+
+\begin{theorem}\label{topological_power_restriction_continuous}
+    Let $X$ be a topological space.
+    Suppose $J\subseteq I$.
+    Then $\functionRestriction{I}{J}{\carrier[X]}$ is continuous from
+        $\TopologicalPower{X}{I}$ to $\TopologicalPower{X}{J}$.
+\end{theorem}
+\begin{proof}
+    $\identity{J}\in\funs{J}{I}$ by \auto{id_elem_funs,funs_weaken_codom}.
+    Follows by \auto{function_restriction,topological_power_reindex_continuous}.
+\end{proof}
+
+\begin{theorem}\label{topological_power_insertion_continuous}
+    Let $X$ be a topological space.
+    Let $i\in I$ and $a\in\carrier[X]$.
+    Then $\functionInsertion{I}{\carrier[X]}{i}{a}$ is continuous from
+        $\TopologicalPower{X}{I\setminus\{i\}}$ to $\TopologicalPower{X}{I}$.
+\end{theorem}
+\begin{proof}
+    Let $D=I\setminus\{i\}$ and $Z=\TopologicalPower{X}{D}$.
+    Let $S=\functionInsertion{I}{\carrier[X]}{i}{a}$.
+    $Z$ is a topological space by \auto{topological_power_is_topological_space}.
+    $\carrier[Z]=\funs{D}{\carrier[X]}$ by \auto{topological_power_carrier}.
+    $S\in\funs{\carrier[Z]}{\funs{I}{\carrier[X]}}$ by \auto{function_insertion_type}.
+    Show that for every $j\in I$ we have
+        $\functionEvaluation{I}{\carrier[X]}{j}\circ S$ is continuous from $Z$ to $X$.
+    \begin{subproof}
+        Fix $j\in I$.
+        \begin{byCase}
+            \caseOf{$j=i$.}
+                $\functionEvaluation{I}{\carrier[X]}{j}\circ S=\carrier[Z]\times\{a\}$ by
+                    \auto{function_evaluation_insertion_selected}.
+                Follows by \auto{constant_graph_continuous}.
+            \caseOf{$j\neq i$.}
+                $j\in D$ by \auto{setminus,singleton_iff}.
+                $\functionEvaluation{I}{\carrier[X]}{j}\circ S
+                    =\functionEvaluation{D}{\carrier[X]}{j}$ by
+                    \auto{function_evaluation_insertion_other}.
+                Follows by \auto{topological_power_evaluation}.
+        \end{byCase}
+    \end{subproof}
+    Follows by \auto{topological_power_continuity_iff}.
+\end{proof}
+
+\subsection{A homeomorphism onto the fibre}
+
+\begin{theorem}\label{topological_power_insertion_homeomorphism}
+    Let $X$ be a topological space.
+    Let $i\in I$ and $a\in\carrier[X]$.
+    Then $\functionInsertion{I}{\carrier[X]}{i}{a}$ is a homeomorphism from
+        $\TopologicalPower{X}{I\setminus\{i\}}$ to
+        $\subspaceTopology{\TopologicalPower{X}{I}}{
+            \fibre{\functionEvaluation{I}{\carrier[X]}{i}}{a}}$.
+\end{theorem}
+\begin{proof}
+    Let $D=I\setminus\{i\}$ and $F=\fibre{\functionEvaluation{I}{\carrier[X]}{i}}{a}$.
+    Let $P=\TopologicalPower{X}{I}$ and $Z=\TopologicalPower{X}{D}$.
+    Let $T=\subspaceTopology{P}{F}$ and $S=\functionInsertion{I}{\carrier[X]}{i}{a}$.
+    $P$ is a topological space and $Z$ is a topological space by
+        \auto{topological_power_is_topological_space}.
+    $\carrier[P]=\funs{I}{\carrier[X]}$ and $\carrier[Z]=\funs{D}{\carrier[X]}$ by
+        \auto{topological_power_carrier}.
+    $F\subseteq\carrier[P]$ by \auto{function_evaluation_fibre,subseteq}.
+    Hence $\carrier[T]=F$ by \auto{subspace_topology_carrier_of_subset}.
+    $\ran{S}=F$ by \auto{function_insertion_range}.
+    $S$ is continuous from $Z$ to $P$ by \auto{topological_power_insertion_continuous}.
+    Hence $S$ is continuous from $Z$ to $T$ by
+        \auto{continuous_codomain_corestriction,subseteq_refl}.
+    $D\subseteq I$ by \auto{setminus_subseteq}.
+    $\functionRestriction{I}{D}{\carrier[X]}$ is continuous from $P$ to $Z$ by
+        \auto{topological_power_restriction_continuous}.
+    Hence $\restrl{\functionRestriction{I}{D}{\carrier[X]}}{F}$ is continuous from $T$ to $Z$
+        by \auto{continuous_domain_restriction_on_subset}.
+    $\converse{S}=\restrl{\functionRestriction{I}{D}{\carrier[X]}}{F}$ by
+        \auto{function_insertion_converse}.
+    $S\in\bijections{\carrier[Z]}{\carrier[T]}$ by \auto{function_insertion_bijection}.
+    Follows by \auto{homeomorphism}.
+\end{proof}
+
+\begin{corollary}\label{topological_power_insertion_embedding}
+    Let $X$ be a topological space.
+    Let $i\in I$ and $a\in\carrier[X]$.
+    Then $\functionInsertion{I}{\carrier[X]}{i}{a}$ is a topological embedding from
+        $\TopologicalPower{X}{I\setminus\{i\}}$ to $\TopologicalPower{X}{I}$.
+\end{corollary}
+\begin{proof}
+    $\TopologicalPower{X}{I}$ is a topological space and
+        $\TopologicalPower{X}{I\setminus\{i\}}$ is a topological space by
+        \obv{topological_power_is_topological_space}.
+    $\functionInsertion{I}{\carrier[X]}{i}{a}\in
+        \funs{\carrier[\TopologicalPower{X}{I\setminus\{i\}}]}{
+            \carrier[\TopologicalPower{X}{I}]}$ by
+        \auto{function_insertion_type,topological_power_carrier}.
+    Follows by \auto{topological_embedding,topological_power_insertion_homeomorphism,
+        function_insertion_range}.
+\end{proof}

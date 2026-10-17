@@ -1,0 +1,289 @@
+\section{Prelude}
+
+The prelude presents the fixed set-theoretic foundation used by every Felix
+theory.  Its unproved propositions are exact, confined views of compiled
+foundation principles; the later construction of the natural numbers is an
+ordinary checked development from those principles.
+
+% Only the confined prelude builder may authorize the foundation presentations
+% below.  This source is not an ordinary axiom module.
+
+\subsection{Universe principles}
+
+\begin{proposition}[Universe containment]\label{universe_contains}
+    For all $n$ we have $n\in\cumul{n}$.
+\end{proposition}
+
+\begin{proposition}[Universe transitivity]\label{universe_transitive}
+    For all $n,a$ we have if $a\in\cumul{n}$, then
+    for all $x$ we have if $x\in a$, then $x\in\cumul{n}$.
+\end{proposition}
+
+\begin{proposition}[Closure under family unions]%
+\label{universe_union_closed}
+    For all $n,a$ we have if $a\in\cumul{n}$, then
+    $\unions{a}\in\cumul{n}$.
+\end{proposition}
+
+\begin{proposition}[Closure under powersets]\label{universe_power_closed}
+    For all $n,a$ we have if $a\in\cumul{n}$, then
+    $\pow{a}\in\cumul{n}$.
+\end{proposition}
+
+\begin{proposition}[Closure under replacement]%
+\label{universe_replacement_closed}
+    $\forall n:\Set.\ \forall A:\Set.\ \forall f:\Set\to\Set.
+        A\in\cumul{n}\implies
+        (\forall x:\Set.\ x\in A\implies
+            \Apply{f}{x}\in\cumul{n})\implies
+        \repl{A}{f}\in\cumul{n}$.
+\end{proposition}
+
+\begin{proposition}[Universe minimality]\label{universe_minimal}
+    $\forall n:\Set.\ \forall U:\Set.
+        n\in U\implies
+        (\forall A:\Set.\ A\in U\implies
+            (\forall x:\Set.\ x\in A\implies x\in U))\implies
+        (\forall A:\Set.\ A\in U\implies \unions{A}\in U)\implies
+        (\forall A:\Set.\ A\in U\implies \pow{A}\in U)\implies
+        (\forall A:\Set.\ \forall f:\Set\to\Set.
+            A\in U\implies
+            (\forall x:\Set.\ x\in A\implies \Apply{f}{x}\in U)\implies
+            \repl{A}{f}\in U)\implies
+        (\forall x:\Set.\ x\in\cumul{n}\implies x\in U)$.
+\end{proposition}
+
+\begin{proposition}[Nested universes]\label{universe_nested}
+    For all $m,n$ we have if $n\in\cumul{m}$, then
+    for all $x$ we have if $x\in\cumul{n}$, then $x\in\cumul{m}$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{universe_transitive,universe_union_closed,universe_power_closed,universe_replacement_closed,universe_minimal}.
+\end{proof}
+
+\subsection{Least fixed points}
+
+The bounded least-fixed-point principles genuinely quantify over logical
+functions and predicates, so their exact typed form is retained.
+
+\begin{proposition}[Least-fixed-point bound]\label{lfp_bound}
+    $\forall D:\Set.\ \forall F:\Set\to\Set.
+        \forall x:\Set.\ x\in\lfp{D}{F}\implies x\in D$.
+\end{proposition}
+
+\begin{proposition}[Least pre-fixed point]\label{lfp_least}
+    $\forall D:\Set.\ \forall F:\Set\to\Set.\ \forall C:\Set.
+        (\forall x:\Set.\ x\in\Apply{F}{C}\implies x\in C)\implies
+        (\forall x:\Set.\ x\in C\implies x\in D)\implies
+        (\forall x:\Set.\ x\in\lfp{D}{F}\implies x\in C)$.
+\end{proposition}
+
+\begin{proposition}[Least fixed point]\label{lfp_fixed}
+    $\forall D:\Set.\ \forall F:\Set\to\Set.
+        ((\forall x:\Set.\ x\in\Apply{F}{D}\implies x\in D)\land
+        (\forall X:\Set.\ \forall Y:\Set.
+            ((\forall x:\Set.\ x\in X\implies x\in Y)\land
+             (\forall x:\Set.\ x\in Y\implies x\in D))\implies
+            (\forall x:\Set.
+                x\in\Apply{F}{X}\implies x\in\Apply{F}{Y})))\implies
+        \lfp{D}{F}=\Apply{F}{\lfp{D}{F}}$.
+\end{proposition}
+
+\begin{proposition}[Least-fixed-point induction]\label{lfp_induct}
+    $\forall D:\Set.\ \forall F:\Set\to\Set.
+     \forall P:\Set\to\Prop.\ \forall a:\Set.
+        ((\forall x:\Set.\ x\in\Apply{F}{D}\implies x\in D)\land
+        (\forall X:\Set.\ \forall Y:\Set.
+            ((\forall x:\Set.\ x\in X\implies x\in Y)\land
+             (\forall x:\Set.\ x\in Y\implies x\in D))\implies
+            (\forall x:\Set.
+                x\in\Apply{F}{X}\implies x\in\Apply{F}{Y})))\implies
+        a\in\lfp{D}{F}\implies
+        (\forall z:\Set.
+            z\in\Apply{F}{\sep{\lfp{D}{F}}{P}}
+                \implies \Apply{P}{z})\implies
+        \Apply{P}{a}$.
+\end{proposition}
+
+\subsection{Elementary set constructions}
+
+The following propositions give the public first-order interface to global
+choice and the elementary set constructors.
+
+\begin{proposition}[Global choice]\label{choice_member}
+    For all $A,x$ we have if $x\in A$, then $\choice{A}\in A$.
+\end{proposition}
+
+\begin{proposition}[Set extensionality]\label{setext}
+    For all $A,B$ we have
+    if for all $x$ if $x\in A$, then $x\in B$, then
+    if for all $x$ if $x\in B$, then $x\in A$, then
+    $A=B$.
+\end{proposition}
+
+\begin{proposition}[Empty set]\label{emptyset}
+    For all $x$ we have $x\in\emptyset$ iff $\bot$.
+\end{proposition}
+
+\begin{proposition}[Unordered pairs]\label{pairset_iff}
+    For all $a,b,x$ we have
+    $x\in\upair{a}{b}$ iff $x=a$ or $x=b$.
+\end{proposition}
+
+\begin{proposition}[Ordered-pair equality]\label{pair_eq_iff}
+    For all $a,b,x,y$ we have
+    $(a,b)=(x,y)$ iff $a=x$ and $b=y$.
+\end{proposition}
+
+\begin{proposition}[First projection]\label{fst_eq}
+    For all $a,b$ we have $\fst{(a,b)}=a$.
+\end{proposition}
+
+\begin{proposition}[Second projection]\label{snd_eq}
+    For all $a,b$ we have $\snd{(a,b)}=b$.
+\end{proposition}
+
+\begin{proposition}[Powersets]\label{pow_iff}
+    For all $A,B$ we have $B\in\pow{A}$ iff
+    for all $x$ if $x\in B$, then $x\in A$.
+\end{proposition}
+
+\begin{proposition}[Family unions]\label{unions_iff}
+    For all $A,x$ we have $x\in\unions{A}$ iff
+    there exists $B\in A$ such that $x\in B$.
+\end{proposition}
+
+\subsection{Natural numbers}
+
+We now derive successor, inductive sets, and the natural numbers inside the
+least universe containing the empty set.
+
+\begin{definition}[Successor]\label{suc}
+    $\suc{x} = \unions{\upair{\upair{x}{x}}{x}}$.
+\end{definition}
+
+\begin{definition}[Transitive sets]\label{transitiveset}
+    $A$ is \in-transitive iff
+    for every $x\in A$ we have
+    for every $y\in x$ we have $y\in A$.
+\end{definition}
+
+\begin{definition}[Inductive sets]\label{inductive_set}
+    $A$ is an inductive set iff
+    $\emptyset\in A$ and
+    for every $x\in A$ we have $\suc{x}\in A$.
+\end{definition}
+
+\begin{definition}[Ambient universe]\label{omega_universe}
+    $\omegaUniverse = \cumul{\emptyset}$.
+\end{definition}
+
+\begin{proposition}[The empty set lies in the ambient universe]%
+\label{omega_universe_empty}
+    $\emptyset \in \omegaUniverse$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{universe_contains,omega_universe}.
+\end{proof}
+
+\begin{proposition}[The empty set is transitive]\label{emptyset_transitive}
+    $\emptyset$ is \in-transitive.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{transitiveset}.
+\end{proof}
+
+\begin{proposition}[Successors preserve transitivity]%
+\label{successor_transitive}
+    For all $x$ we have if $x$ is \in-transitive, then
+    $\suc{x}$ is \in-transitive.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{transitiveset,suc}.
+\end{proof}
+
+\begin{proposition}[Successor powerset bound]\label{successor_power_bound}
+    For all $x$ we have if $x$ is \in-transitive, then
+    $\suc{x}\in\pow{\pow{x}}$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{transitiveset,suc}.
+\end{proof}
+
+\begin{proposition}[Ambient successor closure]%
+\label{omega_universe_transitive_successor}
+    For all $x$ we have if $x\in\omegaUniverse$, then
+    if $x$ is \in-transitive, then $\suc{x}\in\omegaUniverse$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{universe_transitive,universe_power_closed,successor_power_bound,omega_universe}.
+\end{proof}
+
+\begin{definition}[Transitive part of the ambient universe]%
+\label{omega_transitive_part}
+    $\omegaTransitivePart = \{ x \in \omegaUniverse \mid \text{$x$ is \in-transitive} \}$.
+\end{definition}
+
+\begin{proposition}[The transitive part contains the empty set]%
+\label{omega_transitive_part_empty}
+    $\emptyset \in \omegaTransitivePart$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{omega_transitive_part,omega_universe_empty,emptyset_transitive}.
+\end{proof}
+
+\begin{proposition}[The transitive part is successor-closed]%
+\label{omega_transitive_part_successor}
+    For all $x$ we have if $x\in\omegaTransitivePart$, then
+    $\suc{x}\in\omegaTransitivePart$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{omega_transitive_part,omega_universe_transitive_successor,successor_transitive}.
+\end{proof}
+
+\begin{proposition}[Infinity]\label{infinity}
+    $\omegaTransitivePart$ is an inductive set.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{inductive_set,omega_transitive_part_empty,omega_transitive_part_successor}.
+\end{proof}
+
+\begin{definition}[Natural numbers]\label{omega}
+    $\naturals = \{ x \in \omegaUniverse \mid
+        \text{for every $A$ such that $A$ is an inductive set
+        we have $x\in A$} \}$.
+\end{definition}
+
+\begin{proposition}[Zero is natural]\label{omega_empty}
+    $\emptyset \in \naturals$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{omega,omega_universe_empty,inductive_set}.
+\end{proof}
+
+\begin{proposition}[Successors are natural]\label{omega_successor}
+    For all $x$ we have if $x\in\naturals$, then
+    $\suc{x}\in\naturals$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{omega,infinity,omega_transitive_part,omega_universe_transitive_successor,inductive_set}.
+\end{proof}
+
+\begin{proposition}[The natural numbers are inductive]\label{omega_inductive}
+    $\naturals$ is an inductive set.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{inductive_set,omega_empty,omega_successor}.
+\end{proof}
+
+\begin{proposition}[Inductive-set minimality]\label{omega_minimal}
+    For all $A$ we have if $A$ is an inductive set, then
+    for all $x$ if $x\in\naturals$, then $x\in A$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{omega}.
+\end{proof}
+
+\begin{abbreviation}[Natural numbers]\label{natural_number}
+    $n$ is a natural number iff $n\in\naturals$.
+\end{abbreviation}

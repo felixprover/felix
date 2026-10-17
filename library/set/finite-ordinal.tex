@@ -1,0 +1,401 @@
+\section{Finite ordinals}
+
+\import{ordinal.tex}
+\import{order/finite.tex}
+
+\begin{classification}\label{natural_number_is_ordinal}
+    Every natural number is an ordinal.
+\end{classification}
+\begin{proof}
+    Let $C=\{n\in\naturals\mid \text{$n$ is an ordinal}\}$.
+    $\emptyset\in C$ by \obv{omega_empty,emptyset_is_ordinal}.
+    For all $n\in C$ we have $\suc{n}\in C$
+        by \obv{omega_successor,suc_ordinal}.
+    Thus $C$ is an inductive set by \obv{inductive_set}.
+    Follows by \auto{omega_minimal}.
+\end{proof}
+
+\begin{theorem}\label{natural_additive_difference}
+    Let $m,n$ be natural numbers.
+    Suppose $m\subseteq n$.
+    Then there exists a natural number $k$ such that $n=m+k$.
+\end{theorem}
+\begin{proof}
+    Let $D=\{v\in\naturals\mid
+        \text{for every $u\in\naturals$ such that $u\subseteq v$
+        there exists $k\in\naturals$ such that $v=u+k$}\}$.
+    $\emptyset\in D$
+        by \auto{omega_empty,subseteq_emptyset_iff,num_addition_zero_right}.
+    Show that for every $v\in D$ we have $\suc{v}\in D$.
+    \begin{subproof}
+        Fix $v\in D$.
+        $\suc{v}$ is a natural number by \obv{omega_successor}.
+        Show that for every $u$ such that
+            $u\in\naturals$ and $u\subseteq\suc{v}$
+            there exists $k\in\naturals$ such that
+            $\suc{v}=u+k$.
+        \begin{subproof}
+            Fix $u$.
+            Assume $u\in\naturals$ and $u\subseteq\suc{v}$.
+            \begin{byCase}
+                \caseOf{$u=\suc{v}$.}
+                    $\suc{v}=u+\emptyset$
+                        by \obv{num_addition_zero_right}.
+                    Follows by \auto{omega_empty}.
+                \caseOf{$u\neq\suc{v}$.}
+                    $u\in\suc{v}$
+                        by \obv{ordinal_subseteq_implies_elem_or_eq,natural_number_is_ordinal,omega_successor}.
+                    Hence $u=v$ or $u\in v$ by \obv{suc_iff}.
+                    Hence $u\subseteq v$
+                        by \obv{subseteq_refl,ordinal_elem_implies_subseteq,natural_number_is_ordinal}.
+                    Take a natural number $k$ such that $v=u+k$.
+                    $\suc{k}$ is a natural number by \obv{omega_successor}.
+                    $\suc{v}=u+\suc{k}$
+                        by \auto{num_addition_successor_right}.
+                    Follows by \auto.
+            \end{byCase}
+        \end{subproof}
+    \end{subproof}
+    Hence $D$ is an inductive set by \obv{inductive_set}.
+    Hence every natural number is an element of $D$
+        by \obv{omega_minimal}.
+    Thus $n\in D$.
+\end{proof}
+
+\begin{theorem}\label{natural_subseteq_iff_additive_difference}
+    Let $m,n$ be natural numbers.
+    Then $m\subseteq n$ iff there exists a natural number $k$ such that
+        $n=m+k$.
+\end{theorem}
+\begin{proof}
+    Show that if $m\subseteq n$, then there exists a natural number $k$
+        such that $n=m+k$.
+    \begin{subproof}
+        Assume $m\subseteq n$.
+        Follows by \obv{natural_additive_difference}.
+    \end{subproof}
+    Show that if there exists a natural number $k$ such that $n=m+k$,
+        then $m\subseteq n$.
+    \begin{subproof}
+        Assume there exists a natural number $k$ such that $n=m+k$.
+        Take a natural number $k$ such that $n=m+k$.
+        $m\subseteq m+k$ by \obv{natural_addition_left_subseteq_sum}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\subsection{Natural subtraction}
+
+For natural numbers, subtraction is the unique additive difference when the
+subtrahend is no larger than the minuend.  Taking the union of all such
+differences makes the operation a set term without choosing a witness; the
+laws below use it only in its ordinary range.
+
+\begin{definition}\label{natural_difference}
+    $\naturalDifference{n}{k}
+        =\unions{\{d\in\naturals\mid n=k+d\}}$.
+\end{definition}
+
+\begin{theorem}\label{natural_difference_specification}
+    Let $n,k$ be natural numbers.
+    Suppose $k\subseteq n$.
+    Then $\naturalDifference{n}{k}$ is a natural number and
+        $n=k+\naturalDifference{n}{k}$.
+\end{theorem}
+\begin{proof}
+    Take a natural number $d$ such that $n=k+d$ by
+        \obv{natural_additive_difference}.
+    Let $D=\{r\in\naturals\mid n=k+r\}$.
+    Show that $D=\{d\}$.
+    \begin{subproof}
+        Show that every element of $D$ is equal to $d$.
+        \begin{subproof}
+            Fix $r\in D$.
+            Hence $r$ is a natural number and $n=k+r$.
+            Hence $k+r=k+d$.
+            Follows by \obv{natural_addition_cancel_left}.
+        \end{subproof}
+        $d\in D$.
+        Follows by \auto{setext,singleton_iff}.
+    \end{subproof}
+    $\unions{D}=d$ by
+        \auto{setext,unions_iff,singleton_iff}.
+    Hence $\naturalDifference{n}{k}=d$ by
+        \obv{natural_difference}.
+\end{proof}
+
+\begin{proposition}\label{natural_difference_eq}
+    Let $n,k,d$ be natural numbers.
+    Suppose $k\subseteq n$ and $n=k+d$.
+    Then $\naturalDifference{n}{k}=d$.
+\end{proposition}
+\begin{proof}
+    $n=k+\naturalDifference{n}{k}$ and
+        $\naturalDifference{n}{k}$ is a natural number by
+        \obv{natural_difference_specification}.
+    Follows by \obv{natural_addition_cancel_left}.
+\end{proof}
+
+\begin{proposition}\label{natural_difference_zero}
+    Let $n$ be a natural number.
+    Then $\naturalDifference{n}{\emptyset}=n$.
+\end{proposition}
+\begin{proof}
+    $\emptyset\subseteq n$ by \obv{emptyset_subseteq}.
+    $n=\emptyset+n$ by \obv{num_addition_zero_left}.
+    Follows by \obv{natural_difference_eq,omega_empty}.
+\end{proof}
+
+\begin{proposition}\label{natural_difference_self}
+    Let $n$ be a natural number.
+    Then $\naturalDifference{n}{n}=\emptyset$.
+\end{proposition}
+\begin{proof}
+    $n\subseteq n$ by \obv{subseteq_refl}.
+    $n=n+\emptyset$ by \obv{num_addition_zero_right}.
+    Follows by \obv{natural_difference_eq,omega_empty}.
+\end{proof}
+
+\begin{proposition}\label{natural_difference_successor_left}
+    Let $n,k$ be natural numbers.
+    Suppose $k\subseteq n$.
+    Then
+        $\naturalDifference{\suc{n}}{k}
+            =\suc{\naturalDifference{n}{k}}$.
+\end{proposition}
+\begin{proof}
+    Let $d=\naturalDifference{n}{k}$.
+    $\naturalDifference{n}{k}$ is a natural number and
+        $n=k+\naturalDifference{n}{k}$ by
+        \obv{natural_difference_specification}.
+    Hence $d$ is a natural number and $n=k+d$.
+    Hence $\suc{n}=k+\suc{d}$ by
+        \auto{num_addition_successor_right}.
+    $n\subseteq\suc{n}$ by \obv{subseteq_self_suc_intro}.
+    Hence $k\subseteq\suc{n}$ by \obv{subseteq_transitive}.
+    $\suc{n}$ and $\suc{d}$ are natural numbers by
+        \obv{omega_successor}.
+    Follows by \obv{natural_difference_eq}.
+\end{proof}
+
+\begin{proposition}\label{natural_difference_successors}
+    Let $n,k$ be natural numbers.
+    Suppose $k\subseteq n$.
+    Then
+        $\naturalDifference{\suc{n}}{\suc{k}}
+            =\naturalDifference{n}{k}$.
+\end{proposition}
+\begin{proof}
+    Let $d=\naturalDifference{n}{k}$.
+    $\naturalDifference{n}{k}$ is a natural number and
+        $n=k+\naturalDifference{n}{k}$ by
+        \obv{natural_difference_specification}.
+    Hence $d$ is a natural number and $n=k+d$.
+    Hence $\suc{n}=\suc{k}+d$ by
+        \auto{num_addition_successor_left}.
+    $k$ and $n$ are ordinals by
+        \obv{natural_number_is_ordinal}.
+    Hence $k\in n$ or $k=n$ by
+        \obv{ordinal_subseteq_implies_elem_or_eq}.
+    Hence $k\in\suc{n}$ by \auto{suc_iff}.
+    $n\subseteq\suc{n}$ by \obv{subseteq_self_suc_intro}.
+    Hence $k\subseteq\suc{n}$ by \obv{subseteq_transitive}.
+    Hence $\suc{k}\subseteq\suc{n}$ by \obv{suc_subseteq_intro}.
+    $\suc{n}$ and $\suc{k}$ are natural numbers by
+        \obv{omega_successor}.
+    Follows by \obv{natural_difference_eq}.
+\end{proof}
+
+\begin{proposition}\label{natural_nonzero_contains_zero}
+    Let $n$ be a natural number.
+    Suppose $n\neq\emptyset$.
+    Then $\emptyset\in n$.
+\end{proposition}
+\begin{proof}
+    $n$ is an ordinal by \obv{natural_number_is_ordinal}.
+    Follows by \obv{ordinal_empty_or_emptyset_elem}.
+\end{proof}
+
+\begin{proposition}\label{natural_nonzero_successor_of_union}
+    Let $n$ be a natural number.
+    Suppose $n\neq\emptyset$.
+    Then $\unions{n}$ is a natural number and
+        $n=\suc{\unions{n}}$.
+\end{proposition}
+\begin{proof}
+    Take a natural number $m$ such that $n=\suc{m}$
+        by \obv{natural_zero_or_successor}.
+    $m$ is \in-transitive
+        by \obv{natural_number_is_ordinal,ordinal_is_transitiveset}.
+    Hence $\unions{\suc{m}}=m$
+        by \obv{transitiveset_iff_unions_suc}.
+    Thus $\unions{n}=m$.
+\end{proof}
+
+\begin{proposition}\label{natural_successor_in_successor_bound}
+    Let $i,r$ be natural numbers.
+    Suppose $i\in r$.
+    Then $\suc{i}\in\suc{r}$.
+\end{proposition}
+\begin{proof}
+    $i$ is an ordinal and $r$ is an ordinal
+        by \obv{natural_number_is_ordinal}.
+    Hence $\suc{i}\subseteq r$ by \obv{ordinal_suc_subseteq}.
+    $\suc{i}$ is an ordinal by \obv{suc_ordinal}.
+    Hence $\suc{i}\in r$ or $\suc{i}=r$
+        by \obv{ordinal_subseteq_implies_elem_or_eq}.
+    Follows by \auto{suc_iff}.
+\end{proof}
+
+\begin{proposition}\label{naturals_is_transitive_set}
+    $\naturals$ is \in-transitive.
+\end{proposition}
+\begin{proof}
+    Let $C=\{n\in\naturals\mid n\subseteq\naturals\}$.
+    $\emptyset\in C$ by \auto{omega_empty,emptyset,subseteq}.
+    Show that for every $n\in C$ we have $\suc{n}\in C$.
+    \begin{subproof}
+        Fix $n\in C$.
+        Then $n\in\naturals$ and $n\subseteq\naturals$.
+        Hence $\suc{n}\in\naturals$ by \obv{omega_successor}.
+        $\suc{n}\subseteq\naturals$ by \obv{suc_subseteq_intro}.
+    \end{subproof}
+    Hence $C$ is an inductive set by \obv{inductive_set}.
+    Hence $\naturals\subseteq C$ by \obv{omega_minimal,subseteq}.
+    Thus for every $n\in\naturals$ we have $n\subseteq\naturals$
+        by \auto{subseteq}.
+    Follows by \obv{transitiveset_iff_subseteq}.
+\end{proof}
+
+\begin{proposition}\label{omega_is_ordinal}
+    $\naturals$ is an ordinal.
+\end{proposition}
+\begin{proof}
+    Every element of $\naturals$ is an ordinal
+        by \obv{natural_number_is_ordinal}.
+    Follows by
+        \obv{naturals_is_transitive_set,transitive_set_of_ordinals_is_ordinal}.
+\end{proof}
+
+\begin{proposition}\label{natural_number_is_finite}
+    Every natural number is finite.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{finite,id_elem_bijections}.
+\end{proof}
+
+\begin{proposition}\label{omega_below_infinite_ordinal}
+    Suppose $\alpha$ is an ordinal and $\alpha$ is infinite.
+    Then $\naturals\subseteq\alpha$.
+\end{proposition}
+\begin{proof}
+    Suppose not.
+    $\naturals$ is an ordinal by \obv{omega_is_ordinal}.
+    Hence $\alpha\subseteq\naturals$ by
+        \obv{ordinal_subseteq_or_subseteq}.
+    Hence $\alpha\in\naturals$ or $\alpha=\naturals$ by
+        \obv{ordinal_subseteq_implies_elem_or_eq}.
+    $\alpha\neq\naturals$.
+    Hence $\alpha\in\naturals$.
+    Hence $\alpha$ is finite by \obv{natural_number_is_finite}.
+    Contradiction.
+\end{proof}
+
+\begin{proposition}\label{ordinal_membership_relation_transitive}
+    Suppose $\alpha$ is an ordinal.
+    Then $\memrel{\alpha}$ is transitive.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{transitive,memrel_elem_inspect,memrel_elem_intro,pair_eq_iff,elem_of_ordinal_is_ordinal,ordinal_transitivity}.
+\end{proof}
+
+\begin{proposition}\label{ordinal_membership_relation_connex}
+    Suppose $\alpha$ is an ordinal.
+    Then $\memrel{\alpha}$ is connex on $\alpha$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{connex,memrel_elem_intro,elem_of_ordinal_is_ordinal,ordinal_elem_connex}.
+\end{proof}
+
+\begin{theorem}\label{finite_subset_of_naturals_bounded}
+    Suppose $F\subseteq\naturals$ and $F$ is finite.
+    Then there exists a natural number $n$ such that $F\subseteq n$.
+\end{theorem}
+\begin{proof}
+    Let $C=\cons{\emptyset}{F}$.
+    $\emptyset\in\naturals$ by \obv{omega_empty}.
+    Hence $C\subseteq\naturals$ by \auto{cons_subseteq_intro}.
+    $C$ is finite by \obv{finite_cons}.
+    $\emptyset\in C$ by \auto{cons_iff}.
+    Hence $C$ is inhabited.
+    $\memrel{\naturals}$ is transitive
+        by \obv{omega_is_ordinal,ordinal_membership_relation_transitive}.
+    $\memrel{\naturals}$ is connex on $\naturals$
+        by \obv{omega_is_ordinal,ordinal_membership_relation_connex}.
+    Take $m\in C$ such that
+        $m$ is a greatest element of $C$ with respect to
+            $\memrel{\naturals}$
+        by \obv{finite_greatest_element}.
+    $m\in\naturals$ by \obv{elem_subseteq}.
+    Hence $\suc{m}\in\naturals$ by \obv{omega_successor}.
+    For every $k\in F$ we have $k\in\suc{m}$
+        by
+        \auto{cons_iff,greatest_element,memrel_elem_inspect,suc_iff}.
+    Hence $F\subseteq\suc{m}$ by \obv{subseteq}.
+\end{proof}
+
+\begin{theorem}\label{finite_ordinal_is_natural_number}
+    Suppose $\alpha$ is an ordinal and $\alpha$ is finite.
+    Then $\alpha$ is a natural number.
+\end{theorem}
+\begin{proof}
+    Suppose not.
+    Let $B=\{\beta\in\suc{\alpha}\mid
+        \text{$\beta$ is an ordinal and $\beta$ is finite and
+            $\beta$ is not a natural number}\}$.
+    $\alpha\in B$ by \obv{suc_intro_self}.
+    Thus $B$ is inhabited.
+    Take $\beta$ such that $\beta$ is an \in-minimal element of $B$
+        by \obv{regularity}.
+    $\beta$ is an ordinal and $\beta$ is finite and
+        $\beta$ is not a natural number.
+    $\beta\neq\emptyset$ by \obv{omega_empty}.
+    Thus $\beta$ is inhabited by \obv{nonempty_inhabited}.
+
+    $\memrel{\beta}$ is transitive
+        by \obv{ordinal_membership_relation_transitive}.
+    $\memrel{\beta}$ is connex on $\beta$
+        by \obv{ordinal_membership_relation_connex}.
+    Take $m\in\beta$ such that
+        $m$ is a greatest element of $\beta$ with respect to $\memrel{\beta}$
+        by \obv{finite_greatest_element,subseteq_refl}.
+
+    $\beta\subseteq\suc{m}$
+        by \auto{subseteq,greatest_element,memrel,suc_iff,pair_eq_iff}.
+    $\suc{m}\subseteq\beta$
+        by \obv{elem_of_ordinal_is_ordinal,ordinal_suc_subseteq}.
+    Hence $\beta=\suc{m}$ by \obv{subseteq_antisymmetric}.
+
+    $m$ is an ordinal by \obv{elem_of_ordinal_is_ordinal}.
+    $m\subseteq\beta$ by \obv{ordinal_elem_implies_subseteq}.
+    Thus $m$ is finite by \obv{subseteq_finite_is_finite}.
+    $\beta\in\suc{\alpha}$.
+    $\suc{\alpha}$ is an ordinal by \obv{suc_ordinal}.
+    Hence $m\in\suc{\alpha}$ by \obv{ordinal_transitivity}.
+
+    Show that $m$ is a natural number.
+    \begin{subproof}
+        Suppose not.
+        Then $m\in B$.
+        Contradiction by \auto{disjoint}.
+    \end{subproof}
+    Thus $\suc{m}$ is a natural number by \obv{omega_successor}.
+    Contradiction.
+\end{proof}
+
+\begin{theorem}\label{natural_number_iff_finite_ordinal}
+    $n$ is a natural number iff $n$ is finite and $n$ is an ordinal.
+\end{theorem}
+\begin{proof}
+    Follows by \auto{natural_number_is_finite,natural_number_is_ordinal,finite_ordinal_is_natural_number}.
+\end{proof}

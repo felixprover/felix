@@ -1,0 +1,193 @@
+\section{Graphs represented by pair colourings}
+
+\import{function.tex}
+\import{combinatorics/fixed-cardinality-subsets.tex}
+\import{combinatorics/pair-colouring.tex}
+\import{combinatorics/simple-graph.tex}
+\import{cardinal/exponentiation.tex}
+
+For an arbitrary colour $i$, connect two distinct vertices exactly when their
+unordered pair has colour $i$.
+
+\begin{definition}\label{pair_colour_graph}
+    $\pairColourGraph{c}{X}{i}
+        =\{w\in X\times X\mid
+            \text{$\fst{w}\neq\snd{w}$ and
+            $c(\{\fst{w},\snd{w}\})=i$}\}$.
+\end{definition}
+
+\begin{proposition}\label{pair_colour_graph_iff}
+    $x\mathrel{\pairColourGraph{c}{X}{i}}y$ iff
+        $x\in X$ and $y\in X$ and $x\neq y$ and $c(\{x,y\})=i$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{pair_colour_graph,times_tuple_intro,times_tuple_elim,
+            fst_eq,snd_eq}.
+\end{proof}
+
+\begin{proposition}\label{pair_colour_graph_simple}
+    $\pairColourGraph{c}{X}{i}$ is a simple graph on $X$.
+\end{proposition}
+\begin{proof}
+    $\pairColourGraph{c}{X}{i}\subseteq X\times X$ by
+        \obv{pair_colour_graph,subseteq}.
+    Hence $\pairColourGraph{c}{X}{i}$ is a binary relation on $X$ by
+        definition.
+    Show that $\pairColourGraph{c}{X}{i}$ is symmetric.
+    \begin{subproof}
+        Show that for all $x,y$ we have
+            $x\mathrel{\pairColourGraph{c}{X}{i}}y$ iff
+            $y\mathrel{\pairColourGraph{c}{X}{i}}x$.
+        \begin{subproof}
+            Fix $x,y$.
+            $\{x,y\}=\{y,x\}$ by \auto{setext,upair_iff}.
+            Follows by \auto{pair_colour_graph_iff}.
+        \end{subproof}
+        Follows by \obv{symmetric}.
+    \end{subproof}
+    $\pairColourGraph{c}{X}{i}$ is irreflexive by
+        \auto{irreflexive,pair_colour_graph_iff}.
+    Follows by \obv{simple_graph}.
+\end{proof}
+
+\begin{theorem}\label{pair_colour_graph_clique_iff}
+    $H$ is a clique in $X$ with respect to $\pairColourGraph{c}{X}{i}$ iff
+        $\pairHomogeneous{H}{c}{X}{i}$.
+\end{theorem}
+\begin{proof}
+    Show that if $H$ is a clique in $X$ with respect to
+            $\pairColourGraph{c}{X}{i}$, then
+        $\pairHomogeneous{H}{c}{X}{i}$.
+    \begin{subproof}
+        Assume $H$ is a clique in $X$ with respect to
+            $\pairColourGraph{c}{X}{i}$.
+        $H\subseteq X$ by \obv{clique_subseteq}.
+        Show that for every
+            $p\in\fixedCardinalitySubsets{H}{\cardTwo}$ we have
+            $c(p)=i$.
+        \begin{subproof}
+            Fix $p\in\fixedCardinalitySubsets{H}{\cardTwo}$.
+            Take $x,y\in H$ such that $x\neq y$ and $p=\{x,y\}$ by
+                \obv{two_subset_characterization}.
+            $x\mathrel{\pairColourGraph{c}{X}{i}}y$ by
+                \obv{clique_edge}.
+            Hence $c(\{x,y\})=i$ by
+                \auto{pair_colour_graph_iff}.
+        \end{subproof}
+        Follows by \obv{pair_homogeneous}.
+    \end{subproof}
+    Show that if $\pairHomogeneous{H}{c}{X}{i}$, then
+        $H$ is a clique in $X$ with respect to
+            $\pairColourGraph{c}{X}{i}$.
+    \begin{subproof}
+        Assume $\pairHomogeneous{H}{c}{X}{i}$.
+        $H\subseteq X$ by \obv{pair_homogeneous_subseteq}.
+        Show that for all $x,y\in H$ such that $x\neq y$ we have
+            $x\mathrel{\pairColourGraph{c}{X}{i}}y$.
+        \begin{subproof}
+            Fix $x,y\in H$ such that $x\neq y$.
+            $\{x,y\}\in\fixedCardinalitySubsets{H}{\cardTwo}$ by
+                \auto{two_subset_characterization}.
+            Hence $c(\{x,y\})=i$ by
+                \obv{pair_homogeneous_colour}.
+            Follows by \auto{pair_colour_graph_iff,subseteq}.
+        \end{subproof}
+        Follows by \obv{clique_in_graph}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{proposition}\label{pair_colour_outside_codom_graph_empty}
+    Let $c\in\funs{\fixedCardinalitySubsets{X}{\cardTwo}}{I}$.
+    Suppose $i\notin I$.
+    Then $\pairColourGraph{c}{X}{i}=\emptyset$.
+\end{proposition}
+\begin{proof}
+    Show that every element of $\pairColourGraph{c}{X}{i}$ is an element of
+        $\emptyset$.
+    \begin{subproof}
+        Fix $w\in\pairColourGraph{c}{X}{i}$.
+        Hence $w\in X\times X$ by \obv{pair_colour_graph}.
+        Take $x,y$ such that $w=(x,y)$ by
+            \auto{times_elem_is_tuple}.
+        Hence $x\mathrel{\pairColourGraph{c}{X}{i}}y$.
+        Hence $x,y\in X$ and $x\neq y$ and $c(\{x,y\})=i$ by
+            \obv{pair_colour_graph_iff}.
+        $\{x,y\}\in\fixedCardinalitySubsets{X}{\cardTwo}$ by
+            \auto{two_subset_characterization}.
+        Hence $c(\{x,y\})\in I$ by \obv{funs_type_apply}.
+        Hence $i\in I$.
+        Contradiction.
+    \end{subproof}
+    Hence $\pairColourGraph{c}{X}{i}\subseteq\emptyset$ by
+        \obv{subseteq}.
+    Follows by \obv{subseteq_emptyset_iff}.
+\end{proof}
+
+\begin{theorem}\label{two_colour_pair_graph_independent_iff}
+    Let $c\in\funs{\fixedCardinalitySubsets{X}{\cardTwo}}{\cardTwo}$.
+    Then $H$ is an independent set in $X$ with respect to
+            $\pairColourGraph{c}{X}{\cardOne}$ iff
+        $\pairHomogeneous{H}{c}{X}{\cardZero}$.
+\end{theorem}
+\begin{proof}
+    Show that if $H$ is an independent set in $X$ with respect to
+            $\pairColourGraph{c}{X}{\cardOne}$, then
+        $\pairHomogeneous{H}{c}{X}{\cardZero}$.
+    \begin{subproof}
+        Assume $H$ is an independent set in $X$ with respect to
+            $\pairColourGraph{c}{X}{\cardOne}$.
+        $H\subseteq X$ by \obv{independent_subseteq}.
+        $\fixedCardinalitySubsets{H}{\cardTwo}
+            \subseteq\fixedCardinalitySubsets{X}{\cardTwo}$ by
+            \obv{fixed_cardinality_subsets_monotone}.
+        Show that for every
+            $p\in\fixedCardinalitySubsets{H}{\cardTwo}$ we have
+            $c(p)=\cardZero$.
+        \begin{subproof}
+            Fix $p\in\fixedCardinalitySubsets{H}{\cardTwo}$.
+            Take $x,y\in H$ such that $x\neq y$ and $p=\{x,y\}$ by
+                \obv{two_subset_characterization}.
+            $x\not\mathrel{\pairColourGraph{c}{X}{\cardOne}}y$ by
+                \obv{independent_nonedge}.
+            $p\in\fixedCardinalitySubsets{X}{\cardTwo}$ by
+                \obv{subseteq}.
+            Hence $c(p)\in\cardTwo$ by \obv{funs_type_apply}.
+            Hence $c(p)=\cardZero$ or $c(p)=\cardOne$ by
+                \auto{cardinal_two_elements,cons_iff,singleton_iff}.
+            Show that $c(p)\neq\cardOne$.
+            \begin{subproof}
+                Suppose $c(p)=\cardOne$.
+                Hence $c(\{x,y\})=\cardOne$.
+                Hence $x\mathrel{\pairColourGraph{c}{X}{\cardOne}}y$ by
+                    \auto{pair_colour_graph_iff,subseteq}.
+                Contradiction.
+            \end{subproof}
+        \end{subproof}
+        Follows by \obv{pair_homogeneous}.
+    \end{subproof}
+    Show that if $\pairHomogeneous{H}{c}{X}{\cardZero}$, then
+        $H$ is an independent set in $X$ with respect to
+            $\pairColourGraph{c}{X}{\cardOne}$.
+    \begin{subproof}
+        Assume $\pairHomogeneous{H}{c}{X}{\cardZero}$.
+        $H\subseteq X$ by \obv{pair_homogeneous_subseteq}.
+        Show that for all $x,y\in H$ such that $x\neq y$ we have
+            $x\not\mathrel{\pairColourGraph{c}{X}{\cardOne}}y$.
+        \begin{subproof}
+            Fix $x,y\in H$ such that $x\neq y$.
+            $\{x,y\}\in\fixedCardinalitySubsets{H}{\cardTwo}$ by
+                \auto{two_subset_characterization}.
+            Hence $c(\{x,y\})=\cardZero$ by
+                \obv{pair_homogeneous_colour}.
+            Suppose $x\mathrel{\pairColourGraph{c}{X}{\cardOne}}y$.
+            Hence $c(\{x,y\})=\cardOne$ by
+                \auto{pair_colour_graph_iff}.
+            $\cardZero\neq\cardOne$ by \obv{cardinal_zero_neq_one}.
+            Contradiction.
+        \end{subproof}
+        Follows by \obv{independent_in_graph}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}

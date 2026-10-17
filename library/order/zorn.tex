@@ -1,0 +1,115 @@
+\section{Zorn's lemma}
+
+\import{order/hausdorff.tex}
+\import{order/bounds.tex}
+
+The general form is stated for an arbitrary partial order.  The
+subset-family form below is a corollary for developments where upper
+bounds are supplied by unions.
+
+\begin{theorem}\label{zorn_partial_order}
+    Suppose $R$ is an order on $P$.
+    Suppose for every $C$ such that $C$ is a chain in $P$ with respect to $R$
+        there exists $u$ such that $u$ is an upper bound of $C$ in $P$
+            with respect to $R$.
+    Then there exists $m$ such that $m$ is a maximal element of $P$
+        with respect to $R$.
+\end{theorem}
+\begin{proof}
+    Let $Q=\tostrictorder{R}$.
+    $R$ is an order by \obv{order_on_implies_order}.
+    Thus $Q$ is a strict order by \obv{strictorder_from_order}.
+    $R\subseteq P\times P$.
+    $Q\subseteq R$ by \auto{tostrictorder,subseteq}.
+    Hence $Q\subseteq P\times P$ by \obv{subseteq_transitive}.
+    Take $C$ such that $C$ is a maximal chain in $P$ with respect to $Q$
+        by \obv{hausdorff_maximal_chain}.
+    Then $C$ is a maximal chain in $P$ with respect to $R$
+        by \obv{maximal_chain_tostrictorder_iff}.
+    Thus $C$ is a chain in $P$ with respect to $R$
+        by \obv{maximal_chain_in_relation}.
+    Hence $C\subseteq P$ and for all $a,b\in C$ we have
+        $a=b$ or $a\mathrel{R}b$ or $b\mathrel{R}a$
+        by \obv{chain_in_relation}.
+    Take $u$ such that $u$ is an upper bound of $C$ in $P$
+        with respect to $R$.
+
+    Show that $u$ is a maximal element of $P$ with respect to $R$.
+    \begin{subproof}
+        $u\in P$ by \obv{upper_bound}.
+        Show that for all $x\in P$ such that $u\mathrel{R}x$ we have $x=u$.
+        \begin{subproof}
+            Fix $x$.
+            Assume $x\in P$ and $u\mathrel{R}x$.
+            Show that $\cons{x}{C}$ is a chain in $P$ with respect to $R$.
+            \begin{subproof}
+                $C\subseteq P$.
+                Hence $\cons{x}{C}\subseteq P$ by \obv{cons_subseteq_intro}.
+                Show that for all $a,b\in\cons{x}{C}$ we have
+                    $a=b$ or $a\mathrel{R}b$ or $b\mathrel{R}a$.
+                \begin{subproof}
+                    Fix $a,b\in\cons{x}{C}$.
+                    \begin{byCase}
+                    \caseOf{$a=x$.}
+                        Follows by
+                            \auto{cons,upper_bound,transitive}.
+                    \caseOf{$b=x$.}
+                        Follows by
+                            \auto{cons,upper_bound,transitive}.
+                    \caseOf{$a,b\in C$.}
+                        Follows.
+                    \end{byCase}
+                \end{subproof}
+                Follows by \obv{chain_in_relation}.
+            \end{subproof}
+            Thus $\cons{x}{C}$ is a chain in $P$ with respect to $Q$
+                by \obv{chain_tostrictorder_iff}.
+            $C\subseteq\cons{x}{C}$ by \obv{subseteq_cons_self}.
+            Hence $\cons{x}{C}=C$ by
+                \obv{maximal_chain_in_relation}.
+            Thus $x\in C$ by \obv{cons_left}.
+            Hence $x=u$ or $x\mathrel{R}u$ by \obv{upper_bound_elim}.
+            Follows by \obv{antisymmetric}.
+        \end{subproof}
+        Follows by \obv{maximal_element}.
+    \end{subproof}
+\end{proof}
+
+\begin{theorem}\label{zorn_subset_family}
+    Suppose $P$ is inhabited.
+    Suppose for every $C$ such that $C\subseteq P$ and $C$ is inhabited
+        and $C$ is an inclusion chain we have $\unions{C}\in P$.
+    Then there exists $M\in P$ such that for every $X\in P$ such that
+        $M\subseteq X$ we have $X=M$.
+\end{theorem}
+\begin{proof}
+    Let $R=\subseteqrel{P}$.
+    $R$ is an order on $P$ by \auto{subseteqrel_is_order}.
+    Show that for every $C$ such that $C$ is a chain in $P$ with respect to $R$
+        there exists $u$ such that $u$ is an upper bound of $C$ in $P$
+            with respect to $R$.
+    \begin{subproof}
+        Fix $C$.
+        Assume $C$ is a chain in $P$ with respect to $R$.
+        $C\subseteq P$ and $C$ is an inclusion chain
+            by \auto{inclusion_chain_in_family_iff}.
+        \begin{byCase}
+        \caseOf{$C$ is inhabited.}
+            $\unions{C}\in P$.
+            For all $X\in C$ we have
+                $X=\unions{C}$ or $X\mathrel{R}\unions{C}$
+                by \auto{unions_iff,subseteq,subseteqrel,pair_eq_iff}.
+            Thus $\unions{C}$ is an upper bound of $C$ in $P$
+                with respect to $R$ by \obv{upper_bound}.
+        \caseOf{$C$ is not inhabited.}
+            Take $u$ such that $u\in P$.
+            $u$ is an upper bound of $C$ in $P$ with respect to $R$
+                by \auto{upper_bound}.
+        \end{byCase}
+    \end{subproof}
+    Take $M$ such that $M$ is a maximal element of $P$ with respect to $R$
+        by \obv{zorn_partial_order}.
+    $M\in P$ by \obv{maximal_element}.
+    For every $X\in P$ such that $M\subseteq X$ we have $X=M$
+        by \obv{maximal_element,subseteqrel,pair_eq_iff}.
+\end{proof}

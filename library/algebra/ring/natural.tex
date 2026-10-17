@@ -1,0 +1,234 @@
+\import{algebra/ring/reducts.tex}
+\import{algebra/monoid/power.tex}
+\import{recursion/natural.tex}
+
+\section{Natural elements of a ring}
+
+The natural element $n\cdot 1_R$ is the natural power of the unit in the
+additive monoid of the ring.  Thus the generic monoid-power construction is
+the sole recursion owner.
+
+\begin{definition}\label{ring_natural_step}
+    $\ringNaturalStepOp:\Set\to\Set\to\Set\to\Set
+        =\fun{R,n,x:\Set}{
+            \ringAdd[R](x,\ringOne[R])}$.
+\end{definition}
+
+\begin{definition}\label{ring_natural}
+    $\ringNatural{R}{n}=
+        \monoidPower{\AdditiveGroup{R}}{\ringOne[R]}{n}$.
+\end{definition}
+
+\begin{proposition}\label{ring_natural_zero}
+    Let $R$ be a ring.
+    Then $\ringNatural{R}{\emptyset}=\ringZero[R]$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{ring_natural,monoid_power_zero,additive_group_fields}.
+\end{proof}
+
+\begin{proposition}\label{ring_natural_successor}
+    Let $R$ be a ring.
+    Let $n$ be a natural number.
+    Then $\ringNatural{R}{\suc{n}}
+        =\ringAdd[R](\ringNatural{R}{n},\ringOne[R])$.
+\end{proposition}
+\begin{proof}
+    $\AdditiveGroup{R}$ is a monoid by
+        \obv{additive_group_is_exact_commutative_group,
+            commutative_group,group}.
+    $\ringOne[R]\in\carrier[R]$ by \obv{ring_one_type}.
+    Hence $\ringOne[R]\in\carrier[\AdditiveGroup{R}]$ by
+        \auto{additive_group_fields}.
+    $\ringNatural{R}{\suc{n}}=
+        \mul[\AdditiveGroup{R}](
+            \ringNatural{R}{n},\ringOne[R])$ by
+        \auto{ring_natural,monoid_power_successor}.
+    Follows by \auto{additive_group_fields}.
+\end{proof}
+
+\begin{proposition}\label{ring_natural_type}
+    Let $R$ be a ring.
+    Let $n$ be a natural number.
+    Then $\ringNatural{R}{n}\in\carrier[R]$.
+\end{proposition}
+\begin{proof}
+    $\AdditiveGroup{R}$ is a monoid by
+        \obv{additive_group_is_exact_commutative_group,
+            commutative_group,group}.
+    $\ringOne[R]\in\carrier[R]$ by \obv{ring_one_type}.
+    Hence $\ringOne[R]\in\carrier[\AdditiveGroup{R}]$ by
+        \auto{additive_group_fields}.
+    $\ringNatural{R}{n}\in\carrier[\AdditiveGroup{R}]$ by
+        \auto{ring_natural,monoid_power_type}.
+    Follows by \auto{additive_group_fields}.
+\end{proof}
+
+\begin{proposition}\label{ring_natural_one}
+    Let $R$ be a ring.
+    Then $\ringNatural{R}{\suc{\emptyset}}=\ringOne[R]$.
+\end{proposition}
+\begin{proof}
+    $\emptyset$ is a natural number by \obv{omega_empty}.
+    $\ringNatural{R}{\suc{\emptyset}}
+        =\ringAdd[R](\ringNatural{R}{\emptyset},\ringOne[R])$ by
+        \obv{ring_natural_successor}.
+    Follows by
+        \auto{ring_natural_zero,ring_one_type,ring_add_zero_left}.
+\end{proof}
+
+\begin{theorem}\label{ring_natural_addition}
+    Let $R$ be a ring.
+    Let $m,n$ be natural numbers.
+    Then $\ringNatural{R}{m+n}=
+        \ringAdd[R](\ringNatural{R}{m},\ringNatural{R}{n})$.
+\end{theorem}
+\begin{proof}
+    $\AdditiveGroup{R}$ is a monoid by
+        \obv{additive_group_is_exact_commutative_group,
+            commutative_group,group}.
+    $\ringOne[R]\in\carrier[R]$ by \obv{ring_one_type}.
+    Hence $\ringOne[R]\in\carrier[\AdditiveGroup{R}]$ by
+        \auto{additive_group_fields}.
+    $\monoidPower{\AdditiveGroup{R}}{\ringOne[R]}{m+n}=
+        \mul[\AdditiveGroup{R}](
+            \monoidPower{\AdditiveGroup{R}}{\ringOne[R]}{m},
+            \monoidPower{\AdditiveGroup{R}}{\ringOne[R]}{n})$ by
+        \obv{monoid_power_addition}.
+    Follows by \auto{ring_natural,additive_group_fields}.
+\end{proof}
+
+\begin{theorem}\label{ring_natural_central}
+    Let $R$ be a ring.
+    Let $x\in\carrier[R]$.
+    Let $n$ be a natural number.
+    Then $\ringMul[R](\ringNatural{R}{n},x)
+        =\ringMul[R](x,\ringNatural{R}{n})$.
+\end{theorem}
+\begin{proof}
+    Let $C=\{k\in\naturals\mid
+        \ringMul[R](\ringNatural{R}{k},x)
+            =\ringMul[R](x,\ringNatural{R}{k})\}$.
+    $\emptyset\in C$ by
+        \auto{omega_empty,ring_natural_zero,
+            ring_mul_zero_left,ring_mul_zero_right}.
+    Show that for every $k\in C$ we have $\suc{k}\in C$.
+    \begin{subproof}
+        Fix $k\in C$.
+        Hence $k$ is a natural number and
+            $\ringMul[R](\ringNatural{R}{k},x)
+                =\ringMul[R](x,\ringNatural{R}{k})$.
+        $x\in\carrier[R]$ by assumption.
+        $\ringNatural{R}{k}\in\carrier[R]$ by
+            \obv{ring_natural_type}.
+        $\ringOne[R]\in\carrier[R]$ by \obv{ring_one_type}.
+        $\ringNatural{R}{\suc{k}}=
+            \ringAdd[R](\ringNatural{R}{k},\ringOne[R])$ by
+            \obv{ring_natural_successor}.
+        $\ringMul[R](\ringNatural{R}{\suc{k}},x)=
+            \ringAdd[R](
+                \ringMul[R](\ringNatural{R}{k},x),x)$ by
+            \auto{ring_distributive_right,ring_mul_one_left}.
+        $\ringMul[R](x,\ringNatural{R}{\suc{k}})=
+            \ringAdd[R](
+                \ringMul[R](x,\ringNatural{R}{k}),x)$ by
+            \auto{ring_distributive_left,ring_mul_one_right}.
+        $\suc{k}$ is a natural number by \obv{omega_successor}.
+    \end{subproof}
+    Hence $C$ is an inductive set by \obv{inductive_set}.
+    Hence every natural number is an element of $C$ by
+        \obv{omega_minimal}.
+    Hence $n\in C$.
+\end{proof}
+
+\begin{theorem}\label{ring_natural_multiplication}
+    Let $R$ be a ring.
+    Let $m,n$ be natural numbers.
+    Then $\ringNatural{R}{\naturalMul{m}{n}}=
+        \ringMul[R](\ringNatural{R}{m},\ringNatural{R}{n})$.
+\end{theorem}
+\begin{proof}
+    Let $C=\{k\in\naturals\mid
+        \ringNatural{R}{\naturalMul{m}{k}}=
+            \ringMul[R](\ringNatural{R}{m},\ringNatural{R}{k})\}$.
+    $\ringNatural{R}{m}\in\carrier[R]$ by
+        \obv{ring_natural_type}.
+    $\emptyset\in C$ by
+        \auto{omega_empty,natural_multiplication_zero_right,
+            ring_natural_zero,ring_mul_zero_right}.
+    Show that for every $k\in C$ we have $\suc{k}\in C$.
+    \begin{subproof}
+        Fix $k\in C$.
+        Hence $k$ is a natural number and
+            $\ringNatural{R}{\naturalMul{m}{k}}=
+                \ringMul[R](\ringNatural{R}{m},
+                    \ringNatural{R}{k})$.
+        $\ringNatural{R}{m},\ringNatural{R}{k}\in\carrier[R]$ by
+            \obv{ring_natural_type}.
+        $\ringOne[R]\in\carrier[R]$ by \obv{ring_one_type}.
+        $\naturalMul{m}{k}$ is a natural number by
+            \obv{natural_multiplication_closed}.
+        $\naturalMul{m}{\suc{k}}=\naturalMul{m}{k}+m$ by
+            \obv{natural_multiplication_successor_right}.
+        $\ringNatural{R}{\naturalMul{m}{\suc{k}}}=
+            \ringAdd[R](
+                \ringNatural{R}{\naturalMul{m}{k}},
+                \ringNatural{R}{m})$ by
+            \auto{ring_natural_addition}.
+        $\ringNatural{R}{\suc{k}}=
+            \ringAdd[R](\ringNatural{R}{k},\ringOne[R])$ by
+            \obv{ring_natural_successor}.
+        $\ringMul[R](\ringNatural{R}{m},
+                \ringNatural{R}{\suc{k}})=
+            \ringAdd[R](
+                \ringMul[R](\ringNatural{R}{m},
+                    \ringNatural{R}{k}),
+                \ringNatural{R}{m})$ by
+            \auto{ring_distributive_left,ring_mul_one_right}.
+        $\suc{k}$ is a natural number by \obv{omega_successor}.
+    \end{subproof}
+    Hence $C$ is an inductive set by \obv{inductive_set}.
+    Hence every natural number is an element of $C$ by
+        \obv{omega_minimal}.
+    Hence $n\in C$.
+\end{proof}
+
+\begin{theorem}\label{ring_natural_recursion_eq}
+    Let $R$ be a ring.
+    Let $n$ be a natural number.
+    Then $\ringNatural{R}{n}
+        =\Apply{\naturalRecOp}{\ringZero[R],
+            \Apply{\ringNaturalStepOp}{R},n}$.
+\end{theorem}
+\begin{proof}
+    Let $C=\{k\in\naturals\mid
+        \ringNatural{R}{k}
+            =\Apply{\naturalRecOp}{\ringZero[R],
+                \Apply{\ringNaturalStepOp}{R},k}\}$.
+    $\emptyset\in C$ by
+        \auto{omega_empty,ring_natural_zero,natural_recursion_zero}.
+    Show that for every $k\in C$ we have $\suc{k}\in C$.
+    \begin{subproof}
+        Fix $k\in C$.
+        Hence $k$ is a natural number and
+            $\ringNatural{R}{k}
+                =\Apply{\naturalRecOp}{\ringZero[R],
+                    \Apply{\ringNaturalStepOp}{R},k}$.
+        $\ringNatural{R}{\suc{k}}
+            =\ringAdd[R](\ringNatural{R}{k},\ringOne[R])$ by
+            \obv{ring_natural_successor}.
+        $\Apply{\naturalRecOp}{\ringZero[R],
+                \Apply{\ringNaturalStepOp}{R},\suc{k}}
+            =\ringAdd[R](
+                \Apply{\naturalRecOp}{\ringZero[R],
+                    \Apply{\ringNaturalStepOp}{R},k},
+                \ringOne[R])$ by
+            \auto{ring_natural_step,natural_recursion_successor}.
+        $\suc{k}$ is a natural number by \obv{omega_successor}.
+    \end{subproof}
+    Hence $C$ is an inductive set by \obv{inductive_set}.
+    Hence every natural number is an element of $C$ by
+        \obv{omega_minimal}.
+    Hence $n\in C$.
+\end{proof}

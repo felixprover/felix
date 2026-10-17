@@ -1,0 +1,126 @@
+\import{recursion/well-founded-unbounded.tex}
+
+\section{Range bounds for codomain-free recursion}
+
+A codomain is a derived property of the codomain-free recursor.  It is enough
+that the step preserve a proposed range bound whenever its predecessor
+history already has that bound; no common codomain is required to construct
+the recursive graph itself.
+
+\begin{definition}\label{unbounded_recursive_range_closed_op}
+    $\unboundedRecursiveRangeClosedOp:
+        \Set\to\Set\to\Set\to
+        (\Set\to\Set\to\Set)\to\Prop
+        =\fun{A,R,B:\Set}{
+                    \fun{H:\Set\to\Set\to\Set}{
+                        \forall x:\Set.\ x\in A\implies
+                        (\forall p:\Set.
+                            (\Apply{\unboundedRecursiveHistoryOp}
+                                {A,R,x,p}\land
+                             \ran{p}\subseteq B)
+                            \implies
+                            \Apply{H}{x,p}\in B)}}$.
+\end{definition}
+
+\begin{proposition}\label{unbounded_recursive_range_closed_iff}
+    $\forall A,R,B:\Set.\ \forall H:\Set\to\Set\to\Set.
+        \Apply{\unboundedRecursiveRangeClosedOp}
+            {A,R,B,H}
+        \iff
+        (\forall x:\Set.\ x\in A\implies
+            (\forall p:\Set.
+                (\Apply{\unboundedRecursiveHistoryOp}
+                    {A,R,x,p}\land
+                 \ran{p}\subseteq B)
+                \implies
+                \Apply{H}{x,p}\in B))$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{unbounded_recursive_range_closed_op}.
+\end{proof}
+
+\begin{theorem}\label{unbounded_well_founded_recursion_range}
+    Suppose $R$ is a binary relation on $A$ and $R$ is well-founded on $A$.
+    Then $\forall B:\Set.\ \forall H:\Set\to\Set\to\Set.
+        \Apply{\unboundedRecursiveRangeClosedOp}
+            {A,R,B,H}
+        \implies
+        \Apply{\unboundedWellFoundedRecursionOp}
+            {A,R,H}\in\funs{A}{B}$.
+\end{theorem}
+\begin{proof}
+    Fix $B$.
+    Fix $H$.
+    Assume $\Apply{\unboundedRecursiveRangeClosedOp}
+        {A,R,B,H}$.
+    Let $f=\Apply{\unboundedWellFoundedRecursionOp}
+        {A,R,H}$.
+    Let $C=\{x\in A\mid f(x)\in B\}$.
+    Show that $C$ is progressive for $R$ on $A$.
+    \begin{subproof}
+        Show that for every $x\in A$ we have
+            if for every $y\in A$ such that $y\mathrel{R}x$ we have
+                $y\in C$,
+            then $x\in C$.
+        \begin{subproof}
+            Fix $x\in A$.
+            Suppose for every $y\in A$ such that $y\mathrel{R}x$ we have
+                $y\in C$.
+            $\Apply{\recursiveSetFunctionOp}{f}$ by
+                \obv{unbounded_well_founded_recursion_function}.
+            Hence $\recursiveSetFunction{f}$ by
+                \obv{recursive_set_function_op}.
+            Hence $f$ is a function by \obv{recursive_set_function}.
+            $\dom{f}=A$ by
+                \auto{unbounded_well_founded_recursion_domain}.
+            Let $p=\restrl{f}{\downward{R}{x}}$.
+            $\Apply{\unboundedRecursiveHistoryOp}
+                {A,R,x,p}$ by
+                \obv{restriction_is_unbounded_recursive_history}.
+            Show that $\ran{p}\subseteq B$.
+            \begin{subproof}
+                Show that for every $b\in\ran{p}$ we have $b\in B$.
+                \begin{subproof}
+                    Fix $b\in\ran{p}$.
+                    $p$ is a function by
+                        \auto{restrl_of_function_is_function}.
+                    Take $y\in\dom{p}$ such that $p(y)=b$ by
+                        \obv{fun_ran_iff}.
+                    $\dom{p}=\downward{R}{x}$ by
+                        \obv{unbounded_recursive_history_iff}.
+                    Hence $y\mathrel{R}x$ by
+                        \obv{downward_closure_iff}.
+                    $y\in A$ by
+                        \auto{binary_relation_downward_subseteq,subseteq}.
+                    Hence $y\in C$.
+                    Hence $f(y)\in B$.
+                    $\downward{R}{x}\subseteq\dom{f}$ by
+                        \obv{binary_relation_downward_subseteq}.
+                    Hence $p(y)=f(y)$ by
+                        \auto{restrl_of_function_apply}.
+                \end{subproof}
+                Follows by \obv{subseteq}.
+            \end{subproof}
+            Hence $\Apply{H}{x,p}\in B$ by
+                \obv{unbounded_recursive_range_closed_iff}.
+            $f(x)=\Apply{H}{x,p}$ by
+                \auto{unbounded_well_founded_recursion_equation}.
+            Hence $f(x)\in B$.
+        \end{subproof}
+        Follows by \obv{progressive_on}.
+    \end{subproof}
+    Hence $A\subseteq C$ by \obv{well_founded_induction_set}.
+    Show that for every $x\in A$ we have $f(x)\in B$.
+    \begin{subproof}
+        Fix $x\in A$.
+        Hence $x\in C$ by \obv{subseteq}.
+    \end{subproof}
+    $\Apply{\recursiveSetFunctionOp}{f}$ by
+        \obv{unbounded_well_founded_recursion_function}.
+    Hence $\recursiveSetFunction{f}$ by
+        \obv{recursive_set_function_op}.
+    $\dom{f}=A$ by
+        \auto{unbounded_well_founded_recursion_domain}.
+    Hence $f$ is a function to $B$.
+    Follows by \auto{funs_intro}.
+\end{proof}

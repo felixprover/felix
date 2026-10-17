@@ -1,0 +1,288 @@
+\section{Finite intersections of a hosted family}
+
+\import{set.tex}
+\import{set/closure-system.tex}
+\import{set/finite.tex}
+
+For a family hosted by $S$, finite intersections are bounded by $S$.
+Consequently the empty finite intersection is $S$, not the empty set.
+
+\begin{definition}\label{finite_intersections_on}
+    $\finiteIntersectionsOn{S}{B}
+        =\{A\in\pow{S}\mid
+            \text{there exists $D$ such that $D\subseteq B$ and
+                $D$ is finite and
+                $A=\boundedIntersection{S}{D}$}\}$.
+\end{definition}
+
+\begin{proposition}\label{finite_intersections_on_iff}
+    $A\in\finiteIntersectionsOn{S}{B}$ iff
+        $A\subseteq S$ and there exists $D$ such that
+            $D\subseteq B$ and $D$ is finite and
+            $A=\boundedIntersection{S}{D}$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{finite_intersections_on,pow_iff,subseteq}.
+\end{proof}
+
+\begin{proposition}\label{finite_intersections_on_type}
+    $\finiteIntersectionsOn{S}{B}$ is a family of subsets of $S$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{finite_intersections_on_iff,pow_iff,subseteq}.
+\end{proof}
+
+\begin{proposition}\label{carrier_in_finite_intersections_on}
+    $S\in\finiteIntersectionsOn{S}{B}$.
+\end{proposition}
+\begin{proof}
+    $\emptyset\subseteq B$ by \obv{emptyset_subseteq}.
+    $\emptyset$ is finite by \obv{emptyset_is_finite}.
+    $S=\boundedIntersection{S}{\emptyset}$ by
+        \obv{bounded_intersection_empty}.
+    Follows by \auto{finite_intersections_on_iff,subseteq_refl}.
+\end{proof}
+
+\begin{proposition}\label{generators_in_finite_intersections_on}
+    Suppose $B$ is a family of subsets of $S$.
+    Then $B\subseteq\finiteIntersectionsOn{S}{B}$.
+\end{proposition}
+\begin{proof}
+    It suffices to show that every element of $B$ is an element of
+        $\finiteIntersectionsOn{S}{B}$ by \obv{subseteq}.
+    Fix $A\in B$.
+    $A\subseteq S$.
+    $\{A\}\subseteq B$ by \obv{singleton_subset_intro}.
+    $\{A\}$ is finite by \obv{singleton_is_finite}.
+    $\{A\}$ is inhabited by \auto{singleton_iff}.
+    $\{A\}\subseteq\pow{S}$ by
+        \auto{singleton_subset_intro,pow_iff,subseteq}.
+    Hence $\boundedIntersection{S}{\{A\}}=\inters{\{A\}}$
+        by \obv{bounded_intersection_eq_inters}.
+    Hence $\boundedIntersection{S}{\{A\}}=A$ by
+        \auto{inters_singleton}.
+    Follows by \auto{finite_intersections_on_iff}.
+\end{proof}
+
+\begin{proposition}\label{finite_intersections_on_intersection}
+    Suppose $A,C\in\finiteIntersectionsOn{S}{B}$.
+    Then $A\inter C\in\finiteIntersectionsOn{S}{B}$.
+\end{proposition}
+\begin{proof}
+    Take $D$ such that $D\subseteq B$ and $D$ is finite and
+        $A=\boundedIntersection{S}{D}$
+        by \obv{finite_intersections_on}.
+    Take $E$ such that $E\subseteq B$ and $E$ is finite and
+        $C=\boundedIntersection{S}{E}$
+        by \obv{finite_intersections_on}.
+    $D\union E\subseteq B$ by \auto{union_iff,subseteq}.
+    $D\union E$ is finite by \obv{union_of_finite_is_finite}.
+    $\boundedIntersection{S}{D\union E}
+        =\boundedIntersection{S}{D}\inter
+            \boundedIntersection{S}{E}$
+        by \obv{bounded_intersection_union}.
+    Hence $A\inter C=\boundedIntersection{S}{D\union E}$.
+    $A\inter C\subseteq S$ by
+        \auto{finite_intersections_on_iff,inter_subseteq}.
+    Follows by \auto{finite_intersections_on_iff}.
+\end{proof}
+
+\begin{theorem}\label{finite_intersections_on_least}
+    Suppose $B$ is a family of subsets of $S$.
+    Suppose $B\subseteq C$ and $S\in C$.
+    Suppose for all $A,E\in C$ we have $A\inter E\in C$.
+    Then $\finiteIntersectionsOn{S}{B}\subseteq C$.
+\end{theorem}
+\begin{proof}
+    Let $K=\{D\in\pow{B}\mid
+        \boundedIntersection{S}{D}\in C\}$.
+    $\emptyset\in\pow{B}$ by \obv{powerset_bottom}.
+    $\boundedIntersection{S}{\emptyset}=S$ by
+        \obv{bounded_intersection_empty}.
+    Hence $\boundedIntersection{S}{\emptyset}\in C$.
+    Thus $\emptyset\in K$.
+
+    Show that for all $D,d$ such that $D\in K$ and $d\in B$ we have
+        $\cons{d}{D}\in K$.
+    \begin{subproof}
+        Fix $D,d$.
+        Assume $D\in K$ and $d\in B$.
+        $D\subseteq B$ by \obv{powerset_elim}.
+        Hence $\cons{d}{D}\subseteq B$ by
+            \obv{cons_subseteq_intro}.
+        Thus $\cons{d}{D}\in\pow{B}$ by
+            \obv{powerset_intro}.
+        $\boundedIntersection{S}{D}\in C$ and $d\in C$
+            by \obv{subseteq}.
+        $d\subseteq S$.
+        $\{d\}$ is inhabited by \auto{singleton_iff}.
+        $\{d\}\subseteq\pow{S}$ by
+            \obv{singleton_subset_intro,pow_iff,subseteq}.
+        Hence $\boundedIntersection{S}{\{d\}}=d$ by
+            \auto{bounded_intersection_eq_inters,inters_singleton}.
+        $\{d\}\union D=\cons{d}{D}$ by
+            \obv{union_eq_cons}.
+        Hence $\boundedIntersection{S}{\cons{d}{D}}
+            =d\inter\boundedIntersection{S}{D}$ by
+            \auto{bounded_intersection_union}.
+        $d\inter\boundedIntersection{S}{D}\in C$.
+        Hence $\boundedIntersection{S}{\cons{d}{D}}\in C$.
+    \end{subproof}
+
+    It suffices to show that every element of
+        $\finiteIntersectionsOn{S}{B}$ is an element of $C$
+        by \obv{subseteq}.
+    Fix $A\in\finiteIntersectionsOn{S}{B}$.
+    Take $D$ such that $D\subseteq B$ and $D$ is finite and
+        $A=\boundedIntersection{S}{D}$
+        by \obv{finite_intersections_on}.
+    $D\in\pow{B}$ by \obv{powerset_intro}.
+    Hence $D\in K$ by \obv{finite_induction,subseteq}.
+    Thus $\boundedIntersection{S}{D}\in C$.
+\end{proof}
+
+\subsection{Hosted finite intersection properties}
+
+The historical unqualified predicate below is ambient-free: it tests only
+inhabited finite subfamilies.  Its proper variant additionally requires the
+family itself to be inhabited.  The hosted predicate includes the empty
+finite subfamily and therefore records inhabitation of the carrier.
+
+\begin{definition}\label{finite_intersection_property}
+    $C$ has the finite intersection property iff
+        for every $F$ such that $F\subseteq C$ and $F$ is finite and
+            $F$ is inhabited we have $\inters{F}\neq\emptyset$.
+\end{definition}
+
+\begin{definition}\label{proper_finite_intersection_property}
+    $C$ has the proper finite intersection property iff
+        $C$ has the finite intersection property and $C$ is inhabited.
+\end{definition}
+
+\begin{definition}\label{finite_intersection_property_on}
+    $B$ has the finite intersection property on $S$ iff
+        $B$ is a family of subsets of $S$ and
+        for every $D$ such that $D\subseteq B$ and $D$ is finite we have
+            $\boundedIntersection{S}{D}$ is inhabited.
+\end{definition}
+
+\begin{proposition}\label{empty_family_has_finite_intersection_property}
+    $\emptyset$ has the finite intersection property.
+\end{proposition}
+\begin{proof}
+    Show that for every $F$ such that $F\subseteq\emptyset$ and $F$ is finite
+        and $F$ is inhabited we have $\inters{F}\neq\emptyset$.
+    \begin{subproof}
+        Fix $F$.
+        Assume $F\subseteq\emptyset$ and $F$ is finite and $F$ is inhabited.
+        Then $F=\emptyset$ by \obv{subseteq_emptyset_iff}.
+        Take $x$ such that $x\in F$.
+        Thus $x\in\emptyset$.
+        Contradiction by \obv{emptyset}.
+    \end{subproof}
+    Follows by \obv{finite_intersection_property}.
+\end{proof}
+
+\begin{proposition}\label{empty_family_has_no_proper_finite_intersection_property}
+    It is wrong that $\emptyset$ has the proper finite intersection property.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{proper_finite_intersection_property,emptyset}.
+\end{proof}
+
+\begin{proposition}\label{hosted_fip_carrier_inhabited}
+    Suppose $B$ has the finite intersection property on $S$.
+    Then $S$ is inhabited.
+\end{proposition}
+\begin{proof}
+    $\emptyset\subseteq B$ by \obv{emptyset_subseteq}.
+    $\emptyset$ is finite by \obv{emptyset_is_finite}.
+    Hence $\boundedIntersection{S}{\emptyset}$ is inhabited
+        by \obv{finite_intersection_property_on}.
+    Follows by \obv{bounded_intersection_empty}.
+\end{proof}
+
+\begin{theorem}\label{hosted_fip_iff_ambient_free_fip}
+    Suppose $S$ is inhabited.
+    Then $B$ has the finite intersection property on $S$ iff
+        $B$ is a family of subsets of $S$ and
+        $B$ has the finite intersection property.
+\end{theorem}
+\begin{proof}
+    Show that if $B$ has the finite intersection property on $S$, then
+        $B$ is a family of subsets of $S$ and
+        $B$ has the finite intersection property.
+    \begin{subproof}
+        Assume $B$ has the finite intersection property on $S$.
+        $B$ is a family of subsets of $S$ by
+            \obv{finite_intersection_property_on}.
+        Show that for every $D$ such that $D\subseteq B$ and
+            $D$ is finite and $D$ is inhabited we have
+            $\inters{D}\neq\emptyset$.
+        \begin{subproof}
+            Fix $D$.
+            Assume $D\subseteq B$ and $D$ is finite and $D$ is inhabited.
+            $D\subseteq\pow{S}$ by
+                \auto{finite_intersection_property_on,subseteq,
+                    pow_iff}.
+            $\boundedIntersection{S}{D}$ is inhabited by
+                \obv{finite_intersection_property_on}.
+            $\boundedIntersection{S}{D}=\inters{D}$ by
+                \obv{bounded_intersection_eq_inters}.
+            Take $x$ such that $x\in\boundedIntersection{S}{D}$.
+            Hence $x\in\inters{D}$.
+            Thus $\inters{D}$ is inhabited.
+            Follows by \obv{emptyset}.
+        \end{subproof}
+        Follows by \obv{finite_intersection_property}.
+    \end{subproof}
+
+    Show that if $B$ is a family of subsets of $S$ and
+        $B$ has the finite intersection property, then
+        $B$ has the finite intersection property on $S$.
+    \begin{subproof}
+        Assume $B$ is a family of subsets of $S$ and
+            $B$ has the finite intersection property.
+        Show that for every $D$ such that $D\subseteq B$ and $D$ is finite
+            we have $\boundedIntersection{S}{D}$ is inhabited.
+        \begin{subproof}
+            Fix $D$.
+            Assume $D\subseteq B$ and $D$ is finite.
+            \begin{byCase}
+            \caseOf{$D=\emptyset$.}
+                $\boundedIntersection{S}{D}=S$ by
+                    \auto{bounded_intersection_empty}.
+                Take $x$ such that $x\in S$.
+                Hence $x\in\boundedIntersection{S}{D}$.
+            \caseOf{$D\neq\emptyset$.}
+                $D$ is inhabited by \obv{nonempty_inhabited}.
+                Hence $\inters{D}\neq\emptyset$ by
+                    \obv{finite_intersection_property}.
+                Thus $\inters{D}$ is inhabited by
+                    \obv{nonempty_inhabited}.
+                $D\subseteq\pow{S}$ by
+                    \auto{subseteq,pow_iff}.
+                $\boundedIntersection{S}{D}=\inters{D}$ by
+                    \obv{bounded_intersection_eq_inters}.
+                Take $x$ such that $x\in\inters{D}$.
+                Hence $x\in\boundedIntersection{S}{D}$.
+            \end{byCase}
+        \end{subproof}
+        Follows by \obv{finite_intersection_property_on}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{corollary}\label{hosted_fip_iff_proper_ambient_free_fip}
+    Suppose $S$ is inhabited and $B$ is inhabited.
+    Then $B$ has the finite intersection property on $S$ iff
+        $B$ is a family of subsets of $S$ and
+        $B$ has the proper finite intersection property.
+\end{corollary}
+\begin{proof}
+    Follows by
+        \auto{hosted_fip_iff_ambient_free_fip,
+            proper_finite_intersection_property}.
+\end{proof}

@@ -1,0 +1,2364 @@
+\import{surreal/additive.tex}
+
+\section{Surreal multiplication}
+
+For a recursively available binary operation $g$, the Conway multiplication
+option associated with a pair $p=(u,v)$ is
+\[
+    g(u,y)+g(x,v)-g(u,v).
+\]
+Keeping this term and the four option quadrants explicit makes the locality
+of the recursion visible to the type checker.
+
+\subsection{Recursive construction}
+
+\begin{definition}\label{surreal_mul_term_typed}
+    $\surrealMulTermOp:
+        (\Set\to\Set\to\Set)\to\Set\to\Set\to\Set\to\Set
+        =\fun{g:\Set\to\Set\to\Set}{
+            \fun{x,y,p:\Set}{
+                \surrealAdd
+                    {\surrealAdd
+                        {\Apply{g}{\fst{p},y}}
+                        {\Apply{g}{x,\snd{p}}}}
+                    {\surrealNeg{\Apply{g}{\fst{p},\snd{p}}}}}}$.
+\end{definition}
+
+\begin{definition}\label{surreal_mul_step_left}
+    $\surrealMulStepLeftOp:
+        (\Set\to\Set\to\Set)\to\Set\to\Set\to\Set
+        =\fun{g:\Set\to\Set\to\Set}{
+            \fun{x,y:\Set}{
+                \{\Apply{\surrealMulTermOp}{g,x,y,p}\mid
+                    p\in\surrealLeft{x}\times\surrealLeft{y}\}
+                \union
+                \{\Apply{\surrealMulTermOp}{g,x,y,p}\mid
+                    p\in\surrealRight{x}\times\surrealRight{y}\}}}$.
+\end{definition}
+
+\begin{definition}\label{surreal_mul_step_right}
+    $\surrealMulStepRightOp:
+        (\Set\to\Set\to\Set)\to\Set\to\Set\to\Set
+        =\fun{g:\Set\to\Set\to\Set}{
+            \fun{x,y:\Set}{
+                \{\Apply{\surrealMulTermOp}{g,x,y,p}\mid
+                    p\in\surrealLeft{x}\times\surrealRight{y}\}
+                \union
+                \{\Apply{\surrealMulTermOp}{g,x,y,p}\mid
+                    p\in\surrealRight{x}\times\surrealLeft{y}\}}}$.
+\end{definition}
+
+\begin{definition}\label{surreal_mul_step}
+    $\surrealMulStepOp:
+        \Set\to\Set\to(\Set\to\Set\to\Set)\to\Set
+        =\fun{x,y:\Set}{
+            \fun{g:\Set\to\Set\to\Set}{
+                \surrealCut
+                    {\Apply{\surrealMulStepLeftOp}{g,x,y}}
+                    {\Apply{\surrealMulStepRightOp}{g,x,y}}}}$.
+\end{definition}
+
+\begin{lemma}\label{surreal_mul_term_functional}
+    Suppose $\surreal{x}$ and $\surreal{y}$.
+    Suppose
+        $p\in(\surrealLeft{x}\union\surrealRight{x})
+            \times(\surrealLeft{y}\union\surrealRight{y})$.
+    Then
+        $\forall g,h:\Set\to\Set\to\Set.
+            ((\forall u:\Set.
+                (\surreal{u}\land\birthday{u}\in\birthday{x})
+                \implies
+                (\forall v:\Set.\ \surreal{v}\implies
+                    \Apply{g}{u,v}=\Apply{h}{u,v}))
+             \land
+             (\forall v:\Set.
+                (\surreal{v}\land\birthday{v}\in\birthday{y})
+                \implies
+                \Apply{g}{x,v}=\Apply{h}{x,v}))
+            \implies
+            \Apply{\surrealMulTermOp}{g,x,y,p}
+                =\Apply{\surrealMulTermOp}{h,x,y,p}$.
+\end{lemma}
+\begin{proof}
+    Fix $g,h$.
+    Assume
+        $(\forall u:\Set.
+            (\surreal{u}\land\birthday{u}\in\birthday{x})
+            \implies
+            (\forall v:\Set.\ \surreal{v}\implies
+                \Apply{g}{u,v}=\Apply{h}{u,v}))
+         \land
+         (\forall v:\Set.
+            (\surreal{v}\land\birthday{v}\in\birthday{y})
+            \implies
+            \Apply{g}{x,v}=\Apply{h}{x,v})$.
+    $\fst{p}\in\surrealLeft{x}\union\surrealRight{x}$ and
+        $\snd{p}\in\surrealLeft{y}\union\surrealRight{y}$
+        by \obv{fst_type,snd_type}.
+    $\surreal{\fst{p}}$ and
+        $\birthday{\fst{p}}\in\birthday{x}$
+        by \auto{union,surreal_left_elim,surreal_right_elim}.
+    $\surreal{\snd{p}}$ and
+        $\birthday{\snd{p}}\in\birthday{y}$
+        by \auto{union,surreal_left_elim,surreal_right_elim}.
+    $\Apply{g}{\fst{p},y}
+        =\Apply{h}{\fst{p},y}$ and
+        $\Apply{g}{x,\snd{p}}
+        =\Apply{h}{x,\snd{p}}$ and
+        $\Apply{g}{\fst{p},\snd{p}}
+        =\Apply{h}{\fst{p},\snd{p}}$.
+    Follows by \auto{surreal_mul_term_typed}.
+\end{proof}
+
+\begin{lemma}\label{surreal_mul_quadrant_functional}
+    Suppose $\surreal{x}$ and $\surreal{y}$.
+    Suppose
+        $A\subseteq\surrealLeft{x}\union\surrealRight{x}$ and
+        $B\subseteq\surrealLeft{y}\union\surrealRight{y}$.
+    Then
+        $\forall g,h:\Set\to\Set\to\Set.
+            ((\forall u:\Set.
+                (\surreal{u}\land\birthday{u}\in\birthday{x})
+                \implies
+                (\forall v:\Set.\ \surreal{v}\implies
+                    \Apply{g}{u,v}=\Apply{h}{u,v}))
+             \land
+             (\forall v:\Set.
+                (\surreal{v}\land\birthday{v}\in\birthday{y})
+                \implies
+                \Apply{g}{x,v}=\Apply{h}{x,v}))
+            \implies
+            \{\Apply{\surrealMulTermOp}{g,x,y,p}
+                \mid p\in A\times B\}
+            =\{\Apply{\surrealMulTermOp}{h,x,y,p}
+                \mid p\in A\times B\}$.
+\end{lemma}
+\begin{proof}
+    Fix $g,h$.
+    Assume
+        $(\forall u:\Set.
+            (\surreal{u}\land\birthday{u}\in\birthday{x})
+            \implies
+            (\forall v:\Set.\ \surreal{v}\implies
+                \Apply{g}{u,v}=\Apply{h}{u,v}))
+         \land
+         (\forall v:\Set.
+            (\surreal{v}\land\birthday{v}\in\birthday{y})
+            \implies
+            \Apply{g}{x,v}=\Apply{h}{x,v})$.
+    Show that for every $p\in A\times B$ we have
+        $\Apply{\surrealMulTermOp}{g,x,y,p}
+            =\Apply{\surrealMulTermOp}{h,x,y,p}$.
+    \begin{subproof}
+        Fix $p\in A\times B$.
+        $\fst{p}\in A$ and $\snd{p}\in B$
+            by \obv{fst_type,snd_type}.
+        $A\times B\subseteq
+            (\surrealLeft{x}\union\surrealRight{x})
+            \times(\surrealLeft{y}\union\surrealRight{y})$
+            by \auto{subseteq,times}.
+        Hence $p\in(\surrealLeft{x}\union\surrealRight{x})
+            \times(\surrealLeft{y}\union\surrealRight{y})$
+            by \obv{subseteq}.
+        Follows by \obv{surreal_mul_term_functional}.
+    \end{subproof}
+    Follows by \auto{setext}.
+\end{proof}
+
+\begin{proposition}\label{surreal_mul_step_functional}
+    $\Apply{\surrealBinaryRecFunctionalOp}{\surrealMulStepOp}$.
+\end{proposition}
+\begin{proof}
+    Show that $\forall x,y:\Set.
+        (\surreal{x}\land\surreal{y})\implies
+        (\forall g,h:\Set\to\Set\to\Set.
+            ((\forall u:\Set.
+                (\surreal{u}\land\birthday{u}\in\birthday{x})
+                \implies
+                (\forall v:\Set.\ \surreal{v}\implies
+                    \Apply{g}{u,v}
+                    =\Apply{h}{u,v}))
+             \land
+             (\forall v:\Set.
+                (\surreal{v}\land\birthday{v}\in\birthday{y})
+                \implies
+                \Apply{g}{x,v}
+                =\Apply{h}{x,v}))
+            \implies
+            \Apply{\surrealMulStepOp}{x,y,g}
+            =\Apply{\surrealMulStepOp}{x,y,h})$.
+    \begin{subproof}
+        Fix $x,y$.
+        Assume $\surreal{x}\land\surreal{y}$.
+        Fix $g,h$.
+        Assume
+            $(\forall u:\Set.
+                (\surreal{u}\land\birthday{u}\in\birthday{x})
+                \implies
+                (\forall v:\Set.\ \surreal{v}\implies
+                    \Apply{g}{u,v}
+                    =\Apply{h}{u,v}))
+             \land
+             (\forall v:\Set.
+                (\surreal{v}\land\birthday{v}\in\birthday{y})
+                \implies
+                \Apply{g}{x,v}
+                =\Apply{h}{x,v})$.
+        $\surrealLeft{x},\surrealRight{x}\subseteq
+            \surrealLeft{x}\union\surrealRight{x}$ and
+            $\surrealLeft{y},\surrealRight{y}\subseteq
+            \surrealLeft{y}\union\surrealRight{y}$
+            by \auto{subseteq,union}.
+        $\{\Apply{\surrealMulTermOp}{g,x,y,p}\mid
+                p\in\surrealLeft{x}\times\surrealLeft{y}\}
+            =\{\Apply{\surrealMulTermOp}{h,x,y,p}\mid
+                p\in\surrealLeft{x}\times\surrealLeft{y}\}$
+            by \obv{surreal_mul_quadrant_functional}.
+        $\{\Apply{\surrealMulTermOp}{g,x,y,p}\mid
+                p\in\surrealRight{x}\times\surrealRight{y}\}
+            =\{\Apply{\surrealMulTermOp}{h,x,y,p}\mid
+                p\in\surrealRight{x}\times\surrealRight{y}\}$
+            by \obv{surreal_mul_quadrant_functional}.
+        $\{\Apply{\surrealMulTermOp}{g,x,y,p}\mid
+                p\in\surrealLeft{x}\times\surrealRight{y}\}
+            =\{\Apply{\surrealMulTermOp}{h,x,y,p}\mid
+                p\in\surrealLeft{x}\times\surrealRight{y}\}$
+            by \obv{surreal_mul_quadrant_functional}.
+        $\{\Apply{\surrealMulTermOp}{g,x,y,p}\mid
+                p\in\surrealRight{x}\times\surrealLeft{y}\}
+            =\{\Apply{\surrealMulTermOp}{h,x,y,p}\mid
+                p\in\surrealRight{x}\times\surrealLeft{y}\}$
+            by \obv{surreal_mul_quadrant_functional}.
+        Follows by
+            \auto{surreal_mul_step,surreal_mul_step_left,surreal_mul_step_right}.
+    \end{subproof}
+    Follows by \obv{surreal_binary_recursion_functional}.
+\end{proof}
+
+\begin{definition}\label{surreal_mul_typed}
+    $\surrealMulOp:\Set\to\Set\to\Set
+        =\Apply{\surrealBinaryRecOp}{\surrealMulStepOp}$.
+\end{definition}
+
+\begin{definition}\label{surreal_mul}
+    $\surrealMul{x}{y}=\Apply{\surrealMulOp}{x,y}$.
+\end{definition}
+
+\begin{definition}\label{surreal_mul_option}
+    $\surrealMulOption{x}{y}{p}=
+        \Apply{\surrealMulTermOp}{\surrealMulOp,x,y,p}$.
+\end{definition}
+
+\begin{definition}\label{surreal_mul_ll}
+    $\surrealMulLL{x}{y}=
+        \{\surrealMulOption{x}{y}{p}\mid
+            p\in\surrealLeft{x}\times\surrealLeft{y}\}$.
+\end{definition}
+
+\begin{definition}\label{surreal_mul_rr}
+    $\surrealMulRR{x}{y}=
+        \{\surrealMulOption{x}{y}{p}\mid
+            p\in\surrealRight{x}\times\surrealRight{y}\}$.
+\end{definition}
+
+\begin{definition}\label{surreal_mul_lr}
+    $\surrealMulLR{x}{y}=
+        \{\surrealMulOption{x}{y}{p}\mid
+            p\in\surrealLeft{x}\times\surrealRight{y}\}$.
+\end{definition}
+
+\begin{definition}\label{surreal_mul_rl}
+    $\surrealMulRL{x}{y}=
+        \{\surrealMulOption{x}{y}{p}\mid
+            p\in\surrealRight{x}\times\surrealLeft{y}\}$.
+\end{definition}
+
+\begin{definition}\label{surreal_mul_left}
+    $\surrealMulLeft{x}{y}=
+        \Apply{\surrealMulStepLeftOp}{\surrealMulOp,x,y}$.
+\end{definition}
+
+\begin{definition}\label{surreal_mul_right}
+    $\surrealMulRight{x}{y}=
+        \Apply{\surrealMulStepRightOp}{\surrealMulOp,x,y}$.
+\end{definition}
+
+\begin{theorem}\label{surreal_mul_equation}
+    Suppose $\surreal{x}$ and $\surreal{y}$.
+    Then $\surrealMul{x}{y}=
+        \surrealCut{\surrealMulLeft{x}{y}}{\surrealMulRight{x}{y}}$.
+\end{theorem}
+\begin{proof}
+    $\Apply{\surrealMulOp}{x,y}
+        =\Apply{\surrealMulStepOp}
+            {x,y,\surrealMulOp}$
+        by
+        \auto{surreal_mul_typed,surreal_binary_recursion_equation,surreal_mul_step_functional}.
+    $\Apply{\surrealMulStepOp}{x,y,\surrealMulOp}
+        =\surrealCut{\surrealMulLeft{x}{y}}{\surrealMulRight{x}{y}}$
+        by \auto{surreal_mul_step,surreal_mul_left,surreal_mul_right}.
+    Hence $\Apply{\surrealMulOp}{x,y}
+        =\surrealCut{\surrealMulLeft{x}{y}}{\surrealMulRight{x}{y}}$.
+    Follows by \obv{surreal_mul}.
+\end{proof}
+
+\begin{proposition}\label{surreal_mul_option_pair}
+    $\surrealMulOption{x}{y}{(u,v)}=
+        \surrealAdd
+            {\surrealAdd{\surrealMul{u}{y}}{\surrealMul{x}{v}}}
+            {\surrealNeg{\surrealMul{u}{v}}}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{surreal_mul_option,surreal_mul_term_typed,surreal_mul,fst_eq,snd_eq}.
+\end{proof}
+
+\begin{proposition}\label{surreal_mul_left_iff}
+    $a\in\surrealMulLeft{x}{y}$ iff
+        (there exists $p\in\surrealLeft{x}\times\surrealLeft{y}$
+            such that $a=\surrealMulOption{x}{y}{p}$) or
+        (there exists $p\in\surrealRight{x}\times\surrealRight{y}$
+            such that $a=\surrealMulOption{x}{y}{p}$).
+\end{proposition}
+\begin{proof}
+    $a\in\surrealMulLeft{x}{y}$ iff
+        (there exists $p\in\surrealLeft{x}\times\surrealLeft{y}$
+            such that
+            $a=\Apply{\surrealMulTermOp}{\surrealMulOp,x,y,p}$) or
+        (there exists $p\in\surrealRight{x}\times\surrealRight{y}$
+            such that
+            $a=\Apply{\surrealMulTermOp}{\surrealMulOp,x,y,p}$)
+        by \auto{surreal_mul_left,surreal_mul_step_left,union}.
+    Follows by \auto{surreal_mul_option}.
+\end{proof}
+
+\begin{proposition}\label{surreal_mul_right_iff}
+    $a\in\surrealMulRight{x}{y}$ iff
+        (there exists $p\in\surrealLeft{x}\times\surrealRight{y}$
+            such that $a=\surrealMulOption{x}{y}{p}$) or
+        (there exists $p\in\surrealRight{x}\times\surrealLeft{y}$
+            such that $a=\surrealMulOption{x}{y}{p}$).
+\end{proposition}
+\begin{proof}
+    $a\in\surrealMulRight{x}{y}$ iff
+        (there exists $p\in\surrealLeft{x}\times\surrealRight{y}$
+            such that
+            $a=\Apply{\surrealMulTermOp}{\surrealMulOp,x,y,p}$) or
+        (there exists $p\in\surrealRight{x}\times\surrealLeft{y}$
+            such that
+            $a=\Apply{\surrealMulTermOp}{\surrealMulOp,x,y,p}$)
+        by \auto{surreal_mul_right,surreal_mul_step_right,union}.
+    Follows by \auto{surreal_mul_option}.
+\end{proof}
+
+\begin{proposition}\label{surreal_mul_left_pair_iff}
+    $a\in\surrealMulLeft{x}{y}$ iff there exist $u,v$ such that
+        $((u\in\surrealLeft{x}\land v\in\surrealLeft{y})
+          \lor(u\in\surrealRight{x}\land v\in\surrealRight{y}))
+         \land a=\surrealMulOption{x}{y}{(u,v)}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{surreal_mul_left_iff,times_elem_is_tuple,times_tuple_intro}.
+\end{proof}
+
+\begin{proposition}\label{surreal_mul_right_pair_iff}
+    $a\in\surrealMulRight{x}{y}$ iff there exist $u,v$ such that
+        $((u\in\surrealLeft{x}\land v\in\surrealRight{y})
+          \lor(u\in\surrealRight{x}\land v\in\surrealLeft{y}))
+         \land a=\surrealMulOption{x}{y}{(u,v)}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{surreal_mul_right_iff,times_elem_is_tuple,times_tuple_intro}.
+\end{proof}
+
+\begin{definition}\label{surreal_mul_property}
+    $\surrealMulPropertyOp:\Set\to\Set\to\Prop
+        =\fun{x,y:\Set}{
+            \surreal{\surrealMul{x}{y}}
+            \land
+            \surrealCutPair{\surrealMulLeft{x}{y}}
+                {\surrealMulRight{x}{y}}
+            \land
+            (\forall u,v:\Set.
+                (u\in\surrealLeft{x}\land v\in\surrealLeft{y})
+                \implies
+                \surrealLt
+                    {\surrealAdd{\surrealMul{u}{y}}{\surrealMul{x}{v}}}
+                    {\surrealAdd{\surrealMul{x}{y}}{\surrealMul{u}{v}}})
+            \land
+            (\forall u,v:\Set.
+                (u\in\surrealRight{x}\land v\in\surrealRight{y})
+                \implies
+                \surrealLt
+                    {\surrealAdd{\surrealMul{u}{y}}{\surrealMul{x}{v}}}
+                    {\surrealAdd{\surrealMul{x}{y}}{\surrealMul{u}{v}}})
+            \land
+            (\forall u,v:\Set.
+                (u\in\surrealLeft{x}\land v\in\surrealRight{y})
+                \implies
+                \surrealLt
+                    {\surrealAdd{\surrealMul{x}{y}}{\surrealMul{u}{v}}}
+                    {\surrealAdd{\surrealMul{u}{y}}{\surrealMul{x}{v}}})
+            \land
+            (\forall u,v:\Set.
+                (u\in\surrealRight{x}\land v\in\surrealLeft{y})
+                \implies
+                \surrealLt
+                    {\surrealAdd{\surrealMul{x}{y}}{\surrealMul{u}{v}}}
+                    {\surrealAdd{\surrealMul{u}{y}}{\surrealMul{x}{v}}})}$.
+\end{definition}
+
+\begin{lemma}\label{surreal_mul_property_left_left}
+    Suppose $\Apply{\surrealMulPropertyOp}{x,y}$.
+    Let $u\in\surrealLeft{x}$ and $v\in\surrealLeft{y}$.
+    Then
+        $\surrealLt
+            {\surrealAdd{\surrealMul{u}{y}}{\surrealMul{x}{v}}}
+            {\surrealAdd{\surrealMul{x}{y}}{\surrealMul{u}{v}}}$.
+\end{lemma}
+\begin{proof}
+    Follows by \obv{surreal_mul_property}.
+\end{proof}
+
+\begin{lemma}\label{surreal_mul_property_right_left}
+    Suppose $\Apply{\surrealMulPropertyOp}{x,y}$.
+    Let $u\in\surrealRight{x}$ and $v\in\surrealLeft{y}$.
+    Then
+        $\surrealLt
+            {\surrealAdd{\surrealMul{x}{y}}{\surrealMul{u}{v}}}
+            {\surrealAdd{\surrealMul{u}{y}}{\surrealMul{x}{v}}}$.
+\end{lemma}
+\begin{proof}
+    Follows by \obv{surreal_mul_property}.
+\end{proof}
+
+\begin{definition}\label{surreal_mul_available}
+    $\surrealMulAvailableOp:\Set\to\Set\to\Prop
+        =\fun{X,Y:\Set}{
+        (\forall a:\Set.
+            (\surreal{a}\land\birthday{a}\in\birthday{X})
+            \implies
+            (\forall b:\Set.\ \surreal{b}\implies
+                \Apply{\surrealMulPropertyOp}{a,b}))
+        \land
+        (\forall b:\Set.
+            (\surreal{b}\land\birthday{b}\in\birthday{Y})
+            \implies
+            \Apply{\surrealMulPropertyOp}{X,b})}$.
+\end{definition}
+
+\begin{lemma}\label{surreal_mul_available_at}
+    Suppose $\Apply{\surrealMulAvailableOp}{X,Y}$.
+    Suppose $\surreal{a}$ and $\surreal{b}$.
+    Suppose $\birthday{a}\in\birthday{X}$ or
+        ($a=X$ and $\birthday{b}\in\birthday{Y}$).
+    Then $\Apply{\surrealMulPropertyOp}{a,b}$.
+\end{lemma}
+\begin{proof}
+    Follows by \obv{surreal_mul_available}.
+\end{proof}
+
+\begin{lemma}\label{surreal_mul_option_is_surreal_from_available}
+    Suppose $\surreal{X}$ and $\surreal{Y}$.
+    Suppose $\Apply{\surrealMulAvailableOp}{X,Y}$.
+    Suppose
+        $p\in(\surrealLeft{X}\union\surrealRight{X})
+            \times(\surrealLeft{Y}\union\surrealRight{Y})$.
+    Then $\surreal{\surrealMulOption{X}{Y}{p}}$.
+\end{lemma}
+\begin{proof}
+    Take $a,b$ such that
+        $a\in\surrealLeft{X}\union\surrealRight{X}$ and
+        $b\in\surrealLeft{Y}\union\surrealRight{Y}$ and $p=(a,b)$
+        by \obv{times_elem_is_tuple}.
+    $\surreal{a}$ and $\birthday{a}\in\birthday{X}$
+        by \auto{union,surreal_left_elim,surreal_right_elim}.
+    $\surreal{b}$ and $\birthday{b}\in\birthday{Y}$
+        by \auto{union,surreal_left_elim,surreal_right_elim}.
+    $\Apply{\surrealMulPropertyOp}{a,Y}
+        \land\Apply{\surrealMulPropertyOp}{X,b}
+        \land\Apply{\surrealMulPropertyOp}{a,b}$
+        by \obv{surreal_mul_available_at}.
+    $\surreal{\surrealMul{a}{Y}}$ and
+        $\surreal{\surrealMul{X}{b}}$ and
+        $\surreal{\surrealMul{a}{b}}$
+        by \obv{surreal_mul_property}.
+    Follows by
+        \auto{surreal_mul_option_pair,surreal_add_is_surreal,surreal_negation_is_surreal}.
+\end{proof}
+
+\begin{lemma}\label{surreal_mul_cross_from_available_properties}
+    Suppose $\surreal{X}$ and $\surreal{Y}$.
+    Suppose $\Apply{\surrealMulAvailableOp}{X,Y}$.
+    Suppose $\surreal{u}$ and $\surreal{x}$ and
+        $\surreal{v}$ and $\surreal{y}$.
+    Suppose $(u=X\lor\birthday{u}\in\birthday{X})$ and
+        $(x=X\lor\birthday{x}\in\birthday{X})$.
+    Suppose $(v=Y\lor\birthday{v}\in\birthday{Y})$ and
+        $(y=Y\lor\birthday{y}\in\birthday{Y})$.
+    Suppose
+        $(\birthday{u}\in\birthday{X}\land
+            \birthday{x}\in\birthday{X})$
+        or
+        $(\birthday{v}\in\birthday{Y}\land
+            \birthday{y}\in\birthday{Y})$.
+    Suppose $\surrealLt{u}{x}$ and $\surrealLt{v}{y}$.
+    Then
+        $\surrealLt
+            {\surrealAdd{\surrealMul{u}{y}}{\surrealMul{x}{v}}}
+            {\surrealAdd{\surrealMul{x}{y}}{\surrealMul{u}{v}}}$.
+\end{lemma}
+\begin{proof}
+    $\Apply{\surrealMulPropertyOp}{u,v}
+        \land\Apply{\surrealMulPropertyOp}{u,y}
+        \land\Apply{\surrealMulPropertyOp}{x,v}
+        \land\Apply{\surrealMulPropertyOp}{x,y}$
+        by \auto{surreal_mul_available_at}.
+    $\surreal{\surrealMul{u}{v}}$ and
+        $\surreal{\surrealMul{u}{y}}$ and
+        $\surreal{\surrealMul{x}{v}}$ and
+        $\surreal{\surrealMul{x}{y}}$
+        by \obv{surreal_mul_property}.
+    $(\exists w:\Set.\ \surreal{w}\land
+            \birthday{w}\in\birthday{u}\inter\birthday{x}\land
+            \surrealLt{u}{w}\land\surrealLt{w}{x})
+        \lor u\in\surrealLeft{x}
+        \lor x\in\surrealRight{u}$
+        by \obv{surreal_lt_elimination}.
+    \begin{byCase}
+        \caseOf{$\exists w:\Set.\ \surreal{w}\land
+                \birthday{w}\in\birthday{u}\inter\birthday{x}\land
+                \surrealLt{u}{w}\land\surrealLt{w}{x}$.}
+            Take $w$ such that $\surreal{w}$ and
+                $\birthday{w}\in\birthday{u}\inter\birthday{x}$ and
+                $\surrealLt{u}{w}$ and $\surrealLt{w}{x}$.
+            $w\in\surrealRight{u}$ and $w\in\surrealLeft{x}$
+                by \obv{surreal_right_intro,surreal_left_intro,inter}.
+            $\birthday{w}\in\birthday{X}$
+                by
+                \auto{inter,ordinal_transitivity,surreal_birthday_ordinal}.
+            $\Apply{\surrealMulPropertyOp}{w,v}
+                \land\Apply{\surrealMulPropertyOp}{w,y}$
+                by \obv{surreal_mul_available_at}.
+            $(\exists z:\Set.\ \surreal{z}\land
+                    \birthday{z}\in\birthday{v}\inter\birthday{y}\land
+                    \surrealLt{v}{z}\land\surrealLt{z}{y})
+                \lor v\in\surrealLeft{y}
+                \lor y\in\surrealRight{v}$
+                by \obv{surreal_lt_elimination}.
+            \begin{byCase}
+                \caseOf{$\exists z:\Set.\ \surreal{z}\land
+                        \birthday{z}\in\birthday{v}\inter\birthday{y}\land
+                        \surrealLt{v}{z}\land\surrealLt{z}{y}$.}
+                    Take $z$ such that $\surreal{z}$ and
+                        $\birthday{z}\in
+                            \birthday{v}\inter\birthday{y}$ and
+                        $\surrealLt{v}{z}$ and $\surrealLt{z}{y}$.
+                    $z\in\surrealRight{v}$ and $z\in\surrealLeft{y}$
+                        by
+                        \obv{surreal_right_intro,surreal_left_intro,inter}.
+                    $\birthday{z}\in\birthday{Y}$
+                        by
+                        \auto{inter,ordinal_transitivity,surreal_birthday_ordinal}.
+                    $\Apply{\surrealMulPropertyOp}{u,z}
+                        \land\Apply{\surrealMulPropertyOp}{x,z}
+                        \land\Apply{\surrealMulPropertyOp}{w,z}$
+                        by \auto{surreal_mul_available_at}.
+                    $\surreal{\surrealMul{w}{y}}$ and
+                        $\surreal{\surrealMul{x}{z}}$ and
+                        $\surreal{\surrealMul{w}{v}}$ and
+                        $\surreal{\surrealMul{u}{z}}$ and
+                        $\surreal{\surrealMul{w}{z}}$
+                        by \obv{surreal_mul_property}.
+                    $\surrealLt
+                        {\surrealAdd{\surrealMul{u}{y}}{\surrealMul{w}{z}}}
+                        {\surrealAdd{\surrealMul{w}{y}}{\surrealMul{u}{z}}}$
+                        by \obv{surreal_mul_property}.
+                    $\surrealLt
+                        {\surrealAdd{\surrealMul{x}{v}}{\surrealMul{w}{z}}}
+                        {\surrealAdd{\surrealMul{x}{z}}{\surrealMul{w}{v}}}$
+                        by \auto{surreal_mul_property,surreal_add_commutative}.
+                    $\surrealLt
+                        {\surrealAdd{\surrealMul{w}{y}}{\surrealMul{x}{z}}}
+                        {\surrealAdd{\surrealMul{x}{y}}{\surrealMul{w}{z}}}$
+                        by \obv{surreal_mul_property}.
+                    $\surrealLt
+                        {\surrealAdd{\surrealMul{w}{v}}{\surrealMul{u}{z}}}
+                        {\surrealAdd{\surrealMul{u}{v}}{\surrealMul{w}{z}}}$
+                        by \obv{surreal_mul_property}.
+                    Follows by
+                        \auto{surreal_add_four_balance,surreal_add_is_surreal}.
+                \caseOf{$\lnot(\exists z:\Set.\ \surreal{z}\land
+                        \birthday{z}\in
+                            \birthday{v}\inter\birthday{y}\land
+                        \surrealLt{v}{z}\land\surrealLt{z}{y})$.}
+                    \begin{byCase}
+                        \caseOf{$v\in\surrealLeft{y}$.}
+                            $\surreal{\surrealMul{w}{y}}$ and
+                                $\surreal{\surrealMul{w}{v}}$
+                                by \obv{surreal_mul_property}.
+                            $\surrealLt
+                                {\surrealAdd{\surrealMul{x}{v}}
+                                    {\surrealMul{w}{y}}}
+                                {\surrealAdd{\surrealMul{x}{y}}
+                                    {\surrealMul{w}{v}}}$
+                                by \auto{surreal_mul_property,surreal_add_commutative}.
+                            $\surrealLt
+                                {\surrealAdd{\surrealMul{u}{y}}
+                                    {\surrealMul{w}{v}}}
+                                {\surrealAdd{\surrealMul{u}{v}}
+                                    {\surrealMul{w}{y}}}$
+                                by \auto{surreal_mul_property,surreal_add_commutative}.
+                            $\surrealLt
+                                {\surrealAdd{\surrealMul{x}{v}}
+                                    {\surrealMul{u}{y}}}
+                                {\surrealAdd{\surrealMul{x}{y}}
+                                    {\surrealMul{u}{v}}}$
+                                by
+                                \obv{surreal_add_cross_cancel,surreal_add_is_surreal}.
+                            Follows by \obv{surreal_add_commutative}.
+                        \caseOf{$v\notin\surrealLeft{y}$.}
+                            $y\in\surrealRight{v}$.
+                            $\surreal{\surrealMul{w}{y}}$ and
+                                $\surreal{\surrealMul{w}{v}}$
+                                by \obv{surreal_mul_property}.
+                            $\surrealLt
+                                {\surrealAdd{\surrealMul{x}{v}}
+                                    {\surrealMul{w}{y}}}
+                                {\surrealAdd{\surrealMul{x}{y}}
+                                    {\surrealMul{w}{v}}}$
+                                by \auto{surreal_mul_property,surreal_add_commutative}.
+                            $\surrealLt
+                                {\surrealAdd{\surrealMul{u}{y}}
+                                    {\surrealMul{w}{v}}}
+                                {\surrealAdd{\surrealMul{u}{v}}
+                                    {\surrealMul{w}{y}}}$
+                                by \auto{surreal_mul_property,surreal_add_commutative}.
+                            $\surrealLt
+                                {\surrealAdd{\surrealMul{x}{v}}
+                                    {\surrealMul{u}{y}}}
+                                {\surrealAdd{\surrealMul{x}{y}}
+                                    {\surrealMul{u}{v}}}$
+                                by
+                                \obv{surreal_add_cross_cancel,surreal_add_is_surreal}.
+                            Follows by \obv{surreal_add_commutative}.
+                    \end{byCase}
+            \end{byCase}
+        \caseOf{$\lnot(\exists w:\Set.\ \surreal{w}\land
+                \birthday{w}\in\birthday{u}\inter\birthday{x}\land
+                \surrealLt{u}{w}\land\surrealLt{w}{x})$.}
+            \begin{byCase}
+                \caseOf{$u\in\surrealLeft{x}$.}
+                    $(\exists z:\Set.\ \surreal{z}\land
+                            \birthday{z}\in
+                                \birthday{v}\inter\birthday{y}\land
+                            \surrealLt{v}{z}\land\surrealLt{z}{y})
+                        \lor v\in\surrealLeft{y}
+                        \lor y\in\surrealRight{v}$
+                        by \obv{surreal_lt_elimination}.
+                    \begin{byCase}
+                        \caseOf{$\exists z:\Set.\ \surreal{z}\land
+                                \birthday{z}\in
+                                    \birthday{v}\inter\birthday{y}\land
+                                \surrealLt{v}{z}\land\surrealLt{z}{y}$.}
+                            Take $z$ such that $\surreal{z}$ and
+                                $\birthday{z}\in
+                                    \birthday{v}\inter\birthday{y}$ and
+                                $\surrealLt{v}{z}$ and $\surrealLt{z}{y}$.
+                            $z\in\surrealRight{v}$ and
+                                $z\in\surrealLeft{y}$
+                                by
+                                \obv{surreal_right_intro,surreal_left_intro,inter}.
+                            $\birthday{z}\in\birthday{Y}$
+                                by
+                                \auto{inter,ordinal_transitivity,surreal_birthday_ordinal}.
+                            $\Apply{\surrealMulPropertyOp}{u,z}
+                                \land\Apply{\surrealMulPropertyOp}{x,z}$
+                                by \auto{surreal_mul_available_at}.
+                            $\surreal{\surrealMul{u}{z}}$ and
+                                $\surreal{\surrealMul{x}{z}}$
+                                by \obv{surreal_mul_property}.
+                            $\surrealLt
+                                {\surrealAdd{\surrealMul{u}{y}}
+                                    {\surrealMul{x}{z}}}
+                                {\surrealAdd{\surrealMul{x}{y}}
+                                    {\surrealMul{u}{z}}}$
+                                by \obv{surreal_mul_property_left_left}.
+                            $\surrealLt
+                                {\surrealAdd{\surrealMul{x}{v}}
+                                    {\surrealMul{u}{z}}}
+                                {\surrealAdd{\surrealMul{u}{v}}
+                                    {\surrealMul{x}{z}}}$
+                                by \obv{surreal_mul_property}.
+                            Follows by
+                                \obv{surreal_add_cross_cancel,surreal_add_is_surreal}.
+                        \caseOf{$\lnot(\exists z:\Set.\ \surreal{z}\land
+                                \birthday{z}\in
+                                    \birthday{v}\inter\birthday{y}\land
+                                \surrealLt{v}{z}\land\surrealLt{z}{y})$.}
+                            \begin{byCase}
+                                \caseOf{$v\in\surrealLeft{y}$.}
+                                    Follows by \obv{surreal_mul_property}.
+                                \caseOf{$v\notin\surrealLeft{y}$.}
+                                    $y\in\surrealRight{v}$.
+                                    Follows by
+                                        \auto{surreal_mul_property,surreal_add_commutative}.
+                            \end{byCase}
+                    \end{byCase}
+                \caseOf{$u\notin\surrealLeft{x}$.}
+                    $x\in\surrealRight{u}$.
+                    $(\exists z:\Set.\ \surreal{z}\land
+                            \birthday{z}\in
+                                \birthday{v}\inter\birthday{y}\land
+                            \surrealLt{v}{z}\land\surrealLt{z}{y})
+                        \lor v\in\surrealLeft{y}
+                        \lor y\in\surrealRight{v}$
+                        by \obv{surreal_lt_elimination}.
+                    \begin{byCase}
+                        \caseOf{$\exists z:\Set.\ \surreal{z}\land
+                                \birthday{z}\in
+                                    \birthday{v}\inter\birthday{y}\land
+                                \surrealLt{v}{z}\land\surrealLt{z}{y}$.}
+                            Take $z$ such that $\surreal{z}$ and
+                                $\birthday{z}\in
+                                    \birthday{v}\inter\birthday{y}$ and
+                                $\surrealLt{v}{z}$ and $\surrealLt{z}{y}$.
+                            $z\in\surrealRight{v}$ and
+                                $z\in\surrealLeft{y}$
+                                by
+                                \obv{surreal_right_intro,surreal_left_intro,inter}.
+                            $\birthday{z}\in\birthday{Y}$
+                                by
+                                \auto{inter,ordinal_transitivity,surreal_birthday_ordinal}.
+                            $\Apply{\surrealMulPropertyOp}{u,z}
+                                \land\Apply{\surrealMulPropertyOp}{x,z}$
+                                by \auto{surreal_mul_available_at}.
+                            $\surreal{\surrealMul{u}{z}}$ and
+                                $\surreal{\surrealMul{x}{z}}$
+                                by \obv{surreal_mul_property}.
+                            $\surrealLt
+                                {\surrealAdd{\surrealMul{u}{y}}
+                                    {\surrealMul{x}{z}}}
+                                {\surrealAdd{\surrealMul{x}{y}}
+                                    {\surrealMul{u}{z}}}$
+                                by \obv{surreal_mul_property_right_left}.
+                            $\surrealLt
+                                {\surrealAdd{\surrealMul{x}{v}}
+                                    {\surrealMul{u}{z}}}
+                                {\surrealAdd{\surrealMul{u}{v}}
+                                    {\surrealMul{x}{z}}}$
+                                by \auto{surreal_mul_property}.
+                            Follows by
+                                \auto{surreal_add_cross_cancel,surreal_add_is_surreal}.
+                        \caseOf{$\lnot(\exists z:\Set.\ \surreal{z}\land
+                                \birthday{z}\in
+                                    \birthday{v}\inter\birthday{y}\land
+                                \surrealLt{v}{z}\land\surrealLt{z}{y})$.}
+                            \begin{byCase}
+                                \caseOf{$v\in\surrealLeft{y}$.}
+                                    Follows by \obv{surreal_mul_property}.
+                                \caseOf{$v\notin\surrealLeft{y}$.}
+                                    $y\in\surrealRight{v}$.
+                                    Follows by
+                                        \auto{surreal_mul_property,surreal_add_commutative}.
+                            \end{byCase}
+                    \end{byCase}
+            \end{byCase}
+    \end{byCase}
+\end{proof}
+
+\begin{lemma}\label{surreal_mul_options_separated_from_available}
+    Suppose $\surreal{X}$ and $\surreal{Y}$.
+    Suppose $\Apply{\surrealMulAvailableOp}{X,Y}$.
+    Suppose
+        $(a\in\surrealLeft{X}\land b\in\surrealLeft{Y})$
+        or
+        $(a\in\surrealRight{X}\land b\in\surrealRight{Y})$.
+    Suppose
+        $(c\in\surrealLeft{X}\land d\in\surrealRight{Y})$
+        or
+        $(c\in\surrealRight{X}\land d\in\surrealLeft{Y})$.
+    Then
+        $\surrealLt{\surrealMulOption{X}{Y}{(a,b)}}
+            {\surrealMulOption{X}{Y}{(c,d)}}$.
+\end{lemma}
+\begin{proof}
+    $a,c\in\surrealLeft{X}\union\surrealRight{X}$ and
+        $b,d\in\surrealLeft{Y}\union\surrealRight{Y}$
+        by \auto{union}.
+    $\surreal{a}$ and $\surreal{b}$ and $\surreal{c}$ and $\surreal{d}$
+        by \auto{union,surreal_left_elim,surreal_right_elim}.
+    $\birthday{a},\birthday{c}\in\birthday{X}$ and
+        $\birthday{b},\birthday{d}\in\birthday{Y}$
+        by \auto{union,surreal_left_elim,surreal_right_elim}.
+    $\Apply{\surrealMulPropertyOp}{a,Y}
+        \land\Apply{\surrealMulPropertyOp}{X,b}
+        \land\Apply{\surrealMulPropertyOp}{a,b}
+        \land\Apply{\surrealMulPropertyOp}{c,Y}
+        \land\Apply{\surrealMulPropertyOp}{X,d}
+        \land\Apply{\surrealMulPropertyOp}{c,d}
+        \land\Apply{\surrealMulPropertyOp}{c,b}
+        \land\Apply{\surrealMulPropertyOp}{a,d}$
+        by \obv{surreal_mul_available_at}.
+    $\surreal{\surrealMul{a}{Y}}$ and
+        $\surreal{\surrealMul{X}{b}}$ and
+        $\surreal{\surrealMul{a}{b}}$ and
+        $\surreal{\surrealMul{c}{Y}}$ and
+        $\surreal{\surrealMul{X}{d}}$ and
+        $\surreal{\surrealMul{c}{d}}$ and
+        $\surreal{\surrealMul{c}{b}}$ and
+        $\surreal{\surrealMul{a}{d}}$
+        by \auto{surreal_mul_property}.
+    Show that
+        $\surrealLt
+            {\surrealAdd
+                {\surrealAdd{\surrealMul{a}{Y}}{\surrealMul{X}{b}}}
+                {\surrealMul{c}{d}}}
+            {\surrealAdd
+                {\surrealAdd{\surrealMul{c}{Y}}{\surrealMul{X}{d}}}
+                {\surrealMul{a}{b}}}$.
+    \begin{subproof}
+        \begin{byCase}
+            \caseOf{$a\in\surrealLeft{X}\land
+                    b\in\surrealLeft{Y}$.}
+                $\surrealLt{a}{X}$ and $\surrealLt{b}{Y}$
+                    by \obv{surreal_left_elim}.
+                \begin{byCase}
+                    \caseOf{$c\in\surrealLeft{X}\land
+                            d\in\surrealRight{Y}$.}
+                        $\surrealLt{c}{X}$ and $\surrealLt{Y}{d}$
+                            by \obv{surreal_left_elim,surreal_right_elim}.
+                        $\surrealLt{b}{d}$
+                            by \auto{surreal_lt_transitive}.
+                        $\surrealLt{a}{c}$ or $a=c$ or
+                            $\surrealLt{c}{a}$
+                            by \obv{surreal_lt_trichotomy}.
+                        \begin{byCase}
+                            \caseOf{$\surrealLt{a}{c}$.}
+                                $\surrealLt{b}{d}$
+                                    by \obv{surreal_lt_transitive}.
+                                $\surrealLt
+                                    {\surrealAdd{\surrealMul{a}{Y}}
+                                        {\surrealMul{c}{b}}}
+                                    {\surrealAdd{\surrealMul{c}{Y}}
+                                        {\surrealMul{a}{b}}}$
+                                    by
+                                    \auto{surreal_mul_cross_from_available_properties,surreal_add_commutative,surreal_add_is_surreal}.
+                                $\surrealLt
+                                    {\surrealAdd{\surrealMul{c}{d}}
+                                        {\surrealMul{X}{b}}}
+                                    {\surrealAdd{\surrealMul{X}{d}}
+                                        {\surrealMul{c}{b}}}$
+                                    by
+                                    \auto{surreal_mul_cross_from_available_properties}.
+                                $\surrealLt
+                                    {\surrealAdd
+                                        {\surrealAdd{\surrealMul{a}{Y}}
+                                            {\surrealMul{c}{d}}}
+                                        {\surrealMul{X}{b}}}
+                                    {\surrealAdd
+                                        {\surrealAdd{\surrealMul{c}{Y}}
+                                            {\surrealMul{X}{d}}}
+                                        {\surrealMul{a}{b}}}$
+                                    by
+                                    \auto{surreal_add_three_balance,surreal_add_is_surreal}.
+                                Follows by
+                                    \auto{surreal_add_associative,surreal_add_commutative,surreal_add_is_surreal}.
+                            \caseOf{$\lnot\surrealLt{a}{c}$.}
+                                \begin{byCase}
+                                    \caseOf{$a=c$.}
+                                        $\surrealLt{b}{d}$
+                                            by \obv{surreal_lt_transitive}.
+                                        $\surrealLt
+                                            {\surrealAdd{\surrealMul{a}{d}}
+                                                {\surrealMul{X}{b}}}
+                                            {\surrealAdd{\surrealMul{X}{d}}
+                                                {\surrealMul{a}{b}}}$
+                                            by
+                                            \auto{surreal_mul_cross_from_available_properties,surreal_add_commutative,surreal_add_is_surreal}.
+                                        Follows by
+                                            \auto{surreal_add_lt_right,surreal_add_associative,surreal_add_commutative,surreal_add_is_surreal}.
+                                    \caseOf{$a\neq c$.}
+                                        $\surrealLt{c}{a}$.
+                                        $\surrealLt
+                                            {\surrealAdd{\surrealMul{c}{d}}
+                                                {\surrealMul{a}{Y}}}
+                                            {\surrealAdd{\surrealMul{a}{d}}
+                                                {\surrealMul{c}{Y}}}$
+                                            by
+                                            \auto{surreal_mul_cross_from_available_properties,surreal_add_commutative,surreal_add_is_surreal}.
+                                        $\surrealLt
+                                            {\surrealAdd{\surrealMul{a}{d}}
+                                                {\surrealMul{X}{b}}}
+                                            {\surrealAdd{\surrealMul{X}{d}}
+                                                {\surrealMul{a}{b}}}$
+                                            by
+                                            \auto{surreal_mul_cross_from_available_properties}.
+                                        $\surrealLt
+                                            {\surrealAdd{\surrealMul{X}{b}}
+                                                {\surrealMul{a}{d}}}
+                                            {\surrealAdd{\surrealMul{X}{d}}
+                                                {\surrealMul{a}{b}}}$
+                                            by
+                                            \auto{surreal_add_commutative,surreal_add_is_surreal}.
+                                        $\surrealLt
+                                            {\surrealAdd{\surrealMul{c}{d}}
+                                                {\surrealMul{a}{Y}}}
+                                            {\surrealAdd{\surrealMul{c}{Y}}
+                                                {\surrealMul{a}{d}}}$
+                                            by
+                                            \obv{surreal_add_commutative,surreal_add_is_surreal}.
+                                        $\surrealLt
+                                            {\surrealAdd
+                                                {\surrealAdd{\surrealMul{X}{b}}
+                                                    {\surrealMul{c}{d}}}
+                                                {\surrealMul{a}{Y}}}
+                                            {\surrealAdd
+                                                {\surrealAdd{\surrealMul{X}{d}}
+                                                    {\surrealMul{c}{Y}}}
+                                                {\surrealMul{a}{b}}}$
+                                            by
+                                            \auto{surreal_add_three_balance,surreal_add_is_surreal}.
+                                        Follows by
+                                            \auto{surreal_add_associative,surreal_add_commutative,surreal_add_is_surreal}.
+                                \end{byCase}
+                        \end{byCase}
+                    \caseOf{$\lnot(c\in\surrealLeft{X}\land
+                            d\in\surrealRight{Y})$.}
+                        $c\in\surrealRight{X}$ and
+                            $d\in\surrealLeft{Y}$.
+                        $\surrealLt{X}{c}$ and $\surrealLt{d}{Y}$
+                            by \obv{surreal_left_elim,surreal_right_elim}.
+                        $\surrealLt{a}{c}$
+                            by \obv{surreal_lt_transitive}.
+                        $\surrealLt{b}{d}$ or $b=d$ or
+                            $\surrealLt{d}{b}$
+                            by \obv{surreal_lt_trichotomy}.
+                        \begin{byCase}
+                            \caseOf{$\surrealLt{b}{d}$.}
+                                $\surrealLt{a}{c}$
+                                    by \obv{surreal_lt_transitive}.
+                                $\surrealLt
+                                    {\surrealAdd{\surrealMul{a}{d}}
+                                        {\surrealMul{X}{b}}}
+                                    {\surrealAdd{\surrealMul{X}{d}}
+                                        {\surrealMul{a}{b}}}$
+                                    by
+                                    \auto{surreal_mul_cross_from_available_properties}.
+                                $\surrealLt
+                                    {\surrealAdd{\surrealMul{a}{Y}}
+                                        {\surrealMul{c}{d}}}
+                                    {\surrealAdd{\surrealMul{c}{Y}}
+                                        {\surrealMul{a}{d}}}$
+                                    by
+                                    \auto{surreal_mul_cross_from_available_properties}.
+                                $\surrealLt
+                                    {\surrealAdd{\surrealMul{X}{b}}
+                                        {\surrealMul{a}{d}}}
+                                    {\surrealAdd{\surrealMul{X}{d}}
+                                        {\surrealMul{a}{b}}}$
+                                    by
+                                    \auto{surreal_add_commutative,surreal_add_is_surreal}.
+                                $\surrealLt
+                                    {\surrealAdd
+                                        {\surrealAdd{\surrealMul{X}{b}}
+                                            {\surrealMul{a}{Y}}}
+                                        {\surrealMul{c}{d}}}
+                                    {\surrealAdd
+                                        {\surrealAdd{\surrealMul{X}{d}}
+                                            {\surrealMul{c}{Y}}}
+                                        {\surrealMul{a}{b}}}$
+                                    by
+                                    \auto{surreal_add_three_balance,surreal_add_is_surreal}.
+                                Follows by
+                                    \auto{surreal_add_associative,surreal_add_commutative,surreal_add_is_surreal}.
+                            \caseOf{$\lnot\surrealLt{b}{d}$.}
+                                \begin{byCase}
+                                    \caseOf{$b=d$.}
+                                        $\surrealLt{a}{c}$
+                                            by \obv{surreal_lt_transitive}.
+                                        $\surrealLt
+                                            {\surrealAdd{\surrealMul{a}{Y}}
+                                                {\surrealMul{c}{b}}}
+                                            {\surrealAdd{\surrealMul{c}{Y}}
+                                                {\surrealMul{a}{b}}}$
+                                            by
+                                            \auto{surreal_mul_cross_from_available_properties}.
+                                        Follows by
+                                            \auto{surreal_add_lt_right,surreal_add_associative,surreal_add_commutative,surreal_add_is_surreal}.
+                                    \caseOf{$b\neq d$.}
+                                        $\surrealLt{d}{b}$.
+                                        $\surrealLt
+                                            {\surrealAdd{\surrealMul{X}{b}}
+                                                {\surrealMul{c}{d}}}
+                                            {\surrealAdd{\surrealMul{c}{b}}
+                                                {\surrealMul{X}{d}}}$
+                                            by
+                                            \auto{surreal_mul_cross_from_available_properties}.
+                                        $\surrealLt
+                                            {\surrealAdd{\surrealMul{a}{Y}}
+                                                {\surrealMul{c}{b}}}
+                                            {\surrealAdd{\surrealMul{c}{Y}}
+                                                {\surrealMul{a}{b}}}$
+                                            by
+                                            \auto{surreal_mul_cross_from_available_properties}.
+                                        $\surrealLt
+                                            {\surrealAdd{\surrealMul{X}{b}}
+                                                {\surrealMul{c}{d}}}
+                                            {\surrealAdd{\surrealMul{X}{d}}
+                                                {\surrealMul{c}{b}}}$
+                                            by
+                                            \obv{surreal_add_commutative,surreal_add_is_surreal}.
+                                        $\surrealLt
+                                            {\surrealAdd
+                                                {\surrealAdd{\surrealMul{a}{Y}}
+                                                    {\surrealMul{X}{b}}}
+                                                {\surrealMul{c}{d}}}
+                                            {\surrealAdd
+                                                {\surrealAdd{\surrealMul{c}{Y}}
+                                                    {\surrealMul{X}{d}}}
+                                                {\surrealMul{a}{b}}}$
+                                            by
+                                            \auto{surreal_add_three_balance,surreal_add_is_surreal}.
+                                        Follows by
+                                            assumption.
+                                \end{byCase}
+                        \end{byCase}
+                \end{byCase}
+            \caseOf{$\lnot(a\in\surrealLeft{X}\land
+                    b\in\surrealLeft{Y})$.}
+                $a\in\surrealRight{X}$ and
+                    $b\in\surrealRight{Y}$.
+                $\surrealLt{X}{a}$ and $\surrealLt{Y}{b}$
+                    by \obv{surreal_right_elim}.
+                \begin{byCase}
+                    \caseOf{$c\in\surrealLeft{X}\land
+                            d\in\surrealRight{Y}$.}
+                        $\surrealLt{c}{X}$ and $\surrealLt{Y}{d}$
+                            by \obv{surreal_left_elim,surreal_right_elim}.
+                        $\surrealLt{c}{a}$
+                            by \obv{surreal_lt_transitive}.
+                        $\surrealLt{b}{d}$ or $b=d$ or
+                            $\surrealLt{d}{b}$
+                            by \obv{surreal_lt_trichotomy}.
+                        \begin{byCase}
+                            \caseOf{$\surrealLt{b}{d}$.}
+                                $\surrealLt{c}{a}$
+                                    by \obv{surreal_lt_transitive}.
+                                $\surrealLt
+                                    {\surrealAdd{\surrealMul{a}{Y}}
+                                        {\surrealMul{c}{b}}}
+                                    {\surrealAdd{\surrealMul{a}{b}}
+                                        {\surrealMul{c}{Y}}}$
+                                    by
+                                    \auto{surreal_mul_cross_from_available_properties,surreal_add_commutative,surreal_add_is_surreal}.
+                                $\surrealLt
+                                    {\surrealAdd{\surrealMul{c}{d}}
+                                        {\surrealMul{X}{b}}}
+                                    {\surrealAdd{\surrealMul{X}{d}}
+                                        {\surrealMul{c}{b}}}$
+                                    by
+                                    \auto{surreal_mul_cross_from_available_properties}.
+                                $\surrealLt
+                                    {\surrealAdd{\surrealMul{a}{Y}}
+                                        {\surrealMul{c}{b}}}
+                                    {\surrealAdd{\surrealMul{c}{Y}}
+                                        {\surrealMul{a}{b}}}$
+                                    by
+                                    \obv{surreal_add_commutative}.
+                                $\surrealLt
+                                    {\surrealAdd
+                                        {\surrealAdd{\surrealMul{a}{Y}}
+                                            {\surrealMul{c}{d}}}
+                                        {\surrealMul{X}{b}}}
+                                    {\surrealAdd
+                                        {\surrealAdd{\surrealMul{c}{Y}}
+                                            {\surrealMul{X}{d}}}
+                                        {\surrealMul{a}{b}}}$
+                                    by
+                                    \auto{surreal_add_three_balance,surreal_add_is_surreal}.
+                                Follows by
+                                    \auto{surreal_add_associative,surreal_add_commutative,surreal_add_is_surreal}.
+                            \caseOf{$\lnot\surrealLt{b}{d}$.}
+                                \begin{byCase}
+                                    \caseOf{$b=d$.}
+                                        $\surrealLt{c}{a}$
+                                            by \obv{surreal_lt_transitive}.
+                                        $\surrealLt
+                                            {\surrealAdd{\surrealMul{a}{Y}}
+                                                {\surrealMul{c}{b}}}
+                                            {\surrealAdd{\surrealMul{a}{b}}
+                                                {\surrealMul{c}{Y}}}$
+                                            by
+                                            \auto{surreal_mul_cross_from_available_properties,surreal_add_commutative,surreal_add_is_surreal}.
+                                        Follows by
+                                            \auto{surreal_add_lt_right,surreal_add_associative,surreal_add_commutative,surreal_add_is_surreal}.
+                                    \caseOf{$b\neq d$.}
+                                        $\surrealLt{d}{b}$.
+                                        $\surrealLt
+                                            {\surrealAdd{\surrealMul{X}{b}}
+                                                {\surrealMul{a}{d}}}
+                                            {\surrealAdd{\surrealMul{a}{b}}
+                                                {\surrealMul{X}{d}}}$
+                                            by
+                                            \auto{surreal_mul_cross_from_available_properties}.
+                                        $\surrealLt
+                                            {\surrealAdd{\surrealMul{c}{d}}
+                                                {\surrealMul{a}{Y}}}
+                                            {\surrealAdd{\surrealMul{a}{d}}
+                                                {\surrealMul{c}{Y}}}$
+                                            by
+                                            \auto{surreal_mul_cross_from_available_properties}.
+                                        $\surrealLt
+                                            {\surrealAdd{\surrealMul{X}{b}}
+                                                {\surrealMul{a}{d}}}
+                                            {\surrealAdd{\surrealMul{X}{d}}
+                                                {\surrealMul{a}{b}}}$
+                                            by
+                                            \obv{surreal_add_commutative}.
+                                        $\surrealLt
+                                            {\surrealAdd{\surrealMul{c}{d}}
+                                                {\surrealMul{a}{Y}}}
+                                            {\surrealAdd{\surrealMul{c}{Y}}
+                                                {\surrealMul{a}{d}}}$
+                                            by
+                                            \obv{surreal_add_commutative,surreal_add_is_surreal}.
+                                        $\surrealLt
+                                            {\surrealAdd
+                                                {\surrealAdd{\surrealMul{X}{b}}
+                                                    {\surrealMul{c}{d}}}
+                                                {\surrealMul{a}{Y}}}
+                                            {\surrealAdd
+                                                {\surrealAdd{\surrealMul{X}{d}}
+                                                    {\surrealMul{c}{Y}}}
+                                                {\surrealMul{a}{b}}}$
+                                            by
+                                            \auto{surreal_add_three_balance,surreal_add_is_surreal}.
+                                        Follows by
+                                            \auto{surreal_add_associative,surreal_add_commutative,surreal_add_is_surreal}.
+                                \end{byCase}
+                        \end{byCase}
+                    \caseOf{$\lnot(c\in\surrealLeft{X}\land
+                            d\in\surrealRight{Y})$.}
+                        $c\in\surrealRight{X}$ and
+                            $d\in\surrealLeft{Y}$.
+                        $\surrealLt{X}{c}$ and $\surrealLt{d}{Y}$
+                            by \obv{surreal_left_elim,surreal_right_elim}.
+                        $\surrealLt{d}{b}$
+                            by \auto{surreal_lt_transitive}.
+                        $\surrealLt{a}{c}$ or $a=c$ or
+                            $\surrealLt{c}{a}$
+                            by \obv{surreal_lt_trichotomy}.
+                        \begin{byCase}
+                            \caseOf{$\surrealLt{a}{c}$.}
+                                $\surrealLt{d}{b}$
+                                    by \obv{surreal_lt_transitive}.
+                                $\surrealLt
+                                    {\surrealAdd{\surrealMul{a}{Y}}
+                                        {\surrealMul{c}{d}}}
+                                    {\surrealAdd{\surrealMul{c}{Y}}
+                                        {\surrealMul{a}{d}}}$
+                                    by
+                                    \auto{surreal_mul_cross_from_available_properties}.
+                                $\surrealLt
+                                    {\surrealAdd{\surrealMul{X}{b}}
+                                        {\surrealMul{a}{d}}}
+                                    {\surrealAdd{\surrealMul{a}{b}}
+                                        {\surrealMul{X}{d}}}$
+                                    by
+                                    \auto{surreal_mul_cross_from_available_properties}.
+                                $\surrealLt
+                                    {\surrealAdd{\surrealMul{X}{b}}
+                                        {\surrealMul{a}{d}}}
+                                    {\surrealAdd{\surrealMul{X}{d}}
+                                        {\surrealMul{a}{b}}}$
+                                    by
+                                    \obv{surreal_add_commutative}.
+                                $\surrealLt
+                                    {\surrealAdd
+                                        {\surrealAdd{\surrealMul{X}{b}}
+                                            {\surrealMul{a}{Y}}}
+                                        {\surrealMul{c}{d}}}
+                                    {\surrealAdd
+                                        {\surrealAdd{\surrealMul{X}{d}}
+                                            {\surrealMul{c}{Y}}}
+                                        {\surrealMul{a}{b}}}$
+                                    by
+                                    \auto{surreal_add_three_balance,surreal_add_is_surreal}.
+                                Follows by
+                                    \auto{surreal_add_associative,surreal_add_commutative,surreal_add_is_surreal}.
+                            \caseOf{$\lnot\surrealLt{a}{c}$.}
+                                \begin{byCase}
+                                    \caseOf{$a=c$.}
+                                        $\surrealLt{d}{b}$
+                                            by \obv{surreal_lt_transitive}.
+                                        $\surrealLt
+                                            {\surrealAdd{\surrealMul{X}{b}}
+                                                {\surrealMul{a}{d}}}
+                                            {\surrealAdd{\surrealMul{a}{b}}
+                                                {\surrealMul{X}{d}}}$
+                                            by
+                                            \auto{surreal_mul_cross_from_available_properties}.
+                                        Follows by
+                                            \auto{surreal_add_lt_right,surreal_add_associative,surreal_add_commutative,surreal_add_is_surreal}.
+                                    \caseOf{$a\neq c$.}
+                                        $\surrealLt{c}{a}$.
+                                        $\surrealLt
+                                            {\surrealAdd{\surrealMul{a}{Y}}
+                                                {\surrealMul{c}{b}}}
+                                            {\surrealAdd{\surrealMul{a}{b}}
+                                                {\surrealMul{c}{Y}}}$
+                                            by
+                                            \auto{surreal_mul_cross_from_available_properties,surreal_add_commutative,surreal_add_is_surreal}.
+                                        $\surrealLt
+                                            {\surrealAdd{\surrealMul{X}{b}}
+                                                {\surrealMul{c}{d}}}
+                                            {\surrealAdd{\surrealMul{c}{b}}
+                                                {\surrealMul{X}{d}}}$
+                                            by
+                                            \auto{surreal_mul_cross_from_available_properties}.
+                                        $\surrealLt
+                                            {\surrealAdd{\surrealMul{a}{Y}}
+                                                {\surrealMul{c}{b}}}
+                                            {\surrealAdd{\surrealMul{c}{Y}}
+                                                {\surrealMul{a}{b}}}$
+                                            by
+                                            \obv{surreal_add_commutative,surreal_add_is_surreal}.
+                                        $\surrealLt
+                                            {\surrealAdd{\surrealMul{X}{b}}
+                                                {\surrealMul{c}{d}}}
+                                            {\surrealAdd{\surrealMul{X}{d}}
+                                                {\surrealMul{c}{b}}}$
+                                            by
+                                            \obv{surreal_add_commutative,surreal_add_is_surreal}.
+                                        $\surrealLt
+                                            {\surrealAdd
+                                                {\surrealAdd{\surrealMul{a}{Y}}
+                                                    {\surrealMul{X}{b}}}
+                                                {\surrealMul{c}{d}}}
+                                            {\surrealAdd
+                                                {\surrealAdd{\surrealMul{c}{Y}}
+                                                    {\surrealMul{X}{d}}}
+                                                {\surrealMul{a}{b}}}$
+                                            by
+                                            \auto{surreal_add_three_balance,surreal_add_is_surreal}.
+                                        Follows by
+                                            assumption.
+                                \end{byCase}
+                        \end{byCase}
+                \end{byCase}
+        \end{byCase}
+    \end{subproof}
+    $\surreal{\surrealAdd{\surrealMul{a}{Y}}{\surrealMul{X}{b}}}$ and
+        $\surreal{\surrealAdd{\surrealMul{c}{Y}}{\surrealMul{X}{d}}}$
+        by \obv{surreal_add_is_surreal}.
+    $\surrealLt
+        {\surrealAdd
+            {\surrealAdd{\surrealMul{a}{Y}}{\surrealMul{X}{b}}}
+            {\surrealNeg{\surrealMul{a}{b}}}}
+        {\surrealAdd
+            {\surrealAdd{\surrealMul{c}{Y}}{\surrealMul{X}{d}}}
+            {\surrealNeg{\surrealMul{c}{d}}}}$
+        by \obv{surreal_add_subtract_lt}.
+    Follows by \auto{surreal_mul_option_pair}.
+\end{proof}
+
+\begin{lemma}\label{surreal_mul_left_inequality_from_available}
+    Suppose $\surreal{X}$ and $\surreal{Y}$.
+    Suppose $\Apply{\surrealMulAvailableOp}{X,Y}$.
+    Suppose $\surrealCutPair{\surrealMulLeft{X}{Y}}
+        {\surrealMulRight{X}{Y}}$.
+    Suppose $(u\in\surrealLeft{X}\land v\in\surrealLeft{Y})$
+        or $(u\in\surrealRight{X}\land v\in\surrealRight{Y})$.
+    Then
+        $\surrealLt
+            {\surrealAdd{\surrealMul{u}{Y}}{\surrealMul{X}{v}}}
+            {\surrealAdd{\surrealMul{X}{Y}}{\surrealMul{u}{v}}}$.
+\end{lemma}
+\begin{proof}
+    $\surreal{u}$ and $\birthday{u}\in\birthday{X}$ and
+        $\surreal{v}$ and $\birthday{v}\in\birthday{Y}$
+        by \auto{surreal_left_elim,surreal_right_elim}.
+    $\Apply{\surrealMulPropertyOp}{u,Y}
+        \land\Apply{\surrealMulPropertyOp}{X,v}
+        \land\Apply{\surrealMulPropertyOp}{u,v}$
+        by \obv{surreal_mul_available_at}.
+    $\surreal{\surrealMul{u}{Y}}$ and
+        $\surreal{\surrealMul{X}{v}}$ and
+        $\surreal{\surrealMul{u}{v}}$
+        by \obv{surreal_mul_property}.
+    $\surrealMulOption{X}{Y}{(u,v)}
+        \in\surrealMulLeft{X}{Y}$
+        by \auto{surreal_mul_left_pair_iff}.
+    Hence
+        $\surrealLt{\surrealMulOption{X}{Y}{(u,v)}}
+            {\surrealCut{\surrealMulLeft{X}{Y}}{\surrealMulRight{X}{Y}}}$
+        by \obv{surreal_cut_pair_left}.
+    Hence
+        $\surrealLt{\surrealMulOption{X}{Y}{(u,v)}}
+            {\surrealMul{X}{Y}}$
+        by \obv{surreal_mul_equation}.
+    Hence
+        $\surrealLt
+            {\surrealAdd
+                {\surrealAdd{\surrealMul{u}{Y}}{\surrealMul{X}{v}}}
+                {\surrealNeg{\surrealMul{u}{v}}}}
+            {\surrealMul{X}{Y}}$
+        by \auto{surreal_mul_option_pair}.
+    $\surreal{\surrealMul{X}{Y}}$
+        by \obv{surreal_mul_equation,surreal_cut_pair_is_surreal}.
+    Follows by
+        \obv{surreal_subtract_lt_add,surreal_add_is_surreal}.
+\end{proof}
+
+\begin{lemma}\label{surreal_mul_right_inequality_from_available}
+    Suppose $\surreal{X}$ and $\surreal{Y}$.
+    Suppose $\Apply{\surrealMulAvailableOp}{X,Y}$.
+    Suppose $\surrealCutPair{\surrealMulLeft{X}{Y}}
+        {\surrealMulRight{X}{Y}}$.
+    Suppose $(u\in\surrealLeft{X}\land v\in\surrealRight{Y})$
+        or $(u\in\surrealRight{X}\land v\in\surrealLeft{Y})$.
+    Then
+        $\surrealLt
+            {\surrealAdd{\surrealMul{X}{Y}}{\surrealMul{u}{v}}}
+            {\surrealAdd{\surrealMul{u}{Y}}{\surrealMul{X}{v}}}$.
+\end{lemma}
+\begin{proof}
+    $\surreal{u}$ and $\birthday{u}\in\birthday{X}$ and
+        $\surreal{v}$ and $\birthday{v}\in\birthday{Y}$
+        by \auto{surreal_left_elim,surreal_right_elim}.
+    $\Apply{\surrealMulPropertyOp}{u,Y}
+        \land\Apply{\surrealMulPropertyOp}{X,v}
+        \land\Apply{\surrealMulPropertyOp}{u,v}$
+        by \obv{surreal_mul_available_at}.
+    $\surreal{\surrealMul{u}{Y}}$ and
+        $\surreal{\surrealMul{X}{v}}$ and
+        $\surreal{\surrealMul{u}{v}}$
+        by \obv{surreal_mul_property}.
+    $\surrealMulOption{X}{Y}{(u,v)}
+        \in\surrealMulRight{X}{Y}$
+        by \auto{surreal_mul_right_pair_iff}.
+    Hence
+        $\surrealLt
+            {\surrealCut{\surrealMulLeft{X}{Y}}{\surrealMulRight{X}{Y}}}
+            {\surrealMulOption{X}{Y}{(u,v)}}$
+        by \obv{surreal_cut_pair_right}.
+    Hence
+        $\surrealLt{\surrealMul{X}{Y}}
+            {\surrealMulOption{X}{Y}{(u,v)}}$
+        by \obv{surreal_mul_equation}.
+    Hence
+        $\surrealLt{\surrealMul{X}{Y}}
+            {\surrealAdd
+                {\surrealAdd{\surrealMul{u}{Y}}{\surrealMul{X}{v}}}
+                {\surrealNeg{\surrealMul{u}{v}}}}$
+        by \auto{surreal_mul_option_pair}.
+    $\surreal{\surrealMul{X}{Y}}$
+        by \obv{surreal_mul_equation,surreal_cut_pair_is_surreal}.
+    Follows by
+        \obv{surreal_lt_subtract_add,surreal_add_is_surreal}.
+\end{proof}
+
+\begin{theorem}\label{surreal_mul_properties}
+    $\forall x,y:\Set.\ (\surreal{x}\land\surreal{y})\implies
+        \Apply{\surrealMulPropertyOp}{x,y}$.
+\end{theorem}
+\begin{proof}
+    Show that $\forall X,Y:\Set.\ (\surreal{X}\land\surreal{Y})\implies
+        (((\forall a:\Set.
+                (\surreal{a}\land\birthday{a}\in\birthday{X})
+                \implies
+                (\forall b:\Set.\ \surreal{b}\implies
+                    \Apply{\surrealMulPropertyOp}{a,b}))
+          \land
+          (\forall b:\Set.
+                (\surreal{b}\land\birthday{b}\in\birthday{Y})
+                \implies
+                \Apply{\surrealMulPropertyOp}{X,b}))
+         \implies\Apply{\surrealMulPropertyOp}{X,Y})$.
+    \begin{subproof}
+        Fix $X,Y$.
+        Assume $\surreal{X}\land\surreal{Y}$.
+        Assume
+            $(\forall a:\Set.
+                (\surreal{a}\land\birthday{a}\in\birthday{X})
+                \implies
+                (\forall b:\Set.\ \surreal{b}\implies
+                    \Apply{\surrealMulPropertyOp}{a,b}))
+             \land
+             (\forall b:\Set.
+                (\surreal{b}\land\birthday{b}\in\birthday{Y})
+                \implies
+                \Apply{\surrealMulPropertyOp}{X,b})$.
+        Hence $\Apply{\surrealMulAvailableOp}{X,Y}$
+            by \obv{surreal_mul_available}.
+        Show that for every $l\in\surrealMulLeft{X}{Y}$ we have
+            $\surreal{l}$.
+        \begin{subproof}
+            Fix $l\in\surrealMulLeft{X}{Y}$.
+            Take $u,v$ such that
+                $((u\in\surrealLeft{X}\land v\in\surrealLeft{Y})
+                  \lor(u\in\surrealRight{X}\land v\in\surrealRight{Y}))
+                 \land l=\surrealMulOption{X}{Y}{(u,v)}$
+                by \auto{surreal_mul_left_pair_iff}.
+            $(u,v)\in
+                (\surrealLeft{X}\union\surrealRight{X})
+                \times(\surrealLeft{Y}\union\surrealRight{Y})$
+                by \auto{union,times_tuple_intro}.
+            Follows by
+                \obv{surreal_mul_option_is_surreal_from_available}.
+        \end{subproof}
+        Show that for every $r\in\surrealMulRight{X}{Y}$ we have
+            $\surreal{r}$.
+        \begin{subproof}
+            Fix $r\in\surrealMulRight{X}{Y}$.
+            Take $u,v$ such that
+                $((u\in\surrealLeft{X}\land v\in\surrealRight{Y})
+                  \lor(u\in\surrealRight{X}\land v\in\surrealLeft{Y}))
+                 \land r=\surrealMulOption{X}{Y}{(u,v)}$
+                by \auto{surreal_mul_right_pair_iff}.
+            $(u,v)\in
+                (\surrealLeft{X}\union\surrealRight{X})
+                \times(\surrealLeft{Y}\union\surrealRight{Y})$
+                by \auto{union,times_tuple_intro}.
+            Follows by
+                \auto{surreal_mul_option_is_surreal_from_available}.
+        \end{subproof}
+        Show that for all $l,r$ such that
+            $l\in\surrealMulLeft{X}{Y}$ and
+            $r\in\surrealMulRight{X}{Y}$ we have $\surrealLt{l}{r}$.
+        \begin{subproof}
+            Fix $l,r$.
+            Assume $l\in\surrealMulLeft{X}{Y}$ and
+                $r\in\surrealMulRight{X}{Y}$.
+            Take $a,b$ such that
+                $((a\in\surrealLeft{X}\land b\in\surrealLeft{Y})
+                  \lor(a\in\surrealRight{X}\land b\in\surrealRight{Y}))
+                 \land l=\surrealMulOption{X}{Y}{(a,b)}$
+                by \auto{surreal_mul_left_pair_iff}.
+            Take $c,d$ such that
+                $((c\in\surrealLeft{X}\land d\in\surrealRight{Y})
+                  \lor(c\in\surrealRight{X}\land d\in\surrealLeft{Y}))
+                 \land r=\surrealMulOption{X}{Y}{(c,d)}$
+                by \auto{surreal_mul_right_pair_iff}.
+            Follows by
+                \auto{surreal_mul_options_separated_from_available}.
+        \end{subproof}
+        Hence $\surrealCutPair{\surrealMulLeft{X}{Y}}
+            {\surrealMulRight{X}{Y}}$
+            by \obv{surreal_cut_pair}.
+        Hence $\surreal{\surrealMul{X}{Y}}$
+            by \auto{surreal_mul_equation,surreal_cut_pair_is_surreal}.
+        Show that for all $u,v$ such that
+            $u\in\surrealLeft{X}$ and $v\in\surrealLeft{Y}$ we have
+            $\surrealLt
+                {\surrealAdd{\surrealMul{u}{Y}}{\surrealMul{X}{v}}}
+                {\surrealAdd{\surrealMul{X}{Y}}{\surrealMul{u}{v}}}$.
+        \begin{subproof}
+            Follows by
+                \obv{surreal_mul_left_inequality_from_available}.
+        \end{subproof}
+        Show that for all $u,v$ such that
+            $u\in\surrealRight{X}$ and $v\in\surrealRight{Y}$ we have
+            $\surrealLt
+                {\surrealAdd{\surrealMul{u}{Y}}{\surrealMul{X}{v}}}
+                {\surrealAdd{\surrealMul{X}{Y}}{\surrealMul{u}{v}}}$.
+        \begin{subproof}
+            Follows by
+                \auto{surreal_mul_left_inequality_from_available}.
+        \end{subproof}
+        Show that for all $u,v$ such that
+            $u\in\surrealLeft{X}$ and $v\in\surrealRight{Y}$ we have
+            $\surrealLt
+                {\surrealAdd{\surrealMul{X}{Y}}{\surrealMul{u}{v}}}
+                {\surrealAdd{\surrealMul{u}{Y}}{\surrealMul{X}{v}}}$.
+        \begin{subproof}
+            Follows by
+                \obv{surreal_mul_right_inequality_from_available}.
+        \end{subproof}
+        Show that for all $u,v$ such that
+            $u\in\surrealRight{X}$ and $v\in\surrealLeft{Y}$ we have
+            $\surrealLt
+                {\surrealAdd{\surrealMul{X}{Y}}{\surrealMul{u}{v}}}
+                {\surrealAdd{\surrealMul{u}{Y}}{\surrealMul{X}{v}}}$.
+        \begin{subproof}
+            Follows by
+                \auto{surreal_mul_right_inequality_from_available}.
+        \end{subproof}
+        Follows by \obv{surreal_mul_property}.
+    \end{subproof}
+    Follows by \auto{surreal_binary_induction}.
+\end{proof}
+
+\begin{corollary}\label{surreal_mul_is_surreal}
+    Suppose $\surreal{x}$ and $\surreal{y}$.
+    Then $\surreal{\surrealMul{x}{y}}$.
+\end{corollary}
+\begin{proof}
+    Follows by \auto{surreal_mul_properties,surreal_mul_property}.
+\end{proof}
+
+\subsection{Compatibility with order}
+
+\begin{theorem}\label{surreal_mul_cross_lt}
+    Suppose $\surreal{x}$ and $\surreal{y}$ and
+        $\surreal{u}$ and $\surreal{v}$.
+    Suppose $\surrealLt{u}{x}$ and $\surrealLt{v}{y}$.
+    Then
+        $\surrealLt
+            {\surrealAdd{\surrealMul{u}{y}}{\surrealMul{x}{v}}}
+            {\surrealAdd{\surrealMul{x}{y}}{\surrealMul{u}{v}}}$.
+\end{theorem}
+\begin{proof}
+    Let $\alpha=\suc{\birthday{u}\union\birthday{x}}$.
+    Let $\beta=\suc{\birthday{v}\union\birthday{y}}$.
+    $\birthday{u}\union\birthday{x}$ and
+        $\birthday{v}\union\birthday{y}$ are ordinals
+        by
+        \obv{surreal_birthday_ordinal,union_of_two_ordinals_is_ordinal}.
+    Hence $\alpha$ and $\beta$ are ordinals by \obv{suc_ordinal}.
+    $\birthday{u},\birthday{x}\in\alpha$ and
+        $\birthday{v},\birthday{y}\in\beta$
+        by
+        \auto{union_upper_left,union_upper_right,ordinal_subseteq_implies_elem_or_eq,suc_iff,surreal_birthday_ordinal,union_of_two_ordinals_is_ordinal}.
+    Let $X=\ordinalSurreal{\alpha}$.
+    Let $Y=\ordinalSurreal{\beta}$.
+    $\surreal{X}$ and $\surreal{Y}$ and
+        $\birthday{X}=\alpha$ and $\birthday{Y}=\beta$
+        by
+        \auto{ordinal_surreal_is_surreal,ordinal_surreal_birthday}.
+    $\Apply{\surrealMulAvailableOp}{X,Y}$
+        by \obv{surreal_mul_available,surreal_mul_properties}.
+    Follows by
+        \auto{surreal_mul_cross_from_available_properties}.
+\end{proof}
+
+\begin{corollary}\label{surreal_mul_cross_le}
+    Suppose $\surreal{x}$ and $\surreal{y}$ and
+        $\surreal{u}$ and $\surreal{v}$.
+    Suppose $\surrealLe{u}{x}$ and $\surrealLe{v}{y}$.
+    Then
+        $\surrealLe
+            {\surrealAdd{\surrealMul{u}{y}}{\surrealMul{x}{v}}}
+            {\surrealAdd{\surrealMul{x}{y}}{\surrealMul{u}{v}}}$.
+\end{corollary}
+\begin{proof}
+    \begin{byCase}
+        \caseOf{$u=x$ or $v=y$.}
+            Follows by
+                \auto{surreal_le,surreal_add_commutative,surreal_mul_is_surreal}.
+        \caseOf{$u\neq x$ and $v\neq y$.}
+            $\surrealLt{u}{x}$ and $\surrealLt{v}{y}$
+                by \auto{surreal_le}.
+            Follows by \obv{surreal_le,surreal_mul_cross_lt}.
+    \end{byCase}
+\end{proof}
+
+\subsection{Zero, one, and commutativity}
+
+\begin{proposition}\label{surreal_mul_options_zero_right}
+    $\surrealMulLeft{x}{\emptyset}=\emptyset$ and
+        $\surrealMulRight{x}{\emptyset}=\emptyset$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{surreal_mul_left,surreal_mul_right,surreal_mul_step_left,surreal_mul_step_right,empty_surreal_left,empty_surreal_right,times_empty_right,union_emptyset,setext,emptyset}.
+\end{proof}
+
+\begin{proposition}\label{surreal_mul_options_zero_left}
+    $\surrealMulLeft{\emptyset}{x}=\emptyset$ and
+        $\surrealMulRight{\emptyset}{x}=\emptyset$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{surreal_mul_left,surreal_mul_right,surreal_mul_step_left,surreal_mul_step_right,empty_surreal_left,empty_surreal_right,times_empty_left,union_emptyset,setext,emptyset}.
+\end{proof}
+
+\begin{theorem}\label{surreal_mul_zero_right}
+    Suppose $\surreal{x}$.
+    Then $\surrealMul{x}{\emptyset}=\emptyset$.
+\end{theorem}
+\begin{proof}
+    Follows by
+        \auto{surreal_mul_equation,surreal_mul_options_zero_right,empty_surreal,empty_surreal_cut}.
+\end{proof}
+
+\begin{theorem}\label{surreal_mul_zero_left}
+    Suppose $\surreal{x}$.
+    Then $\surrealMul{\emptyset}{x}=\emptyset$.
+\end{theorem}
+\begin{proof}
+    Follows by
+        \auto{surreal_mul_equation,surreal_mul_options_zero_left,empty_surreal,empty_surreal_cut}.
+\end{proof}
+
+\begin{lemma}\label{surreal_empty_birthday}
+    Suppose $\surreal{x}$ and $\birthday{x}=\emptyset$.
+    Then $x=\emptyset$.
+\end{lemma}
+\begin{proof}
+    $\surrealAt{\emptyset}{x}$ by \auto{surreal_at_birthday}.
+    Hence $x\in\funs{\emptyset}{\surrealSigns}$
+        by \obv{surreal_at}.
+    Hence $x\in\rels{\emptyset}{\surrealSigns}$
+        by \obv{funs_subseteq_rels,subseteq}.
+    Hence $x\subseteq\emptyset\times\surrealSigns$
+        by \obv{rels_elim}.
+    Follows by \auto{times_empty_left,subseteq_emptyset_iff}.
+\end{proof}
+
+\begin{proposition}\label{surreal_one_is_surreal}
+    $\surreal{\ordinalSurreal{\suc{\emptyset}}}$ and
+        $\birthday{\ordinalSurreal{\suc{\emptyset}}}=\suc{\emptyset}$.
+\end{proposition}
+\begin{proof}
+    $\suc{\emptyset}$ is an ordinal
+        by \obv{emptyset_is_ordinal,suc_ordinal}.
+    Follows by
+        \obv{ordinal_surreal_is_surreal,ordinal_surreal_birthday}.
+\end{proof}
+
+\begin{proposition}\label{empty_ordinal_surreal}
+    $\ordinalSurreal{\emptyset}=\emptyset$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{ordinal_surreal,times_empty_left}.
+\end{proof}
+
+\begin{proposition}\label{surreal_zero_lt_one}
+    $\surrealLt{\emptyset}{\ordinalSurreal{\suc{\emptyset}}}$.
+\end{proposition}
+\begin{proof}
+    $\emptyset\in\suc{\emptyset}$ by \obv{suc_intro_self}.
+    Follows by
+        \auto{emptyset_is_ordinal,suc_ordinal,ordinal_surreal_lt_iff,empty_ordinal_surreal}.
+\end{proof}
+
+\begin{proposition}\label{surreal_one_left}
+    $\surrealLeft{\ordinalSurreal{\suc{\emptyset}}}=\{\emptyset\}$.
+\end{proposition}
+\begin{proof}
+    Show that for every
+        $x\in\surrealLeft{\ordinalSurreal{\suc{\emptyset}}}$ we have
+        $x=\emptyset$.
+    \begin{subproof}
+        Fix $x\in\surrealLeft{\ordinalSurreal{\suc{\emptyset}}}$.
+        $\surreal{x}$ and
+            $\birthday{x}\in
+                \birthday{\ordinalSurreal{\suc{\emptyset}}}$
+            by \auto{surreal_left_elim,surreal_one_is_surreal}.
+        Hence $\birthday{x}\in\suc{\emptyset}$
+            by \obv{surreal_one_is_surreal}.
+        Hence $\birthday{x}=\emptyset$ by \auto{suc_iff,emptyset}.
+        Follows by \obv{surreal_empty_birthday}.
+    \end{subproof}
+    $\birthday{\emptyset}\in
+        \birthday{\ordinalSurreal{\suc{\emptyset}}}$
+        by \auto{empty_surreal,surreal_one_is_surreal,suc_intro_self}.
+    Hence $\emptyset\in
+        \surrealLeft{\ordinalSurreal{\suc{\emptyset}}}$
+        by
+        \obv{surreal_left_intro,empty_surreal,surreal_one_is_surreal,surreal_zero_lt_one}.
+    Follows by \auto{setext,singleton_iff}.
+\end{proof}
+
+\begin{proposition}\label{surreal_one_right}
+    $\surrealRight{\ordinalSurreal{\suc{\emptyset}}}=\emptyset$.
+\end{proposition}
+\begin{proof}
+    Show that for every $x$ we have
+        $x\notin\surrealRight{\ordinalSurreal{\suc{\emptyset}}}$.
+    \begin{subproof}
+        Fix $x$.
+        Assume
+            $x\in\surrealRight{\ordinalSurreal{\suc{\emptyset}}}$.
+        $\surreal{x}$ and
+            $\birthday{x}\in
+                \birthday{\ordinalSurreal{\suc{\emptyset}}}$ and
+            $\surrealLt{\ordinalSurreal{\suc{\emptyset}}}{x}$
+            by \obv{surreal_right_elim,surreal_one_is_surreal}.
+        Hence $\birthday{x}\in\suc{\emptyset}$
+            by \obv{surreal_one_is_surreal}.
+        Hence $\birthday{x}=\emptyset$ by \auto{suc_iff,emptyset}.
+        Hence $x=\emptyset$ by \obv{surreal_empty_birthday}.
+        Follows by
+            \obv{surreal_lt_asymmetric,surreal_zero_lt_one,empty_surreal,surreal_one_is_surreal}.
+    \end{subproof}
+    Follows by \auto{setext,emptyset}.
+\end{proof}
+
+\begin{lemma}\label{surreal_mul_option_one_zero}
+    Suppose $\surreal{x}$ and $\surreal{u}$.
+    Then
+        $\surrealMulOption{x}{\ordinalSurreal{\suc{\emptyset}}}
+            {(u,\emptyset)}
+        =\surrealMul{u}{\ordinalSurreal{\suc{\emptyset}}}$.
+\end{lemma}
+\begin{proof}
+    Follows by
+        \auto{surreal_mul_option_pair,surreal_mul_zero_right,surreal_negation_empty,surreal_add_zero_right,surreal_mul_is_surreal,surreal_one_is_surreal,empty_surreal}.
+\end{proof}
+
+\begin{theorem}\label{surreal_mul_one_right}
+    Suppose $\surreal{x}$.
+    Then $\surrealMul{x}{\ordinalSurreal{\suc{\emptyset}}}=x$.
+\end{theorem}
+\begin{proof}
+    Let $P:\Set\to\Prop=\fun{u:\Set}{
+        \surrealMul{u}{\ordinalSurreal{\suc{\emptyset}}}=u}$.
+    Show that $\forall u:\Set.\ \surreal{u}\implies
+        ((\forall w:\Set.
+            (\surreal{w}\land\birthday{w}\in\birthday{u})
+            \implies\Apply{P}{w})
+         \implies\Apply{P}{u})$.
+    \begin{subproof}
+        Fix $u$.
+        Assume $\surreal{u}$.
+        Assume $\forall w:\Set.
+            (\surreal{w}\land\birthday{w}\in\birthday{u})
+            \implies\Apply{P}{w}$.
+        Show that for every
+            $a\in\surrealMulLeft{u}{\ordinalSurreal{\suc{\emptyset}}}$
+            we have $a\in\surrealLeft{u}$.
+        \begin{subproof}
+            Fix $a\in
+                \surrealMulLeft{u}{\ordinalSurreal{\suc{\emptyset}}}$.
+            Take $w,v$ such that
+                $((w\in\surrealLeft{u}\land
+                        v\in\surrealLeft{\ordinalSurreal{\suc{\emptyset}}})
+                  \lor(w\in\surrealRight{u}\land
+                        v\in\surrealRight{\ordinalSurreal{\suc{\emptyset}}}))
+                 \land
+                 a=\surrealMulOption{u}
+                    {\ordinalSurreal{\suc{\emptyset}}}{(w,v)}$
+                by \auto{surreal_mul_left_pair_iff}.
+            $w\in\surrealLeft{u}$ and $v=\emptyset$
+                by
+                \auto{surreal_one_left,surreal_one_right,singleton_iff,emptyset}.
+            $\surreal{w}$ and $\birthday{w}\in\birthday{u}$
+                by \auto{surreal_left_elim}.
+            Hence $\Apply{P}{w}$.
+            Hence
+                $\surrealMul{w}{\ordinalSurreal{\suc{\emptyset}}}=w$.
+            $\surrealMulOption{u}{\ordinalSurreal{\suc{\emptyset}}}
+                    {(w,\emptyset)}
+                =\surrealMul{w}{\ordinalSurreal{\suc{\emptyset}}}$
+                by \obv{surreal_mul_option_one_zero}.
+        \end{subproof}
+        Show that for every $w\in\surrealLeft{u}$ we have
+            $w\in\surrealMulLeft{u}
+                {\ordinalSurreal{\suc{\emptyset}}}$.
+        \begin{subproof}
+            Fix $w\in\surrealLeft{u}$.
+            $\surreal{w}$ and $\birthday{w}\in\birthday{u}$
+                by \auto{surreal_left_elim}.
+            Hence $\Apply{P}{w}$.
+            Hence
+                $\surrealMul{w}{\ordinalSurreal{\suc{\emptyset}}}=w$.
+            $\surrealMulOption{u}{\ordinalSurreal{\suc{\emptyset}}}
+                    {(w,\emptyset)}
+                =w$
+                by \auto{surreal_mul_option_one_zero}.
+            $\emptyset\in
+                \surrealLeft{\ordinalSurreal{\suc{\emptyset}}}$
+                by \auto{surreal_one_left,singleton_iff}.
+            $\surrealMulOption{u}{\ordinalSurreal{\suc{\emptyset}}}
+                    {(w,\emptyset)}
+                \in\surrealMulLeft{u}
+                    {\ordinalSurreal{\suc{\emptyset}}}$
+                by \auto{surreal_mul_left_pair_iff}.
+        \end{subproof}
+        Hence
+            $\surrealMulLeft{u}{\ordinalSurreal{\suc{\emptyset}}}
+                =\surrealLeft{u}$
+            by set extensionality.
+        Show that for every
+            $a\in\surrealMulRight{u}{\ordinalSurreal{\suc{\emptyset}}}$
+            we have $a\in\surrealRight{u}$.
+        \begin{subproof}
+            Fix $a\in
+                \surrealMulRight{u}{\ordinalSurreal{\suc{\emptyset}}}$.
+            Take $w,v$ such that
+                $((w\in\surrealLeft{u}\land
+                        v\in\surrealRight{\ordinalSurreal{\suc{\emptyset}}})
+                  \lor(w\in\surrealRight{u}\land
+                        v\in\surrealLeft{\ordinalSurreal{\suc{\emptyset}}}))
+                 \land
+                 a=\surrealMulOption{u}
+                    {\ordinalSurreal{\suc{\emptyset}}}{(w,v)}$
+                by \auto{surreal_mul_right_pair_iff}.
+            $w\in\surrealRight{u}$ and $v=\emptyset$
+                by
+                \auto{surreal_one_left,surreal_one_right,singleton_iff,emptyset}.
+            $\surreal{w}$ and $\birthday{w}\in\birthday{u}$
+                by \auto{surreal_right_elim}.
+            Hence $\Apply{P}{w}$.
+            Hence
+                $\surrealMul{w}{\ordinalSurreal{\suc{\emptyset}}}=w$.
+            $\surrealMulOption{u}{\ordinalSurreal{\suc{\emptyset}}}
+                    {(w,\emptyset)}
+                =\surrealMul{w}{\ordinalSurreal{\suc{\emptyset}}}$
+                by \obv{surreal_mul_option_one_zero}.
+        \end{subproof}
+        Hence
+            $\surrealMulRight{u}{\ordinalSurreal{\suc{\emptyset}}}
+                \subseteq\surrealRight{u}$
+            by \obv{subseteq}.
+        Show that for every $w\in\surrealRight{u}$ we have
+            $w\in\surrealMulRight{u}
+                {\ordinalSurreal{\suc{\emptyset}}}$.
+        \begin{subproof}
+            Fix $w\in\surrealRight{u}$.
+            $\surreal{w}$ and $\birthday{w}\in\birthday{u}$
+                by \auto{surreal_right_elim}.
+            Hence $\Apply{P}{w}$.
+            Hence
+                $\surrealMul{w}{\ordinalSurreal{\suc{\emptyset}}}=w$.
+            $\surrealMulOption{u}{\ordinalSurreal{\suc{\emptyset}}}
+                    {(w,\emptyset)}
+                =w$
+                by \auto{surreal_mul_option_one_zero}.
+            $\emptyset\in
+                \surrealLeft{\ordinalSurreal{\suc{\emptyset}}}$
+                by \auto{surreal_one_left,singleton_iff}.
+            $\surrealMulOption{u}{\ordinalSurreal{\suc{\emptyset}}}
+                    {(w,\emptyset)}
+                \in\surrealMulRight{u}
+                    {\ordinalSurreal{\suc{\emptyset}}}$
+                by \auto{surreal_mul_right_pair_iff}.
+        \end{subproof}
+        Hence
+            $\surrealRight{u}\subseteq
+                \surrealMulRight{u}{\ordinalSurreal{\suc{\emptyset}}}$
+            by \obv{subseteq}.
+        Hence
+            $\surrealMulRight{u}{\ordinalSurreal{\suc{\emptyset}}}
+                =\surrealRight{u}$
+            by \obv{subseteq_antisymmetric}.
+        $\surrealMul{u}{\ordinalSurreal{\suc{\emptyset}}}
+            =\surrealCut
+                {\surrealMulLeft{u}{\ordinalSurreal{\suc{\emptyset}}}}
+                {\surrealMulRight{u}{\ordinalSurreal{\suc{\emptyset}}}}$
+            by \obv{surreal_mul_equation,surreal_one_is_surreal}.
+        Hence
+            $\surrealMul{u}{\ordinalSurreal{\suc{\emptyset}}}
+                =\surrealCut{\surrealLeft{u}}{\surrealRight{u}}$
+            by \auto.
+        Hence
+            $\surrealMul{u}{\ordinalSurreal{\suc{\emptyset}}}=u$
+            by \auto{surreal_eta}.
+    \end{subproof}
+    Follows by \auto{surreal_induction}.
+\end{proof}
+
+\begin{lemma}\label{surreal_mul_option_swap_from_equalities}
+    Suppose $\surreal{x}$ and $\surreal{y}$ and
+        $\surreal{a}$ and $\surreal{b}$.
+    Suppose $\surrealMul{a}{y}=\surrealMul{y}{a}$ and
+        $\surrealMul{x}{b}=\surrealMul{b}{x}$ and
+        $\surrealMul{a}{b}=\surrealMul{b}{a}$.
+    Then
+        $\surrealMulOption{x}{y}{(a,b)}
+            =\surrealMulOption{y}{x}{(b,a)}$.
+\end{lemma}
+\begin{proof}
+    Follows by
+        \auto{surreal_mul_option_pair,surreal_add_commutative,surreal_mul_is_surreal,surreal_negation_is_surreal}.
+\end{proof}
+
+\begin{theorem}\label{surreal_mul_commutative}
+    Suppose $\surreal{x}$ and $\surreal{y}$.
+    Then $\surrealMul{x}{y}=\surrealMul{y}{x}$.
+\end{theorem}
+\begin{proof}
+    Let $P:\Set\to\Set\to\Prop=\fun{u,v:\Set}{
+        \surrealMul{u}{v}=\surrealMul{v}{u}}$.
+    Show that $\forall u,v:\Set.\ (\surreal{u}\land\surreal{v})\implies
+        (((\forall a:\Set.
+                (\surreal{a}\land\birthday{a}\in\birthday{u})
+                \implies
+                (\forall b:\Set.\ \surreal{b}\implies
+                    \Apply{P}{a,b}))
+          \land
+          (\forall b:\Set.
+                (\surreal{b}\land\birthday{b}\in\birthday{v})
+                \implies\Apply{P}{u,b}))
+         \implies\Apply{P}{u,v})$.
+    \begin{subproof}
+        Fix $u,v$.
+        Assume $\surreal{u}\land\surreal{v}$.
+        Assume
+            $(\forall a:\Set.
+                (\surreal{a}\land\birthday{a}\in\birthday{u})
+                \implies
+                (\forall b:\Set.\ \surreal{b}\implies
+                    \Apply{P}{a,b}))
+             \land
+             (\forall b:\Set.
+                (\surreal{b}\land\birthday{b}\in\birthday{v})
+                \implies\Apply{P}{u,b})$.
+        Show that for all $a,b$ such that
+            $a\in\surrealLeft{u}\union\surrealRight{u}$ and
+            $b\in\surrealLeft{v}\union\surrealRight{v}$ we have
+            $\surrealMulOption{u}{v}{(a,b)}
+                =\surrealMulOption{v}{u}{(b,a)}$.
+        \begin{subproof}
+            Fix $a,b$.
+            Assume $a\in\surrealLeft{u}\union\surrealRight{u}$ and
+                $b\in\surrealLeft{v}\union\surrealRight{v}$.
+            $\surreal{a}$ and $\birthday{a}\in\birthday{u}$ and
+                $\surreal{b}$ and $\birthday{b}\in\birthday{v}$
+                by
+                \auto{union,surreal_left_elim,surreal_right_elim}.
+            $\Apply{P}{a,v}
+                \land\Apply{P}{u,b}
+                \land\Apply{P}{a,b}$.
+            Hence
+                $\surrealMul{a}{v}=\surrealMul{v}{a}$ and
+                $\surrealMul{u}{b}=\surrealMul{b}{u}$ and
+                $\surrealMul{a}{b}=\surrealMul{b}{a}$.
+            Follows by
+                \obv{surreal_mul_option_swap_from_equalities}.
+        \end{subproof}
+        Show that for every $z\in\surrealMulLeft{u}{v}$ we have
+            $z\in\surrealMulLeft{v}{u}$.
+        \begin{subproof}
+            Fix $z\in\surrealMulLeft{u}{v}$.
+            Take $a,b$ such that
+                $((a\in\surrealLeft{u}\land b\in\surrealLeft{v})
+                  \lor(a\in\surrealRight{u}\land b\in\surrealRight{v}))
+                 \land z=\surrealMulOption{u}{v}{(a,b)}$
+                by \auto{surreal_mul_left_pair_iff}.
+            $a\in\surrealLeft{u}\union\surrealRight{u}$ and
+                $b\in\surrealLeft{v}\union\surrealRight{v}$
+                by \auto{union}.
+            Hence
+                $\surrealMulOption{u}{v}{(a,b)}
+                    =\surrealMulOption{v}{u}{(b,a)}$.
+            $\surrealMulOption{v}{u}{(b,a)}
+                \in\surrealMulLeft{v}{u}$
+                by \auto{surreal_mul_left_pair_iff}.
+        \end{subproof}
+        Hence $\surrealMulLeft{u}{v}\subseteq\surrealMulLeft{v}{u}$
+            by \obv{subseteq}.
+        Show that for every $z\in\surrealMulLeft{v}{u}$ we have
+            $z\in\surrealMulLeft{u}{v}$.
+        \begin{subproof}
+            Fix $z\in\surrealMulLeft{v}{u}$.
+            Take $b,a$ such that
+                $((b\in\surrealLeft{v}\land a\in\surrealLeft{u})
+                  \lor(b\in\surrealRight{v}\land a\in\surrealRight{u}))
+                 \land z=\surrealMulOption{v}{u}{(b,a)}$
+                by \auto{surreal_mul_left_pair_iff}.
+            $a\in\surrealLeft{u}\union\surrealRight{u}$ and
+                $b\in\surrealLeft{v}\union\surrealRight{v}$
+                by \auto{union}.
+            Hence
+                $\surrealMulOption{u}{v}{(a,b)}
+                    =\surrealMulOption{v}{u}{(b,a)}$.
+            $\surrealMulOption{u}{v}{(a,b)}
+                \in\surrealMulLeft{u}{v}$
+                by \auto{surreal_mul_left_pair_iff}.
+        \end{subproof}
+        Hence $\surrealMulLeft{v}{u}\subseteq\surrealMulLeft{u}{v}$
+            by \obv{subseteq}.
+        Hence $\surrealMulLeft{u}{v}=\surrealMulLeft{v}{u}$
+            by \obv{subseteq_antisymmetric}.
+        Show that for every $z\in\surrealMulRight{u}{v}$ we have
+            $z\in\surrealMulRight{v}{u}$.
+        \begin{subproof}
+            Fix $z\in\surrealMulRight{u}{v}$.
+            Take $a,b$ such that
+                $((a\in\surrealLeft{u}\land b\in\surrealRight{v})
+                  \lor(a\in\surrealRight{u}\land b\in\surrealLeft{v}))
+                 \land z=\surrealMulOption{u}{v}{(a,b)}$
+                by \auto{surreal_mul_right_pair_iff}.
+            $a\in\surrealLeft{u}\union\surrealRight{u}$ and
+                $b\in\surrealLeft{v}\union\surrealRight{v}$
+                by \auto{union}.
+            Hence
+                $\surrealMulOption{u}{v}{(a,b)}
+                    =\surrealMulOption{v}{u}{(b,a)}$.
+            $\surrealMulOption{v}{u}{(b,a)}
+                \in\surrealMulRight{v}{u}$
+                by \auto{surreal_mul_right_pair_iff}.
+        \end{subproof}
+        Hence $\surrealMulRight{u}{v}\subseteq\surrealMulRight{v}{u}$
+            by \obv{subseteq}.
+        Show that for every $z\in\surrealMulRight{v}{u}$ we have
+            $z\in\surrealMulRight{u}{v}$.
+        \begin{subproof}
+            Fix $z\in\surrealMulRight{v}{u}$.
+            Take $b,a$ such that
+                $((b\in\surrealLeft{v}\land a\in\surrealRight{u})
+                  \lor(b\in\surrealRight{v}\land a\in\surrealLeft{u}))
+                 \land z=\surrealMulOption{v}{u}{(b,a)}$
+                by \auto{surreal_mul_right_pair_iff}.
+            $a\in\surrealLeft{u}\union\surrealRight{u}$ and
+                $b\in\surrealLeft{v}\union\surrealRight{v}$
+                by \auto{union}.
+            Hence
+                $\surrealMulOption{u}{v}{(a,b)}
+                    =\surrealMulOption{v}{u}{(b,a)}$.
+            $\surrealMulOption{u}{v}{(a,b)}
+                \in\surrealMulRight{u}{v}$
+                by \auto{surreal_mul_right_pair_iff}.
+        \end{subproof}
+        Hence $\surrealMulRight{v}{u}\subseteq\surrealMulRight{u}{v}$
+            by \obv{subseteq}.
+        Hence $\surrealMulRight{u}{v}=\surrealMulRight{v}{u}$
+            by \obv{subseteq_antisymmetric}.
+        $\surrealMul{u}{v}
+            =\surrealCut{\surrealMulLeft{u}{v}}{\surrealMulRight{u}{v}}$
+            by \obv{surreal_mul_equation}.
+        $\surrealMul{v}{u}
+            =\surrealCut{\surrealMulLeft{v}{u}}{\surrealMulRight{v}{u}}$
+            by \obv{surreal_mul_equation}.
+        Hence $\surrealMul{u}{v}=\surrealMul{v}{u}$ by \auto.
+    \end{subproof}
+    Follows by \auto{surreal_binary_induction}.
+\end{proof}
+
+\begin{corollary}\label{surreal_mul_one_left}
+    Suppose $\surreal{x}$.
+    Then $\surrealMul{\ordinalSurreal{\suc{\emptyset}}}{x}=x$.
+\end{corollary}
+\begin{proof}
+    Follows by
+        \auto{surreal_mul_commutative,surreal_mul_one_right,surreal_one_is_surreal}.
+\end{proof}
+
+\subsection{Sign, cancellation, and squares}
+
+\begin{theorem}\label{surreal_pos_mul_lt_left}
+    Suppose $\surreal{x}$ and $\surreal{y}$ and $\surreal{z}$.
+    Suppose $\surrealLt{\emptyset}{x}$ and $\surrealLt{y}{z}$.
+    Then $\surrealLt{\surrealMul{x}{y}}{\surrealMul{x}{z}}$.
+\end{theorem}
+\begin{proof}
+    $\surrealLt
+        {\surrealAdd{\surrealMul{\emptyset}{z}}{\surrealMul{x}{y}}}
+        {\surrealAdd{\surrealMul{x}{z}}{\surrealMul{\emptyset}{y}}}$
+        by \obv{surreal_mul_cross_lt,empty_surreal}.
+    Follows by
+        \auto{surreal_mul_zero_left,surreal_add_zero_left,surreal_add_zero_right,surreal_mul_is_surreal}.
+\end{proof}
+
+\begin{corollary}\label{surreal_pos_mul_lt_right}
+    Suppose $\surreal{x}$ and $\surreal{y}$ and $\surreal{z}$.
+    Suppose $\surrealLt{\emptyset}{z}$ and $\surrealLt{x}{y}$.
+    Then $\surrealLt{\surrealMul{x}{z}}{\surrealMul{y}{z}}$.
+\end{corollary}
+\begin{proof}
+    Follows by
+        \auto{surreal_pos_mul_lt_left,surreal_mul_commutative}.
+\end{proof}
+
+\begin{theorem}\label{surreal_nonneg_mul_le_left}
+    Suppose $\surreal{x}$ and $\surreal{y}$ and $\surreal{z}$.
+    Suppose $\surrealLe{\emptyset}{x}$ and $\surrealLe{y}{z}$.
+    Then $\surrealLe{\surrealMul{x}{y}}{\surrealMul{x}{z}}$.
+\end{theorem}
+\begin{proof}
+    $\surrealLe
+        {\surrealAdd{\surrealMul{\emptyset}{z}}{\surrealMul{x}{y}}}
+        {\surrealAdd{\surrealMul{x}{z}}{\surrealMul{\emptyset}{y}}}$
+        by \obv{surreal_mul_cross_le,empty_surreal}.
+    Follows by
+        \auto{surreal_mul_zero_left,surreal_add_zero_left,surreal_add_zero_right,surreal_mul_is_surreal}.
+\end{proof}
+
+\begin{corollary}\label{surreal_nonneg_mul_le_right}
+    Suppose $\surreal{x}$ and $\surreal{y}$ and $\surreal{z}$.
+    Suppose $\surrealLe{\emptyset}{z}$ and $\surrealLe{x}{y}$.
+    Then $\surrealLe{\surrealMul{x}{z}}{\surrealMul{y}{z}}$.
+\end{corollary}
+\begin{proof}
+    Follows by
+        \auto{surreal_nonneg_mul_le_left,surreal_mul_commutative}.
+\end{proof}
+
+\begin{theorem}\label{surreal_neg_mul_lt_left}
+    Suppose $\surreal{x}$ and $\surreal{y}$ and $\surreal{z}$.
+    Suppose $\surrealLt{x}{\emptyset}$ and $\surrealLt{z}{y}$.
+    Then $\surrealLt{\surrealMul{x}{y}}{\surrealMul{x}{z}}$.
+\end{theorem}
+\begin{proof}
+    $\surrealLt
+        {\surrealAdd{\surrealMul{x}{y}}{\surrealMul{\emptyset}{z}}}
+        {\surrealAdd{\surrealMul{\emptyset}{y}}{\surrealMul{x}{z}}}$
+        by \obv{surreal_mul_cross_lt,empty_surreal}.
+    Follows by
+        \auto{surreal_mul_zero_left,surreal_add_zero_left,surreal_add_zero_right,surreal_mul_is_surreal}.
+\end{proof}
+
+\begin{theorem}\label{surreal_nonpos_mul_le_left}
+    Suppose $\surreal{x}$ and $\surreal{y}$ and $\surreal{z}$.
+    Suppose $\surrealLe{x}{\emptyset}$ and $\surrealLe{z}{y}$.
+    Then $\surrealLe{\surrealMul{x}{y}}{\surrealMul{x}{z}}$.
+\end{theorem}
+\begin{proof}
+    $\surrealLe
+        {\surrealAdd{\surrealMul{x}{y}}{\surrealMul{\emptyset}{z}}}
+        {\surrealAdd{\surrealMul{\emptyset}{y}}{\surrealMul{x}{z}}}$
+        by \obv{surreal_mul_cross_le,empty_surreal}.
+    Follows by
+        \auto{surreal_mul_zero_left,surreal_add_zero_left,surreal_add_zero_right,surreal_mul_is_surreal}.
+\end{proof}
+
+\begin{corollary}\label{surreal_mul_pos_pos}
+    Suppose $\surreal{x}$ and $\surreal{y}$.
+    Suppose $\surrealLt{\emptyset}{x}$ and
+        $\surrealLt{\emptyset}{y}$.
+    Then $\surrealLt{\emptyset}{\surrealMul{x}{y}}$.
+\end{corollary}
+\begin{proof}
+    $\surrealLt{\surrealMul{x}{\emptyset}}{\surrealMul{x}{y}}$
+        by \obv{surreal_pos_mul_lt_left,empty_surreal}.
+    Follows by \obv{surreal_mul_zero_right}.
+\end{proof}
+
+\begin{corollary}\label{surreal_mul_pos_neg}
+    Suppose $\surreal{x}$ and $\surreal{y}$.
+    Suppose $\surrealLt{\emptyset}{x}$ and
+        $\surrealLt{y}{\emptyset}$.
+    Then $\surrealLt{\surrealMul{x}{y}}{\emptyset}$.
+\end{corollary}
+\begin{proof}
+    $\surrealLt{\surrealMul{x}{y}}{\surrealMul{x}{\emptyset}}$
+        by \obv{surreal_pos_mul_lt_left,empty_surreal}.
+    Follows by \obv{surreal_mul_zero_right}.
+\end{proof}
+
+\begin{corollary}\label{surreal_mul_neg_pos}
+    Suppose $\surreal{x}$ and $\surreal{y}$.
+    Suppose $\surrealLt{x}{\emptyset}$ and
+        $\surrealLt{\emptyset}{y}$.
+    Then $\surrealLt{\surrealMul{x}{y}}{\emptyset}$.
+\end{corollary}
+\begin{proof}
+    Follows by
+        \auto{surreal_mul_pos_neg,surreal_mul_commutative}.
+\end{proof}
+
+\begin{corollary}\label{surreal_mul_neg_neg}
+    Suppose $\surreal{x}$ and $\surreal{y}$.
+    Suppose $\surrealLt{x}{\emptyset}$ and
+        $\surrealLt{y}{\emptyset}$.
+    Then $\surrealLt{\emptyset}{\surrealMul{x}{y}}$.
+\end{corollary}
+\begin{proof}
+    $\surrealLt{\surrealMul{x}{\emptyset}}{\surrealMul{x}{y}}$
+        by \obv{surreal_neg_mul_lt_left,empty_surreal}.
+    Follows by \obv{surreal_mul_zero_right}.
+\end{proof}
+
+\begin{corollary}\label{surreal_mul_nonneg_nonneg}
+    Suppose $\surreal{x}$ and $\surreal{y}$.
+    Suppose $\surrealLe{\emptyset}{x}$ and
+        $\surrealLe{\emptyset}{y}$.
+    Then $\surrealLe{\emptyset}{\surrealMul{x}{y}}$.
+\end{corollary}
+\begin{proof}
+    $\surrealLe{\surrealMul{x}{\emptyset}}{\surrealMul{x}{y}}$
+        by \obv{surreal_nonneg_mul_le_left,empty_surreal}.
+    Follows by \obv{surreal_mul_zero_right}.
+\end{proof}
+
+\begin{corollary}\label{surreal_mul_nonpos_pos}
+    Suppose $\surreal{x}$ and $\surreal{y}$.
+    Suppose $\surrealLe{x}{\emptyset}$ and
+        $\surrealLt{\emptyset}{y}$.
+    Then $\surrealLe{\surrealMul{x}{y}}{\emptyset}$.
+\end{corollary}
+\begin{proof}
+    $\surrealLe{\surrealMul{x}{y}}{\surrealMul{\emptyset}{y}}$
+        by
+        \obv{surreal_nonneg_mul_le_right,surreal_le,empty_surreal}.
+    Follows by \obv{surreal_mul_zero_left}.
+\end{proof}
+
+\begin{corollary}\label{surreal_mul_nonpos_neg}
+    Suppose $\surreal{x}$ and $\surreal{y}$.
+    Suppose $\surrealLe{x}{\emptyset}$ and
+        $\surrealLt{y}{\emptyset}$.
+    Then $\surrealLe{\emptyset}{\surrealMul{x}{y}}$.
+\end{corollary}
+\begin{proof}
+    $\surrealLe{\surrealMul{x}{\emptyset}}{\surrealMul{x}{y}}$
+        by
+        \obv{surreal_nonpos_mul_le_left,surreal_le,empty_surreal}.
+    Follows by \obv{surreal_mul_zero_right}.
+\end{proof}
+
+\begin{theorem}\label{surreal_square_nonnegative}
+    Suppose $\surreal{x}$.
+    Then $\surrealLe{\emptyset}{\surrealMul{x}{x}}$.
+\end{theorem}
+\begin{proof}
+    $\surrealLt{x}{\emptyset}$ or $x=\emptyset$ or
+        $\surrealLt{\emptyset}{x}$
+        by \obv{surreal_lt_trichotomy,empty_surreal}.
+    \begin{byCase}
+        \caseOf{$\surrealLt{x}{\emptyset}$.}
+            Follows by \obv{surreal_le,surreal_mul_neg_neg}.
+        \caseOf{$\lnot\surrealLt{x}{\emptyset}$.}
+            $\surrealLe{\emptyset}{x}$ by \auto{surreal_le}.
+            Follows by \obv{surreal_mul_nonneg_nonneg}.
+    \end{byCase}
+\end{proof}
+
+\begin{theorem}\label{surreal_zero_or_square_positive}
+    Suppose $\surreal{x}$.
+    Then $x=\emptyset$ or
+        $\surrealLt{\emptyset}{\surrealMul{x}{x}}$.
+\end{theorem}
+\begin{proof}
+    $\surrealLt{x}{\emptyset}$ or $x=\emptyset$ or
+        $\surrealLt{\emptyset}{x}$
+        by \obv{surreal_lt_trichotomy,empty_surreal}.
+    Follows by
+        \obv{surreal_mul_neg_neg,surreal_mul_pos_pos}.
+\end{proof}
+
+\begin{theorem}\label{surreal_mul_nonzero_cancel_left}
+    Suppose $\surreal{x}$ and $x\neq\emptyset$ and
+        $\surreal{y}$ and $\surreal{z}$.
+    Suppose $\surrealMul{x}{y}=\surrealMul{x}{z}$.
+    Then $y=z$.
+\end{theorem}
+\begin{proof}
+    $\surrealLt{x}{\emptyset}$ or $x=\emptyset$ or
+        $\surrealLt{\emptyset}{x}$
+        by \obv{surreal_lt_trichotomy,empty_surreal}.
+    $\surrealLt{y}{z}$ or $y=z$ or $\surrealLt{z}{y}$
+        by \obv{surreal_lt_trichotomy}.
+    \begin{byCase}
+        \caseOf{$\surrealLt{y}{z}$.}
+            \begin{byCase}
+                \caseOf{$\surrealLt{\emptyset}{x}$.}
+                    $\surrealLt{\surrealMul{x}{y}}{\surrealMul{x}{z}}$
+                        by \obv{surreal_pos_mul_lt_left}.
+                    Contradiction by
+                        \obv{surreal_mul_is_surreal,surreal_lt_irreflexive}.
+                \caseOf{$\lnot\surrealLt{\emptyset}{x}$.}
+                    $\surrealLt{x}{\emptyset}$.
+                    $\surrealLt{\surrealMul{x}{z}}{\surrealMul{x}{y}}$
+                        by \obv{surreal_neg_mul_lt_left}.
+                    Contradiction by
+                        \obv{surreal_mul_is_surreal,surreal_lt_irreflexive}.
+            \end{byCase}
+        \caseOf{$\lnot\surrealLt{y}{z}$.}
+            \begin{byCase}
+                \caseOf{$y=z$.}
+                    Follows.
+                \caseOf{$y\neq z$.}
+                    $\surrealLt{z}{y}$.
+                    \begin{byCase}
+                        \caseOf{$\surrealLt{\emptyset}{x}$.}
+                            $\surrealLt{\surrealMul{x}{z}}
+                                {\surrealMul{x}{y}}$
+                                by \obv{surreal_pos_mul_lt_left}.
+                            Contradiction by
+                                \obv{surreal_mul_is_surreal,surreal_lt_irreflexive}.
+                        \caseOf{$\lnot\surrealLt{\emptyset}{x}$.}
+                            $\surrealLt{x}{\emptyset}$.
+                            $\surrealLt{\surrealMul{x}{y}}
+                                {\surrealMul{x}{z}}$
+                                by \obv{surreal_neg_mul_lt_left}.
+                            Contradiction by
+                                \obv{surreal_mul_is_surreal,surreal_lt_irreflexive}.
+                    \end{byCase}
+            \end{byCase}
+    \end{byCase}
+\end{proof}
+
+\begin{corollary}\label{surreal_mul_nonzero_cancel_right}
+    Suppose $\surreal{x}$ and $x\neq\emptyset$ and
+        $\surreal{y}$ and $\surreal{z}$.
+    Suppose $\surrealMul{y}{x}=\surrealMul{z}{x}$.
+    Then $y=z$.
+\end{corollary}
+\begin{proof}
+    Follows by
+        \auto{surreal_mul_nonzero_cancel_left,surreal_mul_commutative}.
+\end{proof}
+
+\begin{theorem}\label{surreal_square_strict_monotone_nonnegative}
+    Suppose $\surreal{x}$ and $\surreal{y}$.
+    Suppose $\surrealLe{\emptyset}{x}$ and $\surrealLt{x}{y}$.
+    Then $\surrealLt{\surrealMul{x}{x}}{\surrealMul{y}{y}}$.
+\end{theorem}
+\begin{proof}
+    $\surrealLt{\emptyset}{y}$
+        by \obv{surreal_le_lt_transitive,empty_surreal}.
+    \begin{byCase}
+        \caseOf{$x=\emptyset$.}
+            $\surrealMul{x}{x}=\emptyset$
+                by \auto{surreal_mul_zero_left}.
+            Follows by \obv{surreal_mul_pos_pos}.
+        \caseOf{$x\neq\emptyset$.}
+            $\surrealLt{\emptyset}{x}$
+                by \auto{surreal_le,surreal_lt_trichotomy,empty_surreal}.
+            $\surrealLt{\surrealMul{x}{x}}{\surrealMul{x}{y}}$
+                by \obv{surreal_pos_mul_lt_left}.
+            $\surrealLt{\surrealMul{x}{y}}{\surrealMul{y}{y}}$
+                by \obv{surreal_pos_mul_lt_right}.
+            Follows by
+                \obv{surreal_lt_transitive,surreal_mul_is_surreal}.
+    \end{byCase}
+\end{proof}
+
+\begin{theorem}\label{surreal_nonnegative_square_unique}
+    Suppose $\surreal{x}$ and $\surreal{y}$.
+    Suppose $\surrealLe{\emptyset}{x}$ and
+        $\surrealLe{\emptyset}{y}$.
+    Suppose $\surrealMul{x}{x}=\surrealMul{y}{y}$.
+    Then $x=y$.
+\end{theorem}
+\begin{proof}
+    $\surrealLt{x}{y}$ or $x=y$ or $\surrealLt{y}{x}$
+        by \obv{surreal_lt_trichotomy}.
+    \begin{byCase}
+        \caseOf{$\surrealLt{x}{y}$.}
+            $\surrealLt{\surrealMul{x}{x}}{\surrealMul{y}{y}}$
+                by \obv{surreal_square_strict_monotone_nonnegative}.
+            Contradiction by
+                \obv{surreal_mul_is_surreal,surreal_lt_irreflexive}.
+        \caseOf{$\lnot\surrealLt{x}{y}$.}
+            \begin{byCase}
+                \caseOf{$x=y$.}
+                    Follows.
+                \caseOf{$x\neq y$.}
+                    $\surrealLt{y}{x}$.
+                    $\surrealLt{\surrealMul{y}{y}}{\surrealMul{x}{x}}$
+                        by
+                        \obv{surreal_square_strict_monotone_nonnegative}.
+                    Contradiction by
+                        \obv{surreal_mul_is_surreal,surreal_lt_irreflexive}.
+            \end{byCase}
+    \end{byCase}
+\end{proof}
+
+\begin{corollary}\label{surreal_positive_square_unique}
+    Suppose $\surreal{x}$ and $\surreal{y}$.
+    Suppose $\surrealLt{\emptyset}{x}$ and
+        $\surrealLt{\emptyset}{y}$.
+    Suppose $\surrealMul{x}{x}=\surrealMul{y}{y}$.
+    Then $x=y$.
+\end{corollary}
+\begin{proof}
+    Follows by
+        \obv{surreal_nonnegative_square_unique,surreal_le}.
+\end{proof}
+
+\begin{corollary}\label{surreal_mul_cut_pair}
+    Suppose $\surreal{x}$ and $\surreal{y}$.
+    Then $\surrealCutPair{\surrealMulLeft{x}{y}}
+        {\surrealMulRight{x}{y}}$.
+\end{corollary}
+\begin{proof}
+    Follows by \auto{surreal_mul_properties,surreal_mul_property}.
+\end{proof}

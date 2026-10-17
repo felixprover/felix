@@ -1,0 +1,166 @@
+\import{recursion/logical-membership.tex}
+\import{logic/conditional.tex}
+\import{nat.tex}
+\import{set/finite-ordinal.tex}
+
+\section{Logical recursion on the natural numbers}
+
+Natural primitive recursion is a specialization of logical membership
+recursion.  At a nonzero natural $n$, its unique immediate predecessor is
+$\unions{n}$.  Away from the natural numbers the auxiliary membership step is
+defined to be empty.  Consequently the selected logical recursor itself has
+value $\emptyset$ there, making the higher-order recursion functional on every
+set rather than only on its intended domain.
+
+\begin{definition}\label{natural_recursion_successor_value}
+    $\naturalRecSuccessorValueOp:
+        (\Set\to\Set\to\Set)\to\Set\to
+        (\Set\to(\Set\to\Set))\to\Set
+        =\fun{S:\Set\to\Set\to\Set}{
+            \fun{n:\Set}{
+                \fun{f:\Set\to(\Set\to\Set)}{
+                    \Apply{S}{\unions{n},
+                        \Apply{f}{\unions{n},\emptyset}}}}}$.
+\end{definition}
+
+\begin{definition}\label{natural_recursion_membership_step}
+    $\naturalRecMembershipStepOp:
+        \Set\to(\Set\to\Set\to\Set)\to
+        \Set\to(\Set\to(\Set\to\Set))\to(\Set\to\Set)
+        =\fun{a:\Set}{
+            \fun{S:\Set\to\Set\to\Set}{
+                \fun{n:\Set}{
+                    \fun{f:\Set\to(\Set\to\Set)}{
+                        \fun{u:\Set}{
+                            \Apply{\logicalIfSetOp}
+                                {(n=\emptyset),a,
+                                \Apply{\logicalIfSetOp}
+                                    {(n\in\naturals),
+                                    \Apply{\naturalRecSuccessorValueOp}{S,n,f},\emptyset}}}}}}}$.
+\end{definition}
+
+\begin{proposition}\label{natural_recursion_membership_step_functional}
+    $\forall a:\Set.\ \forall S:\Set\to\Set\to\Set.
+        \Apply{\membershipRecOneFunctionalOp}
+            {\Apply{\naturalRecMembershipStepOp}{a,S}}$.
+\end{proposition}
+\begin{proof}
+    Fix $a,S$.
+    Show that $\forall n:\Set.
+        \forall f,g:\Set\to(\Set\to\Set).
+        (\forall k:\Set.\ k\in n\implies\Apply{f}{k}=\Apply{g}{k})
+        \implies
+        \Apply{\naturalRecMembershipStepOp}{a,S,n,f}
+        =\Apply{\naturalRecMembershipStepOp}{a,S,n,g}$.
+    \begin{subproof}
+        Fix $n,f,g$.
+        Assume $\forall k:\Set.\ k\in n\implies
+            \Apply{f}{k}=\Apply{g}{k}$.
+        Show that $\forall u:\Set.
+            \Apply{\naturalRecMembershipStepOp}{a,S,n,f,u}
+            =\Apply{\naturalRecMembershipStepOp}{a,S,n,g,u}$.
+        \begin{subproof}
+            Fix $u$.
+            \begin{byCase}
+                \caseOf{$n=\emptyset$.}
+                    Follows by
+                        \auto{natural_recursion_membership_step,logical_if_set_true}.
+                \caseOf{$n\neq\emptyset$.}
+                    \begin{byCase}
+                        \caseOf{$n\in\naturals$.}
+                            Take $k$ such that $k$ is a natural number and
+                                $n=\suc{k}$
+                                by \obv{natural_zero_or_successor}.
+                            $k$ is \in-transitive
+                                by \obv{natural_number_is_ordinal,ordinal_is_transitiveset}.
+                            Hence $\unions{n}=k$
+                                by \auto{transitiveset_iff_unions_suc}.
+                            $k\in n$ by \obv{suc_intro_self}.
+                            Hence $\Apply{f}{\unions{n}}=
+                                \Apply{g}{\unions{n}}$.
+                            Follows by
+                                \auto{natural_recursion_membership_step,natural_recursion_successor_value,logical_if_set_true,logical_if_set_false}.
+                        \caseOf{$n\notin\naturals$.}
+                            Follows by
+                                \auto{natural_recursion_membership_step,logical_if_set_false}.
+                    \end{byCase}
+            \end{byCase}
+        \end{subproof}
+        Follows by \auto.
+    \end{subproof}
+    Follows by \obv{membership_rec_one_functional}.
+\end{proof}
+
+\begin{definition}\label{natural_recursion_typed}
+    $\naturalRecOp:
+        \Set\to(\Set\to\Set\to\Set)\to\Set\to\Set
+        =\fun{a:\Set}{
+            \fun{S:\Set\to\Set\to\Set}{
+                \fun{n:\Set}{
+                    \Apply{\membershipRecOneOp}
+                        {
+                                \Apply{\naturalRecMembershipStepOp}{a,S},n,\emptyset}}}}$.
+\end{definition}
+
+\begin{proposition}\label{natural_recursion_zero}
+    $\forall a:\Set.\ \forall S:\Set\to\Set\to\Set.
+        \Apply{\naturalRecOp}{a,S,\emptyset}=a$.
+\end{proposition}
+\begin{proof}
+    Fix $a,S$.
+    $\Apply{\membershipRecOneOp}
+        {
+            \Apply{\naturalRecMembershipStepOp}{a,S},\emptyset}
+        =\Apply{\naturalRecMembershipStepOp}{a,S,\emptyset,
+            \Apply{\membershipRecOneOp}{
+                \Apply{\naturalRecMembershipStepOp}{a,S}}}$
+        by \obv{membership_rec_one_equation,natural_recursion_membership_step_functional}.
+    Follows by
+        \auto{natural_recursion_typed,natural_recursion_membership_step,logical_if_set_true}.
+\end{proof}
+
+\begin{proposition}\label{natural_recursion_successor}
+    $\forall a:\Set.\ \forall S:\Set\to\Set\to\Set.\ \forall n:\Set.
+        n\in\naturals\implies
+        \Apply{\naturalRecOp}{a,S,\suc{n}}
+        =\Apply{S}{n,
+            \Apply{\naturalRecOp}{a,S,n}}$.
+\end{proposition}
+\begin{proof}
+    Fix $a,S,n$.
+    Assume $n\in\naturals$.
+    $n$ is \in-transitive
+        by \obv{natural_number_is_ordinal,ordinal_is_transitiveset}.
+    Hence $\unions{\suc{n}}=n$
+        by \obv{transitiveset_iff_unions_suc}.
+    $\suc{n}\in\naturals$ by \obv{omega_successor}.
+    $\suc{n}\neq\emptyset$ by \obv{suc_neq_emptyset}.
+    $\Apply{\membershipRecOneOp}
+        {
+            \Apply{\naturalRecMembershipStepOp}{a,S},\suc{n}}
+        =\Apply{\naturalRecMembershipStepOp}{a,S,\suc{n},
+            \Apply{\membershipRecOneOp}{
+                \Apply{\naturalRecMembershipStepOp}{a,S}}}$
+        by \obv{membership_rec_one_equation,natural_recursion_membership_step_functional}.
+    Follows by
+        \auto{natural_recursion_typed,natural_recursion_membership_step,natural_recursion_successor_value,logical_if_set_true,logical_if_set_false}.
+\end{proof}
+
+\begin{proposition}\label{natural_recursion_off_domain}
+    $\forall a:\Set.\ \forall S:\Set\to\Set\to\Set.\ \forall n:\Set.
+        n\notin\naturals\implies
+        \Apply{\naturalRecOp}{a,S,n}=\emptyset$.
+\end{proposition}
+\begin{proof}
+    Fix $a,S,n$.
+    Assume $n\notin\naturals$.
+    $n\neq\emptyset$ by \obv{omega_empty}.
+    $\Apply{\membershipRecOneOp}{
+            \Apply{\naturalRecMembershipStepOp}{a,S},n}
+        =\Apply{\naturalRecMembershipStepOp}{a,S,n,
+            \Apply{\membershipRecOneOp}{
+                \Apply{\naturalRecMembershipStepOp}{a,S}}}$
+        by \obv{membership_rec_one_equation,natural_recursion_membership_step_functional}.
+    Follows by
+        \auto{natural_recursion_typed,natural_recursion_membership_step,logical_if_set_false}.
+\end{proof}

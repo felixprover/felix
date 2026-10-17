@@ -1,0 +1,716 @@
+\import{surreal/recursion.tex}
+\import{recursion/logical-membership-two.tex}
+\import{logic/conditional.tex}
+
+\section{Logical recursion over the surreal class}
+
+Membership recursion over birthdays constructs the class function promised
+by the interface around surreal recursion.  The auxiliary stage function
+is deliberately total: away from surreals whose birthdays are bounded by
+the current set, it returns the empty set.
+
+\begin{definition}\label{surreal_unary_recursion_stage}
+    $\surrealUnaryRecStageOp :
+        (\Set\to(\Set\to\Set)\to\Set)\to
+        \Set\to(\Set\to(\Set\to\Set))\to(\Set\to\Set)
+        =\fun{F:\Set\to(\Set\to\Set)\to\Set}{
+            \fun{\alpha:\Set}{
+                \fun{g:\Set\to(\Set\to\Set)}{
+                    \fun{z:\Set}{
+                        \Apply{\logicalIfSetOp}{
+                                    (\surreal{z}\land
+                                    \birthday{z}\subseteq\alpha),
+                            \Apply{F}{z,
+                                    \fun{w:\Set}{
+                                        \Apply{g}{\birthday{w},w}}},\emptyset}}}}}$.
+\end{definition}
+
+\begin{theorem}\label{surreal_unary_recursion_stage_functional}
+    $\forall F:\Set\to(\Set\to\Set)\to\Set.
+        \Apply{\surrealRecFunctionalOp}{F}
+        \implies
+        \Apply{\membershipRecOneFunctionalOp}
+            {\Apply{\surrealUnaryRecStageOp}{F}}$.
+\end{theorem}
+\begin{proof}
+    Fix $F$.
+    Assume $\Apply{\surrealRecFunctionalOp}{F}$.
+    Show that $\forall\alpha:\Set.
+        \forall g,h:\Set\to(\Set\to\Set).
+        (\forall\beta:\Set.\ \beta\in\alpha\implies
+            \Apply{g}{\beta}=\Apply{h}{\beta})
+        \implies
+        \Apply{\surrealUnaryRecStageOp}{F,\alpha,g}
+        =\Apply{\surrealUnaryRecStageOp}{F,\alpha,h}$.
+    \begin{subproof}
+        Fix $\alpha,g,h$.
+        Assume $\forall\beta:\Set.\ \beta\in\alpha\implies
+            \Apply{g}{\beta}=\Apply{h}{\beta}$.
+        Show that $\forall z:\Set.
+            \Apply{\surrealUnaryRecStageOp}{F,\alpha,g,z}
+            =
+            \Apply{\surrealUnaryRecStageOp}{F,\alpha,h,z}$.
+        \begin{subproof}
+            Fix $z$.
+            \begin{byCase}
+                \caseOf{$\surreal{z}\land\birthday{z}\subseteq\alpha$.}
+                    Show that $\forall w:\Set.
+                        (\surreal{w}\land\birthday{w}\in\birthday{z})
+                        \implies
+                        \Apply{g}{\birthday{w},w}
+                        =\Apply{h}{\birthday{w},w}$.
+                    \begin{subproof}
+                        Fix $w$.
+                        Assume $\surreal{w}\land
+                            \birthday{w}\in\birthday{z}$.
+                        $\birthday{w}\in\alpha$
+                            by \obv{subseteq}.
+                        $\Apply{g}{\birthday{w}}=
+                            \Apply{h}{\birthday{w}}$.
+                    \end{subproof}
+                    $\Apply{F}{z,
+                        \fun{w:\Set}{
+                            \Apply{g}{\birthday{w},w}}}
+                        =
+                        \Apply{F}{z,
+                        \fun{w:\Set}{
+                            \Apply{h}{\birthday{w},w}}}$
+                        by \obv{surreal_recursion_functional}.
+                    Follows by
+                        \auto{surreal_unary_recursion_stage,logical_if_set_true}.
+                \caseOf{$\lnot(\surreal{z}\land
+                        \birthday{z}\subseteq\alpha)$.}
+                    Follows by
+                        \auto{surreal_unary_recursion_stage,logical_if_set_false}.
+            \end{byCase}
+        \end{subproof}
+        Follows by \auto.
+    \end{subproof}
+    Follows by \obv{membership_rec_one_functional}.
+\end{proof}
+
+\begin{definition}\label{surreal_unary_recursion_constructed}
+    $\surrealUnaryRecConstructedOp :
+        (\Set\to(\Set\to\Set)\to\Set)\to(\Set\to\Set)
+        =\fun{F:\Set\to(\Set\to\Set)\to\Set}{
+            \fun{z:\Set}{
+                \Apply{\membershipRecOneOp}
+                    {\Apply{\surrealUnaryRecStageOp}{F},\birthday{z},z}}}$.
+\end{definition}
+
+\begin{lemma}\label{surreal_unary_recursion_stage_at_birthday}
+    $\forall F:\Set\to(\Set\to\Set)\to\Set.\ \forall z:\Set.
+        \surreal{z}
+        \implies
+        \Apply{\surrealUnaryRecStageOp}
+            {F,\birthday{z},\Apply{\membershipRecOneOp}
+                    {\Apply{\surrealUnaryRecStageOp}{F}},z}
+        =\Apply{F}{z,
+            \Apply{\surrealUnaryRecConstructedOp}{F}}$.
+\end{lemma}
+\begin{proof}
+    Fix $F,z$.
+    Assume $\surreal{z}$.
+    $\birthday{z}\subseteq\birthday{z}$
+        by \obv{subseteq_refl}.
+    Follows by \auto{surreal_unary_recursion_stage,surreal_unary_recursion_constructed,logical_if_set_true}.
+\end{proof}
+
+\begin{theorem}\label{surreal_unary_recursion_constructed_equation}
+    $\forall F:\Set\to(\Set\to\Set)\to\Set.
+        \Apply{\surrealRecFunctionalOp}{F}
+        \implies
+        (\forall z:\Set.\ \surreal{z}\implies
+            \Apply{\surrealUnaryRecConstructedOp}{F,z}
+            =\Apply{F}{z,
+                \Apply{\surrealUnaryRecConstructedOp}{F}})$.
+\end{theorem}
+\begin{proof}
+    Fix $F$.
+    Assume $\Apply{\surrealRecFunctionalOp}{F}$.
+    $\Apply{\membershipRecOneFunctionalOp}
+        {\Apply{\surrealUnaryRecStageOp}{F}}$
+        by \obv{surreal_unary_recursion_stage_functional}.
+    Fix $z$.
+    Assume $\surreal{z}$.
+    $\Apply{\membershipRecOneOp}
+        {\Apply{\surrealUnaryRecStageOp}{F},\birthday{z}}
+        =\Apply{\surrealUnaryRecStageOp}
+            {F,\birthday{z},\Apply{\membershipRecOneOp}
+                {\Apply{\surrealUnaryRecStageOp}{F}}}$
+        by \obv{membership_rec_one_equation}.
+    Follows by \auto{surreal_unary_recursion_constructed,surreal_unary_recursion_stage_at_birthday}.
+\end{proof}
+
+\begin{theorem}\label{surreal_recursion_functional_implies_admissible}
+    $\forall F:\Set\to(\Set\to\Set)\to\Set.
+        \Apply{\surrealRecFunctionalOp}{F}
+        \implies\Apply{\surrealRecAdmissibleOp}{F}$.
+\end{theorem}
+\begin{proof}
+    Fix $F$.
+    Assume $\Apply{\surrealRecFunctionalOp}{F}$.
+    $\Apply{\surrealRecSolutionOp}
+        {F,\Apply{\surrealUnaryRecConstructedOp}{F}}$
+        by \obv{surreal_recursion_solution,surreal_unary_recursion_constructed_equation}.
+    Follows by \obv{surreal_recursion_admissible}.
+\end{proof}
+
+\begin{corollary}\label{surreal_recursion_equation_functional}
+    $\forall F:\Set\to(\Set\to\Set)\to\Set.
+        \Apply{\surrealRecFunctionalOp}{F}
+        \implies
+        (\forall z:\Set.\ \surreal{z}\implies
+            \Apply{\surrealRecOp}{F,z}
+            =\Apply{F}{z,\Apply{\surrealRecOp}{F}})$.
+\end{corollary}
+\begin{proof}
+    Follows by \obv{surreal_recursion_functional_implies_admissible,surreal_recursion_equation}.
+\end{proof}
+
+\subsection{Function-valued class recursion}
+
+The second concrete instance returns a unary set function at each surreal.
+It is the outer recursion used to construct binary operations.
+
+\begin{definition}\label{surreal_function_recursion_functional}
+    $\surrealFunctionRecFunctionalOp :
+        (\Set\to(\Set\to(\Set\to\Set))\to(\Set\to\Set))\to\Prop
+        =\fun{F:\Set\to(\Set\to(\Set\to\Set))\to(\Set\to\Set)}{
+            \forall z:\Set.\ \surreal{z}\implies
+            (\forall g,h:\Set\to(\Set\to\Set).
+                (\forall w:\Set.
+                    (\surreal{w}\land\birthday{w}\in\birthday{z})
+                    \implies\Apply{g}{w}=\Apply{h}{w})
+                \implies
+                \Apply{F}{z,g}=\Apply{F}{z,h})}$.
+\end{definition}
+
+\begin{definition}\label{surreal_function_recursion_stage}
+    $\surrealFunctionRecStageOp :
+        (\Set\to(\Set\to(\Set\to\Set))\to(\Set\to\Set))\to
+        \Set\to(\Set\to(\Set\to\Set\to\Set))\to
+        (\Set\to\Set\to\Set)
+        =\fun{F:\Set\to(\Set\to(\Set\to\Set))\to(\Set\to\Set)}{
+            \fun{\alpha:\Set}{
+                \fun{g:\Set\to(\Set\to\Set\to\Set)}{
+                    \fun{z:\Set}{
+                        \Apply{\logicalIfOneOp}{
+                                    (\surreal{z}\land
+                                    \birthday{z}\subseteq\alpha),
+                            \Apply{F}{z,
+                                    \fun{w:\Set}{
+                                        \Apply{g}{\birthday{w},w}}},\fun{u:\Set}{\emptyset}}}}}}$.
+\end{definition}
+
+\begin{theorem}\label{surreal_function_recursion_stage_functional}
+    $\forall F:\Set\to(\Set\to(\Set\to\Set))\to(\Set\to\Set).
+        \Apply{\surrealFunctionRecFunctionalOp}{F}
+        \implies
+        \Apply{\membershipRecTwoFunctionalOp}
+            {\Apply{\surrealFunctionRecStageOp}{F}}$.
+\end{theorem}
+\begin{proof}
+    Fix $F$.
+    Assume $\Apply{\surrealFunctionRecFunctionalOp}{F}$.
+    Show that $\forall\alpha:\Set.
+        \forall g,h:\Set\to(\Set\to\Set\to\Set).
+        (\forall\beta:\Set.\ \beta\in\alpha\implies
+            \Apply{g}{\beta}=\Apply{h}{\beta})
+        \implies
+        \Apply{\surrealFunctionRecStageOp}{F,\alpha,g}
+        =\Apply{\surrealFunctionRecStageOp}{F,\alpha,h}$.
+    \begin{subproof}
+        Fix $\alpha,g,h$.
+        Assume $\forall\beta:\Set.\ \beta\in\alpha\implies
+            \Apply{g}{\beta}=\Apply{h}{\beta}$.
+        Show that $\forall z:\Set.
+            \Apply{\surrealFunctionRecStageOp}{F,\alpha,g,z}
+            =
+            \Apply{\surrealFunctionRecStageOp}{F,\alpha,h,z}$.
+        \begin{subproof}
+            Fix $z$.
+            \begin{byCase}
+                \caseOf{$\surreal{z}\land\birthday{z}\subseteq\alpha$.}
+                    Show that $\forall w:\Set.
+                        (\surreal{w}\land\birthday{w}\in\birthday{z})
+                        \implies
+                        \Apply{g}{\birthday{w},w}
+                        =\Apply{h}{\birthday{w},w}$.
+                    \begin{subproof}
+                        Fix $w$.
+                        Assume $\surreal{w}\land
+                            \birthday{w}\in\birthday{z}$.
+                        $\birthday{w}\in\alpha$
+                            by \obv{subseteq}.
+                        $\Apply{g}{\birthday{w}}=
+                            \Apply{h}{\birthday{w}}$.
+                    \end{subproof}
+                    $\Apply{F}{z,
+                        \fun{w:\Set}{
+                            \Apply{g}{\birthday{w},w}}}
+                        =
+                        \Apply{F}{z,
+                        \fun{w:\Set}{
+                            \Apply{h}{\birthday{w},w}}}$
+                        by \obv{surreal_function_recursion_functional}.
+                    Follows by
+                        \auto{surreal_function_recursion_stage,logical_if_one_true}.
+                \caseOf{$\lnot(\surreal{z}\land
+                        \birthday{z}\subseteq\alpha)$.}
+                    Follows by
+                        \auto{surreal_function_recursion_stage,logical_if_one_false}.
+            \end{byCase}
+        \end{subproof}
+        Follows by \auto.
+    \end{subproof}
+    Follows by \obv{membership_rec_two_functional}.
+\end{proof}
+
+\begin{definition}\label{surreal_function_recursion}
+    $\surrealFunctionRecOp :
+        (\Set\to(\Set\to(\Set\to\Set))\to(\Set\to\Set))\to
+        (\Set\to\Set\to\Set)
+        =\fun{F:\Set\to(\Set\to(\Set\to\Set))\to(\Set\to\Set)}{
+            \fun{z:\Set}{
+                \Apply{\membershipRecTwoOp}
+                    {\Apply{\surrealFunctionRecStageOp}{F},\birthday{z},z}}}$.
+\end{definition}
+
+\begin{lemma}\label{surreal_function_recursion_stage_at_birthday}
+    $\forall F:\Set\to(\Set\to(\Set\to\Set))\to(\Set\to\Set).
+     \forall z:\Set.
+        \surreal{z}
+        \implies
+        \Apply{\surrealFunctionRecStageOp}
+            {F,\birthday{z},\Apply{\membershipRecTwoOp}
+                    {\Apply{\surrealFunctionRecStageOp}{F}},z}
+        =\Apply{F}{z,\Apply{\surrealFunctionRecOp}{F}}$.
+\end{lemma}
+\begin{proof}
+    Fix $F,z$.
+    Assume $\surreal{z}$.
+    $\birthday{z}\subseteq\birthday{z}$
+        by \obv{subseteq_refl}.
+    Follows by \auto{surreal_function_recursion_stage,surreal_function_recursion,logical_if_one_true}.
+\end{proof}
+
+\begin{theorem}\label{surreal_function_recursion_equation}
+    $\forall F:\Set\to(\Set\to(\Set\to\Set))\to(\Set\to\Set).
+        \Apply{\surrealFunctionRecFunctionalOp}{F}
+        \implies
+        (\forall z:\Set.\ \surreal{z}\implies
+            \Apply{\surrealFunctionRecOp}{F,z}
+            =\Apply{F}{z,\Apply{\surrealFunctionRecOp}{F}})$.
+\end{theorem}
+\begin{proof}
+    Fix $F$.
+    Assume $\Apply{\surrealFunctionRecFunctionalOp}{F}$.
+    $\Apply{\membershipRecTwoFunctionalOp}
+        {\Apply{\surrealFunctionRecStageOp}{F}}$
+        by \obv{surreal_function_recursion_stage_functional}.
+    Fix $z$.
+    Assume $\surreal{z}$.
+    $\Apply{\membershipRecTwoOp}
+        {\Apply{\surrealFunctionRecStageOp}{F},\birthday{z}}
+        =\Apply{\surrealFunctionRecStageOp}
+            {F,\birthday{z},\Apply{\membershipRecTwoOp}
+                {\Apply{\surrealFunctionRecStageOp}{F}}}$
+        by \obv{membership_rec_two_equation}.
+    Follows by \auto{surreal_function_recursion,surreal_function_recursion_stage_at_birthday}.
+\end{proof}
+
+\subsection{Binary class recursion}
+
+A binary step may inspect values in an earlier row and earlier values in its
+current row.  This is the lexicographic dependency used by the Conway
+addition and multiplication equations.
+
+\begin{definition}\label{surreal_binary_recursion_functional}
+    $\surrealBinaryRecFunctionalOp :
+        (\Set\to\Set\to(\Set\to\Set\to\Set)\to\Set)\to\Prop
+        =\fun{F:\Set\to\Set\to(\Set\to\Set\to\Set)\to\Set}{
+            \forall w,z:\Set.\ (\surreal{w}\land\surreal{z})
+            \implies
+            (\forall g,h:\Set\to\Set\to\Set.
+                (\forall x:\Set.
+                    (\surreal{x}\land\birthday{x}\in\birthday{w})
+                    \implies
+                    (\forall y:\Set.\ \surreal{y}\implies
+                        \Apply{g}{x,y}
+                        =\Apply{h}{x,y}))
+                \land
+                (\forall y:\Set.
+                    (\surreal{y}\land\birthday{y}\in\birthday{z})
+                    \implies
+                    \Apply{g}{w,y}
+                    =\Apply{h}{w,y})
+                \implies
+                \Apply{F}{w,z,g}
+                =\Apply{F}{w,z,h})}$.
+\end{definition}
+
+\begin{definition}\label{surreal_binary_patch}
+    $\surrealBinaryPatchOp :
+        \Set\to(\Set\to\Set\to\Set)\to(\Set\to\Set)\to
+        (\Set\to\Set\to\Set)
+        =\fun{w:\Set}{
+            \fun{f:\Set\to\Set\to\Set}{
+                \fun{g:\Set\to\Set}{
+                    \fun{x,y:\Set}{
+                            \Apply{\logicalIfSetOp}{(x=w),\Apply{g}{y},\Apply{f}{x,y}}
+                        }
+                }
+            }
+        }$.
+\end{definition}
+
+\begin{definition}\label{surreal_binary_inner_step}
+    $\surrealBinaryInnerStepOp :
+        (\Set\to\Set\to(\Set\to\Set\to\Set)\to\Set)\to
+        \Set\to(\Set\to\Set\to\Set)\to
+        \Set\to(\Set\to\Set)\to\Set
+        =\fun{F:\Set\to\Set\to(\Set\to\Set\to\Set)\to\Set}{
+            \fun{w:\Set}{
+                \fun{f:\Set\to\Set\to\Set}{
+                    \fun{z:\Set}{
+                        \fun{g:\Set\to\Set}{
+                            \Apply{F}{w,z,
+                                \Apply{\surrealBinaryPatchOp}
+                                {w,f,g}}
+                        }
+                    }
+                }
+            }
+        }$.
+\end{definition}
+
+\begin{lemma}\label{surreal_binary_inner_step_agreement}
+    $\forall F:\Set\to\Set\to(\Set\to\Set\to\Set)\to\Set.
+     \forall w,z:\Set.
+     \forall f,k:\Set\to\Set\to\Set.
+     \forall g,h:\Set\to\Set.
+        \Apply{\surrealBinaryRecFunctionalOp}{F}
+        \land\surreal{w}\land\surreal{z}
+        \land
+        (\forall x:\Set.
+                (\surreal{x}\land\birthday{x}\in\birthday{w})
+                \implies\Apply{f}{x}=\Apply{k}{x})
+        \land
+        (\forall y:\Set.
+            (\surreal{y}\land\birthday{y}\in\birthday{z})
+            \implies\Apply{g}{y}=\Apply{h}{y})
+        \implies
+        \Apply{\surrealBinaryInnerStepOp}
+            {F,w,f,z,g}
+        =\Apply{\surrealBinaryInnerStepOp}
+            {F,w,k,z,h}$.
+\end{lemma}
+\begin{proof}
+    Fix $F,w,z,f,k,g,h$.
+    Assume $\Apply{\surrealBinaryRecFunctionalOp}{F}
+        \land\surreal{w}\land\surreal{z}
+        \land
+        (\forall x:\Set.
+            (\surreal{x}\land\birthday{x}\in\birthday{w})
+            \implies\Apply{f}{x}=\Apply{k}{x})
+        \land
+        (\forall y:\Set.
+            (\surreal{y}\land\birthday{y}\in\birthday{z})
+            \implies\Apply{g}{y}=\Apply{h}{y})$.
+    Show that $\forall x:\Set.
+        (\surreal{x}\land\birthday{x}\in\birthday{w})
+        \implies
+        (\forall y:\Set.\ \surreal{y}\implies
+            \Apply{\surrealBinaryPatchOp}{w,f,g,x,y}
+            =\Apply{\surrealBinaryPatchOp}{w,k,h,x,y})$.
+    \begin{subproof}
+        Fix $x$.
+        Assume $\surreal{x}\land\birthday{x}\in\birthday{w}$.
+        $x\neq w$ by \obv{surreal_birthday,in_irrefl}.
+        Fix $y$.
+        Assume $\surreal{y}$.
+        $\Apply{f}{x}=\Apply{k}{x}$.
+        Follows by \auto{surreal_binary_patch,logical_if_set_false}.
+    \end{subproof}
+    Show that $\forall y:\Set.
+        (\surreal{y}\land\birthday{y}\in\birthday{z})
+        \implies
+        \Apply{\surrealBinaryPatchOp}{w,f,g,w,y}
+        =\Apply{\surrealBinaryPatchOp}{w,k,h,w,y}$.
+    \begin{subproof}
+        Fix $y$.
+        Assume $\surreal{y}\land\birthday{y}\in\birthday{z}$.
+        $\Apply{g}{y}=\Apply{h}{y}$.
+        Follows by \auto{surreal_binary_patch,logical_if_set_true}.
+    \end{subproof}
+    Follows by \obv{surreal_binary_recursion_functional,surreal_binary_inner_step,surreal_binary_patch}.
+\end{proof}
+
+\begin{theorem}\label{surreal_binary_inner_step_functional}
+    $\forall F:\Set\to\Set\to(\Set\to\Set\to\Set)\to\Set.
+     \forall w:\Set.\ \forall f:\Set\to\Set\to\Set.
+        \Apply{\surrealBinaryRecFunctionalOp}{F}\land\surreal{w}
+        \implies
+        \Apply{\surrealRecFunctionalOp}{
+            \Apply{\surrealBinaryInnerStepOp}{F,w,f}}$.
+\end{theorem}
+\begin{proof}
+    Fix $F,w,f$.
+    Assume $\Apply{\surrealBinaryRecFunctionalOp}{F}\land\surreal{w}$.
+    Show that $\forall x:\Set.
+        (\surreal{x}\land\birthday{x}\in\birthday{w})
+        \implies\Apply{f}{x}=\Apply{f}{x}$.
+    \begin{subproof}
+    \end{subproof}
+    Follows by \obv{surreal_recursion_functional,surreal_binary_inner_step_agreement}.
+\end{proof}
+
+\begin{definition}\label{surreal_binary_inner_recursion}
+    $\surrealBinaryInnerRecOp :
+        (\Set\to\Set\to(\Set\to\Set\to\Set)\to\Set)\to
+        \Set\to(\Set\to\Set\to\Set)\to(\Set\to\Set)
+        =\fun{F:\Set\to\Set\to(\Set\to\Set\to\Set)\to\Set}{
+            \fun{w:\Set}{
+                \fun{f:\Set\to\Set\to\Set}{
+                    \Apply{\surrealRecOp}{
+                        \Apply{\surrealBinaryInnerStepOp}{F,w,f}}
+                }
+            }
+        }$.
+\end{definition}
+
+\begin{definition}\label{surreal_binary_outer_step}
+    $\surrealBinaryOuterStepOp :
+        (\Set\to\Set\to(\Set\to\Set\to\Set)\to\Set)\to
+        \Set\to(\Set\to\Set\to\Set)\to(\Set\to\Set)
+        =\fun{F:\Set\to\Set\to(\Set\to\Set\to\Set)\to\Set}{
+            \fun{w:\Set}{
+                \fun{f:\Set\to\Set\to\Set}{
+                    \fun{z:\Set}{
+                        \Apply{\logicalIfSetOp}
+                            {\surreal{z},\Apply{\surrealBinaryInnerRecOp}{F,w,f,z},\emptyset}
+                    }
+                }
+            }
+        }$.
+\end{definition}
+
+\begin{theorem}\label{surreal_binary_inner_recursion_agreement}
+    $\forall F:\Set\to\Set\to(\Set\to\Set\to\Set)\to\Set.
+     \forall w:\Set.\ \forall f,k:\Set\to\Set\to\Set.
+        \Apply{\surrealBinaryRecFunctionalOp}{F}
+        \land\surreal{w}
+        \land
+        (\forall x:\Set.
+            (\surreal{x}\land\birthday{x}\in\birthday{w})
+            \implies\Apply{f}{x}=\Apply{k}{x})
+        \implies
+        (\forall z:\Set.\ \surreal{z}\implies
+            \Apply{\surrealRecOp}
+                {
+                    \Apply{\surrealBinaryInnerStepOp}{F,w,f},z}
+            =\Apply{\surrealRecOp}
+                {
+                    \Apply{\surrealBinaryInnerStepOp}{F,w,k},z})$.
+\end{theorem}
+\begin{proof}
+    Fix $F,w,f,k$.
+    Assume $\Apply{\surrealBinaryRecFunctionalOp}{F}
+        \land\surreal{w}
+        \land
+        (\forall x:\Set.
+            (\surreal{x}\land\birthday{x}\in\birthday{w})
+            \implies\Apply{f}{x}=\Apply{k}{x})$.
+    Show that $\forall z:\Set.\ \surreal{z}\implies
+        ((\forall y:\Set.
+            (\surreal{y}\land\birthday{y}\in\birthday{z})
+            \implies
+            \Apply{\surrealRecOp}
+                {
+                    \Apply{\surrealBinaryInnerStepOp}{F,w,f},y}
+            =\Apply{\surrealRecOp}
+                {
+                    \Apply{\surrealBinaryInnerStepOp}{F,w,k},y})
+        \implies
+        \Apply{\surrealRecOp}
+            {
+                \Apply{\surrealBinaryInnerStepOp}{F,w,f},z}
+        =\Apply{\surrealRecOp}
+            {
+                \Apply{\surrealBinaryInnerStepOp}{F,w,k},z})$.
+    \begin{subproof}
+        Fix $z$.
+        Assume $\surreal{z}$.
+        Assume $\forall y:\Set.
+            (\surreal{y}\land\birthday{y}\in\birthday{z})
+            \implies
+            \Apply{\surrealRecOp}
+                {
+                    \Apply{\surrealBinaryInnerStepOp}{F,w,f},y}
+            =\Apply{\surrealRecOp}
+                {
+                    \Apply{\surrealBinaryInnerStepOp}{F,w,k},y}$.
+        $\Apply{\surrealRecFunctionalOp}{
+            \Apply{\surrealBinaryInnerStepOp}{F,w,f}}$
+            by \obv{surreal_binary_inner_step_functional}.
+        $\Apply{\surrealRecFunctionalOp}{
+            \Apply{\surrealBinaryInnerStepOp}{F,w,k}}$
+            by \obv{surreal_binary_inner_step_functional}.
+        Follows by \auto{surreal_recursion_equation_functional,surreal_binary_inner_step_agreement}.
+    \end{subproof}
+    Follows by \auto{surreal_induction}.
+\end{proof}
+
+\begin{theorem}\label{surreal_binary_outer_step_functional}
+    $\forall F:\Set\to\Set\to(\Set\to\Set\to\Set)\to\Set.
+        \Apply{\surrealBinaryRecFunctionalOp}{F}
+        \implies
+        \Apply{\surrealFunctionRecFunctionalOp}{
+            \Apply{\surrealBinaryOuterStepOp}{F}}$.
+\end{theorem}
+\begin{proof}
+    Fix $F$.
+    Assume $\Apply{\surrealBinaryRecFunctionalOp}{F}$.
+    Show that $\forall w:\Set.\ \surreal{w}\implies
+        (\forall f,k:\Set\to(\Set\to\Set).
+            (\forall x:\Set.
+                (\surreal{x}\land\birthday{x}\in\birthday{w})
+                \implies\Apply{f}{x}=\Apply{k}{x})
+            \implies
+            \Apply{\surrealBinaryOuterStepOp}{F,w,f}
+            =\Apply{\surrealBinaryOuterStepOp}{F,w,k})$.
+    \begin{subproof}
+        Fix $w$.
+        Assume $\surreal{w}$.
+        Fix $f,k$.
+        Assume $\forall x:\Set.
+            (\surreal{x}\land\birthday{x}\in\birthday{w})
+            \implies\Apply{f}{x}=\Apply{k}{x}$.
+        Show that $\forall z:\Set.
+            \Apply{\surrealBinaryOuterStepOp}
+                {F,w,f,z}
+            =\Apply{\surrealBinaryOuterStepOp}
+                {F,w,k,z}$.
+        \begin{subproof}
+            Fix $z$.
+            \begin{byCase}
+                \caseOf{$\surreal{z}$.}
+                    $\Apply{\surrealBinaryInnerRecOp}{F,w,f,z}
+                    =\Apply{\surrealBinaryInnerRecOp}{F,w,k,z}$
+                        by \obv{surreal_binary_inner_recursion_agreement,surreal_binary_inner_recursion}.
+                    Follows by \auto{surreal_binary_outer_step,logical_if_set_true}.
+                \caseOf{$\lnot\surreal{z}$.}
+                    Follows by \auto{surreal_binary_outer_step,logical_if_set_false}.
+            \end{byCase}
+        \end{subproof}
+        Follows by \auto.
+    \end{subproof}
+    Follows by \obv{surreal_function_recursion_functional}.
+\end{proof}
+
+\begin{definition}\label{surreal_binary_recursion}
+    $\surrealBinaryRecOp :
+        (\Set\to\Set\to(\Set\to\Set\to\Set)\to\Set)\to
+        (\Set\to\Set\to\Set)
+        =\fun{F:\Set\to\Set\to(\Set\to\Set\to\Set)\to\Set}{
+            \Apply{\surrealFunctionRecOp}{
+                \Apply{\surrealBinaryOuterStepOp}{F}}}$.
+\end{definition}
+
+\begin{theorem}\label{surreal_binary_recursion_row_equation}
+    $\forall F:\Set\to\Set\to(\Set\to\Set\to\Set)\to\Set.
+        \Apply{\surrealBinaryRecFunctionalOp}{F}
+        \implies
+        (\forall w,z:\Set.\ (\surreal{w}\land\surreal{z})
+            \implies
+            \Apply{\surrealBinaryRecOp}{F,w,z}
+            =\Apply{\surrealBinaryInnerRecOp}
+                {F,w,\Apply{\surrealBinaryRecOp}{F},z})$.
+\end{theorem}
+\begin{proof}
+    Fix $F$.
+    Assume $\Apply{\surrealBinaryRecFunctionalOp}{F}$.
+    $\Apply{\surrealFunctionRecFunctionalOp}{
+        \Apply{\surrealBinaryOuterStepOp}{F}}$
+        by \obv{surreal_binary_outer_step_functional}.
+    Fix $w,z$.
+    Assume $\surreal{w}\land\surreal{z}$.
+    $\Apply{\surrealFunctionRecOp}{
+        \Apply{\surrealBinaryOuterStepOp}{F},w}
+        =\Apply{\surrealBinaryOuterStepOp}
+            {F,w,\Apply{\surrealFunctionRecOp}{
+                \Apply{\surrealBinaryOuterStepOp}{F}}}$
+        by \obv{surreal_function_recursion_equation}.
+    Follows by \auto{surreal_binary_recursion,surreal_binary_outer_step,logical_if_set_true}.
+\end{proof}
+
+\begin{theorem}\label{surreal_binary_recursion_equation}
+    $\forall F:\Set\to\Set\to(\Set\to\Set\to\Set)\to\Set.
+        \Apply{\surrealBinaryRecFunctionalOp}{F}
+        \implies
+        (\forall w,z:\Set.\ (\surreal{w}\land\surreal{z})
+            \implies
+            \Apply{\surrealBinaryRecOp}{F,w,z}
+            =\Apply{F}{w,z,
+                \Apply{\surrealBinaryRecOp}{F}})$.
+\end{theorem}
+\begin{proof}
+    Fix $F$.
+    Assume $\Apply{\surrealBinaryRecFunctionalOp}{F}$.
+    Fix $w,z$.
+    Assume $\surreal{w}\land\surreal{z}$.
+    Let $q:\Set\to\Set\to\Set
+        =\Apply{\surrealBinaryRecOp}{F}$.
+    Let $r:\Set\to\Set
+        =\Apply{\surrealBinaryInnerRecOp}{F,w,q}$.
+    $\Apply{q}{w,z}=\Apply{r}{z}$
+        by \auto{surreal_binary_recursion_row_equation,surreal_binary_recursion,surreal_binary_inner_recursion}.
+    $\Apply{\surrealRecFunctionalOp}{
+        \Apply{\surrealBinaryInnerStepOp}{F,w,q}}$
+        by \obv{surreal_binary_inner_step_functional}.
+    $\Apply{r}{z}
+        =\Apply{\surrealBinaryInnerStepOp}
+            {F,w,q,z,r}$
+        by \auto{surreal_recursion_equation_functional,surreal_binary_inner_recursion}.
+    Show that $\forall x:\Set.
+        (\surreal{x}\land\birthday{x}\in\birthday{w})
+        \implies
+        (\forall y:\Set.\ \surreal{y}\implies
+            \Apply{\surrealBinaryPatchOp}{w,q,r,x,y}
+            =\Apply{q}{x,y})$.
+    \begin{subproof}
+        Fix $x$.
+        Assume $\surreal{x}\land\birthday{x}\in\birthday{w}$.
+        $x\neq w$ by \obv{surreal_birthday,in_irrefl}.
+        Fix $y$.
+        Assume $\surreal{y}$.
+        \begin{align*}
+            \Apply{\surrealBinaryPatchOp}{w,q,r,x,y}
+                &= \Apply{\logicalIfSetOp}
+                    {(x=w),\Apply{r}{y},\Apply{q}{x,y}}
+                    \explanation{by \obv{surreal_binary_patch}}
+                \\
+                &= \Apply{q}{x,y}
+                    \explanation{by \obv{logical_if_set_false}}
+        \end{align*}
+        Follows by assumption.
+    \end{subproof}
+    Show that $\forall y:\Set.
+        (\surreal{y}\land\birthday{y}\in\birthday{z})
+        \implies
+        \Apply{\surrealBinaryPatchOp}{w,q,r,w,y}
+        =\Apply{q}{w,y}$.
+    \begin{subproof}
+        Fix $y$.
+        Assume $\surreal{y}\land\birthday{y}\in\birthday{z}$.
+        $\Apply{q}{w,y}=\Apply{r}{y}$
+            by \auto{surreal_binary_recursion_row_equation,surreal_binary_recursion,surreal_binary_inner_recursion}.
+        Follows by \auto{surreal_binary_patch,logical_if_set_true}.
+    \end{subproof}
+    $\Apply{F}{w,z,
+        \Apply{\surrealBinaryPatchOp}{w,q,r}}
+        =\Apply{F}{w,z,q}$
+        by \obv{surreal_binary_recursion_functional}.
+    Follows by \auto{surreal_binary_inner_step}.
+\end{proof}

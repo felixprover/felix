@@ -1,0 +1,199 @@
+\import{recursion/well-founded-range.tex}
+\import{order/ordinal-membership.tex}
+
+\section{Codomain-free transfinite recursion}
+
+For a set ordinal $\alpha$, this recursor returns the entire set-coded graph
+on $\alpha$ without requiring a range bound.  Its logical step receives the
+current ordinal and the graph of all earlier values.
+
+\begin{definition}\label{unbounded_ordinal_recursion_op}
+    $\unboundedOrdinalRecursionOp:
+        \Set\to(\Set\to\Set\to\Set)\to\Set
+        =\fun{\alpha:\Set}{
+            \fun{H:\Set\to\Set\to\Set}{
+                \Apply{\unboundedWellFoundedRecursionOp}
+                    {\alpha,\memrel{\alpha},H}}}$.
+\end{definition}
+
+\begin{theorem}\label{unbounded_ordinal_recursion_function}
+    Let $\alpha$ be an ordinal.
+    Then $\forall H:\Set\to\Set\to\Set.
+        \Apply{\recursiveSetFunctionOp}{
+            \Apply{\unboundedOrdinalRecursionOp}{\alpha,H}}$.
+\end{theorem}
+\begin{proof}
+    Fix $H$.
+    $\memrel{\alpha}$ is well-founded on $\alpha$ by
+        \obv{membership_is_well_founded_on}.
+    Follows by \auto{unbounded_ordinal_recursion_op,unbounded_well_founded_recursion_function,memrel_is_binary_relation_on}.
+\end{proof}
+
+\begin{theorem}\label{unbounded_ordinal_recursion_domain}
+    Let $\alpha$ be an ordinal.
+    Then $\forall H:\Set\to\Set\to\Set.
+        \dom{\Apply{\unboundedOrdinalRecursionOp}{\alpha,H}}
+        =\alpha$.
+\end{theorem}
+\begin{proof}
+    Fix $H$.
+    $\memrel{\alpha}$ is well-founded on $\alpha$ by
+        \obv{membership_is_well_founded_on}.
+    Follows by \auto{unbounded_ordinal_recursion_op,unbounded_well_founded_recursion_domain,memrel_is_binary_relation_on}.
+\end{proof}
+
+\begin{theorem}\label{unbounded_ordinal_recursion_equation}
+    Let $\alpha$ be an ordinal.
+    Then $\forall H:\Set\to\Set\to\Set.\ \forall\beta:\Set.
+        \beta\in\alpha\implies
+        \apply{\Apply{\unboundedOrdinalRecursionOp}{\alpha,H}}
+            {\beta}
+        =\Apply{H}{\beta,
+            \restrl{
+                \Apply{\unboundedOrdinalRecursionOp}{\alpha,H}}
+                {\beta}}$.
+\end{theorem}
+\begin{proof}
+    Fix $H$.
+    Fix $\beta\in\alpha$.
+    $\memrel{\alpha}$ is well-founded on $\alpha$ by
+        \obv{membership_is_well_founded_on}.
+    $\downward{\memrel{\alpha}}{\beta}=\beta$ by
+        \obv{ordinal_memrel_downward}.
+    Follows by \auto{unbounded_ordinal_recursion_op,unbounded_well_founded_recursion_equation,memrel_is_binary_relation_on}.
+\end{proof}
+
+\begin{theorem}\label{unbounded_ordinal_recursion_characterization}
+    Let $\alpha$ be an ordinal.
+    Then $\forall H:\Set\to\Set\to\Set.\ \forall f:\Set.
+        (\Apply{\recursiveSetFunctionOp}{f}\land
+         \dom{f}=\alpha\land
+         (\forall\beta:\Set.\ \beta\in\alpha\implies
+            \apply{f}{\beta}=\Apply{H}{\beta,
+                \restrl{f}{\beta}}))
+        \implies
+        f=\Apply{\unboundedOrdinalRecursionOp}{\alpha,H}$.
+\end{theorem}
+\begin{proof}
+    Fix $H$.
+    Fix $f$.
+    Assume $\Apply{\recursiveSetFunctionOp}{f}\land
+        \dom{f}=\alpha\land
+        (\forall\beta:\Set.\ \beta\in\alpha\implies
+            \apply{f}{\beta}=\Apply{H}{\beta,
+                \restrl{f}{\beta}})$.
+    $\Apply{\recursiveSetFunctionOp}{f}$.
+    $\dom{f}=\alpha$.
+    $\forall\beta:\Set.\ \beta\in\alpha\implies
+        \apply{f}{\beta}=\Apply{H}{\beta,
+            \restrl{f}{\beta}}$.
+    $\memrel{\alpha}$ is well-founded on $\alpha$ by
+        \obv{membership_is_well_founded_on}.
+    Show that for every $\beta\in\alpha$ we have
+        $\apply{f}{\beta}=\Apply{H}{\beta,
+            \restrl{f}{\downward{\memrel{\alpha}}{\beta}}}$.
+    \begin{subproof}
+        Fix $\beta\in\alpha$.
+        $\downward{\memrel{\alpha}}{\beta}=\beta$ by
+            \obv{ordinal_memrel_downward}.
+        Follows by \auto.
+    \end{subproof}
+    Hence $f=\Apply{\unboundedWellFoundedRecursionOp}
+        {\alpha,\memrel{\alpha},H}$ by \obv{unbounded_well_founded_recursion_characterization,memrel_is_binary_relation_on}.
+    Follows by \obv{unbounded_ordinal_recursion_op}.
+\end{proof}
+
+\begin{theorem}\label{unbounded_ordinal_recursion_range}
+    Let $\alpha$ be an ordinal.
+    Then $\forall B:\Set.\ \forall H:\Set\to\Set\to\Set.
+        \Apply{\unboundedRecursiveRangeClosedOp}
+            {\alpha,\memrel{\alpha},B,H}
+        \implies
+        \Apply{\unboundedOrdinalRecursionOp}{\alpha,H}
+            \in\funs{\alpha}{B}$.
+\end{theorem}
+\begin{proof}
+    Fix $B$.
+    Fix $H$.
+    Assume $\Apply{\unboundedRecursiveRangeClosedOp}
+        {\alpha,\memrel{\alpha},B,H}$.
+    $\memrel{\alpha}$ is well-founded on $\alpha$ by
+        \obv{membership_is_well_founded_on}.
+    Follows by \auto{unbounded_ordinal_recursion_op,unbounded_well_founded_recursion_range,memrel_is_binary_relation_on}.
+\end{proof}
+
+\begin{theorem}\label{unbounded_ordinal_recursion_segment}
+    Let $\theta,\eta$ be ordinals.
+    Suppose $\theta\subseteq\eta$.
+    Then $\forall H:\Set\to\Set\to\Set.
+        \Apply{\unboundedOrdinalRecursionOp}{\theta,H}
+        =\restrl{
+            \Apply{\unboundedOrdinalRecursionOp}{\eta,H}}
+            {\theta}$.
+\end{theorem}
+\begin{proof}
+    Fix $H$.
+    Let $F=\Apply{\unboundedOrdinalRecursionOp}{\eta,H}$.
+    Let $g=\restrl{F}{\theta}$.
+    $\Apply{\recursiveSetFunctionOp}{F}$ by
+        \obv{unbounded_ordinal_recursion_function}.
+    Hence $\recursiveSetFunction{F}$ by
+        \obv{recursive_set_function_op}.
+    Hence $F$ is a function by \obv{recursive_set_function}.
+    $\dom{F}=\eta$ by \auto{unbounded_ordinal_recursion_domain}.
+    Hence $\recursiveSetFunction{g}$ by
+        \obv{recursive_set_function}.
+    Hence $\Apply{\recursiveSetFunctionOp}{g}$ by
+        \obv{recursive_set_function_op}.
+    $\dom{g}=\dom{F}\inter\theta$ by
+        \auto{dom_of_restrl_eq_inter}.
+    Hence $\dom{g}=\theta$ by
+        \auto{inter_absorb_supseteq_left}.
+    Show that for every $\beta\in\theta$ we have
+        $g(\beta)=\Apply{H}{\beta,\restrl{g}{\beta}}$.
+    \begin{subproof}
+        Fix $\beta\in\theta$.
+        $\beta\in\eta$ by \obv{subseteq}.
+        Hence $F(\beta)=\Apply{H}{\beta,
+            \restrl{F}{\beta}}$ by
+            \auto{unbounded_ordinal_recursion_equation}.
+        $\theta\subseteq\dom{F}$.
+        Hence $g(\beta)=F(\beta)$ by
+            \auto{restrl_of_function_apply}.
+        $\beta$ is an ordinal by \obv{elem_of_ordinal_is_ordinal}.
+        Hence $\beta\subseteq\theta$ by
+            \obv{ordinal_elem_implies_subseteq}.
+        Hence $\restrl{g}{\beta}=\restrl{F}{\beta}$ by
+            \auto{restrl_restrl}.
+    \end{subproof}
+    Hence $g=\Apply{\unboundedOrdinalRecursionOp}{\theta,H}$ by
+        \obv{unbounded_ordinal_recursion_characterization}.
+\end{proof}
+
+\begin{theorem}\label{unbounded_ordinal_recursion_value_stability}
+    Let $\theta,\eta$ be ordinals.
+    Suppose $\theta\subseteq\eta$.
+    Then $\forall H:\Set\to\Set\to\Set.\ \forall\beta:\Set.
+        \beta\in\theta\implies
+        \apply{\Apply{\unboundedOrdinalRecursionOp}{\theta,H}}
+            {\beta}
+        =\apply{\Apply{\unboundedOrdinalRecursionOp}{\eta,H}}
+            {\beta}$.
+\end{theorem}
+\begin{proof}
+    Fix $H$.
+    Fix $\beta\in\theta$.
+    Let $F=\Apply{\unboundedOrdinalRecursionOp}{\eta,H}$.
+    Let $f=\Apply{\unboundedOrdinalRecursionOp}{\theta,H}$.
+    $f=\restrl{F}{\theta}$ by
+        \auto{unbounded_ordinal_recursion_segment}.
+    $\Apply{\recursiveSetFunctionOp}{F}$ by
+        \obv{unbounded_ordinal_recursion_function}.
+    Hence $\recursiveSetFunction{F}$ by
+        \obv{recursive_set_function_op}.
+    $\dom{F}=\eta$ by
+        \auto{unbounded_ordinal_recursion_domain}.
+    Hence $\theta\subseteq\dom{F}$.
+    Hence $\apply{\restrl{F}{\theta}}{\beta}=F(\beta)$ by
+        \obv{restrl_of_function_apply}.
+\end{proof}

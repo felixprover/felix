@@ -1,0 +1,255 @@
+\section{Local map calculi}
+
+\import{topology/partial-continuity.tex}
+
+A local map calculus specifies which continuous partial maps are admissible
+between a set of models. The underlying datum separates the stored relation
+from its laws, so the laws can be stated using admissibility rather than the
+encoding of its triples.
+
+\begin{definition}\label{topological_model_family}
+    $M$ is a topological model family iff
+        every element of $M$ is a topological space.
+\end{definition}
+
+\begin{classification}\label{singleton_topological_model_family}
+    Let $E$ be a topological space.
+    Then $\{E\}$ is a topological model family.
+\end{classification}
+\begin{proof}
+    Follows by \auto{topological_model_family,singleton_iff}.
+\end{proof}
+
+\begin{classification}\label{pair_topological_model_family}
+    Let $E,F$ be topological spaces.
+    Then $\{E,F\}$ is a topological model family.
+\end{classification}
+\begin{proof}
+    Follows by \auto{topological_model_family,cons_iff}.
+\end{proof}
+
+\begin{struct}\label{local_map_datum}
+    A local-map datum $C$ is a record equipped with
+    \begin{enumerate}
+        \item a set $\models[C]$;
+        \item a set $\admissible[C]$;
+    \end{enumerate}.
+\end{struct}
+
+\begin{definition}\label{map_admissible}
+    Let $C$ be a local-map datum.
+    $f$ is admissible from $E$ to $F$ in $C$ iff
+        $((E,F),f)\in\admissible[C]$.
+\end{definition}
+
+\subsection{The calculus laws}
+
+\begin{struct}\label{local_map_calculus}
+    A local-map calculus $C$ is a local-map datum such that
+    \begin{enumerate}
+        \item\label{calculus_models_topological}
+            every element of $\models[C]$ is a topological space.
+        \item\label{calculus_admissible_triples}
+            for every $t\in\admissible[C]$ there exist $E,F\in\models[C]$
+            such that there exists $f$ such that $t=((E,F),f)$ and
+                $f$ is a continuous partial map from $E$ to $F$.
+        \item\label{calculus_identity}
+            for every $E\in\models[C]$ we have
+                $\identity{\carrier[E]}$ is admissible from $E$ to $E$ in $C$.
+        \item\label{calculus_restriction}
+            for all $E,F\in\models[C]$ we have for every $f$ such that
+                $f$ is admissible from $E$ to $F$ in $C$ we have
+                for every $U\in\opens[E]$ we have
+                    $\restrl{f}{U}$ is admissible from $E$ to $F$ in $C$.
+        \item\label{calculus_composition}
+            for all $E,F,H\in\models[C]$ we have for all $f,g$ such that
+                $f$ is admissible from $E$ to $F$ in $C$ and
+                $g$ is admissible from $F$ to $H$ in $C$ we have
+                $g\circ f$ is admissible from $E$ to $H$ in $C$.
+        \item\label{calculus_locality}
+            for all $E,F\in\models[C]$ we have for every $f$ such that
+                $f\in\funs{\dom{f}}{\carrier[F]}$ and $\dom{f}\in\opens[E]$
+                we have for every $B\subseteq\opens[E]$ such that
+                    (for every $x\in\dom{f}$ there exists $U\in B$ such that
+                        $x\in U$) and
+                    (for every $U\in B$ we have
+                        $\restrl{f}{U}$ is admissible from $E$ to $F$ in $C$)
+                we have $f$ is admissible from $E$ to $F$ in $C$.
+    \end{enumerate}
+\end{struct}
+
+\begin{classification}\label{calculus_model_is_topological}
+    Let $C$ be a local-map calculus.
+    Let $E\in\models[C]$.
+    Then $E$ is a topological space.
+\end{classification}
+\begin{proof}
+    Follows by \obv{calculus_models_topological}.
+\end{proof}
+
+\begin{definition}\label{calculus_model}
+    Let $C$ be a local-map calculus.
+    $E$ is a model of $C$ iff $E\in\models[C]$.
+\end{definition}
+
+\begin{classification}\label{calculus_model_topology}
+    Let $C$ be a local-map calculus.
+    Let $E$ be a model of $C$.
+    Then $E$ is a topological space.
+\end{classification}
+\begin{proof}
+    Follows by \obv{calculus_model,calculus_model_is_topological}.
+\end{proof}
+
+\begin{classification}\label{calculus_models_are_topological_family}
+    Let $C$ be a local-map calculus.
+    Then $\models[C]$ is a topological model family.
+\end{classification}
+\begin{proof}
+    Follows by \obv{topological_model_family,calculus_models_topological}.
+\end{proof}
+
+\begin{theorem}\label{admissible_map_sound}
+    Let $C$ be a local-map calculus.
+    Suppose $f$ is admissible from $E$ to $F$ in $C$.
+    Then $E,F\in\models[C]$ and
+        $f$ is a continuous partial map from $E$ to $F$.
+\end{theorem}
+\begin{proof}
+    $((E,F),f)\in\admissible[C]$ by \obv{map_admissible}.
+    Follows by \auto{calculus_admissible_triples,pair_eq_iff}.
+\end{proof}
+
+\begin{theorem}\label{admissible_map_restriction}
+    Let $C$ be a local-map calculus.
+    Suppose $f$ is admissible from $E$ to $F$ in $C$.
+    Suppose $U\in\opens[E]$.
+    Then $\restrl{f}{U}$ is admissible from $E$ to $F$ in $C$.
+\end{theorem}
+\begin{proof}
+    $E,F\in\models[C]$ by \obv{admissible_map_sound}.
+    Follows by \obv{calculus_restriction}.
+\end{proof}
+
+\begin{theorem}\label{admissible_map_composition}
+    Let $C$ be a local-map calculus.
+    Suppose $f$ is admissible from $E$ to $F$ in $C$ and
+        $g$ is admissible from $F$ to $H$ in $C$.
+    Then $g\circ f$ is admissible from $E$ to $H$ in $C$.
+\end{theorem}
+\begin{proof}
+    $E,F,H\in\models[C]$ by \obv{admissible_map_sound}.
+    Follows by \obv{calculus_composition}.
+\end{proof}
+
+\begin{theorem}\label{admissible_open_identity}
+    Let $C$ be a local-map calculus.
+    Let $E\in\models[C]$.
+    Suppose $U\in\opens[E]$.
+    Then $\identity{U}$ is admissible from $E$ to $E$ in $C$.
+\end{theorem}
+\begin{proof}
+    $\identity{\carrier[E]}$ is admissible from $E$ to $E$ in $C$ by
+        \obv{calculus_identity}.
+    Hence $\restrl{\identity{\carrier[E]}}{U}$ is admissible from $E$ to $E$ in $C$
+        by \obv{admissible_map_restriction}.
+    $U\subseteq\carrier[E]$ by \obv{opens_type}.
+    $\carrier[E]\inter U=U$ by \obv{inter_absorb_supseteq_left}.
+    $\restrl{\identity{\carrier[E]}}{U}=\identity{\carrier[E]\inter U}$ by
+        \obv{identity_restriction}.
+\end{proof}
+
+\begin{theorem}\label{admissible_map_iff_locally}
+    Let $C$ be a local-map calculus.
+    Let $E,F\in\models[C]$.
+    Suppose $f\in\funs{\dom{f}}{\carrier[F]}$ and $\dom{f}\in\opens[E]$.
+    Then $f$ is admissible from $E$ to $F$ in $C$ iff
+        for every $x\in\dom{f}$ there exists $U\in\opens[E]$ such that
+            $x\in U$ and $\restrl{f}{U}$ is admissible from $E$ to $F$ in $C$.
+\end{theorem}
+\begin{proof}
+    $f$ is a function by \obv{funs_is_function}.
+    $\restrl{f}{\dom{f}}=f$ by \obv{restrl_by_dom}.
+    If $f$ is admissible from $E$ to $F$ in $C$, then
+        for every $x\in\dom{f}$ there exists $U\in\opens[E]$ such that
+            $x\in U$ and $\restrl{f}{U}$ is admissible from $E$ to $F$ in $C$
+        by \auto.
+    Show that if for every $x\in\dom{f}$ there exists $U\in\opens[E]$ such that
+        $x\in U$ and $\restrl{f}{U}$ is admissible from $E$ to $F$ in $C$,
+        then $f$ is admissible from $E$ to $F$ in $C$.
+    \begin{subproof}
+        Assume for every $x\in\dom{f}$ there exists $U\in\opens[E]$ such that
+            $x\in U$ and $\restrl{f}{U}$ is admissible from $E$ to $F$ in $C$.
+        Let $B=\{U\in\opens[E]\mid
+            \text{$\restrl{f}{U}$ is admissible from $E$ to $F$ in $C$}\}$.
+        $B\subseteq\opens[E]$ by \obv{subseteq}.
+        For every $x\in\dom{f}$ there exists $U\in B$ such that $x\in U$ by \auto.
+        For every $U\in B$ we have
+            $\restrl{f}{U}$ is admissible from $E$ to $F$ in $C$.
+        Follows by \obv{calculus_locality}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\subsection{Inclusion and equality}
+
+\begin{definition}\label{subcalculus}
+    Let $C$ be a local-map calculus.
+    Let $D$ be a local-map calculus.
+    $C$ is a subcalculus of $D$ iff
+        $\models[C]\subseteq\models[D]$ and
+        $\admissible[C]\subseteq\admissible[D]$.
+\end{definition}
+
+\begin{classification}\label{subcalculus_model}
+    Let $C$ be a local-map calculus.
+    Let $D$ be a local-map calculus.
+    Let $E$ be a model of $C$.
+    Suppose $C$ is a subcalculus of $D$.
+    Then $E$ is a model of $D$.
+\end{classification}
+\begin{proof}
+    Follows by \auto{calculus_model,subcalculus,subseteq}.
+\end{proof}
+
+\begin{theorem}\label{subcalculus_reflexive}
+    Let $C$ be a local-map calculus.
+    Then $C$ is a subcalculus of $C$.
+\end{theorem}
+\begin{proof}
+    Follows by \obv{subcalculus,subseteq_refl}.
+\end{proof}
+
+\begin{theorem}\label{subcalculus_transitive}
+    Let $C$ be a local-map calculus.
+    Let $D$ be a local-map calculus.
+    Let $H$ be a local-map calculus.
+    Suppose $C$ is a subcalculus of $D$ and $D$ is a subcalculus of $H$.
+    Then $C$ is a subcalculus of $H$.
+\end{theorem}
+\begin{proof}
+    Follows by \auto{subcalculus,subseteq_transitive}.
+\end{proof}
+
+\begin{theorem}\label{subcalculus_admissibility}
+    Let $C$ be a local-map calculus.
+    Let $D$ be a local-map calculus.
+    Suppose $C$ is a subcalculus of $D$.
+    Suppose $f$ is admissible from $E$ to $F$ in $C$.
+    Then $f$ is admissible from $E$ to $F$ in $D$.
+\end{theorem}
+\begin{proof}
+    $\admissible[C]\subseteq\admissible[D]$ by \obv{subcalculus}.
+    $((E,F),f)\in\admissible[C]$ by \obv{map_admissible}.
+    $((E,F),f)\in\admissible[D]$ by \obv{subseteq}.
+    Follows by \obv{map_admissible}.
+\end{proof}
+
+\begin{theorem}\label{exact_local_map_calculus_extensionality}
+    Suppose $C$ is an exact local-map calculus and $D$ is an exact local-map calculus.
+    Suppose $\models[C]=\models[D]$ and $\admissible[C]=\admissible[D]$.
+    Then $C=D$.
+\end{theorem}
+\begin{proof}
+    Follows by structure extensionality.
+\end{proof}

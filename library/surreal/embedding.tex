@@ -1,0 +1,723 @@
+\import{surreal/ring.tex}
+\import{nat/multiplication.tex}
+
+\section{Ordinal, integer, and dyadic surreals}
+
+\subsection{Canonical ordinal cuts}
+
+The ordinal embedding is compatible with the usual all-left Conway
+presentation.  We keep the presentation separate from ordinal arithmetic:
+surreal addition of arbitrary ordinals is natural sum, not ordinal sum.
+
+\begin{definition}\label{ordinal_surreal_lower}
+    $\ordinalSurrealLower{\alpha}=
+        \{\ordinalSurreal{\beta}\mid\beta\in\alpha\}$.
+\end{definition}
+
+\begin{proposition}\label{ordinal_surreal_lower_iff}
+    $x\in\ordinalSurrealLower{\alpha}$ iff there exists $\beta\in\alpha$
+        such that $x=\ordinalSurreal{\beta}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{ordinal_surreal_lower}.
+\end{proof}
+
+\begin{proposition}\label{ordinal_surreal_lower_cut_pair}
+    Suppose $\alpha$ is an ordinal.
+    Then $\surrealCutPair{\ordinalSurrealLower{\alpha}}{\emptyset}$.
+\end{proposition}
+\begin{proof}
+    Show that for every $x\in\ordinalSurrealLower{\alpha}$ we have
+        $\surreal{x}$.
+    \begin{subproof}
+        Fix $x\in\ordinalSurrealLower{\alpha}$.
+        Take $\beta\in\alpha$ such that
+            $x=\ordinalSurreal{\beta}$
+            by \obv{ordinal_surreal_lower_iff}.
+        $\beta$ is an ordinal by \obv{elem_of_ordinal_is_ordinal}.
+        Follows by \obv{ordinal_surreal_is_surreal}.
+    \end{subproof}
+    Follows by \auto{surreal_cut_pair,emptyset}.
+\end{proof}
+
+\begin{lemma}\label{ordinal_surreal_maximum_at_birthday}
+    Suppose $\surreal{x}$ and $\alpha$ is an ordinal.
+    Suppose $\birthday{x}=\alpha$.
+    Then $\surrealLe{x}{\ordinalSurreal{\alpha}}$.
+\end{lemma}
+\begin{proof}
+    $\surreal{\ordinalSurreal{\alpha}}$
+        by \obv{ordinal_surreal_is_surreal}.
+    $\surrealLt{x}{\ordinalSurreal{\alpha}}$ or
+        $x=\ordinalSurreal{\alpha}$ or
+        $\surrealLt{\ordinalSurreal{\alpha}}{x}$
+        by \obv{surreal_lt_trichotomy}.
+    Show that not $\surrealLt{\ordinalSurreal{\alpha}}{x}$.
+    \begin{subproof}
+        Suppose $\surrealLt{\ordinalSurreal{\alpha}}{x}$.
+        $\birthday{\ordinalSurreal{\alpha}}=\alpha$
+            by \obv{ordinal_surreal_birthday}.
+        Follows by \auto{surreal_lt,surreal_lt_common,surreal_lt_left_short,surreal_lt_right_short,ordinal_surreal_value,surreal_signs_distinct,inter,in_irrefl}.
+    \end{subproof}
+    Follows by \obv{surreal_le}.
+\end{proof}
+
+\begin{lemma}\label{ordinal_surreal_strictly_dominates_birthday}
+    Suppose $\surreal{x}$ and $\alpha$ is an ordinal.
+    Suppose $\birthday{x}\in\alpha$.
+    Then $\surrealLt{x}{\ordinalSurreal{\alpha}}$.
+\end{lemma}
+\begin{proof}
+    $\birthday{x}$ is an ordinal
+        by \obv{surreal_birthday_ordinal}.
+    $\surrealLe{x}{\ordinalSurreal{\birthday{x}}}$
+        by \obv{ordinal_surreal_maximum_at_birthday}.
+    $\surrealLt{\ordinalSurreal{\birthday{x}}}
+        {\ordinalSurreal{\alpha}}$
+        by \obv{ordinal_surreal_lt_iff}.
+    $\surreal{\ordinalSurreal{\birthday{x}}}$ and
+        $\surreal{\ordinalSurreal{\alpha}}$
+        by \obv{ordinal_surreal_is_surreal}.
+    Follows by \obv{surreal_le_lt_transitive}.
+\end{proof}
+
+\begin{proposition}\label{ordinal_surreal_le_iff}
+    Suppose $\alpha$ and $\beta$ are ordinals.
+    Then $\surrealLe{\ordinalSurreal{\alpha}}{\ordinalSurreal{\beta}}$ iff
+        $\alpha\subseteq\beta$.
+\end{proposition}
+\begin{proof}
+    $\surreal{\ordinalSurreal{\alpha}}$ and
+        $\surreal{\ordinalSurreal{\beta}}$
+        by \obv{ordinal_surreal_is_surreal}.
+    $\alpha\in\beta$ or $\alpha=\beta$ or $\beta\in\alpha$
+        by \obv{ordinal_elem_connex}.
+    \begin{byCase}
+        \caseOf{$\beta\in\alpha$.}
+            $\surrealLt{\ordinalSurreal{\beta}}
+                {\ordinalSurreal{\alpha}}$
+                by \obv{ordinal_surreal_lt_iff}.
+            Hence not
+                $\surrealLe{\ordinalSurreal{\alpha}}
+                    {\ordinalSurreal{\beta}}$
+                by
+                \obv{surreal_le,surreal_lt_asymmetric,surreal_lt_irreflexive}.
+            Not $\alpha\subseteq\beta$
+                by \obv{subseteq,in_irrefl}.
+            Follows by \auto.
+        \caseOf{$\beta\notin\alpha$.}
+            Hence $\alpha\in\beta$ or $\alpha=\beta$.
+            Thus
+                $\surrealLt{\ordinalSurreal{\alpha}}
+                    {\ordinalSurreal{\beta}}$ or
+                $\ordinalSurreal{\alpha}=\ordinalSurreal{\beta}$
+                by \obv{ordinal_surreal_lt_iff}.
+            Hence
+                $\surrealLe{\ordinalSurreal{\alpha}}
+                    {\ordinalSurreal{\beta}}$
+                by \obv{surreal_le}.
+            $\alpha\subseteq\beta$
+                by
+                \obv{ordinal_elem_implies_subseteq,subseteq_refl}.
+            Follows by \auto.
+    \end{byCase}
+\end{proof}
+
+\begin{theorem}\label{ordinal_surreal_cut_equation}
+    Suppose $\alpha$ is an ordinal.
+    Then $\ordinalSurreal{\alpha}=
+        \surrealCut{\ordinalSurrealLower{\alpha}}{\emptyset}$.
+\end{theorem}
+\begin{proof}
+    Let $L=\ordinalSurrealLower{\alpha}$.
+    $\surrealCutPair{L}{\emptyset}$
+        by \auto{ordinal_surreal_lower_cut_pair}.
+    $\surreal{\ordinalSurreal{\alpha}}$
+        by \obv{ordinal_surreal_is_surreal}.
+    Show that for every $l\in L$ we have
+        $\surrealLt{l}{\ordinalSurreal{\alpha}}$.
+    \begin{subproof}
+        Fix $l\in L$.
+        Take $\beta\in\alpha$ such that
+            $l=\ordinalSurreal{\beta}$
+            by \obv{ordinal_surreal_lower_iff}.
+        $\beta$ is an ordinal by \obv{elem_of_ordinal_is_ordinal}.
+        Follows by \auto{ordinal_surreal_lt_iff}.
+    \end{subproof}
+    Show that for every $w$ such that $\surreal{w}$ and
+        $(\forall l:\Set.\ l\in L\implies\surrealLt{l}{w})$ we have
+        $\alpha\subseteq\birthday{w}$ and
+        $\surrealEq{\alpha}{\ordinalSurreal{\alpha}}{w}$.
+    \begin{subproof}
+        Fix $w$.
+        Assume $\surreal{w}$ and
+            for every $l\in L$ we have $\surrealLt{l}{w}$.
+        Show that for every $\delta\in\alpha$ we have
+            $\delta\in\birthday{w}$ and
+            $w(\delta)=\suc{\emptyset}$.
+        \begin{subproof}
+            Fix $\delta\in\alpha$.
+            $\delta$ is an ordinal
+                by \obv{elem_of_ordinal_is_ordinal}.
+            $\ordinalSurreal{\delta}\in L$
+                by \obv{ordinal_surreal_lower_iff}.
+            Hence $\surrealLt{\ordinalSurreal{\delta}}{w}$.
+            $\birthday{\ordinalSurreal{\delta}}=\delta$
+                by \obv{ordinal_surreal_birthday}.
+            Follows by \auto{surreal_lt,surreal_lt_common,surreal_lt_left_short,surreal_lt_right_short,ordinal_surreal_value,surreal_signs_distinct,inter,in_irrefl}.
+        \end{subproof}
+        Hence $\alpha\subseteq\birthday{w}$
+            by \auto{subseteq}.
+        For every $\delta\in\alpha$ we have
+            $\apply{\ordinalSurreal{\alpha}}{\delta}=\suc{\emptyset}$
+            by \obv{ordinal_surreal_value}.
+        Hence $\surrealEq{\alpha}{\ordinalSurreal{\alpha}}{w}$
+            by \obv{surreal_eq_initial}.
+    \end{subproof}
+    Hence $\surrealCutCandidate{L}{\emptyset}
+        {\ordinalSurreal{\alpha}}$
+        by \auto{surreal_cut_candidate,ordinal_surreal_birthday,emptyset}.
+    Hence $\surrealCutAdmissible{L}{\emptyset}$
+        by \obv{surreal_cut_admissible}.
+    $\surrealCutCandidate{L}{\emptyset}
+        {\surrealCut{L}{\emptyset}}$
+        by \obv{surreal_cut_specification}.
+    Follows by \obv{surreal_cut_candidate_unique}.
+\end{proof}
+
+\begin{abbreviation}\label{surreal_zero}
+    $\surrealZero=\emptyset$.
+\end{abbreviation}
+
+\begin{abbreviation}\label{surreal_one}
+    $\surrealOne=\ordinalSurreal{\suc{\emptyset}}$.
+\end{abbreviation}
+
+\begin{theorem}\label{ordinal_surreal_successor_addition}
+    For every ordinal $\alpha$ we have
+        $\surrealAdd{\ordinalSurreal{\alpha}}{\surrealOne}
+            =\ordinalSurreal{\suc{\alpha}}$.
+\end{theorem}
+\begin{proof}[Proof by transfinite induction]
+    Let $A=\ordinalSurrealLower{\alpha}$.
+    Let $B=\ordinalSurrealLower{\suc{\emptyset}}$.
+    Let $x=\ordinalSurreal{\alpha}$.
+    Let $e=\surrealOne$.
+    Let $L=\surrealAddCutLeft{A}{B}{x}{e}$.
+
+    $\surrealCutPair{A}{\emptyset}$ and
+        $\surrealCutPair{B}{\emptyset}$
+        by \auto{ordinal_surreal_lower_cut_pair,emptyset_is_ordinal,suc_ordinal}.
+    $x=\surrealCut{A}{\emptyset}$
+        by \auto{ordinal_surreal_cut_equation}.
+    $e=\surrealCut{B}{\emptyset}$
+        by \auto{ordinal_surreal_cut_equation,emptyset_is_ordinal,suc_ordinal}.
+    Show that $\surrealAddCutRight{\emptyset}{\emptyset}{x}{e}
+        =\emptyset$.
+    \begin{subproof}
+        Show that for every $a$ we have
+            $a\notin\surrealAddCutRight{\emptyset}{\emptyset}{x}{e}$.
+        \begin{subproof}
+            Fix $a$.
+            Follows by \auto{surreal_add_cut_right_iff,emptyset}.
+        \end{subproof}
+        Follows by \auto{setext,emptyset}.
+    \end{subproof}
+    Hence $\surrealCutPair{L}{\emptyset}$
+        by \auto{surreal_add_general_cut_pair}.
+    \begin{align*}
+        \surrealAdd{x}{e}
+            &= \surrealAdd{\surrealCut{A}{\emptyset}}
+                {\surrealCut{B}{\emptyset}} \\
+            &= \surrealCut{
+                \surrealAddCutLeft{A}{B}
+                    {\surrealCut{A}{\emptyset}}
+                    {\surrealCut{B}{\emptyset}}}{
+                \surrealAddCutRight{\emptyset}{\emptyset}
+                    {\surrealCut{A}{\emptyset}}
+                    {\surrealCut{B}{\emptyset}}}
+                \explanation{by \obv{surreal_add_cuts_equation}}
+            \\
+            &= \surrealCut{L}{\emptyset}
+    \end{align*}
+
+    Let $M=\ordinalSurrealLower{\suc{\alpha}}$.
+    $\suc{\alpha}$ is an ordinal by \obv{suc_ordinal}.
+    Hence $\surrealCutPair{M}{\emptyset}$
+        by \auto{ordinal_surreal_lower_cut_pair}.
+    $\ordinalSurreal{\suc{\alpha}}=\surrealCut{M}{\emptyset}$
+        by \auto{ordinal_surreal_cut_equation}.
+
+    Show that for every $l\in L$ we have
+        $\surrealLt{l}{\surrealCut{M}{\emptyset}}$.
+    \begin{subproof}
+        Fix $l\in L$.
+        $(\exists u:\Set.\ u\in A\land
+                l=\surrealAdd{u}{e})
+            \lor
+            (\exists v:\Set.\ v\in B\land
+                l=\surrealAdd{x}{v})$
+            by \obv{surreal_add_cut_left_iff}.
+        \begin{byCase}
+            \caseOf{$\exists u:\Set.\ u\in A\land
+                    l=\surrealAdd{u}{e}$.}
+                Take $u\in A$ such that
+                    $l=\surrealAdd{u}{e}$.
+                Take $\beta\in\alpha$ such that
+                    $u=\ordinalSurreal{\beta}$
+                    by \obv{ordinal_surreal_lower_iff}.
+                $\beta$ is an ordinal
+                    by \obv{elem_of_ordinal_is_ordinal}.
+                $\surrealAdd{\ordinalSurreal{\beta}}{e}
+                    =\ordinalSurreal{\suc{\beta}}$
+                    by \auto.
+                $\suc{\beta}\subseteq\alpha$
+                    by \obv{ordinal_suc_subseteq}.
+                Hence $\suc{\beta}\in\suc{\alpha}$
+                    by \auto{ordinal_subseteq_implies_elem_or_eq,suc_iff,suc_ordinal}.
+                Hence $l\in M$
+                    by \obv{ordinal_surreal_lower_iff}.
+                Follows by \obv{surreal_cut_pair_left}.
+            \caseOf{not $\exists u:\Set.\ u\in A\land
+                    l=\surrealAdd{u}{e}$.}
+                Take $v\in B$ such that
+                    $l=\surrealAdd{x}{v}$.
+                Take $\gamma\in\suc{\emptyset}$ such that
+                    $v=\ordinalSurreal{\gamma}$
+                    by \obv{ordinal_surreal_lower_iff}.
+                Hence $\gamma=\emptyset$
+                    by \auto{suc_iff,emptyset}.
+                Hence $v=\emptyset$
+                    by \obv{empty_ordinal_surreal}.
+                Hence $l=x$ by \auto{surreal_add_zero_right,ordinal_surreal_is_surreal}.
+                $\alpha\in\suc{\alpha}$ by \obv{suc_intro_self}.
+                Hence $l\in M$
+                    by \obv{ordinal_surreal_lower_iff}.
+                Follows by \obv{surreal_cut_pair_left}.
+        \end{byCase}
+    \end{subproof}
+
+    Show that for every $m\in M$ we have
+        $\surrealLt{m}{\surrealCut{L}{\emptyset}}$.
+    \begin{subproof}
+        Fix $m\in M$.
+        Take $\gamma\in\suc{\alpha}$ such that
+            $m=\ordinalSurreal{\gamma}$
+            by \obv{ordinal_surreal_lower_iff}.
+        $\gamma\in\alpha$ or $\gamma=\alpha$
+            by \auto{suc_iff}.
+        \begin{byCase}
+            \caseOf{$\gamma=\alpha$.}
+                $\emptyset\in B$
+                    by \obv{ordinal_surreal_lower_iff,suc_intro_self,empty_ordinal_surreal}.
+                $\surrealAdd{x}{\emptyset}=x$
+                    by \obv{surreal_add_zero_right,ordinal_surreal_is_surreal}.
+                Hence $x\in L$ by \auto{surreal_add_cut_left_iff}.
+                Follows by \obv{surreal_cut_pair_left}.
+            \caseOf{$\gamma\neq\alpha$.}
+                Hence $\gamma\in\alpha$.
+                $\gamma$ is an ordinal
+                    by \obv{elem_of_ordinal_is_ordinal}.
+                $\ordinalSurreal{\gamma}\in A$
+                    by \obv{ordinal_surreal_lower_iff}.
+                $\surrealAdd{\ordinalSurreal{\gamma}}{e}
+                    =\ordinalSurreal{\suc{\gamma}}$
+                    by \auto.
+                Hence $\ordinalSurreal{\suc{\gamma}}\in L$
+                    by \auto{surreal_add_cut_left_iff}.
+                Hence $\surrealLt{\ordinalSurreal{\suc{\gamma}}}
+                    {\surrealCut{L}{\emptyset}}$
+                    by \obv{surreal_cut_pair_left}.
+                $\gamma\in\suc{\gamma}$ by \obv{suc_intro_self}.
+                Hence $\surrealLt{m}{\ordinalSurreal{\suc{\gamma}}}$
+                    by \auto{ordinal_surreal_lt_iff,suc_ordinal}.
+                $\surreal{m}$ and
+                    $\surreal{\ordinalSurreal{\suc{\gamma}}}$ and
+                    $\surreal{\surrealCut{L}{\emptyset}}$
+                    by \obv{ordinal_surreal_is_surreal,suc_ordinal,surreal_cut_pair_is_surreal}.
+                Follows by \obv{surreal_lt_transitive}.
+        \end{byCase}
+    \end{subproof}
+    $\surrealCut{L}{\emptyset}=\surrealCut{M}{\emptyset}$
+        by \auto{surreal_cut_extensionality,emptyset}.
+\end{proof}
+
+\begin{theorem}\label{natural_surreal_addition_compatibility}
+    Let $n,m$ be natural numbers.
+    Then $\surrealAdd{\ordinalSurreal{n}}{\ordinalSurreal{m}}
+        =\ordinalSurreal{n+m}$.
+\end{theorem}
+\begin{proof}
+    Let $C=\{k\in\naturals\mid
+        \surrealAdd{\ordinalSurreal{n}}{\ordinalSurreal{k}}
+            =\ordinalSurreal{n+k}\}$.
+    $n$ is an ordinal by \obv{natural_number_is_ordinal}.
+    $\ordinalSurreal{\emptyset}=\emptyset$
+        by \obv{empty_ordinal_surreal}.
+    $n+\emptyset=n$ by \obv{num_addition_zero_right}.
+    Hence $\emptyset\in C$
+        by \auto{omega_empty,surreal_add_zero_right,ordinal_surreal_is_surreal}.
+    Show that for every $k\in C$ we have $\suc{k}\in C$.
+    \begin{subproof}
+        Fix $k\in C$.
+        Then $k$ is a natural number and
+            $\surrealAdd{\ordinalSurreal{n}}{\ordinalSurreal{k}}
+                =\ordinalSurreal{n+k}$.
+        $k$ and $n+k$ are ordinals
+            by \obv{natural_number_is_ordinal,num_addition_on_naturals}.
+        $\suc{k}$ is a natural number by \obv{omega_successor}.
+        $\surreal{\ordinalSurreal{n}}$ and
+            $\surreal{\ordinalSurreal{k}}$ and
+            $\surreal{\surrealOne}$
+            by \obv{ordinal_surreal_is_surreal,emptyset_is_ordinal,suc_ordinal}.
+        $\ordinalSurreal{\suc{k}}
+            =\surrealAdd{\ordinalSurreal{k}}{\surrealOne}$
+            by \obv{ordinal_surreal_successor_addition}.
+        Hence
+        $\surrealAdd{\ordinalSurreal{n}}{\ordinalSurreal{\suc{k}}}
+            =\surrealAdd
+                {\surrealAdd{\ordinalSurreal{n}}{\ordinalSurreal{k}}}
+                {\surrealOne}$
+            by \auto{surreal_add_associative}.
+        Hence
+        $\surrealAdd{\ordinalSurreal{n}}{\ordinalSurreal{\suc{k}}}
+            =\surrealAdd{\ordinalSurreal{n+k}}{\surrealOne}$.
+        Hence
+        $\surrealAdd{\ordinalSurreal{n}}{\ordinalSurreal{\suc{k}}}
+            =\ordinalSurreal{\suc{n+k}}$
+            by \obv{ordinal_surreal_successor_addition}.
+        $n+\suc{k}=\suc{n+k}$
+            by \obv{num_addition_successor_right}.
+        Follows by
+            \obv{num_addition_successor_right,ordinal_surreal_successor_addition}.
+    \end{subproof}
+    Hence $C$ is an inductive set by \obv{inductive_set}.
+    Hence every natural number is an element of $C$
+        by \obv{omega_minimal}.
+    Thus $m\in C$.
+\end{proof}
+
+\begin{theorem}\label{natural_surreal_multiplication_compatibility}
+    Let $n,m$ be natural numbers.
+    Then $\surrealMul{\ordinalSurreal{n}}{\ordinalSurreal{m}}
+        =\ordinalSurreal{\naturalMul{n}{m}}$.
+\end{theorem}
+\begin{proof}
+    Let $C=\{j\in\naturals\mid
+        \text{$\surrealMul{\ordinalSurreal{n}}{\ordinalSurreal{j}}
+            =\ordinalSurreal{\naturalMul{n}{j}}$}\}$.
+    $n$ is an ordinal by \obv{natural_number_is_ordinal}.
+    $\ordinalSurreal{\emptyset}=\emptyset$
+        by \obv{empty_ordinal_surreal}.
+    $\naturalMul{n}{\emptyset}=\emptyset$
+        by \obv{natural_multiplication_zero_right}.
+    Hence $\emptyset\in C$
+        by \auto{omega_empty,surreal_mul_zero_right,ordinal_surreal_is_surreal}.
+    Show that for every $j\in C$ we have $\suc{j}\in C$.
+    \begin{subproof}
+        Fix $j\in C$.
+        Then $j$ is a natural number and
+            $\surrealMul{\ordinalSurreal{n}}{\ordinalSurreal{j}}
+                =\ordinalSurreal{\naturalMul{n}{j}}$.
+        $j$ and $\naturalMul{n}{j}$ are natural numbers
+            by \obv{natural_multiplication_closed}.
+        Hence $j$ and $\naturalMul{n}{j}$ are ordinals
+            by \obv{natural_number_is_ordinal}.
+        $\ordinalSurreal{\suc{j}}
+            =\surrealAdd{\ordinalSurreal{j}}{\surrealOne}$
+            by \obv{ordinal_surreal_successor_addition}.
+        Hence
+        $\surrealMul{\ordinalSurreal{n}}{\ordinalSurreal{\suc{j}}}
+            =\surrealAdd
+                {\surrealMul{\ordinalSurreal{n}}{\ordinalSurreal{j}}}
+                {\surrealMul{\ordinalSurreal{n}}{\surrealOne}}$
+            by \auto{surreal_mul_distributive_left,ordinal_surreal_is_surreal,emptyset_is_ordinal,suc_ordinal}.
+        $\surrealMul{\ordinalSurreal{n}}{\surrealOne}
+            =\ordinalSurreal{n}$
+            by \obv{surreal_mul_one_right,ordinal_surreal_is_surreal}.
+        Hence
+        $\surrealMul{\ordinalSurreal{n}}{\ordinalSurreal{\suc{j}}}
+            =\surrealAdd
+                {\ordinalSurreal{\naturalMul{n}{j}}}
+                {\ordinalSurreal{n}}$.
+        Hence
+        $\surrealMul{\ordinalSurreal{n}}{\ordinalSurreal{\suc{j}}}
+            =\ordinalSurreal{\naturalMul{n}{j}+n}$
+            by \obv{natural_surreal_addition_compatibility}.
+        $\naturalMul{n}{\suc{j}}=\naturalMul{n}{j}+n$
+            by \obv{natural_multiplication_successor_right}.
+        $\suc{j}$ is a natural number by \obv{omega_successor}.
+        Follows by
+            \obv{natural_multiplication_successor_right}.
+    \end{subproof}
+    Hence $C$ is an inductive set by \obv{inductive_set}.
+    Hence every natural number is an element of $C$
+        by \obv{omega_minimal}.
+    Thus $m\in C$.
+\end{proof}
+
+\begin{theorem}\label{natural_surreal_multiplication_closed}
+    Let $n,m$ be natural numbers.
+    Then there exists a natural number $k$ such that
+        $\surrealMul{\ordinalSurreal{n}}{\ordinalSurreal{m}}
+            =\ordinalSurreal{k}$.
+\end{theorem}
+\begin{proof}
+    Let $C=\{j\in\naturals\mid
+        \text{there exists $k\in\naturals$ such that
+            $\surrealMul{\ordinalSurreal{n}}{\ordinalSurreal{j}}
+                =\ordinalSurreal{k}$}\}$.
+    $n$ is an ordinal by \obv{natural_number_is_ordinal}.
+    $\ordinalSurreal{\emptyset}=\emptyset$
+        by \obv{empty_ordinal_surreal}.
+    Hence $\emptyset\in C$
+        by \auto{omega_empty,surreal_mul_zero_right,ordinal_surreal_is_surreal}.
+    Show that for every $j\in C$ we have $\suc{j}\in C$.
+    \begin{subproof}
+        Fix $j\in C$.
+        Take $k\in\naturals$ such that
+            $\surrealMul{\ordinalSurreal{n}}{\ordinalSurreal{j}}
+                =\ordinalSurreal{k}$.
+        Hence $j$ and $k$ are ordinals
+            by \obv{natural_number_is_ordinal}.
+        $k+n$ is a natural number
+            by \obv{num_addition_on_naturals}.
+        $\ordinalSurreal{\suc{j}}
+            =\surrealAdd{\ordinalSurreal{j}}{\surrealOne}$
+            by \obv{ordinal_surreal_successor_addition}.
+        Hence
+        $\surrealMul{\ordinalSurreal{n}}{\ordinalSurreal{\suc{j}}}
+            =\surrealAdd
+                {\surrealMul{\ordinalSurreal{n}}{\ordinalSurreal{j}}}
+                {\surrealMul{\ordinalSurreal{n}}{\surrealOne}}$
+            by \auto{surreal_mul_distributive_left,ordinal_surreal_is_surreal,emptyset_is_ordinal,suc_ordinal}.
+        $\surrealMul{\ordinalSurreal{n}}{\surrealOne}
+            =\ordinalSurreal{n}$
+            by \obv{surreal_mul_one_right,ordinal_surreal_is_surreal}.
+        Hence
+        $\surrealMul{\ordinalSurreal{n}}{\ordinalSurreal{\suc{j}}}
+            =\surrealAdd{\ordinalSurreal{k}}{\ordinalSurreal{n}}$.
+        Hence
+        $\surrealMul{\ordinalSurreal{n}}{\ordinalSurreal{\suc{j}}}
+            =\ordinalSurreal{k+n}$
+            by \obv{natural_surreal_addition_compatibility}.
+        $\suc{j}$ is a natural number by \obv{omega_successor}.
+    \end{subproof}
+    Hence $C$ is an inductive set by \obv{inductive_set}.
+    Hence every natural number is an element of $C$
+        by \obv{omega_minimal}.
+    Thus $m\in C$.
+\end{proof}
+
+\subsection{Integer surreals}
+
+An integer surreal is a surreal value representable as a difference of two
+embedded natural numbers.  This presentation avoids choosing a sign normal
+form and is extensionally the usual copy of the integers inside the surreals.
+
+\begin{definition}\label{surreal_integers}
+    $\surrealIntegers=
+        \{\surrealAdd
+            {\ordinalSurreal{\fst{p}}}
+            {\surrealNeg{\ordinalSurreal{\snd{p}}}}
+            \mid p\in\naturals\times\naturals\}$.
+\end{definition}
+
+Thus the elements of $\surrealIntegers$ are surreal values representable as
+differences of embedded natural numbers.  The pairs of naturals are only
+presentations used by the defining replacement: they are not elements of a
+separate quotient carrier, and different pairs may present the same surreal
+value.
+
+\begin{proposition}\label{surreal_integer_iff}
+    $x\in\surrealIntegers$ iff there exist natural numbers $n,m$ such that
+        $x=\surrealAdd{\ordinalSurreal{n}}
+            {\surrealNeg{\ordinalSurreal{m}}}$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{surreal_integers,times_elem_is_tuple,fst_eq,snd_eq,times_tuple_intro}.
+\end{proof}
+
+\begin{proposition}\label{surreal_integer_is_surreal}
+    For every $x\in\surrealIntegers$ we have $\surreal{x}$.
+\end{proposition}
+\begin{proof}
+    Fix $x\in\surrealIntegers$.
+    Take $n,m$ such that $n,m\in\naturals$ and
+        $x=\surrealAdd{\ordinalSurreal{n}}
+            {\surrealNeg{\ordinalSurreal{m}}}$
+        by \auto{surreal_integer_iff}.
+    $n$ and $m$ are ordinals by \obv{natural_number_is_ordinal}.
+    Follows by \obv{ordinal_surreal_is_surreal,surreal_negation_is_surreal,surreal_add_is_surreal}.
+\end{proof}
+
+\begin{proposition}\label{natural_surreal_is_integer}
+    Let $n$ be a natural number.
+    Then $\ordinalSurreal{n}\in\surrealIntegers$.
+\end{proposition}
+\begin{proof}
+    $n$ is an ordinal by \obv{natural_number_is_ordinal}.
+    $\ordinalSurreal{\emptyset}=\emptyset$
+        by \obv{empty_ordinal_surreal}.
+    $\surrealNeg{\emptyset}=\emptyset$
+        by \obv{surreal_negation_empty}.
+    $\surrealAdd{\ordinalSurreal{n}}{\emptyset}
+        =\ordinalSurreal{n}$
+        by \obv{surreal_add_zero_right,ordinal_surreal_is_surreal}.
+    Follows by \auto{surreal_integer_iff,omega_empty}.
+\end{proof}
+
+\begin{theorem}\label{surreal_integer_negation_closed}
+    Let $x\in\surrealIntegers$.
+    Then $\surrealNeg{x}\in\surrealIntegers$.
+\end{theorem}
+\begin{proof}
+    Take $n,m$ such that $n,m\in\naturals$ and
+        $x=\surrealAdd{\ordinalSurreal{n}}
+            {\surrealNeg{\ordinalSurreal{m}}}$
+        by \auto{surreal_integer_iff}.
+    $n$ and $m$ are ordinals by \obv{natural_number_is_ordinal}.
+    $\surrealNeg{x}=
+        \surrealAdd{\ordinalSurreal{m}}
+            {\surrealNeg{\ordinalSurreal{n}}}$
+        by \auto{surreal_negation_additive,surreal_negation_involutive,surreal_add_commutative,ordinal_surreal_is_surreal,surreal_negation_is_surreal}.
+    Follows by \auto{surreal_integer_iff}.
+\end{proof}
+
+\begin{theorem}\label{surreal_integer_addition_closed}
+    Let $x,y\in\surrealIntegers$.
+    Then $\surrealAdd{x}{y}\in\surrealIntegers$.
+\end{theorem}
+\begin{proof}
+    Take $n,m$ such that $n,m\in\naturals$ and
+        $x=\surrealAdd{\ordinalSurreal{n}}
+            {\surrealNeg{\ordinalSurreal{m}}}$
+        by \auto{surreal_integer_iff}.
+    Take $p,q$ such that $p,q\in\naturals$ and
+        $y=\surrealAdd{\ordinalSurreal{p}}
+            {\surrealNeg{\ordinalSurreal{q}}}$
+        by \auto{surreal_integer_iff}.
+    $n$, $m$, $p$, and $q$ are ordinals
+        by \obv{natural_number_is_ordinal}.
+    $n+p$ and $m+q$ are natural numbers
+        by \obv{num_addition_on_naturals}.
+    $\surrealAdd{x}{y}=
+        \surrealAdd
+            {\surrealAdd{\ordinalSurreal{n}}{\ordinalSurreal{p}}}
+            {\surrealNeg{
+                \surrealAdd{\ordinalSurreal{m}}{\ordinalSurreal{q}}}}$
+        by \auto{surreal_add_associative,surreal_add_commutative,surreal_negation_additive,ordinal_surreal_is_surreal,surreal_negation_is_surreal,surreal_add_is_surreal}.
+    Hence $\surrealAdd{x}{y}=
+        \surrealAdd{\ordinalSurreal{n+p}}
+            {\surrealNeg{\ordinalSurreal{m+q}}}$
+        by \obv{natural_surreal_addition_compatibility}.
+    Follows by \auto{surreal_integer_iff}.
+\end{proof}
+
+\begin{theorem}\label{surreal_integer_multiplication_closed}
+    Let $x,y\in\surrealIntegers$.
+    Then $\surrealMul{x}{y}\in\surrealIntegers$.
+\end{theorem}
+\begin{proof}
+    Take $n,m$ such that $n,m\in\naturals$ and
+        $x=\surrealAdd{\ordinalSurreal{n}}
+            {\surrealNeg{\ordinalSurreal{m}}}$
+        by \auto{surreal_integer_iff}.
+    Take $p,q$ such that $p,q\in\naturals$ and
+        $y=\surrealAdd{\ordinalSurreal{p}}
+            {\surrealNeg{\ordinalSurreal{q}}}$
+        by \auto{surreal_integer_iff}.
+    Take $a,b,c,d$ such that $a,b,c,d\in\naturals$ and
+        $\surrealMul{\ordinalSurreal{n}}{\ordinalSurreal{p}}
+            =\ordinalSurreal{a}$ and
+        $\surrealMul{\ordinalSurreal{m}}{\ordinalSurreal{q}}
+            =\ordinalSurreal{b}$ and
+        $\surrealMul{\ordinalSurreal{n}}{\ordinalSurreal{q}}
+            =\ordinalSurreal{c}$ and
+        $\surrealMul{\ordinalSurreal{m}}{\ordinalSurreal{p}}
+            =\ordinalSurreal{d}$
+        by \auto{natural_surreal_multiplication_closed}.
+    $n$, $m$, $p$, $q$, $a$, $b$, $c$, and $d$ are ordinals
+        by \obv{natural_number_is_ordinal}.
+    $a+b$ and $c+d$ are natural numbers
+        by \obv{num_addition_on_naturals}.
+    Let $A=\surrealMul{\ordinalSurreal{n}}{\ordinalSurreal{p}}$.
+    Let $B=\surrealMul{\ordinalSurreal{m}}{\ordinalSurreal{q}}$.
+    Let $C=\surrealMul{\ordinalSurreal{n}}{\ordinalSurreal{q}}$.
+    Let $D=\surrealMul{\ordinalSurreal{m}}{\ordinalSurreal{p}}$.
+    $\surreal{A}$ and $\surreal{B}$ and $\surreal{C}$ and $\surreal{D}$
+        by \obv{ordinal_surreal_is_surreal,surreal_mul_is_surreal}.
+    $\surrealMul{x}{y}=
+        \surrealAdd
+            {\surrealAdd
+                {\surrealMul{\ordinalSurreal{n}}{\ordinalSurreal{p}}}
+                {\surrealMul{\ordinalSurreal{n}}
+                    {\surrealNeg{\ordinalSurreal{q}}}}}
+            {\surrealAdd
+                {\surrealMul{\surrealNeg{\ordinalSurreal{m}}}
+                    {\ordinalSurreal{p}}}
+                {\surrealMul{\surrealNeg{\ordinalSurreal{m}}}
+                    {\surrealNeg{\ordinalSurreal{q}}}}}$
+        by \auto{surreal_mul_foil,ordinal_surreal_is_surreal,surreal_negation_is_surreal}.
+    $\surrealMul{\ordinalSurreal{n}}
+        {\surrealNeg{\ordinalSurreal{q}}}=\surrealNeg{C}$
+        by \auto{surreal_mul_neg_right,ordinal_surreal_is_surreal}.
+    $\surrealMul{\surrealNeg{\ordinalSurreal{m}}}
+        {\ordinalSurreal{p}}=\surrealNeg{D}$
+        by \auto{surreal_mul_neg_left,ordinal_surreal_is_surreal}.
+    $\surrealMul{\surrealNeg{\ordinalSurreal{m}}}
+        {\surrealNeg{\ordinalSurreal{q}}}=B$
+        by \obv{surreal_mul_both_negated,ordinal_surreal_is_surreal}.
+    Hence $\surrealMul{x}{y}=
+        \surrealAdd{\surrealAdd{A}{\surrealNeg{C}}}
+            {\surrealAdd{\surrealNeg{D}}{B}}$.
+    $\surrealAdd{\surrealAdd{A}{\surrealNeg{C}}}
+            {\surrealAdd{\surrealNeg{D}}{B}}
+        =\surrealAdd{A}
+            {\surrealAdd{\surrealNeg{C}}
+                {\surrealAdd{\surrealNeg{D}}{B}}}$
+        by \auto{surreal_add_associative,surreal_negation_is_surreal,surreal_add_is_surreal}.
+    $\surrealAdd{\surrealNeg{D}}{B}
+        =\surrealAdd{B}{\surrealNeg{D}}$
+        by \obv{surreal_add_commutative,surreal_negation_is_surreal}.
+    $\surrealAdd{\surrealNeg{C}}
+            {\surrealAdd{B}{\surrealNeg{D}}}
+        =\surrealAdd
+            {\surrealAdd{\surrealNeg{C}}{B}}
+            {\surrealNeg{D}}$
+        by \obv{surreal_add_associative,surreal_negation_is_surreal}.
+    $\surrealAdd{\surrealNeg{C}}{B}
+        =\surrealAdd{B}{\surrealNeg{C}}$
+        by \obv{surreal_add_commutative,surreal_negation_is_surreal}.
+    $\surrealAdd
+            {\surrealAdd{B}{\surrealNeg{C}}}
+            {\surrealNeg{D}}
+        =\surrealAdd{B}
+            {\surrealAdd{\surrealNeg{C}}{\surrealNeg{D}}}$
+        by \auto{surreal_add_associative,surreal_negation_is_surreal}.
+    Hence
+    $\surrealAdd{\surrealAdd{A}{\surrealNeg{C}}}
+            {\surrealAdd{\surrealNeg{D}}{B}}
+        =\surrealAdd{A}
+            {\surrealAdd{B}
+                {\surrealAdd{\surrealNeg{C}}{\surrealNeg{D}}}}$.
+    $\surrealAdd{A}
+            {\surrealAdd{B}
+                {\surrealAdd{\surrealNeg{C}}{\surrealNeg{D}}}}
+        =\surrealAdd{\surrealAdd{A}{B}}
+            {\surrealAdd{\surrealNeg{C}}{\surrealNeg{D}}}$
+        by \obv{surreal_add_associative,surreal_negation_is_surreal,surreal_add_is_surreal}.
+    $\surrealAdd{\surrealNeg{C}}{\surrealNeg{D}}
+        =\surrealNeg{\surrealAdd{C}{D}}$
+        by \obv{surreal_negation_additive}.
+    Hence $\surrealMul{x}{y}=
+        \surrealAdd{\surrealAdd{A}{B}}
+            {\surrealNeg{\surrealAdd{C}{D}}}$.
+    $A=\ordinalSurreal{a}$ and $B=\ordinalSurreal{b}$ and
+        $C=\ordinalSurreal{c}$ and $D=\ordinalSurreal{d}$.
+    Hence $\surrealMul{x}{y}=
+        \surrealAdd{\ordinalSurreal{a+b}}
+            {\surrealNeg{\ordinalSurreal{c+d}}}$
+        by \auto{natural_surreal_addition_compatibility}.
+    Follows by \auto{surreal_integer_iff}.
+\end{proof}

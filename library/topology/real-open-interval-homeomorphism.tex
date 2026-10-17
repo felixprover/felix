@@ -1,0 +1,777 @@
+\import{topology/real-map-algebra.tex}
+\import{topology/subspace-continuity.tex}
+
+\section{The real line and the open symmetric unit interval}
+
+\subsection{Compositional squash graphs}
+
+\begin{definition}\label{real_squash}
+    $\realSquash=\realMapDiv{\reals}{\identity{\reals}}
+        {\realMapAdd{\reals}{\reals\times\{\surrealOne\}}
+            {\realMapAbs{\reals}{\identity{\reals}}}}$.
+\end{definition}
+
+\begin{definition}\label{real_unsquash}
+    $\realUnsquash=
+        \realMapDiv{\RealOpenSymmetricUnitInterval}
+            {\identity{\RealOpenSymmetricUnitInterval}}
+            {\realMapSub{\RealOpenSymmetricUnitInterval}
+                {\RealOpenSymmetricUnitInterval\times\{\surrealOne\}}
+                {\realMapAbs{\RealOpenSymmetricUnitInterval}
+                    {\identity{\RealOpenSymmetricUnitInterval}}}}$.
+\end{definition}
+
+\begin{proposition}\label{real_squash_denominator_positive}
+    Let $x\in\reals$.
+    Then
+        $\surrealLt{\surrealZero}
+            {\surrealAdd{\surrealOne}{\abs{x}}}$.
+\end{proposition}
+\begin{proof}
+    $\surrealLe{\surrealZero}{\abs{x}}$
+        by
+        \obv{surreal_abs_nonnegative_value,surreal_real_is_surreal}.
+    $\surrealLt{\surrealZero}{\surrealOne}$
+        by \obv{surreal_zero_lt_one}.
+    $\surrealLt{\surrealZero}{\surrealOne}$ and
+        $\surrealLe{\surrealZero}{\abs{x}}$.
+    Hence
+        $\surrealLt{\surrealAdd{\surrealZero}{\surrealZero}}
+            {\surrealAdd{\surrealOne}{\abs{x}}}$
+        by
+        \obv{surreal_add_lt_le,surreal_one_is_surreal,surreal_abs_is_surreal,surreal_real_is_surreal,empty_surreal}.
+    Follows by \obv{surreal_add_zero_left,empty_surreal}.
+\end{proof}
+
+\begin{proposition}\label{real_squash_apply}
+    Let $x\in\reals$.
+    Then
+        $\apply{\realSquash}{x}=\surrealDiv{x}
+            {\surrealAdd{\surrealOne}{\abs{x}}}$.
+\end{proposition}
+\begin{proof}
+    Let $i=\identity{\reals}$.
+    Let $u=\reals\times\{\surrealOne\}$.
+    Let $v=\realMapAbs{\reals}{i}$.
+    Let $d=\realMapAdd{\reals}{u}{v}$.
+    $i\in\funs{\reals}{\reals}$ by \auto{id_elem_funs}.
+    $u\in\funs{\reals}{\{\surrealOne\}}$
+        by \auto{constant_graph_type}.
+    $\{\surrealOne\}\subseteq\reals$
+        by \auto{singleton_iff,surreal_one_is_real,subseteq}.
+    Hence $u\in\funs{\reals}{\reals}$
+        by \obv{funs_weaken_codom}.
+    $v\in\funs{\reals}{\reals}$ by \auto{real_map_abs_type}.
+    $d\in\funs{\reals}{\reals}$ by \auto{real_map_add_type}.
+    $i(x)=x$ and $u(x)=\surrealOne$
+        by \auto{id_apply,constant_graph_application}.
+    $v(x)=\abs{x}$ by \auto{real_map_abs_apply}.
+    Hence $d(x)=\surrealAdd{\surrealOne}{\abs{x}}$
+        by \auto{real_map_add_apply}.
+    Follows by \auto{real_squash,real_map_div_apply}.
+\end{proof}
+
+\begin{proposition}\label{real_squash_abs_formula}
+    Let $x\in\reals$.
+    Then
+        $\abs{\apply{\realSquash}{x}}=\surrealDiv{\abs{x}}
+            {\surrealAdd{\surrealOne}{\abs{x}}}$.
+\end{proposition}
+\begin{proof}
+    Let $d=\surrealAdd{\surrealOne}{\abs{x}}$.
+    $\abs{x}\in\reals$ and $d\in\reals$
+        by
+        \auto{surreal_real_abs_closed,surreal_real_addition_closed,surreal_one_is_real}.
+    Hence $\surreal{x}$ and $\surreal{d}$
+        by \obv{surreal_real_is_surreal}.
+    $\surrealLt{\surrealZero}{d}$
+        by \obv{real_squash_denominator_positive}.
+    Hence $d\neq\surrealZero$
+        by \obv{surreal_lt_irreflexive,empty_surreal}.
+    $\abs{d}=d$
+        by \obv{surreal_abs_nonnegative,surreal_le}.
+    $\abs{\surrealReciprocal{d}}=\surrealReciprocal{d}$
+        by \auto{surreal_abs_reciprocal}.
+    $\apply{\realSquash}{x}=\surrealMul{x}{\surrealReciprocal{d}}$
+        by \auto{real_squash_apply,surreal_division}.
+    Hence
+        $\abs{\apply{\realSquash}{x}}
+            =\surrealMul{\abs{x}}{\abs{\surrealReciprocal{d}}}$
+        by
+        \auto{surreal_abs_multiplicative,surreal_reciprocal_is_surreal}.
+    Follows by \obv{surreal_division}.
+\end{proof}
+
+\begin{theorem}\label{real_squash_strict_abs_bound}
+    Let $x\in\reals$.
+    Then $\surrealLt{\abs{\apply{\realSquash}{x}}}{\surrealOne}$.
+\end{theorem}
+\begin{proof}
+    Let $a=\abs{x}$ and $d=\surrealAdd{\surrealOne}{a}$.
+    $a,d\in\reals$
+        by
+        \auto{surreal_real_abs_closed,surreal_real_addition_closed,surreal_one_is_real}.
+    Hence $\surreal{a}$ and $\surreal{d}$
+        by \obv{surreal_real_is_surreal}.
+    $\surrealLt{\surrealZero}{d}$
+        by \auto{real_squash_denominator_positive}.
+    Hence $d\neq\surrealZero$ and
+        $\surrealLt{\surrealZero}{\surrealReciprocal{d}}$
+        by
+        \obv{surreal_lt_irreflexive,surreal_reciprocal_positive,empty_surreal}.
+    $\surrealLt{a}{d}$
+        by
+        \auto{surreal_add_lt_left,surreal_add_zero_left,surreal_add_commutative,surreal_zero_lt_one,surreal_abs_is_surreal,surreal_one_is_surreal,empty_surreal}.
+    Hence
+        $\surrealLt{\surrealMul{a}{\surrealReciprocal{d}}}
+            {\surrealMul{d}{\surrealReciprocal{d}}}$
+        by
+        \obv{surreal_pos_mul_lt_right,surreal_reciprocal_is_surreal}.
+    $\surrealMul{d}{\surrealReciprocal{d}}=\surrealOne$
+        by \obv{surreal_reciprocal_inverse}.
+    $\abs{\apply{\realSquash}{x}}=\surrealMul{a}{\surrealReciprocal{d}}$
+        by \auto{real_squash_abs_formula,surreal_division}.
+\end{proof}
+
+\begin{theorem}\label{real_squash_typed_real}
+    $\realSquash\in\funs{\reals}{\reals}$.
+\end{theorem}
+\begin{proof}
+    Let $i=\identity{\reals}$.
+    Let $u=\reals\times\{\surrealOne\}$.
+    $i\in\funs{\reals}{\reals}$ by \auto{id_elem_funs}.
+    $u\in\funs{\reals}{\{\surrealOne\}}$
+        by \auto{constant_graph_type}.
+    $\{\surrealOne\}\subseteq\reals$
+        by \auto{singleton_iff,surreal_one_is_real,subseteq}.
+    Hence $u\in\funs{\reals}{\reals}$
+        by \obv{funs_weaken_codom}.
+    $\realMapAbs{\reals}{i}\in\funs{\reals}{\reals}$
+        by \obv{real_map_abs_type}.
+    $\realMapAdd{\reals}{u}{\realMapAbs{\reals}{i}}
+        \in\funs{\reals}{\reals}$
+        by \obv{real_map_add_type}.
+    Follows by \auto{real_squash,real_map_div_type}.
+\end{proof}
+
+\begin{theorem}\label{real_squash_range_open_symmetric_unit}
+    $\realSquash\in
+        \funs{\reals}{\RealOpenSymmetricUnitInterval}$.
+\end{theorem}
+\begin{proof}
+    $\realSquash\in\funs{\reals}{\reals}$
+        by \obv{real_squash_typed_real}.
+    Show that for every $x\in\reals$ we have
+        $\apply{\realSquash}{x}\in\RealOpenSymmetricUnitInterval$.
+    \begin{subproof}
+        Fix $x\in\reals$.
+        $\apply{\realSquash}{x}\in\reals$
+            by \obv{funs_type_apply}.
+        $\surrealLt{\abs{\apply{\realSquash}{x}}}{\surrealOne}$
+            by \obv{real_squash_strict_abs_bound}.
+        $\surrealOne\in\reals$ and
+            $\surrealLe{\surrealZero}{\surrealOne}$
+            by
+            \obv{surreal_one_is_real,surreal_le,surreal_zero_lt_one}.
+        Hence
+            $\apply{\realSquash}{x}
+                \in\realOpenSymmetricInterval{\surrealOne}$
+            by \auto{real_open_symmetric_interval_iff_abs_bound}.
+        Follows by
+            \obv{real_open_symmetric_unit_interval,real_open_symmetric_interval}.
+    \end{subproof}
+    Follows by \obv{funs_intro,funs_is_function,funs}.
+\end{proof}
+
+\begin{theorem}\label{real_squash_continuous_real}
+    $\realSquash$ is continuous from $\RealTopology$ to
+        $\RealTopology$.
+\end{theorem}
+\begin{proof}
+    Let $i=\identity{\reals}$.
+    Let $u=\reals\times\{\surrealOne\}$.
+    Let $v=\realMapAbs{\reals}{i}$.
+    Let $d=\realMapAdd{\reals}{u}{v}$.
+    $i\in\funs{\reals}{\reals}$ by \auto{id_elem_funs}.
+    $u\in\funs{\reals}{\{\surrealOne\}}$
+        by \auto{constant_graph_type}.
+    $\{\surrealOne\}\subseteq\reals$
+        by \auto{singleton_iff,surreal_one_is_real,subseteq}.
+    Hence $u\in\funs{\reals}{\reals}$
+        by \obv{funs_weaken_codom}.
+    $\carrier[\RealTopology]=\reals$
+        by \obv{real_topology_carrier}.
+    $\identity{\carrier[\RealTopology]}$ is continuous from
+        $\RealTopology$ to $\RealTopology$
+        by
+        \obv{identity_continuous,real_topology_is_topological_space}.
+    Hence $i$ is continuous from $\RealTopology$ to $\RealTopology$.
+    $u=\carrier[\RealTopology]\times\{\surrealOne\}$.
+    $\RealTopology$ is a topological space
+        by \obv{real_topology_is_topological_space}.
+    $\carrier[\RealTopology]\times\{\surrealOne\}$ is continuous from
+        $\RealTopology$ to $\RealTopology$
+        by \obv{real_constant_graph_continuous,surreal_one_is_real}.
+    Hence $u$ is continuous from $\RealTopology$ to $\RealTopology$.
+    $v\in\funs{\reals}{\reals}$
+        by \auto{real_map_abs_type}.
+    $v$ is continuous from $\RealTopology$ to $\RealTopology$
+        by \auto{real_map_abs_continuous}.
+    $d\in\funs{\reals}{\reals}$
+        by \auto{real_map_add_type}.
+    $d$ is continuous from $\RealTopology$ to $\RealTopology$
+        by \auto{real_map_add_continuous}.
+    Show that for every $x\in\reals$ we have
+        $d(x)\neq\surrealZero$.
+    \begin{subproof}
+        Fix $x\in\reals$.
+        $i(x)=x$ and $u(x)=\surrealOne$
+            by \auto{id_apply,constant_graph_application}.
+        $v(x)=\abs{x}$ by \auto{real_map_abs_apply}.
+        Hence $d(x)=\surrealAdd{\surrealOne}{\abs{x}}$
+            by \auto{real_map_add_apply}.
+        $\surrealLt{\surrealZero}
+            {\surrealAdd{\surrealOne}{\abs{x}}}$
+            by \obv{real_squash_denominator_positive}.
+        Follows by \obv{surreal_lt_irreflexive,empty_surreal}.
+    \end{subproof}
+    Follows by
+        \auto{real_squash,real_map_div_continuous}.
+\end{proof}
+
+\begin{theorem}\label{real_squash_continuous_open_interval}
+    $\realSquash$ is continuous from $\RealTopology$ to
+        $\RealOpenSymmetricUnitIntervalTopology$.
+\end{theorem}
+\begin{proof}
+    $\realSquash$ is continuous from $\RealTopology$ to
+        $\RealTopology$
+        by \obv{real_squash_continuous_real}.
+    $\RealOpenSymmetricUnitIntervalTopology
+        =\subspaceTopology{\RealTopology}
+            {\RealOpenSymmetricUnitInterval}$
+        by
+        \obv{real_open_symmetric_unit_interval_topology,real_open_interval_topology,real_open_symmetric_unit_interval}.
+    $\ran{\realSquash}\subseteq\RealOpenSymmetricUnitInterval$
+        by \obv{real_squash_range_open_symmetric_unit,funs_ran}.
+    $\carrier[\RealOpenSymmetricUnitIntervalTopology]
+        =\RealOpenSymmetricUnitInterval$
+        by
+        \obv{real_open_symmetric_unit_interval_topology_carrier}.
+    Hence
+        $\ran{\realSquash}\subseteq
+            \carrier[\RealOpenSymmetricUnitIntervalTopology]$.
+    Follows by \obv{continuous_codomain_corestriction}.
+\end{proof}
+
+\subsection{The inverse graph on the open interval}
+
+\begin{proposition}\label{real_unsquash_denominator_positive}
+    Let $u\in\RealOpenSymmetricUnitInterval$.
+    Then
+        $\surrealLt{\surrealZero}
+            {\surrealAdd{\surrealOne}{\surrealNeg{\abs{u}}}}$.
+\end{proposition}
+\begin{proof}
+    $u\in\reals$ and $\surrealLt{\abs{u}}{\surrealOne}$
+        by
+        \auto{real_open_symmetric_unit_interval,real_open_symmetric_interval,real_open_symmetric_interval_iff_abs_bound,surreal_one_is_real,surreal_le,surreal_zero_lt_one}.
+    Follows by
+        \obv{surreal_subtraction_positive,surreal_abs_is_surreal,surreal_one_is_surreal,surreal_real_is_surreal}.
+\end{proof}
+
+\begin{proposition}\label{real_unsquash_apply}
+    Let $u\in\RealOpenSymmetricUnitInterval$.
+    Then
+        $\apply{\realUnsquash}{u}=\surrealDiv{u}
+            {\surrealAdd{\surrealOne}{\surrealNeg{\abs{u}}}}$.
+\end{proposition}
+\begin{proof}
+    Let $I=\RealOpenSymmetricUnitInterval$.
+    Let $i=\identity{I}$.
+    Let $k=I\times\{\surrealOne\}$.
+    Let $v=\realMapAbs{I}{i}$.
+    Let $d=\realMapSub{I}{k}{v}$.
+    $I\subseteq\reals$
+        by
+        \auto{real_open_symmetric_unit_interval,real_open_interval_subset_reals}.
+    $i\in\funs{I}{I}$ by \auto{id_elem_funs}.
+    Hence $i\in\funs{I}{\reals}$ by \obv{funs_weaken_codom}.
+    $k\in\funs{I}{\{\surrealOne\}}$
+        by \auto{constant_graph_type}.
+    $\{\surrealOne\}\subseteq\reals$
+        by \auto{singleton_iff,surreal_one_is_real,subseteq}.
+    Hence $k\in\funs{I}{\reals}$ by \obv{funs_weaken_codom}.
+    $v\in\funs{I}{\reals}$ by \auto{real_map_abs_type}.
+    $d\in\funs{I}{\reals}$ by \auto{real_map_sub_type}.
+    $i(u)=u$ and $k(u)=\surrealOne$
+        by \auto{id_apply,constant_graph_application}.
+    $v(u)=\abs{u}$ by \auto{real_map_abs_apply}.
+    Hence $d(u)=\surrealAdd{\surrealOne}{\surrealNeg{\abs{u}}}$
+        by \auto{real_map_sub_apply}.
+    Follows by \auto{real_unsquash,real_map_div_apply}.
+\end{proof}
+
+\begin{theorem}\label{real_unsquash_typed_real}
+    $\realUnsquash\in
+        \funs{\RealOpenSymmetricUnitInterval}{\reals}$.
+\end{theorem}
+\begin{proof}
+    Let $I=\RealOpenSymmetricUnitInterval$.
+    Let $i=\identity{I}$.
+    Let $k=I\times\{\surrealOne\}$.
+    $I\subseteq\reals$
+        by
+        \auto{real_open_symmetric_unit_interval,real_open_interval_subset_reals}.
+    $i\in\funs{I}{I}$ by \auto{id_elem_funs}.
+    Hence $i\in\funs{I}{\reals}$ by \obv{funs_weaken_codom}.
+    $k\in\funs{I}{\{\surrealOne\}}$
+        by \auto{constant_graph_type}.
+    $\{\surrealOne\}\subseteq\reals$
+        by \auto{singleton_iff,surreal_one_is_real,subseteq}.
+    Hence $k\in\funs{I}{\reals}$ by \obv{funs_weaken_codom}.
+    $\realMapAbs{I}{i}\in\funs{I}{\reals}$
+        by \obv{real_map_abs_type}.
+    $\realMapSub{I}{k}{\realMapAbs{I}{i}}\in\funs{I}{\reals}$
+        by \obv{real_map_sub_type}.
+    Follows by \auto{real_unsquash,real_map_div_type}.
+\end{proof}
+
+\begin{theorem}\label{real_unsquash_continuous}
+    $\realUnsquash$ is continuous from
+        $\RealOpenSymmetricUnitIntervalTopology$ to $\RealTopology$.
+\end{theorem}
+\begin{proof}
+    Let $I=\RealOpenSymmetricUnitInterval$.
+    Let $J=\RealOpenSymmetricUnitIntervalTopology$.
+    Let $i=\identity{I}$.
+    Let $k=I\times\{\surrealOne\}$.
+    Let $v=\realMapAbs{I}{i}$.
+    Let $d=\realMapSub{I}{k}{v}$.
+    $\carrier[J]=I$
+        by
+        \obv{real_open_symmetric_unit_interval_topology_carrier}.
+    $J=\subspaceTopology{\RealTopology}{I}$
+        by
+        \obv{real_open_symmetric_unit_interval_topology,real_open_interval_topology,real_open_symmetric_unit_interval}.
+    $J$ is a topological space
+        by
+        \obv{real_open_symmetric_unit_interval_topology_is_topological_space}.
+    $I\subseteq\reals$
+        by
+        \auto{real_open_symmetric_unit_interval,real_open_interval_subset_reals}.
+    $i\in\funs{I}{I}$ by \auto{id_elem_funs}.
+    Hence $i\in\funs{I}{\reals}$ by \obv{funs_weaken_codom}.
+    $k\in\funs{I}{\{\surrealOne\}}$
+        by \auto{constant_graph_type}.
+    $\{\surrealOne\}\subseteq\reals$
+        by \auto{singleton_iff,surreal_one_is_real,subseteq}.
+    Hence $k\in\funs{I}{\reals}$ by \obv{funs_weaken_codom}.
+    $\identity{\carrier[\subspaceTopology{\RealTopology}{I}]}$
+        is continuous from $\subspaceTopology{\RealTopology}{I}$ to
+            $\RealTopology$
+        by
+        \auto{subspace_inclusion_continuous,real_topology_is_topological_space}.
+    Hence $\identity{\carrier[J]}$ is continuous from $J$ to
+        $\RealTopology$.
+    Hence $i$ is continuous from $J$ to $\RealTopology$.
+    $\carrier[J]\times\{\surrealOne\}$ is continuous from $J$ to
+        $\RealTopology$
+        by \obv{real_constant_graph_continuous,surreal_one_is_real}.
+    Hence $k$ is continuous from $J$ to $\RealTopology$.
+    $v\in\funs{I}{\reals}$ by \auto{real_map_abs_type}.
+    $v$ is continuous from $J$ to $\RealTopology$
+        by \auto{real_map_abs_continuous}.
+    $d\in\funs{I}{\reals}$ by \auto{real_map_sub_type}.
+    $d$ is continuous from $J$ to $\RealTopology$
+        by \auto{real_map_sub_continuous}.
+    Show that for every $u\in I$ we have $d(u)\neq\surrealZero$.
+    \begin{subproof}
+        Fix $u\in I$.
+        $i(u)=u$ and $k(u)=\surrealOne$
+            by \auto{id_apply,constant_graph_application}.
+        $v(u)=\abs{u}$ by \auto{real_map_abs_apply}.
+        Hence $d(u)=\surrealAdd{\surrealOne}{\surrealNeg{\abs{u}}}$
+            by \auto{real_map_sub_apply}.
+        $\surrealLt{\surrealZero}
+            {\surrealAdd{\surrealOne}{\surrealNeg{\abs{u}}}}$
+            by \obv{real_unsquash_denominator_positive}.
+        Follows by \obv{surreal_lt_irreflexive,empty_surreal}.
+    \end{subproof}
+    Follows by
+        \auto{real_unsquash,real_map_div_continuous}.
+\end{proof}
+
+\subsection{Inverse laws}
+
+\begin{theorem}\label{real_unsquash_after_squash}
+    $\realUnsquash\circ\realSquash=\identity{\reals}$.
+\end{theorem}
+\begin{proof}
+    $\realSquash\in
+        \funs{\reals}{\RealOpenSymmetricUnitInterval}$
+        by \obv{real_squash_range_open_symmetric_unit}.
+    $\realUnsquash\in
+        \funs{\RealOpenSymmetricUnitInterval}{\reals}$
+        by \obv{real_unsquash_typed_real}.
+    Hence $\realUnsquash\circ\realSquash\in\funs{\reals}{\reals}$
+        by \obv{funs_circ}.
+    $\identity{\reals}\in\funs{\reals}{\reals}$
+        by \obv{id_elem_funs}.
+    Show that for every $x\in\reals$ we have
+        $(\realUnsquash\circ\realSquash)(x)
+            =(\identity{\reals})(x)$.
+    \begin{subproof}
+        Fix $x\in\reals$.
+        Let $a=\abs{x}$.
+        Let $d=\surrealAdd{\surrealOne}{a}$.
+        Let $s=\apply{\realSquash}{x}$.
+        Let $q=\abs{s}$.
+        Let $e=\surrealAdd{\surrealOne}{\surrealNeg{q}}$.
+        $a,d\in\reals$
+            by
+            \auto{surreal_real_abs_closed,surreal_real_addition_closed,surreal_one_is_real}.
+        $s\in\RealOpenSymmetricUnitInterval$
+            by
+            \auto{real_squash_range_open_symmetric_unit,funs_type_apply}.
+        Hence $s,q\in\reals$
+            by
+            \auto{real_open_symmetric_unit_interval,real_open_interval_subset_reals,subseteq,surreal_real_abs_closed}.
+        Hence $e\in\reals$
+            by
+            \auto{surreal_real_negation_closed,surreal_real_addition_closed,surreal_one_is_real}.
+        $\surrealLt{\surrealZero}{d}$
+            by \auto{real_squash_denominator_positive}.
+        Hence $d\neq\surrealZero$
+            by \obv{surreal_lt_irreflexive,empty_surreal}.
+        $s=\surrealMul{x}{\surrealReciprocal{d}}$
+            by \auto{real_squash_apply,surreal_division}.
+        $q=\surrealMul{a}{\surrealReciprocal{d}}$
+            by \auto{real_squash_abs_formula,surreal_division}.
+        $d\neq\surrealZero$.
+        $\surrealMul{d}{\surrealReciprocal{d}}=\surrealOne$
+            by \obv{surreal_reciprocal_inverse,surreal_real_is_surreal}.
+        $\surrealMul{d}{\surrealMul{a}{\surrealReciprocal{d}}}
+            =\surrealMul{a}{\surrealMul{d}{\surrealReciprocal{d}}}$
+            by
+            \auto{surreal_mul_associative,surreal_mul_commutative,surreal_real_is_surreal,surreal_reciprocal_is_surreal}.
+        $\surrealMul{d}{\surrealMul{a}{\surrealReciprocal{d}}}=a$
+            by
+            \auto{surreal_mul_one_right,surreal_real_is_surreal}.
+        Hence $\surrealMul{d}{q}=a$ by \auto.
+        $d,q\in\reals$.
+        Hence $\surreal{d}$ and $\surreal{q}$
+            by \obv{surreal_real_is_surreal}.
+        $e=\surrealAdd{\surrealOne}{\surrealNeg{q}}$ and
+            $\surreal{d}$ and $\surreal{q}$.
+        Hence $\surrealMul{d}{e}
+            =\surrealMul{d}
+                {\surrealAdd{\surrealOne}{\surrealNeg{q}}}$.
+        $\surrealMul{d}{\surrealAdd{\surrealOne}{\surrealNeg{q}}}
+            =\surrealAdd{\surrealMul{d}{\surrealOne}}
+                {\surrealMul{d}{\surrealNeg{q}}}$
+            by
+            \obv{surreal_mul_distributive_left,surreal_negation_is_surreal,surreal_one_is_surreal}.
+        $\surrealMul{d}{\surrealNeg{q}}
+            =\surrealNeg{\surrealMul{d}{q}}$
+            by \obv{surreal_mul_neg_right}.
+        Hence $\surrealMul{d}{e}
+            =\surrealAdd{\surrealMul{d}{\surrealOne}}
+                {\surrealNeg{\surrealMul{d}{q}}}$
+            by \auto.
+        $\surrealMul{d}{q}=a$.
+        Hence $\surrealMul{d}{e}=\surrealAdd{d}{\surrealNeg{a}}$
+            by \auto{surreal_mul_one_right,surreal_real_is_surreal}.
+        $d=\surrealAdd{\surrealOne}{a}$.
+        Hence $\surrealAdd{d}{\surrealNeg{a}}
+            =\surrealAdd{\surrealAdd{\surrealOne}{a}}
+                {\surrealNeg{a}}$.
+        $\surreal{a}$ by \obv{surreal_real_is_surreal}.
+        $\surrealAdd{d}{\surrealNeg{a}}
+            =\surrealAdd{\surrealAdd{\surrealOne}{a}}
+                {\surrealNeg{a}}$ and $\surreal{a}$.
+        $\surrealAdd{\surrealAdd{\surrealOne}{a}}{\surrealNeg{a}}
+            =\surrealAdd{\surrealOne}
+                {\surrealAdd{a}{\surrealNeg{a}}}$
+            by
+            \auto{surreal_add_associative,surreal_negation_is_surreal,surreal_one_is_surreal}.
+        $\surrealAdd{a}{\surrealNeg{a}}=\surrealZero$
+            by \obv{surreal_add_inverse_right}.
+        Hence
+            $\surrealAdd{\surrealAdd{\surrealOne}{a}}{\surrealNeg{a}}
+                =\surrealOne$
+            by \auto{surreal_add_zero_right,surreal_one_is_surreal}.
+        $\surrealAdd{d}{\surrealNeg{a}}=\surrealOne$.
+        Hence $\surrealMul{d}{e}=\surrealOne$.
+        Hence $e=\surrealReciprocal{d}$
+            by \auto{surreal_reciprocal_unique,surreal_real_is_surreal}.
+        $\surrealReciprocal{e}=d$
+            by
+            \auto{surreal_reciprocal_involutive,surreal_real_is_surreal}.
+        $\apply{\realUnsquash}{s}=\surrealMul{s}{\surrealReciprocal{e}}$
+            by \auto{real_unsquash_apply,surreal_division}.
+        Hence $\apply{\realUnsquash}{s}=x$
+            by
+            \auto{surreal_mul_associative,surreal_mul_commutative,surreal_reciprocal_inverse,surreal_mul_one_right,surreal_real_is_surreal}.
+        $(\realUnsquash\circ\realSquash)(x)
+            =\apply{\realUnsquash}{s}$
+            by \auto{circ_apply,funs_is_function,funs_ran,funs}.
+        $(\identity{\reals})(x)=x$ by \obv{id_apply}.
+    \end{subproof}
+    Follows by \obv{typed_functions_equal_from_agreement}.
+\end{proof}
+
+\begin{proposition}\label{real_unsquash_abs_formula}
+    Let $u\in\RealOpenSymmetricUnitInterval$.
+    Then
+        $\abs{\apply{\realUnsquash}{u}}=\surrealDiv{\abs{u}}
+            {\surrealAdd{\surrealOne}{\surrealNeg{\abs{u}}}}$.
+\end{proposition}
+\begin{proof}
+    Let $d=\surrealAdd{\surrealOne}{\surrealNeg{\abs{u}}}$.
+    $u\in\reals$
+        by
+        \auto{real_open_symmetric_unit_interval,real_open_interval_subset_reals,subseteq}.
+    Hence $\abs{u}\in\reals$ and $d\in\reals$
+        by
+        \auto{surreal_real_abs_closed,surreal_real_negation_closed,surreal_real_addition_closed,surreal_one_is_real}.
+    $\surrealLt{\surrealZero}{d}$
+        by \obv{real_unsquash_denominator_positive}.
+    Hence $d\neq\surrealZero$
+        by \obv{surreal_lt_irreflexive,empty_surreal}.
+    $\abs{d}=d$
+        by
+        \obv{surreal_abs_nonnegative,surreal_le,surreal_real_is_surreal}.
+    $\abs{\surrealReciprocal{d}}=\surrealReciprocal{d}$
+        by \auto{surreal_abs_reciprocal,surreal_real_is_surreal}.
+    $\apply{\realUnsquash}{u}
+        =\surrealMul{u}{\surrealReciprocal{d}}$
+        by \auto{real_unsquash_apply,surreal_division}.
+    Hence
+        $\abs{\apply{\realUnsquash}{u}}
+            =\surrealMul{\abs{u}}{\abs{\surrealReciprocal{d}}}$
+        by
+        \auto{surreal_abs_multiplicative,surreal_reciprocal_is_surreal,surreal_real_is_surreal}.
+    Follows by \auto{surreal_division}.
+\end{proof}
+
+\begin{theorem}\label{real_squash_after_unsquash}
+    $\realSquash\circ\realUnsquash
+        =\identity{\RealOpenSymmetricUnitInterval}$.
+\end{theorem}
+\begin{proof}
+    Let $I=\RealOpenSymmetricUnitInterval$.
+    $\realUnsquash\in\funs{I}{\reals}$
+        by \obv{real_unsquash_typed_real}.
+    $\realSquash\in\funs{\reals}{I}$
+        by \obv{real_squash_range_open_symmetric_unit}.
+    Hence $\realSquash\circ\realUnsquash\in\funs{I}{I}$
+        by \obv{funs_circ}.
+    $\identity{I}\in\funs{I}{I}$ by \obv{id_elem_funs}.
+    Show that for every $u\in I$ we have
+        $(\realSquash\circ\realUnsquash)(u)=(\identity{I})(u)$.
+    \begin{subproof}
+        Fix $u\in I$.
+        Let $a=\abs{u}$.
+        Let $d=\surrealAdd{\surrealOne}{\surrealNeg{a}}$.
+        Let $t=\apply{\realUnsquash}{u}$.
+        Let $q=\abs{t}$.
+        Let $e=\surrealAdd{\surrealOne}{q}$.
+        $u\in\reals$
+            by
+            \auto{real_open_symmetric_unit_interval,real_open_interval_subset_reals,subseteq}.
+        Hence $a,d\in\reals$
+            by
+            \auto{surreal_real_abs_closed,surreal_real_negation_closed,surreal_real_addition_closed,surreal_one_is_real}.
+        $t\in\reals$
+            by \auto{real_unsquash_typed_real,funs_type_apply}.
+        Hence $q,e\in\reals$
+            by
+            \auto{surreal_real_abs_closed,surreal_real_addition_closed,surreal_one_is_real}.
+        $\surrealLt{\surrealZero}{d}$
+            by \auto{real_unsquash_denominator_positive}.
+        Hence $d\neq\surrealZero$
+            by \obv{surreal_lt_irreflexive,empty_surreal}.
+        $t=\surrealMul{u}{\surrealReciprocal{d}}$
+            by \auto{real_unsquash_apply,surreal_division}.
+        $q=\surrealMul{a}{\surrealReciprocal{d}}$
+            by \auto{real_unsquash_abs_formula,surreal_division}.
+        $d\neq\surrealZero$.
+        $\surrealMul{d}{\surrealReciprocal{d}}=\surrealOne$
+            by \obv{surreal_reciprocal_inverse,surreal_real_is_surreal}.
+        $\surrealMul{d}{\surrealMul{a}{\surrealReciprocal{d}}}
+            =\surrealMul{a}{\surrealMul{d}{\surrealReciprocal{d}}}$
+            by
+            \auto{surreal_mul_associative,surreal_mul_commutative,surreal_real_is_surreal,surreal_reciprocal_is_surreal}.
+        $\surrealMul{d}{\surrealMul{a}{\surrealReciprocal{d}}}=a$
+            by
+            \auto{surreal_mul_one_right,surreal_real_is_surreal}.
+        Hence $\surrealMul{d}{q}=a$ by \auto.
+        $d,q\in\reals$.
+        Hence $\surreal{d}$ and $\surreal{q}$
+            by \obv{surreal_real_is_surreal}.
+        $e=\surrealAdd{\surrealOne}{q}$ and
+            $\surreal{d}$ and $\surreal{q}$.
+        Hence $\surrealMul{d}{e}
+            =\surrealMul{d}{\surrealAdd{\surrealOne}{q}}$.
+        $\surrealMul{d}{\surrealAdd{\surrealOne}{q}}
+            =\surrealAdd{\surrealMul{d}{\surrealOne}}
+                {\surrealMul{d}{q}}$
+            by
+            \obv{surreal_mul_distributive_left,surreal_one_is_surreal}.
+        Hence $\surrealMul{d}{e}
+            =\surrealAdd{\surrealMul{d}{\surrealOne}}
+                {\surrealMul{d}{q}}$.
+        $\surrealMul{d}{q}=a$.
+        Hence $\surrealMul{d}{e}=\surrealAdd{d}{a}$
+            by \auto{surreal_mul_one_right,surreal_real_is_surreal}.
+        $d=\surrealAdd{\surrealOne}{\surrealNeg{a}}$.
+        Hence $\surrealAdd{d}{a}
+            =\surrealAdd{\surrealAdd{\surrealOne}{\surrealNeg{a}}}{a}$.
+        $\surreal{a}$ by \obv{surreal_real_is_surreal}.
+        $\surrealAdd{d}{a}
+            =\surrealAdd{\surrealAdd{\surrealOne}{\surrealNeg{a}}}{a}$
+            and $\surreal{a}$.
+        $\surrealAdd{\surrealAdd{\surrealOne}{\surrealNeg{a}}}{a}
+            =\surrealAdd{\surrealOne}
+                {\surrealAdd{\surrealNeg{a}}{a}}$
+            by
+            \auto{surreal_add_associative,surreal_negation_is_surreal,surreal_one_is_surreal}.
+        $\surrealAdd{\surrealNeg{a}}{a}=\surrealZero$
+            by \obv{surreal_add_inverse_left}.
+        Hence
+            $\surrealAdd{\surrealAdd{\surrealOne}{\surrealNeg{a}}}{a}
+                =\surrealOne$
+            by \auto{surreal_add_zero_right,surreal_one_is_surreal}.
+        Hence $\surrealAdd{d}{a}=\surrealOne$.
+        Hence $\surrealMul{d}{e}=\surrealOne$.
+        Hence $e=\surrealReciprocal{d}$
+            by \auto{surreal_reciprocal_unique,surreal_real_is_surreal}.
+        $\surrealReciprocal{e}=d$
+            by
+            \auto{surreal_reciprocal_involutive,surreal_real_is_surreal}.
+        $\apply{\realSquash}{t}=\surrealMul{t}{\surrealReciprocal{e}}$
+            by \auto{real_squash_apply,surreal_division}.
+        Hence $\apply{\realSquash}{t}=u$
+            by
+            \auto{surreal_mul_associative,surreal_mul_commutative,surreal_reciprocal_inverse,surreal_mul_one_right,surreal_real_is_surreal}.
+        $(\realSquash\circ\realUnsquash)(u)=\apply{\realSquash}{t}$
+            by \auto{circ_apply,funs_is_function,funs_ran,funs}.
+        $(\identity{I})(u)=u$ by \obv{id_apply}.
+    \end{subproof}
+    Follows by \auto{typed_functions_equal_from_agreement}.
+\end{proof}
+
+\begin{theorem}\label{real_squash_bijection_open_symmetric_unit}
+    $\realSquash\in
+        \bijections{\reals}{\RealOpenSymmetricUnitInterval}$.
+\end{theorem}
+\begin{proof}
+    Let $I=\RealOpenSymmetricUnitInterval$.
+    $\realSquash\in\funs{\reals}{I}$
+        by \obv{real_squash_range_open_symmetric_unit}.
+    $\realUnsquash\in\funs{I}{\reals}$
+        by \obv{real_unsquash_typed_real}.
+    Show that for every $x\in\reals$ we have
+        $\apply{\realUnsquash}{\apply{\realSquash}{x}}=x$.
+    \begin{subproof}
+        Fix $x\in\reals$.
+        $(\realUnsquash\circ\realSquash)(x)
+            =(\identity{\reals})(x)$
+            by \obv{real_unsquash_after_squash}.
+        $(\realUnsquash\circ\realSquash)(x)
+            =\apply{\realUnsquash}{\apply{\realSquash}{x}}$
+            by \auto{circ_apply,funs_is_function,funs_ran,funs}.
+        $(\identity{\reals})(x)=x$ by \obv{id_apply}.
+    \end{subproof}
+    Hence $\realUnsquash$ is a left inverse of $\realSquash$
+        by \obv{leftinverse_from_to_iff}.
+    Hence $\realSquash$ is an injection
+        by \obv{leftinverse_implies_injection}.
+    Show that for every $u\in I$ we have
+        $\apply{\realSquash}{\apply{\realUnsquash}{u}}=u$.
+    \begin{subproof}
+        Fix $u\in I$.
+        $(\realSquash\circ\realUnsquash)(u)
+            =(\identity{I})(u)$
+            by \obv{real_squash_after_unsquash}.
+        $(\realSquash\circ\realUnsquash)(u)
+            =\apply{\realSquash}{\apply{\realUnsquash}{u}}$
+            by \auto{circ_apply,funs_is_function,funs_ran,funs}.
+        $(\identity{I})(u)=u$ by \obv{id_apply}.
+    \end{subproof}
+    Hence $\realUnsquash$ is a right inverse of $\realSquash$
+        by \obv{rightinverse_from_to_iff}.
+    Hence $\realSquash\in\surj{\reals}{I}$
+        by \obv{rightinverse_implies_surjection}.
+    Follows by \auto{bijections}.
+\end{proof}
+
+\begin{theorem}\label{real_squash_converse_eq_unsquash}
+    $\converse{\realSquash}=\realUnsquash$.
+\end{theorem}
+\begin{proof}
+    Let $I=\RealOpenSymmetricUnitInterval$.
+    $\realSquash\in\bijections{\reals}{I}$
+        by \obv{real_squash_bijection_open_symmetric_unit}.
+    Hence $\converse{\realSquash}\in\funs{I}{\reals}$
+        by \obv{bijective_converse_are_funs}.
+    $\realUnsquash\in\funs{I}{\reals}$
+        by \obv{real_unsquash_typed_real}.
+    Show that for every $u\in I$ we have
+        $(\converse{\realSquash})(u)=\apply{\realUnsquash}{u}$.
+    \begin{subproof}
+        Fix $u\in I$.
+        $\apply{\realUnsquash}{u}\in\reals$
+            by \obv{funs_type_apply}.
+        Show that $\apply{\realSquash}{\apply{\realUnsquash}{u}}=u$.
+        \begin{subproof}
+            $(\realSquash\circ\realUnsquash)(u)
+                =(\identity{I})(u)$
+                by \obv{real_squash_after_unsquash}.
+            $(\realSquash\circ\realUnsquash)(u)
+                =\apply{\realSquash}{\apply{\realUnsquash}{u}}$
+                by
+                \auto{circ_apply,funs_is_function,funs_ran,funs,real_squash_range_open_symmetric_unit,real_unsquash_typed_real}.
+            $(\identity{I})(u)=u$ by \obv{id_apply}.
+        \end{subproof}
+        Hence
+            $(\apply{\realUnsquash}{u},u)\in\realSquash$
+            by
+            \auto{function_apply_elim,funs_is_function,funs,real_squash_typed_real}.
+        Hence
+            $(u,\apply{\realUnsquash}{u})
+                \in\converse{\realSquash}$
+            by \auto{converse_iff}.
+        $\converse{\realSquash}$ is a function
+            by \obv{funs_is_function}.
+        Follows by \obv{function_apply_intro}.
+    \end{subproof}
+    Follows by \obv{typed_functions_equal_from_agreement}.
+\end{proof}
+
+\begin{theorem}\label{real_homeomorphic_to_open_symmetric_unit_interval}
+    $\realSquash$ is a homeomorphism from $\RealTopology$ to
+        $\RealOpenSymmetricUnitIntervalTopology$.
+\end{theorem}
+\begin{proof}
+    $\realSquash$ is continuous from $\RealTopology$ to
+        $\RealOpenSymmetricUnitIntervalTopology$
+        by \obv{real_squash_continuous_open_interval}.
+    $\carrier[\RealTopology]=\reals$
+        by \obv{real_topology_carrier}.
+    $\carrier[\RealOpenSymmetricUnitIntervalTopology]
+        =\RealOpenSymmetricUnitInterval$
+        by
+        \obv{real_open_symmetric_unit_interval_topology_carrier}.
+    Hence
+        $\realSquash\in\bijections{\carrier[\RealTopology]}
+            {\carrier[\RealOpenSymmetricUnitIntervalTopology]}$
+        by \obv{real_squash_bijection_open_symmetric_unit}.
+    $\converse{\realSquash}=\realUnsquash$
+        by \obv{real_squash_converse_eq_unsquash}.
+    Hence $\converse{\realSquash}$ is continuous from
+        $\RealOpenSymmetricUnitIntervalTopology$ to $\RealTopology$
+        by \obv{real_unsquash_continuous}.
+    Follows by \obv{homeomorphism}.
+\end{proof}

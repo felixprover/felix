@@ -1,0 +1,636 @@
+\section{Bounded subsets of the surreal real line}
+
+\import{function.tex}
+\import{set/finite.tex}
+\import{set/finite-ordinal.tex}
+\import{surreal/embedding.tex}
+\import{surreal/real.tex}
+\import{surreal/real-order.tex}
+\import{surreal/absolute-value.tex}
+\import{surreal/real-metric.tex}
+\import{topology/metric.tex}
+
+\begin{definition}\label{real_bounded}
+    $S$ is real bounded iff
+        $S\subseteq\reals$ and there exists $M\in\reals$ such that
+            $\surrealLe{\surrealZero}{M}$ and
+            for every $x\in S$ we have $\surrealLe{\abs{x}}{M}$.
+\end{definition}
+
+\begin{proposition}\label{empty_real_set_is_bounded}
+    $\emptyset$ is real bounded.
+\end{proposition}
+\begin{proof}
+    $\emptyset\subseteq\reals$ by \obv{emptyset_subseteq}.
+    $\surrealZero\in\reals$ by \obv{surreal_zero_is_real}.
+    $\surrealLe{\surrealZero}{\surrealZero}$
+        by \obv{surreal_le_reflexive,empty_surreal}.
+    For every $x\in\emptyset$ we have
+        $\surrealLe{\abs{x}}{\surrealZero}$ by \auto{emptyset}.
+    Follows by \obv{real_bounded}.
+\end{proof}
+
+\begin{proposition}\label{singleton_real_set_is_bounded}
+    Let $x\in\reals$.
+    Then $\{x\}$ is real bounded.
+\end{proposition}
+\begin{proof}
+    $\{x\}\subseteq\reals$ by \obv{singleton_subset_intro}.
+    $\abs{x}\in\reals$ by \obv{surreal_real_abs_closed}.
+    $\surrealLe{\surrealZero}{\abs{x}}$ by
+        \obv{surreal_abs_nonnegative_value,surreal_real_is_surreal}.
+    For every $y\in\{x\}$ we have
+        $\surrealLe{\abs{y}}{\abs{x}}$
+        by \auto{singleton_iff,surreal_le_reflexive,
+            surreal_abs_is_surreal,surreal_real_is_surreal}.
+    Follows by \obv{real_bounded}.
+\end{proof}
+
+\begin{theorem}\label{subset_of_real_bounded_is_bounded}
+    Suppose $T$ is real bounded and $S\subseteq T$.
+    Then $S$ is real bounded.
+\end{theorem}
+\begin{proof}
+    $T\subseteq\reals$ by \obv{real_bounded}.
+    Hence $S\subseteq\reals$ by \obv{subseteq_transitive}.
+    Take $M\in\reals$ such that $\surrealLe{\surrealZero}{M}$ and
+        for every $x\in T$ we have $\surrealLe{\abs{x}}{M}$
+        by \obv{real_bounded}.
+    For every $x\in S$ we have $\surrealLe{\abs{x}}{M}$
+        by \obv{subseteq}.
+    Follows by \obv{real_bounded}.
+\end{proof}
+
+\begin{theorem}\label{real_bounded_union}
+    Suppose $S$ and $T$ are real bounded.
+    Then $S\union T$ is real bounded.
+\end{theorem}
+\begin{proof}
+    $S,T\subseteq\reals$ by \obv{real_bounded}.
+    Hence $S\union T\subseteq\reals$ by \auto{subseteq_union_iff}.
+    Take $M\in\reals$ such that $\surrealLe{\surrealZero}{M}$ and
+        for every $x\in S$ we have $\surrealLe{\abs{x}}{M}$
+        by \obv{real_bounded}.
+    Take $N\in\reals$ such that $\surrealLe{\surrealZero}{N}$ and
+        for every $x\in T$ we have $\surrealLe{\abs{x}}{N}$
+        by \obv{real_bounded}.
+    Let $K=\surrealAdd{M}{N}$.
+    $K\in\reals$ by \auto{surreal_real_addition_closed}.
+    $\surrealLe{\surrealAdd{\surrealZero}{\surrealZero}}{K}$ by
+        \obv{surreal_add_le_both,surreal_real_is_surreal,empty_surreal}.
+    $\surrealAdd{\surrealZero}{\surrealZero}=\surrealZero$
+        by \obv{surreal_add_zero_left,empty_surreal}.
+    Hence $\surrealLe{\surrealZero}{K}$.
+    Show that for every $x\in S\union T$ we have
+        $\surrealLe{\abs{x}}{K}$.
+    \begin{subproof}
+        Fix $x\in S\union T$.
+        $x\in S$ or $x\in T$ by \obv{union_iff}.
+        \begin{byCase}
+            \caseOf{$x\in S$.}
+                $x\in\reals$ by \obv{subseteq}.
+                Hence $\surreal{x}$ and $\surreal{\abs{x}}$ and
+                    $\surreal{M}$ and $\surreal{K}$ by
+                    \obv{surreal_real_is_surreal,surreal_abs_is_surreal}.
+                $\surrealLe{\abs{x}}{M}$.
+                $\surrealLe{\surrealAdd{M}{\surrealZero}}{K}$ by
+                    \obv{surreal_add_le_right,surreal_real_is_surreal,
+                        empty_surreal}.
+                $\surrealAdd{M}{\surrealZero}=M$ by
+                    \obv{surreal_add_zero_right,surreal_real_is_surreal}.
+                Hence $\surrealLe{M}{K}$.
+                Follows by
+                    \obv{surreal_le_transitive,surreal_real_is_surreal,
+                        surreal_abs_is_surreal}.
+            \caseOf{$x\in T$.}
+                $x\in\reals$ by \obv{subseteq}.
+                Hence $\surreal{x}$ and $\surreal{\abs{x}}$ and
+                    $\surreal{N}$ and $\surreal{K}$ by
+                    \obv{surreal_real_is_surreal,surreal_abs_is_surreal}.
+                $\surrealLe{\abs{x}}{N}$.
+                $\surrealLe{\surrealAdd{\surrealZero}{N}}{K}$ by
+                    \obv{surreal_add_le_left,surreal_real_is_surreal,
+                        empty_surreal}.
+                $\surrealAdd{\surrealZero}{N}=N$ by
+                    \obv{surreal_add_zero_left,surreal_real_is_surreal}.
+                Hence $\surrealLe{N}{K}$.
+                Follows by
+                    \obv{surreal_le_transitive,surreal_real_is_surreal,
+                        surreal_abs_is_surreal}.
+        \end{byCase}
+    \end{subproof}
+    Follows by \obv{real_bounded}.
+\end{proof}
+
+\begin{theorem}\label{unions_of_finite_real_bounded_family}
+    Suppose $F$ is finite and every element of $F$ is real bounded.
+    Then $\unions{F}$ is real bounded.
+\end{theorem}
+\begin{proof}
+    Let $C=\{G\in\pow{F}\mid
+        \text{$\unions{G}$ is real bounded}\}$.
+    $\emptyset\in\pow{F}$ by \obv{powerset_bottom}.
+    $\unions{\emptyset}=\emptyset$ by \obv{unions_emptyset}.
+    Hence $\unions{\emptyset}$ is real bounded by
+        \obv{empty_real_set_is_bounded}.
+    Thus $\emptyset\in C$.
+    Show that for all $G,S$ such that $G\in C$ and $S\in F$ we have
+        $\cons{S}{G}\in C$.
+    \begin{subproof}
+        Fix $G,S$.
+        Assume $G\in C$ and $S\in F$.
+        Hence $G\subseteq F$ and $\unions{G}$ is real bounded by
+            \obv{powerset_elim}.
+        $S$ is real bounded.
+        Hence $S\union\unions{G}$ is real bounded by
+            \obv{real_bounded_union}.
+        $\unions{\cons{S}{G}}=S\union\unions{G}$ by
+            \obv{unions_cons}.
+        Hence $\unions{\cons{S}{G}}$ is real bounded.
+        $\cons{S}{G}\subseteq F$ by \obv{cons_subseteq_intro}.
+        Thus $\cons{S}{G}\in\pow{F}$ by \obv{powerset_intro}.
+    \end{subproof}
+    Hence $F\in C$ by \obv{finite_induction}.
+\end{proof}
+
+\begin{proposition}\label{real_bounded_cons}
+    Suppose $S$ is real bounded and $x\in\reals$.
+    Then $\cons{x}{S}$ is real bounded.
+\end{proposition}
+\begin{proof}
+    $\{x\}$ is real bounded by \obv{singleton_real_set_is_bounded}.
+    $\cons{x}{S}=\{x\}\union S$ by
+        \auto{setext,cons_iff,union_iff,singleton_iff}.
+    Follows by \obv{real_bounded_union}.
+\end{proof}
+
+\begin{theorem}\label{finite_real_set_is_bounded}
+    Suppose $S\subseteq\reals$ and $S$ is finite.
+    Then $S$ is real bounded.
+\end{theorem}
+\begin{proof}
+    Let $C=\{T\in\pow{S}\mid \text{$T$ is real bounded}\}$.
+    $\emptyset\in C$ by
+        \obv{powerset_bottom,empty_real_set_is_bounded}.
+    Show that for all $T,x$ such that $T\in C$ and $x\in S$ we have
+        $\cons{x}{T}\in C$.
+    \begin{subproof}
+        Fix $T,x$.
+        Assume $T\in C$ and $x\in S$.
+        Hence $T\subseteq S$ and $T$ is real bounded by
+            \obv{powerset_elim}.
+        $x\in\reals$ by \obv{subseteq}.
+        Hence $\cons{x}{T}$ is real bounded by \obv{real_bounded_cons}.
+        $\cons{x}{T}\subseteq S$ by \obv{cons_subseteq_intro}.
+        Hence $\cons{x}{T}\in\pow{S}$ by \obv{powerset_intro}.
+    \end{subproof}
+    $S\in C$ by \obv{finite_induction}.
+\end{proof}
+
+\begin{theorem}\label{real_bounded_iff_has_natural_bound}
+    Suppose $S\subseteq\reals$.
+    Then $S$ is real bounded iff there exists a natural number $N$ such that
+        for every $x\in S$ we have
+            $\surrealLe{\abs{x}}{\ordinalSurreal{N}}$.
+\end{theorem}
+\begin{proof}
+    Show that if $S$ is real bounded, then there exists a natural number
+        $N$ such that for every $x\in S$ we have
+            $\surrealLe{\abs{x}}{\ordinalSurreal{N}}$.
+    \begin{subproof}
+        Assume $S$ is real bounded.
+        Take $M\in\reals$ such that $\surrealLe{\surrealZero}{M}$ and
+            for every $x\in S$ we have $\surrealLe{\abs{x}}{M}$
+            by \obv{real_bounded}.
+        $\surrealOne\in\reals$ by \obv{surreal_one_is_real}.
+        $\surrealLt{\surrealZero}{\surrealOne}$
+            by \obv{surreal_zero_lt_one}.
+        Take $N\in\naturals$ such that
+            $\surrealLe{M}{
+                \surrealMul{\ordinalSurreal{N}}{\surrealOne}}$
+            by \obv{surreal_reals_archimedean}.
+        $\surreal{\ordinalSurreal{N}}$ by
+            \obv{ordinal_surreal_is_surreal,natural_number_is_ordinal}.
+        $\surrealMul{\ordinalSurreal{N}}{\surrealOne}
+            =\ordinalSurreal{N}$ by \obv{surreal_mul_one_right}.
+        Hence $\surrealLe{M}{\ordinalSurreal{N}}$.
+        Show that for every $x\in S$ we have
+            $\surrealLe{\abs{x}}{\ordinalSurreal{N}}$.
+        \begin{subproof}
+            Fix $x\in S$.
+            $x\in\reals$ by \obv{subseteq}.
+            Hence $\surreal{\abs{x}}$ and $\surreal{M}$ and
+                $\surreal{\ordinalSurreal{N}}$ by
+                \obv{surreal_real_is_surreal,surreal_abs_is_surreal}.
+            $\surrealLe{\abs{x}}{M}$.
+            Follows by \obv{surreal_le_transitive}.
+        \end{subproof}
+        Follows by \auto.
+    \end{subproof}
+    Show that if there exists a natural number $N$ such that
+        for every $x\in S$ we have
+            $\surrealLe{\abs{x}}{\ordinalSurreal{N}}$, then
+        $S$ is real bounded.
+    \begin{subproof}
+        Assume there exists a natural number $N$ such that
+            for every $x\in S$ we have
+                $\surrealLe{\abs{x}}{\ordinalSurreal{N}}$.
+        Take $N\in\naturals$ such that for every $x\in S$ we have
+            $\surrealLe{\abs{x}}{\ordinalSurreal{N}}$.
+        $\ordinalSurreal{N}\in\reals$ by
+            \obv{natural_ordinal_surreal_is_real}.
+        $\emptyset\subseteq N$ by \obv{emptyset_subseteq}.
+        Hence $\surrealLe{\ordinalSurreal{\emptyset}}
+            {\ordinalSurreal{N}}$ by
+            \obv{ordinal_surreal_le_iff,emptyset_is_ordinal,
+                natural_number_is_ordinal}.
+        $\ordinalSurreal{\emptyset}=\surrealZero$ by
+            \obv{empty_ordinal_surreal}.
+        Hence $\surrealLe{\surrealZero}{\ordinalSurreal{N}}$.
+        Follows by \obv{real_bounded}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{finite_real_set_has_natural_bound}
+    Suppose $S\subseteq\reals$ and $S$ is finite.
+    Then there exists a natural number $N$ such that for every $x\in S$
+        we have $\surrealLe{\abs{x}}{\ordinalSurreal{N}}$.
+\end{theorem}
+\begin{proof}
+    $S$ is real bounded by \obv{finite_real_set_is_bounded}.
+    Follows by \obv{real_bounded_iff_has_natural_bound}.
+\end{proof}
+
+\begin{theorem}\label{real_set_unbounded_iff_exceeds_every_natural}
+    Suppose $S\subseteq\reals$.
+    Then $S$ is not real bounded iff for every natural number $N$
+        there exists $x\in S$ such that
+            $\surrealLt{\ordinalSurreal{N}}{\abs{x}}$.
+\end{theorem}
+\begin{proof}
+    Show that if $S$ is not real bounded, then for every natural number
+        $N$ there exists $x\in S$ such that
+            $\surrealLt{\ordinalSurreal{N}}{\abs{x}}$.
+    \begin{subproof}
+        Assume $S$ is not real bounded.
+        Fix $N\in\naturals$.
+        Suppose not.
+        Show that for every $x\in S$ we have
+            $\surrealLe{\abs{x}}{\ordinalSurreal{N}}$.
+        \begin{subproof}
+            Fix $x\in S$.
+            $x\in\reals$ by \obv{subseteq}.
+            Hence $\surreal{\abs{x}}$ by
+                \obv{surreal_real_is_surreal,surreal_abs_is_surreal}.
+            $\surreal{\ordinalSurreal{N}}$ by
+                \obv{ordinal_surreal_is_surreal,natural_number_is_ordinal}.
+            Not $\surrealLt{\ordinalSurreal{N}}{\abs{x}}$
+                by \auto.
+            Follows by \obv{surreal_lt_trichotomy,surreal_le}.
+        \end{subproof}
+        Hence $S$ is real bounded by
+            \auto{real_bounded_iff_has_natural_bound}.
+        Contradiction.
+    \end{subproof}
+    Show that if for every natural number $N$ there exists $x\in S$
+        such that $\surrealLt{\ordinalSurreal{N}}{\abs{x}}$, then
+        $S$ is not real bounded.
+    \begin{subproof}
+        Assume for every natural number $N$ there exists $x\in S$
+            such that $\surrealLt{\ordinalSurreal{N}}{\abs{x}}$.
+        Suppose $S$ is real bounded.
+        Take $N\in\naturals$ such that for every $x\in S$ we have
+            $\surrealLe{\abs{x}}{\ordinalSurreal{N}}$
+            by \obv{real_bounded_iff_has_natural_bound}.
+        Take $x\in S$ such that
+            $\surrealLt{\ordinalSurreal{N}}{\abs{x}}$.
+        $x\in\reals$ by \obv{subseteq}.
+        Hence $\surreal{\abs{x}}$ and $\surreal{\ordinalSurreal{N}}$ by
+            \obv{surreal_real_is_surreal,surreal_abs_is_surreal,
+                ordinal_surreal_is_surreal,natural_number_is_ordinal}.
+        $\surrealLe{\abs{x}}{\ordinalSurreal{N}}$.
+        Contradiction by \auto{surreal_le,surreal_lt_asymmetric,
+            surreal_lt_irreflexive}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{corollary}\label{function_image_unbounded_iff_large_values}
+    Let $f\in\funs{X}{\reals}$.
+    Let $D\subseteq X$.
+    Then $\img{f}{D}$ is not real bounded iff for every natural number
+        $N$ there exists $x\in D$ such that
+            $\surrealLt{\ordinalSurreal{N}}{\abs{f(x)}}$.
+\end{corollary}
+\begin{proof}
+    $f$ is a function and $\dom{f}=X$ by
+        \obv{funs_is_function,funs}.
+    Show that for every $y\in\img{f}{D}$ we have $y\in\reals$.
+    \begin{subproof}
+        Fix $y\in\img{f}{D}$.
+        Take $x\in\dom{f}\inter D$ such that $y=f(x)$ by
+            \obv{img_of_function_elim}.
+        $x\in D$ and $x\in\dom{f}$ by \obv{inter}.
+        Hence $x\in X$.
+        Hence $f(x)\in\reals$ by \obv{funs_type_apply}.
+    \end{subproof}
+    Hence $\img{f}{D}\subseteq\reals$ by \obv{subseteq}.
+    Show that if $\img{f}{D}$ is not real bounded, then for every
+        natural number $N$ there exists $x\in D$ such that
+            $\surrealLt{\ordinalSurreal{N}}{\abs{f(x)}}$.
+    \begin{subproof}
+        Assume $\img{f}{D}$ is not real bounded.
+        Fix $N\in\naturals$.
+        Take $y\in\img{f}{D}$ such that
+            $\surrealLt{\ordinalSurreal{N}}{\abs{y}}$
+            by \auto{real_set_unbounded_iff_exceeds_every_natural}.
+        Take $x\in\dom{f}\inter D$ such that $y=f(x)$ by
+            \obv{img_of_function_elim}.
+        Hence $x\in D$ by \obv{inter}.
+    \end{subproof}
+    Show that if for every natural number $N$ there exists $x\in D$
+        such that $\surrealLt{\ordinalSurreal{N}}{\abs{f(x)}}$, then
+        $\img{f}{D}$ is not real bounded.
+    \begin{subproof}
+        Assume for every natural number $N$ there exists $x\in D$
+            such that $\surrealLt{\ordinalSurreal{N}}{\abs{f(x)}}$.
+        Show that for every natural number $N$ there exists
+            $y\in\img{f}{D}$ such that
+                $\surrealLt{\ordinalSurreal{N}}{\abs{y}}$.
+        \begin{subproof}
+            Fix $N\in\naturals$.
+            Take $x\in D$ such that
+                $\surrealLt{\ordinalSurreal{N}}{\abs{f(x)}}$.
+            $x\in\dom{f}$ by \obv{subseteq}.
+            Hence $x\in\dom{f}\inter D$ by \obv{inter}.
+            Hence $f(x)\in\img{f}{D}$ by
+                \obv{img_of_function_intro}.
+        \end{subproof}
+        Follows by \obv{real_set_unbounded_iff_exceeds_every_natural}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{definition}\label{natural_real_embedding}
+    $\naturalRealEmbedding=
+        \{(n,\ordinalSurreal{n})\mid n\in\naturals\}$.
+\end{definition}
+
+\begin{proposition}\label{natural_real_embedding_membership}
+    $(n,x)\in\naturalRealEmbedding$ iff
+        $n\in\naturals$ and $x=\ordinalSurreal{n}$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{natural_real_embedding,pair_eq_iff}.
+\end{proof}
+
+\begin{proposition}\label{natural_real_embedding_type}
+    $\naturalRealEmbedding\in\funs{\naturals}{\reals}$.
+\end{proposition}
+\begin{proof}
+    $\naturalRealEmbedding$ is a relation by
+        \auto{relation,natural_real_embedding}.
+    $\naturalRealEmbedding$ is right-unique by
+        \auto{rightunique,natural_real_embedding_membership}.
+    $\dom{\naturalRealEmbedding}=\naturals$ by
+        \auto{setext,dom_iff,natural_real_embedding_membership}.
+    For every $n\in\dom{\naturalRealEmbedding}$ we have
+        $\apply{\naturalRealEmbedding}{n}\in\reals$ by
+        \auto{function_apply_elim,natural_real_embedding_membership,
+            natural_ordinal_surreal_is_real}.
+    Hence $\naturalRealEmbedding$ is a function to $\reals$.
+    Follows by \obv{funs_intro}.
+\end{proof}
+
+\begin{proposition}\label{natural_real_embedding_application}
+    Let $n\in\naturals$.
+    Then $\apply{\naturalRealEmbedding}{n}=\ordinalSurreal{n}$.
+\end{proposition}
+\begin{proof}
+    $\naturalRealEmbedding$ is a function by
+        \obv{natural_real_embedding_type,funs_is_function}.
+    $(n,\ordinalSurreal{n})\in\naturalRealEmbedding$ by
+        \obv{natural_real_embedding_membership}.
+    Follows by \obv{function_apply_intro}.
+\end{proof}
+
+\begin{proposition}\label{natural_real_embedding_injective}
+    $\naturalRealEmbedding$ is injective.
+\end{proposition}
+\begin{proof}
+    $\naturalRealEmbedding$ is a function and
+        $\dom{\naturalRealEmbedding}=\naturals$ by
+        \obv{natural_real_embedding_type,funs_is_function,funs}.
+    Show that for all $m,n\in\dom{\naturalRealEmbedding}$ such that
+        $\apply{\naturalRealEmbedding}{m}
+            =\apply{\naturalRealEmbedding}{n}$ we have
+        $m=n$.
+    \begin{subproof}
+        Fix $m,n\in\dom{\naturalRealEmbedding}$.
+        Assume $\apply{\naturalRealEmbedding}{m}
+            =\apply{\naturalRealEmbedding}{n}$.
+        Hence $m,n\in\naturals$.
+        $\apply{\naturalRealEmbedding}{m}=\ordinalSurreal{m}$ and
+            $\apply{\naturalRealEmbedding}{n}=\ordinalSurreal{n}$ by
+            \obv{natural_real_embedding_application}.
+        Hence $\ordinalSurreal{m}=\ordinalSurreal{n}$.
+        $m$ and $n$ are ordinals by \obv{natural_number_is_ordinal}.
+        Follows by \obv{ordinal_surreal_injective}.
+    \end{subproof}
+    Follows by \obv{injective_function}.
+\end{proof}
+
+\begin{theorem}\label{natural_real_embedding_is_injection}
+    $\naturalRealEmbedding\in\inj{\naturals}{\reals}$.
+\end{theorem}
+\begin{proof}
+    $\naturalRealEmbedding\in\funs{\naturals}{\reals}$ by
+        \obv{natural_real_embedding_type}.
+    $\naturalRealEmbedding$ is a function and
+        $\dom{\naturalRealEmbedding}=\naturals$ by
+        \obv{funs_is_function,funs}.
+    For all $m,n\in\naturals$ such that
+        $\apply{\naturalRealEmbedding}{m}
+            =\apply{\naturalRealEmbedding}{n}$ we have $m=n$ by
+        \auto{natural_real_embedding_injective,injective_function}.
+    Follows by \obv{inj}.
+\end{proof}
+
+\begin{theorem}\label{natural_real_embedding_range_unbounded}
+    $\ran{\naturalRealEmbedding}$ is not real bounded.
+\end{theorem}
+\begin{proof}
+    $\naturalRealEmbedding\in\funs{\naturals}{\reals}$
+        by \obv{natural_real_embedding_type}.
+    Hence $\ran{\naturalRealEmbedding}\subseteq\reals$
+        by \obv{funs_ran}.
+    Show that for every natural number $N$ there exists
+        $x\in\ran{\naturalRealEmbedding}$ such that
+            $\surrealLt{\ordinalSurreal{N}}{\abs{x}}$.
+    \begin{subproof}
+        Fix $N\in\naturals$.
+        $\suc{N}\in\naturals$ by \obv{omega_successor}.
+        Hence $\apply{\naturalRealEmbedding}{\suc{N}}
+            \in\ran{\naturalRealEmbedding}$ by
+            \auto{natural_real_embedding_type,funs_is_function,funs,
+                fun_ran_iff}.
+        $\apply{\naturalRealEmbedding}{\suc{N}}=
+            \ordinalSurreal{\suc{N}}$ by
+            \obv{natural_real_embedding_application}.
+        $\surrealLe{\surrealZero}{\ordinalSurreal{\suc{N}}}$ by
+            \auto{ordinal_surreal_le_iff,empty_ordinal_surreal,
+                emptyset_subseteq,emptyset_is_ordinal,suc_ordinal,
+                natural_number_is_ordinal}.
+        Hence $\abs{\ordinalSurreal{\suc{N}}}
+            =\ordinalSurreal{\suc{N}}$ by
+            \obv{surreal_abs_nonnegative,ordinal_surreal_is_surreal,
+                suc_ordinal,natural_number_is_ordinal}.
+        $\surrealLt{\ordinalSurreal{N}}
+            {\ordinalSurreal{\suc{N}}}$ by
+            \auto{ordinal_surreal_lt_iff,suc_intro_self,
+                natural_number_is_ordinal,suc_ordinal}.
+        Follows by \auto.
+    \end{subproof}
+    Follows by \obv{real_set_unbounded_iff_exceeds_every_natural}.
+\end{proof}
+
+\begin{lemma}\label{real_unit_close_to_bounded_is_bounded}
+    Suppose $x,y,M\in\reals$.
+    Suppose $\surrealLe{\surrealZero}{M}$.
+    Suppose $\surrealLe{\abs{y}}{M}$.
+    Suppose
+        $\surrealLt{\metricDistance[\RealMetric](x,y)}{\surrealOne}$.
+    Then $\surrealLe{\abs{x}}{\surrealAdd{M}{\surrealOne}}$.
+\end{lemma}
+\begin{proof}
+    $\surreal{x}$ and $\surreal{y}$ and $\surreal{M}$ and
+        $\surreal{\surrealOne}$ by
+        \obv{surreal_real_is_surreal,surreal_one_is_surreal}.
+    Let $d=\abs{\surrealAdd{x}{\surrealNeg{y}}}$.
+    $\metricDistance[\RealMetric](x,y)=d$ by
+        \obv{surreal_real_metric_distance}.
+    Hence $\surrealLt{d}{\surrealOne}$.
+    $\surreal{d}$ by
+        \obv{surreal_abs_is_surreal,surreal_add_is_surreal,
+            surreal_negation_is_surreal}.
+    Hence $\surrealLe{d}{\surrealOne}$ by \obv{surreal_le}.
+    $\surrealAdd{\surrealAdd{x}{\surrealNeg{y}}}{y}=x$ by
+        \obv{surreal_add_negated_cancel_right}.
+    Hence $\abs{x}=\abs{
+        \surrealAdd{\surrealAdd{x}{\surrealNeg{y}}}{y}}$.
+    $\surrealLe{\abs{
+        \surrealAdd{\surrealAdd{x}{\surrealNeg{y}}}{y}}}
+        {\surrealAdd{d}{\abs{y}}}$ by
+        \auto{surreal_abs_triangle,surreal_add_is_surreal,
+            surreal_negation_is_surreal}.
+    Hence $\surrealLe{\abs{x}}{\surrealAdd{d}{\abs{y}}}$.
+    $\surreal{\abs{y}}$ by
+        \obv{surreal_abs_is_surreal,surreal_real_is_surreal}.
+    $\surrealLe{\surrealAdd{d}{\abs{y}}}
+        {\surrealAdd{\surrealOne}{M}}$ by
+        \obv{surreal_add_le_both}.
+    $\surrealAdd{\surrealOne}{M}=\surrealAdd{M}{\surrealOne}$ by
+        \obv{surreal_add_commutative}.
+    Hence $\surrealLe{\surrealAdd{d}{\abs{y}}}
+        {\surrealAdd{M}{\surrealOne}}$.
+    Follows by \auto{surreal_le_transitive,surreal_add_is_surreal,
+        surreal_abs_is_surreal}.
+\end{proof}
+
+\begin{lemma}\label{real_unit_ball_has_natural_absolute_bound}
+    Let $a\in\reals$.
+    Then there exists a natural number $N$ such that for every
+        $x\in\reals$ we have if
+            $\surrealLt{\metricDistance[\RealMetric](a,x)}{\surrealOne}$,
+        then $\surrealLe{\abs{x}}{\ordinalSurreal{N}}$.
+\end{lemma}
+\begin{proof}
+    $\abs{a}\in\reals$ by \obv{surreal_real_abs_closed}.
+    $\surrealOne\in\reals$ by \obv{surreal_one_is_real}.
+    Let $K=\surrealAdd{\abs{a}}{\surrealOne}$.
+    $K\in\reals$ by \auto{surreal_real_addition_closed}.
+    $\surrealLe{\surrealZero}{\abs{a}}$ by
+        \obv{surreal_abs_nonnegative_value,surreal_real_is_surreal}.
+    $\surrealLe{\surrealZero}{\surrealOne}$ by
+        \obv{surreal_zero_lt_one,surreal_le}.
+    Hence $\surrealLe{
+        \surrealAdd{\surrealZero}{\surrealZero}}{K}$ by
+        \obv{surreal_add_le_both,empty_surreal,surreal_abs_is_surreal,
+            surreal_real_is_surreal,surreal_one_is_surreal}.
+    $\surrealAdd{\surrealZero}{\surrealZero}=\surrealZero$ by
+        \obv{surreal_add_zero_left,empty_surreal}.
+    Hence $\surrealLe{\surrealZero}{K}$.
+    $\surrealLt{\surrealZero}{\surrealOne}$ by
+        \obv{surreal_zero_lt_one}.
+    Take $N\in\naturals$ such that
+        $\surrealLe{K}{
+            \surrealMul{\ordinalSurreal{N}}{\surrealOne}}$
+        by \obv{surreal_reals_archimedean}.
+    $\surreal{\ordinalSurreal{N}}$ by
+        \obv{ordinal_surreal_is_surreal,natural_number_is_ordinal}.
+    $\surrealMul{\ordinalSurreal{N}}{\surrealOne}
+        =\ordinalSurreal{N}$ by \obv{surreal_mul_one_right}.
+    Hence $\surrealLe{K}{\ordinalSurreal{N}}$.
+    Show that for every $x\in\reals$ we have if
+        $\surrealLt{\metricDistance[\RealMetric](a,x)}{\surrealOne}$,
+        then $\surrealLe{\abs{x}}{\ordinalSurreal{N}}$.
+    \begin{subproof}
+        Fix $x\in\reals$.
+        Assume
+            $\surrealLt{\metricDistance[\RealMetric](a,x)}{\surrealOne}$.
+        $\RealMetric$ is a metric space by
+            \obv{surreal_real_metric_space}.
+        $a,x\in\carrier[\RealMetric]$ by
+            \obv{surreal_real_metric_carrier}.
+        $\metricDistance[\RealMetric](x,a)
+            =\metricDistance[\RealMetric](a,x)$ by
+            \obv{metric_distance_symmetric}.
+        Hence $\surrealLt{\metricDistance[\RealMetric](x,a)}
+            {\surrealOne}$.
+        $\surrealLe{\abs{a}}{\abs{a}}$ by
+            \obv{surreal_le_reflexive,surreal_abs_is_surreal,
+                surreal_real_is_surreal}.
+        $\surrealLe{\abs{x}}{
+            \surrealAdd{\abs{a}}{\surrealOne}}$ by
+            \obv{real_unit_close_to_bounded_is_bounded}.
+        Hence $\surrealLe{\abs{x}}{K}$.
+        $\surreal{\abs{x}}$ and $\surreal{K}$ and
+            $\surreal{\ordinalSurreal{N}}$ by
+            \obv{surreal_real_is_surreal,surreal_abs_is_surreal}.
+        Follows by \obv{surreal_le_transitive}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{proposition}\label{real_unit_ball_is_bounded}
+    Let $a\in\reals$.
+    Then $\metricBall{\RealMetric}{a}{\surrealOne}$ is real bounded.
+\end{proposition}
+\begin{proof}
+    $\metricBall{\RealMetric}{a}{\surrealOne}
+        \subseteq\carrier[\RealMetric]$ by
+        \obv{metric_ball_subset_carrier}.
+    $\carrier[\RealMetric]=\reals$ by
+        \obv{surreal_real_metric_carrier}.
+    Hence $\metricBall{\RealMetric}{a}{\surrealOne}
+        \subseteq\reals$.
+    Take $N\in\naturals$ such that for every $x\in\reals$ we have if
+        $\surrealLt{\metricDistance[\RealMetric](a,x)}{\surrealOne}$,
+        then $\surrealLe{\abs{x}}{\ordinalSurreal{N}}$ by
+        \obv{real_unit_ball_has_natural_absolute_bound}.
+    Show that for every
+        $x\in\metricBall{\RealMetric}{a}{\surrealOne}$ we have
+        $\surrealLe{\abs{x}}{\ordinalSurreal{N}}$.
+    \begin{subproof}
+        Fix $x\in\metricBall{\RealMetric}{a}{\surrealOne}$.
+        $\surrealLt{\metricDistance[\RealMetric](a,x)}{\surrealOne}$
+            by \obv{metric_ball}.
+    \end{subproof}
+    $\metricBall{\RealMetric}{a}{\surrealOne}$ is real bounded iff
+        there exists a natural number $n$ such that for every
+        $x\in\metricBall{\RealMetric}{a}{\surrealOne}$ we have
+        $\surrealLe{\abs{x}}{\ordinalSurreal{n}}$ by
+        \obv{real_bounded_iff_has_natural_bound}.
+    Follows by \auto.
+\end{proof}

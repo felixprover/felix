@@ -1,0 +1,618 @@
+\section{Compactness and ultrafilters}
+
+\import{set/relative-complement-family.tex}
+\import{topology/topological-space.tex}
+\import{topology/basis.tex}
+\import{topology/filter-convergence.tex}
+\import{set/ultrafilter.tex}
+
+Compactness is developed first through open covers, then through closed
+families with the proper finite-intersection property, and finally through
+ultrafilter convergence.  The relative-complement calculation connecting the
+first two viewpoints belongs to the preceding set-theoretic support module.
+
+\subsection{Open-cover compactness}
+
+\begin{definition}\label{open_cover}
+    $C$ is an open cover of $X$ iff
+        $X$ is a topological space and
+        $C\subseteq\opens[X]$ and $C$ covers $\carrier[X]$.
+\end{definition}
+
+\begin{definition}\label{is_compact}
+    Let $X$ be a topological space.
+    $X$ is compact iff for every open cover $C$ of $X$ there exists
+        a finite set $D$ such that $D\subseteq C$ and
+        $D$ covers $\carrier[X]$.
+\end{definition}
+
+Compactness is a property of topological spaces.  The declaration header
+supplies that domain directly; no separate ``compact space'' wrapper or
+off-domain covering predicate is needed.
+
+\begin{theorem}\label{finite_topological_space_is_compact}
+    Suppose $X$ is a topological space and $\carrier[X]$ is finite.
+    Then $X$ is compact.
+\end{theorem}
+\begin{proof}
+    Show that for every $C$ such that $C$ is an open cover of $X$
+        there exists a finite set $D$ such that $D\subseteq C$ and
+        $D$ covers $\carrier[X]$.
+    \begin{subproof}
+        Fix $C$.
+        Assume $C$ is an open cover of $X$.
+        Take $D$ such that $D$ is finite and $D\subseteq C$ and
+            $D$ covers $\carrier[X]$
+            by \auto{open_cover,finite_covered_set_has_finite_subcover}.
+    \end{subproof}
+    Follows by \obv{is_compact}.
+\end{proof}
+
+\begin{corollary}\label{empty_topological_space_is_compact}
+    Suppose $X$ is a topological space and $\carrier[X]=\emptyset$.
+    Then $X$ is compact.
+\end{corollary}
+\begin{proof}
+    $\carrier[X]$ is finite by \obv{emptyset_is_finite}.
+    Follows by \obv{finite_topological_space_is_compact}.
+\end{proof}
+
+\begin{theorem}\label{cofinite_neighbourhood_point_implies_compact}
+    Let $X$ be a topological space.
+    Let $p\in\carrier[X]$.
+    Suppose for every $U\in\opens[X]$ such that $p\in U$ we have
+        $\carrier[X]\setminus U$ is finite.
+    Then $X$ is compact.
+\end{theorem}
+\begin{proof}
+    Show that for every $C$ such that $C$ is an open cover of $X$
+        there exists a finite set $E$ such that $E\subseteq C$ and
+            $E$ covers $\carrier[X]$.
+    \begin{subproof}
+        Fix $C$.
+        Assume $C$ is an open cover of $X$.
+        $C$ covers $\carrier[X]$ by \obv{open_cover}.
+        Take $U\in C$ such that $p\in U$.
+        $C\subseteq\opens[X]$ by \obv{open_cover}.
+        Hence $U\in\opens[X]$ by \obv{subseteq}.
+        Let $K=\carrier[X]\setminus U$.
+        $K$ is finite.
+        $K\subseteq\carrier[X]$ by \auto{setminus_subseteq}.
+        Show that $C$ covers $K$.
+        \begin{subproof}
+            Show that for every $x\in K$ there exists $V\in C$
+                such that $x\in V$.
+            \begin{subproof}
+                Fix $x\in K$.
+                Hence $x\in\carrier[X]$ by \obv{subseteq}.
+            \end{subproof}
+        \end{subproof}
+        Take $D$ such that $D$ is finite and $D\subseteq C$ and
+            $D$ covers $K$
+            by \auto{finite_covered_set_has_finite_subcover}.
+        Let $E=\cons{U}{D}$.
+        $E$ is finite by \obv{finite_cons}.
+        $E\subseteq C$ by \auto{cons_subseteq_intro}.
+        Show that $E$ covers $\carrier[X]$.
+        \begin{subproof}
+            Show that for every $x\in\carrier[X]$ there exists $V\in E$
+                such that $x\in V$.
+            \begin{subproof}
+                Fix $x\in\carrier[X]$.
+                \begin{byCase}
+                    \caseOf{$x\in U$.}
+                        $U\in E$ by \obv{cons_left}.
+                    \caseOf{$x\notin U$.}
+                        Hence $x\in K$ by \obv{setminus}.
+                        Take $V\in D$ such that $x\in V$.
+                        $V\in E$ by \auto{cons_iff}.
+                \end{byCase}
+            \end{subproof}
+        \end{subproof}
+    \end{subproof}
+    Follows by \obv{is_compact}.
+\end{proof}
+
+\subsection{Closed-family characterization}
+
+\begin{theorem}[Compactness and proper finite intersections]\label{compact_iff_closed_proper_finite_intersection_property}
+    Suppose $X$ is a topological space.
+    Then $X$ is compact iff for every $F$ such that
+        $F\subseteq\closeds{X}$ and $F$ has the proper finite intersection property
+        we have $\inters{F}$ is inhabited.
+\end{theorem}
+
+In the forward direction, complements turn a closed family with the
+proper finite intersection property into an open cover. Conversely,
+complements turn an open cover without a finite subcover into such a
+closed family. The empty-carrier case is separated where properness is
+needed.
+
+\begin{proof}
+    Show that if $X$ is compact, then for every $F$ such that
+        $F\subseteq\closeds{X}$ and $F$ has the proper finite intersection property
+        we have $\inters{F}$ is inhabited.
+    \begin{subproof}
+        Assume $X$ is compact.
+        Fix $F$.
+        Assume $F\subseteq\closeds{X}$ and
+            $F$ has the proper finite intersection property.
+        $F$ is inhabited by \obv{proper_finite_intersection_property}.
+        $F\subseteq\pow{\carrier[X]}$
+            by \auto{subseteq,closeds}.
+        Let $C=\relativeComplements{\carrier[X]}{F}$.
+        Show that $C\subseteq\opens[X]$.
+        \begin{subproof}
+            It suffices to show that every element of $C$ is an element of
+                $\opens[X]$ by \obv{subseteq}.
+            Fix $U\in C$.
+            Take $A\in F$ such that $U=\carrier[X]\setminus A$
+                by \obv{relative_complement_family}.
+            $A\in\closeds{X}$ by \obv{subseteq}.
+            Hence $A\in\pow{\carrier[X]}$ by \obv{closeds}.
+            Thus $A\subseteq\carrier[X]$ by \obv{pow_iff,subseteq}.
+            $A$ is closed in $X$ by \obv{is_closed_in}.
+            Thus $\carrier[X]\setminus A$ is open in $X$
+                by \obv{complement_of_closed_is_open}.
+            Hence $\carrier[X]\setminus A\in\opens[X]$
+                by \obv{is_open}.
+        \end{subproof}
+        Suppose not.
+        Hence $\inters{F}=\emptyset$ by \obv{nonempty_inhabited}.
+        Thus $\unions{C}=\carrier[X]$
+            by \auto{relative_complement_union_iff_intersection_empty}.
+        Hence $C$ covers $\carrier[X]$
+            by \auto{covers_unions_elim,subseteq_refl}.
+        Thus $C$ is an open cover of $X$ by \obv{open_cover}.
+        Take $D$ such that $D$ is finite and $D\subseteq C$ and
+            $D$ covers $\carrier[X]$ by \auto{is_compact}.
+
+        Take $A$ such that $A\in F$.
+        $\{A\}\subseteq F$ by \obv{singleton_subset_intro}.
+        $\{A\}$ is finite and inhabited
+            by \obv{singleton_is_finite,singleton_inhabited}.
+        Hence $\inters{\{A\}}\neq\emptyset$
+            by \auto{proper_finite_intersection_property,finite_intersection_property}.
+        $\inters{\{A\}}=A$ by \obv{inters_singleton}.
+        Thus $A$ is inhabited by \obv{nonempty_inhabited}.
+        $A\subseteq\carrier[X]$ by \auto{subseteq,pow_iff}.
+        Hence $\carrier[X]$ is inhabited by \obv{subseteq}.
+        Take $x$ such that $x\in\carrier[X]$.
+        Take $U\in D$ such that $x\in U$.
+        Thus $D$ is inhabited by \auto.
+
+        Let $G=\relativeComplements{\carrier[X]}{D}$.
+        $G$ is finite by \obv{relative_complement_family_finite}.
+        $G$ is inhabited by \auto{relative_complement_family}.
+        Show that $G\subseteq F$.
+        \begin{subproof}
+            It suffices to show that every element of $G$ is an element of
+                $F$ by \obv{subseteq}.
+            Fix $B\in G$.
+            Take $V\in D$ such that $B=\carrier[X]\setminus V$
+                by \obv{relative_complement_family}.
+            $V\in C$ by \obv{subseteq}.
+            Take $E\in F$ such that $V=\carrier[X]\setminus E$
+                by \obv{relative_complement_family}.
+            $E\subseteq\carrier[X]$ by \auto{subseteq,pow_iff}.
+            Hence $\carrier[X]\setminus(\carrier[X]\setminus E)=E$
+                by \obv{double_relative_complement}.
+            Thus $B=E$.
+        \end{subproof}
+        $D\subseteq\pow{\carrier[X]}$
+            by \auto{subseteq,opens_type}.
+        $\carrier[X]\subseteq\unions{D}$
+            by \obv{covers_unions_intro}.
+        $\unions{D}\subseteq\carrier[X]$
+            by \auto{unions_iff,subseteq,pow_iff}.
+        Hence $\unions{D}=\carrier[X]$
+            by \obv{subseteq_antisymmetric}.
+        $G\subseteq\pow{\carrier[X]}$
+            by \obv{subseteq_transitive}.
+        $\relativeComplements{\carrier[X]}{G}=D$
+            by \auto{relative_complement_family_involutive}.
+        Thus $\inters{G}=\emptyset$
+            by \auto{relative_complement_union_iff_intersection_empty}.
+        $\inters{G}\neq\emptyset$
+            by \auto{proper_finite_intersection_property,finite_intersection_property}.
+        Contradiction.
+    \end{subproof}
+
+    Show that if for every $F$ such that $F\subseteq\closeds{X}$ and
+        $F$ has the proper finite intersection property we have
+        $\inters{F}$ is inhabited, then $X$ is compact.
+    \begin{subproof}
+        Assume for every $F$ such that $F\subseteq\closeds{X}$ and
+            $F$ has the proper finite intersection property we have
+            $\inters{F}$ is inhabited.
+        Show that for every $C$ such that $C$ is an open cover of $X$
+            there exists a finite set $D$ such that $D\subseteq C$ and
+            $D$ covers $\carrier[X]$.
+        \begin{subproof}
+            Fix $C$.
+            Assume $C$ is an open cover of $X$.
+            \begin{byCase}
+            \caseOf{$\carrier[X]=\emptyset$.}
+                $\emptyset$ is finite and $\emptyset\subseteq C$
+                    by \obv{emptyset_is_finite,emptyset_subseteq}.
+                $\emptyset$ covers $\carrier[X]$ by \auto{emptyset}.
+                Follows by \auto.
+            \caseOf{$\carrier[X]\neq\emptyset$.}
+                $\carrier[X]$ is inhabited by \obv{nonempty_inhabited}.
+                Suppose not.
+                $C\subseteq\opens[X]$ by \obv{open_cover}.
+                Hence $C\subseteq\pow{\carrier[X]}$
+                    by \auto{subseteq,opens_type}.
+                $C$ is inhabited by \auto{open_cover}.
+                Let $F=\relativeComplements{\carrier[X]}{C}$.
+                $F$ is inhabited by \auto{relative_complement_family}.
+                Show that $F\subseteq\closeds{X}$.
+                \begin{subproof}
+                    It suffices to show that every element of $F$ is an
+                        element of $\closeds{X}$ by \obv{subseteq}.
+                    Fix $A\in F$.
+                    Take $U\in C$ such that
+                        $A=\carrier[X]\setminus U$
+                        by \obv{relative_complement_family}.
+                    $U\in\opens[X]$ by \obv{subseteq}.
+                    Follows by \auto{complement_of_open_elem_closeds}.
+                \end{subproof}
+                Show that $F$ has the proper finite intersection property.
+                \begin{subproof}
+                    Show that for every $G$ such that $G\subseteq F$ and
+                        $G$ is finite and $G$ is inhabited we have
+                        $\inters{G}\neq\emptyset$.
+                    \begin{subproof}
+                        Fix $G$.
+                        Assume $G\subseteq F$ and $G$ is finite and
+                            $G$ is inhabited.
+                        Let $D=\relativeComplements{\carrier[X]}{G}$.
+                        $D$ is finite
+                            by \obv{relative_complement_family_finite}.
+                        Show that $D\subseteq C$.
+                        \begin{subproof}
+                            It suffices to show that every element of $D$ is
+                                an element of $C$ by \obv{subseteq}.
+                            Fix $U\in D$.
+                            Take $A\in G$ such that
+                                $U=\carrier[X]\setminus A$
+                                by \obv{relative_complement_family}.
+                            $A\in F$ by \obv{subseteq}.
+                            Take $V\in C$ such that
+                                $A=\carrier[X]\setminus V$
+                                by \obv{relative_complement_family}.
+                            $V\subseteq\carrier[X]$
+                                by \obv{subseteq,pow_iff}.
+                            $\carrier[X]\setminus(\carrier[X]\setminus V)=V$
+                                by \obv{double_relative_complement}.
+                            Thus $U=V$.
+                        \end{subproof}
+                        $D$ does not cover $\carrier[X]$ by \auto.
+                        Hence $\unions{D}\neq\carrier[X]$
+                            by \auto{covers_unions_elim,subseteq_refl}.
+                        $G\subseteq\pow{\carrier[X]}$
+                            by \auto{subseteq,closeds}.
+                        Hence $\inters{G}\neq\emptyset$
+                            by \auto{relative_complement_union_iff_intersection_empty}.
+                    \end{subproof}
+                    Follows by \obv{proper_finite_intersection_property,finite_intersection_property}.
+                \end{subproof}
+                Hence $\inters{F}$ is inhabited.
+                $C$ covers $\carrier[X]$ by \obv{open_cover}.
+                Thus $\carrier[X]\subseteq\unions{C}$
+                    by \obv{covers_unions_intro}.
+                $\unions{C}\subseteq\carrier[X]$
+                    by \auto{unions_iff,subseteq,pow_iff}.
+                Hence $\unions{C}=\carrier[X]$
+                    by \obv{subseteq_antisymmetric}.
+                $F\subseteq\pow{\carrier[X]}$
+                    by \auto{subseteq,closeds}.
+                $\relativeComplements{\carrier[X]}{F}=C$
+                    by \auto{relative_complement_family_involutive}.
+                Thus $\inters{F}=\emptyset$
+                    by \auto{relative_complement_union_iff_intersection_empty}.
+                Contradiction by \auto{emptyset}.
+            \end{byCase}
+        \end{subproof}
+        Follows by \obv{is_compact}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\subsection{Ultrafilter convergence}
+
+The cluster-point predicate below is likewise a raw relation.  Its public
+elimination results state the topological-space and filter hypotheses
+explicitly.
+
+\begin{definition}\label{filter_cluster_point}
+    $\filterClusters{F}{x}{X}$ iff $x\in\carrier[X]$ and
+        for every $A,N$ such that $A\in F$ and
+        $N\in\neighbourhoods{x}{X}$ we have $A\inter N$ is inhabited.
+\end{definition}
+
+\begin{proposition}\label{filter_convergence_implies_cluster_point}
+    Suppose $X$ is a topological space and
+        $F$ is a proper filter on $\carrier[X]$.
+    Suppose $\filterConverges{F}{x}{X}$.
+    Then $\filterClusters{F}{x}{X}$.
+\end{proposition}
+\begin{proof}
+    $F$ is a filter on $\carrier[X]$ by \obv{proper_filter}.
+    $x\in\carrier[X]$ and $\neighbourhoods{x}{X}\subseteq F$
+        by \obv{filter_converges}.
+    Show that for every $A,N$ such that $A\in F$ and
+        $N\in\neighbourhoods{x}{X}$ we have $A\inter N$ is inhabited.
+    \begin{subproof}
+        Fix $A,N$.
+        Assume $A\in F$ and $N\in\neighbourhoods{x}{X}$.
+        $N\in F$ by \obv{subseteq}.
+        $A,N\subseteq\carrier[X]$ by \obv{filter}.
+        Hence $A\inter N\in F$ by \obv{filter_inter_in_iff}.
+        Thus $A\inter N\neq\emptyset$ by \obv{proper_filter}.
+        Follows by \obv{nonempty_inhabited}.
+    \end{subproof}
+    Follows by \obv{filter_cluster_point}.
+\end{proof}
+
+\begin{theorem}\label{ultrafilter_cluster_iff_converges}
+    Suppose $X$ is a topological space.
+    Suppose $U$ is an ultrafilter on $\carrier[X]$ and
+        $x\in\carrier[X]$.
+    Then $\filterClusters{U}{x}{X}$ iff
+        $\filterConverges{U}{x}{X}$.
+\end{theorem}
+\begin{proof}
+    $U$ is a proper filter on $\carrier[X]$
+        by \auto{ultrafilter,maximalfilter}.
+    If $\filterConverges{U}{x}{X}$, then
+        $\filterClusters{U}{x}{X}$
+        by \obv{filter_convergence_implies_cluster_point}.
+    Show that if $\filterClusters{U}{x}{X}$, then
+        $\filterConverges{U}{x}{X}$.
+    \begin{subproof}
+        Assume $\filterClusters{U}{x}{X}$.
+        Show that $\neighbourhoods{x}{X}\subseteq U$.
+        \begin{subproof}
+            It suffices to show that every element of
+                $\neighbourhoods{x}{X}$ is an element of $U$
+                by \obv{subseteq}.
+            Fix $N\in\neighbourhoods{x}{X}$.
+            $N\subseteq\carrier[X]$
+                by \auto{neighbourhoods,pow_iff,subseteq}.
+            Suppose not.
+            Hence $\carrier[X]\setminus N\in U$
+                by \obv{ultrafilter_decides_subset}.
+            Thus $(\carrier[X]\setminus N)\inter N$ is inhabited
+                by \obv{filter_cluster_point}.
+            $(\carrier[X]\setminus N)\inter N=\emptyset$
+                by \auto{inter,setminus,setext}.
+            Contradiction by \obv{emptyset}.
+        \end{subproof}
+        Follows by \obv{filter_converges}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{compact_iff_every_ultrafilter_converges}
+    Suppose $X$ is a topological space.
+    Then $X$ is compact iff for every $U$ such that
+        $U$ is an ultrafilter on $\carrier[X]$ there exists
+        $x\in\carrier[X]$ such that $\filterConverges{U}{x}{X}$.
+\end{theorem}
+\begin{proof}
+    Show that if $X$ is compact, then for every $U$ such that
+        $U$ is an ultrafilter on $\carrier[X]$ there exists
+        $x\in\carrier[X]$ such that $\filterConverges{U}{x}{X}$.
+    \begin{subproof}
+        Assume $X$ is compact.
+        Fix $U$.
+        Assume $U$ is an ultrafilter on $\carrier[X]$.
+        Thus $U$ is a proper filter on $\carrier[X]$
+            by \auto{ultrafilter,maximalfilter}.
+        Hence $U$ is a filter on $\carrier[X]$
+            by \obv{proper_filter_is_filter}.
+        Let $F=U\inter\closeds{X}$.
+        $F\subseteq\closeds{X}$ by \auto{inter_lower_right}.
+        $\carrier[X]\in U$ by \obv{filter}.
+        $\carrier[X]\in\closeds{X}$
+            by \auto{carrier_is_closed,is_closed_in}.
+        Hence $\carrier[X]\in F$ by \obv{inter_intro}.
+        Thus $F$ is inhabited.
+        Show that $F$ has the proper finite intersection property.
+        \begin{subproof}
+            Show that for every $G$ such that $G\subseteq F$ and
+                $G$ is finite and $G$ is inhabited we have
+                $\inters{G}\neq\emptyset$.
+            \begin{subproof}
+                Fix $G$.
+                Assume $G\subseteq F$ and $G$ is finite and
+                    $G$ is inhabited.
+                $F\subseteq U$ by \auto{inter_lower_left}.
+                Hence $G\subseteq U$ by \obv{subseteq_transitive}.
+                Thus $\inters{G}\in U$
+                    by \obv{filter_finite_intersection_in}.
+                Follows by \obv{proper_filter}.
+            \end{subproof}
+            Follows by \obv{proper_finite_intersection_property,finite_intersection_property}.
+        \end{subproof}
+        Hence $\inters{F}$ is inhabited
+            by \auto{compact_iff_closed_proper_finite_intersection_property}.
+        Take $x$ such that $x\in\inters{F}$.
+        $x\in\carrier[X]$ by \obv{inters_destr}.
+        Show that $\filterClusters{U}{x}{X}$.
+        \begin{subproof}
+            Show that for every $A,N$ such that $A\in U$ and
+                $N\in\neighbourhoods{x}{X}$ we have
+                $A\inter N$ is inhabited.
+            \begin{subproof}
+                Fix $A,N$.
+                Assume $A\in U$ and $N\in\neighbourhoods{x}{X}$.
+                Suppose not.
+                Hence $A\inter N=\emptyset$
+                    by \obv{nonempty_inhabited}.
+                Take $V\in\opens[X]$ such that $x\in V\subseteq N$
+                    by \obv{neighbourhoods}.
+                $A\subseteq\carrier[X]$ by \obv{filter}.
+                $V\subseteq\carrier[X]$ by \obv{opens_type}.
+                $A\inter V\subseteq A\inter N$
+                    by \obv{subseteq,inter}.
+                Hence $A\inter V=\emptyset$
+                    by \obv{subseteq_emptyset_iff}.
+                Thus $A\subseteq\carrier[X]\setminus V$
+                    by \obv{subseteq_setminus}.
+                Hence $\carrier[X]\setminus V\in U$
+                    by \auto{filter,setminus_subseteq}.
+                $\carrier[X]\setminus V\in\closeds{X}$
+                    by \obv{complement_of_open_elem_closeds}.
+                Thus $\carrier[X]\setminus V\in F$
+                    by \obv{inter_intro}.
+                Hence $x\in\carrier[X]\setminus V$
+                    by \obv{inters_destr}.
+                Thus $x\notin V$ by \obv{setminus}.
+                Contradiction.
+            \end{subproof}
+            Follows by \obv{filter_cluster_point}.
+        \end{subproof}
+        Hence $\filterConverges{U}{x}{X}$
+            by \obv{ultrafilter_cluster_iff_converges}.
+    \end{subproof}
+
+    Show that if for every $U$ such that
+        $U$ is an ultrafilter on $\carrier[X]$ there exists
+        $x\in\carrier[X]$ such that $\filterConverges{U}{x}{X}$,
+        then $X$ is compact.
+    \begin{subproof}
+        Assume for every $U$ such that
+            $U$ is an ultrafilter on $\carrier[X]$ there exists
+            $x\in\carrier[X]$ such that $\filterConverges{U}{x}{X}$.
+        Show that for every $F$ such that $F\subseteq\closeds{X}$ and
+            $F$ has the proper finite intersection property we have
+            $\inters{F}$ is inhabited.
+        \begin{subproof}
+            Fix $F$.
+            Assume $F\subseteq\closeds{X}$ and
+                $F$ has the proper finite intersection property.
+            $F$ is inhabited by \obv{proper_finite_intersection_property}.
+            $F\subseteq\pow{\carrier[X]}$
+                by \auto{subseteq,closeds}.
+            Take $U$ such that $F\subseteq U$ and
+                $U$ is maximal with respect to the proper finite intersection
+                    property on $\carrier[X]$
+                by \obv{maximal_proper_fip_extension}.
+            $U$ is an ultrafilter on $\carrier[X]$
+                by \obv{maximal_proper_fip_is_ultrafilter}.
+            Take $x\in\carrier[X]$ such that
+                $\filterConverges{U}{x}{X}$.
+            Show that for every $A\in F$ we have $x\in A$.
+            \begin{subproof}
+                Fix $A\in F$.
+                $A\in\closeds{X}$ by \obv{subseteq}.
+                Hence $A\in\pow{\carrier[X]}$ by \obv{closeds}.
+                Thus $A\subseteq\carrier[X]$
+                    by \auto{pow_iff,subseteq}.
+                $A$ is closed in $X$ by \obv{is_closed_in}.
+                Suppose not.
+                Let $V=\carrier[X]\setminus A$.
+                $x\in V$ by \obv{setminus}.
+                $V$ is open in $X$
+                    by \obv{complement_of_closed_is_open}.
+                Hence $V\in\opens[X]$ by \obv{is_open}.
+                $V\subseteq\carrier[X]$ by \auto{setminus_subseteq}.
+                Hence $V\in\pow{\carrier[X]}$
+                    by \obv{pow_iff,subseteq}.
+                $V\in\neighbourhoods{x}{X}$
+                    by \obv{neighbourhoods,subseteq_refl}.
+                $\neighbourhoods{x}{X}\subseteq U$
+                    by \obv{filter_converges}.
+                Hence $V\in U$ by \obv{subseteq}.
+                $A\in U$ by \obv{subseteq}.
+                $U$ is a proper filter on $\carrier[X]$
+                    by \auto{ultrafilter,maximalfilter}.
+                Hence $U$ is a filter on $\carrier[X]$
+                    by \obv{proper_filter_is_filter}.
+                Hence $A\inter V\in U$
+                    by \obv{filter_inter_in_iff}.
+                $A\inter V=\emptyset$
+                    by \auto{inter,setminus,setext}.
+                Thus $\emptyset\in U$.
+                Contradiction by \obv{proper_filter}.
+            \end{subproof}
+            Hence $x\in\inters{F}$ by \auto{inters_iff_forall}.
+            Thus $\inters{F}$ is inhabited.
+        \end{subproof}
+        Follows by
+            \obv{compact_iff_closed_proper_finite_intersection_property}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\subsection{Finite spaces and principal ultrafilters}
+
+\begin{proposition}\label{empty_space_has_no_ultrafilter}
+    Suppose $\carrier[X]=\emptyset$.
+    It is wrong that $U$ is an ultrafilter on $\carrier[X]$.
+\end{proposition}
+\begin{proof}
+    Suppose not.
+    Then $U$ is a proper filter on $\carrier[X]$
+        by \auto{ultrafilter,maximalfilter}.
+    Hence $U$ is a filter on $\carrier[X]$
+        by \obv{proper_filter_is_filter}.
+    Hence $\carrier[X]\in U$ by \obv{filter}.
+    $\emptyset\notin U$ by \obv{proper_filter}.
+    Thus $\emptyset\in U$.
+    Contradiction.
+\end{proof}
+
+\begin{corollary}\label{empty_space_satisfies_ultrafilter_compactness}
+    Suppose $X$ is a topological space and $\carrier[X]=\emptyset$.
+    Then for every $U$ such that
+        $U$ is an ultrafilter on $\carrier[X]$ there exists
+        $x\in\carrier[X]$ such that $\filterConverges{U}{x}{X}$.
+\end{corollary}
+\begin{proof}
+    Fix $U$.
+    Assume $U$ is an ultrafilter on $\carrier[X]$.
+    Contradiction by \auto{empty_space_has_no_ultrafilter}.
+\end{proof}
+
+\begin{proposition}\label{principal_ultrafilter_converges}
+    Suppose $X$ is a topological space and $x\in\carrier[X]$.
+    Then $\filterConverges{\principalfilter{\carrier[X]}{\{x\}}}{x}{X}$.
+\end{proposition}
+\begin{proof}
+    Show that $\neighbourhoods{x}{X}
+        \subseteq\principalfilter{\carrier[X]}{\{x\}}$.
+    \begin{subproof}
+        It suffices to show that every element of
+            $\neighbourhoods{x}{X}$ is an element of
+            $\principalfilter{\carrier[X]}{\{x\}}$
+            by \obv{subseteq}.
+        Fix $N\in\neighbourhoods{x}{X}$.
+        $N\subseteq\carrier[X]$ by
+            \auto{neighbourhoods,pow_iff,subseteq}.
+        Take $V\in\opens[X]$ such that $x\in V\subseteq N$
+            by \obv{neighbourhoods}.
+        Hence $x\in N$ by \obv{subseteq}.
+        Thus $\{x\}\subseteq N$ by \obv{singleton_subset_intro}.
+        $\{x\}\subseteq\carrier[X]$
+            by \obv{singleton_subset_intro}.
+        Follows by \obv{principalfilter_iff}.
+    \end{subproof}
+    Follows by \obv{filter_converges}.
+\end{proof}
+
+\begin{theorem}\label{ultrafilter_on_finite_space_converges}
+    Suppose $X$ is a topological space and $\carrier[X]$ is finite.
+    Suppose $U$ is an ultrafilter on $\carrier[X]$.
+    Then there exists $x\in\carrier[X]$ such that
+        $\filterConverges{U}{x}{X}$.
+\end{theorem}
+\begin{proof}
+    Take $x\in\carrier[X]$ such that
+        $U=\principalfilter{\carrier[X]}{\{x\}}$
+        by \obv{ultrafilter_on_finite_set_is_principal}.
+    $\filterConverges{\principalfilter{\carrier[X]}{\{x\}}}{x}{X}$
+        by \obv{principal_ultrafilter_converges}.
+\end{proof}

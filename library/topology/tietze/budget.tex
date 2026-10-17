@@ -1,0 +1,472 @@
+\import{topology/tietze/approximation.tex}
+\import{surreal/real-metric-sequences.tex}
+\import{nat/multiplication.tex}
+\import{set/logical-graph.tex}
+
+\section{The Tietze correction budget}
+
+\subsection{Recursive radii}
+
+\begin{definition}\label{tietze_radius_step}
+    $\tietzeRadiusStepOp:\Set\to\Set\to\Set\to\Set
+        =\fun{r,n,q:\Set}{\surrealMul{\realThreeQuarters}{q}}$.
+\end{definition}
+
+\begin{definition}\label{tietze_radius}
+    $\tietzeRadius{r}{n}
+        =\Apply{\naturalRecOp}
+            {r,\Apply{\tietzeRadiusStepOp}{r},n}$.
+\end{definition}
+
+\begin{proposition}\label{tietze_radius_zero}
+    $\tietzeRadius{r}{\emptyset}=r$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{tietze_radius,natural_recursion_zero}.
+\end{proof}
+
+\begin{proposition}\label{tietze_radius_successor}
+    Let $n\in\naturals$.
+    Then
+        $\tietzeRadius{r}{\suc{n}}
+            =\surrealMul{\realThreeQuarters}{\tietzeRadius{r}{n}}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{tietze_radius,tietze_radius_step,natural_recursion_successor}.
+\end{proof}
+
+\begin{theorem}\label{tietze_radius_is_real}
+    Let $r\in\reals$ and $n\in\naturals$.
+    Then $\tietzeRadius{r}{n}\in\reals$.
+\end{theorem}
+\begin{proof}
+    Let $P:\Set\to\Prop=\fun{k:\Set}{\tietzeRadius{r}{k}\in\reals}$.
+    $\Apply{P}{\emptyset}$ by \obv{tietze_radius_zero}.
+    Show that for every $k\in\naturals$ such that $\Apply{P}{k}$
+        we have $\Apply{P}{\suc{k}}$.
+    \begin{subproof}
+        Fix $k\in\naturals$.
+        Assume $\Apply{P}{k}$.
+        $\tietzeRadius{r}{\suc{k}}
+            =\surrealMul{\realThreeQuarters}{\tietzeRadius{r}{k}}$
+            by \obv{tietze_radius_successor}.
+        Follows by
+            \auto{real_three_quarters_is_real,surreal_real_multiplication_closed}.
+    \end{subproof}
+    Let $C=\sep{\naturals}{P}$.
+    $\emptyset\in C$ by \auto{logical_separation_iff,omega_empty}.
+    For every $k\in C$ we have $\suc{k}\in C$
+        by \auto{logical_separation_iff,omega_successor}.
+    Hence $C$ is an inductive set by \obv{inductive_set}.
+    Hence every natural number is an element of $C$
+        by \obv{omega_minimal}.
+    Hence $\Apply{P}{n}$ by \auto{logical_separation_iff}.
+\end{proof}
+
+\begin{theorem}\label{tietze_radius_nonnegative}
+    Let $r\in\reals$.
+    Suppose $\surrealLe{\surrealZero}{r}$.
+    Let $n\in\naturals$.
+    Then $\surrealLe{\surrealZero}{\tietzeRadius{r}{n}}$.
+\end{theorem}
+\begin{proof}
+    Let $P:\Set\to\Prop=\fun{k:\Set}{
+        \surrealLe{\surrealZero}{\tietzeRadius{r}{k}}}$.
+    $\Apply{P}{\emptyset}$ by \obv{tietze_radius_zero}.
+    Show that for every $k\in\naturals$ such that $\Apply{P}{k}$
+        we have $\Apply{P}{\suc{k}}$.
+    \begin{subproof}
+        Fix $k\in\naturals$.
+        Assume $\Apply{P}{k}$.
+        $\tietzeRadius{r}{k}\in\reals$
+            by \obv{tietze_radius_is_real}.
+        $\surrealLe{\surrealZero}{\tietzeRadius{r}{k}}$.
+        $\surrealLe{\surrealZero}
+            {\surrealMul{\realThreeQuarters}{\tietzeRadius{r}{k}}}$
+            by \obv{real_three_quarters_scale_nonnegative}.
+        Follows by \obv{tietze_radius_successor}.
+    \end{subproof}
+    Let $C=\sep{\naturals}{P}$.
+    $\emptyset\in C$ by \auto{logical_separation_iff,omega_empty}.
+    For every $k\in C$ we have $\suc{k}\in C$
+        by \auto{logical_separation_iff,omega_successor}.
+    Hence $C$ is an inductive set by \obv{inductive_set}.
+    Hence every natural number is an element of $C$
+        by \obv{omega_minimal}.
+    Hence $\Apply{P}{n}$ by \auto{logical_separation_iff}.
+\end{proof}
+
+\begin{theorem}\label{tietze_radius_positive}
+    Let $r\in\reals$.
+    Suppose $\surrealLt{\surrealZero}{r}$.
+    Let $n\in\naturals$.
+    Then $\surrealLt{\surrealZero}{\tietzeRadius{r}{n}}$.
+\end{theorem}
+\begin{proof}
+    Let $P:\Set\to\Prop=\fun{k:\Set}{
+        \surrealLt{\surrealZero}{\tietzeRadius{r}{k}}}$.
+    $\Apply{P}{\emptyset}$ by \obv{tietze_radius_zero}.
+    Show that for every $k\in\naturals$ such that $\Apply{P}{k}$
+        we have $\Apply{P}{\suc{k}}$.
+    \begin{subproof}
+        Fix $k\in\naturals$.
+        Assume $\Apply{P}{k}$.
+        $\surrealLt{\surrealZero}{\tietzeRadius{r}{k}}$.
+        $\surreal{\realThreeQuarters}$ and
+            $\surreal{\tietzeRadius{r}{k}}$
+            by
+            \obv{real_three_quarters_is_real,tietze_radius_is_real,surreal_real_is_surreal}.
+        $\surrealLt{\surrealZero}
+            {\surrealMul{\realThreeQuarters}{\tietzeRadius{r}{k}}}$
+            by \obv{real_three_quarters_positive,surreal_mul_pos_pos}.
+        Follows by \obv{tietze_radius_successor}.
+    \end{subproof}
+    Let $C=\sep{\naturals}{P}$.
+    $\emptyset\in C$ by \auto{logical_separation_iff,omega_empty}.
+    For every $k\in C$ we have $\suc{k}\in C$
+        by \auto{logical_separation_iff,omega_successor}.
+    Hence $C$ is an inductive set by \obv{inductive_set}.
+    Hence every natural number is an element of $C$
+        by \obv{omega_minimal}.
+    Hence $\Apply{P}{n}$ by \auto{logical_separation_iff}.
+\end{proof}
+
+\begin{proposition}\label{tietze_radius_successor_le}
+    Let $r\in\reals$.
+    Suppose $\surrealLe{\surrealZero}{r}$.
+    Let $n\in\naturals$.
+    Then $\surrealLe{\tietzeRadius{r}{\suc{n}}}
+        {\tietzeRadius{r}{n}}$.
+\end{proposition}
+\begin{proof}
+    Let $x=\tietzeRadius{r}{n}$.
+    $x\in\reals$ and $\surrealLe{\surrealZero}{x}$
+        by \auto{tietze_radius_is_real,tietze_radius_nonnegative}.
+    $\surrealLe{\realThreeQuarters}{\surrealOne}$
+        by
+        \obv{real_three_quarters_lt_one,surreal_le,real_three_quarters_is_real,surreal_one_is_real,surreal_real_is_surreal}.
+    Hence $\surrealLe{\surrealMul{\realThreeQuarters}{x}}
+        {\surrealMul{\surrealOne}{x}}$
+        by
+        \obv{surreal_nonneg_mul_le_right,real_three_quarters_is_real,surreal_one_is_real,surreal_real_is_surreal}.
+    $\surrealMul{\surrealOne}{x}=x$
+        by \obv{surreal_mul_one_left,surreal_real_is_surreal}.
+    Follows by \auto{tietze_radius_successor}.
+\end{proof}
+
+\begin{theorem}\label{tietze_radius_antitone}
+    Let $r\in\reals$.
+    Suppose $\surrealLe{\surrealZero}{r}$.
+    Let $m,n\in\naturals$.
+    Suppose $m\subseteq n$.
+    Then $\surrealLe{\tietzeRadius{r}{n}}{\tietzeRadius{r}{m}}$.
+\end{theorem}
+\begin{proof}
+    Take $k\in\naturals$ such that $n=m+k$
+        by \obv{natural_subseteq_iff_additive_difference}.
+    Let $P:\Set\to\Prop=\fun{j:\Set}{
+        \surrealLe{\tietzeRadius{r}{m+j}}{\tietzeRadius{r}{m}}}$.
+    $\Apply{P}{\emptyset}$
+        by
+        \auto{num_addition_zero_right,surreal_le_reflexive,tietze_radius_is_real,surreal_real_is_surreal}.
+    Show that for every $j\in\naturals$ such that $\Apply{P}{j}$
+        we have $\Apply{P}{\suc{j}}$.
+    \begin{subproof}
+        Fix $j\in\naturals$.
+        Assume $\Apply{P}{j}$.
+        $m+j\in\naturals$ by \obv{num_addition_on_naturals}.
+        $\surrealLe{\tietzeRadius{r}{m+j}}{\tietzeRadius{r}{m}}$.
+        $\surrealLe{\tietzeRadius{r}{\suc{m+j}}}
+            {\tietzeRadius{r}{m+j}}$
+            by \obv{tietze_radius_successor_le}.
+        $\tietzeRadius{r}{\suc{m+j}},\tietzeRadius{r}{m+j},
+            \tietzeRadius{r}{m}\in\reals$
+            by \obv{tietze_radius_is_real,omega_successor}.
+        Hence $\surrealLe{\tietzeRadius{r}{\suc{m+j}}}
+            {\tietzeRadius{r}{m}}$
+            by \auto{surreal_le_transitive,surreal_real_is_surreal}.
+        Follows by \obv{num_addition_successor_right}.
+    \end{subproof}
+    Let $C=\sep{\naturals}{P}$.
+    $\emptyset\in C$ by \auto{logical_separation_iff,omega_empty}.
+    For every $j\in C$ we have $\suc{j}\in C$
+        by \auto{logical_separation_iff,omega_successor}.
+    Hence $C$ is an inductive set by \obv{inductive_set}.
+    Hence every natural number is an element of $C$
+        by \obv{omega_minimal}.
+    Hence $\Apply{P}{k}$ by \auto{logical_separation_iff}.
+\end{proof}
+
+\begin{proposition}\label{tietze_radius_quarter_spending}
+    Let $r\in\reals$.
+    Suppose $\surrealLe{\surrealZero}{r}$.
+    Let $n\in\naturals$.
+    Then
+        $\surrealAdd{
+            \surrealMul{\realQuarter}{\tietzeRadius{r}{n}}}
+            {\tietzeRadius{r}{\suc{n}}}
+        =\tietzeRadius{r}{n}$.
+\end{proposition}
+\begin{proof}
+    $\tietzeRadius{r}{n}\in\reals$ and
+        $\surrealLe{\surrealZero}{\tietzeRadius{r}{n}}$
+        by \obv{tietze_radius_is_real,tietze_radius_nonnegative}.
+    Follows by
+        \auto{tietze_radius_successor,real_quarter_spending_identity}.
+\end{proof}
+
+\subsection{Geometric decay}
+
+\begin{theorem}\label{tietze_radius_three_step_halving}
+    Let $r\in\reals$.
+    Suppose $\surrealLe{\surrealZero}{r}$.
+    Let $n\in\naturals$.
+    Then
+        $\surrealLe{
+            \tietzeRadius{r}{\suc{\suc{\suc{n}}}}}
+            {\surrealMul{\realHalf}{\tietzeRadius{r}{n}}}$.
+\end{theorem}
+\begin{proof}
+    $\suc{n},\suc{\suc{n}}\in\naturals$
+        by \obv{omega_successor}.
+    $\tietzeRadius{r}{n}\in\reals$ and
+        $\surrealLe{\surrealZero}{\tietzeRadius{r}{n}}$
+        by \obv{tietze_radius_is_real,tietze_radius_nonnegative}.
+    $\tietzeRadius{r}{\suc{\suc{\suc{n}}}}
+        =\surrealMul{\realThreeQuarters}{
+            \surrealMul{\realThreeQuarters}{
+                \surrealMul{\realThreeQuarters}
+                    {\tietzeRadius{r}{n}}}}$
+        by \auto{tietze_radius_successor}.
+    Follows by
+        \auto{real_three_quarters_triple_product_le_half}.
+\end{proof}
+
+\begin{lemma}\label{tietze_triple_index_successor}
+    Let $k\in\naturals$.
+    Let $d=\suc{\suc{\suc{\emptyset}}}$.
+    Then
+        $\naturalMul{d}{\suc{k}}
+            =\suc{\suc{\suc{\naturalMul{d}{k}}}}$.
+\end{lemma}
+\begin{proof}
+    $d\in\naturals$ by \auto{omega_empty,omega_successor}.
+    $\naturalMul{d}{\suc{k}}=\naturalMul{d}{k}+d$
+        by \obv{natural_multiplication_successor_right}.
+    $\naturalMul{d}{k}\in\naturals$
+        by \obv{natural_multiplication_closed}.
+    $\naturalMul{d}{k}+d
+        =\suc{\suc{\suc{\naturalMul{d}{k}}}}$
+        by
+        \auto{num_addition_successor_right,num_addition_zero_right,omega_empty,omega_successor}.
+\end{proof}
+
+\begin{theorem}\label{tietze_radius_triple_index_bound}
+    Let $r\in\reals$.
+    Suppose $\surrealLe{\surrealZero}{r}$.
+    Let $k\in\naturals$.
+    Let $d=\suc{\suc{\suc{\emptyset}}}$.
+    Then
+        $\surrealLe{\tietzeRadius{r}{\naturalMul{d}{k}}}
+            {\surrealMul{\surrealEpsilon{k}}{r}}$.
+\end{theorem}
+\begin{proof}
+    $d\in\naturals$ by \auto{omega_empty,omega_successor}.
+    Let $P:\Set\to\Prop=\fun{j:\Set}{
+        \surrealLe{\tietzeRadius{r}{\naturalMul{d}{j}}}
+            {\surrealMul{\surrealEpsilon{j}}{r}}}$.
+    $\naturalMul{d}{\emptyset}=\emptyset$
+        by \obv{natural_multiplication_zero_right}.
+    Hence $\tietzeRadius{r}{\naturalMul{d}{\emptyset}}=r$
+        by \auto{tietze_radius_zero}.
+    $\surrealEpsilon{\emptyset}=\surrealOne$
+        by \obv{surreal_epsilon_zero}.
+    Hence $\surrealMul{\surrealEpsilon{\emptyset}}{r}=r$
+        by \auto{surreal_mul_one_left,surreal_real_is_surreal}.
+    $\surrealLe{r}{r}$
+        by \obv{surreal_le_reflexive,surreal_real_is_surreal}.
+    Hence $\Apply{P}{\emptyset}$.
+    Show that for every $j\in\naturals$ such that $\Apply{P}{j}$
+        we have $\Apply{P}{\suc{j}}$.
+    \begin{subproof}
+        Fix $j\in\naturals$.
+        Assume $\Apply{P}{j}$.
+        $\naturalMul{d}{j}\in\naturals$
+            by \obv{natural_multiplication_closed}.
+        $\naturalMul{d}{\suc{j}}
+            =\suc{\suc{\suc{\naturalMul{d}{j}}}}$
+            by \obv{tietze_triple_index_successor}.
+        Hence
+            $\surrealLe{\tietzeRadius{r}{\naturalMul{d}{\suc{j}}}}
+                {\surrealMul{\realHalf}
+                    {\tietzeRadius{r}{\naturalMul{d}{j}}}}$
+            by \auto{tietze_radius_three_step_halving}.
+        $\surrealLe{\tietzeRadius{r}{\naturalMul{d}{j}}}
+            {\surrealMul{\surrealEpsilon{j}}{r}}$.
+        $\surreal{\realHalf}$ and
+            $\surreal{\tietzeRadius{r}{\naturalMul{d}{j}}}$ and
+            $\surreal{\surrealMul{\surrealEpsilon{j}}{r}}$
+            by
+            \auto{real_half_is_real,tietze_radius_is_real,surreal_epsilon_is_surreal,surreal_real_is_surreal,surreal_mul_is_surreal}.
+        $\surrealLe{\surrealZero}{\realHalf}$
+            by
+            \obv{real_half_positive,surreal_le,real_half_is_real,surreal_real_is_surreal,empty_surreal}.
+        Hence
+            $\surrealLe{
+                \surrealMul{\realHalf}
+                    {\tietzeRadius{r}{\naturalMul{d}{j}}}}
+                {\surrealMul{\realHalf}
+                    {\surrealMul{\surrealEpsilon{j}}{r}}}$
+            by \obv{surreal_nonneg_mul_le_left}.
+        $\surrealMul{\realHalf}{\surrealEpsilon{j}}
+            =\surrealEpsilon{\suc{j}}$
+            by
+            \auto{real_half,surreal_epsilon_product,num_addition_successor_left,num_addition_zero_left,natural_number_is_ordinal,omega_empty,omega_successor}.
+        Hence
+            $\surrealMul{\realHalf}
+                {\surrealMul{\surrealEpsilon{j}}{r}}
+            =\surrealMul{\surrealEpsilon{\suc{j}}}{r}$
+            by
+            \auto{surreal_mul_associative,surreal_epsilon_is_surreal,surreal_real_is_surreal,real_half_is_real}.
+        $\tietzeRadius{r}{\naturalMul{d}{\suc{j}}},
+            \surrealMul{\realHalf}{
+                \tietzeRadius{r}{\naturalMul{d}{j}}},
+            \surrealMul{\realHalf}{
+                \surrealMul{\surrealEpsilon{j}}{r}},
+            \surrealMul{\surrealEpsilon{\suc{j}}}{r}\in\reals$
+            by
+            \obv{tietze_radius_is_real,natural_multiplication_closed,omega_successor,real_half_is_real,surreal_epsilon_is_real,surreal_real_multiplication_closed}.
+        Follows by
+            \auto{surreal_le_transitive,surreal_real_is_surreal}.
+    \end{subproof}
+    Let $C=\sep{\naturals}{P}$.
+    $\emptyset\in C$ by \auto{logical_separation_iff,omega_empty}.
+    For every $j\in C$ we have $\suc{j}\in C$
+        by \auto{logical_separation_iff,omega_successor}.
+    Hence $C$ is an inductive set by \obv{inductive_set}.
+    Hence every natural number is an element of $C$
+        by \obv{omega_minimal}.
+    Hence $\Apply{P}{k}$ by \auto{logical_separation_iff}.
+\end{proof}
+
+\subsection{The set-coded budget sequence}
+
+\begin{definition}\label{tietze_budget_sequence}
+    $\tietzeBudgetSequence{r}
+        =\Apply{\graphOnDomainOp}
+            {\naturals,\fun{n:\Set}{\tietzeRadius{r}{n}}}$.
+\end{definition}
+
+\begin{proposition}\label{tietze_budget_sequence_typed}
+    Let $r\in\reals$.
+    Then $\tietzeBudgetSequence{r}\in\funs{\naturals}{\reals}$.
+\end{proposition}
+\begin{proof}
+    For every $n\in\naturals$ we have $\tietzeRadius{r}{n}\in\reals$
+        by \obv{tietze_radius_is_real}.
+    Follows by
+        \auto{tietze_budget_sequence,logical_graph_on_domain_type}.
+\end{proof}
+
+\begin{proposition}\label{tietze_budget_sequence_apply}
+    Let $n\in\naturals$.
+    Then $\apply{\tietzeBudgetSequence{r}}{n}=\tietzeRadius{r}{n}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{tietze_budget_sequence,logical_graph_on_domain_apply}.
+\end{proof}
+
+\begin{proposition}\label{tietze_budget_sequence_nonnegative}
+    Let $r\in\reals$.
+    Suppose $\surrealLe{\surrealZero}{r}$.
+    Then for every $n\in\naturals$ we have
+        $\surrealLe{\surrealZero}{\apply{\tietzeBudgetSequence{r}}{n}}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{tietze_budget_sequence_apply,tietze_radius_nonnegative}.
+\end{proof}
+
+\begin{theorem}\label{tietze_budget_sequence_converges_zero}
+    Let $r\in\reals$.
+    Suppose $\surrealLe{\surrealZero}{r}$.
+    Then
+        $\metricConverges{\RealMetric}
+            {\tietzeBudgetSequence{r}}{\surrealZero}$.
+\end{theorem}
+\begin{proof}
+    $\tietzeBudgetSequence{r}\in\funs{\naturals}{\reals}$
+        by \obv{tietze_budget_sequence_typed}.
+    For every $n\in\naturals$ we have
+        $\surrealLe{\surrealZero}{\apply{\tietzeBudgetSequence{r}}{n}}$
+        by \obv{tietze_budget_sequence_nonnegative}.
+    Show that for every $e\in\reals$ such that
+        $\surrealLt{\surrealZero}{e}$ there exists $N\in\naturals$
+        such that for every $n\in\naturals$ such that $N\subseteq n$
+            we have $\surrealLt{\apply{\tietzeBudgetSequence{r}}{n}}{e}$.
+    \begin{subproof}
+        Fix $e\in\reals$.
+        Assume $\surrealLt{\surrealZero}{e}$.
+        \begin{byCase}
+        \caseOf{$r=\surrealZero$.}
+            Let $N=\emptyset$.
+            $N\in\naturals$ by \obv{omega_empty}.
+            Show that for every $n\in\naturals$ such that $N\subseteq n$
+                we have
+                    $\surrealLt{\apply{\tietzeBudgetSequence{r}}{n}}{e}$.
+            \begin{subproof}
+                Fix $n\in\naturals$.
+                Assume $N\subseteq n$.
+                $\surrealLe{\tietzeRadius{r}{n}}
+                    {\tietzeRadius{r}{\emptyset}}$
+                    by \auto{tietze_radius_antitone,emptyset_subseteq}.
+                Hence $\surrealLe{\tietzeRadius{r}{n}}{\surrealZero}$
+                    by \auto{tietze_radius_zero}.
+                $\tietzeRadius{r}{n}\in\reals$
+                    by \obv{tietze_radius_is_real}.
+                Hence $\surrealLt{\tietzeRadius{r}{n}}{e}$
+                    by
+                    \obv{surreal_le_lt_transitive,surreal_real_is_surreal,empty_surreal}.
+                Follows by \auto{tietze_budget_sequence_apply}.
+            \end{subproof}
+            Follows by \auto.
+        \caseOf{$r\neq\surrealZero$.}
+            $\surrealLt{\surrealZero}{r}$
+                by
+                \auto{surreal_le,surreal_real_is_surreal,empty_surreal}.
+            Take $k\in\naturals$ such that
+                $\surrealLt{\surrealMul{\surrealEpsilon{k}}{r}}{e}$
+                by \obv{positive_real_scaled_epsilon_below}.
+            Let $d=\suc{\suc{\suc{\emptyset}}}$.
+            Let $N=\naturalMul{d}{k}$.
+            $d\in\naturals$ by \auto{omega_empty,omega_successor}.
+            Hence $N\in\naturals$ by \auto{natural_multiplication_closed}.
+            Show that for every $n\in\naturals$ such that $N\subseteq n$
+                we have
+                    $\surrealLt{\apply{\tietzeBudgetSequence{r}}{n}}{e}$.
+            \begin{subproof}
+                Fix $n\in\naturals$.
+                Assume $N\subseteq n$.
+                $\surrealLe{\tietzeRadius{r}{n}}
+                    {\tietzeRadius{r}{N}}$
+                    by \obv{tietze_radius_antitone}.
+                $\surrealLe{\tietzeRadius{r}{N}}
+                    {\surrealMul{\surrealEpsilon{k}}{r}}$
+                    by \auto{tietze_radius_triple_index_bound}.
+                $\tietzeRadius{r}{n},\tietzeRadius{r}{N},
+                    \surrealMul{\surrealEpsilon{k}}{r},e\in\reals$
+                    by
+                    \obv{tietze_radius_is_real,surreal_epsilon_is_real,surreal_real_multiplication_closed}.
+                Hence $\surrealLt{\tietzeRadius{r}{n}}{e}$
+                    by
+                    \auto{surreal_le_transitive,surreal_le_lt_transitive,surreal_real_is_surreal}.
+                Follows by \auto{tietze_budget_sequence_apply}.
+            \end{subproof}
+            Follows by \auto.
+        \end{byCase}
+    \end{subproof}
+    Follows by
+        \auto{nonnegative_real_sequence_converges_zero_iff_eventually_below}.
+\end{proof}

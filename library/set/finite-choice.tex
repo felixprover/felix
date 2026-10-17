@@ -1,0 +1,80 @@
+\section{Finite choice}
+
+\import{set/finite.tex}
+
+Choice over a finite domain follows by adjoining one selected value at a
+time.  This result does not use the global choice operator.
+
+\begin{theorem}\label{finite_choice}
+    Suppose $A$ is finite and $R$ is a relation.
+    Suppose for every $x\in A$ there exists $y$ such that
+        $x\mathrel{R}y$.
+    Then there exists $f$ such that $f$ is a function on $A$ and
+        for every $x\in A$ we have $x\mathrel{R}f(x)$.
+\end{theorem}
+\begin{proof}
+    Let $C=\{B\in\pow{A}\mid
+        \text{there exists $f\in\funs{B}{\ran{R}}$ such that
+            for every $x\in B$ we have $x\mathrel{R}f(x)$}\}$.
+
+    $\emptyset\in\pow{A}$ by \obv{powerset_bottom}.
+    $\emptyset\in\funs{\emptyset}{\ran{R}}$ by
+        \obv{emptyset_is_function_on_emptyset,
+            codom_of_emptyset_can_be_anything,funs_intro}.
+    For every $x\in\emptyset$ we have
+        $x\mathrel{R}\apply{\emptyset}{x}$ by \auto{emptyset}.
+    Hence $\emptyset\in C$.
+
+    Show that for all $B,b$ such that $B\in C$ and $b\in A$ we have
+        $\cons{b}{B}\in C$.
+    \begin{subproof}
+        Fix $B,b$.
+        Assume $B\in C$ and $b\in A$.
+        $B\subseteq A$ by \obv{powerset_elim}.
+        Hence $\cons{b}{B}\subseteq A$ by
+            \obv{cons_subseteq_intro}.
+        Thus $\cons{b}{B}\in\pow{A}$ by \obv{powerset_intro}.
+        \begin{byCase}
+        \caseOf{$b\in B$.}
+            $\cons{b}{B}=B$ by \obv{cons_absorb}.
+        \caseOf{$b\notin B$.}
+            Take $f\in\funs{B}{\ran{R}}$ such that for every $x\in B$
+                we have $x\mathrel{R}f(x)$.
+            Take $y$ such that $b\mathrel{R}y$.
+            Hence $(b,y)\in R$.
+            Thus $y\in\ran{R}$ by \obv{ran_intro}.
+            Let $g=\cons{(b,y)}{f}$.
+            $g\in\funs{\cons{b}{B}}{\ran{R}}$ by
+                \auto{extend_function_at_new_point}.
+            Show that for every $x\in\cons{b}{B}$ we have
+                $x\mathrel{R}g(x)$.
+            \begin{subproof}
+                Fix $x\in\cons{b}{B}$.
+                $x=b$ or $x\in B$ by \obv{cons_iff}.
+                \begin{byCase}
+                \caseOf{$x=b$.}
+                    $(b,y)\in g$ by \auto{cons_iff}.
+                    $g$ is a function by \obv{funs_is_function}.
+                    Hence $g(b)=y$ by \obv{function_apply_intro}.
+                \caseOf{$x\neq b$.}
+                    Hence $x\in B$.
+                    $f$ is a function and $\dom{f}=B$ by
+                        \obv{funs_is_function,funs}.
+                    Hence $x\in\dom{f}$.
+                    Thus $(x,f(x))\in f$ by
+                        \obv{function_apply_elim}.
+                    Hence $(x,f(x))\in g$ by \auto{cons_iff}.
+                    $g$ is a function by \obv{funs_is_function}.
+                    Hence $g(x)=f(x)$ by
+                        \obv{function_apply_intro}.
+                \end{byCase}
+            \end{subproof}
+        \end{byCase}
+    \end{subproof}
+
+    Hence $A\in C$ by \obv{finite_induction}.
+    Take $f\in\funs{A}{\ran{R}}$ such that for every $x\in A$ we have
+        $x\mathrel{R}f(x)$.
+    $f$ is a function on $A$ by \obv{funs_is_function,funs}.
+    Follows by \auto.
+\end{proof}

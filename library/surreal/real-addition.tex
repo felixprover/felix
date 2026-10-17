@@ -1,0 +1,557 @@
+\import{surreal/real-cut.tex}
+
+\section{Addition of surreal reals}
+
+We represent a real sum by the cut of pairwise sums of finite-stage lower and
+upper bounds.  These option sets remain finite-stage, unlike the ordinary
+Conway addition options, which still contain one real argument.
+
+\begin{definition}\label{surreal_real_add_lower}
+    $\realAddLower{x}{y}=
+        \{\surrealAdd{\fst{p}}{\snd{p}}
+            \mid p\in\realLower{x}\times\realLower{y}\}$.
+\end{definition}
+
+\begin{definition}\label{surreal_real_add_upper}
+    $\realAddUpper{x}{y}=
+        \{\surrealAdd{\fst{p}}{\snd{p}}
+            \mid p\in\realUpper{x}\times\realUpper{y}\}$.
+\end{definition}
+
+\begin{proposition}\label{surreal_real_add_lower_iff}
+    $z\in\realAddLower{x}{y}$ iff there exist $a,b$ such that
+        $a\in\realLower{x}$ and $b\in\realLower{y}$ and
+        $z=\surrealAdd{a}{b}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{surreal_real_add_lower,times_elem_is_tuple,times_tuple_intro,fst_eq,snd_eq}.
+\end{proof}
+
+\begin{proposition}\label{surreal_real_add_upper_iff}
+    $z\in\realAddUpper{x}{y}$ iff there exist $a,b$ such that
+        $a\in\realUpper{x}$ and $b\in\realUpper{y}$ and
+        $z=\surrealAdd{a}{b}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{surreal_real_add_upper,times_elem_is_tuple,times_tuple_intro,fst_eq,snd_eq}.
+\end{proof}
+
+\begin{lemma}\label{surreal_real_lower_sum_interpolation}
+    Suppose $x,y\in\reals$.
+    Suppose $a\in\surrealStage{\naturals}$ and
+        $a'\in\realLower{x}$.
+    Suppose $\surrealLt{a}{a'}$.
+    Then there exists $b\in\realLower{y}$ such that
+        $\surrealLt{\surrealAdd{a}{y}}{\surrealAdd{a'}{b}}$.
+\end{lemma}
+\begin{proof}
+    $a'\in\surrealStage{\naturals}$ and $\surrealLt{a'}{x}$
+        by \obv{surreal_real_lower}.
+    $\surreal{a}$ and $\surreal{a'}$ and $\surreal{y}$
+        by
+        \auto{surreal_stage_characterization,omega_is_ordinal,surreal_real_is_surreal}.
+    Let $d=\surrealAdd{a'}{\surrealNeg{a}}$.
+    $\surrealNeg{a}\in\surrealStage{\naturals}$
+        by \obv{surreal_negation_finite_stage}.
+    Hence $d\in\surrealStage{\naturals}$
+        by \auto{surreal_addition_finite_stage}.
+    Hence $\surreal{d}$ and $\birthday{d}\in\naturals$
+        by
+        \obv{surreal_stage_characterization,omega_is_ordinal}.
+    $\surrealLt{\surrealZero}{d}$
+        by \obv{surreal_subtraction_positive}.
+    $d\in\surrealStage{\suc{\birthday{d}}}$
+        by \obv{surreal_in_successor_stage}.
+    Hence $\surrealLt{\surrealEpsilon{\birthday{d}}}{d}$
+        by \obv{positive_finite_surreal_dominates_epsilon}.
+    Take $b\in\surrealStage{\naturals}$ such that
+        $\surrealLt{b}{y}$ and
+        $\surrealLt{y}
+            {\surrealAdd{b}{\surrealEpsilon{\birthday{d}}}}$
+        by
+        \obv{surreal_real_dyadic_interval,surreal_birthday_ordinal}.
+    Hence $b\in\realLower{y}$
+        by \obv{surreal_real_lower}.
+    $\surreal{b}$ and $\surreal{\surrealEpsilon{\birthday{d}}}$
+        by
+        \auto{surreal_stage_characterization,omega_is_ordinal,surreal_epsilon_is_surreal}.
+    $\surrealLt{\surrealAdd{a}{y}}
+        {\surrealAdd{a}
+            {\surrealAdd{b}{\surrealEpsilon{\birthday{d}}}}}$
+        by \obv{surreal_add_lt_right,surreal_add_is_surreal}.
+    $\surrealLt
+        {\surrealAdd{\surrealAdd{a}{b}}
+            {\surrealEpsilon{\birthday{d}}}}
+        {\surrealAdd{\surrealAdd{a}{b}}{d}}$
+        by \obv{surreal_add_lt_right,surreal_add_is_surreal}.
+    Hence
+        $\surrealLt
+            {\surrealAdd{a}
+                {\surrealAdd{b}{\surrealEpsilon{\birthday{d}}}}}
+            {\surrealAdd{a'}{b}}$
+        by
+        \auto{surreal_add_associative,surreal_add_commutative,surreal_add_inverse_right,surreal_add_zero_right,surreal_negation_is_surreal,surreal_add_is_surreal}.
+    Hence $\surrealLt{\surrealAdd{a}{y}}{\surrealAdd{a'}{b}}$
+        by \auto{surreal_lt_transitive,surreal_add_is_surreal}.
+\end{proof}
+
+\begin{lemma}\label{surreal_real_upper_sum_interpolation}
+    Suppose $x,y\in\reals$.
+    Suppose $a\in\surrealStage{\naturals}$ and
+        $a'\in\realUpper{x}$.
+    Suppose $\surrealLt{a'}{a}$.
+    Then there exists $b\in\realUpper{y}$ such that
+        $\surrealLt{\surrealAdd{a'}{b}}{\surrealAdd{a}{y}}$.
+\end{lemma}
+\begin{proof}
+    Let $u=\surrealNeg{x}$.
+    Let $v=\surrealNeg{y}$.
+    Let $c=\surrealNeg{a}$.
+    Let $c'=\surrealNeg{a'}$.
+    $u,v\in\reals$
+        by \auto{surreal_real_negation_closed}.
+    $c\in\surrealStage{\naturals}$
+        by \auto{surreal_negation_finite_stage}.
+    $a'\in\surrealStage{\naturals}$ and $\surrealLt{x}{a'}$
+        by \obv{surreal_real_upper_iff}.
+    Hence $c'\in\surrealStage{\naturals}$
+        by \auto{surreal_negation_finite_stage}.
+    $\surrealLt{c'}{u}$ and $\surrealLt{c}{c'}$
+        by
+        \auto{surreal_negation_lt_reverses,surreal_real_is_surreal,surreal_stage_characterization,omega_is_ordinal}.
+    Hence $c'\in\realLower{u}$
+        by \obv{surreal_real_lower}.
+    Take $d\in\realLower{v}$ such that
+        $\surrealLt{\surrealAdd{c}{v}}{\surrealAdd{c'}{d}}$
+        by \obv{surreal_real_lower_sum_interpolation}.
+    Let $b=\surrealNeg{d}$.
+    $d\in\surrealStage{\naturals}$ and $\surrealLt{d}{v}$
+        by \obv{surreal_real_lower_iff}.
+    Hence $b\in\surrealStage{\naturals}$
+        by \auto{surreal_negation_finite_stage}.
+    $\surrealLt{y}{b}$
+        by
+        \auto{surreal_negation_lt_reverses,surreal_negation_involutive,surreal_real_is_surreal,surreal_stage_characterization,omega_is_ordinal}.
+    Hence $b\in\realUpper{y}$
+        by \obv{surreal_real_upper}.
+    $\surrealLt
+        {\surrealNeg{\surrealAdd{c'}{d}}}
+        {\surrealNeg{\surrealAdd{c}{v}}}$
+        by
+        \auto{surreal_negation_lt_reverses,surreal_add_is_surreal,surreal_real_is_surreal,surreal_stage_characterization,omega_is_ordinal}.
+    Hence $\surrealLt{\surrealAdd{a'}{b}}{\surrealAdd{a}{y}}$
+        by
+        \auto{surreal_negation_additive,surreal_negation_involutive,surreal_real_is_surreal,surreal_stage_characterization,omega_is_ordinal}.
+\end{proof}
+
+\subsection{The finite-stage sum cut}
+
+\begin{proposition}\label{surreal_real_add_bounds_finite_stage}
+    Suppose $x,y\in\reals$.
+    Then $\realAddLower{x}{y}\union\realAddUpper{x}{y}
+        \subseteq\surrealStage{\naturals}$.
+\end{proposition}
+\begin{proof}
+    Show that for every
+        $z\in\realAddLower{x}{y}\union\realAddUpper{x}{y}$ we have
+        $z\in\surrealStage{\naturals}$.
+    \begin{subproof}
+        Fix $z\in\realAddLower{x}{y}\union\realAddUpper{x}{y}$.
+        \begin{byCase}
+            \caseOf{$z\in\realAddLower{x}{y}$.}
+                Take $a,b$ such that
+                    $a\in\realLower{x}$ and
+                    $b\in\realLower{y}$ and
+                    $z=\surrealAdd{a}{b}$
+                    by \auto{surreal_real_add_lower_iff}.
+                $a,b\in\surrealStage{\naturals}$
+                    by \obv{surreal_real_lower}.
+                Follows by \auto{surreal_addition_finite_stage}.
+            \caseOf{$z\notin\realAddLower{x}{y}$.}
+                Hence $z\in\realAddUpper{x}{y}$
+                    by \auto{union_iff}.
+                Take $a,b$ such that
+                    $a\in\realUpper{x}$ and
+                    $b\in\realUpper{y}$ and
+                    $z=\surrealAdd{a}{b}$
+                    by \auto{surreal_real_add_upper_iff}.
+                $a,b\in\surrealStage{\naturals}$
+                    by \obv{surreal_real_upper}.
+                Follows by \auto{surreal_addition_finite_stage}.
+        \end{byCase}
+    \end{subproof}
+    Follows by \obv{subseteq}.
+\end{proof}
+
+\begin{proposition}\label{surreal_real_add_cut_pair}
+    Suppose $x,y\in\reals$.
+    Then $\surrealCutPair{\realAddLower{x}{y}}
+        {\realAddUpper{x}{y}}$.
+\end{proposition}
+\begin{proof}
+    For every $z\in\realAddLower{x}{y}\union
+        \realAddUpper{x}{y}$ we have
+        $z\in\surrealStage{\naturals}$
+        by
+        \auto{surreal_real_add_bounds_finite_stage,subseteq}.
+    Hence for every $z\in\realAddLower{x}{y}\union
+        \realAddUpper{x}{y}$ we have $\surreal{z}$
+        by
+        \auto{surreal_stage_characterization,omega_is_ordinal}.
+    Show that for all $l\in\realAddLower{x}{y}$ we have for all
+        $r\in\realAddUpper{x}{y}$ we have $\surrealLt{l}{r}$.
+    \begin{subproof}
+        Fix $l\in\realAddLower{x}{y}$.
+        Fix $r\in\realAddUpper{x}{y}$.
+        Take $a,b$ such that
+            $a\in\realLower{x}$ and $b\in\realLower{y}$ and
+            $l=\surrealAdd{a}{b}$
+            by \auto{surreal_real_add_lower_iff}.
+        Take $c,d$ such that
+            $c\in\realUpper{x}$ and $d\in\realUpper{y}$ and
+            $r=\surrealAdd{c}{d}$
+            by \obv{surreal_real_add_upper_iff}.
+        $a,b,c,d\in\surrealStage{\naturals}$ and
+            $\surrealLt{a}{x}$ and $\surrealLt{x}{c}$ and
+            $\surrealLt{b}{y}$ and $\surrealLt{y}{d}$
+            by
+            \auto{surreal_real_lower_iff,surreal_real_upper_iff}.
+        Hence $\surreal{a}$ and $\surreal{b}$ and
+            $\surreal{c}$ and $\surreal{d}$
+            by
+            \auto{surreal_stage_characterization,omega_is_ordinal}.
+        $\surrealLt{a}{c}$ and $\surrealLt{b}{d}$
+            by
+            \obv{surreal_lt_transitive,surreal_real_is_surreal}.
+        Follows by \auto{surreal_add_lt_both}.
+    \end{subproof}
+    For every $l\in\realAddLower{x}{y}$ we have $\surreal{l}$
+        by \auto{union_iff}.
+    For every $r\in\realAddUpper{x}{y}$ we have $\surreal{r}$
+        by \auto{union_iff}.
+    Follows by \obv{surreal_cut_pair}.
+\end{proof}
+
+\begin{proposition}\label{surreal_real_add_lower_inhabited}
+    Suppose $x,y\in\reals$.
+    Then $\realAddLower{x}{y}$ is inhabited.
+\end{proposition}
+\begin{proof}
+    Take $a$ such that $a\in\realLower{x}$
+        by \obv{surreal_real_lower_inhabited}.
+    Take $b$ such that $b\in\realLower{y}$
+        by \obv{surreal_real_lower_inhabited}.
+    $\surrealAdd{a}{b}\in\realAddLower{x}{y}$
+        by \auto{surreal_real_add_lower_iff}.
+\end{proof}
+
+\begin{proposition}\label{surreal_real_add_upper_inhabited}
+    Suppose $x,y\in\reals$.
+    Then $\realAddUpper{x}{y}$ is inhabited.
+\end{proposition}
+\begin{proof}
+    Take $a$ such that $a\in\realUpper{x}$
+        by \obv{surreal_real_upper_inhabited}.
+    Take $b$ such that $b\in\realUpper{y}$
+        by \obv{surreal_real_upper_inhabited}.
+    $\surrealAdd{a}{b}\in\realAddUpper{x}{y}$
+        by \auto{surreal_real_add_upper_iff}.
+\end{proof}
+
+\begin{proposition}\label{surreal_real_add_lower_no_maximum}
+    Suppose $x,y\in\reals$.
+    Then for every $z\in\realAddLower{x}{y}$ there exists
+        $z'\in\realAddLower{x}{y}$ such that $\surrealLt{z}{z'}$.
+\end{proposition}
+\begin{proof}
+    Fix $z\in\realAddLower{x}{y}$.
+    Take $a,b$ such that
+        $a\in\realLower{x}$ and $b\in\realLower{y}$ and
+        $z=\surrealAdd{a}{b}$
+        by \auto{surreal_real_add_lower_iff}.
+    Take $a'\in\realLower{x}$ such that $\surrealLt{a}{a'}$
+        by \obv{surreal_real_lower_no_maximum}.
+    Let $z'=\surrealAdd{a'}{b}$.
+    $z'\in\realAddLower{x}{y}$
+        by \auto{surreal_real_add_lower_iff}.
+    $a,a',b\in\surrealStage{\naturals}$
+        by \obv{surreal_real_lower}.
+    Hence $\surreal{a}$ and $\surreal{a'}$ and $\surreal{b}$
+        by
+        \auto{surreal_stage_characterization,omega_is_ordinal}.
+    Hence $\surrealLt{z}{z'}$
+        by \auto{surreal_add_lt_left}.
+\end{proof}
+
+\begin{proposition}\label{surreal_real_add_upper_no_minimum}
+    Suppose $x,y\in\reals$.
+    Then for every $z\in\realAddUpper{x}{y}$ there exists
+        $z'\in\realAddUpper{x}{y}$ such that $\surrealLt{z'}{z}$.
+\end{proposition}
+\begin{proof}
+    Fix $z\in\realAddUpper{x}{y}$.
+    Take $a,b$ such that
+        $a\in\realUpper{x}$ and $b\in\realUpper{y}$ and
+        $z=\surrealAdd{a}{b}$
+        by \auto{surreal_real_add_upper_iff}.
+    Take $a'\in\realUpper{x}$ such that $\surrealLt{a'}{a}$
+        by \obv{surreal_real_upper_no_minimum}.
+    Let $z'=\surrealAdd{a'}{b}$.
+    $z'\in\realAddUpper{x}{y}$
+        by \auto{surreal_real_add_upper_iff}.
+    $a,a',b\in\surrealStage{\naturals}$
+        by \obv{surreal_real_upper}.
+    Hence $\surreal{a}$ and $\surreal{a'}$ and $\surreal{b}$
+        by
+        \auto{surreal_stage_characterization,omega_is_ordinal}.
+    Hence $\surrealLt{z'}{z}$
+        by \auto{surreal_add_lt_left}.
+\end{proof}
+
+\begin{theorem}\label{surreal_real_add_cut_is_real}
+    Suppose $x,y\in\reals$.
+    Then $\surrealCut{\realAddLower{x}{y}}{\realAddUpper{x}{y}}
+        \in\reals$.
+\end{theorem}
+\begin{proof}
+    Follows by
+        \obv{dense_finite_stage_surreal_cut_is_real,surreal_real_add_bounds_finite_stage,surreal_real_add_cut_pair,surreal_real_add_lower_inhabited,surreal_real_add_upper_inhabited,surreal_real_add_lower_no_maximum,surreal_real_add_upper_no_minimum}.
+\end{proof}
+
+\begin{theorem}\label{surreal_real_add_cut_equation}
+    Suppose $x,y\in\reals$.
+    Then $\surrealAdd{x}{y}
+        =\surrealCut{\realAddLower{x}{y}}{\realAddUpper{x}{y}}$.
+\end{theorem}
+\begin{proof}
+    Let $L=\realAddLower{x}{y}$.
+    Let $R=\realAddUpper{x}{y}$.
+    Let $A=\surrealAddLeft{x}{y}$.
+    Let $B=\surrealAddRight{x}{y}$.
+    Let $c=\surrealCut{L}{R}$.
+    $\surreal{x}$ and $\surreal{y}$
+        by \obv{surreal_real_is_surreal}.
+    $\surrealCutPair{L}{R}$
+        by \auto{surreal_real_add_cut_pair}.
+    $\surrealCutPair{A}{B}$
+        by \auto{surreal_add_cut_pair}.
+    $\surreal{c}$
+        by \obv{surreal_cut_pair_is_surreal}.
+    Show that for every $l\in L$ we have
+        $\surrealLt{l}{\surrealCut{A}{B}}$.
+    \begin{subproof}
+        Fix $l\in L$.
+        Take $a,b$ such that
+            $a\in\realLower{x}$ and $b\in\realLower{y}$ and
+            $l=\surrealAdd{a}{b}$
+            by \obv{surreal_real_add_lower_iff}.
+        $a,b\in\surrealStage{\naturals}$ and
+            $\surrealLt{a}{x}$ and $\surrealLt{b}{y}$
+            by \obv{surreal_real_lower_iff}.
+        Hence $\surreal{a}$ and $\surreal{b}$
+            by
+            \auto{surreal_stage_characterization,omega_is_ordinal}.
+        $\surrealLt{l}{\surrealAdd{x}{y}}$
+            by \auto{surreal_add_lt_both}.
+        Follows by \auto{surreal_add_equation}.
+    \end{subproof}
+    Show that for every $r\in R$ we have
+        $\surrealLt{\surrealCut{A}{B}}{r}$.
+    \begin{subproof}
+        Fix $r\in R$.
+        Take $a,b$ such that
+            $a\in\realUpper{x}$ and $b\in\realUpper{y}$ and
+            $r=\surrealAdd{a}{b}$
+            by \auto{surreal_real_add_upper_iff}.
+        $a,b\in\surrealStage{\naturals}$ and
+            $\surrealLt{x}{a}$ and $\surrealLt{y}{b}$
+            by \auto{surreal_real_upper_iff}.
+        Hence $\surreal{a}$ and $\surreal{b}$
+            by
+            \auto{surreal_stage_characterization,omega_is_ordinal}.
+        $\surrealLt{\surrealAdd{x}{y}}{r}$
+            by \auto{surreal_add_lt_both}.
+        Follows by \auto{surreal_add_equation}.
+    \end{subproof}
+    Show that for every $l\in A$ we have $\surrealLt{l}{c}$.
+    \begin{subproof}
+        Fix $l\in A$.
+        (There exists $u\in\surrealLeft{x}$ such that
+            $l=\surrealAdd{u}{y}$) or
+        (there exists $v\in\surrealLeft{y}$ such that
+            $l=\surrealAdd{x}{v}$)
+            by \auto{surreal_add_left_options_iff}.
+        \begin{byCase}
+            \caseOf{$\exists u:\Set.\ u\in\surrealLeft{x}\land
+                    l=\surrealAdd{u}{y}$.}
+                Take $u\in\surrealLeft{x}$ such that
+                    $l=\surrealAdd{u}{y}$.
+                $\surreal{u}$ and $\birthday{u}\in\birthday{x}$ and
+                    $\surrealLt{u}{x}$
+                    by \auto{surreal_left_elim}.
+                Hence $u\in\surrealStage{\naturals}$
+                    by \obv{surreal_earlier_than_real_finite_stage}.
+                Hence $u\in\realLower{x}$
+                    by \obv{surreal_real_lower}.
+                Take $u'\in\realLower{x}$ such that
+                    $\surrealLt{u}{u'}$
+                    by \obv{surreal_real_lower_no_maximum}.
+                Take $v\in\realLower{y}$ such that
+                    $\surrealLt{\surrealAdd{u}{y}}
+                        {\surrealAdd{u'}{v}}$
+                    by \obv{surreal_real_lower_sum_interpolation}.
+                Hence $\surrealLt{l}{\surrealAdd{u'}{v}}$
+                    by \auto.
+                $\surrealAdd{u'}{v}\in L$
+                    by \auto{surreal_real_add_lower_iff}.
+                Hence $\surrealLt{\surrealAdd{u'}{v}}{c}$
+                    by \auto{surreal_cut_pair_left}.
+                $u',v\in\surrealStage{\naturals}$
+                    by \obv{surreal_real_lower}.
+                Hence $\surreal{l}$ and
+                    $\surreal{\surrealAdd{u'}{v}}$
+                    by
+                    \auto{surreal_add_is_surreal,surreal_real_is_surreal,surreal_stage_characterization,omega_is_ordinal}.
+                Follows by
+                    \auto{surreal_lt_transitive}.
+            \caseOf{$\lnot(\exists u:\Set.
+                    u\in\surrealLeft{x}\land
+                    l=\surrealAdd{u}{y})$.}
+                Take $v\in\surrealLeft{y}$ such that
+                    $l=\surrealAdd{x}{v}$.
+                $\surreal{v}$ and $\birthday{v}\in\birthday{y}$ and
+                    $\surrealLt{v}{y}$
+                    by \auto{surreal_left_elim}.
+                Hence $v\in\surrealStage{\naturals}$
+                    by \obv{surreal_earlier_than_real_finite_stage}.
+                Hence $v\in\realLower{y}$
+                    by \obv{surreal_real_lower}.
+                Take $v'\in\realLower{y}$ such that
+                    $\surrealLt{v}{v'}$
+                    by \obv{surreal_real_lower_no_maximum}.
+                Take $u\in\realLower{x}$ such that
+                    $\surrealLt{\surrealAdd{v}{x}}
+                        {\surrealAdd{v'}{u}}$
+                    by \auto{surreal_real_lower_sum_interpolation}.
+                $u,v'\in\surrealStage{\naturals}$
+                    by \obv{surreal_real_lower}.
+                Hence $\surreal{u}$ and $\surreal{v'}$
+                    by
+                    \auto{surreal_stage_characterization,omega_is_ordinal}.
+                $l=\surrealAdd{v}{x}$ and
+                    $\surrealAdd{v'}{u}=\surrealAdd{u}{v'}$
+                    by
+                    \auto{surreal_add_commutative,surreal_real_is_surreal}.
+                Hence $\surrealLt{l}{\surrealAdd{u}{v'}}$
+                    by \auto.
+                $\surrealAdd{u}{v'}\in L$
+                    by \auto{surreal_real_add_lower_iff}.
+                Hence $\surrealLt{\surrealAdd{u}{v'}}{c}$
+                    by \auto{surreal_cut_pair_left}.
+                Hence $\surreal{l}$ and
+                    $\surreal{\surrealAdd{u}{v'}}$
+                    by
+                    \auto{surreal_add_is_surreal,surreal_add_commutative,surreal_real_is_surreal,surreal_stage_characterization,omega_is_ordinal}.
+                Follows by
+                    \auto{surreal_lt_transitive,surreal_add_commutative}.
+        \end{byCase}
+    \end{subproof}
+    Show that for every $r\in B$ we have $\surrealLt{c}{r}$.
+    \begin{subproof}
+        Fix $r\in B$.
+        (There exists $u\in\surrealRight{x}$ such that
+            $r=\surrealAdd{u}{y}$) or
+        (there exists $v\in\surrealRight{y}$ such that
+            $r=\surrealAdd{x}{v}$)
+            by \auto{surreal_add_right_options_iff}.
+        \begin{byCase}
+            \caseOf{$\exists u:\Set.\ u\in\surrealRight{x}\land
+                    r=\surrealAdd{u}{y}$.}
+                Take $u\in\surrealRight{x}$ such that
+                    $r=\surrealAdd{u}{y}$.
+                $\surreal{u}$ and $\birthday{u}\in\birthday{x}$ and
+                    $\surrealLt{x}{u}$
+                    by \auto{surreal_right_elim}.
+                Hence $u\in\surrealStage{\naturals}$
+                    by \obv{surreal_earlier_than_real_finite_stage}.
+                Hence $u\in\realUpper{x}$
+                    by \obv{surreal_real_upper}.
+                Take $u'\in\realUpper{x}$ such that
+                    $\surrealLt{u'}{u}$
+                    by \obv{surreal_real_upper_no_minimum}.
+                Take $v\in\realUpper{y}$ such that
+                    $\surrealLt{\surrealAdd{u'}{v}}
+                        {\surrealAdd{u}{y}}$
+                    by \obv{surreal_real_upper_sum_interpolation}.
+                Hence $\surrealLt{\surrealAdd{u'}{v}}{r}$
+                    by \auto.
+                $\surrealAdd{u'}{v}\in R$
+                    by \auto{surreal_real_add_upper_iff}.
+                Hence $\surrealLt{c}{\surrealAdd{u'}{v}}$
+                    by \auto{surreal_cut_pair_right}.
+                $u',v\in\surrealStage{\naturals}$
+                    by \obv{surreal_real_upper}.
+                Hence $\surreal{r}$ and
+                    $\surreal{\surrealAdd{u'}{v}}$
+                    by
+                    \auto{surreal_add_is_surreal,surreal_real_is_surreal,surreal_stage_characterization,omega_is_ordinal}.
+                Follows by
+                    \auto{surreal_lt_transitive}.
+            \caseOf{$\lnot(\exists u:\Set.
+                    u\in\surrealRight{x}\land
+                    r=\surrealAdd{u}{y})$.}
+                Take $v\in\surrealRight{y}$ such that
+                    $r=\surrealAdd{x}{v}$.
+                $\surreal{v}$ and $\birthday{v}\in\birthday{y}$ and
+                    $\surrealLt{y}{v}$
+                    by \auto{surreal_right_elim}.
+                Hence $v\in\surrealStage{\naturals}$
+                    by \obv{surreal_earlier_than_real_finite_stage}.
+                Hence $v\in\realUpper{y}$
+                    by \obv{surreal_real_upper}.
+                Take $v'\in\realUpper{y}$ such that
+                    $\surrealLt{v'}{v}$
+                    by \obv{surreal_real_upper_no_minimum}.
+                Take $u\in\realUpper{x}$ such that
+                    $\surrealLt{\surrealAdd{v'}{u}}
+                        {\surrealAdd{v}{x}}$
+                    by \auto{surreal_real_upper_sum_interpolation}.
+                $u,v'\in\surrealStage{\naturals}$
+                    by \obv{surreal_real_upper}.
+                Hence $\surreal{u}$ and $\surreal{v'}$
+                    by
+                    \auto{surreal_stage_characterization,omega_is_ordinal}.
+                $r=\surrealAdd{v}{x}$ and
+                    $\surrealAdd{v'}{u}=\surrealAdd{u}{v'}$
+                    by
+                    \auto{surreal_add_commutative,surreal_real_is_surreal}.
+                Hence $\surrealLt{\surrealAdd{u}{v'}}{r}$
+                    by \auto.
+                $\surrealAdd{u}{v'}\in R$
+                    by \auto{surreal_real_add_upper_iff}.
+                Hence $\surrealLt{c}{\surrealAdd{u}{v'}}$
+                    by \auto{surreal_cut_pair_right}.
+                Hence $\surreal{r}$ and
+                    $\surreal{\surrealAdd{u}{v'}}$
+                    by
+                    \auto{surreal_add_is_surreal,surreal_add_commutative,surreal_real_is_surreal,surreal_stage_characterization,omega_is_ordinal}.
+                Follows by
+                    \auto{surreal_lt_transitive,surreal_add_commutative}.
+        \end{byCase}
+    \end{subproof}
+    Hence $c=\surrealCut{A}{B}$
+        by \auto{surreal_cut_extensionality}.
+    Follows by \auto{surreal_add_equation}.
+\end{proof}
+
+\begin{theorem}\label{surreal_real_addition_closed}
+    Suppose $x,y\in\reals$.
+    Then $\surrealAdd{x}{y}\in\reals$.
+\end{theorem}
+\begin{proof}
+    $\surrealCut{\realAddLower{x}{y}}{\realAddUpper{x}{y}}
+        \in\reals$ by \obv{surreal_real_add_cut_is_real}.
+    Follows by \auto{surreal_real_add_cut_equation}.
+\end{proof}

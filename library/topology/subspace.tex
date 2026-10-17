@@ -1,0 +1,695 @@
+\section{Subspace topologies}
+
+\import{topology/initial.tex}
+
+For an arbitrary set $A$, the carrier of the subspace is the trace
+$A\inter\carrier[X]$.  This keeps the construction total without identifying
+an untyped ambient subset with a topological structure.
+
+\begin{definition}\label{subspace_opens}
+    $\subspaceOpens{X}{A}=
+        \{V\in\pow{A\inter\carrier[X]}\mid
+            \text{there exists $U\in\opens[X]$ such that
+                $V=U\inter(A\inter\carrier[X])$}\}$.
+\end{definition}
+
+\begin{proposition}\label{subspace_opens_iff}
+    Let $X$ be a topological space.
+    Then $V\in\subspaceOpens{X}{A}$ iff
+        there exists $U\in\opens[X]$ such that
+            $V=U\inter(A\inter\carrier[X])$.
+\end{proposition}
+\begin{proof}
+    If $V\in\subspaceOpens{X}{A}$, then there exists
+        $U\in\opens[X]$ such that
+            $V=U\inter(A\inter\carrier[X])$
+        by \obv{subspace_opens}.
+    Show that if there exists $U\in\opens[X]$ such that
+        $V=U\inter(A\inter\carrier[X])$, then
+        $V\in\subspaceOpens{X}{A}$.
+    \begin{subproof}
+        Assume there exists $U\in\opens[X]$ such that
+            $V=U\inter(A\inter\carrier[X])$.
+        Take $U\in\opens[X]$ such that
+            $V=U\inter(A\inter\carrier[X])$.
+        $V\subseteq A\inter\carrier[X]$
+            by \auto{inter_lower_right}.
+        Hence $V\in\pow{A\inter\carrier[X]}$
+            by \obv{pow_iff,subseteq}.
+        Follows by \obv{subspace_opens}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{proposition}\label{subspace_opens_type}
+    $\subspaceOpens{X}{A}\subseteq\pow{A\inter\carrier[X]}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{subspace_opens,subseteq}.
+\end{proof}
+
+\begin{theorem}\label{subspace_opens_form_topology}
+    Let $X$ be a topological space.
+    Then $\subspaceOpens{X}{A}$ is a topology on
+        $A\inter\carrier[X]$.
+\end{theorem}
+\begin{proof}
+    Let $C=A\inter\carrier[X]$.
+    $C\subseteq\carrier[X]$ by \auto{inter_lower_right}.
+    $\carrier[X]\in\opens[X]$ by \obv{carrier_open}.
+    $\carrier[X]\inter C=C$
+        by \obv{inter_absorb_supseteq_left}.
+    Hence $C\in\subspaceOpens{X}{A}$
+        by \auto{subspace_opens_iff}.
+    Show that for all $V,W\in\subspaceOpens{X}{A}$ we have
+        $V\inter W\in\subspaceOpens{X}{A}$.
+    \begin{subproof}
+        Fix $V,W\in\subspaceOpens{X}{A}$.
+        Take $P\in\opens[X]$ such that $V=P\inter C$
+            by \auto{subspace_opens_iff}.
+        Take $Q\in\opens[X]$ such that $W=Q\inter C$
+            by \auto{subspace_opens_iff}.
+        $P\inter Q\in\opens[X]$ by \obv{opens_inter}.
+        $V\inter W=(P\inter Q)\inter C$
+            by \auto{inter_assoc,inter_comm,inter_idempotent}.
+        Follows by \auto{subspace_opens_iff}.
+    \end{subproof}
+    Show that for every $F\subseteq\subspaceOpens{X}{A}$ we have
+        $\unions{F}\in\subspaceOpens{X}{A}$.
+    \begin{subproof}
+        Fix $F\subseteq\subspaceOpens{X}{A}$.
+        Let $G=\{U\in\opens[X]\mid U\inter C\in F\}$.
+        $G\subseteq\opens[X]$ by \obv{subseteq}.
+        Hence $\unions{G}\in\opens[X]$ by \obv{opens_unions}.
+        Show that $\unions{F}=\unions{G}\inter C$.
+        \begin{subproof}
+            Show that for every $x\in\unions{F}$ we have
+                $x\in\unions{G}\inter C$.
+            \begin{subproof}
+                Fix $x\in\unions{F}$.
+                Take $V\in F$ such that $x\in V$
+                    by \obv{unions_iff}.
+                $V\in\subspaceOpens{X}{A}$ by \obv{subseteq}.
+                Take $U\in\opens[X]$ such that $V=U\inter C$
+                    by \auto{subspace_opens_iff}.
+                Hence $U\in G$.
+                $x\in U$ and $x\in C$ by \auto{inter}.
+                Thus $x\in\unions{G}$ by \auto{unions_iff}.
+                Follows by \obv{inter}.
+            \end{subproof}
+            Show that for every $x\in\unions{G}\inter C$ we have
+                $x\in\unions{F}$.
+            \begin{subproof}
+                Fix $x\in\unions{G}\inter C$.
+                Then $x\in\unions{G}$ and $x\in C$ by \obv{inter}.
+                Take $U\in G$ such that $x\in U$
+                    by \obv{unions_iff}.
+                Then $U\inter C\in F$.
+                $x\in U\inter C$ by \obv{inter}.
+                Follows by \auto{unions_iff}.
+            \end{subproof}
+            Follows by set extensionality.
+        \end{subproof}
+        Follows by \auto{subspace_opens_iff}.
+    \end{subproof}
+    Follows by
+        \obv{topology_family,subspace_opens_type}.
+\end{proof}
+
+\begin{definition}\label{subspace_topology}
+    $\subspaceTopology{X}{A}=
+        \TopologicalSpaceOn{A\inter\carrier[X]}{\subspaceOpens{X}{A}}$.
+\end{definition}
+
+\begin{classification}\label{subspace_topology_is_topological_space}
+    Let $X$ be a topological space.
+    Then $\subspaceTopology{X}{A}$ is a topological space.
+\end{classification}
+\begin{proof}
+    $\subspaceOpens{X}{A}$ is a topology on
+        $A\inter\carrier[X]$
+        by \obv{subspace_opens_form_topology}.
+    Follows by
+        \auto{subspace_topology,topological_space_on_is_topological_space}.
+\end{proof}
+
+\begin{theorem}\label{subspace_topology_is_exact}
+    Let $X$ be a topological space.
+    Then $\subspaceTopology{X}{A}$ is an exact topological space.
+\end{theorem}
+\begin{proof}
+    $\subspaceOpens{X}{A}$ is a topology on
+        $A\inter\carrier[X]$ by
+        \obv{subspace_opens_form_topology}.
+    Follows by
+        \auto{subspace_topology,topological_space_on_is_exact}.
+\end{proof}
+
+\begin{proposition}\label{subspace_topology_carrier}
+    $\carrier[\subspaceTopology{X}{A}]=A\inter\carrier[X]$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{subspace_topology,topological_space_on_carrier}.
+\end{proof}
+
+\begin{proposition}\label{subspace_topology_opens}
+    $\opens[\subspaceTopology{X}{A}]=\subspaceOpens{X}{A}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{subspace_topology,topological_space_on_opens}.
+\end{proof}
+
+\begin{definition}\label{subspace_inclusion}
+    $\subspaceInclusion{X}{A}=\identity{A\inter\carrier[X]}$.
+\end{definition}
+
+\begin{proposition}\label{subspace_inclusion_type}
+    $\subspaceInclusion{X}{A}\in
+        \funs{A\inter\carrier[X]}{\carrier[X]}$.
+\end{proposition}
+\begin{proof}
+    $A\inter\carrier[X]\subseteq\carrier[X]$ by
+        \obv{inter_lower_right}.
+    $\identity{A\inter\carrier[X]}\in
+        \funs{A\inter\carrier[X]}{A\inter\carrier[X]}$ by
+        \obv{id_elem_funs}.
+    Hence $\identity{A\inter\carrier[X]}\in
+        \funs{A\inter\carrier[X]}{\carrier[X]}$ by
+        \obv{funs_weaken_codom}.
+    $\subspaceInclusion{X}{A}=\identity{A\inter\carrier[X]}$ by
+        \obv{subspace_inclusion}.
+\end{proof}
+
+\begin{proposition}\label{subspace_inclusion_preimage}
+    $\preimg{\subspaceInclusion{X}{A}}{U}
+        =(A\inter\carrier[X])\inter U$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{subspace_inclusion,preimg_iff,id_iff,inter,setext}.
+\end{proof}
+
+\begin{theorem}\label{subspace_opens_are_single_initial_opens}
+    Let $X$ be a topological space.
+    Then $\subspaceOpens{X}{A}
+        =\singleInitialPrebasis{A\inter\carrier[X]}{X}
+            {\subspaceInclusion{X}{A}}$.
+\end{theorem}
+\begin{proof}
+    Show that every element of $\subspaceOpens{X}{A}$ is an element of
+        $\singleInitialPrebasis{A\inter\carrier[X]}{X}
+            {\subspaceInclusion{X}{A}}$.
+    \begin{subproof}
+        Fix $V\in\subspaceOpens{X}{A}$.
+        Take $U\in\opens[X]$ such that
+            $V=U\inter(A\inter\carrier[X])$ by
+            \obv{subspace_opens_iff}.
+        $U\inter(A\inter\carrier[X])\subseteq
+            A\inter\carrier[X]$ by \obv{inter_lower_right}.
+        Hence $V\subseteq A\inter\carrier[X]$.
+        Hence $V\in\pow{A\inter\carrier[X]}$ by
+            \obv{powerset_intro}.
+        $\preimg{\subspaceInclusion{X}{A}}{U}
+            =(A\inter\carrier[X])\inter U$ by
+            \obv{subspace_inclusion_preimage}.
+        $U\inter(A\inter\carrier[X])
+            =(A\inter\carrier[X])\inter U$ by \obv{inter_comm}.
+        Hence $V=\preimg{\subspaceInclusion{X}{A}}{U}$.
+        Follows by \obv{single_initial_prebasis}.
+    \end{subproof}
+    Hence $\subspaceOpens{X}{A}\subseteq
+        \singleInitialPrebasis{A\inter\carrier[X]}{X}
+            {\subspaceInclusion{X}{A}}$ by
+        \obv{subseteq}.
+
+    Show that every element of
+        $\singleInitialPrebasis{A\inter\carrier[X]}{X}
+            {\subspaceInclusion{X}{A}}$
+        is an element of $\subspaceOpens{X}{A}$.
+    \begin{subproof}
+        Fix $V\in
+            \singleInitialPrebasis{A\inter\carrier[X]}{X}
+                {\subspaceInclusion{X}{A}}$.
+        Take $U\in\opens[X]$ such that
+            $V=\preimg{\subspaceInclusion{X}{A}}{U}$ by
+            \obv{single_initial_prebasis}.
+        $\preimg{\subspaceInclusion{X}{A}}{U}
+            =(A\inter\carrier[X])\inter U$ by
+            \obv{subspace_inclusion_preimage}.
+        $(A\inter\carrier[X])\inter U
+            =U\inter(A\inter\carrier[X])$ by \obv{inter_comm}.
+        Hence $V=U\inter(A\inter\carrier[X])$.
+        Follows by \obv{subspace_opens_iff}.
+    \end{subproof}
+    Hence $\singleInitialPrebasis{A\inter\carrier[X]}{X}
+        {\subspaceInclusion{X}{A}}
+        \subseteq\subspaceOpens{X}{A}$ by \obv{subseteq}.
+    Follows by \obv{subseteq_antisymmetric}.
+\end{proof}
+
+\begin{theorem}\label{subspace_topology_is_single_initial_topology}
+    Let $X$ be a topological space.
+    Then $\subspaceTopology{X}{A}
+        =\SingleInitialTopology{A\inter\carrier[X]}{X}
+            {\subspaceInclusion{X}{A}}$.
+\end{theorem}
+\begin{proof}
+    $\subspaceInclusion{X}{A}\in
+        \funs{A\inter\carrier[X]}{\carrier[X]}$ by
+        \obv{subspace_inclusion_type}.
+    Hence $\SingleInitialTopology{A\inter\carrier[X]}{X}
+        {\subspaceInclusion{X}{A}}
+        =\TopologicalSpaceOn{A\inter\carrier[X]}
+            {\singleInitialPrebasis{A\inter\carrier[X]}{X}
+                {\subspaceInclusion{X}{A}}}$ by
+        \obv{single_initial_topology_direct}.
+    $\subspaceOpens{X}{A}
+        =\singleInitialPrebasis{A\inter\carrier[X]}{X}
+            {\subspaceInclusion{X}{A}}$ by
+        \obv{subspace_opens_are_single_initial_opens}.
+    $\subspaceTopology{X}{A}
+        =\TopologicalSpaceOn{A\inter\carrier[X]}
+            {\subspaceOpens{X}{A}}$ by \obv{subspace_topology}.
+    Hence $\subspaceTopology{X}{A}
+        =\TopologicalSpaceOn{A\inter\carrier[X]}
+            {\singleInitialPrebasis{A\inter\carrier[X]}{X}
+                {\subspaceInclusion{X}{A}}}$.
+\end{proof}
+
+\begin{corollary}\label{subspace_topology_carrier_of_subset}
+    Suppose $A\subseteq\carrier[X]$.
+    Then $\carrier[\subspaceTopology{X}{A}]=A$.
+\end{corollary}
+\begin{proof}
+    $A\inter\carrier[X]=A$
+        by \obv{inter_absorb_supseteq_right}.
+    Follows by \obv{subspace_topology_carrier}.
+\end{proof}
+
+\begin{theorem}\label{subspace_open_iff}
+    Let $X$ be a topological space.
+    Then $V\in\opens[\subspaceTopology{X}{A}]$ iff
+        there exists $U\in\opens[X]$ such that
+            $V=U\inter\carrier[\subspaceTopology{X}{A}]$.
+\end{theorem}
+\begin{proof}
+    Follows by
+        \auto{subspace_topology_opens,subspace_topology_carrier,
+            subspace_opens_iff}.
+\end{proof}
+
+\begin{theorem}\label{open_subspace_open_iff}
+    Let $X$ be a topological space.
+    Suppose $A\in\opens[X]$.
+    Then $V\in\opens[\subspaceTopology{X}{A}]$ iff
+        $V\in\opens[X]$ and $V\subseteq A$.
+\end{theorem}
+\begin{proof}
+    $A\subseteq\carrier[X]$ by \obv{opens_type}.
+    $\carrier[\subspaceTopology{X}{A}]=A$ by
+        \obv{subspace_topology_carrier_of_subset}.
+    Show that if $V\in\opens[\subspaceTopology{X}{A}]$, then
+        $V\in\opens[X]$ and $V\subseteq A$.
+    \begin{subproof}
+        Assume $V\in\opens[\subspaceTopology{X}{A}]$.
+        Take $U\in\opens[X]$ such that $V=U\inter A$ by
+            \auto{subspace_open_iff}.
+        $V\in\opens[X]$ by \auto{opens_inter}.
+        $V\subseteq A$ by \auto{inter_lower_right}.
+    \end{subproof}
+    Show that if $V\in\opens[X]$ and $V\subseteq A$, then
+        $V\in\opens[\subspaceTopology{X}{A}]$.
+    \begin{subproof}
+        Assume $V\in\opens[X]$ and $V\subseteq A$.
+        $V=V\inter A$ by \obv{inter_absorb_supseteq_right}.
+        Follows by \auto{subspace_open_iff}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{classification}\label{open_in_open_subspace_is_open}
+    Let $X$ be a topological space.
+    Suppose $U$ is open in $X$ and $V$ is open in $\subspaceTopology{X}{U}$.
+    Then $V$ is open in $X$.
+\end{classification}
+\begin{proof}
+    $U\in\opens[X]$ and $V\in\opens[\subspaceTopology{X}{U}]$ by \obv{is_open}.
+    Follows by \auto{open_subspace_open_iff,is_open}.
+\end{proof}
+
+\begin{theorem}\label{subspace_opens_on_full_carrier}
+    Let $X$ be a topological space.
+    Then $\subspaceOpens{X}{\carrier[X]}=\opens[X]$.
+\end{theorem}
+\begin{proof}
+    Show that every element of $\subspaceOpens{X}{\carrier[X]}$
+        is an element of $\opens[X]$.
+    \begin{subproof}
+        Fix $V\in\subspaceOpens{X}{\carrier[X]}$.
+        Take $U\in\opens[X]$ such that
+            $V=U\inter(\carrier[X]\inter\carrier[X])$ by
+            \obv{subspace_opens_iff}.
+        $\carrier[X]\inter\carrier[X]=\carrier[X]$ by
+            \obv{inter_idempotent}.
+        $U\subseteq\carrier[X]$ by \obv{opens_type,subseteq}.
+        Hence $U\inter\carrier[X]=U$ by
+            \obv{inter_absorb_supseteq_right}.
+        Thus $V=U$.
+    \end{subproof}
+    Hence $\subspaceOpens{X}{\carrier[X]}\subseteq\opens[X]$ by
+        \obv{subseteq}.
+
+    Show that every element of $\opens[X]$ is an element of
+        $\subspaceOpens{X}{\carrier[X]}$.
+    \begin{subproof}
+        Fix $U\in\opens[X]$.
+        $\carrier[X]\inter\carrier[X]=\carrier[X]$ by
+            \obv{inter_idempotent}.
+        $U\subseteq\carrier[X]$ by \obv{opens_type,subseteq}.
+        Hence $U\inter\carrier[X]=U$ by
+            \obv{inter_absorb_supseteq_right}.
+        Hence $U=U\inter(\carrier[X]\inter\carrier[X])$.
+        Follows by \auto{subspace_opens_iff}.
+    \end{subproof}
+    Hence $\opens[X]\subseteq\subspaceOpens{X}{\carrier[X]}$ by
+        \obv{subseteq}.
+    Follows by \obv{subseteq_antisymmetric}.
+\end{proof}
+
+\begin{theorem}\label{full_subspace_is_topological_reduct}
+    Let $X$ be a topological space.
+    Then $\subspaceTopology{X}{\carrier[X]}=\TopologicalReduct{X}$.
+\end{theorem}
+\begin{proof}
+    $\carrier[X]\inter\carrier[X]=\carrier[X]$ by
+        \obv{inter_idempotent}.
+    $\subspaceOpens{X}{\carrier[X]}=\opens[X]$ by
+        \obv{subspace_opens_on_full_carrier}.
+    Follows by \obv{subspace_topology,topological_reduct}.
+\end{proof}
+
+\begin{corollary}\label{full_subspace_of_exact}
+    Suppose $X$ is an exact topological space.
+    Then $\subspaceTopology{X}{\carrier[X]}=X$.
+\end{corollary}
+\begin{proof}
+    Hence $\subspaceTopology{X}{\carrier[X]}=\TopologicalReduct{X}$ by
+        \obv{full_subspace_is_topological_reduct}.
+    $\TopologicalReduct{X}=X$ by \obv{topological_reduct_of_exact}.
+\end{proof}
+
+\begin{proposition}\label{iterated_subspace_carrier}
+    Let $X$ be a topological space.
+    Then
+        $\carrier[\subspaceTopology{\subspaceTopology{X}{A}}{B}]
+            =(A\inter\carrier[X])\inter B$.
+\end{proposition}
+\begin{proof}
+    $\carrier[\subspaceTopology{\subspaceTopology{X}{A}}{B}]
+        =B\inter\carrier[\subspaceTopology{X}{A}]$ by
+        \obv{subspace_topology_carrier}.
+    $\carrier[\subspaceTopology{X}{A}]=A\inter\carrier[X]$ by
+        \obv{subspace_topology_carrier}.
+    $B\inter(A\inter\carrier[X])
+        =(A\inter\carrier[X])\inter B$ by \obv{inter_comm}.
+\end{proof}
+
+\begin{proposition}\label{transitive_subspace_carrier}
+    Let $X$ be a topological space.
+    Then
+        $\carrier[\subspaceTopology{X}{(A\inter\carrier[X])\inter B}]
+            =(A\inter\carrier[X])\inter B$.
+\end{proposition}
+\begin{proof}
+    $(A\inter\carrier[X])\inter B\subseteq\carrier[X]$ by
+        \auto{inter,subseteq}.
+    Follows by \obv{subspace_topology_carrier_of_subset}.
+\end{proof}
+
+\begin{theorem}\label{subspace_topology_transitive}
+    Let $X$ be a topological space.
+    Then $\subspaceTopology{\subspaceTopology{X}{A}}{B}
+        =\subspaceTopology{X}{(A\inter\carrier[X])\inter B}$.
+\end{theorem}
+\begin{proof}
+    $\subspaceTopology{X}{A}$ is a topological space by
+        \obv{subspace_topology_is_topological_space}.
+    $\subspaceTopology{\subspaceTopology{X}{A}}{B}$ is an exact
+        topological space by \obv{subspace_topology_is_exact}.
+    $\subspaceTopology{X}{(A\inter\carrier[X])\inter B}$ is an exact
+        topological space by \obv{subspace_topology_is_exact}.
+    $\carrier[\subspaceTopology{\subspaceTopology{X}{A}}{B}]
+        =(A\inter\carrier[X])\inter B$ by
+        \obv{iterated_subspace_carrier}.
+    $\carrier[\subspaceTopology{X}{(A\inter\carrier[X])\inter B}]
+        =(A\inter\carrier[X])\inter B$ by
+        \obv{transitive_subspace_carrier}.
+    Hence $\carrier[\subspaceTopology{\subspaceTopology{X}{A}}{B}]
+        =\carrier[\subspaceTopology{X}{(A\inter\carrier[X])\inter B}]$.
+
+    Show that every element of
+        $\opens[\subspaceTopology{\subspaceTopology{X}{A}}{B}]$
+        is an element of
+        $\opens[\subspaceTopology{X}{(A\inter\carrier[X])\inter B}]$.
+    \begin{subproof}
+        Fix $V\in
+            \opens[\subspaceTopology{\subspaceTopology{X}{A}}{B}]$.
+        Hence $V\in
+            \subspaceOpens{\subspaceTopology{X}{A}}{B}$ by
+            \obv{subspace_topology_opens}.
+        Take $U\in\opens[\subspaceTopology{X}{A}]$ such that
+            $V=U\inter(B\inter\carrier[\subspaceTopology{X}{A}])$ by
+            \obv{subspace_opens_iff}.
+        Hence $U\in\subspaceOpens{X}{A}$ by
+            \obv{subspace_topology_opens}.
+        Take $W\in\opens[X]$ such that
+            $U=W\inter(A\inter\carrier[X])$ by
+            \obv{subspace_opens_iff}.
+        $\carrier[\subspaceTopology{X}{A}]=A\inter\carrier[X]$ by
+            \obv{subspace_topology_carrier}.
+        $\carrier[\subspaceTopology{\subspaceTopology{X}{A}}{B}]
+            =(A\inter\carrier[X])\inter B$ by
+            \obv{iterated_subspace_carrier}.
+        $B\inter(A\inter\carrier[X])
+            =(A\inter\carrier[X])\inter B$ by \obv{inter_comm}.
+        Hence $V=(W\inter(A\inter\carrier[X]))
+            \inter((A\inter\carrier[X])\inter B)$.
+        $(W\inter(A\inter\carrier[X]))
+            \inter((A\inter\carrier[X])\inter B)
+            =W\inter((A\inter\carrier[X])\inter B)$ by
+            \auto{inter,setext}.
+        $\carrier[\subspaceTopology{X}{(A\inter\carrier[X])\inter B}]
+            =(A\inter\carrier[X])\inter B$ by
+            \obv{transitive_subspace_carrier}.
+        Hence $V=W\inter
+            \carrier[\subspaceTopology{X}{(A\inter\carrier[X])\inter B}]$.
+        Follows by \auto{subspace_open_iff}.
+    \end{subproof}
+    Hence $\opens[\subspaceTopology{\subspaceTopology{X}{A}}{B}]
+        \subseteq
+        \opens[\subspaceTopology{X}{(A\inter\carrier[X])\inter B}]$ by
+        \obv{subseteq}.
+
+    Show that every element of
+        $\opens[\subspaceTopology{X}{(A\inter\carrier[X])\inter B}]$
+        is an element of
+        $\opens[\subspaceTopology{\subspaceTopology{X}{A}}{B}]$.
+    \begin{subproof}
+        Fix $V\in
+            \opens[\subspaceTopology{X}{(A\inter\carrier[X])\inter B}]$.
+        Hence $V\in\subspaceOpens{X}{(A\inter\carrier[X])\inter B}$ by
+            \obv{subspace_topology_opens}.
+        Take $W\in\opens[X]$ such that
+            $V=W\inter(((A\inter\carrier[X])\inter B)
+                \inter\carrier[X])$ by
+            \obv{subspace_opens_iff}.
+        Let $U=W\inter(A\inter\carrier[X])$.
+        $\carrier[\subspaceTopology{X}{A}]=A\inter\carrier[X]$ by
+            \obv{subspace_topology_carrier}.
+        Hence $U=W\inter\carrier[\subspaceTopology{X}{A}]$.
+        $U\in\subspaceOpens{X}{A}$ by
+            \auto{subspace_opens_iff}.
+        Hence $U\in\opens[\subspaceTopology{X}{A}]$ by
+            \obv{subspace_topology_opens}.
+        $(A\inter\carrier[X])\inter B\subseteq\carrier[X]$ by
+            \auto{inter,subseteq}.
+        Hence $((A\inter\carrier[X])\inter B)\inter\carrier[X]
+            =(A\inter\carrier[X])\inter B$ by
+            \obv{inter_absorb_supseteq_right}.
+        Hence $V=W\inter((A\inter\carrier[X])\inter B)$.
+        $\carrier[\subspaceTopology{\subspaceTopology{X}{A}}{B}]
+            =(A\inter\carrier[X])\inter B$ by
+            \obv{iterated_subspace_carrier}.
+        $(W\inter(A\inter\carrier[X]))
+            \inter((A\inter\carrier[X])\inter B)
+            =W\inter((A\inter\carrier[X])\inter B)$ by
+            \auto{inter,setext}.
+        Hence $V=U\inter
+            \carrier[\subspaceTopology{\subspaceTopology{X}{A}}{B}]$.
+        Follows by \auto{subspace_open_iff}.
+    \end{subproof}
+    Hence $\opens[\subspaceTopology{X}{(A\inter\carrier[X])\inter B}]
+        \subseteq
+        \opens[\subspaceTopology{\subspaceTopology{X}{A}}{B}]$ by
+        \obv{subseteq}.
+    Hence $\opens[\subspaceTopology{\subspaceTopology{X}{A}}{B}]
+        =\opens[\subspaceTopology{X}{(A\inter\carrier[X])\inter B}]$ by
+        \obv{subseteq_antisymmetric}.
+    Follows by structure extensionality.
+\end{proof}
+
+\begin{theorem}\label{subspace_topology_same_fields}
+    Suppose $\carrier[X]=\carrier[Y]$ and $\opens[X]=\opens[Y]$.
+    Then $\subspaceTopology{X}{A}=\subspaceTopology{Y}{A}$.
+\end{theorem}
+\begin{proof}
+    $\subspaceOpens{X}{A}=\subspaceOpens{Y}{A}$ by
+        \auto{subspace_opens,setext}.
+    Follows by \obv{subspace_topology}.
+\end{proof}
+
+\begin{corollary}\label{nested_subspace_topology}
+    Let $X$ be a topological space.
+    Suppose $B\subseteq A$ and $A\subseteq\carrier[X]$.
+    Then $\subspaceTopology{\subspaceTopology{X}{A}}{B}
+        =\subspaceTopology{X}{B}$.
+\end{corollary}
+\begin{proof}
+    $A\inter\carrier[X]=A$ by \obv{inter_absorb_supseteq_right}.
+    $A\inter B=B$ by \obv{inter_absorb_supseteq_left}.
+    Follows by \auto{subspace_topology_transitive}.
+\end{proof}
+
+\begin{theorem}\label{subspace_closed_iff}
+    Let $X$ be a topological space.
+    Then $C$ is closed in $\subspaceTopology{X}{A}$ iff
+        there exists $F\in\closeds{X}$ such that
+            $C=F\inter\carrier[\subspaceTopology{X}{A}]$.
+\end{theorem}
+\begin{proof}
+    Let $D=\carrier[\subspaceTopology{X}{A}]$.
+    $\subspaceTopology{X}{A}$ is a topological space
+        by \obv{subspace_topology_is_topological_space}.
+    $D=A\inter\carrier[X]$ by \obv{subspace_topology_carrier}.
+    Hence $D\subseteq\carrier[X]$ by \auto{inter_lower_right}.
+    Show that if $C$ is closed in $\subspaceTopology{X}{A}$, then
+        there exists $F\in\closeds{X}$ such that $C=F\inter D$.
+    \begin{subproof}
+        Assume $C$ is closed in $\subspaceTopology{X}{A}$.
+        Hence $C\in\closeds{\subspaceTopology{X}{A}}$
+            by \obv{is_closed_in}.
+        Then $C\in\pow{D}$ and
+            $D\setminus C\in\opens[\subspaceTopology{X}{A}]$
+            by \obv{closeds}.
+        Hence $C\subseteq D$ by \obv{pow_iff,subseteq}.
+        Take $U\in\opens[X]$ such that
+            $D\setminus C=U\inter D$
+            by \auto{subspace_open_iff}.
+        Let $F=\carrier[X]\setminus U$.
+        $F\in\closeds{X}$
+            by \auto{complement_of_open_elem_closeds}.
+        Show that $C=F\inter D$.
+        \begin{subproof}
+            Show that for every $x\in C$ we have $x\in F\inter D$.
+            \begin{subproof}
+                Fix $x\in C$.
+                Hence $x\in D$ by \obv{subseteq}.
+                Show that $x\notin U$.
+                \begin{subproof}
+                    Suppose $x\in U$.
+                    Hence $x\in U\inter D$ by \obv{inter}.
+                    Thus $x\in D\setminus C$.
+                    Contradiction by \obv{setminus}.
+                \end{subproof}
+                Hence $x\in F$ by \obv{setminus,subseteq}.
+                Follows by \obv{inter}.
+            \end{subproof}
+            Show that for every $x\in F\inter D$ we have $x\in C$.
+            \begin{subproof}
+                Fix $x\in F\inter D$.
+                Then $x\in F$ and $x\in D$ by \obv{inter}.
+                Hence $x\notin U$ by \auto{setminus}.
+                Suppose not.
+                Hence $x\in D\setminus C$ by \obv{setminus}.
+                Thus $x\in U\inter D$.
+                Hence $x\in U$ by \obv{inter}.
+                Contradiction.
+            \end{subproof}
+            Follows by set extensionality.
+        \end{subproof}
+    \end{subproof}
+    Show that if there exists $F\in\closeds{X}$ such that $C=F\inter D$,
+        then $C$ is closed in $\subspaceTopology{X}{A}$.
+    \begin{subproof}
+        Assume there exists $F\in\closeds{X}$ such that $C=F\inter D$.
+        Take $F\in\closeds{X}$ such that $C=F\inter D$.
+        $F\in\pow{\carrier[X]}$ and
+            $\carrier[X]\setminus F\in\opens[X]$
+            by \obv{closeds}.
+        Hence $F\subseteq\carrier[X]$ by \obv{pow_iff,subseteq}.
+        $C\subseteq D$ by \auto{inter_lower_right}.
+        Show that
+            $D\setminus C=(\carrier[X]\setminus F)\inter D$.
+        \begin{subproof}
+            Show that for every $x\in D\setminus C$ we have
+                $x\in(\carrier[X]\setminus F)\inter D$.
+            \begin{subproof}
+                Fix $x\in D\setminus C$.
+                Then $x\in D$ and $x\notin C$ by \obv{setminus}.
+                Hence $x\notin F$ by \auto{inter}.
+                $x\in\carrier[X]$ by \obv{subseteq}.
+                Hence $x\in\carrier[X]\setminus F$
+                    by \obv{setminus}.
+                Follows by \obv{inter}.
+            \end{subproof}
+            Show that for every
+                $x\in(\carrier[X]\setminus F)\inter D$ we have
+                $x\in D\setminus C$.
+            \begin{subproof}
+                Fix $x\in(\carrier[X]\setminus F)\inter D$.
+                Then $x\in\carrier[X]\setminus F$ and $x\in D$
+                    by \obv{inter}.
+                Hence $x\notin F$ by \obv{setminus}.
+                Thus $x\notin C$ by \auto{inter}.
+                Follows by \obv{setminus}.
+            \end{subproof}
+            Follows by set extensionality.
+        \end{subproof}
+        Hence $D\setminus C\in\opens[\subspaceTopology{X}{A}]$
+            by \auto{subspace_open_iff}.
+        $C\in\pow{D}$ by \obv{powerset_intro}.
+        Hence $C\in\closeds{\subspaceTopology{X}{A}}$
+            by \obv{closeds}.
+        Follows by \obv{is_closed_in}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{closed_of_closed_in_closed_subspace}
+    Let $X$ be a topological space.
+    Let $A\in\closeds{X}$.
+    Let $C\in\closeds{\subspaceTopology{X}{A}}$.
+    Then $C\in\closeds{X}$.
+\end{theorem}
+\begin{proof}
+    Let $S=\subspaceTopology{X}{A}$.
+    $A$ is closed in $X$ by \obv{is_closed_in}.
+    Hence $A\subseteq\carrier[X]$
+        by \obv{closed_in_subseteq_carrier}.
+    Hence $\carrier[S]=A$
+        by \auto{subspace_topology_carrier_of_subset}.
+    $S$ is a topological space
+        by \obv{subspace_topology_is_topological_space}.
+    $C$ is closed in $S$ by \obv{is_closed_in}.
+    Take $F\in\closeds{X}$ such that
+        $C=F\inter\carrier[S]$ by \auto{subspace_closed_iff}.
+    Hence $C=F\inter A$.
+    $F$ is closed in $X$ by \obv{is_closed_in}.
+    Hence $F\subseteq\carrier[X]$
+        by \obv{closed_in_subseteq_carrier}.
+    Hence $F\inter A$ is closed in $X$
+        by \obv{intersection_of_closed_is_closed}.
+    Follows by \obv{is_closed_in}.
+\end{proof}

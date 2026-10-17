@@ -1,0 +1,583 @@
+\import{surreal/real-completeness.tex}
+\import{logic/conditional.tex}
+
+\section{Absolute value on the surreal reals}
+
+Absolute value uses the ambient surreal order and negation.  The definition
+is total, as are the underlying surreal operations, but the mathematical
+interface below is deliberately stated for surreal values and, where closure
+matters, for real values.
+
+\begin{definition}\label{surreal_absolute_value}
+    $\surrealAbs{x}=
+        \Apply{\logicalIfSetOp}
+            {\surrealLt{x}{\surrealZero},\surrealNeg{x},x}$.
+\end{definition}
+
+\begin{abbreviation}\label{surreal_absolute_value_notation}
+    $\abs{x}=\surrealAbs{x}$.
+\end{abbreviation}
+
+\begin{definition}\label{surreal_absolute_value_op}
+    $\surrealAbsoluteValueOp:\Set\to\Set
+        =\fun{x:\Set}{\surrealAbs{x}}$.
+\end{definition}
+
+\begin{proposition}\label{surreal_abs_negative}
+    Suppose $\surreal{x}$ and $\surrealLt{x}{\surrealZero}$.
+    Then $\abs{x}=\surrealNeg{x}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \obv{surreal_absolute_value,logical_if_set_true}.
+\end{proof}
+
+\begin{proposition}\label{surreal_abs_nonnegative}
+    Suppose $\surreal{x}$ and $\surrealLe{\surrealZero}{x}$.
+    Then $\abs{x}=x$.
+\end{proposition}
+\begin{proof}
+    Not $\surrealLt{x}{\surrealZero}$
+        by
+        \auto{surreal_le,surreal_lt_asymmetric,surreal_lt_irreflexive,empty_surreal}.
+    Follows by
+        \obv{surreal_absolute_value,logical_if_set_false}.
+\end{proof}
+
+\begin{proposition}\label{surreal_abs_nonpositive}
+    Suppose $\surreal{x}$ and $\surrealLe{x}{\surrealZero}$.
+    Then $\abs{x}=\surrealNeg{x}$.
+\end{proposition}
+\begin{proof}
+    $\surrealLt{x}{\surrealZero}$ or $x=\surrealZero$
+        by \obv{surreal_le}.
+    Follows by
+        \obv{surreal_abs_negative,surreal_abs_nonnegative,surreal_negation_empty,empty_surreal}.
+\end{proof}
+
+\begin{proposition}\label{surreal_abs_cases}
+    Suppose $\surreal{x}$.
+    Then $\abs{x}=x$ or $\abs{x}=\surrealNeg{x}$.
+\end{proposition}
+\begin{proof}
+    $\surrealLt{x}{\surrealZero}$ or $x=\surrealZero$ or
+        $\surrealLt{\surrealZero}{x}$
+        by \obv{surreal_lt_trichotomy,empty_surreal}.
+    Follows by
+        \auto{surreal_abs_negative,surreal_abs_nonnegative,surreal_le}.
+\end{proof}
+
+\begin{proposition}\label{surreal_abs_is_surreal}
+    Suppose $\surreal{x}$.
+    Then $\surreal{\abs{x}}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{surreal_abs_cases,surreal_negation_is_surreal}.
+\end{proof}
+
+\begin{proposition}\label{surreal_real_abs_closed}
+    Suppose $x\in\reals$.
+    Then $\abs{x}\in\reals$.
+\end{proposition}
+\begin{proof}
+    $\surreal{x}$ by \obv{surreal_real_is_surreal}.
+    Follows by
+        \auto{surreal_abs_cases,surreal_real_negation_closed}.
+\end{proof}
+
+\begin{proposition}\label{surreal_abs_zero}
+    $\abs{\surrealZero}=\surrealZero$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \obv{surreal_abs_nonnegative,surreal_le_reflexive,empty_surreal}.
+\end{proof}
+
+\begin{proposition}\label{surreal_abs_nonnegative_value}
+    Suppose $\surreal{x}$.
+    Then $\surrealLe{\surrealZero}{\abs{x}}$.
+\end{proposition}
+\begin{proof}
+    \begin{byCase}
+    \caseOf{$\surrealLt{x}{\surrealZero}$.}
+        $\surreal{\surrealNeg{x}}$
+            by \obv{surreal_negation_is_surreal}.
+        $\surrealLt{\surrealZero}{\surrealNeg{x}}$
+            by
+            \auto{surreal_negation_lt_reverses,surreal_negation_empty,empty_surreal}.
+        Follows by \obv{surreal_abs_negative,surreal_le}.
+    \caseOf{Not $\surrealLt{x}{\surrealZero}$.}
+        $\surrealLe{\surrealZero}{x}$
+            by \obv{surreal_lt_trichotomy,surreal_le,empty_surreal}.
+        Follows by \obv{surreal_abs_nonnegative}.
+    \end{byCase}
+\end{proof}
+
+\begin{proposition}\label{surreal_abs_eq_zero_iff}
+    Suppose $\surreal{x}$.
+    Then $\abs{x}=\surrealZero$ iff $x=\surrealZero$.
+\end{proposition}
+\begin{proof}
+    \begin{byCase}
+    \caseOf{$\surrealLt{x}{\surrealZero}$.}
+        $\abs{x}=\surrealNeg{x}$ by \obv{surreal_abs_negative}.
+        $x\neq\surrealZero$
+            by \obv{surreal_lt_irreflexive,empty_surreal}.
+        $\surrealNeg{x}\neq\surrealZero$
+            by
+            \auto{surreal_negation_involutive,surreal_negation_empty}.
+        Follows by \auto.
+    \caseOf{Not $\surrealLt{x}{\surrealZero}$.}
+        $\surrealLe{\surrealZero}{x}$
+            by \obv{surreal_lt_trichotomy,surreal_le,empty_surreal}.
+        Follows by \auto{surreal_abs_nonnegative,surreal_abs_zero}.
+    \end{byCase}
+\end{proof}
+
+\begin{proposition}\label{surreal_abs_negation}
+    Suppose $\surreal{x}$.
+    Then $\abs{\surrealNeg{x}}=\abs{x}$.
+\end{proposition}
+\begin{proof}
+    $\surreal{\surrealNeg{x}}$
+        by \obv{surreal_negation_is_surreal}.
+    \begin{byCase}
+    \caseOf{$\surrealLe{\surrealZero}{x}$.}
+        $\surrealLe{\surrealNeg{x}}{\surrealZero}$
+            by
+            \obv{surreal_negation_le_reverses,surreal_negation_empty,empty_surreal}.
+        Follows by
+            \auto{surreal_abs_nonnegative,surreal_abs_nonpositive,surreal_negation_involutive}.
+    \caseOf{Not $\surrealLe{\surrealZero}{x}$.}
+        $\surrealLt{x}{\surrealZero}$
+            by \auto{surreal_lt_trichotomy,surreal_le,empty_surreal}.
+        $\surrealLe{\surrealZero}{\surrealNeg{x}}$
+            by
+            \auto{surreal_negation_lt_reverses,surreal_negation_empty,surreal_le,empty_surreal}.
+        Follows by
+            \obv{surreal_abs_negative,surreal_abs_nonnegative}.
+    \end{byCase}
+\end{proof}
+
+\begin{proposition}\label{surreal_le_abs}
+    Suppose $\surreal{x}$.
+    Then $\surrealLe{x}{\abs{x}}$.
+\end{proposition}
+\begin{proof}
+    \begin{byCase}
+    \caseOf{$\surrealLt{x}{\surrealZero}$.}
+        $\surreal{\surrealNeg{x}}$
+            by \obv{surreal_negation_is_surreal}.
+        $\surrealLt{\surrealZero}{\surrealNeg{x}}$
+            by
+            \auto{surreal_negation_lt_reverses,surreal_negation_empty,empty_surreal}.
+        $\surrealLt{x}{\surrealNeg{x}}$
+            by \obv{surreal_lt_transitive,empty_surreal}.
+        Follows by \obv{surreal_abs_negative,surreal_le}.
+    \caseOf{Not $\surrealLt{x}{\surrealZero}$.}
+        $\surrealLe{\surrealZero}{x}$
+            by \obv{surreal_lt_trichotomy,surreal_le,empty_surreal}.
+        Follows by
+            \obv{surreal_abs_nonnegative,surreal_le_reflexive}.
+    \end{byCase}
+\end{proof}
+
+\begin{proposition}\label{surreal_neg_le_abs}
+    Suppose $\surreal{x}$.
+    Then $\surrealLe{\surrealNeg{x}}{\abs{x}}$.
+\end{proposition}
+\begin{proof}
+    $\surreal{\surrealNeg{x}}$
+        by \obv{surreal_negation_is_surreal}.
+    $\surrealLe{\surrealNeg{x}}{\abs{\surrealNeg{x}}}$
+        by \obv{surreal_le_abs}.
+    Follows by \obv{surreal_abs_negation}.
+\end{proof}
+
+\begin{proposition}\label{surreal_abs_positive_iff}
+    Suppose $\surreal{x}$.
+    Then $\surrealLt{\surrealZero}{\abs{x}}$ iff
+        $x\neq\surrealZero$.
+\end{proposition}
+\begin{proof}
+    $\surreal{\abs{x}}$ by \obv{surreal_abs_is_surreal}.
+    $\surrealLe{\surrealZero}{\abs{x}}$
+        by \obv{surreal_abs_nonnegative_value}.
+    Follows by
+        \auto{surreal_abs_eq_zero_iff,surreal_le,surreal_lt_irreflexive,empty_surreal}.
+\end{proof}
+
+\begin{theorem}\label{surreal_abs_le_iff}
+    Suppose $\surreal{x}$ and $\surreal{a}$.
+    Then $\surrealLe{\abs{x}}{a}$ iff
+        $\surrealLe{x}{a}$ and
+        $\surrealLe{\surrealNeg{x}}{a}$.
+\end{theorem}
+\begin{proof}
+    $\surreal{\abs{x}}$ and $\surreal{\surrealNeg{x}}$
+        by
+        \obv{surreal_abs_is_surreal,surreal_negation_is_surreal}.
+    $\surrealLe{x}{\abs{x}}$ by \obv{surreal_le_abs}.
+    $\surrealLe{\surrealNeg{x}}{\abs{x}}$
+        by \obv{surreal_neg_le_abs}.
+    $\abs{x}=x$ or $\abs{x}=\surrealNeg{x}$
+        by \obv{surreal_abs_cases}.
+    Follows by \auto{surreal_le_transitive}.
+\end{proof}
+
+\begin{theorem}\label{surreal_abs_lt_iff}
+    Suppose $\surreal{x}$ and $\surreal{a}$.
+    Then $\surrealLt{\abs{x}}{a}$ iff
+        $\surrealLt{x}{a}$ and
+        $\surrealLt{\surrealNeg{x}}{a}$.
+\end{theorem}
+\begin{proof}
+    $\surreal{\abs{x}}$ and $\surreal{\surrealNeg{x}}$
+        by
+        \obv{surreal_abs_is_surreal,surreal_negation_is_surreal}.
+    $\surrealLe{x}{\abs{x}}$ by \obv{surreal_le_abs}.
+    $\surrealLe{\surrealNeg{x}}{\abs{x}}$
+        by \obv{surreal_neg_le_abs}.
+    $\abs{x}=x$ or $\abs{x}=\surrealNeg{x}$
+        by \obv{surreal_abs_cases}.
+    Follows by \auto{surreal_le_lt_transitive}.
+\end{proof}
+
+\begin{theorem}\label{surreal_abs_triangle}
+    Suppose $\surreal{x}$ and $\surreal{y}$.
+    Then
+        $\surrealLe{\abs{\surrealAdd{x}{y}}}
+            {\surrealAdd{\abs{x}}{\abs{y}}}$.
+\end{theorem}
+\begin{proof}
+    $\surreal{\abs{x}}$ and $\surreal{\abs{y}}$ and
+        $\surreal{\surrealAdd{x}{y}}$ and
+        $\surreal{\surrealAdd{\abs{x}}{\abs{y}}}$
+        by \obv{surreal_abs_is_surreal,surreal_add_is_surreal}.
+    $\surrealLe{x}{\abs{x}}$ and
+        $\surrealLe{y}{\abs{y}}$
+        by \obv{surreal_le_abs}.
+    Hence
+        $\surrealLe{\surrealAdd{x}{y}}
+            {\surrealAdd{\abs{x}}{\abs{y}}}$
+        by \obv{surreal_add_le_both}.
+    $\surrealLe{\surrealNeg{x}}{\abs{x}}$ and
+        $\surrealLe{\surrealNeg{y}}{\abs{y}}$
+        by \obv{surreal_neg_le_abs}.
+    Hence
+        $\surrealLe{
+            \surrealAdd{\surrealNeg{x}}{\surrealNeg{y}}}
+            {\surrealAdd{\abs{x}}{\abs{y}}}$
+        by
+        \obv{surreal_add_le_both,surreal_negation_is_surreal}.
+    Thus
+        $\surrealLe{\surrealNeg{\surrealAdd{x}{y}}}
+            {\surrealAdd{\abs{x}}{\abs{y}}}$
+        by \obv{surreal_negation_additive}.
+    Follows by \auto{surreal_abs_le_iff}.
+\end{proof}
+
+\begin{proposition}\label{surreal_abs_square}
+    Suppose $\surreal{x}$.
+    Then
+        $\surrealMul{\abs{x}}{\abs{x}}
+            =\surrealMul{x}{x}$.
+\end{proposition}
+\begin{proof}
+    $\abs{x}=x$ or $\abs{x}=\surrealNeg{x}$
+        by \obv{surreal_abs_cases}.
+    Follows by
+        \auto{surreal_mul_both_negated}.
+\end{proof}
+
+\begin{theorem}\label{surreal_abs_multiplicative}
+    Suppose $\surreal{x}$ and $\surreal{y}$.
+    Then
+        $\abs{\surrealMul{x}{y}}
+            =\surrealMul{\abs{x}}{\abs{y}}$.
+\end{theorem}
+\begin{proof}
+    $\surreal{\abs{x}}$ and $\surreal{\abs{y}}$ and
+        $\surreal{\surrealMul{x}{y}}$ and
+        $\surreal{\abs{\surrealMul{x}{y}}}$ and
+        $\surreal{\surrealMul{\abs{x}}{\abs{y}}}$
+        by
+        \obv{surreal_abs_is_surreal,surreal_mul_is_surreal}.
+    $\surrealLe{\surrealZero}{\abs{\surrealMul{x}{y}}}$
+        by \obv{surreal_abs_nonnegative_value}.
+    $\surrealLe{\surrealZero}{\abs{x}}$ and
+        $\surrealLe{\surrealZero}{\abs{y}}$
+        by \obv{surreal_abs_nonnegative_value}.
+    Hence
+        $\surrealLe{\surrealZero}
+            {\surrealMul{\abs{x}}{\abs{y}}}$
+        by \obv{surreal_mul_nonneg_nonneg}.
+    $\surrealMul{\abs{\surrealMul{x}{y}}}
+            {\abs{\surrealMul{x}{y}}}
+        =\surrealMul{\surrealMul{x}{y}}{\surrealMul{x}{y}}$
+        by \obv{surreal_abs_square}.
+    $\surrealMul{
+            \surrealMul{\abs{x}}{\abs{y}}}
+            {\surrealMul{\abs{x}}{\abs{y}}}
+        =\surrealMul{
+            \surrealMul{\abs{x}}{\abs{x}}}
+            {\surrealMul{\abs{y}}{\abs{y}}}$
+        by \obv{surreal_mul_four_rearrange}.
+    Hence
+        $\surrealMul{
+            \surrealMul{\abs{x}}{\abs{y}}}
+            {\surrealMul{\abs{x}}{\abs{y}}}
+        =\surrealMul{\surrealMul{x}{x}}{\surrealMul{y}{y}}$
+        by \obv{surreal_abs_square}.
+    $\surrealMul{\surrealMul{x}{x}}{\surrealMul{y}{y}}
+        =\surrealMul{\surrealMul{x}{y}}{\surrealMul{x}{y}}$
+        by \obv{surreal_mul_four_rearrange}.
+    Follows by \obv{surreal_nonnegative_square_unique}.
+\end{proof}
+
+\begin{proposition}\label{surreal_difference_negation}
+    Suppose $\surreal{x}$ and $\surreal{y}$.
+    Then
+        $\surrealNeg{\surrealAdd{x}{\surrealNeg{y}}}
+            =\surrealAdd{y}{\surrealNeg{x}}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{surreal_negation_additive,surreal_negation_involutive,surreal_add_commutative,surreal_negation_is_surreal}.
+\end{proof}
+
+\begin{proposition}\label{surreal_difference_le_iff}
+    Suppose $\surreal{x}$ and $\surreal{y}$ and $\surreal{a}$.
+    Then
+        $\surrealLe{\surrealAdd{x}{\surrealNeg{y}}}{a}$ iff
+        $\surrealLe{x}{\surrealAdd{y}{a}}$.
+\end{proposition}
+\begin{proof}
+    $\surreal{\surrealNeg{y}}$
+        by \obv{surreal_negation_is_surreal}.
+    Show that
+        $\surrealLe{\surrealAdd{x}{\surrealNeg{y}}}{a}
+            \implies
+         \surrealLe{x}{\surrealAdd{y}{a}}$.
+    \begin{subproof}
+        Assume
+            $\surrealLe{\surrealAdd{x}{\surrealNeg{y}}}{a}$.
+        $\surrealLe{
+            \surrealAdd{\surrealAdd{x}{\surrealNeg{y}}}{y}}
+            {\surrealAdd{a}{y}}$
+            by \obv{surreal_add_le_left,surreal_add_is_surreal}.
+        Follows by
+            \auto{surreal_add_associative,surreal_add_inverse_left,surreal_add_zero_right,surreal_add_commutative}.
+    \end{subproof}
+    Show that
+        $\surrealLe{x}{\surrealAdd{y}{a}}
+            \implies
+         \surrealLe{\surrealAdd{x}{\surrealNeg{y}}}{a}$.
+    \begin{subproof}
+        Assume $\surrealLe{x}{\surrealAdd{y}{a}}$.
+        $\surrealLe{\surrealAdd{x}{\surrealNeg{y}}}
+            {\surrealAdd{\surrealAdd{y}{a}}{\surrealNeg{y}}}$
+            by \obv{surreal_add_le_left,surreal_add_is_surreal}.
+        Follows by
+            \auto{surreal_add_associative,surreal_add_commutative,surreal_add_inverse_right,surreal_add_zero_left,surreal_negation_is_surreal}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{surreal_abs_difference_le_iff}
+    Suppose $\surreal{x}$ and $\surreal{y}$ and $\surreal{a}$.
+    Then
+        $\surrealLe{\abs{\surrealAdd{x}{\surrealNeg{y}}}}{a}$ iff
+        $\surrealLe{x}{\surrealAdd{y}{a}}$ and
+        $\surrealLe{y}{\surrealAdd{x}{a}}$.
+\end{theorem}
+\begin{proof}
+    $\surreal{\surrealNeg{y}}$ and
+        $\surreal{\surrealAdd{x}{\surrealNeg{y}}}$
+        by
+        \obv{surreal_negation_is_surreal,surreal_add_is_surreal}.
+    $\surrealNeg{\surrealAdd{x}{\surrealNeg{y}}}
+        =\surrealAdd{y}{\surrealNeg{x}}$
+        by \obv{surreal_difference_negation}.
+    Follows by
+        \auto{surreal_abs_le_iff,surreal_difference_le_iff}.
+\end{proof}
+
+\begin{proposition}\label{surreal_difference_lt_iff}
+    Suppose $\surreal{x}$ and $\surreal{y}$ and $\surreal{a}$.
+    Then
+        $\surrealLt{\surrealAdd{x}{\surrealNeg{y}}}{a}$ iff
+        $\surrealLt{x}{\surrealAdd{y}{a}}$.
+\end{proposition}
+\begin{proof}
+    $\surreal{\surrealNeg{y}}$
+        by \obv{surreal_negation_is_surreal}.
+    Show that
+        $\surrealLt{\surrealAdd{x}{\surrealNeg{y}}}{a}
+            \implies
+         \surrealLt{x}{\surrealAdd{y}{a}}$.
+    \begin{subproof}
+        Assume
+            $\surrealLt{\surrealAdd{x}{\surrealNeg{y}}}{a}$.
+        Follows by
+            \auto{surreal_subtract_lt_add,surreal_add_commutative}.
+    \end{subproof}
+    Show that
+        $\surrealLt{x}{\surrealAdd{y}{a}}
+            \implies
+         \surrealLt{\surrealAdd{x}{\surrealNeg{y}}}{a}$.
+    \begin{subproof}
+        Assume $\surrealLt{x}{\surrealAdd{y}{a}}$.
+        $\surrealLt{\surrealAdd{x}{\surrealZero}}
+            {\surrealAdd{a}{y}}$
+            by \obv{surreal_add_zero_right,surreal_add_commutative}.
+        Follows by
+            \auto{surreal_add_subtract_lt,surreal_negation_empty,surreal_add_zero_right,empty_surreal}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{surreal_abs_difference_lt_iff}
+    Suppose $\surreal{x}$ and $\surreal{y}$ and $\surreal{a}$.
+    Then
+        $\surrealLt{\abs{\surrealAdd{x}{\surrealNeg{y}}}}{a}$ iff
+        $\surrealLt{x}{\surrealAdd{y}{a}}$ and
+        $\surrealLt{y}{\surrealAdd{x}{a}}$.
+\end{theorem}
+\begin{proof}
+    $\surreal{\surrealNeg{y}}$ and
+        $\surreal{\surrealAdd{x}{\surrealNeg{y}}}$
+        by
+        \obv{surreal_negation_is_surreal,surreal_add_is_surreal}.
+    $\surrealNeg{\surrealAdd{x}{\surrealNeg{y}}}
+        =\surrealAdd{y}{\surrealNeg{x}}$
+        by \obv{surreal_difference_negation}.
+    Follows by
+        \auto{surreal_abs_lt_iff,surreal_difference_lt_iff}.
+\end{proof}
+
+\begin{theorem}\label{surreal_reals_absolute_value_characterization}
+    $x\in\reals$ iff
+        $x\in\surrealStage{\suc{\naturals}}$ and
+        $x\neq\ordinalSurreal{\naturals}$ and
+        $x\neq\surrealNeg{\ordinalSurreal{\naturals}}$ and
+        for every $q\in\surrealStage{\naturals}$ such that
+            for every natural number $n$ we have
+                $\surrealLt{
+                    \abs{\surrealAdd{x}{\surrealNeg{q}}}}
+                    {\surrealEpsilon{n}}$
+        we have $q=x$.
+\end{theorem}
+\begin{proof}
+    Show that
+        $x\in\reals\implies
+        (x\in\surrealStage{\suc{\naturals}}\land
+         x\neq\ordinalSurreal{\naturals}\land
+         x\neq\surrealNeg{\ordinalSurreal{\naturals}}\land
+         (\forall q:\Set.\ q\in\surrealStage{\naturals}\implies
+            ((\forall n:\Set.\ n\in\naturals\implies
+                \surrealLt{
+                    \abs{\surrealAdd{x}{\surrealNeg{q}}}}
+                    {\surrealEpsilon{n}})
+             \implies q=x)))$.
+    \begin{subproof}
+        Assume $x\in\reals$.
+        $x\in\surrealStage{\suc{\naturals}}$ and
+            $x\neq\ordinalSurreal{\naturals}$ and
+            $x\neq\surrealNeg{\ordinalSurreal{\naturals}}$
+            by \obv{surreal_real_elim}.
+        $\surreal{x}$ by \obv{surreal_real_is_surreal}.
+        Show that $\forall q:\Set.\ q\in\surrealStage{\naturals}\implies
+            ((\forall n:\Set.\ n\in\naturals\implies
+                \surrealLt{
+                    \abs{\surrealAdd{x}{\surrealNeg{q}}}}
+                    {\surrealEpsilon{n}})
+             \implies q=x)$.
+        \begin{subproof}
+            Fix $q$.
+            Assume $q\in\surrealStage{\naturals}$.
+            Assume $\forall n:\Set.\ n\in\naturals\implies
+                \surrealLt{
+                    \abs{\surrealAdd{x}{\surrealNeg{q}}}}
+                    {\surrealEpsilon{n}}$.
+            $\surreal{q}$
+                by
+                \auto{surreal_stage_characterization,omega_is_ordinal}.
+            Show that for every natural number $n$ we have
+                $\surrealLt{q}
+                    {\surrealAdd{x}{\surrealEpsilon{n}}}$ and
+                $\surrealLt{x}
+                    {\surrealAdd{q}{\surrealEpsilon{n}}}$.
+            \begin{subproof}
+                Fix $n\in\naturals$.
+                $\surreal{\surrealEpsilon{n}}$
+                    by
+                    \auto{surreal_epsilon_is_surreal,natural_number_is_ordinal}.
+                Follows by
+                    \auto{surreal_abs_difference_lt_iff}.
+            \end{subproof}
+            Follows by \obv{surreal_real_elim}.
+        \end{subproof}
+    \end{subproof}
+
+    Show that
+        $(x\in\surrealStage{\suc{\naturals}}\land
+         x\neq\ordinalSurreal{\naturals}\land
+         x\neq\surrealNeg{\ordinalSurreal{\naturals}}\land
+         (\forall q:\Set.\ q\in\surrealStage{\naturals}\implies
+            ((\forall n:\Set.\ n\in\naturals\implies
+                \surrealLt{
+                    \abs{\surrealAdd{x}{\surrealNeg{q}}}}
+                    {\surrealEpsilon{n}})
+             \implies q=x)))\implies x\in\reals$.
+    \begin{subproof}
+        Assume
+            $x\in\surrealStage{\suc{\naturals}}\land
+             x\neq\ordinalSurreal{\naturals}\land
+             x\neq\surrealNeg{\ordinalSurreal{\naturals}}\land
+             (\forall q:\Set.\ q\in\surrealStage{\naturals}\implies
+                ((\forall n:\Set.\ n\in\naturals\implies
+                    \surrealLt{
+                        \abs{\surrealAdd{x}{\surrealNeg{q}}}}
+                        {\surrealEpsilon{n}})
+                 \implies q=x))$.
+        $\surreal{x}$
+            by
+            \auto{surreal_stage_characterization,suc_ordinal,omega_is_ordinal}.
+        Show that
+            $\forall q:\Set.\ q\in\surrealStage{\naturals}\implies
+                ((\forall n:\Set.\ n\in\naturals\implies
+                    (\surrealLt{q}
+                        {\surrealAdd{x}{\surrealEpsilon{n}}}\land
+                     \surrealLt{x}
+                        {\surrealAdd{q}{\surrealEpsilon{n}}}))
+                 \implies q=x)$.
+        \begin{subproof}
+            Fix $q$.
+            Assume $q\in\surrealStage{\naturals}$.
+            Assume $\forall n:\Set.\ n\in\naturals\implies
+                (\surrealLt{q}
+                    {\surrealAdd{x}{\surrealEpsilon{n}}}\land
+                 \surrealLt{x}
+                    {\surrealAdd{q}{\surrealEpsilon{n}}})$.
+            $\surreal{q}$
+                by
+                \auto{surreal_stage_characterization,omega_is_ordinal}.
+            Show that for every natural number $n$ we have
+                $\surrealLt{
+                    \abs{\surrealAdd{x}{\surrealNeg{q}}}}
+                    {\surrealEpsilon{n}}$.
+            \begin{subproof}
+                Fix $n\in\naturals$.
+                $\surreal{\surrealEpsilon{n}}$
+                    by
+                    \auto{surreal_epsilon_is_surreal,natural_number_is_ordinal}.
+                Follows by
+                    \auto{surreal_abs_difference_lt_iff}.
+            \end{subproof}
+        \end{subproof}
+        Follows by \obv{surreal_real_intro}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}

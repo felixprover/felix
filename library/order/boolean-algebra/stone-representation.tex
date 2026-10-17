@@ -1,0 +1,807 @@
+\section{Stone representation of Boolean algebras}
+
+\import{order/boolean-algebra/field-of-sets.tex}
+\import{order/boolean-algebra/isomorphism.tex}
+\import{order/boolean-algebra/ultrafilter.tex}
+\import{set/logical-graph.tex}
+
+\subsection{Boolean ultrafilters and Stone sets}
+
+\begin{definition}\label{boolean_ultrafilters}
+    $\booleanUltrafilters{B}=
+        \{U\in\pow{\carrier[B]}\mid
+            \booleanUltrafilter{U}{B}\}$.
+\end{definition}
+
+\begin{proposition}\label{boolean_ultrafilters_iff}
+    Let $B$ be a Boolean algebra.
+    Then $U\in\booleanUltrafilters{B}$ iff
+        $\booleanUltrafilter{U}{B}$.
+\end{proposition}
+\begin{proof}
+    Show that if $U\in\booleanUltrafilters{B}$, then
+        $\booleanUltrafilter{U}{B}$.
+    \begin{subproof}
+        Follows by \obv{boolean_ultrafilters}.
+    \end{subproof}
+    Show that if $\booleanUltrafilter{U}{B}$, then
+        $U\in\booleanUltrafilters{B}$.
+    \begin{subproof}
+        Assume $\booleanUltrafilter{U}{B}$.
+        Hence $\latticeFilter{U}{B}$ by
+            \obv{boolean_ultrafilter_is_lattice_filter}.
+        $U\subseteq\carrier[B]$ by
+            \obv{lattice_filter_subseteq_carrier}.
+        Hence $U\in\pow{\carrier[B]}$ by
+            \obv{powerset_intro}.
+        Follows by \obv{boolean_ultrafilters}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{proposition}\label{boolean_ultrafilters_subseteq_powerset}
+    $\booleanUltrafilters{B}\subseteq\pow{\carrier[B]}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{boolean_ultrafilters,subseteq}.
+\end{proof}
+
+\begin{proposition}\label{boolean_ultrafilters_member_subseteq_carrier}
+    Let $U\in\booleanUltrafilters{B}$.
+    Then $U\subseteq\carrier[B]$.
+\end{proposition}
+\begin{proof}
+    $U\in\pow{\carrier[B]}$ by
+        \obv{boolean_ultrafilters_subseteq_powerset,elem_subseteq}.
+    Follows by \obv{powerset_elim}.
+\end{proof}
+
+\begin{theorem}\label{boolean_ultrafilters_empty_iff_bottom_eq_top}
+    Let $B$ be a Boolean algebra.
+    Then $\booleanUltrafilters{B}=\emptyset$ iff
+        $\latticeBottom[B]=\latticeTop[B]$.
+\end{theorem}
+\begin{proof}
+    Show that if $\booleanUltrafilters{B}=\emptyset$, then
+        $\latticeBottom[B]=\latticeTop[B]$.
+    \begin{subproof}
+        Assume $\booleanUltrafilters{B}=\emptyset$.
+        Suppose not.
+        Take $U$ such that $\booleanUltrafilter{U}{B}$ by
+            \obv{boolean_ultrafilter_exists_iff_bottom_ne_top}.
+        Hence $U\in\booleanUltrafilters{B}$ by
+            \obv{boolean_ultrafilters_iff}.
+        Thus $U\in\emptyset$.
+        Contradiction by \obv{emptyset}.
+    \end{subproof}
+    Show that if $\latticeBottom[B]=\latticeTop[B]$, then
+        $\booleanUltrafilters{B}=\emptyset$.
+    \begin{subproof}
+        Assume $\latticeBottom[B]=\latticeTop[B]$.
+        Show that every element of $\booleanUltrafilters{B}$ is an
+            element of $\emptyset$.
+        \begin{subproof}
+            Fix $U\in\booleanUltrafilters{B}$.
+            Hence $\booleanUltrafilter{U}{B}$ by
+                \obv{boolean_ultrafilters_iff}.
+            $\latticeTop[B]\in U$ by
+                \obv{boolean_ultrafilter_top}.
+            Hence $\latticeBottom[B]\in U$.
+            $\latticeBottom[B]\notin U$ by
+                \obv{boolean_ultrafilter_bottom_notin}.
+            Contradiction.
+        \end{subproof}
+        Follows by \auto{emptyset,setext}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{definition}\label{stone_set}
+    $\stoneSet{B}{a}=
+        \{U\in\booleanUltrafilters{B}\mid a\in U\}$.
+\end{definition}
+
+\begin{proposition}\label{stone_set_iff}
+    Let $B$ be a Boolean algebra.
+    Then $U\in\stoneSet{B}{a}$ iff
+        $U\in\booleanUltrafilters{B}$ and $a\in U$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{stone_set}.
+\end{proof}
+
+\begin{proposition}\label{stone_set_subseteq_boolean_ultrafilters}
+    $\stoneSet{B}{a}\subseteq\booleanUltrafilters{B}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{stone_set,subseteq}.
+\end{proof}
+
+\begin{proposition}\label{stone_set_in_powerset}
+    $\stoneSet{B}{a}\in\pow{\booleanUltrafilters{B}}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \obv{stone_set_subseteq_boolean_ultrafilters,powerset_intro}.
+\end{proof}
+
+\subsection{The Stone map}
+
+\begin{definition}\label{stone_map}
+    $\stoneMap{B}=
+        \Apply{\graphOnDomainOp}
+            {\carrier[B],
+             \fun{a:\Set}{\stoneSet{B}{a}}}$.
+\end{definition}
+
+\begin{theorem}\label{stone_map_type}
+    Let $B$ be a Boolean algebra.
+    Then $\stoneMap{B}\in
+        \funs{\carrier[B]}{\pow{\booleanUltrafilters{B}}}$.
+\end{theorem}
+\begin{proof}
+    For every $a\in\carrier[B]$ we have
+        $\stoneSet{B}{a}\in\pow{\booleanUltrafilters{B}}$ by
+        \obv{stone_set_in_powerset}.
+    Follows by
+        \auto{stone_map,logical_graph_on_domain_type}.
+\end{proof}
+
+\begin{proposition}\label{stone_map_is_function}
+    Let $B$ be a Boolean algebra.
+    Then $\stoneMap{B}$ is a function.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{stone_map_type,funs_is_function}.
+\end{proof}
+
+\begin{proposition}\label{stone_map_domain}
+    Let $B$ be a Boolean algebra.
+    Then $\dom{\stoneMap{B}}=\carrier[B]$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{stone_map,logical_graph_on_domain_dom}.
+\end{proof}
+
+\begin{proposition}\label{stone_map_apply}
+    Let $B$ be a Boolean algebra.
+    Let $a\in\carrier[B]$.
+    Then $\apply{\stoneMap{B}}{a}=\stoneSet{B}{a}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{stone_map,logical_graph_on_domain_apply}.
+\end{proof}
+
+\begin{proposition}\label{stone_map_apply_type}
+    Let $B$ be a Boolean algebra.
+    Let $a\in\carrier[B]$.
+    Then $\apply{\stoneMap{B}}{a}\in\pow{\booleanUltrafilters{B}}$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{stone_map_type,funs_type_apply}.
+\end{proof}
+
+\subsection{Boolean equations for Stone sets}
+
+\begin{proposition}\label{stone_set_lattice_bottom}
+    Let $B$ be a Boolean algebra.
+    Then $\stoneSet{B}{\latticeBottom[B]}=\emptyset$.
+\end{proposition}
+\begin{proof}
+    Show that every element of
+        $\stoneSet{B}{\latticeBottom[B]}$ is an element of $\emptyset$.
+    \begin{subproof}
+        Fix $U\in\stoneSet{B}{\latticeBottom[B]}$.
+        $U\in\booleanUltrafilters{B}$ and
+            $\latticeBottom[B]\in U$ by \obv{stone_set_iff}.
+        Hence $\booleanUltrafilter{U}{B}$ by
+            \obv{boolean_ultrafilters_iff}.
+        $\latticeBottom[B]\notin U$ by
+            \obv{boolean_ultrafilter_bottom_notin}.
+        Contradiction.
+    \end{subproof}
+    Follows by \auto{emptyset,setext}.
+\end{proof}
+
+\begin{proposition}\label{stone_set_lattice_top}
+    Let $B$ be a Boolean algebra.
+    Then $\stoneSet{B}{\latticeTop[B]}=\booleanUltrafilters{B}$.
+\end{proposition}
+\begin{proof}
+    $\stoneSet{B}{\latticeTop[B]}
+        \subseteq\booleanUltrafilters{B}$ by
+        \obv{stone_set_subseteq_boolean_ultrafilters}.
+    Show that $\booleanUltrafilters{B}
+        \subseteq\stoneSet{B}{\latticeTop[B]}$.
+    \begin{subproof}
+        It suffices to show that every element of $\booleanUltrafilters{B}$
+            is an element of $\stoneSet{B}{\latticeTop[B]}$ by
+            \obv{subseteq}.
+        Fix $U\in\booleanUltrafilters{B}$.
+        Hence $\booleanUltrafilter{U}{B}$ by
+            \obv{boolean_ultrafilters_iff}.
+        $\latticeTop[B]\in U$ by \obv{boolean_ultrafilter_top}.
+        Follows by \obv{stone_set_iff}.
+    \end{subproof}
+    Follows by \obv{subseteq_antisymmetric}.
+\end{proof}
+
+\begin{proposition}\label{stone_set_meet}
+    Let $B$ be a Boolean algebra.
+    Let $a,b\in\carrier[B]$.
+    Then $\stoneSet{B}{\meet[B](a,b)}=
+        \stoneSet{B}{a}\inter\stoneSet{B}{b}$.
+\end{proposition}
+\begin{proof}
+    Show that for every $U$ we have
+        $U\in\stoneSet{B}{\meet[B](a,b)}$ iff
+        $U\in\stoneSet{B}{a}\inter\stoneSet{B}{b}$.
+    \begin{subproof}
+        Fix $U$.
+        Follows by
+            \auto{stone_set_iff,boolean_ultrafilters_iff,
+                boolean_ultrafilter_meet_in_iff,inter}.
+    \end{subproof}
+    Follows by \auto{setext}.
+\end{proof}
+
+\begin{proposition}\label{stone_set_join}
+    Let $B$ be a Boolean algebra.
+    Let $a,b\in\carrier[B]$.
+    Then $\stoneSet{B}{\join[B](a,b)}=
+        \stoneSet{B}{a}\union\stoneSet{B}{b}$.
+\end{proposition}
+\begin{proof}
+    Show that for every $U$ we have
+        $U\in\stoneSet{B}{\join[B](a,b)}$ iff
+        $U\in\stoneSet{B}{a}\union\stoneSet{B}{b}$.
+    \begin{subproof}
+        Fix $U$.
+        Follows by
+            \auto{stone_set_iff,boolean_ultrafilters_iff,
+                boolean_ultrafilter_join_in_iff,union_iff}.
+    \end{subproof}
+    Follows by \auto{setext}.
+\end{proof}
+
+\begin{proposition}\label{stone_set_complement}
+    Let $B$ be a Boolean algebra.
+    Let $a\in\carrier[B]$.
+    Then $\stoneSet{B}{\booleanComplement[B](a)}=
+        \booleanUltrafilters{B}\setminus\stoneSet{B}{a}$.
+\end{proposition}
+\begin{proof}
+    Show that for every $U$ we have
+        $U\in\stoneSet{B}{\booleanComplement[B](a)}$ iff
+        $U\in\booleanUltrafilters{B}\setminus\stoneSet{B}{a}$.
+    \begin{subproof}
+        Fix $U$.
+        Follows by
+            \auto{stone_set_iff,boolean_ultrafilters_iff,
+                boolean_ultrafilter_complement_in_iff,setminus}.
+    \end{subproof}
+    Follows by \obv{setext}.
+\end{proof}
+
+\subsection{The Stone homomorphism}
+
+\begin{proposition}\label{stone_map_lattice_bottom}
+    Let $B$ be a Boolean algebra.
+    Then $\apply{\stoneMap{B}}{\latticeBottom[B]}=
+        \latticeBottom[\powersetBooleanAlgebra{\booleanUltrafilters{B}}]$.
+\end{proposition}
+\begin{proof}
+    $\latticeBottom[B]\in\carrier[B]$ by
+        \obv{boolean_algebra_is_bounded_lattice,lattice_bottom_type}.
+    $\apply{\stoneMap{B}}{\latticeBottom[B]}=
+        \stoneSet{B}{\latticeBottom[B]}$ by \obv{stone_map_apply}.
+    Hence $\apply{\stoneMap{B}}{\latticeBottom[B]}=\emptyset$ by
+        \obv{stone_set_lattice_bottom}.
+    Follows by \obv{powerset_boolean_algebra_bottom}.
+\end{proof}
+
+\begin{proposition}\label{stone_map_lattice_top}
+    Let $B$ be a Boolean algebra.
+    Then $\apply{\stoneMap{B}}{\latticeTop[B]}=
+        \latticeTop[\powersetBooleanAlgebra{\booleanUltrafilters{B}}]$.
+\end{proposition}
+\begin{proof}
+    $\latticeTop[B]\in\carrier[B]$ by
+        \obv{boolean_algebra_is_bounded_lattice,lattice_top_type}.
+    $\apply{\stoneMap{B}}{\latticeTop[B]}=
+        \stoneSet{B}{\latticeTop[B]}$ by \obv{stone_map_apply}.
+    Hence $\apply{\stoneMap{B}}{\latticeTop[B]}=
+        \booleanUltrafilters{B}$ by \obv{stone_set_lattice_top}.
+    Follows by \obv{powerset_boolean_algebra_top}.
+\end{proof}
+
+\begin{proposition}\label{stone_map_meet}
+    Let $B$ be a Boolean algebra.
+    Let $a,b\in\carrier[B]$.
+    Then $\apply{\stoneMap{B}}{\meet[B](a,b)}=
+        \meet[\powersetBooleanAlgebra{\booleanUltrafilters{B}}]
+            (\apply{\stoneMap{B}}{a},\apply{\stoneMap{B}}{b})$.
+\end{proposition}
+\begin{proof}
+    Let $P=\powersetBooleanAlgebra{\booleanUltrafilters{B}}$.
+    $B$ is a lattice by
+        \obv{boolean_algebra_is_lattice}.
+    Hence $\meet[B](a,b)\in\carrier[B]$ by
+        \obv{lattice_is_meet_semilattice,meet_type}.
+    $\apply{\stoneMap{B}}{\meet[B](a,b)}=
+        \stoneSet{B}{\meet[B](a,b)}$ by \obv{stone_map_apply}.
+    Hence $\apply{\stoneMap{B}}{\meet[B](a,b)}=
+        \stoneSet{B}{a}\inter\stoneSet{B}{b}$ by
+        \obv{stone_set_meet}.
+    $\apply{\stoneMap{B}}{a}=\stoneSet{B}{a}$ and
+        $\apply{\stoneMap{B}}{b}=\stoneSet{B}{b}$ by
+        \obv{stone_map_apply}.
+    $\stoneSet{B}{a},\stoneSet{B}{b}
+        \in\pow{\booleanUltrafilters{B}}$ by
+        \obv{stone_set_in_powerset}.
+    $\meet[P](\stoneSet{B}{a},\stoneSet{B}{b})=
+        \stoneSet{B}{a}\inter\stoneSet{B}{b}$ by
+        \auto{powerset_boolean_algebra_meet_apply}.
+\end{proof}
+
+\begin{proposition}\label{stone_map_join}
+    Let $B$ be a Boolean algebra.
+    Let $a,b\in\carrier[B]$.
+    Then $\apply{\stoneMap{B}}{\join[B](a,b)}=
+        \join[\powersetBooleanAlgebra{\booleanUltrafilters{B}}]
+            (\apply{\stoneMap{B}}{a},\apply{\stoneMap{B}}{b})$.
+\end{proposition}
+\begin{proof}
+    Let $P=\powersetBooleanAlgebra{\booleanUltrafilters{B}}$.
+    $B$ is a lattice by
+        \obv{boolean_algebra_is_lattice}.
+    Hence $\join[B](a,b)\in\carrier[B]$ by
+        \obv{lattice_is_join_semilattice,join_type}.
+    $\apply{\stoneMap{B}}{\join[B](a,b)}=
+        \stoneSet{B}{\join[B](a,b)}$ by \obv{stone_map_apply}.
+    Hence $\apply{\stoneMap{B}}{\join[B](a,b)}=
+        \stoneSet{B}{a}\union\stoneSet{B}{b}$ by
+        \obv{stone_set_join}.
+    $\apply{\stoneMap{B}}{a}=\stoneSet{B}{a}$ and
+        $\apply{\stoneMap{B}}{b}=\stoneSet{B}{b}$ by
+        \obv{stone_map_apply}.
+    $\stoneSet{B}{a},\stoneSet{B}{b}
+        \in\pow{\booleanUltrafilters{B}}$ by
+        \obv{stone_set_in_powerset}.
+    $\join[P](\stoneSet{B}{a},\stoneSet{B}{b})=
+        \stoneSet{B}{a}\union\stoneSet{B}{b}$ by
+        \auto{powerset_boolean_algebra_join_apply}.
+\end{proof}
+
+\begin{proposition}\label{stone_map_complement}
+    Let $B$ be a Boolean algebra.
+    Let $a\in\carrier[B]$.
+    Then $\apply{\stoneMap{B}}{\booleanComplement[B](a)}=
+        \booleanComplement[
+            \powersetBooleanAlgebra{\booleanUltrafilters{B}}]
+            (\apply{\stoneMap{B}}{a})$.
+\end{proposition}
+\begin{proof}
+    Let $P=\powersetBooleanAlgebra{\booleanUltrafilters{B}}$.
+    $\booleanComplement[B](a)\in\carrier[B]$ by
+        \obv{boolean_complement_apply_type}.
+    $\apply{\stoneMap{B}}{\booleanComplement[B](a)}=
+        \stoneSet{B}{\booleanComplement[B](a)}$ by
+        \obv{stone_map_apply}.
+    Hence $\apply{\stoneMap{B}}{\booleanComplement[B](a)}=
+        \booleanUltrafilters{B}\setminus\stoneSet{B}{a}$ by
+        \obv{stone_set_complement}.
+    $\apply{\stoneMap{B}}{a}=\stoneSet{B}{a}$ by
+        \obv{stone_map_apply}.
+    $\stoneSet{B}{a}\in\pow{\booleanUltrafilters{B}}$ by
+        \obv{stone_set_in_powerset}.
+    $\booleanComplement[P](\stoneSet{B}{a})=
+        \booleanUltrafilters{B}\setminus\stoneSet{B}{a}$ by
+        \auto{powerset_boolean_algebra_complement_apply}.
+\end{proof}
+
+\begin{theorem}\label{stone_map_is_boolean_hom}
+    Let $B$ be a Boolean algebra.
+    Then $\booleanHom
+        {\stoneMap{B}}
+        {B}
+        {\powersetBooleanAlgebra{\booleanUltrafilters{B}}}$.
+\end{theorem}
+\begin{proof}
+    Let $P=\powersetBooleanAlgebra{\booleanUltrafilters{B}}$.
+    $P$ is a Boolean algebra by
+        \obv{powerset_boolean_algebra_is_boolean_algebra}.
+    Hence $B$ is a lattice and $P$ is a lattice by
+        \obv{boolean_algebra_is_lattice}.
+    $\carrier[P]=\pow{\booleanUltrafilters{B}}$ by
+        \auto{powerset_boolean_algebra_carrier}.
+    $\stoneMap{B}\in\funs{\carrier[B]}{\carrier[P]}$ by
+        \auto{stone_map_type}.
+    For all $a,b\in\carrier[B]$ we have
+        $\apply{\stoneMap{B}}{\meet[B](a,b)}=
+            \meet[P](\apply{\stoneMap{B}}{a},
+                \apply{\stoneMap{B}}{b})$ and
+        $\apply{\stoneMap{B}}{\join[B](a,b)}=
+            \join[P](\apply{\stoneMap{B}}{a},
+                \apply{\stoneMap{B}}{b})$ by
+        \auto{stone_map_meet,stone_map_join}.
+    Hence $\latticeHom{\stoneMap{B}}{B}{P}$ by
+        \obv{lattice_hom}.
+    $B$ is a bounded lattice and $P$ is a bounded lattice by
+        \obv{boolean_algebra_is_bounded_lattice}.
+    $\apply{\stoneMap{B}}{\latticeBottom[B]}=
+        \latticeBottom[P]$ and
+        $\apply{\stoneMap{B}}{\latticeTop[B]}=
+        \latticeTop[P]$ by
+        \auto{stone_map_lattice_bottom,stone_map_lattice_top}.
+    Hence $\boundedLatticeHom{\stoneMap{B}}{B}{P}$ by
+        \obv{bounded_lattice_hom}.
+    For every $a\in\carrier[B]$ we have
+        $\apply{\stoneMap{B}}{\booleanComplement[B](a)}=
+            \booleanComplement[P](\apply{\stoneMap{B}}{a})$ by
+        \auto{stone_map_complement}.
+    Follows by \auto{boolean_hom}.
+\end{proof}
+
+\subsection{Order reflection and embedding}
+
+\begin{proposition}\label{stone_set_monotone}
+    Let $B$ be a Boolean algebra.
+    Let $a,b\in\carrier[B]$.
+    Suppose $a\mathrel{\leq[B]}b$.
+    Then $\stoneSet{B}{a}\subseteq\stoneSet{B}{b}$.
+\end{proposition}
+\begin{proof}
+    It suffices to show that every element of $\stoneSet{B}{a}$
+        is an element of $\stoneSet{B}{b}$ by \obv{subseteq}.
+    Fix $U\in\stoneSet{B}{a}$.
+    $U\in\booleanUltrafilters{B}$ and $a\in U$ by
+        \obv{stone_set_iff}.
+    Hence $\booleanUltrafilter{U}{B}$ by
+        \obv{boolean_ultrafilters_iff}.
+    Hence $b\in U$ by \obv{boolean_ultrafilter_upward}.
+    Follows by \obv{stone_set_iff}.
+\end{proof}
+
+\begin{proposition}\label{stone_set_order_reflecting}
+    Let $B$ be a Boolean algebra.
+    Let $a,b\in\carrier[B]$.
+    Suppose $\stoneSet{B}{a}\subseteq\stoneSet{B}{b}$.
+    Then $a\mathrel{\leq[B]}b$.
+\end{proposition}
+\begin{proof}
+    Suppose not.
+    Take $U$ such that $\booleanUltrafilter{U}{B}$ and
+        $a\in U$ and $b\notin U$ by
+        \obv{boolean_ultrafilter_separates_order}.
+    Hence $U\in\booleanUltrafilters{B}$ by
+        \auto{boolean_ultrafilters_iff}.
+    Hence $U\in\stoneSet{B}{a}$ by \obv{stone_set_iff}.
+    Thus $U\in\stoneSet{B}{b}$ by \obv{subseteq}.
+    Hence $b\in U$ by \obv{stone_set_iff}.
+    Contradiction.
+\end{proof}
+
+\begin{theorem}\label{stone_map_order_iff}
+    Let $B$ be a Boolean algebra.
+    Let $a,b\in\carrier[B]$.
+    Then $a\mathrel{\leq[B]}b$ iff
+        $\apply{\stoneMap{B}}{a}
+            \subseteq\apply{\stoneMap{B}}{b}$.
+\end{theorem}
+\begin{proof}
+    $\apply{\stoneMap{B}}{a}=\stoneSet{B}{a}$ and
+        $\apply{\stoneMap{B}}{b}=\stoneSet{B}{b}$ by
+        \obv{stone_map_apply}.
+    Follows by
+        \auto{stone_set_monotone,stone_set_order_reflecting}.
+\end{proof}
+
+\begin{theorem}\label{stone_map_injective}
+    Let $B$ be a Boolean algebra.
+    Then $\stoneMap{B}\in
+        \inj{\carrier[B]}{\pow{\booleanUltrafilters{B}}}$.
+\end{theorem}
+\begin{proof}
+    $\stoneMap{B}\in
+        \funs{\carrier[B]}{\pow{\booleanUltrafilters{B}}}$ by
+        \obv{stone_map_type}.
+    Hence $\stoneMap{B}$ is a function and
+        $\dom{\stoneMap{B}}=\carrier[B]$ by
+        \obv{funs_is_function,funs}.
+    Show that $\stoneMap{B}$ is injective.
+    \begin{subproof}
+        Show that for all $a,b\in\dom{\stoneMap{B}}$ such that
+            $\apply{\stoneMap{B}}{a}=\apply{\stoneMap{B}}{b}$
+            we have $a=b$.
+        \begin{subproof}
+            Fix $a,b\in\dom{\stoneMap{B}}$.
+            Assume $\apply{\stoneMap{B}}{a}=
+                \apply{\stoneMap{B}}{b}$.
+            Hence $a,b\in\carrier[B]$.
+            $\apply{\stoneMap{B}}{a}
+                \subseteq\apply{\stoneMap{B}}{b}$ and
+                $\apply{\stoneMap{B}}{b}
+                \subseteq\apply{\stoneMap{B}}{a}$ by
+                \obv{subseteq_refl}.
+            Hence $a\mathrel{\leq[B]}b$ and
+                $b\mathrel{\leq[B]}a$ by
+                \obv{stone_map_order_iff}.
+            $B$ is an ordered set by
+                \obv{boolean_algebra_is_lattice,
+                    lattice_is_ordered_set}.
+            Follows by
+                \auto{ordered_set_order_antisymmetric,antisymmetric}.
+        \end{subproof}
+        Follows by \obv{injective_function}.
+    \end{subproof}
+    For all $a,b\in\carrier[B]$ such that
+        $\apply{\stoneMap{B}}{a}=\apply{\stoneMap{B}}{b}$
+        we have $a=b$ by \auto{injective_function}.
+    Follows by \obv{inj}.
+\end{proof}
+
+\begin{theorem}\label{stone_map_is_boolean_embedding}
+    Let $B$ be a Boolean algebra.
+    Then $\booleanEmbedding
+        {\stoneMap{B}}
+        {B}
+        {\powersetBooleanAlgebra{\booleanUltrafilters{B}}}$.
+\end{theorem}
+\begin{proof}
+    $\booleanHom
+        {\stoneMap{B}}
+        {B}
+        {\powersetBooleanAlgebra{\booleanUltrafilters{B}}}$ by
+        \obv{stone_map_is_boolean_hom}.
+    $\carrier[\powersetBooleanAlgebra{\booleanUltrafilters{B}}]
+        =\pow{\booleanUltrafilters{B}}$ by
+        \obv{powerset_boolean_algebra_carrier}.
+    $\stoneMap{B}\in
+        \inj{\carrier[B]}
+            {\pow{\booleanUltrafilters{B}}}$ by
+        \obv{stone_map_injective}.
+    Follows by \obv{boolean_embedding}.
+\end{proof}
+
+\subsection{The represented field of sets}
+
+\begin{definition}\label{stone_field}
+    $\stoneField{B}=\img{\stoneMap{B}}{\carrier[B]}$.
+\end{definition}
+
+\begin{proposition}\label{stone_field_iff}
+    Let $B$ be a Boolean algebra.
+    Then $A\in\stoneField{B}$ iff
+        there exists $a\in\carrier[B]$ such that
+            $A=\stoneSet{B}{a}$.
+\end{proposition}
+\begin{proof}
+    $\booleanHom
+        {\stoneMap{B}}
+        {B}
+        {\powersetBooleanAlgebra{\booleanUltrafilters{B}}}$ by
+        \obv{stone_map_is_boolean_hom}.
+    $\carrier[B]\subseteq\carrier[B]$ by \obv{subseteq_refl}.
+    Show that if $A\in\stoneField{B}$, then
+        there exists $a\in\carrier[B]$ such that
+            $A=\stoneSet{B}{a}$.
+    \begin{subproof}
+        Assume $A\in\stoneField{B}$.
+        Hence $A\in\img{\stoneMap{B}}{\carrier[B]}$ by
+            \obv{stone_field}.
+        Take $a\in\carrier[B]$ such that
+            $\apply{\stoneMap{B}}{a}=A$ by
+            \auto{boolean_hom_image_iff}.
+        $\apply{\stoneMap{B}}{a}=\stoneSet{B}{a}$ by
+            \obv{stone_map_apply}.
+        Hence $A=\stoneSet{B}{a}$.
+    \end{subproof}
+    Show that if there exists $a\in\carrier[B]$ such that
+        $A=\stoneSet{B}{a}$, then $A\in\stoneField{B}$.
+    \begin{subproof}
+        Assume that there exists $a\in\carrier[B]$ such that
+            $A=\stoneSet{B}{a}$.
+        Take $a\in\carrier[B]$ such that
+            $A=\stoneSet{B}{a}$.
+        $\apply{\stoneMap{B}}{a}=\stoneSet{B}{a}$ by
+            \obv{stone_map_apply}.
+        Hence $\apply{\stoneMap{B}}{a}=A$.
+        Hence $A\in\img{\stoneMap{B}}{\carrier[B]}$ by
+            \auto{boolean_hom_image_iff}.
+        Follows by \obv{stone_field}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{proposition}\label{stone_field_subseteq_powerset}
+    Let $B$ be a Boolean algebra.
+    Then $\stoneField{B}\subseteq
+        \pow{\booleanUltrafilters{B}}$.
+\end{proposition}
+\begin{proof}
+    It suffices to show that every element of $\stoneField{B}$
+        is an element of $\pow{\booleanUltrafilters{B}}$ by
+        \obv{subseteq}.
+    Fix $A\in\stoneField{B}$.
+    Take $a\in\carrier[B]$ such that
+        $A=\stoneSet{B}{a}$ by \auto{stone_field_iff}.
+    Follows by \auto{stone_set_in_powerset}.
+\end{proof}
+
+\begin{proposition}\label{stone_field_eq_range}
+    Let $B$ be a Boolean algebra.
+    Then $\stoneField{B}=\ran{\stoneMap{B}}$.
+\end{proposition}
+\begin{proof}
+    $\dom{\stoneMap{B}}=\carrier[B]$ by
+        \obv{stone_map_domain}.
+    $\img{\stoneMap{B}}{\dom{\stoneMap{B}}}
+        =\ran{\stoneMap{B}}$ by \obv{img_dom}.
+    Follows by \obv{stone_field}.
+\end{proof}
+
+\begin{theorem}\label{stone_field_is_boolean_subalgebra}
+    Let $B$ be a Boolean algebra.
+    Then $\booleanSubalgebra
+        {\stoneField{B}}
+        {\powersetBooleanAlgebra{\booleanUltrafilters{B}}}$.
+\end{theorem}
+\begin{proof}
+    $\booleanHom
+        {\stoneMap{B}}
+        {B}
+        {\powersetBooleanAlgebra{\booleanUltrafilters{B}}}$ by
+        \obv{stone_map_is_boolean_hom}.
+    $\booleanSubalgebra
+        {\img{\stoneMap{B}}{\carrier[B]}}
+        {\powersetBooleanAlgebra{\booleanUltrafilters{B}}}$ by
+        \obv{boolean_hom_image_boolean_subalgebra}.
+    Follows by \obv{stone_field}.
+\end{proof}
+
+\begin{classification}\label{stone_field_is_field_of_sets}
+    Let $B$ be a Boolean algebra.
+    Then $\stoneField{B}$ is a field of sets on
+        $\booleanUltrafilters{B}$.
+\end{classification}
+\begin{proof}
+    Follows by
+        \auto{field_of_sets_iff_boolean_subalgebra_of_powerset,
+            stone_field_is_boolean_subalgebra}.
+\end{proof}
+
+\subsection{The Stone field algebra}
+
+\begin{definition}\label{stone_field_algebra}
+    $\stoneFieldAlgebra{B}=
+        \fieldOfSetsAlgebra
+            {\stoneField{B}}{\booleanUltrafilters{B}}$.
+\end{definition}
+
+\begin{proposition}\label{stone_field_algebra_carrier}
+    $\carrier[\stoneFieldAlgebra{B}]=\stoneField{B}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{stone_field_algebra,field_of_sets_algebra_carrier}.
+\end{proof}
+
+\begin{proposition}\label{stone_field_algebra_order_iff}
+    Let $B$ be a Boolean algebra.
+    Let $A,C\in\stoneField{B}$.
+    Then $A\mathrel{\leq[\stoneFieldAlgebra{B}]}C$ iff
+        $A\subseteq C$.
+\end{proposition}
+\begin{proof}
+    $\stoneField{B}$ is a field of sets on
+        $\booleanUltrafilters{B}$ by
+        \obv{stone_field_is_field_of_sets}.
+    Follows by
+        \auto{stone_field_algebra,
+            field_of_sets_algebra_order_iff}.
+\end{proof}
+
+\begin{proposition}\label{stone_field_algebra_meet_apply}
+    Let $B$ be a Boolean algebra.
+    Let $A,C\in\stoneField{B}$.
+    Then $\meet[\stoneFieldAlgebra{B}](A,C)=A\inter C$.
+\end{proposition}
+\begin{proof}
+    $\stoneField{B}$ is a field of sets on
+        $\booleanUltrafilters{B}$ by
+        \obv{stone_field_is_field_of_sets}.
+    Follows by
+        \auto{stone_field_algebra,
+            field_of_sets_algebra_meet_apply}.
+\end{proof}
+
+\begin{proposition}\label{stone_field_algebra_join_apply}
+    Let $B$ be a Boolean algebra.
+    Let $A,C\in\stoneField{B}$.
+    Then $\join[\stoneFieldAlgebra{B}](A,C)=A\union C$.
+\end{proposition}
+\begin{proof}
+    $\stoneField{B}$ is a field of sets on
+        $\booleanUltrafilters{B}$ by
+        \obv{stone_field_is_field_of_sets}.
+    Follows by
+        \auto{stone_field_algebra,
+            field_of_sets_algebra_join_apply}.
+\end{proof}
+
+\begin{proposition}\label{stone_field_algebra_bottom}
+    $\latticeBottom[\stoneFieldAlgebra{B}]=\emptyset$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{stone_field_algebra,field_of_sets_algebra_bottom}.
+\end{proof}
+
+\begin{proposition}\label{stone_field_algebra_top}
+    $\latticeTop[\stoneFieldAlgebra{B}]=\booleanUltrafilters{B}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{stone_field_algebra,field_of_sets_algebra_top}.
+\end{proof}
+
+\begin{proposition}\label{stone_field_algebra_complement_apply}
+    Let $B$ be a Boolean algebra.
+    Let $A\in\stoneField{B}$.
+    Then $\booleanComplement[\stoneFieldAlgebra{B}](A)=
+        \booleanUltrafilters{B}\setminus A$.
+\end{proposition}
+\begin{proof}
+    $\stoneField{B}$ is a field of sets on
+        $\booleanUltrafilters{B}$ by
+        \obv{stone_field_is_field_of_sets}.
+    Follows by
+        \auto{stone_field_algebra,
+            field_of_sets_algebra_complement_apply}.
+\end{proof}
+
+\begin{theorem}\label{stone_field_algebra_is_exact_boolean_algebra}
+    Let $B$ be a Boolean algebra.
+    Then $\stoneFieldAlgebra{B}$ is an exact Boolean algebra.
+\end{theorem}
+\begin{proof}
+    $\stoneField{B}$ is a field of sets on
+        $\booleanUltrafilters{B}$ by
+        \obv{stone_field_is_field_of_sets}.
+    Follows by
+        \auto{stone_field_algebra,
+            field_of_sets_algebra_is_exact_boolean_algebra}.
+\end{proof}
+
+\begin{classification}\label{stone_field_algebra_is_boolean_algebra}
+    Let $B$ be a Boolean algebra.
+    Then $\stoneFieldAlgebra{B}$ is a Boolean algebra.
+\end{classification}
+\begin{proof}
+    Follows by
+        \obv{stone_field_algebra_is_exact_boolean_algebra}.
+\end{proof}
+
+\begin{theorem}\label{stone_representation}
+    Let $B$ be a Boolean algebra.
+    Then $\booleanIsomorphism
+        {\stoneMap{B}}{B}{\stoneFieldAlgebra{B}}$.
+\end{theorem}
+\begin{proof}
+    $\booleanEmbedding
+        {\stoneMap{B}}
+        {B}
+        {\powersetBooleanAlgebra{\booleanUltrafilters{B}}}$ by
+        \obv{stone_map_is_boolean_embedding}.
+    $\booleanIsomorphism
+        {\stoneMap{B}}
+        {B}
+        {\booleanSubalgebraStructure
+            {\powersetBooleanAlgebra{\booleanUltrafilters{B}}}
+            {\img{\stoneMap{B}}{\carrier[B]}}}$ by
+        \obv{boolean_embedding_image_isomorphism}.
+    Follows by
+        \auto{stone_field_algebra,field_of_sets_algebra,stone_field}.
+\end{proof}

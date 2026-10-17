@@ -1,0 +1,631 @@
+\import{test/algebra-spike/02-module-reduct.tex}
+\import{test/algebra-spike/03-submodule-equivalence.tex}
+\import{algebra/group/quotient.tex}
+\import{relation/quotient-lift.tex}
+
+\section{The exact quotient module}
+
+\begin{proposition}\label{spike_submodule_is_normal}
+    Suppose $\prototypeSubmodule{R}{N}{M}$.
+    Then $\normalSubgroup{N}{\ModuleAdditiveGroup{M}}$.
+\end{proposition}
+\begin{proof}
+    Let $G=\ModuleAdditiveGroup{M}$.
+    $M$ is a left module over $R$ and $\subgroup{N}{G}$ by
+        \auto{spike_prototype_submodule}.
+    $G$ is an exact commutative group by
+        \auto{spike_module_additive_group_is_exact}.
+    Hence $G$ is a group by \auto{commutative_group_is_group}.
+    Show that for all $a\in\carrier[G]$ we have for every $x\in N$ we have
+        $\conjugate{G}{a}{x}\in N$.
+    \begin{subproof}
+        Fix $a\in\carrier[G]$ and $x\in N$.
+        Hence $x\in\carrier[G]$ by
+            \auto{subgroup_subseteq,subseteq}.
+        $\commutesIn{G}{a}{x}$ by
+            \auto{commutes_in,commutative_group_commutative}.
+        Hence $\conjugate{G}{a}{x}=x$ by
+            \auto{commutes_in_iff_conjugate_fixed}.
+        Follows by \auto.
+    \end{subproof}
+    Follows by \auto{normal_subgroup_iff_closed_under_conjugation}.
+\end{proof}
+
+\begin{definition}\label{spike_quotient_scalar_representative_op}
+    $\spikeQuotientScalarRepresentativeOp:
+        \Set\to\Set\to\Set\to\Set\to\Set\to\Set
+        =\fun{R,M,N,a,x:\Set}{
+            \equivalenceClass{
+                \subgroupCosetRelation{\ModuleAdditiveGroup{M}}{N}}
+                {\scalarMul[M](a,x)}}$.
+\end{definition}
+
+\begin{definition}\label{spike_quotient_scalar_representative}
+    $\spikeQuotientScalarRepresentative{R}{M}{N}{a}=
+        \Apply{\graphOnDomainOp}
+            {\carrier[M],
+             \Apply{\spikeQuotientScalarRepresentativeOp}{R,M,N,a}}$.
+\end{definition}
+
+\begin{proposition}\label{spike_quotient_scalar_representative_apply}
+    Let $x\in\carrier[M]$.
+    Then
+        $\apply{\spikeQuotientScalarRepresentative{R}{M}{N}{a}}{x}
+            =\equivalenceClass{
+                \subgroupCosetRelation{\ModuleAdditiveGroup{M}}{N}}
+                {\scalarMul[M](a,x)}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{spike_quotient_scalar_representative,
+            spike_quotient_scalar_representative_op,
+            logical_graph_on_domain_apply}.
+\end{proof}
+
+\begin{proposition}\label{spike_quotient_scalar_representative_type}
+    Suppose $\prototypeSubmodule{R}{N}{M}$.
+    Let $a\in\carrier[R]$.
+    Then
+        $\spikeQuotientScalarRepresentative{R}{M}{N}{a}
+            \in\funs{\carrier[M]}{
+                \groupQuotientCarrier{\ModuleAdditiveGroup{M}}{N}}$.
+\end{proposition}
+\begin{proof}
+    Let $G=\ModuleAdditiveGroup{M}$.
+    Let $E=\subgroupCosetRelation{G}{N}$.
+    Let $Q=\groupQuotientCarrier{G}{N}$.
+    $M$ is a left module over $R$ and $\subgroup{N}{G}$ by
+        \auto{spike_prototype_submodule}.
+    Hence $R$ is a ring by \auto{module_scalar_ring}.
+    Hence $E$ is an equivalence on $\carrier[G]$ by
+        \auto{subgroup_coset_relation_equivalence}.
+    $\carrier[G]=\carrier[M]$ by
+        \auto{spike_module_additive_group_fields}.
+    Show that for every $x\in\carrier[M]$ we have
+        $\Apply{\spikeQuotientScalarRepresentativeOp}{R,M,N,a,x}\in Q$.
+    \begin{subproof}
+        Fix $x\in\carrier[M]$.
+        $\scalarMul[M](a,x)\in\carrier[M]$ by
+            \auto{module_scalar_type}.
+        Hence
+            $\equivalenceClass{E}{\scalarMul[M](a,x)}
+                \in\quotient{\carrier[G]}{E}$ by
+            \auto{quotient}.
+        Follows by
+            \auto{spike_quotient_scalar_representative_op,
+                group_quotient_carrier}.
+    \end{subproof}
+    Follows by
+        \auto{spike_quotient_scalar_representative,
+            logical_graph_on_domain_type}.
+\end{proof}
+
+\begin{proposition}\label{spike_quotient_scalar_respects_cosets}
+    Suppose $\prototypeSubmodule{R}{N}{M}$.
+    Let $a\in\carrier[R]$.
+    Let $x,y\in\carrier[M]$.
+    Suppose
+        $x\mathrel{\subgroupCosetRelation{
+            \ModuleAdditiveGroup{M}}{N}}y$.
+    Then
+        $\scalarMul[M](a,x)
+            \mathrel{\subgroupCosetRelation{
+                \ModuleAdditiveGroup{M}}{N}}
+            \scalarMul[M](a,y)$.
+\end{proposition}
+\begin{proof}
+    Let $G=\ModuleAdditiveGroup{M}$.
+    Let $E=\subgroupCosetRelation{G}{N}$.
+    $M$ is a left module over $R$ and $\subgroup{N}{G}$ by
+        \auto{spike_prototype_submodule}.
+    Hence $R$ is a ring and $M$ is a commutative group by
+        \auto{module_scalar_ring,module_is_commutative_group}.
+    Hence $M$ is a group by \auto{commutative_group_is_group}.
+    $\groupInv[M](x)\in\carrier[M]$ by
+        \auto{group_inverse_type}.
+    $\mul[G](\groupInv[G](x),y)\in N$ by
+        \auto{subgroup_coset_relation_iff,
+            spike_module_additive_group_fields}.
+    Hence
+        $\mul[M](\groupInv[M](x),y)\in N$ by
+        \auto{spike_module_additive_group_fields}.
+    Hence
+        $\scalarMul[M]
+            (a,\mul[M](\groupInv[M](x),y))\in N$ by
+        \auto{spike_prototype_submodule}.
+    $\scalarMul[M]
+        (a,\mul[M](\groupInv[M](x),y))
+        =\mul[M]
+            (\scalarMul[M](a,\groupInv[M](x)),
+             \scalarMul[M](a,y))$ by
+        \auto{module_scalar_vector_distributive,
+            group_inverse_type}.
+    $\scalarMul[M](a,\groupInv[M](x))
+        =\groupInv[M](\scalarMul[M](a,x))$ by
+        \auto{module_vector_negation_scalar}.
+    Hence
+        $\mul[M]
+            (\groupInv[M](\scalarMul[M](a,x)),
+             \scalarMul[M](a,y))\in N$ by \auto.
+    $\scalarMul[M](a,x),\scalarMul[M](a,y)\in\carrier[M]$ by
+        \auto{module_scalar_type}.
+    Follows by
+        \auto{subgroup_coset_relation_iff,
+            spike_module_additive_group_fields}.
+\end{proof}
+
+\begin{proposition}\label{spike_quotient_scalar_representative_compatible}
+    Suppose $\prototypeSubmodule{R}{N}{M}$.
+    Let $a\in\carrier[R]$.
+    Then
+        $\quotientCompatible{
+            \spikeQuotientScalarRepresentative{R}{M}{N}{a}}
+            {\carrier[M]}
+            {\subgroupCosetRelation{\ModuleAdditiveGroup{M}}{N}}$.
+\end{proposition}
+\begin{proof}
+    Let $G=\ModuleAdditiveGroup{M}$.
+    Let $E=\subgroupCosetRelation{G}{N}$.
+    $M$ is a left module over $R$ and $\subgroup{N}{G}$ by
+        \auto{spike_prototype_submodule}.
+    Hence $R$ is a ring by \auto{module_scalar_ring}.
+    Hence $E$ is an equivalence on $\carrier[G]$ by
+        \auto{subgroup_coset_relation_equivalence}.
+    $\carrier[G]=\carrier[M]$ by
+        \auto{spike_module_additive_group_fields}.
+    Show that for all $x,y\in\carrier[M]$ such that $x\mathrel{E}y$ we have
+        $\apply{\spikeQuotientScalarRepresentative{R}{M}{N}{a}}{x}
+            =\apply{\spikeQuotientScalarRepresentative{R}{M}{N}{a}}{y}$.
+    \begin{subproof}
+        Fix $x,y\in\carrier[M]$.
+        Assume $x\mathrel{E}y$.
+        Hence
+            $\scalarMul[M](a,x)\mathrel{E}\scalarMul[M](a,y)$ by
+            \auto{spike_quotient_scalar_respects_cosets}.
+        $\scalarMul[M](a,x),\scalarMul[M](a,y)\in\carrier[G]$ by
+            \auto{module_scalar_type}.
+        Hence
+            $\equivalenceClass{E}{\scalarMul[M](a,x)}
+                =\equivalenceClass{E}{\scalarMul[M](a,y)}$ by
+            \auto{equiv_implies_equivanlence_classes_eq}.
+        Follows by
+            \auto{spike_quotient_scalar_representative_apply}.
+    \end{subproof}
+    Follows by \auto{quotient_compatible}.
+\end{proof}
+
+\begin{definition}\label{spike_quotient_scalar_descent}
+    $\spikeQuotientScalarDescent{R}{M}{N}{a}=
+        \quotientDescent{
+            \spikeQuotientScalarRepresentative{R}{M}{N}{a}}
+            {\carrier[M]}
+            {\subgroupCosetRelation{\ModuleAdditiveGroup{M}}{N}}$.
+\end{definition}
+
+\begin{proposition}\label{spike_quotient_scalar_descent_type}
+    Suppose $\prototypeSubmodule{R}{N}{M}$.
+    Let $a\in\carrier[R]$.
+    Then
+        $\spikeQuotientScalarDescent{R}{M}{N}{a}
+            \in\funs{
+                \groupQuotientCarrier{\ModuleAdditiveGroup{M}}{N}}{
+                \groupQuotientCarrier{\ModuleAdditiveGroup{M}}{N}}$.
+\end{proposition}
+\begin{proof}
+    Let $G=\ModuleAdditiveGroup{M}$.
+    Let $E=\subgroupCosetRelation{G}{N}$.
+    $\subgroup{N}{G}$ by \auto{spike_prototype_submodule}.
+    Hence $E$ is an equivalence on $\carrier[G]$ by
+        \auto{subgroup_coset_relation_equivalence}.
+    $\carrier[G]=\carrier[M]$ by
+        \auto{spike_module_additive_group_fields}.
+    Follows by
+        \auto{spike_quotient_scalar_descent,
+            spike_quotient_scalar_representative_type,
+            spike_quotient_scalar_representative_compatible,
+            quotient_descent_type,group_quotient_carrier}.
+\end{proof}
+
+\begin{proposition}\label{spike_quotient_scalar_descent_apply}
+    Suppose $\prototypeSubmodule{R}{N}{M}$.
+    Let $a\in\carrier[R]$ and $x\in\carrier[M]$.
+    Then
+        $\apply{\spikeQuotientScalarDescent{R}{M}{N}{a}}{
+            \equivalenceClass{
+                \subgroupCosetRelation{\ModuleAdditiveGroup{M}}{N}}{x}}
+        =\equivalenceClass{
+            \subgroupCosetRelation{\ModuleAdditiveGroup{M}}{N}}
+            {\scalarMul[M](a,x)}$.
+\end{proposition}
+\begin{proof}
+    Let $G=\ModuleAdditiveGroup{M}$.
+    Let $E=\subgroupCosetRelation{G}{N}$.
+    $\subgroup{N}{G}$ by \auto{spike_prototype_submodule}.
+    Hence $E$ is an equivalence on $\carrier[G]$ by
+        \auto{subgroup_coset_relation_equivalence}.
+    $\carrier[G]=\carrier[M]$ by
+        \auto{spike_module_additive_group_fields}.
+    Follows by
+        \auto{spike_quotient_scalar_descent,
+            spike_quotient_scalar_representative_type,
+            spike_quotient_scalar_representative_compatible,
+            spike_quotient_scalar_representative_apply,
+            quotient_descent_apply}.
+\end{proof}
+
+\begin{definition}\label{spike_quotient_scalar_op}
+    $\spikeQuotientScalarOp:
+        \Set\to\Set\to\Set\to\Set\to\Set\to\Set
+        =\fun{R,M,N,a,U:\Set}{
+            \apply{\spikeQuotientScalarDescent{R}{M}{N}{a}}{U}}$.
+\end{definition}
+
+\begin{definition}\label{spike_quotient_scalar_graph}
+    $\spikeQuotientScalarGraph{R}{M}{N}=
+        \Apply{\heteroBinaryGraphOnOp}
+            {\carrier[R],
+             \groupQuotientCarrier{\ModuleAdditiveGroup{M}}{N},
+             \Apply{\spikeQuotientScalarOp}{R,M,N}}$.
+\end{definition}
+
+\begin{proposition}\label{spike_quotient_scalar_graph_type}
+    Suppose $\prototypeSubmodule{R}{N}{M}$.
+    Then
+        $\spikeQuotientScalarGraph{R}{M}{N}
+            \in\funs{
+                \carrier[R]\times
+                    \groupQuotientCarrier{\ModuleAdditiveGroup{M}}{N}}{
+                \groupQuotientCarrier{\ModuleAdditiveGroup{M}}{N}}$.
+\end{proposition}
+\begin{proof}
+    Let $Q=\groupQuotientCarrier{\ModuleAdditiveGroup{M}}{N}$.
+    Show that for all $a,U$ such that
+        $a\in\carrier[R]$ and $U\in Q$ we have
+        $\Apply{\spikeQuotientScalarOp}{R,M,N,a,U}\in Q$.
+    \begin{subproof}
+        Fix $a,U$.
+        Assume $a\in\carrier[R]$ and $U\in Q$.
+        $\spikeQuotientScalarDescent{R}{M}{N}{a}\in\funs{Q}{Q}$ by
+            \auto{spike_quotient_scalar_descent_type}.
+        Hence
+            $\apply{\spikeQuotientScalarDescent{R}{M}{N}{a}}{U}\in Q$ by
+            \auto{funs_type_apply}.
+        Follows by \auto{spike_quotient_scalar_op}.
+    \end{subproof}
+    Follows by
+        \auto{spike_quotient_scalar_graph,
+            logical_heterogeneous_binary_graph_on_type}.
+\end{proof}
+
+\begin{proposition}\label{spike_quotient_scalar_graph_apply}
+    Suppose $\prototypeSubmodule{R}{N}{M}$.
+    Let $a\in\carrier[R]$ and $x\in\carrier[M]$.
+    Then
+        $\apply{\spikeQuotientScalarGraph{R}{M}{N}}{
+            (a,\equivalenceClass{
+                \subgroupCosetRelation{\ModuleAdditiveGroup{M}}{N}}{x})}
+        =\equivalenceClass{
+            \subgroupCosetRelation{\ModuleAdditiveGroup{M}}{N}}
+            {\scalarMul[M](a,x)}$.
+\end{proposition}
+\begin{proof}
+    Let $G=\ModuleAdditiveGroup{M}$.
+    Let $E=\subgroupCosetRelation{G}{N}$.
+    Let $Q=\groupQuotientCarrier{G}{N}$.
+    $\subgroup{N}{G}$ by \auto{spike_prototype_submodule}.
+    Hence $E$ is an equivalence on $\carrier[G]$ by
+        \auto{subgroup_coset_relation_equivalence}.
+    $\carrier[G]=\carrier[M]$ by
+        \auto{spike_module_additive_group_fields}.
+    $\equivalenceClass{E}{x}\in Q$ by
+        \auto{group_quotient_carrier,quotient}.
+    $\apply{\spikeQuotientScalarGraph{R}{M}{N}}{
+        (a,\equivalenceClass{E}{x})}
+        =\Apply{\spikeQuotientScalarOp}
+            {R,M,N,a,\equivalenceClass{E}{x}}$ by
+        \auto{spike_quotient_scalar_graph,
+            logical_heterogeneous_binary_graph_on_apply}.
+    Follows by
+        \auto{spike_quotient_scalar_op,
+            spike_quotient_scalar_descent_apply}.
+\end{proof}
+
+\begin{definition}\label{spike_quotient_module}
+    $\QuotientModule{R}{M}{N}=
+        \structure[left module over R]{
+            \carrier=
+                \carrier[\quotientGroup{\ModuleAdditiveGroup{M}}{N}],
+            \mul=\mul[\quotientGroup{\ModuleAdditiveGroup{M}}{N}],
+            \neutral=
+                \neutral[\quotientGroup{\ModuleAdditiveGroup{M}}{N}],
+            \groupInv=
+                \groupInv[\quotientGroup{\ModuleAdditiveGroup{M}}{N}],
+            \scalarMul=\spikeQuotientScalarGraph{R}{M}{N}
+        }$.
+\end{definition}
+
+\begin{proposition}\label{spike_quotient_module_fields}
+    Let $Q=\quotientGroup{\ModuleAdditiveGroup{M}}{N}$.
+    $\carrier[\QuotientModule{R}{M}{N}]=\carrier[Q]$ and
+    $\mul[\QuotientModule{R}{M}{N}]=\mul[Q]$ and
+    $\neutral[\QuotientModule{R}{M}{N}]=\neutral[Q]$ and
+    $\groupInv[\QuotientModule{R}{M}{N}]=\groupInv[Q]$ and
+    $\scalarMul[\QuotientModule{R}{M}{N}]
+        =\spikeQuotientScalarGraph{R}{M}{N}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{spike_quotient_module,
+            left_moduleaggregateprojection_carrier,
+            left_moduleaggregateprojection_mul,
+            left_moduleaggregateprojection_neutral,
+            left_moduleaggregateprojection_groupInv,
+            left_moduleaggregateprojection_scalarMul}.
+\end{proof}
+
+\begin{proposition}\label{spike_quotient_module_scalar_apply}
+    Suppose $\prototypeSubmodule{R}{N}{M}$.
+    Let $a\in\carrier[R]$ and $x\in\carrier[M]$.
+    Then
+        $\scalarMul[\QuotientModule{R}{M}{N}]
+            (a,\equivalenceClass{
+                \subgroupCosetRelation{\ModuleAdditiveGroup{M}}{N}}{x})
+        =\equivalenceClass{
+            \subgroupCosetRelation{\ModuleAdditiveGroup{M}}{N}}
+            {\scalarMul[M](a,x)}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{spike_quotient_module_fields,
+            spike_quotient_scalar_graph_apply}.
+\end{proof}
+
+\begin{theorem}\label{spike_quotient_module_is_exact}
+    Suppose $\prototypeSubmodule{R}{N}{M}$.
+    Then $\QuotientModule{R}{M}{N}$ is an exact left module over $R$.
+\end{theorem}
+\begin{proof}
+    Let $G=\ModuleAdditiveGroup{M}$.
+    Let $E=\subgroupCosetRelation{G}{N}$.
+    Let $Q=\quotientGroup{G}{N}$.
+    Let $P=\QuotientModule{R}{M}{N}$.
+    $M$ is a left module over $R$ and $\subgroup{N}{G}$ by
+        \auto{spike_prototype_submodule}.
+    Hence $R$ is a ring by \auto{module_scalar_ring}.
+    $G$ is an exact commutative group by
+        \auto{spike_module_additive_group_is_exact}.
+    Hence $G$ is a group by \auto{commutative_group_is_group}.
+    $\normalSubgroup{N}{G}$ by \auto{spike_submodule_is_normal}.
+    Hence $E$ is an equivalence on $\carrier[G]$ by
+        \auto{normal_subgroup_is_subgroup,
+            subgroup_coset_relation_equivalence}.
+    $Q$ is an exact group by \auto{quotient_group_is_exact_group}.
+    Hence $Q$ is a group and $Q$ is a monoid and
+        $Q$ is a unital magma and $Q$ is a magma by
+        \auto{group_is_monoid,monoid_is_unital_magma,
+            monoid_is_magma}.
+    Show that for all $U,V\in\carrier[Q]$ we have
+        $\mul[Q](U,V)=\mul[Q](V,U)$.
+    \begin{subproof}
+        Fix $U,V\in\carrier[Q]$.
+        Take $x\in\carrier[G]$ such that
+            $U=\equivalenceClass{E}{x}$ by
+            \auto{quotient_group_carrier,group_quotient_carrier,quotient}.
+        Take $y\in\carrier[G]$ such that
+            $V=\equivalenceClass{E}{y}$ by
+            \auto{quotient_group_carrier,group_quotient_carrier,quotient}.
+        $\mul[Q](U,V)=\equivalenceClass{E}{\mul[G](x,y)}$ and
+            $\mul[Q](V,U)=\equivalenceClass{E}{\mul[G](y,x)}$ by
+            \auto{quotient_group_mul_apply}.
+        $\mul[G](x,y)=\mul[G](y,x)$ by
+            \auto{commutative_group_commutative}.
+        Follows by \auto.
+    \end{subproof}
+    Hence $Q$ is a commutative group by
+        \auto{group,commutative_group}.
+
+    $\carrier[P]=\carrier[Q]$ and $\mul[P]=\mul[Q]$ and
+        $\neutral[P]=\neutral[Q]$ and
+        $\groupInv[P]=\groupInv[Q]$ by
+        \auto{spike_quotient_module_fields}.
+    $\mul[P]\in\funs{\carrier[P]\times\carrier[P]}{\carrier[P]}$ by
+        \auto{magma_mul_graph}.
+    $\neutral[P]\in\carrier[P]$ by \auto{unitalmagma_type}.
+    $\groupInv[P]\in\funs{\carrier[P]}{\carrier[P]}$ by
+        \auto{group_inverse_graph}.
+    For all $U,V,W\in\carrier[P]$ we have
+        $\mul[P](U,\mul[P](V,W))=\mul[P](\mul[P](U,V),W)$ by
+        \auto{monoid_assoc}.
+    For every $U\in\carrier[P]$ we have
+        $\mul[P](U,\neutral[P])=U$ and
+        $\mul[P](\neutral[P],U)=U$ by
+        \auto{unitalmagma_right,unitalmagma_left}.
+    For every $U\in\carrier[P]$ we have
+        $\mul[P](U,\groupInv[P](U))=\neutral[P]$ and
+        $\mul[P](\groupInv[P](U),U)=\neutral[P]$ by
+        \auto{group_inverse_right,group_inverse_left}.
+    Hence $P$ is a group by
+        \auto{spike_quotient_module,left_moduleaggregateexact,
+            magma,unitalmagma,monoid,group}.
+    For all $U,V\in\carrier[P]$ we have
+        $\mul[P](U,V)=\mul[P](V,U)$ by \auto.
+    Hence $P$ is a commutative group by
+        \auto{group,commutative_group}.
+    $\scalarMul[P]\in
+        \funs{\carrier[R]\times\carrier[P]}{\carrier[P]}$ by
+        \auto{spike_quotient_module_fields,
+            quotient_group_carrier,spike_quotient_scalar_graph_type}.
+
+    Show that for all $a,U,V$ such that
+        $a\in\carrier[R]$ and $U,V\in\carrier[P]$ we have
+        $\scalarMul[P](a,\mul[P](U,V))
+            =\mul[P](\scalarMul[P](a,U),\scalarMul[P](a,V))$.
+    \begin{subproof}
+        Fix $a,U,V$.
+        Assume $a\in\carrier[R]$ and $U,V\in\carrier[P]$.
+        Take $x\in\carrier[G]$ such that
+            $U=\equivalenceClass{E}{x}$ by
+            \auto{quotient_group_carrier,group_quotient_carrier,quotient}.
+        Take $y\in\carrier[G]$ such that
+            $V=\equivalenceClass{E}{y}$ by
+            \auto{quotient_group_carrier,group_quotient_carrier,quotient}.
+        Hence $x,y\in\carrier[M]$ by
+            \auto{spike_module_additive_group_fields}.
+        $\mul[M](x,y)\in\carrier[M]$ and
+            $\scalarMul[M](a,x),\scalarMul[M](a,y)\in\carrier[M]$ by
+            \auto{module_is_group,group_is_monoid,monoid_is_magma,
+                magma_welldef,module_scalar_type}.
+        $\mul[P](U,V)=\equivalenceClass{E}{\mul[M](x,y)}$ by
+            \auto{spike_quotient_module_fields,
+                quotient_group_mul_apply,
+                spike_module_additive_group_fields}.
+        $\scalarMul[P](a,\mul[P](U,V))
+            =\equivalenceClass{E}{
+                \scalarMul[M](a,\mul[M](x,y))}$ by
+            \auto{spike_quotient_module_scalar_apply}.
+        $\scalarMul[P](a,U)=
+            \equivalenceClass{E}{\scalarMul[M](a,x)}$ and
+            $\scalarMul[P](a,V)=
+            \equivalenceClass{E}{\scalarMul[M](a,y)}$ by
+            \auto{spike_quotient_module_scalar_apply}.
+        Hence
+            $\mul[P](\scalarMul[P](a,U),\scalarMul[P](a,V))
+                =\equivalenceClass{E}{
+                    \mul[M](\scalarMul[M](a,x),
+                            \scalarMul[M](a,y))}$ by
+            \auto{spike_quotient_module_fields,
+                quotient_group_mul_apply,
+                spike_module_additive_group_fields}.
+        Follows by \auto{module_scalar_vector_distributive}.
+    \end{subproof}
+    Show that for all $a,b,U$ such that
+        $a,b\in\carrier[R]$ and $U\in\carrier[P]$ we have
+        $\scalarMul[P](\ringAdd[R](a,b),U)
+            =\mul[P](\scalarMul[P](a,U),\scalarMul[P](b,U))$.
+    \begin{subproof}
+        Fix $a,b,U$.
+        Assume $a,b\in\carrier[R]$ and $U\in\carrier[P]$.
+        Take $x\in\carrier[G]$ such that
+            $U=\equivalenceClass{E}{x}$ by
+            \auto{quotient_group_carrier,group_quotient_carrier,quotient}.
+        Hence $x\in\carrier[M]$ by
+            \auto{spike_module_additive_group_fields}.
+        $\ringAdd[R](a,b)\in\carrier[R]$ by \auto{ring_add_type}.
+        $\scalarMul[M](a,x),\scalarMul[M](b,x)\in\carrier[M]$ by
+            \auto{module_scalar_type}.
+        $\scalarMul[P](\ringAdd[R](a,b),U)
+            =\equivalenceClass{E}{
+                \scalarMul[M](\ringAdd[R](a,b),x)}$ by
+            \auto{spike_quotient_module_scalar_apply}.
+        $\scalarMul[P](a,U)=
+            \equivalenceClass{E}{\scalarMul[M](a,x)}$ and
+            $\scalarMul[P](b,U)=
+            \equivalenceClass{E}{\scalarMul[M](b,x)}$ by
+            \auto{spike_quotient_module_scalar_apply}.
+        Hence
+            $\mul[P](\scalarMul[P](a,U),\scalarMul[P](b,U))
+                =\equivalenceClass{E}{
+                    \mul[M](\scalarMul[M](a,x),
+                            \scalarMul[M](b,x))}$ by
+            \auto{spike_quotient_module_fields,
+                quotient_group_mul_apply,
+                spike_module_additive_group_fields}.
+        Follows by \auto{module_scalar_add_distributive}.
+    \end{subproof}
+    Show that for all $a,b,U$ such that
+        $a,b\in\carrier[R]$ and $U\in\carrier[P]$ we have
+        $\scalarMul[P](a,\scalarMul[P](b,U))
+            =\scalarMul[P](\ringMul[R](a,b),U)$.
+    \begin{subproof}
+        Fix $a,b,U$.
+        Assume $a,b\in\carrier[R]$ and $U\in\carrier[P]$.
+        Take $x\in\carrier[G]$ such that
+            $U=\equivalenceClass{E}{x}$ by
+            \auto{quotient_group_carrier,group_quotient_carrier,quotient}.
+        Hence $x\in\carrier[M]$ by
+            \auto{spike_module_additive_group_fields}.
+        $\ringMul[R](a,b)\in\carrier[R]$ and
+            $\scalarMul[M](b,x)\in\carrier[M]$ by
+            \auto{ring_mul_type,module_scalar_type}.
+        $\scalarMul[P](b,U)=
+            \equivalenceClass{E}{\scalarMul[M](b,x)}$ by
+            \auto{spike_quotient_module_scalar_apply}.
+        Hence $\scalarMul[P](a,\scalarMul[P](b,U))
+            =\equivalenceClass{E}{
+                \scalarMul[M](a,\scalarMul[M](b,x))}$ by
+            \auto{spike_quotient_module_scalar_apply}.
+        $\scalarMul[P](\ringMul[R](a,b),U)
+            =\equivalenceClass{E}{
+                \scalarMul[M](\ringMul[R](a,b),x)}$ by
+            \auto{spike_quotient_module_scalar_apply}.
+        Follows by \auto{module_scalar_associative}.
+    \end{subproof}
+    Show that for every $U\in\carrier[P]$ we have
+        $\scalarMul[P](\ringOne[R],U)=U$.
+    \begin{subproof}
+        Fix $U\in\carrier[P]$.
+        Take $x\in\carrier[G]$ such that
+            $U=\equivalenceClass{E}{x}$ by
+            \auto{quotient_group_carrier,group_quotient_carrier,quotient}.
+        Hence $x\in\carrier[M]$ by
+            \auto{spike_module_additive_group_fields}.
+        $\ringOne[R]\in\carrier[R]$ by \auto{ring_one_type}.
+        $\scalarMul[P](\ringOne[R],U)
+            =\equivalenceClass{E}{\scalarMul[M](\ringOne[R],x)}$ by
+            \auto{spike_quotient_module_scalar_apply}.
+        Follows by \auto{module_scalar_one}.
+    \end{subproof}
+    It is not the case that it is not the case that
+        $P$ is a left module over $R$ by
+        \auto{spike_quotient_module,left_moduleaggregateexact,
+            left_module}.
+    Hence $P$ is a left module over $R$ by \auto.
+    Follows by
+        \auto{spike_quotient_module,left_moduleaggregateexact}.
+\end{proof}
+
+\begin{theorem}\label{spike_quotient_module_additive_reduct}
+    Suppose $\prototypeSubmodule{R}{N}{M}$.
+    Then
+        $\ModuleAdditiveGroup{\QuotientModule{R}{M}{N}}
+            =\quotientGroup{\ModuleAdditiveGroup{M}}{N}$.
+\end{theorem}
+\begin{proof}
+    Let $P=\QuotientModule{R}{M}{N}$.
+    Let $Q=\quotientGroup{\ModuleAdditiveGroup{M}}{N}$.
+    $P$ is an exact left module over $R$ by
+        \auto{spike_quotient_module_is_exact}.
+    Hence $\ModuleAdditiveGroup{P}$ is an exact commutative group by
+        \auto{spike_module_additive_group_is_exact}.
+    Hence $\ModuleAdditiveGroup{P}$ is a group by
+        \auto{commutative_group_is_group}.
+    Hence $\ModuleAdditiveGroup{P}$ is an exact group by
+        \auto{spike_module_additive_group,groupaggregateexact}.
+    $\normalSubgroup{N}{\ModuleAdditiveGroup{M}}$ by
+        \auto{spike_submodule_is_normal}.
+    Hence $Q$ is an exact group by
+        \auto{quotient_group_is_exact_group}.
+    $\carrier[\ModuleAdditiveGroup{P}]=\carrier[Q]$ and
+        $\mul[\ModuleAdditiveGroup{P}]=\mul[Q]$ and
+        $\neutral[\ModuleAdditiveGroup{P}]=\neutral[Q]$ and
+        $\groupInv[\ModuleAdditiveGroup{P}]=\groupInv[Q]$ by
+        \auto{spike_module_additive_group_fields,
+            spike_quotient_module_fields}.
+    Follows by \auto{exact_group_extensionality}.
+\end{proof}
+
+\begin{proposition}\label{spike_quotient_projection_reused}
+    Suppose $\prototypeSubmodule{R}{N}{M}$.
+    Then
+        $\groupQuotientProjection{\ModuleAdditiveGroup{M}}{N}
+            \in\funs{\carrier[M]}{
+                \carrier[\QuotientModule{R}{M}{N}]}$.
+\end{proposition}
+\begin{proof}
+    $\normalSubgroup{N}{\ModuleAdditiveGroup{M}}$ by
+        \auto{spike_submodule_is_normal}.
+    Follows by
+        \auto{group_quotient_projection_type,
+            spike_module_additive_group_fields,
+            quotient_group_carrier,spike_quotient_module_fields}.
+\end{proof}

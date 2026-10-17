@@ -1,0 +1,525 @@
+\section{Boolean ultrafilters}
+
+\import{order/boolean-algebra.tex}
+\import{order/lattice-filter-extension.tex}
+
+\begin{proposition}\label{boolean_lattice_filter_excludes_complement}
+    Let $B$ be a Boolean algebra.
+    Suppose $\latticeFilter{F}{B}$ and $a\in F$.
+    Then $\booleanComplement[B](a)\notin F$.
+\end{proposition}
+\begin{proof}
+    $F\subseteq\carrier[B]$ by
+        \obv{lattice_filter_subseteq_carrier}.
+    Hence $a\in\carrier[B]$ by \obv{subseteq}.
+    Assume $\booleanComplement[B](a)\in F$.
+    Hence $\meet[B](a,\booleanComplement[B](a))\in F$ by
+        \obv{lattice_filter_meet}.
+    $\meet[B](a,\booleanComplement[B](a))
+        =\latticeBottom[B]$ by \obv{boolean_meet_complement}.
+    Hence $\latticeBottom[B]\in F$.
+    $\latticeBottom[B]\notin F$ by
+        \obv{lattice_filter_bottom_notin}.
+    Contradiction.
+\end{proof}
+
+\begin{theorem}\label{boolean_lattice_filter_adjoin_is_filter_iff}
+    Let $B$ be a Boolean algebra.
+    Suppose $\latticeFilter{F}{B}$ and $a\in\carrier[B]$.
+    Then $\latticeFilter{\latticeFilterAdjoin{F}{B}{a}}{B}$ iff
+        $\booleanComplement[B](a)\notin F$.
+\end{theorem}
+\begin{proof}
+    $F\subseteq\carrier[B]$ by
+        \obv{lattice_filter_subseteq_carrier}.
+    $\booleanComplement[B](a)\in\carrier[B]$ by
+        \obv{boolean_complement_apply_type}.
+    Show that if
+        $\latticeFilter{\latticeFilterAdjoin{F}{B}{a}}{B}$, then
+        $\booleanComplement[B](a)\notin F$.
+    \begin{subproof}
+        Assume $\latticeFilter{\latticeFilterAdjoin{F}{B}{a}}{B}$.
+        For every $c\in F$ we have
+            $\meet[B](c,a)\neq\latticeBottom[B]$ by
+            \obv{lattice_filter_adjoin_is_filter_iff}.
+        Assume $\booleanComplement[B](a)\in F$.
+        $\meet[B](\booleanComplement[B](a),a)
+            =\latticeBottom[B]$ by
+            \auto{boolean_meet_complement,meet_commutative,
+                boolean_algebra_is_lattice,
+                lattice_is_meet_semilattice}.
+        Contradiction.
+    \end{subproof}
+    Show that if $\booleanComplement[B](a)\notin F$, then
+        $\latticeFilter{\latticeFilterAdjoin{F}{B}{a}}{B}$.
+    \begin{subproof}
+        Assume $\booleanComplement[B](a)\notin F$.
+        Show that for every $c\in F$ we have
+            $\meet[B](c,a)\neq\latticeBottom[B]$.
+        \begin{subproof}
+            Fix $c\in F$.
+            Hence $c\in\carrier[B]$ by \obv{subseteq}.
+            Assume $\meet[B](c,a)=\latticeBottom[B]$.
+            Hence $c\mathrel{\leq[B]}\booleanComplement[B](a)$ by
+                \obv{meet_eq_lattice_bottom_iff_leq_boolean_complement}.
+            Hence $\booleanComplement[B](a)\in F$ by
+                \obv{lattice_filter_upward}.
+            Contradiction.
+        \end{subproof}
+        Follows by \obv{lattice_filter_adjoin_is_filter_iff}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{definition}\label{boolean_ultrafilter}
+    $\booleanUltrafilter{U}{B}$ iff
+        $B$ is a Boolean algebra and $\maximalLatticeFilter{U}{B}$.
+\end{definition}
+
+\begin{proposition}\label{boolean_ultrafilter_ambient}
+    Suppose $\booleanUltrafilter{U}{B}$.
+    Then $B$ is a Boolean algebra.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{boolean_ultrafilter}.
+\end{proof}
+
+\begin{proposition}\label{boolean_ultrafilter_is_maximal_lattice_filter}
+    Suppose $\booleanUltrafilter{U}{B}$.
+    Then $\maximalLatticeFilter{U}{B}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{boolean_ultrafilter}.
+\end{proof}
+
+\begin{proposition}\label{boolean_ultrafilter_is_lattice_filter}
+    Suppose $\booleanUltrafilter{U}{B}$.
+    Then $\latticeFilter{U}{B}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \obv{boolean_ultrafilter_is_maximal_lattice_filter,
+            maximal_lattice_filter_is_filter}.
+\end{proof}
+
+\begin{theorem}\label{boolean_ultrafilter_extension}
+    Let $B$ be a Boolean algebra.
+    Suppose $\latticeFilter{F}{B}$.
+    Then there exists $U$ such that $F\subseteq U$ and
+        $\booleanUltrafilter{U}{B}$.
+\end{theorem}
+\begin{proof}
+    Take $U$ such that $F\subseteq U$ and
+        $\maximalLatticeFilter{U}{B}$ by
+        \obv{lattice_filter_extension}.
+    Hence $\booleanUltrafilter{U}{B}$ by
+        \obv{boolean_ultrafilter}.
+\end{proof}
+
+\begin{proposition}\label{boolean_ultrafilter_subseteq_carrier}
+    Suppose $\booleanUltrafilter{U}{B}$.
+    Then $U\subseteq\carrier[B]$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \obv{boolean_ultrafilter_is_lattice_filter,
+            lattice_filter_subseteq_carrier}.
+\end{proof}
+
+\begin{proposition}\label{boolean_ultrafilter_top}
+    Suppose $\booleanUltrafilter{U}{B}$.
+    Then $\latticeTop[B]\in U$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \obv{boolean_ultrafilter_is_lattice_filter,
+            lattice_filter_top}.
+\end{proof}
+
+\begin{proposition}\label{boolean_ultrafilter_bottom_notin}
+    Suppose $\booleanUltrafilter{U}{B}$.
+    Then $\latticeBottom[B]\notin U$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \obv{boolean_ultrafilter_is_lattice_filter,
+            lattice_filter_bottom_notin}.
+\end{proof}
+
+\begin{proposition}\label{boolean_ultrafilter_meet_in_iff}
+    Suppose $\booleanUltrafilter{U}{B}$.
+    Let $a,b\in\carrier[B]$.
+    Then $\meet[B](a,b)\in U$ iff $a\in U$ and $b\in U$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \obv{boolean_ultrafilter_is_lattice_filter,
+            lattice_filter_meet_in_iff}.
+\end{proof}
+
+\begin{proposition}\label{boolean_ultrafilter_upward}
+    Suppose $\booleanUltrafilter{U}{B}$.
+    Let $a\in U$ and $b\in\carrier[B]$.
+    Suppose $a\mathrel{\leq[B]}b$.
+    Then $b\in U$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{boolean_ultrafilter_is_lattice_filter,
+            lattice_filter_upward}.
+\end{proof}
+
+\begin{theorem}\label{boolean_ultrafilter_decides}
+    Suppose $\booleanUltrafilter{U}{B}$.
+    Let $a\in\carrier[B]$.
+    Then $a\in U$ or $\booleanComplement[B](a)\in U$.
+\end{theorem}
+\begin{proof}
+    $\maximalLatticeFilter{U}{B}$ by
+        \obv{boolean_ultrafilter_is_maximal_lattice_filter}.
+    Hence $\latticeFilter{U}{B}$ by
+        \obv{maximal_lattice_filter_is_filter}.
+    \begin{byCase}
+    \caseOf{$a\in U$.}
+        Follows.
+    \caseOf{$a\notin U$.}
+        \begin{byCase}
+        \caseOf{$\booleanComplement[B](a)\in U$.}
+            Follows.
+        \caseOf{$\booleanComplement[B](a)\notin U$.}
+            $\latticeFilter{\latticeFilterAdjoin{U}{B}{a}}{B}$ by
+                \obv{boolean_lattice_filter_adjoin_is_filter_iff}.
+            $U\subseteq\latticeFilterAdjoin{U}{B}{a}$ by
+                \obv{lattice_filter_adjoin_contains_filter}.
+            Hence $\latticeFilterAdjoin{U}{B}{a}=U$ by
+                \obv{maximal_lattice_filter_extension_eq}.
+            $a\in\latticeFilterAdjoin{U}{B}{a}$ by
+                \obv{lattice_filter_adjoin_contains_element}.
+            Hence $a\in U$.
+            Contradiction.
+        \end{byCase}
+    \end{byCase}
+\end{proof}
+
+\begin{theorem}\label{boolean_ultrafilter_exactly_one_element_or_complement}
+    Suppose $\booleanUltrafilter{U}{B}$.
+    Let $a\in\carrier[B]$.
+    Then $(a\in U\lor\booleanComplement[B](a)\in U)\land
+        \lnot(a\in U\land\booleanComplement[B](a)\in U)$.
+\end{theorem}
+\begin{proof}
+    $a\in U$ or $\booleanComplement[B](a)\in U$ by
+        \obv{boolean_ultrafilter_decides}.
+    $\latticeFilter{U}{B}$ by
+        \obv{boolean_ultrafilter_is_lattice_filter}.
+    Show that
+        $\lnot(a\in U\land\booleanComplement[B](a)\in U)$.
+    \begin{subproof}
+        Assume $a\in U$ and $\booleanComplement[B](a)\in U$.
+        $\booleanComplement[B](a)\notin U$ by
+            \obv{boolean_lattice_filter_excludes_complement}.
+        Contradiction.
+    \end{subproof}
+\end{proof}
+
+\begin{proposition}\label{boolean_ultrafilter_element_iff_complement_notin}
+    Suppose $\booleanUltrafilter{U}{B}$.
+    Let $a\in\carrier[B]$.
+    Then $a\in U$ iff $\booleanComplement[B](a)\notin U$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{boolean_ultrafilter_exactly_one_element_or_complement}.
+\end{proof}
+
+\begin{theorem}\label{filter_and_decision_implies_boolean_ultrafilter}
+    Let $B$ be a Boolean algebra.
+    Suppose $\latticeFilter{F}{B}$.
+    Suppose for every $a\in\carrier[B]$ we have
+        $a\in F$ or $\booleanComplement[B](a)\in F$.
+    Then $\booleanUltrafilter{F}{B}$.
+\end{theorem}
+\begin{proof}
+    Show that there exists no $G$ such that
+        $\latticeFilter{G}{B}$ and $F\subset G$.
+    \begin{subproof}
+        Assume that there exists $G$ such that
+            $\latticeFilter{G}{B}$ and $F\subset G$.
+        Take $G$ such that $\latticeFilter{G}{B}$ and $F\subset G$.
+        Take $a\in G$ such that $a\notin F$ by
+            \obv{subset_witness}.
+        $G\subseteq\carrier[B]$ by
+            \obv{lattice_filter_subseteq_carrier}.
+        Hence $a\in\carrier[B]$ by \obv{subseteq}.
+        $a\in F$ or $\booleanComplement[B](a)\in F$.
+        Hence $\booleanComplement[B](a)\in F$.
+        $F\subseteq G$ by \obv{subset}.
+        Hence $\booleanComplement[B](a)\in G$ by \obv{subseteq}.
+        Hence $\meet[B](a,\booleanComplement[B](a))\in G$ by
+            \obv{lattice_filter_meet}.
+        $\meet[B](a,\booleanComplement[B](a))
+            =\latticeBottom[B]$ by \obv{boolean_meet_complement}.
+        Hence $\latticeBottom[B]\in G$.
+        $\latticeBottom[B]\notin G$ by
+            \obv{lattice_filter_bottom_notin}.
+        Contradiction.
+    \end{subproof}
+    Hence $\maximalLatticeFilter{F}{B}$ by
+        \obv{maximal_lattice_filter}.
+    Follows by \obv{boolean_ultrafilter}.
+\end{proof}
+
+\begin{theorem}\label{boolean_ultrafilter_iff_filter_and_decision}
+    Let $B$ be a Boolean algebra.
+    Then $\booleanUltrafilter{F}{B}$ iff
+        $\latticeFilter{F}{B}$ and
+        for every $a\in\carrier[B]$ we have
+            $a\in F$ or $\booleanComplement[B](a)\in F$.
+\end{theorem}
+\begin{proof}
+    Show that if $\booleanUltrafilter{F}{B}$, then
+        $\latticeFilter{F}{B}$ and
+        for every $a\in\carrier[B]$ we have
+            $a\in F$ or $\booleanComplement[B](a)\in F$.
+    \begin{subproof}
+        Assume $\booleanUltrafilter{F}{B}$.
+        $\latticeFilter{F}{B}$ by
+            \obv{boolean_ultrafilter_is_lattice_filter}.
+        For every $a\in\carrier[B]$ we have
+            $a\in F$ or $\booleanComplement[B](a)\in F$ by
+            \obv{boolean_ultrafilter_decides}.
+    \end{subproof}
+    Show that if $\latticeFilter{F}{B}$ and
+        for every $a\in\carrier[B]$ we have
+            $a\in F$ or $\booleanComplement[B](a)\in F$, then
+        $\booleanUltrafilter{F}{B}$.
+    \begin{subproof}
+        Follows by
+            \obv{filter_and_decision_implies_boolean_ultrafilter}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{proposition}\label{boolean_ultrafilter_complement_in_iff}
+    Suppose $\booleanUltrafilter{U}{B}$.
+    Let $a\in\carrier[B]$.
+    Then $\booleanComplement[B](a)\in U$ iff $a\notin U$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{boolean_ultrafilter_exactly_one_element_or_complement}.
+\end{proof}
+
+\begin{proposition}\label{boolean_ultrafilter_join_in_iff}
+    Suppose $\booleanUltrafilter{U}{B}$.
+    Let $a,b\in\carrier[B]$.
+    Then $\join[B](a,b)\in U$ iff $a\in U$ or $b\in U$.
+\end{proposition}
+\begin{proof}
+    Hence $B$ is a lattice by \obv{boolean_algebra_is_lattice}.
+    $\join[B](a,b)\in\carrier[B]$ by \obv{join_type}.
+    Show that if $\join[B](a,b)\in U$, then $a\in U$ or $b\in U$.
+    \begin{subproof}
+        Assume $\join[B](a,b)\in U$.
+        \begin{byCase}
+        \caseOf{$a\in U$.}
+            Follows.
+        \caseOf{$a\notin U$.}
+            \begin{byCase}
+            \caseOf{$b\in U$.}
+                Follows.
+            \caseOf{$b\notin U$.}
+                $\booleanComplement[B](a),
+                    \booleanComplement[B](b)\in U$ by
+                    \obv{boolean_ultrafilter_complement_in_iff}.
+                Hence $\meet[B](\booleanComplement[B](a),
+                    \booleanComplement[B](b))\in U$ by
+                    \obv{boolean_ultrafilter_meet_in_iff,
+                        boolean_complement_apply_type}.
+                $\meet[B](\booleanComplement[B](a),
+                    \booleanComplement[B](b))
+                    =\booleanComplement[B](\join[B](a,b))$ by
+                    \obv{boolean_complement_join}.
+                Hence $\booleanComplement[B](\join[B](a,b))\in U$.
+                $\booleanComplement[B](\join[B](a,b))\notin U$ by
+                    \obv{boolean_ultrafilter_is_lattice_filter,
+                        boolean_lattice_filter_excludes_complement}.
+                Contradiction.
+            \end{byCase}
+        \end{byCase}
+    \end{subproof}
+    Show that if $a\in U$ or $b\in U$, then $\join[B](a,b)\in U$.
+    \begin{subproof}
+        Assume $a\in U$ or $b\in U$.
+        $a\mathrel{\leq[B]}\join[B](a,b)$ and
+            $b\mathrel{\leq[B]}\join[B](a,b)$ by \obv{join_ub}.
+        Follows by \obv{boolean_ultrafilter_upward}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{boolean_ultrafilter_is_prime}
+    Suppose $\booleanUltrafilter{U}{B}$.
+    Then $\primeLatticeFilter{U}{B}$.
+\end{theorem}
+\begin{proof}
+    $\latticeFilter{U}{B}$ by
+        \obv{boolean_ultrafilter_is_lattice_filter}.
+    For all $a,b\in\carrier[B]$ such that $\join[B](a,b)\in U$
+        we have $a\in U$ or $b\in U$ by
+        \obv{boolean_ultrafilter_join_in_iff}.
+    Follows by \obv{prime_lattice_filter}.
+\end{proof}
+
+\begin{theorem}\label{prime_boolean_filter_is_ultrafilter}
+    Let $B$ be a Boolean algebra.
+    Suppose $\primeLatticeFilter{F}{B}$.
+    Then $\booleanUltrafilter{F}{B}$.
+\end{theorem}
+\begin{proof}
+    $\latticeFilter{F}{B}$ by
+        \obv{prime_lattice_filter_is_filter}.
+    Show that for every $a\in\carrier[B]$ we have
+        $a\in F$ or $\booleanComplement[B](a)\in F$.
+    \begin{subproof}
+        Fix $a\in\carrier[B]$.
+        $\booleanComplement[B](a)\in\carrier[B]$ by
+            \obv{boolean_complement_apply_type}.
+        $\join[B](a,\booleanComplement[B](a))
+            =\latticeTop[B]$ by \obv{boolean_join_complement}.
+        $\latticeTop[B]\in F$ by \obv{lattice_filter_top}.
+        Hence $\join[B](a,\booleanComplement[B](a))\in F$.
+        Follows by \obv{prime_lattice_filter_join_elim}.
+    \end{subproof}
+    Follows by
+        \obv{filter_and_decision_implies_boolean_ultrafilter}.
+\end{proof}
+
+\begin{theorem}\label{boolean_ultrafilter_iff_prime_filter}
+    Let $B$ be a Boolean algebra.
+    Then $\booleanUltrafilter{F}{B}$ iff
+        $\primeLatticeFilter{F}{B}$.
+\end{theorem}
+\begin{proof}
+    Follows by
+        \auto{boolean_ultrafilter_is_prime,
+            prime_boolean_filter_is_ultrafilter}.
+\end{proof}
+
+\begin{theorem}\label{nonbottom_in_boolean_ultrafilter}
+    Let $B$ be a Boolean algebra.
+    Let $a\in\carrier[B]$.
+    Suppose $a\neq\latticeBottom[B]$.
+    Then there exists $U$ such that
+        $\booleanUltrafilter{U}{B}$ and $a\in U$.
+\end{theorem}
+\begin{proof}
+    Let $P=\principalLatticeFilter{B}{a}$.
+    $B$ is a bounded lattice by
+        \obv{boolean_algebra_is_bounded_lattice}.
+    Hence $\latticeFilter{P}{B}$ by
+        \auto{principal_lattice_filter_is_filter}.
+    Take $U$ such that $P\subseteq U$ and
+        $\booleanUltrafilter{U}{B}$ by
+        \obv{boolean_ultrafilter_extension}.
+    $a\in P$ by
+        \obv{principal_lattice_filter_contains_generator}.
+    Hence $a\in U$ by \obv{subseteq}.
+\end{proof}
+
+\begin{theorem}\label{boolean_ultrafilter_exists_iff_bottom_ne_top}
+    Let $B$ be a Boolean algebra.
+    Then (there exists $U$ such that $\booleanUltrafilter{U}{B}$) iff
+        $\latticeBottom[B]\neq\latticeTop[B]$.
+\end{theorem}
+\begin{proof}
+    $\latticeTop[B]\in\carrier[B]$ by \obv{lattice_top_type}.
+    Show that if there exists $U$ such that
+        $\booleanUltrafilter{U}{B}$, then
+        $\latticeBottom[B]\neq\latticeTop[B]$.
+    \begin{subproof}
+        Assume that there exists $U$ such that
+            $\booleanUltrafilter{U}{B}$.
+        Take $U$ such that $\booleanUltrafilter{U}{B}$.
+        $\latticeFilter{U}{B}$ by
+            \obv{boolean_ultrafilter_is_lattice_filter}.
+        Follows by \obv{lattice_filter_implies_bottom_ne_top}.
+    \end{subproof}
+    Show that if $\latticeBottom[B]\neq\latticeTop[B]$, then
+        there exists $U$ such that $\booleanUltrafilter{U}{B}$.
+    \begin{subproof}
+        Assume $\latticeBottom[B]\neq\latticeTop[B]$.
+        Take $U$ such that $\booleanUltrafilter{U}{B}$ and
+            $\latticeTop[B]\in U$ by
+            \obv{nonbottom_in_boolean_ultrafilter}.
+        Follows by \auto.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{boolean_ultrafilter_separates_order}
+    Let $B$ be a Boolean algebra.
+    Let $a,b\in\carrier[B]$.
+    Suppose $a\not\mathrel{\leq[B]}b$.
+    Then there exists $U$ such that
+        $\booleanUltrafilter{U}{B}$ and $a\in U$ and $b\notin U$.
+\end{theorem}
+\begin{proof}
+    Let $d=\booleanDifference{B}{a}{b}$.
+    $d\in\carrier[B]$ by \auto{boolean_difference_type}.
+    $d\neq\latticeBottom[B]$ by
+        \auto{not_leq_iff_boolean_difference_nonbottom}.
+    Take $U$ such that $\booleanUltrafilter{U}{B}$ and $d\in U$ by
+        \obv{nonbottom_in_boolean_ultrafilter}.
+    $d\mathrel{\leq[B]}a$ and
+        $d\mathrel{\leq[B]}\booleanComplement[B](b)$ by
+        \auto{boolean_difference_leq_left,
+            boolean_difference_leq_complement_right}.
+    Hence $a,\booleanComplement[B](b)\in U$ by
+        \obv{boolean_ultrafilter_upward,
+            boolean_complement_apply_type}.
+    $b\notin U$ by
+        \obv{boolean_ultrafilter_complement_in_iff}.
+\end{proof}
+
+\begin{theorem}\label{boolean_ultrafilter_separates_unequal}
+    Let $B$ be a Boolean algebra.
+    Let $a,b\in\carrier[B]$.
+    Suppose $a\neq b$.
+    Then there exists $U$ such that $\booleanUltrafilter{U}{B}$ and
+        (($a\in U$ and $b\notin U$) or
+         ($b\in U$ and $a\notin U$)).
+\end{theorem}
+\begin{proof}
+    Hence $B$ is an ordered set by \obv{lattice_is_ordered_set}.
+    $a\not\mathrel{\leq[B]}b$ or
+        $b\not\mathrel{\leq[B]}a$ by
+        \auto{ordered_set_order_antisymmetric,antisymmetric}.
+    \begin{byCase}
+    \caseOf{$a\not\mathrel{\leq[B]}b$.}
+        Take $U$ such that $\booleanUltrafilter{U}{B}$ and
+            $a\in U$ and $b\notin U$ by
+            \obv{boolean_ultrafilter_separates_order}.
+        Follows by \auto.
+    \caseOf{$a\mathrel{\leq[B]}b$.}
+        Hence $b\not\mathrel{\leq[B]}a$.
+        Take $U$ such that $\booleanUltrafilter{U}{B}$ and
+            $b\in U$ and $a\notin U$ by
+            \obv{boolean_ultrafilter_separates_order}.
+        Follows by \auto.
+    \end{byCase}
+\end{proof}
+
+\begin{theorem}\label{boolean_prime_filter_theorem}
+    Let $B$ be a Boolean algebra.
+    Suppose $\latticeFilter{F}{B}$.
+    Then there exists $P$ such that $F\subseteq P$ and
+        $\primeLatticeFilter{P}{B}$.
+\end{theorem}
+\begin{proof}
+    Take $P$ such that $F\subseteq P$ and
+        $\booleanUltrafilter{P}{B}$ by
+        \obv{boolean_ultrafilter_extension}.
+    Hence $\primeLatticeFilter{P}{B}$ by
+        \obv{boolean_ultrafilter_is_prime}.
+\end{proof}

@@ -1,0 +1,888 @@
+\section{Pullbacks and tendency of filters}
+
+\import{set/filter-map.tex}
+
+\subsection{The preimage basis}
+
+\begin{definition}\label{filter_preimage_family}
+    $\filterPreimageFamily{S}{T}{f}{G}
+        =\{\preimg{f}{B}\mid B\in G\}$.
+\end{definition}
+
+\begin{proposition}\label{filter_preimage_family_iff}
+    $A\in\filterPreimageFamily{S}{T}{f}{G}$ iff
+        there exists $B\in G$ such that $A=\preimg{f}{B}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{filter_preimage_family}.
+\end{proof}
+
+\begin{proposition}\label{filter_preimage_family_is_filter_basis}
+    Let $f\in\funs{S}{T}$ and $G$ be a filter on $T$.
+    Then $\filterPreimageFamily{S}{T}{f}{G}$ is a filter basis on $S$.
+\end{proposition}
+\begin{proof}
+    Show that $\filterPreimageFamily{S}{T}{f}{G}$ is a family of subsets
+        of $S$.
+    \begin{subproof}
+        Fix $A\in\filterPreimageFamily{S}{T}{f}{G}$.
+        Take $B\in G$ such that $A=\preimg{f}{B}$ by
+            \obv{filter_preimage_family_iff}.
+        $\preimg{f}{B}\subseteq\dom{f}=S$ by
+            \obv{preimg_subseteq_dom,funs}.
+    \end{subproof}
+
+    $T\in G$ by \obv{filter}.
+    $\preimg{f}{T}=S$ by \obv{preimg_codom_of_function}.
+    Hence $S\in\filterPreimageFamily{S}{T}{f}{G}$ by
+        \obv{filter_preimage_family_iff}.
+    Hence $\filterPreimageFamily{S}{T}{f}{G}$ is inhabited.
+
+    Show that for all $A,C$ such that
+        $A\in\filterPreimageFamily{S}{T}{f}{G}$ and
+        $C\in\filterPreimageFamily{S}{T}{f}{G}$ there exists
+        $D\in\filterPreimageFamily{S}{T}{f}{G}$ such that
+        $D\subseteq A\inter C$.
+    \begin{subproof}
+        Fix $A,C$.
+        Assume $A\in\filterPreimageFamily{S}{T}{f}{G}$ and
+            $C\in\filterPreimageFamily{S}{T}{f}{G}$.
+        Take $B\in G$ such that $A=\preimg{f}{B}$ by
+            \obv{filter_preimage_family_iff}.
+        Take $E\in G$ such that $C=\preimg{f}{E}$ by
+            \obv{filter_preimage_family_iff}.
+        $B\inter E\in G$ by \obv{filter}.
+        Hence $\preimg{f}{B\inter E}
+            \in\filterPreimageFamily{S}{T}{f}{G}$ by
+            \obv{filter_preimage_family_iff}.
+        $f$ is a function by \obv{funs_is_function}.
+        $\preimg{f}{B\inter E}
+            =\preimg{f}{B}\inter\preimg{f}{E}$ by
+            \obv{function_preimage_intersection}.
+        Hence $\preimg{f}{B\inter E}=A\inter C$.
+        Follows by \obv{subseteq_refl}.
+    \end{subproof}
+    Follows by \obv{filter_basis}.
+\end{proof}
+
+\subsection{Pullback filters}
+
+\begin{definition}\label{filter_pullback}
+    $\filterPullback{S}{T}{f}{G}
+        =\generatedFilter{S}{\filterPreimageFamily{S}{T}{f}{G}}$.
+\end{definition}
+
+\begin{proposition}\label{filter_pullback_is_filter}
+    Let $f\in\funs{S}{T}$ and $G$ be a filter on $T$.
+    Then $\filterPullback{S}{T}{f}{G}$ is a filter on $S$.
+\end{proposition}
+\begin{proof}
+    $\filterPreimageFamily{S}{T}{f}{G}$ is a filter basis on $S$ by
+        \obv{filter_preimage_family_is_filter_basis}.
+    Hence $\filterPreimageFamily{S}{T}{f}{G}$ is a family of subsets of
+        $S$ by \obv{filter_basis}.
+    $\generatedFilter{S}{\filterPreimageFamily{S}{T}{f}{G}}$ is a filter
+        on $S$ by \obv{generated_filter_is_filter}.
+    $\filterPullback{S}{T}{f}{G}
+        =\generatedFilter{S}{\filterPreimageFamily{S}{T}{f}{G}}$ by
+        \obv{filter_pullback}.
+\end{proof}
+
+\begin{theorem}\label{filter_pullback_iff}
+    Let $f\in\funs{S}{T}$ and $G$ be a filter on $T$.
+    Then $A\in\filterPullback{S}{T}{f}{G}$ iff
+        $A\subseteq S$ and there exists $B\in G$ such that
+        $\preimg{f}{B}\subseteq A$.
+\end{theorem}
+\begin{proof}
+    Let $P=\filterPreimageFamily{S}{T}{f}{G}$.
+    $\filterPreimageFamily{S}{T}{f}{G}$ is a filter basis on $S$ by
+        \obv{filter_preimage_family_is_filter_basis}.
+    Hence $P$ is a filter basis on $S$.
+    $\filterPullback{S}{T}{f}{G}
+        =\generatedFilter{S}{P}$ by
+        \obv{filter_pullback}.
+    $A\in\generatedFilter{S}{P}$ iff
+        $A\subseteq S$ and there exists $C\in P$ such that $C\subseteq A$
+        by \obv{generated_filter_iff}.
+    Show that if $A\in\filterPullback{S}{T}{f}{G}$, then
+        $A\subseteq S$ and there exists $B\in G$ such that
+        $\preimg{f}{B}\subseteq A$.
+    \begin{subproof}
+        Assume $A\in\filterPullback{S}{T}{f}{G}$.
+        Hence $A\in\generatedFilter{S}{P}$.
+        Hence $A\subseteq S$ and there exists
+            $C\in P$ such that $C\subseteq A$.
+        Take $C\in P$ such that $C\subseteq A$.
+        Hence $C\in\filterPreimageFamily{S}{T}{f}{G}$.
+        Take $B\in G$ such that $C=\preimg{f}{B}$ by
+            \obv{filter_preimage_family_iff}.
+        Hence $\preimg{f}{B}\subseteq A$.
+    \end{subproof}
+    Show that if $A\subseteq S$ and there exists $B\in G$ such that
+        $\preimg{f}{B}\subseteq A$, then
+        $A\in\filterPullback{S}{T}{f}{G}$.
+    \begin{subproof}
+        Assume $A\subseteq S$ and there exists $B\in G$ such that
+            $\preimg{f}{B}\subseteq A$.
+        Take $B\in G$ such that $\preimg{f}{B}\subseteq A$.
+        $\preimg{f}{B}\in\filterPreimageFamily{S}{T}{f}{G}$ by
+            \obv{filter_preimage_family_iff}.
+        Hence $\preimg{f}{B}\in P$.
+        Hence $A\in\generatedFilter{S}{P}$.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{proposition}\label{preimage_family_contained_in_pullback}
+    Let $f\in\funs{S}{T}$ and $G$ be a filter on $T$.
+    Then $\filterPreimageFamily{S}{T}{f}{G}
+        \subseteq\filterPullback{S}{T}{f}{G}$.
+\end{proposition}
+\begin{proof}
+    $\filterPreimageFamily{S}{T}{f}{G}$ is a filter basis on $S$ by
+        \obv{filter_preimage_family_is_filter_basis}.
+    Hence $\filterPreimageFamily{S}{T}{f}{G}$ is a family of subsets of
+        $S$ by \obv{filter_basis}.
+    $\filterPreimageFamily{S}{T}{f}{G}\subseteq
+        \generatedFilter{S}{\filterPreimageFamily{S}{T}{f}{G}}$ by
+        \obv{generated_filter_contains}.
+    Follows by \obv{filter_pullback}.
+\end{proof}
+
+\subsection{The pushforward--pullback adjunction}
+
+\begin{theorem}\label{filter_pushforward_pullback_adjunction}
+    Let $f\in\funs{S}{T}$.
+    Let $F$ be a filter on $S$ and $G$ be a filter on $T$.
+    Then $\filterPushforward{S}{T}{f}{F}$ refines $G$ on $T$ iff
+        $F$ refines $\filterPullback{S}{T}{f}{G}$ on $S$.
+\end{theorem}
+\begin{proof}
+    $\filterPushforward{S}{T}{f}{F}$ is a filter on $T$ by
+        \obv{filter_pushforward_is_filter}.
+    $\filterPullback{S}{T}{f}{G}$ is a filter on $S$ by
+        \obv{filter_pullback_is_filter}.
+
+    Show that if $\filterPushforward{S}{T}{f}{F}$ refines $G$ on $T$,
+        then $F$ refines $\filterPullback{S}{T}{f}{G}$ on $S$.
+    \begin{subproof}
+        Assume $\filterPushforward{S}{T}{f}{F}$ refines $G$ on $T$.
+        Hence $G\subseteq\filterPushforward{S}{T}{f}{F}$ by
+            \obv{filter_refines}.
+        Show that $\filterPreimageFamily{S}{T}{f}{G}\subseteq F$.
+        \begin{subproof}
+            It suffices to show that every element of
+                $\filterPreimageFamily{S}{T}{f}{G}$ is an element of $F$
+                by \obv{subseteq}.
+            Fix $A\in\filterPreimageFamily{S}{T}{f}{G}$.
+            Take $B\in G$ such that $A=\preimg{f}{B}$ by
+                \obv{filter_preimage_family_iff}.
+            Hence $B\in\filterPushforward{S}{T}{f}{F}$ by
+                \obv{subseteq}.
+            Thus $\preimg{f}{B}\in F$ by \obv{filter_pushforward_iff}.
+        \end{subproof}
+        $\filterPreimageFamily{S}{T}{f}{G}$ is a family of subsets of $S$
+            by \obv{filter_preimage_family_is_filter_basis,filter_basis}.
+        Hence $\generatedFilter{S}{\filterPreimageFamily{S}{T}{f}{G}}
+            \subseteq F$ by \obv{generated_filter_least}.
+        Hence $\filterPullback{S}{T}{f}{G}\subseteq F$ by
+            \obv{filter_pullback}.
+        Follows by \obv{filter_refines}.
+    \end{subproof}
+
+    Show that if $F$ refines $\filterPullback{S}{T}{f}{G}$ on $S$,
+        then $\filterPushforward{S}{T}{f}{F}$ refines $G$ on $T$.
+    \begin{subproof}
+        Assume $F$ refines $\filterPullback{S}{T}{f}{G}$ on $S$.
+        Hence $\filterPullback{S}{T}{f}{G}\subseteq F$ by
+            \obv{filter_refines}.
+        $\filterPreimageFamily{S}{T}{f}{G}
+            \subseteq\filterPullback{S}{T}{f}{G}$ by
+            \obv{preimage_family_contained_in_pullback}.
+        Show that $G\subseteq\filterPushforward{S}{T}{f}{F}$.
+        \begin{subproof}
+            It suffices to show that every element of $G$ is an element of
+                $\filterPushforward{S}{T}{f}{F}$ by \obv{subseteq}.
+            Fix $B\in G$.
+            $B\subseteq T$ by \obv{filter}.
+            $\preimg{f}{B}\in\filterPreimageFamily{S}{T}{f}{G}$ by
+                \obv{filter_preimage_family_iff}.
+            Hence $\preimg{f}{B}\in\filterPullback{S}{T}{f}{G}$ by
+                \obv{subseteq}.
+            Hence $\preimg{f}{B}\in F$ by \obv{subseteq}.
+            Follows by \auto{filter_pushforward_iff}.
+        \end{subproof}
+        Follows by \obv{filter_refines}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\subsection{Tendency}
+
+\begin{definition}\label{filter_tendsto}
+    $f$ tends from $F$ on $S$ to $G$ on $T$ iff
+        $f\in\funs{S}{T}$ and $F$ is a filter on $S$ and
+        $G$ is a filter on $T$ and
+        $\filterPushforward{S}{T}{f}{F}$ refines $G$ on $T$.
+\end{definition}
+
+\begin{theorem}\label{filter_tendsto_iff_preimage}
+    Let $f\in\funs{S}{T}$.
+    Let $F$ be a filter on $S$ and $G$ be a filter on $T$.
+    Then $f$ tends from $F$ on $S$ to $G$ on $T$ iff
+        for every $B\in G$ we have $\preimg{f}{B}\in F$.
+\end{theorem}
+\begin{proof}
+    $\filterPushforward{S}{T}{f}{F}$ is a filter on $T$ by
+        \obv{filter_pushforward_is_filter}.
+    Show that $G\subseteq\filterPushforward{S}{T}{f}{F}$ iff
+        for every $B\in G$ we have $\preimg{f}{B}\in F$.
+    \begin{subproof}
+        Show that if $G\subseteq\filterPushforward{S}{T}{f}{F}$, then
+            for every $B\in G$ we have $\preimg{f}{B}\in F$.
+        \begin{subproof}
+            Assume $G\subseteq\filterPushforward{S}{T}{f}{F}$.
+            Fix $B\in G$.
+            Hence $B\in\filterPushforward{S}{T}{f}{F}$ by \obv{subseteq}.
+            Follows by \obv{filter_pushforward_iff}.
+        \end{subproof}
+        Show that if for every $B\in G$ we have $\preimg{f}{B}\in F$,
+            then $G\subseteq\filterPushforward{S}{T}{f}{F}$.
+        \begin{subproof}
+            Assume for every $B\in G$ we have $\preimg{f}{B}\in F$.
+            Show that every element of $G$ is an element of
+                $\filterPushforward{S}{T}{f}{F}$.
+            \begin{subproof}
+                Fix $B\in G$.
+                $B\subseteq T$ by \obv{filter}.
+                $\preimg{f}{B}\in F$.
+                Follows by \auto{filter_pushforward_iff}.
+            \end{subproof}
+            Follows by \obv{subseteq}.
+        \end{subproof}
+        Follows by \auto.
+    \end{subproof}
+    Follows by \auto{filter_tendsto,filter_refines}.
+\end{proof}
+
+\begin{theorem}\label{filter_tendsto_iff_pullback}
+    Let $f\in\funs{S}{T}$.
+    Let $F$ be a filter on $S$ and $G$ be a filter on $T$.
+    Then $f$ tends from $F$ on $S$ to $G$ on $T$ iff
+        $F$ refines $\filterPullback{S}{T}{f}{G}$ on $S$.
+\end{theorem}
+\begin{proof}
+    Follows by
+        \auto{filter_tendsto,filter_pushforward_pullback_adjunction}.
+\end{proof}
+
+\begin{proposition}\label{identity_filter_tendsto}
+    Let $F$ be a filter on $S$.
+    Then $\identity{S}$ tends from $F$ on $S$ to $F$ on $S$.
+\end{proposition}
+\begin{proof}
+    $\identity{S}\in\funs{S}{S}$ by \obv{id_elem_funs}.
+    $\filterPushforward{S}{S}{\identity{S}}{F}=F$ by
+        \obv{identity_filter_pushforward}.
+    $F$ refines $F$ on $S$ by \obv{filter_refines_reflexive}.
+    Follows by \obv{filter_tendsto}.
+\end{proof}
+
+\begin{theorem}\label{composition_filter_tendsto}
+    Let $f\in\funs{S}{T}$ and $g\in\funs{T}{U}$.
+    Let $F$ be a filter on $S$, $G$ be a filter on $T$, and
+        $H$ be a filter on $U$.
+    Suppose $f$ tends from $F$ on $S$ to $G$ on $T$.
+    Suppose $g$ tends from $G$ on $T$ to $H$ on $U$.
+    Then $g\circ f$ tends from $F$ on $S$ to $H$ on $U$.
+\end{theorem}
+\begin{proof}
+    $g\circ f\in\funs{S}{U}$ by \obv{funs_circ}.
+    $\filterPushforward{S}{T}{f}{F}$ refines $G$ on $T$ and
+        $\filterPushforward{T}{U}{g}{G}$ refines $H$ on $U$ by
+        \obv{filter_tendsto}.
+    $G\subseteq\filterPushforward{S}{T}{f}{F}$ by
+        \obv{filter_refines}.
+    Show that $\filterPushforward{T}{U}{g}{
+            \filterPushforward{S}{T}{f}{F}}$
+        refines $\filterPushforward{T}{U}{g}{G}$ on $U$.
+    \begin{subproof}
+        $\filterPushforward{S}{T}{f}{F}$ is a filter on $T$ by
+            \obv{filter_pushforward_is_filter}.
+        $\filterPushforward{T}{U}{g}{
+                \filterPushforward{S}{T}{f}{F}}$ and
+            $\filterPushforward{T}{U}{g}{G}$ are filters on $U$ by
+            \obv{filter_pushforward_is_filter}.
+        Show that $\filterPushforward{T}{U}{g}{G}\subseteq
+            \filterPushforward{T}{U}{g}{
+                \filterPushforward{S}{T}{f}{F}}$.
+        \begin{subproof}
+            It suffices to show that every element of
+                $\filterPushforward{T}{U}{g}{G}$ is an element of
+                $\filterPushforward{T}{U}{g}{
+                    \filterPushforward{S}{T}{f}{F}}$ by \obv{subseteq}.
+            Fix $B\in\filterPushforward{T}{U}{g}{G}$.
+            $B\subseteq U$ and $\preimg{g}{B}\in G$ by
+                \obv{filter_pushforward_iff}.
+            Hence $\preimg{g}{B}\in
+                \filterPushforward{S}{T}{f}{F}$ by \obv{subseteq}.
+            Follows by \obv{filter_pushforward_iff}.
+        \end{subproof}
+        Follows by \obv{filter_refines}.
+    \end{subproof}
+    Hence $\filterPushforward{T}{U}{g}{
+            \filterPushforward{S}{T}{f}{F}}$ refines $H$ on $U$ by
+        \obv{filter_refines_transitive}.
+    $\filterPushforward{S}{U}{g\circ f}{F}
+        =\filterPushforward{T}{U}{g}{
+            \filterPushforward{S}{T}{f}{F}}$ by
+        \obv{composition_filter_pushforward}.
+    Hence $\filterPushforward{S}{U}{g\circ f}{F}$ refines $H$ on $U$.
+    Follows by \obv{filter_tendsto}.
+\end{proof}
+
+\begin{theorem}\label{filter_tendsto_from_pushforward_iff_composition}
+    Let $i\in\funs{R}{S}$ and $f\in\funs{S}{T}$.
+    Let $F$ be a filter on $R$ and $G$ be a filter on $T$.
+    Then $f$ tends from
+        $\filterPushforward{R}{S}{i}{F}$ on $S$ to $G$ on $T$ iff
+        $f\circ i$ tends from $F$ on $R$ to $G$ on $T$.
+\end{theorem}
+\begin{proof}
+    $\filterPushforward{R}{S}{i}{F}$ is a filter on $S$ by
+        \obv{filter_pushforward_is_filter}.
+    $f\circ i\in\funs{R}{T}$ by \obv{funs_circ}.
+    $\filterPushforward{S}{T}{f}{
+        \filterPushforward{R}{S}{i}{F}}
+        =\filterPushforward{R}{T}{f\circ i}{F}$ by
+        \obv{composition_filter_pushforward}.
+    Follows by \auto{filter_tendsto}.
+\end{proof}
+
+\subsection{Proper pullbacks}
+
+\begin{proposition}\label{preimage_inhabited_iff_intersects_range}
+    $\preimg{R}{B}$ is inhabited iff $B\inter\ran{R}$ is inhabited.
+\end{proposition}
+\begin{proof}
+    Show that if $\preimg{R}{B}$ is inhabited, then
+        $B\inter\ran{R}$ is inhabited.
+    \begin{subproof}
+        Assume $\preimg{R}{B}$ is inhabited.
+        Take $x$ such that $x\in\preimg{R}{B}$.
+        Take $y\in B$ such that $(x,y)\in R$ by \obv{preimg_iff}.
+        Hence $y\in\ran{R}$ by \obv{ran_intro}.
+        Thus $y\in B\inter\ran{R}$ by \obv{inter_intro}.
+    \end{subproof}
+    Show that if $B\inter\ran{R}$ is inhabited, then
+        $\preimg{R}{B}$ is inhabited.
+    \begin{subproof}
+        Assume $B\inter\ran{R}$ is inhabited.
+        Take $y$ such that $y\in B\inter\ran{R}$.
+        Hence $y\in B$ and $y\in\ran{R}$ by \obv{inter}.
+        Take $x$ such that $(x,y)\in R$ by \obv{ran_iff}.
+        Hence $x\in\preimg{R}{B}$ by \auto{preimg_iff}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{filter_pullback_is_proper_iff_preimages_inhabited}
+    Let $f\in\funs{S}{T}$ and $G$ be a filter on $T$.
+    Then $\filterPullback{S}{T}{f}{G}$ is a proper filter on $S$ iff
+        for every $B\in G$ we have $\preimg{f}{B}$ is inhabited.
+\end{theorem}
+\begin{proof}
+    Let $P=\filterPreimageFamily{S}{T}{f}{G}$.
+    $\filterPreimageFamily{S}{T}{f}{G}$ is a filter basis on $S$ by
+        \obv{filter_preimage_family_is_filter_basis}.
+    Hence $P$ is a filter basis on $S$.
+    $\filterPreimageFamily{S}{T}{f}{G}
+        \subseteq\filterPullback{S}{T}{f}{G}$ by
+        \obv{preimage_family_contained_in_pullback}.
+
+    Show that if $\filterPullback{S}{T}{f}{G}$ is a proper filter on $S$,
+        then for every $B\in G$ we have $\preimg{f}{B}$ is inhabited.
+    \begin{subproof}
+        Assume $\filterPullback{S}{T}{f}{G}$ is a proper filter on $S$.
+        Fix $B\in G$.
+        $\preimg{f}{B}\in\filterPreimageFamily{S}{T}{f}{G}$ by
+            \obv{filter_preimage_family_iff}.
+        Hence $\preimg{f}{B}\in\filterPullback{S}{T}{f}{G}$ by
+            \obv{subseteq}.
+        $\emptyset\notin\filterPullback{S}{T}{f}{G}$ by
+            \obv{proper_filter}.
+        Hence $\preimg{f}{B}\neq\emptyset$.
+        Follows by \obv{nonempty_inhabited}.
+    \end{subproof}
+
+    Show that if for every $B\in G$ we have $\preimg{f}{B}$ is inhabited,
+        then $\filterPullback{S}{T}{f}{G}$ is a proper filter on $S$.
+    \begin{subproof}
+        Assume for every $B\in G$ we have $\preimg{f}{B}$ is inhabited.
+        Show that for every $A\in P$ we have $A$ is inhabited.
+        \begin{subproof}
+            Fix $A\in P$.
+            Hence $A\in\filterPreimageFamily{S}{T}{f}{G}$.
+            Take $B\in G$ such that $A=\preimg{f}{B}$ by
+                \obv{filter_preimage_family_iff}.
+            $\preimg{f}{B}$ is inhabited.
+        \end{subproof}
+        Hence $P$ is a proper filter basis on $S$ by
+            \obv{proper_filter_basis}.
+        Hence $\generatedFilter{S}{P}$ is a proper filter on $S$ by
+            \obv{generated_filter_is_proper_filter}.
+        $\filterPullback{S}{T}{f}{G}=\generatedFilter{S}{P}$ by
+            \obv{filter_pullback}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{filter_pullback_is_proper_iff_meshes_range}
+    Let $f\in\funs{S}{T}$ and $G$ be a filter on $T$.
+    Then $\filterPullback{S}{T}{f}{G}$ is a proper filter on $S$ iff
+        $G$ meshes with $\principalfilter{T}{\ran{f}}$ on $T$.
+\end{theorem}
+\begin{proof}
+    $\ran{f}\subseteq T$ by \obv{funs_ran}.
+    Show that if $\filterPullback{S}{T}{f}{G}$ is a proper filter on $S$,
+        then $G$ meshes with $\principalfilter{T}{\ran{f}}$ on $T$.
+    \begin{subproof}
+        Assume $\filterPullback{S}{T}{f}{G}$ is a proper filter on $S$.
+        Hence for every $B\in G$ we have $\preimg{f}{B}$ is inhabited by
+            \obv{filter_pullback_is_proper_iff_preimages_inhabited}.
+        Show that for every $B\in G$ we have
+            $B\inter\ran{f}$ is inhabited.
+        \begin{subproof}
+            Fix $B\in G$.
+            $\preimg{f}{B}$ is inhabited.
+            Follows by \obv{preimage_inhabited_iff_intersects_range}.
+        \end{subproof}
+        Hence $\ran{f}$ is frequent along $G$ on $T$ by
+            \obv{filter_frequent_iff_intersects_every_eventual_set}.
+        Follows by \obv{filter_frequent_iff_meshes_principal}.
+    \end{subproof}
+    Show that if $G$ meshes with $\principalfilter{T}{\ran{f}}$ on $T$,
+        then $\filterPullback{S}{T}{f}{G}$ is a proper filter on $S$.
+    \begin{subproof}
+        Assume $G$ meshes with $\principalfilter{T}{\ran{f}}$ on $T$.
+        Hence $\ran{f}$ is frequent along $G$ on $T$ by
+            \obv{filter_frequent_iff_meshes_principal}.
+        Hence for every $B\in G$ we have $B\inter\ran{f}$ is inhabited by
+            \obv{filter_frequent_iff_intersects_every_eventual_set}.
+        Show that for every $B\in G$ we have $\preimg{f}{B}$ is inhabited.
+        \begin{subproof}
+            Fix $B\in G$.
+            $B\inter\ran{f}$ is inhabited.
+            Follows by \obv{preimage_inhabited_iff_intersects_range}.
+        \end{subproof}
+        Follows by \obv{filter_pullback_is_proper_iff_preimages_inhabited}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{corollary}\label{surjective_filter_pullback_preserves_properness}
+    Let $f\in\surj{S}{T}$ and $G$ be a proper filter on $T$.
+    Then $\filterPullback{S}{T}{f}{G}$ is a proper filter on $S$.
+\end{corollary}
+\begin{proof}
+    $f\in\funs{S}{T}$ by \obv{surj_to_fun}.
+    $G$ is a filter on $T$ by \obv{proper_filter}.
+    $\ran{f}=T$ by \obv{ran_of_surj}.
+    Show that for every $B\in G$ we have $\preimg{f}{B}$ is inhabited.
+    \begin{subproof}
+        Fix $B\in G$.
+        $B\neq\emptyset$ by \obv{proper_filter}.
+        Hence $B$ is inhabited by \obv{nonempty_inhabited}.
+        $B\subseteq T$ by \obv{filter}.
+        Hence $B\inter T=B$ by \obv{inter_absorb_supseteq_right}.
+        Hence $B\inter\ran{f}$ is inhabited by \auto.
+        Follows by \obv{preimage_inhabited_iff_intersects_range}.
+    \end{subproof}
+    Follows by \obv{filter_pullback_is_proper_iff_preimages_inhabited}.
+\end{proof}
+
+\subsection{Functoriality and monotonicity}
+
+\begin{theorem}\label{identity_filter_pullback}
+    Let $F$ be a filter on $S$.
+    Then $\filterPullback{S}{S}{\identity{S}}{F}=F$.
+\end{theorem}
+\begin{proof}
+    $\identity{S}\in\funs{S}{S}$ by \obv{id_elem_funs}.
+    $\filterPullback{S}{S}{\identity{S}}{F}$ is a filter on $S$ by
+        \obv{filter_pullback_is_filter}.
+    Show that $\filterPullback{S}{S}{\identity{S}}{F}\subseteq F$.
+    \begin{subproof}
+        It suffices to show that every element of
+            $\filterPullback{S}{S}{\identity{S}}{F}$ is an element of $F$
+            by \obv{subseteq}.
+        Fix $A\in\filterPullback{S}{S}{\identity{S}}{F}$.
+        $A\in\filterPullback{S}{S}{\identity{S}}{F}$ iff
+            $A\subseteq S$ and there exists $B\in F$ such that
+            $\preimg{\identity{S}}{B}\subseteq A$ by
+            \obv{filter_pullback_iff}.
+        Hence $A\subseteq S$ and there exists $B\in F$ such that
+            $\preimg{\identity{S}}{B}\subseteq A$.
+        Take $B\in F$ such that $\preimg{\identity{S}}{B}\subseteq A$.
+        $B\subseteq S$ by \obv{filter}.
+        Hence $\preimg{\identity{S}}{B}=B$ by
+            \obv{function_preimage_identity}.
+        Hence $B\subseteq A$.
+        Follows by \obv{filter}.
+    \end{subproof}
+    Show that $F\subseteq\filterPullback{S}{S}{\identity{S}}{F}$.
+    \begin{subproof}
+        It suffices to show that every element of $F$ is an element of
+            $\filterPullback{S}{S}{\identity{S}}{F}$ by \obv{subseteq}.
+        Fix $A\in F$.
+        $A\subseteq S$ by \obv{filter}.
+        $A\in\filterPullback{S}{S}{\identity{S}}{F}$ iff
+            $A\subseteq S$ and there exists $B\in F$ such that
+            $\preimg{\identity{S}}{B}\subseteq A$ by
+            \obv{filter_pullback_iff}.
+        $\preimg{\identity{S}}{A}=A$ by
+            \obv{function_preimage_identity}.
+        Hence $\preimg{\identity{S}}{A}\subseteq A$ by
+            \obv{subseteq_refl}.
+    \end{subproof}
+    Follows by \obv{subseteq_antisymmetric}.
+\end{proof}
+
+\begin{theorem}\label{composition_filter_pullback}
+    Let $f\in\funs{S}{T}$ and $g\in\funs{T}{U}$.
+    Let $H$ be a filter on $U$.
+    Then $\filterPullback{S}{U}{g\circ f}{H}
+        =\filterPullback{S}{T}{f}{\filterPullback{T}{U}{g}{H}}$.
+\end{theorem}
+\begin{proof}
+    $g\circ f\in\funs{S}{U}$ by \obv{funs_circ}.
+    $\filterPullback{T}{U}{g}{H}$ is a filter on $T$ by
+        \obv{filter_pullback_is_filter}.
+    $\filterPullback{S}{U}{g\circ f}{H}$ and
+        $\filterPullback{S}{T}{f}{\filterPullback{T}{U}{g}{H}}$ are
+        filters on $S$ by \obv{filter_pullback_is_filter}.
+
+    Show that $\filterPullback{S}{U}{g\circ f}{H}\subseteq
+        \filterPullback{S}{T}{f}{\filterPullback{T}{U}{g}{H}}$.
+    \begin{subproof}
+        It suffices to show that every element of
+            $\filterPullback{S}{U}{g\circ f}{H}$ is an element of
+            $\filterPullback{S}{T}{f}{\filterPullback{T}{U}{g}{H}}$ by
+            \obv{subseteq}.
+        Fix $A\in\filterPullback{S}{U}{g\circ f}{H}$.
+        $A\in\filterPullback{S}{U}{g\circ f}{H}$ iff
+            $A\subseteq S$ and there exists $C\in H$ such that
+            $\preimg{g\circ f}{C}\subseteq A$ by
+            \obv{filter_pullback_iff}.
+        Hence $A\subseteq S$ and there exists $C\in H$ such that
+            $\preimg{g\circ f}{C}\subseteq A$.
+        Take $C\in H$ such that $\preimg{g\circ f}{C}\subseteq A$.
+        Let $B=\preimg{g}{C}$.
+        $C\subseteq U$ by \obv{filter}.
+        $B\subseteq T$ by \auto{preimg_subseteq_dom,funs}.
+        $\preimg{g}{C}\subseteq B$ by \obv{subseteq_refl}.
+        Hence $B\in\filterPullback{T}{U}{g}{H}$ by
+            \auto{filter_pullback_iff}.
+        $\preimg{g\circ f}{C}=\preimg{f}{\preimg{g}{C}}$ by
+            \obv{preimg_circ}.
+        Hence $\preimg{f}{B}\subseteq A$.
+        $A\in\filterPullback{S}{T}{f}{\filterPullback{T}{U}{g}{H}}$ iff
+            $A\subseteq S$ and there exists
+            $D\in\filterPullback{T}{U}{g}{H}$ such that
+            $\preimg{f}{D}\subseteq A$ by \obv{filter_pullback_iff}.
+    \end{subproof}
+
+    Show that $\filterPullback{S}{T}{f}{\filterPullback{T}{U}{g}{H}}
+        \subseteq\filterPullback{S}{U}{g\circ f}{H}$.
+    \begin{subproof}
+        It suffices to show that every element of
+            $\filterPullback{S}{T}{f}{\filterPullback{T}{U}{g}{H}}$ is an
+            element of $\filterPullback{S}{U}{g\circ f}{H}$ by
+            \obv{subseteq}.
+        Fix $A\in\filterPullback{S}{T}{f}{
+            \filterPullback{T}{U}{g}{H}}$.
+        $A\in\filterPullback{S}{T}{f}{\filterPullback{T}{U}{g}{H}}$ iff
+            $A\subseteq S$ and there exists
+            $B\in\filterPullback{T}{U}{g}{H}$ such that
+            $\preimg{f}{B}\subseteq A$ by \obv{filter_pullback_iff}.
+        Hence $A\subseteq S$ and there exists
+            $B\in\filterPullback{T}{U}{g}{H}$ such that
+            $\preimg{f}{B}\subseteq A$.
+        Take $B\in\filterPullback{T}{U}{g}{H}$ such that
+            $\preimg{f}{B}\subseteq A$.
+        $B\in\filterPullback{T}{U}{g}{H}$ iff
+            $B\subseteq T$ and there exists $C\in H$ such that
+            $\preimg{g}{C}\subseteq B$ by \obv{filter_pullback_iff}.
+        Hence $B\subseteq T$ and there exists $C\in H$ such that
+            $\preimg{g}{C}\subseteq B$.
+        Take $C\in H$ such that $\preimg{g}{C}\subseteq B$.
+        $\preimg{f}{\preimg{g}{C}}\subseteq\preimg{f}{B}$ by
+            \obv{preimg_subseteq}.
+        Hence $\preimg{f}{\preimg{g}{C}}\subseteq A$ by
+            \obv{subseteq_transitive}.
+        $\preimg{g\circ f}{C}=\preimg{f}{\preimg{g}{C}}$ by
+            \obv{preimg_circ}.
+        Hence $\preimg{g\circ f}{C}\subseteq A$.
+        $A\in\filterPullback{S}{U}{g\circ f}{H}$ iff
+            $A\subseteq S$ and there exists $D\in H$ such that
+            $\preimg{g\circ f}{D}\subseteq A$ by
+            \obv{filter_pullback_iff}.
+    \end{subproof}
+    Follows by \obv{subseteq_antisymmetric}.
+\end{proof}
+
+\begin{theorem}\label{filter_pushforward_monotone}
+    Let $f\in\funs{S}{T}$.
+    Suppose $F'$ refines $F$ on $S$.
+    Then $\filterPushforward{S}{T}{f}{F'}$ refines
+        $\filterPushforward{S}{T}{f}{F}$ on $T$.
+\end{theorem}
+\begin{proof}
+    $F'$ and $F$ are filters on $S$ and $F\subseteq F'$ by
+        \obv{filter_refines}.
+    $\filterPushforward{S}{T}{f}{F'}$ and
+        $\filterPushforward{S}{T}{f}{F}$ are filters on $T$ by
+        \obv{filter_pushforward_is_filter}.
+    Show that $\filterPushforward{S}{T}{f}{F}\subseteq
+        \filterPushforward{S}{T}{f}{F'}$.
+    \begin{subproof}
+        It suffices to show that every element of
+            $\filterPushforward{S}{T}{f}{F}$ is an element of
+            $\filterPushforward{S}{T}{f}{F'}$ by \obv{subseteq}.
+        Fix $B\in\filterPushforward{S}{T}{f}{F}$.
+        $B\subseteq T$ and $\preimg{f}{B}\in F$ by
+            \obv{filter_pushforward_iff}.
+        Hence $\preimg{f}{B}\in F'$ by \obv{subseteq}.
+        Follows by \obv{filter_pushforward_iff}.
+    \end{subproof}
+    Follows by \obv{filter_refines}.
+\end{proof}
+
+\begin{theorem}\label{filter_pullback_monotone}
+    Let $f\in\funs{S}{T}$.
+    Suppose $G'$ refines $G$ on $T$.
+    Then $\filterPullback{S}{T}{f}{G'}$ refines
+        $\filterPullback{S}{T}{f}{G}$ on $S$.
+\end{theorem}
+\begin{proof}
+    $G'$ and $G$ are filters on $T$ and $G\subseteq G'$ by
+        \obv{filter_refines}.
+    $\filterPullback{S}{T}{f}{G'}$ and
+        $\filterPullback{S}{T}{f}{G}$ are filters on $S$ by
+        \obv{filter_pullback_is_filter}.
+    Show that $\filterPullback{S}{T}{f}{G}\subseteq
+        \filterPullback{S}{T}{f}{G'}$.
+    \begin{subproof}
+        It suffices to show that every element of
+            $\filterPullback{S}{T}{f}{G}$ is an element of
+            $\filterPullback{S}{T}{f}{G'}$ by \obv{subseteq}.
+        Fix $A\in\filterPullback{S}{T}{f}{G}$.
+        $A\in\filterPullback{S}{T}{f}{G}$ iff
+            $A\subseteq S$ and there exists $B\in G$ such that
+            $\preimg{f}{B}\subseteq A$ by \obv{filter_pullback_iff}.
+        Hence $A\subseteq S$ and there exists $B\in G$ such that
+            $\preimg{f}{B}\subseteq A$.
+        Take $B\in G$ such that $\preimg{f}{B}\subseteq A$.
+        Hence $B\in G'$ by \obv{subseteq}.
+        $A\in\filterPullback{S}{T}{f}{G'}$ iff
+            $A\subseteq S$ and there exists $C\in G'$ such that
+            $\preimg{f}{C}\subseteq A$ by \obv{filter_pullback_iff}.
+    \end{subproof}
+    Follows by \obv{filter_refines}.
+\end{proof}
+
+\begin{theorem}\label{filter_tendsto_mono}
+    Let $f\in\funs{S}{T}$.
+    Suppose $F'$ refines $F$ on $S$ and $G$ refines $G'$ on $T$.
+    Suppose $f$ tends from $F$ on $S$ to $G$ on $T$.
+    Then $f$ tends from $F'$ on $S$ to $G'$ on $T$.
+\end{theorem}
+\begin{proof}
+    $F'$ and $F$ are filters on $S$ and $F\subseteq F'$ by
+        \obv{filter_refines}.
+    $G$ and $G'$ are filters on $T$ and $G'\subseteq G$ by
+        \obv{filter_refines}.
+    For every $B\in G$ we have $\preimg{f}{B}\in F$ by
+        \obv{filter_tendsto_iff_preimage}.
+    Show that for every $B\in G'$ we have $\preimg{f}{B}\in F'$.
+    \begin{subproof}
+        Fix $B\in G'$.
+        Hence $B\in G$ by \obv{subseteq}.
+        Hence $\preimg{f}{B}\in F$.
+        Follows by \obv{subseteq}.
+    \end{subproof}
+    Follows by \obv{filter_tendsto_iff_preimage}.
+\end{proof}
+
+\subsection{Congruence under eventual equality}
+
+\begin{proposition}\label{filter_eventually_equal_preimage_membership}
+    Let $F$ be a filter on $S$ and $f,g\in\funs{S}{T}$.
+    Suppose $f$ is eventually equal to $g$ along $F$ from $S$ to $T$.
+    Suppose $\preimg{f}{B}\in F$.
+    Then $\preimg{g}{B}\in F$.
+\end{proposition}
+\begin{proof}
+    Let $E=\filterEventualEqualitySet{S}{f}{g}$.
+    $E\in F$ by \obv{filter_eventually_equal}.
+    Hence $E\inter\preimg{f}{B}\in F$ by \obv{filter}.
+    Show that $E\inter\preimg{f}{B}\subseteq\preimg{g}{B}$.
+    \begin{subproof}
+        It suffices to show that every element of
+            $E\inter\preimg{f}{B}$ is an element of $\preimg{g}{B}$ by
+            \obv{subseteq}.
+        Fix $x\in E\inter\preimg{f}{B}$.
+        Hence $x\in E$ and $x\in\preimg{f}{B}$ by \obv{inter}.
+        Hence $x\in S$ and $f(x)=g(x)$ by
+            \obv{filter_eventual_equality_set_iff}.
+        Take $y\in B$ such that $(x,y)\in f$ by \obv{preimg_iff}.
+        $f$ and $g$ are functions by \obv{funs_is_function}.
+        $f(x)=y$ by \obv{function_apply_intro}.
+        Hence $g(x)=y$.
+        $\dom{g}=S$ by \obv{funs}.
+        Hence $x\in\dom{g}$.
+        Thus $(x,g(x))\in g$ by \obv{function_apply_elim}.
+        Hence $(x,y)\in g$.
+        Follows by \obv{preimg_iff}.
+    \end{subproof}
+    $\preimg{g}{B}\subseteq S$ by \auto{preimg_subseteq_dom,funs}.
+    Follows by \obv{filter}.
+\end{proof}
+
+\begin{theorem}\label{filter_eventually_equal_preimage_iff}
+    Let $F$ be a filter on $S$ and $f,g\in\funs{S}{T}$.
+    Suppose $f$ is eventually equal to $g$ along $F$ from $S$ to $T$.
+    Then $\preimg{f}{B}\in F$ iff $\preimg{g}{B}\in F$.
+\end{theorem}
+\begin{proof}
+    $g$ is eventually equal to $f$ along $F$ from $S$ to $T$ by
+        \obv{filter_eventually_equal_symmetric}.
+    If $\preimg{f}{B}\in F$, then $\preimg{g}{B}\in F$ by
+        \obv{filter_eventually_equal_preimage_membership}.
+    If $\preimg{g}{B}\in F$, then $\preimg{f}{B}\in F$ by
+        \obv{filter_eventually_equal_preimage_membership}.
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{filter_tendsto_congruent}
+    Let $F$ be a filter on $S$ and $G$ be a filter on $T$.
+    Let $f,g\in\funs{S}{T}$.
+    Suppose $f$ is eventually equal to $g$ along $F$ from $S$ to $T$.
+    Then $f$ tends from $F$ on $S$ to $G$ on $T$ iff
+        $g$ tends from $F$ on $S$ to $G$ on $T$.
+\end{theorem}
+\begin{proof}
+    Show that if $f$ tends from $F$ on $S$ to $G$ on $T$, then
+        $g$ tends from $F$ on $S$ to $G$ on $T$.
+    \begin{subproof}
+        Assume $f$ tends from $F$ on $S$ to $G$ on $T$.
+        Hence for every $B\in G$ we have $\preimg{f}{B}\in F$ by
+            \obv{filter_tendsto_iff_preimage}.
+        Show that for every $B\in G$ we have $\preimg{g}{B}\in F$.
+        \begin{subproof}
+            Fix $B\in G$.
+            $\preimg{f}{B}\in F$.
+            $\preimg{f}{B}\in F$ iff $\preimg{g}{B}\in F$ by
+                \obv{filter_eventually_equal_preimage_iff}.
+        \end{subproof}
+        Follows by \obv{filter_tendsto_iff_preimage}.
+    \end{subproof}
+    Show that if $g$ tends from $F$ on $S$ to $G$ on $T$, then
+        $f$ tends from $F$ on $S$ to $G$ on $T$.
+    \begin{subproof}
+        Assume $g$ tends from $F$ on $S$ to $G$ on $T$.
+        Hence for every $B\in G$ we have $\preimg{g}{B}\in F$ by
+            \obv{filter_tendsto_iff_preimage}.
+        Show that for every $B\in G$ we have $\preimg{f}{B}\in F$.
+        \begin{subproof}
+            Fix $B\in G$.
+            $\preimg{g}{B}\in F$.
+            $\preimg{f}{B}\in F$ iff $\preimg{g}{B}\in F$ by
+                \obv{filter_eventually_equal_preimage_iff}.
+        \end{subproof}
+        Follows by \obv{filter_tendsto_iff_preimage}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{proposition}\label{filter_eventually_equal_postcompose}
+    Let $F$ be a filter on $S$.
+    Let $f,g\in\funs{S}{T}$ and $h\in\funs{T}{U}$.
+    Suppose $f$ is eventually equal to $g$ along $F$ from $S$ to $T$.
+    Then $h\circ f$ is eventually equal to $h\circ g$ along $F$ from
+        $S$ to $U$.
+\end{proposition}
+\begin{proof}
+    $h\circ f,h\circ g\in\funs{S}{U}$ by \obv{funs_circ}.
+    $f$ is a function and $g$ is a function and $h$ is a function by
+        \obv{funs_is_function}.
+    $\dom{f}=S$ and $\dom{g}=S$ by \obv{funs}.
+    $\ran{f}\subseteq T$ and $\ran{g}\subseteq T$ by \obv{funs_ran}.
+    $\dom{h}=T$ by \obv{funs}.
+    Hence $h$ is composable with $f$ and $h$ is composable with $g$.
+    Let $E=\filterEventualEqualitySet{S}{f}{g}$.
+    Let $D=\filterEventualEqualitySet{S}{h\circ f}{h\circ g}$.
+    $E\in F$ by \obv{filter_eventually_equal}.
+    Show that $E\subseteq D$.
+    \begin{subproof}
+        It suffices to show that every element of $E$ is an element of $D$
+            by \obv{subseteq}.
+        Fix $x\in E$.
+        Hence $x\in S$ and $f(x)=g(x)$ by
+            \obv{filter_eventual_equality_set_iff}.
+        Hence $x\in\dom{f}$ and $x\in\dom{g}$.
+        $(h\circ f)(x)=h(f(x))$ by \obv{circ_apply}.
+        $(h\circ g)(x)=h(g(x))$ by \obv{circ_apply}.
+        Hence $(h\circ f)(x)=(h\circ g)(x)$.
+        Follows by \obv{filter_eventual_equality_set_iff}.
+    \end{subproof}
+    $D\subseteq S$ by
+        \auto{filter_eventual_equality_set_iff,subseteq}.
+    Hence $D\in F$ by \obv{filter}.
+    Follows by \obv{filter_eventually_equal}.
+\end{proof}
+
+\begin{proposition}\label{filter_eventually_equal_precompose}
+    Let $H$ be a filter on $R$ and $F$ be a filter on $S$.
+    Let $k\in\funs{R}{S}$ and $f,g\in\funs{S}{T}$.
+    Suppose $k$ tends from $H$ on $R$ to $F$ on $S$.
+    Suppose $f$ is eventually equal to $g$ along $F$ from $S$ to $T$.
+    Then $f\circ k$ is eventually equal to $g\circ k$ along $H$ from
+        $R$ to $T$.
+\end{proposition}
+\begin{proof}
+    $f\circ k,g\circ k\in\funs{R}{T}$ by \obv{funs_circ}.
+    $k$ is a function and $f$ is a function and $g$ is a function by
+        \obv{funs_is_function}.
+    $\dom{k}=R$ by \obv{funs}.
+    $\ran{k}\subseteq S$ by \obv{funs_ran}.
+    $\dom{f}=S$ and $\dom{g}=S$ by \obv{funs}.
+    Hence $f$ is composable with $k$ and $g$ is composable with $k$.
+    Let $E=\filterEventualEqualitySet{S}{f}{g}$.
+    Let $D=\filterEventualEqualitySet{R}{f\circ k}{g\circ k}$.
+    $E\in F$ by \obv{filter_eventually_equal}.
+    For every $B\in F$ we have $\preimg{k}{B}\in H$ by
+        \obv{filter_tendsto_iff_preimage}.
+    Hence $\preimg{k}{E}\in H$.
+    Show that $\preimg{k}{E}\subseteq D$.
+    \begin{subproof}
+        It suffices to show that every element of $\preimg{k}{E}$ is an
+            element of $D$ by \obv{subseteq}.
+        Fix $x\in\preimg{k}{E}$.
+        Take $y\in E$ such that $(x,y)\in k$ by \obv{preimg_iff}.
+        Hence $k(x)=y$ by \obv{function_apply_intro}.
+        $y\in S$ and $f(y)=g(y)$ by
+            \obv{filter_eventual_equality_set_iff}.
+        $x\in R$ by \auto{preimg_subseteq_dom,funs,subseteq}.
+        Hence $x\in\dom{k}$.
+        $(f\circ k)(x)=f(k(x))$ by \obv{circ_apply}.
+        $(g\circ k)(x)=g(k(x))$ by \obv{circ_apply}.
+        Hence $(f\circ k)(x)=(g\circ k)(x)$.
+        Follows by \obv{filter_eventual_equality_set_iff}.
+    \end{subproof}
+    $D\subseteq R$ by
+        \auto{filter_eventual_equality_set_iff,subseteq}.
+    Hence $D\in H$ by \obv{filter}.
+    Follows by \obv{filter_eventually_equal}.
+\end{proof}

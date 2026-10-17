@@ -1,0 +1,389 @@
+\section{Eventual and frequent sets}
+
+\import{set/filter-order.tex}
+
+\subsection{Eventuality}
+
+\begin{definition}\label{filter_eventual}
+    Let $F$ be a filter on $S$.
+    $A$ is eventual along $F$ on $S$ iff $A\subseteq S$ and $A\in F$.
+\end{definition}
+
+\begin{proposition}\label{filter_eventual_carrier}
+    Let $F$ be a filter on $S$.
+    Then $S$ is eventual along $F$ on $S$.
+\end{proposition}
+\begin{proof}
+    $S\subseteq S$ by \obv{subseteq_refl}.
+    $S\in F$ by \obv{filter}.
+    Follows by \obv{filter_eventual}.
+\end{proof}
+
+\begin{proposition}\label{filter_eventual_intersection}
+    Let $F$ be a filter on $S$.
+    Suppose $A,B\subseteq S$.
+    Suppose $A$ and $B$ are eventual along $F$ on $S$.
+    Then $A\inter B$ is eventual along $F$ on $S$.
+\end{proposition}
+\begin{proof}
+    $A,B\in F$ by \obv{filter_eventual}.
+    Hence $A\inter B\in F$ by \obv{filter}.
+    $A\inter B\subseteq S$ by \obv{inter_subseteq}.
+    Follows by \obv{filter_eventual}.
+\end{proof}
+
+\begin{proposition}\label{filter_eventual_superset}
+    Let $F$ be a filter on $S$.
+    Suppose $A$ is eventual along $F$ on $S$ and $A\subseteq B\subseteq S$.
+    Then $B$ is eventual along $F$ on $S$.
+\end{proposition}
+\begin{proof}
+    $A\in F$ by \obv{filter_eventual}.
+    Hence $B\in F$ by \obv{filter}.
+    Follows by \obv{filter_eventual}.
+\end{proof}
+
+\subsection{Frequency and meshing}
+
+\begin{definition}\label{filter_frequent}
+    Let $F$ be a filter on $S$.
+    $A$ is frequent along $F$ on $S$ iff
+        $A\subseteq S$ and $S\setminus A\notin F$.
+\end{definition}
+
+\begin{definition}\label{filters_mesh}
+    $F$ meshes with $G$ on $S$ iff
+        $F$ is a filter on $S$ and $G$ is a filter on $S$ and
+        for all $A,B$ such that $A\in F$ and $B\in G$
+            we have $A\inter B$ is inhabited.
+\end{definition}
+
+\begin{proposition}\label{filters_mesh_symmetric}
+    Suppose $F$ meshes with $G$ on $S$.
+    Then $G$ meshes with $F$ on $S$.
+\end{proposition}
+\begin{proof}
+    $F$ and $G$ are filters on $S$ by \obv{filters_mesh}.
+    Show that for all $A,B$ such that $A\in G$ and $B\in F$
+        we have $A\inter B$ is inhabited.
+    \begin{subproof}
+        Fix $A,B$.
+        Assume $A\in G$ and $B\in F$.
+        $B\inter A$ is inhabited by \obv{filters_mesh}.
+        Take $x$ such that $x\in B\inter A$.
+        Hence $x\in B$ and $x\in A$ by \obv{inter}.
+        Thus $x\in A\inter B$ by \obv{inter_intro}.
+    \end{subproof}
+    Follows by \obv{filters_mesh}.
+\end{proof}
+
+\begin{theorem}\label{filter_frequent_iff_intersects_every_eventual_set}
+    Let $F$ be a filter on $S$.
+    Suppose $A\subseteq S$.
+    Then $A$ is frequent along $F$ on $S$ iff
+        for every $B\in F$ we have $B\inter A$ is inhabited.
+\end{theorem}
+\begin{proof}
+    Show that if $A$ is frequent along $F$ on $S$, then
+        for every $B\in F$ we have $B\inter A$ is inhabited.
+    \begin{subproof}
+        Assume $A$ is frequent along $F$ on $S$.
+        Hence $S\setminus A\notin F$ by \obv{filter_frequent}.
+        Fix $B\in F$.
+        Show that $B\inter A$ is inhabited.
+        \begin{subproof}
+            Suppose not.
+            Hence $B\inter A=\emptyset$ by \auto{emptyset,setext}.
+            $B\subseteq S$ by \obv{filter}.
+            Hence $B\subseteq S\setminus A$ by \obv{subseteq_setminus}.
+            $S\setminus A\subseteq S$ by \obv{setminus_subseteq}.
+            Hence $S\setminus A\in F$ by \obv{filter}.
+            Contradiction.
+        \end{subproof}
+    \end{subproof}
+
+    Show that if for every $B\in F$ we have $B\inter A$ is inhabited,
+        then $A$ is frequent along $F$ on $S$.
+    \begin{subproof}
+        Assume for every $B\in F$ we have $B\inter A$ is inhabited.
+        Show that $S\setminus A\notin F$.
+        \begin{subproof}
+            Suppose not.
+            Hence $S\setminus A\in F$.
+            Thus $(S\setminus A)\inter A$ is inhabited.
+            $(S\setminus A)\inter A=\emptyset$ by
+                \auto{inter_comm,setminus_disjoint}.
+            Contradiction by \obv{emptyset}.
+        \end{subproof}
+        Follows by \obv{filter_frequent}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{definition}\label{filter_intersection_basis}
+    $\filterIntersectionBasis{F}{G}
+        =\{A\inter B\mid A\in F,B\in G\}$.
+\end{definition}
+
+\begin{proposition}\label{filter_intersection_basis_iff}
+    $C\in\filterIntersectionBasis{F}{G}$ iff
+        there exist $A,B$ such that $A\in F$ and $B\in G$ and
+        $C=A\inter B$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{filter_intersection_basis}.
+\end{proof}
+
+\begin{proposition}\label{filter_intersection_basis_is_filter_basis}
+    Let $F,G$ be filters on $S$.
+    Then $\filterIntersectionBasis{F}{G}$ is a filter basis on $S$.
+\end{proposition}
+\begin{proof}
+    Show that $\filterIntersectionBasis{F}{G}$ is a family of subsets of $S$.
+    \begin{subproof}
+        Fix $C\in\filterIntersectionBasis{F}{G}$.
+        Take $A,B$ such that $A\in F$ and $B\in G$ and $C=A\inter B$ by
+            \obv{filter_intersection_basis_iff}.
+        $A,B\subseteq S$ by \obv{filter}.
+        Follows by \auto{inter_subseteq}.
+    \end{subproof}
+    $S\in F$ and $S\in G$ by \obv{filter}.
+    $S=S\inter S$ by \obv{inter_idempotent}.
+    Hence $S\in\filterIntersectionBasis{F}{G}$ by
+        \obv{filter_intersection_basis_iff}.
+    Hence $\filterIntersectionBasis{F}{G}$ is inhabited.
+
+    Show that for all $C,D$ such that
+        $C\in\filterIntersectionBasis{F}{G}$ and
+        $D\in\filterIntersectionBasis{F}{G}$ there exists
+        $E\in\filterIntersectionBasis{F}{G}$ such that $E\subseteq C\inter D$.
+    \begin{subproof}
+        Fix $C,D$.
+        Assume $C\in\filterIntersectionBasis{F}{G}$ and
+            $D\in\filterIntersectionBasis{F}{G}$.
+        Take $A,B$ such that $A\in F$ and $B\in G$ and $C=A\inter B$ by
+            \obv{filter_intersection_basis_iff}.
+        Take $U,V$ such that $U\in F$ and $V\in G$ and $D=U\inter V$ by
+            \obv{filter_intersection_basis_iff}.
+        $A\inter U\in F$ and $B\inter V\in G$ by \obv{filter}.
+        Hence $(A\inter U)\inter(B\inter V)
+            \in\filterIntersectionBasis{F}{G}$ by
+            \auto{filter_intersection_basis_iff}.
+        $(A\inter U)\inter(B\inter V)\subseteq C\inter D$ by
+            \auto{inter,subseteq}.
+    \end{subproof}
+    Follows by \obv{filter_basis}.
+\end{proof}
+
+\begin{theorem}\label{binary_common_filter_refinement_eq_intersection_basis}
+    Let $F,G$ be filters on $S$.
+    Then $\binaryCommonFilterRefinement{S}{F}{G}
+        =\generatedFilter{S}{\filterIntersectionBasis{F}{G}}$.
+\end{theorem}
+\begin{proof}
+    $F\union G$ is a family of subsets of $S$ by
+        \auto{filter,union_iff,subseteq}.
+    $\filterIntersectionBasis{F}{G}$ is a family of subsets of $S$ by
+        \auto{filter_intersection_basis_is_filter_basis,filter_basis}.
+
+    Show that $F\union G\subseteq\filterIntersectionBasis{F}{G}$.
+    \begin{subproof}
+        It suffices to show that every element of $F\union G$ is an element
+            of $\filterIntersectionBasis{F}{G}$ by \obv{subseteq}.
+        Fix $C\in F\union G$.
+        $S\in F$ and $S\in G$ by \obv{filter}.
+        \begin{byCase}
+        \caseOf{$C\in F$.}
+            $C\subseteq S$ by \obv{filter}.
+            Hence $C\inter S=C$ by \obv{inter_absorb_supseteq_right}.
+            Thus $C=C\inter S$.
+            Follows by \obv{filter_intersection_basis_iff}.
+        \caseOf{$C\notin F$.}
+            Hence $C\in G$ by \auto{union_iff}.
+            $C\subseteq S$ by \obv{filter}.
+            Hence $S\inter C=C$ by \obv{inter_absorb_supseteq_left}.
+            Thus $C=S\inter C$.
+            Follows by \auto{filter_intersection_basis_iff}.
+        \end{byCase}
+    \end{subproof}
+    Hence $\generatedFilter{S}{F\union G}\subseteq
+        \generatedFilter{S}{\filterIntersectionBasis{F}{G}}$ by
+        \obv{generated_filter_monotone}.
+
+    $F\union G\subseteq\generatedFilter{S}{F\union G}$ by
+        \obv{generated_filter_contains}.
+    $\generatedFilter{S}{F\union G}$ is a filter on $S$ by
+        \obv{generated_filter_is_filter}.
+    Show that $\filterIntersectionBasis{F}{G}
+        \subseteq\generatedFilter{S}{F\union G}$.
+    \begin{subproof}
+        It suffices to show that every element of
+            $\filterIntersectionBasis{F}{G}$ is an element of
+            $\generatedFilter{S}{F\union G}$ by \obv{subseteq}.
+        Fix $C\in\filterIntersectionBasis{F}{G}$.
+        Take $A,B$ such that $A\in F$ and $B\in G$ and $C=A\inter B$ by
+            \obv{filter_intersection_basis_iff}.
+        $A,B\in F\union G$ by \auto{union_iff}.
+        Hence $A,B\in\generatedFilter{S}{F\union G}$ by \obv{subseteq}.
+        Hence $A\inter B\in\generatedFilter{S}{F\union G}$ by
+            \obv{filter}.
+    \end{subproof}
+    Hence $\generatedFilter{S}{\filterIntersectionBasis{F}{G}}
+        \subseteq\generatedFilter{S}{F\union G}$ by
+        \obv{generated_filter_least}.
+    Follows by
+        \obv{binary_common_filter_refinement,subseteq_antisymmetric}.
+\end{proof}
+
+\begin{theorem}\label{binary_common_filter_refinement_iff}
+    Let $F,G$ be filters on $S$.
+    Then $C\in\binaryCommonFilterRefinement{S}{F}{G}$ iff
+        $C\subseteq S$ and there exist $A,B$ such that $A\in F$ and
+        $B\in G$ and $A\inter B\subseteq C$.
+\end{theorem}
+\begin{proof}
+    $\filterIntersectionBasis{F}{G}$ is a filter basis on $S$ by
+        \obv{filter_intersection_basis_is_filter_basis}.
+    $\binaryCommonFilterRefinement{S}{F}{G}
+        =\generatedFilter{S}{\filterIntersectionBasis{F}{G}}$ by
+        \obv{binary_common_filter_refinement_eq_intersection_basis}.
+    Show that if $C\in\binaryCommonFilterRefinement{S}{F}{G}$, then
+        $C\subseteq S$ and there exist $A,B$ such that $A\in F$ and
+        $B\in G$ and $A\inter B\subseteq C$.
+    \begin{subproof}
+        Assume $C\in\binaryCommonFilterRefinement{S}{F}{G}$.
+        Hence $C\in\generatedFilter{S}{\filterIntersectionBasis{F}{G}}$.
+        $C\in\generatedFilter{S}{\filterIntersectionBasis{F}{G}}$ iff
+            $C\subseteq S$ and there exists
+            $D\in\filterIntersectionBasis{F}{G}$ such that $D\subseteq C$
+            by \obv{generated_filter_iff}.
+        Hence $C\subseteq S$ and there exists
+            $D\in\filterIntersectionBasis{F}{G}$ such that $D\subseteq C$.
+        Take $D\in\filterIntersectionBasis{F}{G}$ such that
+            $D\subseteq C$.
+        Take $A,B$ such that $A\in F$ and $B\in G$ and
+            $D=A\inter B$ by \obv{filter_intersection_basis_iff}.
+        Hence $A\inter B\subseteq C$.
+        Follows by \auto.
+    \end{subproof}
+    Show that if $C\subseteq S$ and there exist $A,B$ such that $A\in F$
+        and $B\in G$ and $A\inter B\subseteq C$, then
+        $C\in\binaryCommonFilterRefinement{S}{F}{G}$.
+    \begin{subproof}
+        Assume $C\subseteq S$ and there exist $A,B$ such that $A\in F$
+            and $B\in G$ and $A\inter B\subseteq C$.
+        Take $A,B$ such that $A\in F$ and $B\in G$ and
+            $A\inter B\subseteq C$.
+        $A\inter B\in\filterIntersectionBasis{F}{G}$ by
+            \obv{filter_intersection_basis_iff}.
+        $C\in\generatedFilter{S}{\filterIntersectionBasis{F}{G}}$ iff
+            $C\subseteq S$ and there exists
+            $D\in\filterIntersectionBasis{F}{G}$ such that $D\subseteq C$
+            by \obv{generated_filter_iff}.
+        Hence $C\in\generatedFilter{S}{\filterIntersectionBasis{F}{G}}$.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{filters_mesh_iff_common_refinement_proper}
+    Let $F,G$ be filters on $S$.
+    Then $F$ meshes with $G$ on $S$ iff
+        $\binaryCommonFilterRefinement{S}{F}{G}$ is a proper filter on $S$.
+\end{theorem}
+\begin{proof}
+    Show that if $F$ meshes with $G$ on $S$, then
+        $\binaryCommonFilterRefinement{S}{F}{G}$ is a proper filter on $S$.
+    \begin{subproof}
+        Assume $F$ meshes with $G$ on $S$.
+        $\filterIntersectionBasis{F}{G}$ is a filter basis on $S$ by
+            \obv{filter_intersection_basis_is_filter_basis}.
+        Show that for every $C\in\filterIntersectionBasis{F}{G}$ we have
+            $C$ is inhabited.
+        \begin{subproof}
+            Fix $C\in\filterIntersectionBasis{F}{G}$.
+            Take $A,B$ such that $A\in F$ and $B\in G$ and $C=A\inter B$ by
+                \obv{filter_intersection_basis_iff}.
+            $A\inter B$ is inhabited by \obv{filters_mesh}.
+            Take $x$ such that $x\in A\inter B$.
+            Hence $x\in C$.
+        \end{subproof}
+        Hence $\filterIntersectionBasis{F}{G}$ is a proper filter basis on
+            $S$ by \obv{proper_filter_basis}.
+        Hence $\generatedFilter{S}{\filterIntersectionBasis{F}{G}}$
+            is a proper filter on $S$ by
+            \obv{generated_filter_is_proper_filter}.
+        $\binaryCommonFilterRefinement{S}{F}{G}
+            =\generatedFilter{S}{\filterIntersectionBasis{F}{G}}$ by
+            \obv{binary_common_filter_refinement_eq_intersection_basis}.
+    \end{subproof}
+
+    Show that if $\binaryCommonFilterRefinement{S}{F}{G}$ is a proper filter
+        on $S$, then $F$ meshes with $G$ on $S$.
+    \begin{subproof}
+        Assume $\binaryCommonFilterRefinement{S}{F}{G}$ is a proper filter
+            on $S$.
+        $F\union G$ is a family of subsets of $S$ by
+            \auto{filter,union_iff,subseteq}.
+        $F\union G\subseteq\generatedFilter{S}{F\union G}$ by
+            \obv{generated_filter_contains}.
+        Hence $F\union G\subseteq
+            \binaryCommonFilterRefinement{S}{F}{G}$ by
+            \obv{binary_common_filter_refinement}.
+        Show that for all $A,B$ such that $A\in F$ and $B\in G$
+            we have $A\inter B$ is inhabited.
+        \begin{subproof}
+            Fix $A,B$.
+            Assume $A\in F$ and $B\in G$.
+            $A,B\in F\union G$ by \auto{union_iff}.
+            Hence $A,B\in\binaryCommonFilterRefinement{S}{F}{G}$ by
+                \obv{subseteq}.
+            Hence $A\inter B\in\binaryCommonFilterRefinement{S}{F}{G}$ by
+                \auto{proper_filter,filter}.
+            Thus $A\inter B\neq\emptyset$ by \auto{proper_filter}.
+            Follows by \obv{nonempty_inhabited}.
+        \end{subproof}
+        Follows by \obv{filters_mesh}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{filter_frequent_iff_meshes_principal}
+    Let $F$ be a filter on $S$.
+    Suppose $A\subseteq S$.
+    Then $A$ is frequent along $F$ on $S$ iff
+        $F$ meshes with $\principalfilter{S}{A}$ on $S$.
+\end{theorem}
+\begin{proof}
+    $\principalfilter{S}{A}$ is a filter on $S$ by
+        \obv{principalfilter_is_filter}.
+    Show that if $A$ is frequent along $F$ on $S$, then
+        $F$ meshes with $\principalfilter{S}{A}$ on $S$.
+    \begin{subproof}
+        Assume $A$ is frequent along $F$ on $S$.
+        For every $B\in F$ we have $B\inter A$ is inhabited by
+            \obv{filter_frequent_iff_intersects_every_eventual_set}.
+        Show that for all $B,C$ such that $B\in F$ and
+            $C\in\principalfilter{S}{A}$ we have $B\inter C$ is inhabited.
+        \begin{subproof}
+            Fix $B,C$.
+            Assume $B\in F$ and $C\in\principalfilter{S}{A}$.
+            $A\subseteq C$ by \obv{principalfilter_iff}.
+            Take $x$ such that $x\in B\inter A$.
+            $x\in B$ and $x\in A$ by \obv{inter}.
+            Hence $x\in C$ by \obv{subseteq}.
+            Hence $x\in B\inter C$ by \obv{inter_intro}.
+        \end{subproof}
+        Follows by \obv{filters_mesh}.
+    \end{subproof}
+
+    Show that if $F$ meshes with $\principalfilter{S}{A}$ on $S$, then
+        $A$ is frequent along $F$ on $S$.
+    \begin{subproof}
+        Assume $F$ meshes with $\principalfilter{S}{A}$ on $S$.
+        $A\in\principalfilter{S}{A}$ by \obv{principalfilter_bottom}.
+        Hence for every $B\in F$ we have $B\inter A$ is inhabited by
+            \obv{filters_mesh}.
+        Follows by \obv{filter_frequent_iff_intersects_every_eventual_set}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}

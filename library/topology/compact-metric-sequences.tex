@@ -1,0 +1,302 @@
+\section{Sequences in compact metric subspaces}
+
+\import{set/logical-graph.tex}
+\import{set/subsequence.tex}
+\import{topology/compactness-filter.tex}
+\import{topology/induced-topology.tex}
+\import{topology/local-compactness.tex}
+\import{topology/metric-sequences.tex}
+\import{topology/sequence-convergence.tex}
+
+Compactness first supplies a cluster point of the sequence-tail filter.  The
+metric balls at that point then permit a recursively chosen, strictly
+increasing sequence of indices.  This separates the topological compactness
+argument from the countable extraction used by the familiar sequential
+statement.
+
+\begin{theorem}\label{compact_subspace_sequence_has_cluster_point}
+    Let $X$ be a topological space.
+    Suppose $K$ is compact in $X$.
+    Let $s\in\funs{\naturals}{K}$.
+    Then there exists $p\in K$ such that
+        $\filterClusters{\sequenceTailFilter{K}{s}}{p}
+            {\subspaceTopology{X}{K}}$.
+\end{theorem}
+\begin{proof}
+    $K\subseteq\carrier[X]$ and
+        $\subspaceTopology{X}{K}$ is compact by \obv{compact_in}.
+    Let $Y=\subspaceTopology{X}{K}$.
+    Hence $Y$ is a topological space.
+    $Y$ is compact.
+    $\carrier[\subspaceTopology{X}{K}]=K$ by
+        \obv{subspace_topology_carrier_of_subset}.
+    Hence $\carrier[Y]=K$.
+    $\sequenceTailFilter{K}{s}$ is a proper filter on $K$ by
+        \obv{sequence_tail_filter_is_proper_filter}.
+    Hence $\sequenceTailFilter{K}{s}$ is a proper filter on
+        $\carrier[Y]$.
+    Take $p\in\carrier[Y]$ such that
+        $\filterClusters{\sequenceTailFilter{K}{s}}{p}{Y}$ by
+        \auto{compact_iff_every_proper_filter_has_cluster_point}.
+    Hence $p\in K$.
+\end{proof}
+
+\begin{lemma}\label{sequence_cluster_has_late_ball_index}
+    Let $M$ be a metric space and $X$ be a topological space.
+    Suppose $X=\metricTopology{M}$.
+    Let $K\subseteq\carrier[X]$.
+    Let $s\in\funs{\naturals}{K}$ and $p\in K$.
+    Suppose
+        $\filterClusters{\sequenceTailFilter{K}{s}}{p}
+            {\subspaceTopology{X}{K}}$.
+    Let $k,N$ be natural numbers.
+    Then there exists $n\in\naturals$ such that
+        $\suc{N}\subseteq n$ and
+        $s(n)\in\metricBall{M}{p}{\surrealEpsilon{k}}$.
+\end{lemma}
+\begin{proof}
+    $\carrier[X]=\carrier[M]$ by
+        \auto{metric_topology_carrier}.
+    Hence $K\subseteq\carrier[M]$.
+    Hence $p\in\carrier[M]$ by \obv{subseteq}.
+    $\surrealEpsilon{k}\in\reals$ and
+        $\surrealLt{\surrealZero}{\surrealEpsilon{k}}$ by
+        \obv{surreal_epsilon_is_real,surreal_epsilon_positive}.
+    Hence $\metricBall{M}{p}{\surrealEpsilon{k}}
+        \in\metricOpens{M}$ by \obv{metric_ball_is_open}.
+    $\opens[\metricTopology{M}]=\metricOpens{M}$ by
+        \obv{metric_topology_opens}.
+    Hence $\metricBall{M}{p}{\surrealEpsilon{k}}\in\opens[X]$.
+
+    Let $Y=\subspaceTopology{X}{K}$.
+    $\subspaceTopology{X}{K}$ is a topological space by
+        \obv{subspace_topology_is_topological_space}.
+    Hence $Y$ is a topological space.
+    $\carrier[\subspaceTopology{X}{K}]=K$ by
+        \obv{subspace_topology_carrier_of_subset}.
+    Hence $\carrier[Y]=K$.
+    Let $B=\metricBall{M}{p}{\surrealEpsilon{k}}\inter K$.
+    $B\in\opens[Y]$ by \auto{subspace_open_iff}.
+    $p\in\metricBall{M}{p}{\surrealEpsilon{k}}$ by
+        \obv{metric_ball_contains_centre}.
+    Hence $p\in B$ by \obv{inter}.
+    $B\subseteq\carrier[Y]$ by \obv{opens_type}.
+    Hence $B\in\pow{\carrier[Y]}$ by \obv{pow_iff,subseteq}.
+    $B\subseteq B$ by \obv{subseteq_refl}.
+    Hence there exists $U\in\opens[Y]$ such that
+        $p\in U\subseteq B$.
+    Hence $B\in\neighbourhoods{p}{Y}$ by \obv{neighbourhoods}.
+
+    $\suc{N}$ is a natural number by \obv{omega_successor}.
+    $\sequenceTail{s}{\suc{N}}\subseteq K$ by
+        \obv{sequence_tail_type}.
+    Hence $\sequenceTail{s}{\suc{N}}
+        \in\sequenceTailFilter{K}{s}$ by
+        \auto{sequence_tail_filter_iff,subseteq_refl}.
+    $\filterClusters{\sequenceTailFilter{K}{s}}{p}{Y}$.
+    Hence $\sequenceTail{s}{\suc{N}}\inter B$ is inhabited by
+        \obv{filter_cluster_point}.
+    Take $y$ such that $y\in\sequenceTail{s}{\suc{N}}\inter B$.
+    Hence $y\in\sequenceTail{s}{\suc{N}}$ and
+        $y\in\metricBall{M}{p}{\surrealEpsilon{k}}$ by
+        \auto{inter}.
+    Take $n\in\naturalTail{\suc{N}}$ such that $(n,y)\in s$ by
+        \auto{sequence_tail,img_iff}.
+    Hence $n\in\naturals$ and $\suc{N}\subseteq n$ by
+        \obv{natural_tail}.
+    $s$ is a function by \obv{funs_is_function}.
+    Hence $s(n)=y$ by \auto{function_apply_iff}.
+    Hence $s(n)\in\metricBall{M}{p}{\surrealEpsilon{k}}$.
+\end{proof}
+
+\begin{lemma}\label{metric_subsequence_converges_from_epsilon_balls}
+    Let $M$ be a metric space.
+    Let $s\in\funs{\naturals}{\carrier[M]}$.
+    Suppose $h$ is a natural subsequence selector.
+    Let $p\in\carrier[M]$.
+    Suppose for every $k\in\naturals$ we have
+        $s(h(k))\in\metricBall{M}{p}{\surrealEpsilon{k}}$.
+    Then $\metricConverges{M}{s\circ h}{p}$.
+\end{lemma}
+\begin{proof}
+    $h\in\funs{\naturals}{\naturals}$ by
+        \obv{natural_subsequence_selector_type}.
+    Hence $s\circ h\in\funs{\naturals}{\carrier[M]}$ by
+        \obv{funs_circ}.
+    Show that for every $e\in\reals$ such that
+        $\surrealLt{\surrealZero}{e}$ there exists $N\in\naturals$
+        such that for every $n\in\naturals$ such that $N\subseteq n$
+            we have $(s\circ h)(n)\in\metricBall{M}{p}{e}$.
+    \begin{subproof}
+        Fix $e\in\reals$.
+        Assume $\surrealLt{\surrealZero}{e}$.
+        Take $N\in\naturals$ such that
+            $\surrealLt{\surrealEpsilon{N}}{e}$ by
+            \auto{positive_real_scaled_epsilon_below,
+                surreal_one_is_real,surreal_zero_lt_one,
+                surreal_mul_one_right,surreal_epsilon_is_surreal}.
+        Show that for every $n\in\naturals$ such that $N\subseteq n$
+            we have $(s\circ h)(n)\in\metricBall{M}{p}{e}$.
+        \begin{subproof}
+            Fix $n\in\naturals$.
+            Assume $N\subseteq n$.
+            $\surrealLe{\surrealEpsilon{n}}{\surrealEpsilon{N}}$ by
+                \obv{surreal_epsilon_antitone}.
+            Hence $\surrealLe{\surrealEpsilon{n}}{e}$ by
+                \auto{surreal_le_lt_transitive,surreal_le,
+                    surreal_epsilon_is_surreal,
+                    surreal_real_is_surreal}.
+            $\surrealEpsilon{n}\in\reals$ by
+                \obv{surreal_epsilon_is_real}.
+            $\metricBall{M}{p}{\surrealEpsilon{n}}
+                \subseteq\metricBall{M}{p}{e}$ by
+                \obv{metric_ball_monotone}.
+            $s(h(n))\in\metricBall{M}{p}{\surrealEpsilon{n}}$.
+            Hence $s(h(n))\in\metricBall{M}{p}{e}$ by
+                \obv{subseteq}.
+            $(s\circ h)(n)=s(h(n))$ by
+                \obv{subsequence_from_selector_apply}.
+        \end{subproof}
+        Follows by \auto.
+    \end{subproof}
+    Follows by \obv{metric_convergence}.
+\end{proof}
+
+\begin{theorem}\label{compact_metric_subspace_is_sequentially_compact}
+    Let $M$ be a metric space and $X$ be a topological space.
+    Suppose $X=\metricTopology{M}$.
+    Suppose $K$ is compact in $X$.
+    Let $s\in\funs{\naturals}{K}$.
+    Then there exist $p,t$ such that $p\in K$ and
+        $t$ is a subsequence of $s$ in $K$ and
+        $\metricConverges{M}{t}{p}$.
+\end{theorem}
+\begin{proof}
+    $K\subseteq\carrier[X]$ by \obv{compact_in}.
+    $\carrier[X]=\carrier[M]$ by
+        \auto{metric_topology_carrier}.
+    Hence $K\subseteq\carrier[M]$.
+    Take $p\in K$ such that
+        $\filterClusters{\sequenceTailFilter{K}{s}}{p}
+            {\subspaceTopology{X}{K}}$ by
+        \obv{compact_subspace_sequence_has_cluster_point}.
+
+    Let $D:\Set\to\Set\to\Set=
+        \fun{k,N:\Set}{
+            \{n\in\naturals\mid
+                \text{$\suc{N}\subseteq n$ and
+                $s(n)\in\metricBall{M}{p}{\surrealEpsilon{k}}$}\}}$.
+    Show that for all $k,N\in\naturals$ we have
+        $\Apply{D}{k,N}$ is inhabited.
+    \begin{subproof}
+        Fix $k,N\in\naturals$.
+        Take $n\in\naturals$ such that $\suc{N}\subseteq n$ and
+            $s(n)\in\metricBall{M}{p}{\surrealEpsilon{k}}$ by
+            \obv{sequence_cluster_has_late_ball_index}.
+        Hence $n\in\Apply{D}{k,N}$ by \auto.
+    \end{subproof}
+
+    Let $a=\choice{\Apply{D}{\emptyset,\emptyset}}$.
+    Let $Q:\Set\to\Set\to\Set=
+        \fun{k,N:\Set}{\choice{\Apply{D}{\suc{k},N}}}$.
+    Let $q:\Set\to\Set=
+        \fun{n:\Set}{\Apply{\naturalRecOp}{a,Q,n}}$.
+    $\Apply{D}{\emptyset,\emptyset}$ is inhabited by
+        \obv{omega_empty}.
+    Hence $a\in\Apply{D}{\emptyset,\emptyset}$ by
+        \auto{choice_in}.
+    Show that for all $k,N\in\naturals$ we have
+        $\Apply{Q}{k,N}\in\Apply{D}{\suc{k},N}$.
+    \begin{subproof}
+        Fix $k,N\in\naturals$.
+        $\suc{k}$ is a natural number by \obv{omega_successor}.
+        Hence $\Apply{D}{\suc{k},N}$ is inhabited.
+        Follows by \auto{choice_in}.
+    \end{subproof}
+    $\Apply{q}{\emptyset}=a$ by
+        \obv{natural_recursion_zero}.
+    For every $k\in\naturals$ we have
+        $\Apply{q}{\suc{k}}=\Apply{Q}{k,\Apply{q}{k}}$ by
+        \auto{natural_recursion_successor}.
+
+    Let $C=\{k\in\naturals\mid
+        \text{$\Apply{q}{k}\in\naturals$ and
+        $s(\Apply{q}{k})
+            \in\metricBall{M}{p}{\surrealEpsilon{k}}$}\}$.
+    $a\in\naturals$ and
+        $s(a)\in\metricBall{M}{p}{\surrealEpsilon{\emptyset}}$ by
+        \auto.
+    Hence $\Apply{q}{\emptyset}\in\naturals$ and
+        $s(\Apply{q}{\emptyset})
+            \in\metricBall{M}{p}{\surrealEpsilon{\emptyset}}$.
+    $\emptyset\in\naturals$ by \obv{omega_empty}.
+    Hence $\emptyset\in C$.
+    Show that for every $k\in C$ we have $\suc{k}\in C$.
+    \begin{subproof}
+        Fix $k\in C$.
+        Hence $k\in\naturals$ and $\Apply{q}{k}\in\naturals$.
+        $\Apply{Q}{k,\Apply{q}{k}}
+            \in\Apply{D}{\suc{k},\Apply{q}{k}}$.
+        $\Apply{q}{\suc{k}}
+            =\Apply{Q}{k,\Apply{q}{k}}$.
+        Hence $\Apply{q}{\suc{k}}\in\naturals$ and
+            $s(\Apply{q}{\suc{k}})
+                \in\metricBall{M}{p}{\surrealEpsilon{\suc{k}}}$ by
+            \auto.
+        $\suc{k}$ is a natural number by \obv{omega_successor}.
+    \end{subproof}
+    Hence $C$ is an inductive set by \obv{inductive_set}.
+    Hence every natural number is an element of $C$ by
+        \obv{omega_minimal}.
+    Thus for every $k\in\naturals$ we have
+        $\Apply{q}{k}\in\naturals$ and
+        $s(\Apply{q}{k})
+            \in\metricBall{M}{p}{\surrealEpsilon{k}}$ by
+        \auto.
+
+    Show that for every $k\in\naturals$ we have
+        $\Apply{q}{k}\in\Apply{q}{\suc{k}}$.
+    \begin{subproof}
+        Fix $k\in\naturals$.
+        $\Apply{q}{k}\in\naturals$ by \auto.
+        $\Apply{Q}{k,\Apply{q}{k}}
+            \in\Apply{D}{\suc{k},\Apply{q}{k}}$.
+        Hence $\suc{\Apply{q}{k}}
+            \subseteq\Apply{Q}{k,\Apply{q}{k}}$ by \auto.
+        $\Apply{q}{k}\in\suc{\Apply{q}{k}}$ by
+            \obv{suc_intro_self}.
+        Hence $\Apply{q}{k}\in\Apply{Q}{k,\Apply{q}{k}}$ by
+            \obv{subseteq}.
+    \end{subproof}
+
+    Let $h=\Apply{\graphOnDomainOp}{\naturals,q}$.
+    $h\in\funs{\naturals}{\naturals}$ by
+        \auto{logical_graph_on_domain_type}.
+    For every $k\in\naturals$ we have $h(k)=\Apply{q}{k}$ by
+        \auto{logical_graph_on_domain_apply}.
+    For every $k\in\naturals$ we have $h(k)\in h(\suc{k})$ by
+        \auto.
+    Hence $h$ is a natural subsequence selector by
+        \obv{natural_subsequence_selector_from_successors}.
+
+    Let $t=s\circ h$.
+    $s\circ h$ is a subsequence of $s$ in $K$ by
+        \obv{subsequence_from_selector}.
+    Hence $t$ is a subsequence of $s$ in $K$.
+    $s\in\funs{\naturals}{\carrier[M]}$ by
+        \obv{funs_weaken_codom}.
+    $p\in\carrier[M]$ by \obv{subseteq}.
+    Show that for every $k\in\naturals$ we have
+        $s(h(k))\in\metricBall{M}{p}{\surrealEpsilon{k}}$.
+    \begin{subproof}
+        Fix $k\in\naturals$.
+        $h(k)=\Apply{q}{k}$.
+        $s(\Apply{q}{k})
+            \in\metricBall{M}{p}{\surrealEpsilon{k}}$ by
+            \auto.
+    \end{subproof}
+    $\metricConverges{M}{s\circ h}{p}$ by
+        \obv{metric_subsequence_converges_from_epsilon_balls}.
+    Hence $\metricConverges{M}{t}{p}$.
+    Follows by \auto.
+\end{proof}

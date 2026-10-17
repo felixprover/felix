@@ -1,0 +1,1003 @@
+\import{algebra/group/subgroup.tex}
+\import{algebra/monoid/homomorphism.tex}
+
+\section{Group homomorphisms}
+
+Group homomorphisms are ordinary set-coded function graphs.  Their source and
+target groups are explicit parameters; the graph itself carries no hidden
+endpoint data.
+
+\begin{definition}\label{group_hom}
+    $\groupHom{f}{G}{H}$ iff
+        $G$ is a group and $H$ is a group and
+        $f\in\funs{\carrier[G]}{\carrier[H]}$ and
+        for all $x,y\in\carrier[G]$ we have
+            $f(\mul[G](x,y))=\mul[H](f(x),f(y))$.
+\end{definition}
+
+\begin{proposition}\label{group_hom_source_group}
+    Suppose $\groupHom{f}{G}{H}$.
+    Then $G$ is a group.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{group_hom}.
+\end{proof}
+
+\begin{proposition}\label{group_hom_target_group}
+    Suppose $\groupHom{f}{G}{H}$.
+    Then $H$ is a group.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{group_hom}.
+\end{proof}
+
+\begin{proposition}\label{group_hom_type}
+    Suppose $\groupHom{f}{G}{H}$.
+    Then $f\in\funs{\carrier[G]}{\carrier[H]}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{group_hom}.
+\end{proof}
+
+\begin{corollary}\label{group_hom_is_function}
+    Suppose $\groupHom{f}{G}{H}$.
+    Then $f$ is a function.
+\end{corollary}
+\begin{proof}
+    Follows by \obv{group_hom_type,funs_is_function}.
+\end{proof}
+
+\begin{corollary}\label{group_hom_apply_type}
+    Suppose $\groupHom{f}{G}{H}$.
+    Let $x\in\carrier[G]$.
+    Then $f(x)\in\carrier[H]$.
+\end{corollary}
+\begin{proof}
+    Follows by \obv{group_hom_type,funs_type_apply}.
+\end{proof}
+
+\begin{proposition}\label{group_hom_mul}
+    Suppose $\groupHom{f}{G}{H}$.
+    Let $x,y\in\carrier[G]$.
+    Then $f(\mul[G](x,y))=\mul[H](f(x),f(y))$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{group_hom}.
+\end{proof}
+
+\begin{theorem}\label{group_hom_preserves_commutes}
+    Suppose $\groupHom{f}{G}{H}$.
+    Let $x,y\in\carrier[G]$.
+    Suppose $\commutesIn{G}{x}{y}$.
+    Then $\commutesIn{H}{f(x)}{f(y)}$.
+\end{theorem}
+\begin{proof}
+    $f(x),f(y)\in\carrier[H]$ by \obv{group_hom_apply_type}.
+    \begin{align*}
+        \mul[H](f(x),f(y))
+            &= f(\mul[G](x,y)) \explanation{by \obv{group_hom_mul}}
+            \\
+            &= f(\mul[G](y,x)) \explanation{by \obv{commutes_in}}
+            \\
+            &= \mul[H](f(y),f(x)) \explanation{by \obv{group_hom_mul}}
+    \end{align*}
+    Follows by \obv{commutes_in}.
+\end{proof}
+
+\begin{theorem}\label{group_hom_neutral}
+    Suppose $\groupHom{f}{G}{H}$.
+    Then $f(\neutral[G])=\neutral[H]$.
+\end{theorem}
+\begin{proof}
+    Hence $G$ is a unital magma and $H$ is a unital magma by
+        \obv{group_is_monoid,monoid_is_unital_magma}.
+    $\neutral[G]\in\carrier[G]$ and
+        $\neutral[H]\in\carrier[H]$ by
+        \obv{unitalmagma_type}.
+    $f(\neutral[G])\in\carrier[H]$ by
+        \obv{group_hom_apply_type}.
+    \begin{align*}
+        \mul[H](f(\neutral[G]),\neutral[H])
+            &= f(\neutral[G]) \explanation{by \obv{unitalmagma_right}}
+            \\
+            &= f(\mul[G](\neutral[G],\neutral[G]))
+                \explanation{by \obv{unitalmagma_left}}
+            \\
+            &= \mul[H](f(\neutral[G]),f(\neutral[G]))
+                \explanation{by \obv{group_hom_mul}}
+    \end{align*}
+    Follows by \obv{group_cancel_left}.
+\end{proof}
+
+\begin{theorem}\label{group_hom_is_monoid_hom}
+    Suppose $\groupHom{f}{G}{H}$.
+    Then $f$ is a monoid homomorphism from $G$ to $H$.
+\end{theorem}
+\begin{proof}
+    Hence $G$ is a monoid and $H$ is a monoid by
+        \obv{group_is_monoid}.
+    $f$ is a magma homomorphism from $G$ to $H$ by
+        \obv{group_hom,magma_hom}.
+    $f(\neutral[G])=\neutral[H]$ by \obv{group_hom_neutral}.
+    Follows by \obv{monoid_hom}.
+\end{proof}
+
+\begin{theorem}\label{group_hom_inverse}
+    Suppose $\groupHom{f}{G}{H}$.
+    Let $x\in\carrier[G]$.
+    Then $f(\groupInv[G](x))=\groupInv[H](f(x))$.
+\end{theorem}
+\begin{proof}
+    $\groupInv[G](x)\in\carrier[G]$ by
+        \obv{group_inverse_type}.
+    $f(x),f(\groupInv[G](x))\in\carrier[H]$ by
+        \obv{group_hom_apply_type}.
+    $\mul[G](x,\groupInv[G](x))=\neutral[G]$ by
+        \obv{group_inverse_right}.
+    Hence
+        $\mul[H](f(x),f(\groupInv[G](x)))=f(\neutral[G])$ by
+        \auto{group_hom_mul}.
+    Hence
+        $\mul[H](f(x),f(\groupInv[G](x)))=\neutral[H]$ by
+        \obv{group_hom_neutral}.
+    Follows by \obv{group_inverse_unique_right}.
+\end{proof}
+
+\begin{proposition}\label{identity_group_hom}
+    Let $G$ be a group.
+    Then $\groupHom{\identity{\carrier[G]}}{G}{G}$.
+\end{proposition}
+\begin{proof}
+    $\identity{\carrier[G]}\in
+        \funs{\carrier[G]}{\carrier[G]}$ by
+        \obv{id_elem_funs}.
+    Show that for all $x,y\in\carrier[G]$ we have
+        $(\identity{\carrier[G]})(\mul[G](x,y))=
+            \mul[G]
+                ((\identity{\carrier[G]})(x),
+                 (\identity{\carrier[G]})(y))$.
+    \begin{subproof}
+        Fix $x,y\in\carrier[G]$.
+        $\mul[G](x,y)\in\carrier[G]$ by
+            \obv{group_is_monoid,monoid_is_magma,magma_welldef}.
+        Follows by \obv{id_apply}.
+    \end{subproof}
+    Follows by \obv{group_hom}.
+\end{proof}
+
+\begin{theorem}\label{group_hom_composition}
+    Suppose $\groupHom{f}{G}{H}$ and $\groupHom{g}{H}{K}$.
+    Then $\groupHom{g\circ f}{G}{K}$.
+\end{theorem}
+\begin{proof}
+    $f\in\funs{\carrier[G]}{\carrier[H]}$ and
+        $g\in\funs{\carrier[H]}{\carrier[K]}$ by
+        \obv{group_hom_type}.
+    Hence $g\circ f\in
+        \funs{\carrier[G]}{\carrier[K]}$ by
+        \obv{funs_circ}.
+    $f$ is a function and $g$ is a function by
+        \obv{funs_is_function}.
+    $g$ is composable with $f$ by
+        \auto{funs_ran,funs}.
+    Show that for all $x,y\in\carrier[G]$ we have
+        $(g\circ f)(\mul[G](x,y))=
+            \mul[K]((g\circ f)(x),(g\circ f)(y))$.
+    \begin{subproof}
+        Fix $x,y\in\carrier[G]$.
+        $\mul[G](x,y)\in\carrier[G]$ by
+            \obv{group_is_monoid,monoid_is_magma,magma_welldef}.
+        $f(x),f(y)\in\carrier[H]$ by
+            \obv{group_hom_apply_type}.
+        $(g\circ f)(\mul[G](x,y))=
+            g(f(\mul[G](x,y)))$ by \obv{circ_apply,funs}.
+        Hence
+            $(g\circ f)(\mul[G](x,y))=
+                g(\mul[H](f(x),f(y)))$ by
+            \obv{group_hom_mul}.
+        Hence
+            $(g\circ f)(\mul[G](x,y))=
+                \mul[K](g(f(x)),g(f(y)))$ by
+            \obv{group_hom_mul}.
+        $(g\circ f)(x)=g(f(x))$ and
+            $(g\circ f)(y)=g(f(y))$ by
+            \auto{circ_apply,funs}.
+    \end{subproof}
+    Follows by \obv{group_hom}.
+\end{proof}
+
+\begin{theorem}\label{group_hom_extensionality}
+    Suppose $\groupHom{f}{G}{H}$ and $\groupHom{g}{G}{H}$.
+    Suppose for every $x\in\carrier[G]$ we have $f(x)=g(x)$.
+    Then $f=g$.
+\end{theorem}
+\begin{proof}
+    $f,g\in\funs{\carrier[G]}{\carrier[H]}$ by
+        \obv{group_hom_type}.
+    Hence $f$ is a function and $g$ is a function by
+        \auto{funs_elim}.
+    $\dom{f}=\carrier[G]=\dom{g}$ by \obv{funs_elim}.
+    Show that $f\subseteq g$.
+    \begin{subproof}
+        $\dom{f}\subseteq\dom{g}$ by
+            \obv{subseteq_refl}.
+        For every $x\in\dom{f}$ we have $x\in\carrier[G]$.
+        Hence for every $x\in\dom{f}$ we have $f(x)=g(x)$.
+        Follows by \obv{fun_subseteq}.
+    \end{subproof}
+    Show that $g\subseteq f$.
+    \begin{subproof}
+        $\dom{g}\subseteq\dom{f}$ by
+            \obv{subseteq_refl}.
+        For every $x\in\dom{g}$ we have $x\in\carrier[G]$.
+        Hence for every $x\in\dom{g}$ we have $g(x)=f(x)$.
+        Follows by \obv{fun_subseteq}.
+    \end{subproof}
+    Follows by \obv{subseteq_antisymmetric}.
+\end{proof}
+
+\subsection{Endpoint changes}
+
+\begin{theorem}\label{subgroup_inclusion_group_hom}
+    Suppose $\subgroup{A}{G}$.
+    Then
+        $\groupHom
+            {\subgroupInclusion{G}{A}}
+            {\subgroupStructure{G}{A}}
+            {G}$.
+\end{theorem}
+\begin{proof}
+    Let $S=\subgroupStructure{G}{A}$.
+    Let $i=\subgroupInclusion{G}{A}$.
+    $S$ is a group by \obv{subgroup_structure_is_group}.
+    $G$ is a group by \obv{subgroup_ambient_group}.
+    $\carrier[S]=A$ by \auto{subgroup_structure_carrier}.
+    Hence $i\in\funs{\carrier[S]}{\carrier[G]}$ by
+        \auto{subgroup_inclusion_type}.
+    Show that for all $x,y\in\carrier[S]$ we have
+        $i(\mul[S](x,y))=\mul[G](i(x),i(y))$.
+    \begin{subproof}
+        Fix $x,y\in\carrier[S]$.
+        Hence $x,y\in A$.
+        Hence $x,y\in\carrier[G]$ by
+            \auto{subgroup_subseteq,subseteq}.
+        $\mul[G](x,y)\in A$ by \obv{subgroup_mul}.
+        $\mul[S](x,y)=\mul[G](x,y)$ by
+            \auto{subgroup_structure_mul_apply}.
+        Hence $i(\mul[S](x,y))=\mul[G](x,y)$ by
+            \auto{subgroup_inclusion_apply}.
+        $i(x)=x$ and $i(y)=y$ by
+            \auto{subgroup_inclusion_apply}.
+    \end{subproof}
+    Follows by \auto{group_hom}.
+\end{proof}
+
+\begin{theorem}\label{group_hom_domain_restriction}
+    Suppose $\groupHom{f}{G}{H}$ and $\subgroup{A}{G}$.
+    Then
+        $\groupHom
+            {\restrl{f}{A}}
+            {\subgroupStructure{G}{A}}
+            {H}$.
+\end{theorem}
+\begin{proof}
+    Let $S=\subgroupStructure{G}{A}$.
+    Let $r=\restrl{f}{A}$.
+    $S$ is a group by \obv{subgroup_structure_is_group}.
+    $f\in\funs{\carrier[G]}{\carrier[H]}$ by
+        \obv{group_hom_type}.
+    $A\subseteq\carrier[G]$ by \obv{subgroup_subseteq}.
+    Hence $r\in\funs{A}{\carrier[H]}$ by
+        \auto{funs_restrl}.
+    $\carrier[S]=A$ by \auto{subgroup_structure_carrier}.
+    Hence $r\in\funs{\carrier[S]}{\carrier[H]}$.
+    $f$ is a function and $A\subseteq\dom{f}$ by
+        \obv{funs_is_function,funs}.
+    Show that for all $x,y\in\carrier[S]$ we have
+        $r(\mul[S](x,y))=\mul[H](r(x),r(y))$.
+    \begin{subproof}
+        Fix $x,y\in\carrier[S]$.
+        Hence $x,y\in A$.
+        Hence $x,y\in\carrier[G]$ by
+            \obv{subgroup_subseteq,subseteq}.
+        $\mul[G](x,y)\in A$ by \obv{subgroup_mul}.
+        $\mul[S](x,y)=\mul[G](x,y)$ by
+            \auto{subgroup_structure_mul_apply}.
+        Hence $r(\mul[S](x,y))=f(\mul[G](x,y))$ by
+            \auto{restrl_of_function_apply}.
+        $f(\mul[G](x,y))=\mul[H](f(x),f(y))$ by
+            \obv{group_hom_mul}.
+        $r(x)=f(x)$ and $r(y)=f(y)$ by
+            \auto{restrl_of_function_apply}.
+    \end{subproof}
+    Follows by \auto{group_hom}.
+\end{proof}
+
+\begin{theorem}\label{group_hom_codomain_enlargement}
+    Suppose $\groupHom{f}{G}{H}$ and
+        $\groupSubstructure{H}{K}$.
+    Then $\groupHom{f}{G}{K}$.
+\end{theorem}
+\begin{proof}
+    $K$ is a group by \obv{group_substructure_ambient_group}.
+    $f\in\funs{\carrier[G]}{\carrier[H]}$ by
+        \obv{group_hom_type}.
+    $\carrier[H]\subseteq\carrier[K]$ by
+        \obv{group_substructure_carrier_subseteq}.
+    Hence $f\in\funs{\carrier[G]}{\carrier[K]}$ by
+        \obv{funs_weaken_codom}.
+    Show that for all $x,y\in\carrier[G]$ we have
+        $f(\mul[G](x,y))=\mul[K](f(x),f(y))$.
+    \begin{subproof}
+        Fix $x,y\in\carrier[G]$.
+        $f(x),f(y)\in\carrier[H]$ by
+            \obv{group_hom_apply_type}.
+        $f(\mul[G](x,y))=\mul[H](f(x),f(y))$ by
+            \obv{group_hom_mul}.
+        $\mul[H](f(x),f(y))=\mul[K](f(x),f(y))$ by
+            \obv{group_substructure_mul_apply}.
+    \end{subproof}
+    Follows by \obv{group_hom}.
+\end{proof}
+
+\begin{theorem}\label{group_hom_codomain_corestriction}
+    Suppose $\groupHom{f}{G}{H}$ and $\subgroup{A}{H}$.
+    Suppose $\img{f}{\carrier[G]}\subseteq A$.
+    Then
+        $\groupHom{f}{G}{\subgroupStructure{H}{A}}$.
+\end{theorem}
+\begin{proof}
+    Let $T=\subgroupStructure{H}{A}$.
+    $T$ is a group by \obv{subgroup_structure_is_group}.
+    $\carrier[T]=A$ by \auto{subgroup_structure_carrier}.
+    $f\in\funs{\carrier[G]}{\carrier[H]}$ by
+        \obv{group_hom_type}.
+    Hence $f$ is a function and $\dom{f}=\carrier[G]$ by
+        \auto{funs_elim}.
+    Show that $f$ is a function to $A$.
+    \begin{subproof}
+        Show that for every $x\in\dom{f}$ we have $f(x)\in A$.
+        \begin{subproof}
+            Fix $x\in\dom{f}$.
+            Hence $x\in\carrier[G]$.
+            $(x,f(x))\in f$ by \obv{function_apply_elim}.
+            Hence $f(x)\in\img{f}{\carrier[G]}$ by
+                \auto{img_iff}.
+            Follows by \obv{subseteq}.
+        \end{subproof}
+    \end{subproof}
+    Hence $f\in\funs{\carrier[G]}{A}$ by
+        \obv{funs_intro}.
+    Hence $f\in\funs{\carrier[G]}{\carrier[T]}$.
+    Show that for all $x,y\in\carrier[G]$ we have
+        $f(\mul[G](x,y))=\mul[T](f(x),f(y))$.
+    \begin{subproof}
+        Fix $x,y\in\carrier[G]$.
+        $f(x),f(y)\in A$ by \obv{funs_type_apply}.
+        $f(\mul[G](x,y))=\mul[H](f(x),f(y))$ by
+            \obv{group_hom_mul}.
+        $\mul[T](f(x),f(y))=\mul[H](f(x),f(y))$ by
+            \auto{subgroup_structure_mul_apply}.
+    \end{subproof}
+    Follows by \auto{group_hom}.
+\end{proof}
+
+\subsection{Images, preimages, and kernels}
+
+\begin{proposition}\label{group_hom_image_iff}
+    Suppose $\groupHom{f}{G}{H}$ and $A\subseteq\carrier[G]$.
+    Then $y\in\img{f}{A}$ iff
+        there exists $x\in A$ such that $f(x)=y$.
+\end{proposition}
+\begin{proof}
+    $f$ is a function and $\dom{f}=\carrier[G]$ by
+        \obv{group_hom_type,funs_elim}.
+    Show that if $y\in\img{f}{A}$, then there exists $x\in A$
+        such that $f(x)=y$.
+    \begin{subproof}
+        Assume $y\in\img{f}{A}$.
+        Take $x\in A$ such that $(x,y)\in f$ by
+            \obv{img_iff}.
+        $f(x)=y$ by \obv{function_apply_intro}.
+    \end{subproof}
+    Show that if there exists $x\in A$ such that $f(x)=y$, then
+        $y\in\img{f}{A}$.
+    \begin{subproof}
+        Assume that there exists $x\in A$ such that $f(x)=y$.
+        Take $x\in A$ such that $f(x)=y$.
+        Hence $x\in\dom{f}$ by \obv{subseteq}.
+        Hence $(x,y)\in f$ by \auto{function_apply_elim}.
+        Follows by \auto{img_iff}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{proposition}\label{group_hom_image_trivial_subgroup}
+    Suppose $\groupHom{f}{G}{H}$.
+    Then
+        $\img{f}{\trivialSubgroupCarrier{G}}=
+            \trivialSubgroupCarrier{H}$.
+\end{proposition}
+\begin{proof}
+    $\trivialSubgroupCarrier{G}\subseteq\carrier[G]$ by
+        \obv{trivial_carrier_subgroup,subgroup_subseteq}.
+    $f(\neutral[G])=\neutral[H]$ by \obv{group_hom_neutral}.
+    Show that for every $y$ we have
+        $y\in\img{f}{\trivialSubgroupCarrier{G}}$ iff
+        $y\in\trivialSubgroupCarrier{H}$.
+    \begin{subproof}
+        Fix $y$.
+        Show that if $y\in\img{f}{\trivialSubgroupCarrier{G}}$, then
+            $y\in\trivialSubgroupCarrier{H}$.
+        \begin{subproof}
+            Assume $y\in\img{f}{\trivialSubgroupCarrier{G}}$.
+            Take $x\in\trivialSubgroupCarrier{G}$ such that $f(x)=y$ by
+                \auto{group_hom_image_iff}.
+            Hence $x=\neutral[G]$ by
+                \obv{trivial_subgroup_carrier,singleton_iff}.
+            Hence $y=\neutral[H]$.
+            Follows by \obv{trivial_subgroup_carrier,singleton_iff}.
+        \end{subproof}
+        Show that if $y\in\trivialSubgroupCarrier{H}$, then
+            $y\in\img{f}{\trivialSubgroupCarrier{G}}$.
+        \begin{subproof}
+            Assume $y\in\trivialSubgroupCarrier{H}$.
+            Hence $y=\neutral[H]$ by
+                \obv{trivial_subgroup_carrier,singleton_iff}.
+            $\neutral[G]\in\trivialSubgroupCarrier{G}$ by
+                \obv{trivial_subgroup_carrier,singleton_intro}.
+            Follows by \auto{group_hom_image_iff}.
+        \end{subproof}
+        Follows by \auto.
+    \end{subproof}
+    Follows by \obv{setext}.
+\end{proof}
+
+\begin{proposition}\label{group_hom_preimage_iff}
+    Suppose $\groupHom{f}{G}{H}$.
+    Then $x\in\preimg{f}{A}$ iff
+        $x\in\carrier[G]$ and $f(x)\in A$.
+\end{proposition}
+\begin{proof}
+    $f$ is a function and $\dom{f}=\carrier[G]$ by
+        \obv{group_hom_type,funs_elim}.
+    Show that if $x\in\preimg{f}{A}$, then
+        $x\in\carrier[G]$ and $f(x)\in A$.
+    \begin{subproof}
+        Assume $x\in\preimg{f}{A}$.
+        Take $y\in A$ such that $(x,y)\in f$ by
+            \obv{preimg_iff}.
+        $x\in\dom{f}$ and $f(x)=y$ by
+            \obv{dom_iff,function_apply_intro}.
+    \end{subproof}
+    Show that if $x\in\carrier[G]$ and $f(x)\in A$, then
+        $x\in\preimg{f}{A}$.
+    \begin{subproof}
+        Assume $x\in\carrier[G]$ and $f(x)\in A$.
+        Hence $(x,f(x))\in f$ by \obv{function_apply_elim}.
+        Follows by \obv{preimg_iff}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{group_hom_subgroup_image}
+    Suppose $\groupHom{f}{G}{H}$ and $\subgroup{A}{G}$.
+    Then $\subgroup{\img{f}{A}}{H}$.
+\end{theorem}
+\begin{proof}
+    Let $J=\img{f}{A}$.
+    $A\subseteq\carrier[G]$ by \obv{subgroup_subseteq}.
+    Show that $J\subseteq\carrier[H]$.
+    \begin{subproof}
+        Show that for every $z\in J$ we have $z\in\carrier[H]$.
+        \begin{subproof}
+            Fix $z\in J$.
+            Take $x\in A$ such that $f(x)=z$ by
+                \auto{group_hom_image_iff}.
+            Hence $x\in\carrier[G]$ by \obv{subseteq}.
+            $f(x)\in\carrier[H]$ by
+                \obv{group_hom_apply_type}.
+        \end{subproof}
+        Follows by \obv{subseteq}.
+    \end{subproof}
+    $\neutral[G]\in A$ by \obv{subgroup_neutral}.
+    $f(\neutral[G])=\neutral[H]$ by
+        \obv{group_hom_neutral}.
+    Hence $\neutral[H]\in J$ by
+        \auto{group_hom_image_iff}.
+    Show that for all $z,w\in J$ we have $\mul[H](z,w)\in J$.
+    \begin{subproof}
+        Fix $z,w\in J$.
+        Take $x\in A$ such that $f(x)=z$ by
+            \auto{group_hom_image_iff}.
+        Take $y\in A$ such that $f(y)=w$ by
+            \auto{group_hom_image_iff}.
+        $\mul[G](x,y)\in A$ by \obv{subgroup_mul}.
+        $x,y\in\carrier[G]$ by \obv{subseteq}.
+        $f(\mul[G](x,y))=\mul[H](f(x),f(y))$ by
+            \obv{group_hom_mul}.
+        Hence $f(\mul[G](x,y))=\mul[H](z,w)$.
+        Follows by \auto{group_hom_image_iff}.
+    \end{subproof}
+    Show that for every $z\in J$ we have $\groupInv[H](z)\in J$.
+    \begin{subproof}
+        Fix $z\in J$.
+        Take $x\in A$ such that $f(x)=z$ by
+            \auto{group_hom_image_iff}.
+        $\groupInv[G](x)\in A$ by \obv{subgroup_inv}.
+        $x\in\carrier[G]$ by \obv{subseteq}.
+        $f(\groupInv[G](x))=\groupInv[H](f(x))$ by
+            \obv{group_hom_inverse}.
+        Hence $f(\groupInv[G](x))=\groupInv[H](z)$.
+        Follows by \auto{group_hom_image_iff}.
+    \end{subproof}
+    Follows by \obv{subgroup}.
+\end{proof}
+
+\begin{corollary}\label{group_hom_image_subgroup}
+    Suppose $\groupHom{f}{G}{H}$.
+    Then $\subgroup{\img{f}{\carrier[G]}}{H}$.
+\end{corollary}
+\begin{proof}
+    $\subgroup{\carrier[G]}{G}$ by
+        \obv{full_carrier_subgroup}.
+    Follows by \obv{group_hom_subgroup_image}.
+\end{proof}
+
+\begin{proposition}\label{group_hom_composition_image}
+    Suppose $\groupHom{f}{G}{H}$ and
+        $\groupHom{g}{H}{K}$.
+    Then $\img{g\circ f}{\carrier[G]}=
+        \img{g}{\img{f}{\carrier[G]}}$.
+\end{proposition}
+\begin{proof}
+    $f\in\funs{\carrier[G]}{\carrier[H]}$ and
+        $g\in\funs{\carrier[H]}{\carrier[K]}$ by
+        \obv{group_hom_type}.
+    Hence $f$ and $g$ are functions and
+        $\ran{f}\subseteq\carrier[H]$ and
+        $\dom{g}=\carrier[H]$ by
+        \obv{funs_ran,funs_elim,funs_is_function}.
+    Hence $\ran{f}\subseteq\dom{g}$.
+    Follows by \obv{img_of_circ}.
+\end{proof}
+
+\begin{proposition}\label{group_hom_composition_image_subseteq}
+    Suppose $\groupHom{f}{G}{H}$ and
+        $\groupHom{g}{H}{K}$.
+    Then $\img{g\circ f}{\carrier[G]}\subseteq
+        \img{g}{\carrier[H]}$.
+\end{proposition}
+\begin{proof}
+    $\subgroup{\img{f}{\carrier[G]}}{H}$ by
+        \obv{group_hom_image_subgroup}.
+    Hence $\img{f}{\carrier[G]}\subseteq\carrier[H]$ by
+        \obv{subgroup_subseteq}.
+    Hence $\img{g}{\img{f}{\carrier[G]}}\subseteq
+        \img{g}{\carrier[H]}$ by
+        \obv{img_subseteq}.
+    Follows by \obv{group_hom_composition_image}.
+\end{proof}
+
+\begin{theorem}\label{group_hom_subgroup_preimage}
+    Suppose $\groupHom{f}{G}{H}$ and $\subgroup{A}{H}$.
+    Then $\subgroup{\preimg{f}{A}}{G}$.
+\end{theorem}
+\begin{proof}
+    Let $P=\preimg{f}{A}$.
+    $G$ is a group by \obv{group_hom_source_group}.
+    $P\subseteq\carrier[G]$ by
+        \auto{subseteq,group_hom_preimage_iff}.
+    $f(\neutral[G])=\neutral[H]$ by
+        \obv{group_hom_neutral}.
+    $\neutral[G]\in\carrier[G]$ by
+        \obv{group_is_monoid,monoid_is_unital_magma,unitalmagma_type}.
+    $\neutral[H]\in A$ by \obv{subgroup_neutral}.
+    Hence $\neutral[G]\in P$ by
+        \auto{group_hom_preimage_iff}.
+    Show that for all $x,y\in P$ we have $\mul[G](x,y)\in P$.
+    \begin{subproof}
+        Fix $x,y\in P$.
+        Hence $x,y\in\carrier[G]$ and $f(x),f(y)\in A$ by
+            \auto{group_hom_preimage_iff}.
+        $\mul[G](x,y)\in\carrier[G]$ by
+            \obv{group_is_monoid,monoid_is_magma,magma_welldef}.
+        $f(\mul[G](x,y))=\mul[H](f(x),f(y))$ by
+            \obv{group_hom_mul}.
+        $\mul[H](f(x),f(y))\in A$ by
+            \obv{subgroup_mul}.
+        Follows by \auto{group_hom_preimage_iff}.
+    \end{subproof}
+    Show that for every $x\in P$ we have $\groupInv[G](x)\in P$.
+    \begin{subproof}
+        Fix $x\in P$.
+        Hence $x\in\carrier[G]$ and $f(x)\in A$ by
+            \auto{group_hom_preimage_iff}.
+        $\groupInv[G](x)\in\carrier[G]$ by
+            \obv{group_inverse_type}.
+        $f(\groupInv[G](x))=\groupInv[H](f(x))$ by
+            \obv{group_hom_inverse}.
+        $\groupInv[H](f(x))\in A$ by \obv{subgroup_inv}.
+        Follows by \auto{group_hom_preimage_iff}.
+    \end{subproof}
+    Follows by \obv{subgroup}.
+\end{proof}
+
+\begin{definition}\label{group_kernel}
+    $\groupKernel{f}{G}=
+        \{x\in\carrier[G]\mid f(x)=f(\neutral[G])\}$.
+\end{definition}
+
+\begin{proposition}\label{group_kernel_target_preimage}
+    Suppose $\groupHom{f}{G}{H}$.
+    Then $\groupKernel{f}{G}=
+        \preimg{f}{\trivialSubgroupCarrier{H}}$.
+\end{proposition}
+\begin{proof}
+    $f(\neutral[G])=\neutral[H]$ by \obv{group_hom_neutral}.
+    Follows by
+        \auto{group_kernel,group_hom_preimage_iff,
+            trivial_subgroup_carrier,singleton_iff,setext}.
+\end{proof}
+
+\begin{proposition}\label{group_kernel_iff}
+    Suppose $\groupHom{f}{G}{H}$.
+    Then $x\in\groupKernel{f}{G}$ iff
+        $x\in\carrier[G]$ and $f(x)=\neutral[H]$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{group_kernel,group_hom_neutral}.
+\end{proof}
+
+\begin{theorem}\label{group_kernel_subgroup}
+    Suppose $\groupHom{f}{G}{H}$.
+    Then $\subgroup{\groupKernel{f}{G}}{G}$.
+\end{theorem}
+\begin{proof}
+    $\subgroup{\trivialSubgroupCarrier{H}}{H}$ by
+        \obv{trivial_carrier_subgroup}.
+    $\subgroup{\preimg{f}{\trivialSubgroupCarrier{H}}}{G}$ by
+        \obv{group_hom_subgroup_preimage}.
+    Follows by \obv{group_kernel_target_preimage}.
+\end{proof}
+
+\begin{theorem}\label{group_hom_preimage_image_eq}
+    Suppose $\groupHom{f}{G}{H}$ and $\subgroup{A}{G}$.
+    Suppose $\groupKernel{f}{G}\subseteq A$.
+    Then $\preimg{f}{\img{f}{A}}=A$.
+\end{theorem}
+\begin{proof}
+    $G$ is a group and $H$ is a group by
+        \obv{group_hom_source_group,group_hom_target_group}.
+    $A\subseteq\carrier[G]$ by \obv{subgroup_subseteq}.
+    Show that $\preimg{f}{\img{f}{A}}\subseteq A$.
+    \begin{subproof}
+        Show that for every $x\in\preimg{f}{\img{f}{A}}$ we have
+            $x\in A$.
+        \begin{subproof}
+            Fix $x\in\preimg{f}{\img{f}{A}}$.
+            Hence $x\in\carrier[G]$ and $f(x)\in\img{f}{A}$ by
+                \auto{group_hom_preimage_iff}.
+            Take $y\in A$ such that $f(y)=f(x)$ by
+                \auto{group_hom_image_iff}.
+            Hence $y\in\carrier[G]$ by \obv{subseteq}.
+            Let $z=\mul[G](\groupInv[G](y),x)$.
+            $\groupInv[G](y)\in\carrier[G]$ by
+                \obv{group_inverse_type}.
+            $\mul[G](\groupInv[G](y),x)\in\carrier[G]$ by
+                \obv{group_is_monoid,monoid_is_magma,magma_welldef}.
+            Hence $z\in\carrier[G]$.
+            $f(\mul[G](\groupInv[G](y),x))
+                =\mul[H](f(\groupInv[G](y)),f(x))$ by
+                \obv{group_hom_mul}.
+            Hence $f(z)=\mul[H](f(\groupInv[G](y)),f(x))$.
+            $f(\groupInv[G](y))=\groupInv[H](f(y))$ by
+                \obv{group_hom_inverse}.
+            Hence $f(z)=\mul[H](\groupInv[H](f(x)),f(x))$.
+            Hence $f(z)=\neutral[H]$ by
+                \obv{group_hom_apply_type,group_inverse_left}.
+            Hence $z\in\groupKernel{f}{G}$ by
+                \auto{group_kernel_iff}.
+            Hence $z\in A$ by \obv{subseteq}.
+            Hence $\mul[G](y,z)\in A$ by \obv{subgroup_mul}.
+            $\mul[G](y,z)=x$ by
+                \auto{group_is_monoid,monoid_assoc,group_inverse_right,
+                    monoid_is_unital_magma,unitalmagma_left}.
+        \end{subproof}
+        Follows by \obv{subseteq}.
+    \end{subproof}
+    Show that $A\subseteq\preimg{f}{\img{f}{A}}$.
+    \begin{subproof}
+        Show that for every $x\in A$ we have
+            $x\in\preimg{f}{\img{f}{A}}$.
+        \begin{subproof}
+            Fix $x\in A$.
+            Hence $x\in\carrier[G]$ by \obv{subseteq}.
+            $f(x)\in\img{f}{A}$ by \auto{group_hom_image_iff}.
+            Follows by \auto{group_hom_preimage_iff}.
+        \end{subproof}
+        Follows by \obv{subseteq}.
+    \end{subproof}
+    Follows by \obv{subseteq_antisymmetric}.
+\end{proof}
+
+\begin{theorem}\label{surjective_group_hom_image_preimage_eq}
+    Suppose $\groupHom{f}{G}{H}$ and
+        $f\in\surj{\carrier[G]}{\carrier[H]}$.
+    Suppose $B\subseteq\carrier[H]$.
+    Then $\img{f}{\preimg{f}{B}}=B$.
+\end{theorem}
+\begin{proof}
+    $\preimg{f}{B}\subseteq\carrier[G]$ by
+        \auto{subseteq,group_hom_preimage_iff}.
+    Show that $\img{f}{\preimg{f}{B}}\subseteq B$.
+    \begin{subproof}
+        Show that for every $y\in\img{f}{\preimg{f}{B}}$ we have
+            $y\in B$.
+        \begin{subproof}
+            Fix $y\in\img{f}{\preimg{f}{B}}$.
+            Take $x\in\preimg{f}{B}$ such that $f(x)=y$ by
+                \auto{group_hom_image_iff}.
+            $f(x)\in B$ by \auto{group_hom_preimage_iff}.
+        \end{subproof}
+        Follows by \obv{subseteq}.
+    \end{subproof}
+    Show that $B\subseteq\img{f}{\preimg{f}{B}}$.
+    \begin{subproof}
+        Show that for every $y\in B$ we have
+            $y\in\img{f}{\preimg{f}{B}}$.
+        \begin{subproof}
+            Fix $y\in B$.
+            Hence $y\in\carrier[H]$ by \obv{subseteq}.
+            Take $x\in\carrier[G]$ such that $f(x)=y$ by
+                \obv{surj}.
+            Hence $x\in\preimg{f}{B}$ by
+                \auto{group_hom_preimage_iff}.
+            Follows by \auto{group_hom_image_iff}.
+        \end{subproof}
+        Follows by \obv{subseteq}.
+    \end{subproof}
+    Follows by \obv{subseteq_antisymmetric}.
+\end{proof}
+
+\subsection{Embeddings, surjections, and homomorphism sets}
+
+\begin{definition}\label{group_embedding}
+    $\groupEmbedding{f}{G}{H}$ iff
+        $\groupHom{f}{G}{H}$ and $f$ is injective.
+\end{definition}
+
+\begin{definition}\label{group_surjection}
+    $\groupSurjection{f}{G}{H}$ iff
+        $\groupHom{f}{G}{H}$ and
+        $f\in\surj{\carrier[G]}{\carrier[H]}$.
+\end{definition}
+
+\begin{proposition}\label{group_embedding_is_hom}
+    Suppose $\groupEmbedding{f}{G}{H}$.
+    Then $\groupHom{f}{G}{H}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{group_embedding}.
+\end{proof}
+
+\begin{proposition}\label{group_embedding_injective}
+    Suppose $\groupEmbedding{f}{G}{H}$.
+    Then $f$ is injective.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{group_embedding}.
+\end{proof}
+
+\begin{theorem}\label{group_embedding_commutes_iff}
+    Suppose $\groupEmbedding{f}{G}{H}$.
+    Let $x,y\in\carrier[G]$.
+    Then $\commutesIn{H}{f(x)}{f(y)}$ iff
+        $\commutesIn{G}{x}{y}$.
+\end{theorem}
+\begin{proof}
+    $\groupHom{f}{G}{H}$ and $f$ is injective by
+        \obv{group_embedding_is_hom,group_embedding_injective}.
+    $G$ is a group and $H$ is a group by
+        \obv{group_hom_source_group,group_hom_target_group}.
+    $f$ is a function and $\dom{f}=\carrier[G]$ by
+        \auto{group_hom_type,funs_elim}.
+    Show that if $\commutesIn{H}{f(x)}{f(y)}$, then
+        $\commutesIn{G}{x}{y}$.
+    \begin{subproof}
+        Assume $\commutesIn{H}{f(x)}{f(y)}$.
+        $\mul[G](x,y),\mul[G](y,x)\in\carrier[G]$ by
+            \obv{group_is_monoid,monoid_is_magma,magma_welldef}.
+        $\mul[H](f(x),f(y))=\mul[H](f(y),f(x))$ by
+            \obv{commutes_in}.
+        Hence
+            $f(\mul[G](x,y))=f(\mul[G](y,x))$ by
+            \obv{group_hom_mul}.
+        Hence $\mul[G](x,y)=\mul[G](y,x)$ by
+            \auto{injective_function}.
+        Follows by \obv{commutes_in}.
+    \end{subproof}
+    Show that if $\commutesIn{G}{x}{y}$, then
+        $\commutesIn{H}{f(x)}{f(y)}$.
+    \begin{subproof}
+        Assume $\commutesIn{G}{x}{y}$.
+        Follows by \obv{group_hom_preserves_commutes}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{proposition}\label{identity_group_embedding}
+    Let $G$ be a group.
+    Then $\groupEmbedding{\identity{\carrier[G]}}{G}{G}$.
+\end{proposition}
+\begin{proof}
+    $\groupHom{\identity{\carrier[G]}}{G}{G}$ by
+        \obv{identity_group_hom}.
+    $\identity{\carrier[G]}$ is injective by
+        \obv{identity_injective}.
+    Follows by \obv{group_embedding}.
+\end{proof}
+
+\begin{theorem}\label{group_embedding_composition}
+    Suppose $\groupEmbedding{f}{G}{H}$ and
+        $\groupEmbedding{g}{H}{K}$.
+    Then $\groupEmbedding{g\circ f}{G}{K}$.
+\end{theorem}
+\begin{proof}
+    $\groupHom{f}{G}{H}$ and $\groupHom{g}{H}{K}$ by
+        \obv{group_embedding_is_hom}.
+    Hence $\groupHom{g\circ f}{G}{K}$ by
+        \obv{group_hom_composition}.
+    $f$ and $g$ are injective by
+        \obv{group_embedding_injective}.
+    Hence $g\circ f$ is injective by \obv{circ_injective}.
+    Follows by \obv{group_embedding}.
+\end{proof}
+
+\begin{proposition}\label{group_surjection_is_hom}
+    Suppose $\groupSurjection{f}{G}{H}$.
+    Then $\groupHom{f}{G}{H}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{group_surjection}.
+\end{proof}
+
+\begin{proposition}\label{group_surjection_is_surj}
+    Suppose $\groupSurjection{f}{G}{H}$.
+    Then $f\in\surj{\carrier[G]}{\carrier[H]}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{group_surjection}.
+\end{proof}
+
+\begin{theorem}\label{group_hom_injective_iff_kernel_trivial}
+    Suppose $\groupHom{f}{G}{H}$.
+    Then $f$ is injective iff
+        $\groupKernel{f}{G}=\trivialSubgroupCarrier{G}$.
+\end{theorem}
+\begin{proof}
+    $f$ is a function and $\dom{f}=\carrier[G]$ by
+        \obv{group_hom_type,funs_elim}.
+    $\neutral[G]\in\carrier[G]$ by
+        \obv{group_is_monoid,monoid_is_unital_magma,unitalmagma_type}.
+    $f(\neutral[G])=\neutral[H]$ by
+        \obv{group_hom_neutral}.
+    Show that if $f$ is injective, then
+        $\groupKernel{f}{G}=\trivialSubgroupCarrier{G}$.
+    \begin{subproof}
+        Assume $f$ is injective.
+        Show that
+            $\groupKernel{f}{G}\subseteq
+                \trivialSubgroupCarrier{G}$.
+        \begin{subproof}
+            Show that for every $x\in\groupKernel{f}{G}$ we have
+                $x\in\trivialSubgroupCarrier{G}$.
+            \begin{subproof}
+                Fix $x\in\groupKernel{f}{G}$.
+                Hence $x\in\carrier[G]$ and $f(x)=\neutral[H]$ by
+                    \obv{group_kernel_iff}.
+                $(x,\neutral[H])\in f$ and
+                    $(\neutral[G],\neutral[H])\in f$ by
+                    \auto{function_apply_elim}.
+                Hence $x=\neutral[G]$ by \obv{injective}.
+                Follows by
+                    \auto{trivial_subgroup_carrier,singleton_intro}.
+            \end{subproof}
+            Follows by \obv{subseteq}.
+        \end{subproof}
+        Show that
+            $\trivialSubgroupCarrier{G}\subseteq
+                \groupKernel{f}{G}$.
+        \begin{subproof}
+            Show that for every $x\in\trivialSubgroupCarrier{G}$ we have
+                $x\in\groupKernel{f}{G}$.
+            \begin{subproof}
+                Fix $x\in\trivialSubgroupCarrier{G}$.
+                Hence $x=\neutral[G]$ by
+                    \obv{trivial_subgroup_carrier,singleton_iff}.
+                Follows by \obv{group_kernel_iff}.
+            \end{subproof}
+            Follows by \obv{subseteq}.
+        \end{subproof}
+        Follows by \obv{subseteq_antisymmetric}.
+    \end{subproof}
+    Show that if $\groupKernel{f}{G}=\trivialSubgroupCarrier{G}$,
+        then $f$ is injective.
+    \begin{subproof}
+        Assume
+            $\groupKernel{f}{G}=\trivialSubgroupCarrier{G}$.
+        Show that for all $x,y\in\dom{f}$ we have
+            $f(x)=f(y)\implies x=y$.
+        \begin{subproof}
+            Fix $x,y\in\dom{f}$.
+            Assume $f(x)=f(y)$.
+            Hence $x,y\in\carrier[G]$.
+            $\groupInv[G](y)\in\carrier[G]$ by
+                \obv{group_inverse_type}.
+            $\mul[G](x,\groupInv[G](y))\in\carrier[G]$ by
+                \obv{group_is_monoid,monoid_is_magma,magma_welldef}.
+            $f(\groupInv[G](y))=\groupInv[H](f(y))$ by
+                \obv{group_hom_inverse}.
+            $f(y)\in\carrier[H]$ by
+                \obv{group_hom_apply_type}.
+            $\mul[H](f(y),\groupInv[H](f(y)))=\neutral[H]$ by
+                \obv{group_inverse_right}.
+            $f(\mul[G](x,\groupInv[G](y)))=
+                \mul[H](f(x),f(\groupInv[G](y)))$ by
+                \obv{group_hom_mul}.
+            Hence $f(\mul[G](x,\groupInv[G](y)))=\neutral[H]$.
+            Hence
+                $\mul[G](x,\groupInv[G](y))
+                    \in\groupKernel{f}{G}$ by
+                \obv{group_kernel_iff}.
+            Hence
+                $\mul[G](x,\groupInv[G](y))=\neutral[G]$ by
+                \auto{trivial_subgroup_carrier,singleton_iff}.
+            $\mul[G](y,\groupInv[G](y))=\neutral[G]$ by
+                \obv{group_inverse_right}.
+            Follows by \obv{group_cancel_right}.
+        \end{subproof}
+        Follows by \obv{injective_function}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{corollary}\label{group_embedding_iff_kernel_trivial}
+    Suppose $\groupHom{f}{G}{H}$.
+    Then $\groupEmbedding{f}{G}{H}$ iff
+        $\groupKernel{f}{G}=\trivialSubgroupCarrier{G}$.
+\end{corollary}
+\begin{proof}
+    Follows by
+        \auto{group_embedding,group_hom_injective_iff_kernel_trivial}.
+\end{proof}
+
+\begin{definition}\label{group_hom_set}
+    Let $G$ be a group.
+    Let $H$ be a group.
+    $\groupHomSet{G}{H}=
+        \{f\in\funs{\carrier[G]}{\carrier[H]}
+            \mid \groupHom{f}{G}{H}\}$.
+\end{definition}
+
+\begin{proposition}\label{group_hom_set_iff}
+    Let $G$ be a group.
+    Let $H$ be a group.
+    $f\in\groupHomSet{G}{H}$ iff $\groupHom{f}{G}{H}$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{group_hom_set,group_hom_type}.
+\end{proof}
+
+\begin{definition}\label{endomorphism_set}
+    Let $G$ be a group.
+    $\endomorphismSet{G}=\groupHomSet{G}{G}$.
+\end{definition}
+
+\begin{proposition}\label{endomorphism_set_iff}
+    Let $G$ be a group.
+    $f\in\endomorphismSet{G}$ iff $\groupHom{f}{G}{G}$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{endomorphism_set,group_hom_set_iff}.
+\end{proof}

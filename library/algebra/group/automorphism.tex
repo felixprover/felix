@@ -1,0 +1,679 @@
+\import{algebra/group/centre.tex}
+\import{set/logical-graph.tex}
+
+\section{Automorphism groups}
+
+Automorphisms remain ordinary set-coded graphs on the carrier of the source
+group.  The exact automorphism group below uses graph composition in the order
+$(\varphi\psi)(x)=\varphi(\psi(x))$, graph identity as its neutral element,
+and graph converse as its inverse operation.
+
+\begin{definition}\label{automorphism_set}
+    $\automorphismSet{G}=
+        \{f\in\funs{\carrier[G]}{\carrier[G]}
+            \mid \groupIsomorphism{f}{G}{G}\}$.
+\end{definition}
+
+\begin{proposition}\label{automorphism_set_iff}
+    $f\in\automorphismSet{G}$ iff
+        $\groupIsomorphism{f}{G}{G}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{automorphism_set,group_isomorphism_is_bijection,
+            bijections_to_funs}.
+\end{proof}
+
+\begin{corollary}\label{automorphism_set_type}
+    Suppose $f\in\automorphismSet{G}$.
+    Then $f\in\bijections{\carrier[G]}{\carrier[G]}$.
+\end{corollary}
+\begin{proof}
+    Follows by
+        \obv{automorphism_set_iff,group_isomorphism_is_bijection}.
+\end{proof}
+
+\begin{corollary}\label{automorphism_set_is_hom}
+    Suppose $f\in\automorphismSet{G}$.
+    Then $\groupHom{f}{G}{G}$.
+\end{corollary}
+\begin{proof}
+    Follows by
+        \obv{automorphism_set_iff,group_isomorphism_is_hom}.
+\end{proof}
+
+\begin{definition}\label{automorphism_composition_op}
+    $\automorphismCompositionOp:\Set\to\Set\to\Set
+        =\fun{f,g:\Set}{f\circ g}$.
+\end{definition}
+
+\begin{definition}\label{automorphism_inverse_op}
+    $\automorphismInverseOp:\Set\to\Set
+        =\fun{f:\Set}{\converse{f}}$.
+\end{definition}
+
+\begin{definition}\label{automorphism_multiplication_graph}
+    $\automorphismMultiplicationGraph{G}=
+        \Apply{\binaryGraphOnOp}
+            {\automorphismSet{G},\automorphismSet{G},\automorphismCompositionOp}$.
+\end{definition}
+
+\begin{definition}\label{automorphism_inverse_graph}
+    $\automorphismInverseGraph{G}=
+        \Apply{\graphOnOp}
+            {\automorphismSet{G},\automorphismSet{G},\automorphismInverseOp}$.
+\end{definition}
+
+\begin{proposition}\label{automorphism_composition_closed}
+    Suppose $f,g\in\automorphismSet{G}$.
+    Then $f\circ g\in\automorphismSet{G}$.
+\end{proposition}
+\begin{proof}
+    $\groupIsomorphism{g}{G}{G}$ and
+        $\groupIsomorphism{f}{G}{G}$ by
+        \obv{automorphism_set_iff}.
+    Hence $\groupIsomorphism{f\circ g}{G}{G}$ by
+        \obv{group_isomorphism_composition}.
+    Follows by \auto{automorphism_set_iff}.
+\end{proof}
+
+\begin{proposition}\label{automorphism_identity_closed}
+    Let $G$ be a group.
+    Then $\identity{\carrier[G]}\in\automorphismSet{G}$.
+\end{proposition}
+\begin{proof}
+    $\groupIsomorphism{\identity{\carrier[G]}}{G}{G}$ by
+        \obv{identity_group_isomorphism}.
+    Follows by \obv{automorphism_set_iff}.
+\end{proof}
+
+\begin{proposition}\label{automorphism_inverse_closed}
+    Suppose $f\in\automorphismSet{G}$.
+    Then $\converse{f}\in\automorphismSet{G}$.
+\end{proposition}
+\begin{proof}
+    $\groupIsomorphism{f}{G}{G}$ by
+        \obv{automorphism_set_iff}.
+    Hence $\groupIsomorphism{\converse{f}}{G}{G}$ by
+        \obv{group_isomorphism_converse}.
+    Follows by \obv{automorphism_set_iff}.
+\end{proof}
+
+\begin{proposition}\label{automorphism_multiplication_graph_type}
+    $\automorphismMultiplicationGraph{G}\in
+        \funs{
+            \automorphismSet{G}\times\automorphismSet{G}}
+            {\automorphismSet{G}}$.
+\end{proposition}
+\begin{proof}
+    Show that $\forall f,g:\Set.
+        (f\in\automorphismSet{G}\land g\in\automorphismSet{G})
+        \implies
+        \Apply{\automorphismCompositionOp}{f,g}
+            \in\automorphismSet{G}$.
+    \begin{subproof}
+        Fix $f,g:\Set$.
+        Assume $f,g\in\automorphismSet{G}$.
+        Follows by
+            \auto{automorphism_composition_op,automorphism_composition_closed}.
+    \end{subproof}
+    Follows by
+        \auto{automorphism_multiplication_graph,logical_binary_graph_on_function}.
+\end{proof}
+
+\begin{proposition}\label{automorphism_multiplication_graph_apply}
+    Suppose $f,g\in\automorphismSet{G}$.
+    Then $\apply{\automorphismMultiplicationGraph{G}}{(f,g)}=f\circ g$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{automorphism_multiplication_graph,automorphism_composition_op,logical_binary_graph_on_apply}.
+\end{proof}
+
+\begin{proposition}\label{automorphism_inverse_graph_type}
+    $\automorphismInverseGraph{G}\in
+        \funs{\automorphismSet{G}}{\automorphismSet{G}}$.
+\end{proposition}
+\begin{proof}
+    Show that $\forall f:\Set.
+        f\in\automorphismSet{G}\implies
+        \Apply{\automorphismInverseOp}{f}\in\automorphismSet{G}$.
+    \begin{subproof}
+        Fix $f:\Set$.
+        Assume $f\in\automorphismSet{G}$.
+        Follows by
+            \auto{automorphism_inverse_op,automorphism_inverse_closed}.
+    \end{subproof}
+    Follows by
+        \auto{automorphism_inverse_graph,logical_graph_on_function}.
+\end{proof}
+
+\begin{proposition}\label{automorphism_inverse_graph_apply}
+    Suppose $f\in\automorphismSet{G}$.
+    Then $\apply{\automorphismInverseGraph{G}}{f}=\converse{f}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{automorphism_inverse_graph,automorphism_inverse_op,logical_graph_on_apply}.
+\end{proof}
+
+\begin{definition}\label{automorphism_group}
+    $\automorphismGroup{G}=
+        \structure[group]{
+            \carrier=\automorphismSet{G},
+            \mul=\automorphismMultiplicationGraph{G},
+            \neutral=\identity{\carrier[G]},
+            \groupInv=\automorphismInverseGraph{G}
+        }$.
+\end{definition}
+
+\begin{proposition}\label{automorphism_group_carrier}
+    $\carrier[\automorphismGroup{G}]=\automorphismSet{G}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{automorphism_group,groupaggregateprojection_carrier}.
+\end{proof}
+
+\begin{proposition}\label{automorphism_group_mul_graph}
+    $\mul[\automorphismGroup{G}]=
+        \automorphismMultiplicationGraph{G}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{automorphism_group,groupaggregateprojection_mul}.
+\end{proof}
+
+\begin{proposition}\label{automorphism_group_neutral}
+    $\neutral[\automorphismGroup{G}]=\identity{\carrier[G]}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{automorphism_group,groupaggregateprojection_neutral}.
+\end{proof}
+
+\begin{proposition}\label{automorphism_group_inv_graph}
+    $\groupInv[\automorphismGroup{G}]=
+        \automorphismInverseGraph{G}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{automorphism_group,groupaggregateprojection_groupInv}.
+\end{proof}
+
+\begin{proposition}\label{automorphism_group_mul_apply}
+    Suppose $f,g\in\automorphismSet{G}$.
+    Then $\mul[\automorphismGroup{G}](f,g)=f\circ g$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{automorphism_group_mul_graph,automorphism_multiplication_graph_apply}.
+\end{proof}
+
+\begin{proposition}\label{automorphism_group_inv_apply}
+    Suppose $f\in\automorphismSet{G}$.
+    Then $\groupInv[\automorphismGroup{G}](f)=\converse{f}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{automorphism_group_inv_graph,automorphism_inverse_graph_apply}.
+\end{proof}
+
+\begin{theorem}\label{automorphism_group_is_exact_group}
+    Let $G$ be a group.
+    Then $\automorphismGroup{G}$ is an exact group.
+\end{theorem}
+\begin{proof}
+    Let $A=\automorphismSet{G}$.
+    Let $K=\automorphismGroup{G}$.
+    $\carrier[K]=A$ by \auto{automorphism_group_carrier}.
+    $\mul[K]=\automorphismMultiplicationGraph{G}$ by
+        \auto{automorphism_group_mul_graph}.
+    $\neutral[K]=\identity{\carrier[G]}$ by
+        \auto{automorphism_group_neutral}.
+    $\groupInv[K]=\automorphismInverseGraph{G}$ by
+        \auto{automorphism_group_inv_graph}.
+    $\mul[K]\in\funs{\carrier[K]\times\carrier[K]}{\carrier[K]}$ by
+        \auto{automorphism_multiplication_graph_type}.
+    $\neutral[K]\in\carrier[K]$ by
+        \auto{automorphism_identity_closed}.
+    $\groupInv[K]\in\funs{\carrier[K]}{\carrier[K]}$ by
+        \auto{automorphism_inverse_graph_type}.
+    Show that for every $f\in\carrier[K]$ we have
+        $\mul[K](f,\neutral[K])=f$.
+    \begin{subproof}
+        Fix $f\in\carrier[K]$.
+        Hence $f\in A$.
+        $f\in\funs{\carrier[G]}{\carrier[G]}$ by
+            \obv{automorphism_set_type,bijections_to_funs}.
+        $\mul[K](f,\neutral[K])=
+            f\circ\identity{\carrier[G]}$ by
+            \auto{automorphism_group_mul_apply}.
+        Follows by \obv{funs_circ_identity_right}.
+    \end{subproof}
+    Show that for every $f\in\carrier[K]$ we have
+        $\mul[K](\neutral[K],f)=f$.
+    \begin{subproof}
+        Fix $f\in\carrier[K]$.
+        Hence $f\in A$.
+        $f\in\funs{\carrier[G]}{\carrier[G]}$ by
+            \obv{automorphism_set_type,bijections_to_funs}.
+        $\mul[K](\neutral[K],f)=
+            \identity{\carrier[G]}\circ f$ by
+            \auto{automorphism_group_mul_apply}.
+        Follows by \obv{funs_identity_circ_left}.
+    \end{subproof}
+    Show that for all $f,g,h\in\carrier[K]$ we have
+        $\mul[K](f,\mul[K](g,h))=
+            \mul[K](\mul[K](f,g),h)$.
+    \begin{subproof}
+        Fix $f,g,h\in\carrier[K]$.
+        Hence $f,g,h\in A$.
+        $f\circ g\in A$ and $g\circ h\in A$ by
+            \obv{automorphism_composition_closed}.
+        $\mul[K](f,\mul[K](g,h))=f\circ(g\circ h)$ by
+            \auto{automorphism_group_mul_apply}.
+        $\mul[K](\mul[K](f,g),h)=(f\circ g)\circ h$ by
+            \auto{automorphism_group_mul_apply}.
+        Follows by \auto{circ_assoc}.
+    \end{subproof}
+    Show that for every $f\in\carrier[K]$ we have
+        $\mul[K](f,\groupInv[K](f))=\neutral[K]$.
+    \begin{subproof}
+        Fix $f\in\carrier[K]$.
+        Hence $f\in A$.
+        $\converse{f}\in A$ by \obv{automorphism_inverse_closed}.
+        $\mul[K](f,\groupInv[K](f))=f\circ\converse{f}$ by
+            \auto{automorphism_group_mul_apply,automorphism_group_inv_apply}.
+        Follows by
+            \auto{automorphism_set_type,bijection_circ_converse}.
+    \end{subproof}
+    Show that for every $f\in\carrier[K]$ we have
+        $\mul[K](\groupInv[K](f),f)=\neutral[K]$.
+    \begin{subproof}
+        Fix $f\in\carrier[K]$.
+        Hence $f\in A$.
+        $\converse{f}\in A$ by \obv{automorphism_inverse_closed}.
+        $\mul[K](\groupInv[K](f),f)=\converse{f}\circ f$ by
+            \auto{automorphism_group_mul_apply,automorphism_group_inv_apply}.
+        Follows by
+            \auto{automorphism_set_type,bijection_converse_circ}.
+    \end{subproof}
+    Hence $K$ is a group by
+        \auto{group,automorphism_group,groupaggregateexact,groupaggregateprojection_carrier,groupaggregateprojection_mul,groupaggregateprojection_neutral,groupaggregateprojection_groupInv}.
+    Follows by \auto{automorphism_group,groupaggregateexact}.
+\end{proof}
+
+\begin{classification}\label{automorphism_group_is_group}
+    Let $G$ be a group.
+    Then $\automorphismGroup{G}$ is a group.
+\end{classification}
+\begin{proof}
+    Follows by \obv{automorphism_group_is_exact_group}.
+\end{proof}
+
+\subsection{Transport along a chosen isomorphism}
+
+Transport is conjugation of graph maps by one chosen group isomorphism.  Its
+endpoint groups remain explicit because the graph $e$ does not remember them.
+
+\begin{definition}\label{automorphism_transport_op}
+    $\automorphismTransportOp:\Set\to\Set\to\Set
+        =\fun{e,f:\Set}{
+            e\circ(f\circ\converse{e})}$.
+\end{definition}
+
+\begin{definition}\label{automorphism_transport}
+    $\automorphismTransport{e}{G}{H}=
+        \Apply{\graphOnOp}
+            {\automorphismSet{G},\automorphismSet{H},\Apply{\automorphismTransportOp}{e}}$.
+\end{definition}
+
+\begin{proposition}\label{automorphism_transport_op_closed}
+    Suppose $\groupIsomorphism{e}{G}{H}$.
+    Suppose $f\in\automorphismSet{G}$.
+    Then
+        $\Apply{\automorphismTransportOp}{e,f}
+            \in\automorphismSet{H}$.
+\end{proposition}
+\begin{proof}
+    $\groupIsomorphism{\converse{e}}{H}{G}$ by
+        \obv{group_isomorphism_converse}.
+    $\groupIsomorphism{f}{G}{G}$ by
+        \obv{automorphism_set_iff}.
+    Hence $\groupIsomorphism{f\circ\converse{e}}{H}{G}$ by
+        \obv{group_isomorphism_composition}.
+    Hence
+        $\groupIsomorphism{e\circ(f\circ\converse{e})}{H}{H}$ by
+        \obv{group_isomorphism_composition}.
+    Follows by
+        \auto{automorphism_transport_op,automorphism_set_iff}.
+\end{proof}
+
+\begin{proposition}\label{automorphism_transport_type}
+    Suppose $\groupIsomorphism{e}{G}{H}$.
+    Then $\automorphismTransport{e}{G}{H}\in
+        \funs{\automorphismSet{G}}{\automorphismSet{H}}$.
+\end{proposition}
+\begin{proof}
+    Show that $\forall f:\Set.
+        f\in\automorphismSet{G}\implies
+        \Apply{\automorphismTransportOp}{e,f}
+            \in\automorphismSet{H}$.
+    \begin{subproof}
+        Fix $f:\Set$.
+        Assume $f\in\automorphismSet{G}$.
+        Follows by \obv{automorphism_transport_op_closed}.
+    \end{subproof}
+    Follows by
+        \auto{automorphism_transport,logical_graph_on_function}.
+\end{proof}
+
+\begin{proposition}\label{automorphism_transport_apply}
+    Suppose $\groupIsomorphism{e}{G}{H}$.
+    Let $f\in\automorphismSet{G}$.
+    Then
+        $\apply{\automorphismTransport{e}{G}{H}}{f}=
+            e\circ(f\circ\converse{e})$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{automorphism_transport,automorphism_transport_op,logical_graph_on_apply}.
+\end{proof}
+
+\begin{lemma}\label{automorphism_transport_op_mul}
+    Suppose $\groupIsomorphism{e}{G}{H}$.
+    Suppose $f,g\in\automorphismSet{G}$.
+    Then
+        $\Apply{\automorphismTransportOp}{e,f\circ g}=
+            \Apply{\automorphismTransportOp}{e,f}
+                \circ
+            \Apply{\automorphismTransportOp}{e,g}$.
+\end{lemma}
+\begin{proof}
+    Let $c=\converse{e}$.
+    $e\in\bijections{\carrier[G]}{\carrier[H]}$ by
+        \obv{group_isomorphism_is_bijection}.
+    Hence $e\in\funs{\carrier[G]}{\carrier[H]}$ by
+        \obv{bijections_to_funs}.
+    $c\in\funs{\carrier[H]}{\carrier[G]}$ by
+        \auto{bijective_converse_are_funs}.
+    $f,g\in\funs{\carrier[G]}{\carrier[G]}$ by
+        \obv{automorphism_set_type,bijections_to_funs}.
+    Hence $g\circ c\in\funs{\carrier[H]}{\carrier[G]}$ and
+        $f\circ c\in\funs{\carrier[H]}{\carrier[G]}$ by
+        \obv{funs_circ}.
+    Hence $e\circ(g\circ c),e\circ(f\circ c)\in
+        \funs{\carrier[H]}{\carrier[H]}$ by
+        \obv{funs_circ}.
+    $c\circ e=\identity{\carrier[G]}$ by
+        \auto{bijection_converse_circ}.
+    $\identity{\carrier[G]}\circ(g\circ c)=g\circ c$ by
+        \obv{funs_identity_circ_left}.
+    Hence $(c\circ e)\circ(g\circ c)=g\circ c$.
+    $c\circ(e\circ(g\circ c))=(c\circ e)\circ(g\circ c)$ by
+        \obv{circ_assoc}.
+    Hence $c\circ(e\circ(g\circ c))=g\circ c$.
+    $(f\circ c)\circ(e\circ(g\circ c))=
+        f\circ(c\circ(e\circ(g\circ c)))$ by
+        \obv{circ_assoc}.
+    Hence
+        $(f\circ c)\circ(e\circ(g\circ c))=f\circ(g\circ c)$.
+    $(e\circ(f\circ c))\circ(e\circ(g\circ c))=
+        e\circ((f\circ c)\circ(e\circ(g\circ c)))$ by
+        \obv{circ_assoc}.
+    Hence
+        $(e\circ(f\circ c))\circ(e\circ(g\circ c))=
+            e\circ(f\circ(g\circ c))$.
+    $(f\circ g)\circ c=f\circ(g\circ c)$ by
+        \obv{circ_assoc}.
+    Follows by \auto{automorphism_transport_op}.
+\end{proof}
+
+\begin{theorem}\label{automorphism_transport_group_hom}
+    Suppose $\groupIsomorphism{e}{G}{H}$.
+    Then
+        $\groupHom
+            {\automorphismTransport{e}{G}{H}}
+            {\automorphismGroup{G}}
+            {\automorphismGroup{H}}$.
+\end{theorem}
+\begin{proof}
+    Let $F=\automorphismTransport{e}{G}{H}$.
+    Let $A=\automorphismGroup{G}$.
+    Let $B=\automorphismGroup{H}$.
+    $G$ is a group and $H$ is a group by
+        \obv{group_isomorphism_is_hom,group_hom_source_group,group_hom_target_group}.
+    Hence $A$ is a group and $B$ is a group by
+        \obv{automorphism_group_is_group}.
+    $\carrier[A]=\automorphismSet{G}$ and
+        $\carrier[B]=\automorphismSet{H}$ by
+        \auto{automorphism_group_carrier}.
+    Hence $F\in\funs{\carrier[A]}{\carrier[B]}$ by
+        \auto{automorphism_transport_type}.
+    Show that for all $f,g\in\carrier[A]$ we have
+        $F(\mul[A](f,g))=\mul[B](F(f),F(g))$.
+    \begin{subproof}
+        Fix $f,g\in\carrier[A]$.
+        Hence $f,g\in\automorphismSet{G}$.
+        $f\circ g\in\automorphismSet{G}$ by
+            \obv{automorphism_composition_closed}.
+        $F(f),F(g)\in\automorphismSet{H}$ by
+            \obv{automorphism_transport_type,funs_type_apply}.
+        $\mul[A](f,g)=f\circ g$ by
+            \auto{automorphism_group_mul_apply}.
+        Hence $F(\mul[A](f,g))=e\circ((f\circ g)\circ\converse{e})$ by
+            \auto{automorphism_transport_apply}.
+        $F(f)=e\circ(f\circ\converse{e})$ and
+            $F(g)=e\circ(g\circ\converse{e})$ by
+            \auto{automorphism_transport_apply}.
+        Hence $F(\mul[A](f,g))=F(f)\circ F(g)$ by
+            \auto{automorphism_transport_op_mul,automorphism_transport_op}.
+        Follows by \auto{automorphism_group_mul_apply}.
+    \end{subproof}
+    Follows by \auto{group_hom}.
+\end{proof}
+
+\begin{theorem}\label{automorphism_transport_identity}
+    Let $G$ be a group.
+    Then
+        $\automorphismTransport{\identity{\carrier[G]}}{G}{G}
+            =\identity{\automorphismSet{G}}$.
+\end{theorem}
+\begin{proof}
+    Let $e=\identity{\carrier[G]}$.
+    Let $F=\automorphismTransport{e}{G}{G}$.
+    Let $A=\automorphismGroup{G}$.
+    $\groupIsomorphism{e}{G}{G}$ by
+        \auto{identity_group_isomorphism}.
+    Hence $\groupHom{F}{A}{A}$ by
+        \auto{automorphism_transport_group_hom}.
+    $\groupHom{\identity{\carrier[A]}}{A}{A}$ by
+        \obv{automorphism_group_is_group,identity_group_hom}.
+    $\carrier[A]=\automorphismSet{G}$ by
+        \auto{automorphism_group_carrier}.
+    Show that for every $f\in\carrier[A]$ we have
+        $F(f)=(\identity{\carrier[A]})(f)$.
+    \begin{subproof}
+        Fix $f\in\carrier[A]$.
+        Hence $f\in\automorphismSet{G}$.
+        $f\in\funs{\carrier[G]}{\carrier[G]}$ by
+            \obv{automorphism_set_type,bijections_to_funs}.
+        $\converse{e}=e$ by \auto{converse_identity}.
+        $f\circ e=f$ by \auto{funs_circ_identity_right}.
+        $e\circ f=f$ by \auto{funs_identity_circ_left}.
+        $F(f)=e\circ(f\circ\converse{e})$ by
+            \auto{automorphism_transport_apply}.
+        Hence $F(f)=f$.
+        Follows by \obv{id_apply}.
+    \end{subproof}
+    Hence $F=\identity{\carrier[A]}$ by
+        \obv{group_hom_extensionality}.
+\end{proof}
+
+\begin{theorem}\label{automorphism_transport_composition}
+    Suppose $\groupIsomorphism{e}{G}{H}$ and
+        $\groupIsomorphism{d}{H}{K}$.
+    Then
+        $\automorphismTransport{d\circ e}{G}{K}=
+            \automorphismTransport{d}{H}{K}\circ
+                \automorphismTransport{e}{G}{H}$.
+\end{theorem}
+\begin{proof}
+    Let $E=\automorphismTransport{e}{G}{H}$.
+    Let $D=\automorphismTransport{d}{H}{K}$.
+    Let $Q=\automorphismTransport{d\circ e}{G}{K}$.
+    Let $A=\automorphismGroup{G}$.
+    Let $B=\automorphismGroup{H}$.
+    Let $C=\automorphismGroup{K}$.
+    $\groupIsomorphism{d\circ e}{G}{K}$ by
+        \obv{group_isomorphism_composition}.
+    Hence $\groupHom{Q}{A}{C}$ by
+        \auto{automorphism_transport_group_hom}.
+    $\groupHom{E}{A}{B}$ and $\groupHom{D}{B}{C}$ by
+        \auto{automorphism_transport_group_hom}.
+    Hence $\groupHom{D\circ E}{A}{C}$ by
+        \obv{group_hom_composition}.
+    $\carrier[A]=\automorphismSet{G}$ and
+        $\carrier[B]=\automorphismSet{H}$ and
+        $\carrier[C]=\automorphismSet{K}$ by
+        \auto{automorphism_group_carrier}.
+    $E\in\funs{\carrier[A]}{\carrier[B]}$ and
+        $D\in\funs{\carrier[B]}{\carrier[C]}$ by
+        \obv{group_hom_type}.
+    Hence $E$ is a function and $D$ is a function and
+        $\dom{E}=\carrier[A]$ by
+        \auto{funs_elim}.
+    Hence $D$ is composable with $E$ by
+        \auto{funs_ran,funs}.
+    Show that for every $f\in\carrier[A]$ we have
+        $Q(f)=(D\circ E)(f)$.
+    \begin{subproof}
+        Fix $f\in\carrier[A]$.
+        Hence $f\in\automorphismSet{G}$.
+        $E(f)\in\automorphismSet{H}$ by
+            \obv{automorphism_transport_type,funs_type_apply}.
+        $(D\circ E)(f)=D(E(f))$ by \obv{circ_apply}.
+        $E(f)=e\circ(f\circ\converse{e})$ and
+            $D(E(f))=d\circ(E(f)\circ\converse{d})$ by
+            \auto{automorphism_transport_apply}.
+        Hence
+            $(D\circ E)(f)=
+                d\circ((e\circ(f\circ\converse{e}))
+                    \circ\converse{d})$.
+        $\converse{d\circ e}=\converse{e}\circ\converse{d}$ by
+            \obv{circ_converse}.
+        $(f\circ\converse{e})\circ\converse{d}=
+            f\circ(\converse{e}\circ\converse{d})$ by
+            \obv{circ_assoc}.
+        $(e\circ(f\circ\converse{e}))\circ\converse{d}=
+            e\circ((f\circ\converse{e})\circ\converse{d})$ by
+            \obv{circ_assoc}.
+        Hence
+            $(e\circ(f\circ\converse{e}))\circ\converse{d}=
+                e\circ(f\circ\converse{d\circ e})$.
+        $d\circ(e\circ(f\circ\converse{d\circ e}))=
+            (d\circ e)\circ(f\circ\converse{d\circ e})$ by
+            \obv{circ_assoc}.
+        Hence
+            $(D\circ E)(f)=
+                (d\circ e)\circ(f\circ\converse{d\circ e})$.
+        $Q(f)=(d\circ e)\circ(f\circ\converse{d\circ e})$ by
+            \auto{automorphism_transport_apply}.
+    \end{subproof}
+    Follows by \auto{group_hom_extensionality}.
+\end{proof}
+
+\begin{theorem}\label{automorphism_transport_bijection}
+    Suppose $\groupIsomorphism{e}{G}{H}$.
+    Then $\automorphismTransport{e}{G}{H}\in
+        \bijections{\automorphismSet{G}}{\automorphismSet{H}}$.
+\end{theorem}
+\begin{proof}
+    Let $c=\converse{e}$.
+    Let $F=\automorphismTransport{e}{G}{H}$.
+    Let $C=\automorphismTransport{c}{H}{G}$.
+    $G$ is a group and $H$ is a group by
+        \obv{group_isomorphism_is_hom,group_hom_source_group,group_hom_target_group}.
+    $\groupIsomorphism{c}{H}{G}$ by
+        \auto{group_isomorphism_converse}.
+    $F\in\funs{\automorphismSet{G}}{\automorphismSet{H}}$ and
+        $C\in\funs{\automorphismSet{H}}{\automorphismSet{G}}$ by
+        \auto{automorphism_transport_type}.
+    Hence $F$ is a function and $C$ is a function and
+        $\dom{F}=\automorphismSet{G}$ and
+        $\dom{C}=\automorphismSet{H}$ by
+        \auto{funs_elim}.
+    Hence $C$ is composable with $F$ and
+        $F$ is composable with $C$ by
+        \obv{funs_ran,funs}.
+    $e\in\bijections{\carrier[G]}{\carrier[H]}$ by
+        \obv{group_isomorphism_is_bijection}.
+    Hence $c\circ e=\identity{\carrier[G]}$ and
+        $e\circ c=\identity{\carrier[H]}$ by
+        \auto{bijection_converse_circ,bijection_circ_converse}.
+    $C\circ F=\automorphismTransport{c\circ e}{G}{G}$ by
+        \auto{automorphism_transport_composition}.
+    $\automorphismTransport{c\circ e}{G}{G}=
+        \automorphismTransport{\identity{\carrier[G]}}{G}{G}$.
+    Hence $C\circ F=\identity{\automorphismSet{G}}$ by
+        \obv{automorphism_transport_identity}.
+    $F\circ C=\automorphismTransport{e\circ c}{H}{H}$ by
+        \auto{automorphism_transport_composition}.
+    $\automorphismTransport{e\circ c}{H}{H}=
+        \automorphismTransport{\identity{\carrier[H]}}{H}{H}$.
+    Hence $F\circ C=\identity{\automorphismSet{H}}$ by
+        \obv{automorphism_transport_identity}.
+    Show that $F$ is injective.
+    \begin{subproof}
+        Show that for all $f,g\in\dom{F}$ we have
+            $F(f)=F(g)\implies f=g$.
+        \begin{subproof}
+            Fix $f,g\in\dom{F}$.
+            Assume $F(f)=F(g)$.
+            $f,g\in\automorphismSet{G}$ by \obv{funs_elim}.
+            $F(f),F(g)\in\automorphismSet{H}$ by
+                \obv{funs_type_apply}.
+            $C(F(f))=f$ and $C(F(g))=g$ by
+                \auto{circ_apply,id_apply}.
+        \end{subproof}
+        Follows by \obv{injective_function}.
+    \end{subproof}
+    Show that $F\in\surj{\automorphismSet{G}}{\automorphismSet{H}}$.
+    \begin{subproof}
+        Show that for every $h\in\automorphismSet{H}$ there exists
+            $f\in\automorphismSet{G}$ such that $F(f)=h$.
+        \begin{subproof}
+            Fix $h\in\automorphismSet{H}$.
+            Let $f=C(h)$.
+            $f\in\automorphismSet{G}$ by
+                \auto{funs_type_apply}.
+            $F(C(h))=h$ by \auto{circ_apply,id_apply}.
+        \end{subproof}
+        Follows by \obv{surj}.
+    \end{subproof}
+    Follows by \obv{bijections}.
+\end{proof}
+
+\begin{theorem}\label{automorphism_transport_group_isomorphism}
+    Suppose $\groupIsomorphism{e}{G}{H}$.
+    Then
+        $\groupIsomorphism
+            {\automorphismTransport{e}{G}{H}}
+            {\automorphismGroup{G}}
+            {\automorphismGroup{H}}$.
+\end{theorem}
+\begin{proof}
+    $\groupHom
+        {\automorphismTransport{e}{G}{H}}
+        {\automorphismGroup{G}}
+        {\automorphismGroup{H}}$ by
+        \obv{automorphism_transport_group_hom}.
+    $\automorphismTransport{e}{G}{H}\in
+        \bijections{\automorphismSet{G}}{\automorphismSet{H}}$ by
+        \obv{automorphism_transport_bijection}.
+    $\carrier[\automorphismGroup{G}]=\automorphismSet{G}$ and
+        $\carrier[\automorphismGroup{H}]=\automorphismSet{H}$ by
+        \obv{automorphism_group_carrier}.
+    Follows by \obv{group_isomorphism}.
+\end{proof}

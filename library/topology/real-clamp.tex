@@ -1,0 +1,483 @@
+\import{logic/conditional.tex}
+\import{topology/real-order-intervals.tex}
+\import{topology/metric-continuity.tex}
+\import{topology/subspace-continuity.tex}
+\import{set/logical-graph.tex}
+
+\section{Projection onto a closed real interval}
+
+\subsection{The scalar clamp}
+
+\begin{definition}\label{real_clamp_value}
+    $\realClampValue{a}{b}{x}
+        =\Apply{\logicalIfSetOp}{(\surrealLt{x}{a}),a,
+            \Apply{\logicalIfSetOp}{(\surrealLt{b}{x}),b,x}}$.
+\end{definition}
+
+\begin{definition}\label{real_clamp}
+    $\realClamp{a}{b}=\Apply{\graphOnDomainOp}
+        {\reals,\fun{x:\Set}{\realClampValue{a}{b}{x}}}$.
+\end{definition}
+
+\begin{proposition}\label{real_clamp_value_below}
+    Suppose $\surrealLt{x}{a}$.
+    Then $\realClampValue{a}{b}{x}=a$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{real_clamp_value,logical_if_set_true}.
+\end{proof}
+
+\begin{proposition}\label{real_clamp_value_inside}
+    Let $a,b,x\in\reals$.
+    Suppose $\surrealLe{a}{x}$ and $\surrealLe{x}{b}$.
+    Then $\realClampValue{a}{b}{x}=x$.
+\end{proposition}
+\begin{proof}
+    It is not the case that $\surrealLt{x}{a}$
+        by
+        \obv{surreal_le,surreal_lt_asymmetric,surreal_real_is_surreal}.
+    It is not the case that $\surrealLt{b}{x}$
+        by
+        \obv{surreal_le,surreal_lt_asymmetric,surreal_real_is_surreal}.
+    $\realClampValue{a}{b}{x}
+        =\Apply{\logicalIfSetOp}{(\surrealLt{b}{x}),b,x}$
+        by \obv{real_clamp_value,logical_if_set_false}.
+    $\Apply{\logicalIfSetOp}{(\surrealLt{b}{x}),b,x}=x$
+        by \obv{logical_if_set_false}.
+\end{proof}
+
+\begin{proposition}\label{real_clamp_value_above}
+    Let $a,b,x\in\reals$.
+    Suppose $\surrealLe{a}{b}$ and $\surrealLt{b}{x}$.
+    Then $\realClampValue{a}{b}{x}=b$.
+\end{proposition}
+\begin{proof}
+    $\surrealLt{a}{x}$
+        by
+        \obv{surreal_le_lt_transitive,surreal_real_is_surreal}.
+    $\surreal{a}$ and $\surreal{x}$
+        by \obv{surreal_real_is_surreal}.
+    Hence it is not the case that $\surrealLt{x}{a}$
+        by \obv{surreal_lt_asymmetric}.
+    $\realClampValue{a}{b}{x}
+        =\Apply{\logicalIfSetOp}{(\surrealLt{b}{x}),b,x}$
+        by \obv{real_clamp_value,logical_if_set_false}.
+    $\Apply{\logicalIfSetOp}{(\surrealLt{b}{x}),b,x}=b$
+        by \obv{logical_if_set_true}.
+\end{proof}
+
+\begin{proposition}\label{real_clamp_typed_real}
+    Let $a,b\in\reals$.
+    Then $\realClamp{a}{b}\in\funs{\reals}{\reals}$.
+\end{proposition}
+\begin{proof}
+    Show that for every $x\in\reals$ we have
+        $\realClampValue{a}{b}{x}\in\reals$.
+    \begin{subproof}
+        Fix $x\in\reals$.
+        \begin{byCase}
+        \caseOf{$\surrealLt{x}{a}$.}
+            Follows by \obv{real_clamp_value_below}.
+        \caseOf{not $\surrealLt{x}{a}$.}
+            \begin{byCase}
+            \caseOf{$\surrealLt{b}{x}$.}
+                Follows by
+                    \auto{real_clamp_value,logical_if_set_false,logical_if_set_true}.
+            \caseOf{not $\surrealLt{b}{x}$.}
+                Follows by
+                    \auto{real_clamp_value,logical_if_set_false}.
+            \end{byCase}
+        \end{byCase}
+    \end{subproof}
+    Follows by \auto{real_clamp,logical_graph_on_domain_type}.
+\end{proof}
+
+\begin{proposition}\label{real_clamp_apply}
+    Let $x\in\reals$.
+    Then $\apply{\realClamp{a}{b}}{x}=\realClampValue{a}{b}{x}$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{real_clamp,logical_graph_on_domain_apply}.
+\end{proof}
+
+\begin{theorem}\label{real_clamp_in_closed_interval}
+    Let $a,b,x\in\reals$.
+    Suppose $\surrealLe{a}{b}$.
+    Then
+        $\apply{\realClamp{a}{b}}{x}\in\realClosedInterval{a}{b}$.
+\end{theorem}
+\begin{proof}
+    $\apply{\realClamp{a}{b}}{x}=\realClampValue{a}{b}{x}$
+        by \obv{real_clamp_apply}.
+    \begin{byCase}
+    \caseOf{$\surrealLt{x}{a}$.}
+        $\realClampValue{a}{b}{x}=a$
+            by \obv{real_clamp_value_below}.
+        $a\in\realClosedInterval{a}{b}$
+            by
+            \obv{real_closed_interval,surreal_le_reflexive,surreal_real_is_surreal}.
+    \caseOf{not $\surrealLt{x}{a}$.}
+        \begin{byCase}
+        \caseOf{$\surrealLt{b}{x}$.}
+            $\realClampValue{a}{b}{x}=b$
+                by \obv{real_clamp_value_above}.
+            $b\in\realClosedInterval{a}{b}$
+                by
+                \obv{real_closed_interval,surreal_le_reflexive,surreal_real_is_surreal}.
+        \caseOf{not $\surrealLt{b}{x}$.}
+            $\surreal{a}$ and $\surreal{b}$ and $\surreal{x}$
+                by \obv{surreal_real_is_surreal}.
+            $\surrealLe{a}{x}$
+                by \auto{surreal_le_total,surreal_le}.
+            $\surrealLe{x}{b}$
+                by \auto{surreal_le_total,surreal_le}.
+            Hence $\realClampValue{a}{b}{x}=x$
+                by \obv{real_clamp_value_inside}.
+            Follows by \obv{real_closed_interval_member_iff}.
+        \end{byCase}
+    \end{byCase}
+\end{proof}
+
+\begin{proposition}\label{real_clamp_fixes_closed_interval}
+    Let $a,b\in\reals$.
+    Let $x\in\realClosedInterval{a}{b}$.
+    Then $\apply{\realClamp{a}{b}}{x}=x$.
+\end{proposition}
+\begin{proof}
+    $x\in\reals$ and $\surrealLe{a}{x}$ and $\surrealLe{x}{b}$
+        by \obv{real_closed_interval}.
+    Follows by
+        \auto{real_clamp_apply,real_clamp_value_inside}.
+\end{proof}
+
+\begin{theorem}\label{real_clamp_range}
+    Let $a,b\in\reals$.
+    Suppose $\surrealLe{a}{b}$.
+    Then $\realClamp{a}{b}
+        \in\funs{\reals}{\realClosedInterval{a}{b}}$.
+\end{theorem}
+\begin{proof}
+    $\realClamp{a}{b}\in\funs{\reals}{\reals}$
+        by \obv{real_clamp_typed_real}.
+    For every $x\in\reals$ we have
+        $\apply{\realClamp{a}{b}}{x}\in\realClosedInterval{a}{b}$
+        by \obv{real_clamp_in_closed_interval}.
+    Follows by \obv{funs_intro,funs_is_function,funs}.
+\end{proof}
+
+\begin{proposition}\label{real_clamp_circ_fixes_interval_map}
+    Let $a,b\in\reals$.
+    Suppose $f\in\funs{D}{\realClosedInterval{a}{b}}$.
+    Then $\realClamp{a}{b}\circ f=f$.
+\end{proposition}
+\begin{proof}
+    $f$ is a function and $\dom{f}=D$ and
+        $\ran{f}\subseteq\realClosedInterval{a}{b}$
+        by \obv{funs_is_function,funs,funs_ran}.
+    $f$ is a function to $\realClosedInterval{a}{b}$
+        by \obv{funs_elim}.
+    $\realClosedInterval{a}{b}\subseteq\reals$
+        by \obv{real_closed_interval_subset_reals}.
+    Hence $\ran{f}\subseteq\reals$ by \obv{subseteq_transitive}.
+    Hence $f$ is a function to $\reals$
+        by \obv{function_on_weaken_codom}.
+    Hence $f\in\funs{D}{\reals}$ by \obv{funs_intro}.
+    $\realClamp{a}{b}$ is a function and
+        $\dom{\realClamp{a}{b}}=\reals$
+        by \auto{real_clamp_typed_real,funs_is_function,funs}.
+    Hence $\ran{f}\subseteq\dom{\realClamp{a}{b}}$.
+    $\realClamp{a}{b}\circ f\in\funs{D}{\reals}$
+        by \obv{real_clamp_typed_real,funs_circ}.
+    Show that for every $x\in D$ we have
+        $(\realClamp{a}{b}\circ f)(x)=f(x)$.
+    \begin{subproof}
+        Fix $x\in D$.
+        $f(x)\in\realClosedInterval{a}{b}$
+            by \obv{funs_type_apply}.
+        $(\realClamp{a}{b}\circ f)(x)
+            =\apply{\realClamp{a}{b}}{f(x)}$
+            by \obv{circ_apply}.
+        Follows by \obv{real_clamp_fixes_closed_interval}.
+    \end{subproof}
+    Follows by \obv{typed_functions_equal_from_agreement}.
+\end{proof}
+
+\begin{theorem}\label{real_clamp_nondecreasing}
+    Let $a,b,x,y\in\reals$.
+    Suppose $\surrealLe{a}{b}$ and $\surrealLe{x}{y}$.
+    Then
+        $\surrealLe{\apply{\realClamp{a}{b}}{x}}
+            {\apply{\realClamp{a}{b}}{y}}$.
+\end{theorem}
+\begin{proof}
+    Let $c_x=\apply{\realClamp{a}{b}}{x}$ and
+        $c_y=\apply{\realClamp{a}{b}}{y}$.
+    $c_x,c_y\in\realClosedInterval{a}{b}$
+        by \auto{real_clamp_in_closed_interval}.
+    Hence $\surrealLe{a}{c_x}$ and $\surrealLe{c_x}{b}$ and
+        $\surrealLe{a}{c_y}$ and $\surrealLe{c_y}{b}$
+        by \auto{real_closed_interval_member_iff}.
+    \begin{byCase}
+    \caseOf{$\surrealLt{x}{a}$.}
+        $c_x=a$ by
+            \auto{real_clamp_apply,real_clamp_value_below}.
+    \caseOf{not $\surrealLt{x}{a}$.}
+        \begin{byCase}
+        \caseOf{$\surrealLt{b}{y}$.}
+            $c_y=b$ by
+                \auto{real_clamp_apply,real_clamp_value_above}.
+        \caseOf{not $\surrealLt{b}{y}$.}
+            $\surrealLe{a}{x}$ and $\surrealLe{y}{b}$
+                by
+                \auto{surreal_le_total,surreal_le,surreal_real_is_surreal}.
+            Hence $c_x=x$ and $c_y=y$
+                by
+                \auto{real_clamp_apply,real_clamp_value_inside,surreal_le_transitive,surreal_real_is_surreal}.
+        \end{byCase}
+    \end{byCase}
+\end{proof}
+
+\begin{lemma}\label{real_clamp_ordered_difference_bound}
+    Let $a,b,x,y\in\reals$.
+    Suppose $\surrealLe{a}{b}$ and $\surrealLe{x}{y}$.
+    Let $c_x=\apply{\realClamp{a}{b}}{x}$ and
+        $c_y=\apply{\realClamp{a}{b}}{y}$.
+    Then
+        $\surrealLe{\surrealAdd{c_y}{\surrealNeg{c_x}}}
+            {\surrealAdd{y}{\surrealNeg{x}}}$.
+\end{lemma}
+\begin{proof}
+    $c_x,c_y\in\reals$
+        by \auto{real_clamp_typed_real,funs_type_apply}.
+    Hence $\surreal{a}$ and $\surreal{b}$ and $\surreal{x}$ and
+        $\surreal{y}$ and $\surreal{c_x}$ and $\surreal{c_y}$
+        by \obv{surreal_real_is_surreal}.
+    Show that
+        $\surrealLe{\surrealAdd{c_y}{x}}{\surrealAdd{c_x}{y}}$.
+    \begin{subproof}
+        \begin{byCase}
+        \caseOf{$\surrealLt{x}{a}$.}
+            $c_x=a$ by
+                \auto{real_clamp_apply,real_clamp_value_below}.
+            \begin{byCase}
+            \caseOf{$\surrealLt{y}{a}$.}
+                $c_y=a$ by
+                    \auto{real_clamp_apply,real_clamp_value_below}.
+                Follows by
+                    \auto{surreal_add_le_right,surreal_add_commutative}.
+            \caseOf{not $\surrealLt{y}{a}$.}
+                \begin{byCase}
+                \caseOf{$\surrealLt{b}{y}$.}
+                    $c_y=b$ by
+                        \auto{real_clamp_apply,real_clamp_value_above}.
+                    $\surrealLe{x}{a}$ and $\surrealLe{b}{y}$
+                        by \obv{surreal_le}.
+                    Follows by
+                        \auto{surreal_add_le_both,surreal_add_commutative}.
+                \caseOf{not $\surrealLt{b}{y}$.}
+                    $\surrealLe{a}{y}$ and $\surrealLe{y}{b}$
+                        by \auto{surreal_le_total,surreal_le}.
+                    Hence $c_y=y$ by
+                        \auto{real_clamp_apply,real_clamp_value_inside}.
+                    $\surrealLe{x}{a}$ by \obv{surreal_le}.
+                    Follows by
+                        \auto{surreal_add_le_left,surreal_add_commutative}.
+                \end{byCase}
+            \end{byCase}
+        \caseOf{not $\surrealLt{x}{a}$.}
+            $\surrealLe{a}{x}$ by \auto{surreal_le_total,surreal_le}.
+            \begin{byCase}
+            \caseOf{$\surrealLt{b}{y}$.}
+                $c_y=b$ by
+                    \auto{real_clamp_apply,real_clamp_value_above}.
+                \begin{byCase}
+                \caseOf{$\surrealLt{b}{x}$.}
+                    $c_x=b$ by
+                        \auto{real_clamp_apply,real_clamp_value_above}.
+                    Follows by
+                        \auto{surreal_add_le_right,surreal_add_commutative}.
+                \caseOf{not $\surrealLt{b}{x}$.}
+                    $\surrealLe{x}{b}$ by
+                        \auto{surreal_le_total,surreal_le}.
+                    Hence $c_x=x$ by
+                        \auto{real_clamp_apply,real_clamp_value_inside}.
+                    $\surrealLe{b}{y}$ by \obv{surreal_le}.
+                    Follows by
+                        \auto{surreal_add_le_right,surreal_add_commutative}.
+                \end{byCase}
+            \caseOf{not $\surrealLt{b}{y}$.}
+                $\surrealLe{y}{b}$ by
+                    \auto{surreal_le_total,surreal_le}.
+                $\surrealLe{x}{b}$
+                    by \obv{surreal_le_transitive}.
+                Hence $c_x=x$ and $c_y=y$ by
+                    \auto{real_clamp_apply,real_clamp_value_inside,surreal_le_transitive}.
+                $\surrealAdd{c_y}{x}=\surrealAdd{c_x}{y}$
+                    by \auto{surreal_add_commutative}.
+                Follows by \obv{surreal_le_reflexive,surreal_add_is_surreal}.
+            \end{byCase}
+        \end{byCase}
+    \end{subproof}
+    Hence
+        $\surrealLe{
+            \surrealAdd{\surrealAdd{c_y}{x}}
+                {\surrealAdd{\surrealNeg{c_x}}{\surrealNeg{x}}}}
+            {\surrealAdd{\surrealAdd{c_x}{y}}
+                {\surrealAdd{\surrealNeg{c_x}}{\surrealNeg{x}}}}$
+        by
+        \obv{surreal_add_le_left,surreal_add_is_surreal,surreal_negation_is_surreal}.
+    Follows by
+        \auto{surreal_add_associative,surreal_add_commutative,surreal_add_inverse_right,surreal_add_zero_right,surreal_negation_is_surreal,surreal_add_is_surreal}.
+\end{proof}
+
+\begin{theorem}\label{real_clamp_nonexpansive}
+    Let $a,b,x,y\in\reals$.
+    Suppose $\surrealLe{a}{b}$.
+    Then
+        $\surrealLe{
+            \abs{\surrealAdd{\apply{\realClamp{a}{b}}{x}}
+                {\surrealNeg{\apply{\realClamp{a}{b}}{y}}}}}
+            {\abs{\surrealAdd{x}{\surrealNeg{y}}}}$.
+\end{theorem}
+\begin{proof}
+    Let $c_x=\apply{\realClamp{a}{b}}{x}$ and
+        $c_y=\apply{\realClamp{a}{b}}{y}$.
+    $c_x,c_y\in\reals$
+        by \auto{real_clamp_typed_real,funs_type_apply}.
+    Hence $\surreal{x}$ and $\surreal{y}$ and
+        $\surreal{c_x}$ and $\surreal{c_y}$
+        by \obv{surreal_real_is_surreal}.
+    $\surrealLe{x}{y}$ or $\surrealLe{y}{x}$
+        by \auto{surreal_le_total}.
+    \begin{byCase}
+    \caseOf{$\surrealLe{x}{y}$.}
+        $\surrealLe{c_x}{c_y}$
+            by \auto{real_clamp_nondecreasing}.
+        Hence
+            $\surrealLe{\surrealAdd{c_x}{\surrealNeg{c_y}}}
+                {\surrealZero}$ and
+            $\surrealLe{\surrealAdd{x}{\surrealNeg{y}}}
+                {\surrealZero}$
+            by
+            \auto{surreal_add_le_left,surreal_add_inverse_right,surreal_add_zero_right,surreal_negation_is_surreal,surreal_add_is_surreal}.
+        Hence
+            $\abs{\surrealAdd{c_x}{\surrealNeg{c_y}}}
+                =\surrealAdd{c_y}{\surrealNeg{c_x}}$ and
+            $\abs{\surrealAdd{x}{\surrealNeg{y}}}
+                =\surrealAdd{y}{\surrealNeg{x}}$
+            by
+            \auto{surreal_abs_nonpositive,surreal_difference_negation,surreal_negation_is_surreal,surreal_add_is_surreal}.
+        Follows by \auto{real_clamp_ordered_difference_bound}.
+    \caseOf{not $\surrealLe{x}{y}$.}
+        Hence $\surrealLe{y}{x}$.
+        $\surrealLe{c_y}{c_x}$
+            by \auto{real_clamp_nondecreasing}.
+        Hence
+            $\surrealLe{\surrealZero}
+                {\surrealAdd{c_x}{\surrealNeg{c_y}}}$ and
+            $\surrealLe{\surrealZero}
+                {\surrealAdd{x}{\surrealNeg{y}}}$
+            by
+            \auto{surreal_add_le_left,surreal_add_inverse_right,surreal_add_zero_right,surreal_negation_is_surreal,surreal_add_is_surreal}.
+        $\surreal{\surrealAdd{c_x}{\surrealNeg{c_y}}}$ and
+            $\surreal{\surrealAdd{x}{\surrealNeg{y}}}$
+            by \obv{surreal_negation_is_surreal,surreal_add_is_surreal}.
+        Hence
+            $\abs{\surrealAdd{c_x}{\surrealNeg{c_y}}}
+                =\surrealAdd{c_x}{\surrealNeg{c_y}}$ and
+            $\abs{\surrealAdd{x}{\surrealNeg{y}}}
+                =\surrealAdd{x}{\surrealNeg{y}}$
+            by \obv{surreal_abs_nonnegative}.
+        Follows by \auto{real_clamp_ordered_difference_bound}.
+    \end{byCase}
+\end{proof}
+
+\begin{theorem}\label{real_clamp_continuous}
+    Let $a,b\in\reals$.
+    Suppose $\surrealLe{a}{b}$.
+    Then $\realClamp{a}{b}$ is continuous from
+        $\RealTopology$ to $\RealTopology$.
+\end{theorem}
+\begin{proof}
+    Let $g=\realClamp{a}{b}$.
+    $\RealTopology$ is a topological space
+        by \obv{real_topology_is_topological_space}.
+    $\RealMetric$ is a metric space
+        by \obv{surreal_real_metric_space}.
+    $\RealMetric$ is a pseudometric space by
+        \obv{surreal_real_pseudometric_space}.
+    $g\in\funs{\carrier[\RealTopology]}{\carrier[\RealMetric]}$
+        by
+        \auto{real_clamp_typed_real,real_topology_carrier,surreal_real_metric_carrier}.
+    Show that for every $x\in\carrier[\RealTopology]$ we have
+        for every $e\in\reals$ we have if
+            $\surrealLt{\surrealZero}{e}$, then there exists
+            $U\in\opens[\RealTopology]$ such that $x\in U$ and
+            for every $y\in U$ we have
+                $g(y)\in\metricBall{\RealMetric}{g(x)}{e}$.
+    \begin{subproof}
+        Fix $x\in\carrier[\RealTopology]$.
+        Fix $e\in\reals$.
+        Assume $\surrealLt{\surrealZero}{e}$.
+        Let $U=\metricBall{\RealMetric}{x}{e}$.
+        $x\in\reals$ by \obv{real_topology_carrier}.
+        Hence $x\in\carrier[\RealMetric]$
+            by \obv{surreal_real_metric_carrier}.
+        $U\in\metricOpens{\RealMetric}$
+            by \auto{metric_ball_is_open}.
+        Hence $U\in\opens[\RealTopology]$
+            by \auto{real_topology,metric_topology_opens}.
+        $x\in U$ by \obv{metric_ball_contains_centre}.
+        Show that for every $y\in U$ we have
+            $g(y)\in\metricBall{\RealMetric}{g(x)}{e}$.
+        \begin{subproof}
+            Fix $y\in U$.
+            $y\in\carrier[\RealMetric]$ and
+                $\surrealLt{\metricDistance[\RealMetric](x,y)}{e}$
+                by \auto{metric_ball_iff}.
+            Hence $y\in\reals$ by \obv{surreal_real_metric_carrier}.
+            $g(x),g(y)\in\reals$
+                by \auto{real_clamp_typed_real,funs_type_apply}.
+            $\surrealLe{\metricDistance[\RealMetric](g(x),g(y))}
+                {\metricDistance[\RealMetric](x,y)}$
+                by
+                \auto{surreal_real_metric_distance,real_clamp_nonexpansive}.
+            Hence
+                $\surrealLt{\metricDistance[\RealMetric](g(x),g(y))}{e}$
+                by
+                \auto{surreal_le_lt_transitive,metric_distance_type,surreal_real_metric_carrier,surreal_real_is_surreal}.
+            $g(y)\in\carrier[\RealMetric]$
+                by \obv{surreal_real_metric_carrier}.
+            Follows by \obv{metric_ball}.
+        \end{subproof}
+        Follows by \auto.
+    \end{subproof}
+    $\metricTopology{\RealMetric}=\RealTopology$
+        by \obv{real_topology}.
+    Follows by \auto{metric_continuous_iff_local_balls}.
+\end{proof}
+
+\begin{theorem}\label{real_clamp_continuous_to_closed_interval}
+    Let $a,b\in\reals$.
+    Suppose $\surrealLe{a}{b}$.
+    Then $\realClamp{a}{b}$ is continuous from $\RealTopology$ to
+        $\realClosedIntervalTopology{a}{b}$.
+\end{theorem}
+\begin{proof}
+    Let $g=\realClamp{a}{b}$.
+    $g$ is continuous from $\RealTopology$ to $\RealTopology$
+        by \auto{real_clamp_continuous}.
+    $\realClosedIntervalTopology{a}{b}
+        =\subspaceTopology{\RealTopology}{\realClosedInterval{a}{b}}$
+        by \obv{real_closed_interval_topology}.
+    $g\in\funs{\reals}{\realClosedInterval{a}{b}}$
+        by \auto{real_clamp_range}.
+    Hence $\ran{g}\subseteq\realClosedInterval{a}{b}$
+        by \obv{funs_ran}.
+    $\carrier[\realClosedIntervalTopology{a}{b}]
+        =\realClosedInterval{a}{b}$
+        by \obv{real_closed_interval_topology_carrier}.
+    Hence
+        $\ran{g}\subseteq\carrier[\realClosedIntervalTopology{a}{b}]$.
+    Follows by \obv{continuous_codomain_corestriction}.
+\end{proof}

@@ -1,0 +1,498 @@
+\section{The topology determined by coordinates}
+
+\import{topology/coordinate-chart.tex}
+\import{topology/generated-continuity.tex}
+\import{topology/discrete.tex}
+
+Each raw chart gives a topology on the bare source by testing open coordinate
+images. Taking the common open sets gives a topology for any family of raw
+charts. Compatibility and coverage will then make the charts into local
+homeomorphisms and characterize the resulting topology uniquely.
+
+\subsection{The common open sets}
+
+\begin{theorem}\label{raw_chart_induced_topology}
+    Suppose $c$ is a raw coordinate chart on $X$ modelled on $E$.
+    Then $\{U\in\pow{X}\mid\img{c}{U}\in\opens[E]\}$ is a topology on $X$.
+\end{theorem}
+\begin{proof}
+    $E$ is a topological space and $c$ is an injection and
+        $\dom{c}\subseteq X$ and $\ran{c}\in\opens[E]$ by
+        \obv{raw_coordinate_chart}.
+    Let $S=\subspaceTopology{E}{\ran{c}}$.
+    $S$ is a topological space by
+        \auto{subspace_topology_is_topological_space}.
+    $\ran{c}\subseteq\carrier[E]$ by \obv{opens_type}.
+    $\carrier[S]=\ran{c}$ by \auto{subspace_topology_carrier_of_subset}.
+    $c\in\bijections{\dom{c}}{\ran{c}}$ by
+        \obv{injective_function_bijection_to_range}.
+    $\converse{c}\in\bijections{\ran{c}}{\dom{c}}$ by
+        \obv{bijection_converse_is_bijection}.
+    $\converse{c}\in\funs{\ran{c}}{\dom{c}}$ by \obv{bijections_to_funs}.
+    $\converse{c}\in\funs{\carrier[S]}{X}$ by \auto{funs_weaken_codom}.
+    Let $T=\preimageOpenFamily{S}{X}{\converse{c}}$.
+    $T$ is a topology on $X$ by \auto{preimage_open_family_is_topology}.
+    $\converse{\converse{c}}=c$ by \obv{converse_converse_eq}.
+    Show that for every $U$ we have $U\in T$ iff
+        $U\in\pow{X}$ and $\img{c}{U}\in\opens[E]$.
+    \begin{subproof}
+        Fix $U$.
+        $\preimg{\converse{c}}{U}=\img{\converse{\converse{c}}}{U}$ by
+            \obv{preim_eq_img_of_converse}.
+        $\img{c}{U}\subseteq\ran{c}$ by \obv{img_subseteq_ran}.
+        Follows by \auto{preimage_open_family,open_subspace_open_iff}.
+    \end{subproof}
+    $T=\{U\in\pow{X}\mid\img{c}{U}\in\opens[E]\}$ by \auto{setext}.
+\end{proof}
+
+\begin{definition}\label{coordinate_opens}
+    $\coordinateOpens{X}{E}{A}=\{U\in\pow{X}\mid
+        \text{for every $c\in A$ we have $\img{c}{U}\in\opens[E]$}\}$.
+\end{definition}
+
+\begin{theorem}\label{coordinate_opens_form_topology}
+    Suppose every element of $A$ is a raw coordinate chart on $X$ modelled on $E$.
+    Then $\coordinateOpens{X}{E}{A}$ is a topology on $X$.
+\end{theorem}
+\begin{proof}
+    Let $F=\{T\in\topologiesOn{X}\mid
+        \text{there exists $c\in A$ such that
+            $T=\{U\in\pow{X}\mid\img{c}{U}\in\opens[E]\}$}\}$.
+    Show that for every $c\in A$ we have
+        $\{U\in\pow{X}\mid\img{c}{U}\in\opens[E]\}\in F$.
+    \begin{subproof}
+        Fix $c\in A$.
+        $c$ is a raw coordinate chart on $X$ modelled on $E$.
+        Let $T=\{U\in\pow{X}\mid\img{c}{U}\in\opens[E]\}$.
+        $T$ is a topology on $X$ by \auto{raw_chart_induced_topology}.
+        $T\in\topologiesOn{X}$ by \obv{topology_in_topologies_on}.
+        Hence $T\in F$.
+    \end{subproof}
+    Show that $\coordinateOpens{X}{E}{A}=\boundedIntersection{\pow{X}}{F}$.
+    \begin{subproof}
+        Show that for every $U$ we have $U\in\coordinateOpens{X}{E}{A}$ iff
+            $U\in\boundedIntersection{\pow{X}}{F}$.
+        \begin{subproof}
+            Fix $U$.
+            Show that if $U\in\coordinateOpens{X}{E}{A}$, then
+                $U\in\boundedIntersection{\pow{X}}{F}$.
+            \begin{subproof}
+                Assume $U\in\coordinateOpens{X}{E}{A}$.
+                $U\in\pow{X}$ by \obv{coordinate_opens}.
+                Show that for every $T\in F$ we have $U\in T$.
+                \begin{subproof}
+                    Fix $T\in F$.
+                    Take $c\in A$ such that
+                        $T=\{V\in\pow{X}\mid\img{c}{V}\in\opens[E]\}$.
+                    $\img{c}{U}\in\opens[E]$ by \obv{coordinate_opens}.
+                    Follows by \auto.
+                \end{subproof}
+                Follows by \obv{bounded_intersection_iff}.
+            \end{subproof}
+            Show that if $U\in\boundedIntersection{\pow{X}}{F}$, then
+                $U\in\coordinateOpens{X}{E}{A}$.
+            \begin{subproof}
+                Assume $U\in\boundedIntersection{\pow{X}}{F}$.
+                $U\in\pow{X}$ by \obv{bounded_intersection_iff}.
+                Show that for every $c\in A$ we have $\img{c}{U}\in\opens[E]$.
+                \begin{subproof}
+                    Fix $c\in A$.
+                    Let $T=\{V\in\pow{X}\mid\img{c}{V}\in\opens[E]\}$.
+                    $T\in F$ by \auto.
+                    $U\in T$ by \obv{bounded_intersection_iff}.
+                \end{subproof}
+                Follows by \obv{coordinate_opens}.
+            \end{subproof}
+            Follows by \auto.
+        \end{subproof}
+        Follows by \obv{setext}.
+    \end{subproof}
+    $F\subseteq\topologiesOn{X}$ by \obv{subseteq}.
+    $\topologiesOn{X}$ is a closure system on $\pow{X}$ by
+        \obv{topologies_on_is_closure_system}.
+    $\boundedIntersection{\pow{X}}{F}\in\topologiesOn{X}$ by
+        \obv{closure_system_intersection}.
+    Follows by \obv{topologies_on_iff}.
+\end{proof}
+
+\begin{definition}\label{coordinate_topology}
+    $\CoordinateTopology{X}{E}{A}=\TopologicalSpaceOn{X}{\coordinateOpens{X}{E}{A}}$.
+\end{definition}
+
+\begin{theorem}\label{coordinate_topology_is_topological_space}
+    Suppose every element of $A$ is a raw coordinate chart on $X$ modelled on $E$.
+    Then $\CoordinateTopology{X}{E}{A}$ is a topological space.
+\end{theorem}
+\begin{proof}
+    $\coordinateOpens{X}{E}{A}$ is a topology on $X$ by
+        \obv{coordinate_opens_form_topology}.
+    Follows by \auto{coordinate_topology,topological_space_on_is_topological_space}.
+\end{proof}
+
+\begin{theorem}\label{coordinate_topology_is_exact}
+    Suppose every element of $A$ is a raw coordinate chart on $X$ modelled on $E$.
+    Then $\CoordinateTopology{X}{E}{A}$ is an exact topological space.
+\end{theorem}
+\begin{proof}
+    $\coordinateOpens{X}{E}{A}$ is a topology on $X$ by
+        \obv{coordinate_opens_form_topology}.
+    Follows by \auto{coordinate_topology,topological_space_on_is_exact}.
+\end{proof}
+
+\begin{proposition}\label{coordinate_topology_carrier}
+    Then $\carrier[\CoordinateTopology{X}{E}{A}]=X$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{coordinate_topology,topological_space_on_carrier}.
+\end{proof}
+
+\begin{proposition}\label{coordinate_topology_opens}
+    Then $\opens[\CoordinateTopology{X}{E}{A}]=\coordinateOpens{X}{E}{A}$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{coordinate_topology,topological_space_on_opens}.
+\end{proof}
+
+\subsection{Presentations and their charts}
+
+\begin{definition}\label{topological_coordinate_presentation}
+    $A$ is a topological coordinate presentation on $X$ modelled on $E$ iff
+        $E$ is a topological space and
+        every element of $A$ is a raw coordinate chart on $X$ modelled on $E$ and
+        (for all $c,d\in A$ we have
+            $c$ is topologically compatible with $d$ on $X$ modelled on $E$) and
+        for every $x\in X$ there exists $c\in A$ such that $x\in\dom{c}$.
+\end{definition}
+
+\begin{classification}\label{coordinate_presentation_topology}
+    Suppose $A$ is a topological coordinate presentation on $X$ modelled on $E$.
+    Then $\CoordinateTopology{X}{E}{A}$ is a topological space.
+\end{classification}
+\begin{proof}
+    Every element of $A$ is a raw coordinate chart on $X$ modelled on $E$ by
+        \obv{topological_coordinate_presentation}.
+    Follows by \obv{coordinate_topology_is_topological_space}.
+\end{proof}
+
+\begin{theorem}\label{coordinate_topology_open_iff}
+    Then $U\in\opens[\CoordinateTopology{X}{E}{A}]$ iff
+        $U\subseteq X$ and
+        for every $c\in A$ we have $\img{c}{U}\in\opens[E]$.
+\end{theorem}
+\begin{proof}
+    $\opens[\CoordinateTopology{X}{E}{A}]=\coordinateOpens{X}{E}{A}$ by
+        \obv{coordinate_topology_opens}.
+    $U\in\coordinateOpens{X}{E}{A}$ iff $U\in\pow{X}$ and
+        for every $c\in A$ we have $\img{c}{U}\in\opens[E]$
+        by \obv{coordinate_opens}.
+    $U\in\pow{X}$ iff $U\subseteq X$ by \obv{pow_iff}.
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{coordinate_chart_preimage_open}
+    Suppose $A$ is a topological coordinate presentation on $X$ modelled on $E$.
+    Let $c\in A$.
+    Suppose $V\in\opens[E]$.
+    Then $\preimg{c}{V}\in\opens[\CoordinateTopology{X}{E}{A}]$.
+\end{theorem}
+\begin{proof}
+    $c$ is a raw coordinate chart on $X$ modelled on $E$ by
+        \obv{topological_coordinate_presentation}.
+    $c$ is an injection and $\dom{c}\subseteq X$ by \obv{raw_coordinate_chart}.
+    $\preimg{c}{V}\subseteq\dom{c}$ by \obv{preimg_subseteq_dom}.
+    Hence $\preimg{c}{V}\subseteq X$ by \obv{subseteq_transitive}.
+    Show that for every $d\in A$ we have $\img{d}{\preimg{c}{V}}\in\opens[E]$.
+    \begin{subproof}
+        Fix $d\in A$.
+        $d$ is a raw coordinate chart on $X$ modelled on $E$ and
+            $c$ is topologically compatible with $d$ on $X$ modelled on $E$ by
+            \obv{topological_coordinate_presentation}.
+        $d$ is an injection by \obv{raw_coordinate_chart}.
+        $\chartTransition{d}{c}$ is an open partial homeomorphism from $E$ to $E$
+            by \obv{raw_chart_compatibility}.
+        $\img{\chartTransition{d}{c}}{V}\in\opens[E]$ by
+            \obv{open_partial_homeomorphism_image_open}.
+        $\preimg{c}{V}=\img{\converse{c}}{V}$ by
+            \obv{preim_eq_img_of_converse}.
+        $\converse{c}$ is a relation by \obv{converse_is_relation}.
+        $\img{d\circ\converse{c}}{V}=\img{d}{\img{\converse{c}}{V}}$ by
+            \obv{relation_composition_image}.
+        $\chartTransition{d}{c}=d\circ\converse{c}$ by \obv{chart_transition}.
+    \end{subproof}
+    Follows by \auto{coordinate_topology_open_iff}.
+\end{proof}
+
+\begin{theorem}\label{coordinate_chart_domain_open}
+    Suppose $A$ is a topological coordinate presentation on $X$ modelled on $E$.
+    Let $c\in A$.
+    Then $\dom{c}\in\opens[\CoordinateTopology{X}{E}{A}]$.
+\end{theorem}
+\begin{proof}
+    $c$ is a raw coordinate chart on $X$ modelled on $E$ by
+        \obv{topological_coordinate_presentation}.
+    $c$ is an injection and $\ran{c}\in\opens[E]$ by \obv{raw_coordinate_chart}.
+    $\preimg{c}{\ran{c}}\in\opens[\CoordinateTopology{X}{E}{A}]$ by
+        \obv{coordinate_chart_preimage_open}.
+    $c\in\funs{\dom{c}}{\ran{c}}$ by \obv{function_exact_type_to_range}.
+    $\preimg{c}{\ran{c}}=\dom{c}$ by \obv{preimg_codom_of_function}.
+\end{proof}
+
+\begin{theorem}\label{coordinate_chart_is_partial_homeomorphism}
+    Suppose $A$ is a topological coordinate presentation on $X$ modelled on $E$.
+    Let $c\in A$.
+    Then $c$ is an open partial homeomorphism from $\CoordinateTopology{X}{E}{A}$
+        to $E$.
+\end{theorem}
+\begin{proof}
+    Let $M=\CoordinateTopology{X}{E}{A}$.
+    Let $S=\subspaceTopology{M}{\dom{c}}$.
+    $M$ is a topological space by \auto{coordinate_presentation_topology}.
+    $S$ is a topological space by \auto{subspace_topology_is_topological_space}.
+    $c$ is a raw coordinate chart on $X$ modelled on $E$ by
+        \obv{topological_coordinate_presentation}.
+    $E$ is a topological space and $c$ is an injection and
+        $\ran{c}\in\opens[E]$ by \obv{raw_coordinate_chart}.
+    $\dom{c}\in\opens[M]$ by \auto{coordinate_chart_domain_open}.
+    $\dom{c}\subseteq\carrier[M]$ and $\ran{c}\subseteq\carrier[E]$ by
+        \obv{opens_type}.
+    $\carrier[S]=\dom{c}$ by \auto{subspace_topology_carrier_of_subset}.
+    $c\in\funs{\dom{c}}{\ran{c}}$ by \obv{function_exact_type_to_range}.
+    $c\in\funs{\carrier[S]}{\carrier[E]}$ by \auto{funs_weaken_codom}.
+
+    Show that for every $V\in\opens[E]$ we have $\preimg{c}{V}\in\opens[S]$.
+    \begin{subproof}
+        Fix $V\in\opens[E]$.
+        $\preimg{c}{V}\in\opens[M]$ by \auto{coordinate_chart_preimage_open}.
+        $\preimg{c}{V}\subseteq\dom{c}$ by \obv{preimg_subseteq_dom}.
+        Follows by \auto{open_subspace_open_iff}.
+    \end{subproof}
+    Hence $c$ is continuous from $S$ to $E$ by \obv{continuous_map}.
+
+    Show that for every $U\in\opens[S]$ we have $\img{c}{U}\in\opens[E]$.
+    \begin{subproof}
+        Fix $U\in\opens[S]$.
+        $U\in\opens[M]$ by \auto{open_subspace_open_iff}.
+        Follows by \auto{coordinate_topology_open_iff}.
+    \end{subproof}
+    Hence $c$ is an open map from $S$ to $E$ by \obv{open_map}.
+    $c$ is an open embedding from $S$ to $E$ by
+        \obv{continuous_injective_open_map_is_open_embedding}.
+    $c$ is a topological embedding from $S$ to $E$ by \obv{open_embedding}.
+    $c$ is a homeomorphism from $S$ to $\subspaceTopology{E}{\ran{c}}$ by
+        \obv{topological_embedding}.
+    Follows by \obv{open_partial_homeomorphism}.
+\end{proof}
+
+\subsection{Recovery and uniqueness}
+
+\begin{theorem}\label{open_chart_cover_is_coordinate_presentation}
+    Let $M,E$ be topological spaces.
+    Suppose every element of $A$ is an open partial homeomorphism from $M$ to $E$.
+    Suppose for every $x\in\carrier[M]$ there exists $c\in A$ such that $x\in\dom{c}$.
+    Then $A$ is a topological coordinate presentation on $\carrier[M]$
+        modelled on $E$.
+\end{theorem}
+\begin{proof}
+    Every element of $A$ is a raw coordinate chart on $\carrier[M]$
+        modelled on $E$ by \auto{open_partial_homeomorphism_is_raw_chart}.
+    For all $c,d\in A$ we have
+        $c$ is topologically compatible with $d$ on $\carrier[M]$
+            modelled on $E$ by \auto{open_partial_homeomorphisms_are_compatible}.
+    Follows by \obv{topological_coordinate_presentation}.
+\end{proof}
+
+\begin{theorem}\label{coordinate_opens_recovers_topology}
+    Let $M,E$ be topological spaces.
+    Suppose every element of $A$ is an open partial homeomorphism from $M$ to $E$.
+    Suppose for every $x\in\carrier[M]$ there exists $c\in A$ such that $x\in\dom{c}$.
+    Then $\coordinateOpens{\carrier[M]}{E}{A}=\opens[M]$.
+\end{theorem}
+\begin{proof}
+    Show that every element of $\opens[M]$ is an element of
+        $\coordinateOpens{\carrier[M]}{E}{A}$.
+    \begin{subproof}
+        Fix $U\in\opens[M]$.
+        $U\subseteq\carrier[M]$ by \obv{opens_type}.
+        For every $c\in A$ we have $\img{c}{U}\in\opens[E]$ by
+            \auto{open_partial_homeomorphism_image_open}.
+        Follows by \obv{coordinate_opens,powerset_intro}.
+    \end{subproof}
+    Show that every element of $\coordinateOpens{\carrier[M]}{E}{A}$
+        is an element of $\opens[M]$.
+    \begin{subproof}
+        Fix $U\in\coordinateOpens{\carrier[M]}{E}{A}$.
+        $U\subseteq\carrier[M]$ by \obv{coordinate_opens,powerset_elim}.
+        Show that for every $x\in U$ there exists $V\in\opens[M]$ such that
+            $x\in V$ and $V\subseteq U$.
+        \begin{subproof}
+            Fix $x\in U$.
+            $x\in\carrier[M]$ by \obv{subseteq}.
+            Take $c\in A$ such that $x\in\dom{c}$.
+            $c$ is an open partial homeomorphism from $M$ to $E$.
+            $\img{c}{U}\in\opens[E]$ by \obv{coordinate_opens}.
+            Let $V=\preimg{c}{\img{c}{U}}$.
+            $V\in\opens[M]$ by \auto{open_partial_homeomorphism_preimage_open}.
+            $c\in\bijections{\dom{c}}{\ran{c}}$ by
+                \obv{open_partial_homeomorphism_bijection}.
+            $c$ is a function and $c$ is injective by
+                \obv{bijection_is_function,bijections}.
+            $V=\dom{c}\inter U$ by \auto{preimage_image_domain_trace}.
+            $x\in V$ and $V\subseteq U$ by \auto{inter,inter_lower_right}.
+        \end{subproof}
+        Follows by \auto{open_iff_local_open_subsets}.
+    \end{subproof}
+    Follows by \obv{setext}.
+\end{proof}
+
+\begin{theorem}\label{coordinate_topology_recovers_reduct}
+    Let $M,E$ be topological spaces.
+    Suppose every element of $A$ is an open partial homeomorphism from $M$ to $E$.
+    Suppose for every $x\in\carrier[M]$ there exists $c\in A$ such that $x\in\dom{c}$.
+    Then $\CoordinateTopology{\carrier[M]}{E}{A}=\TopologicalReduct{M}$.
+\end{theorem}
+\begin{proof}
+    $\coordinateOpens{\carrier[M]}{E}{A}=\opens[M]$ by
+        \obv{coordinate_opens_recovers_topology}.
+    Follows by \obv{coordinate_topology,topological_reduct}.
+\end{proof}
+
+\begin{theorem}\label{coordinate_topology_unique}
+    Suppose $M$ is an exact topological space.
+    Suppose $A$ is a topological coordinate presentation on $X$ modelled on $E$.
+    Suppose $\carrier[M]=X$.
+    Suppose every element of $A$ is an open partial homeomorphism from $M$ to $E$.
+    Then $\CoordinateTopology{X}{E}{A}=M$.
+\end{theorem}
+\begin{proof}
+    $E$ is a topological space and for every $x\in X$ there exists
+        $c\in A$ such that $x\in\dom{c}$ by
+        \obv{topological_coordinate_presentation}.
+    $\CoordinateTopology{X}{E}{A}=\TopologicalReduct{M}$ by
+        \auto{coordinate_topology_recovers_reduct}.
+    $\TopologicalReduct{M}=M$ by \obv{topological_reduct_of_exact}.
+\end{proof}
+
+\subsection{Empty sources and two-chart covers}
+
+\begin{classification}\label{empty_coordinate_presentation}
+    Let $E$ be a topological space.
+    Then $\emptyset$ is a topological coordinate presentation on $\emptyset$
+        modelled on $E$.
+\end{classification}
+\begin{proof}
+    Follows by \auto{topological_coordinate_presentation,emptyset}.
+\end{proof}
+
+\begin{theorem}\label{empty_coordinate_opens}
+    Then $\coordinateOpens{X}{E}{\emptyset}=\pow{X}$.
+\end{theorem}
+\begin{proof}
+    Follows by \auto{setext,coordinate_opens,emptyset}.
+\end{proof}
+
+\begin{theorem}\label{empty_coordinate_topology}
+    Then $\CoordinateTopology{X}{E}{\emptyset}=\discreteTopology{X}$.
+\end{theorem}
+\begin{proof}
+    $\coordinateOpens{X}{E}{\emptyset}=\pow{X}$ by \obv{empty_coordinate_opens}.
+    Follows by \auto{coordinate_topology,discrete_topology,discrete_opens}.
+\end{proof}
+
+\begin{theorem}\label{empty_coordinate_presentation_iff}
+    Let $E$ be a topological space.
+    Then $\emptyset$ is a topological coordinate presentation on $X$
+        modelled on $E$ iff $X=\emptyset$.
+\end{theorem}
+\begin{proof}
+    If $\emptyset$ is a topological coordinate presentation on $X$ modelled on $E$,
+        then $X=\emptyset$ by
+        \auto{topological_coordinate_presentation,setext,emptyset}.
+    If $X=\emptyset$, then $\emptyset$ is a topological coordinate presentation
+        on $X$ modelled on $E$ by \obv{empty_coordinate_presentation}.
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{two_open_identity_charts}
+    Let $E$ be a topological space.
+    Suppose $U,V\in\opens[E]$ and $U\union V=\carrier[E]$.
+    Let $A=\{\identity{U},\identity{V}\}$.
+    Then $A$ is a topological coordinate presentation on $\carrier[E]$
+        modelled on $E$ and
+        $\CoordinateTopology{\carrier[E]}{E}{A}=\TopologicalReduct{E}$.
+\end{theorem}
+\begin{proof}
+    $\identity{U}$ is an open partial homeomorphism from $E$ to $E$ and
+        $\identity{V}$ is an open partial homeomorphism from $E$ to $E$ by
+        \obv{identity_open_partial_homeomorphism}.
+    Every element of $A$ is an open partial homeomorphism from $E$ to $E$
+        by \auto{cons_iff}.
+    For every $x\in\carrier[E]$ there exists $c\in A$ such that $x\in\dom{c}$
+        by \auto{cons_iff,id_dom,union_iff}.
+    $A$ is a topological coordinate presentation on $\carrier[E]$ modelled on $E$
+        by \obv{open_chart_cover_is_coordinate_presentation}.
+    $\CoordinateTopology{\carrier[E]}{E}{A}=\TopologicalReduct{E}$ by
+        \obv{coordinate_topology_recovers_reduct}.
+\end{proof}
+
+\begin{theorem}\label{cross_compatible_presentation_union}
+    Suppose $A$ is a topological coordinate presentation on $X$ modelled on $E$ and
+        $B$ is a topological coordinate presentation on $X$ modelled on $E$.
+    Suppose for every $a\in A$ we have for every $b\in B$ we have
+        $a$ is topologically compatible with $b$ on $X$ modelled on $E$.
+    Then $A\union B$ is a topological coordinate presentation on $X$ modelled on $E$.
+\end{theorem}
+\begin{proof}
+    Every element of $A\union B$ is a raw coordinate chart on $X$ modelled on $E$
+        by \auto{topological_coordinate_presentation,union_iff}.
+    For every $b\in B$ we have for every $a\in A$ we have
+        $b$ is topologically compatible with $a$ on $X$ modelled on $E$ by
+        \auto{raw_chart_compatibility_symmetric}.
+    For all $c,d\in A\union B$ we have
+        $c$ is topologically compatible with $d$ on $X$ modelled on $E$ by
+        \auto{topological_coordinate_presentation,union_iff}.
+    For every $x\in X$ there exists $c\in A\union B$ such that $x\in\dom{c}$ by
+        \auto{topological_coordinate_presentation,union_iff}.
+    Follows by \obv{topological_coordinate_presentation}.
+\end{proof}
+
+\begin{theorem}\label{coordinate_presentation_extension_topology}
+    Suppose $A$ is a topological coordinate presentation on $X$ modelled on $E$ and
+        $B$ is a topological coordinate presentation on $X$ modelled on $E$.
+    Suppose $A\subseteq B$.
+    Then $\CoordinateTopology{X}{E}{A}=\CoordinateTopology{X}{E}{B}$.
+\end{theorem}
+\begin{proof}
+    Let $M=\CoordinateTopology{X}{E}{B}$.
+    Every element of $B$ is a raw coordinate chart on $X$ modelled on $E$ by
+        \obv{topological_coordinate_presentation}.
+    $M$ is an exact topological space by \auto{coordinate_topology_is_exact}.
+    $\carrier[M]=X$ by \auto{coordinate_topology_carrier}.
+    Every element of $B$ is an open partial homeomorphism from $M$ to $E$ by
+        \auto{coordinate_chart_is_partial_homeomorphism}.
+    Every element of $A$ is an open partial homeomorphism from $M$ to $E$ by
+        \auto{subseteq}.
+    For every $x\in\carrier[M]$ there exists $c\in A$ such that $x\in\dom{c}$ by
+        \auto{topological_coordinate_presentation}.
+    $\CoordinateTopology{\carrier[M]}{E}{A}=\TopologicalReduct{M}$ by
+        \obv{coordinate_topology_recovers_reduct}.
+    $\TopologicalReduct{M}=M$ by \obv{topological_reduct_of_exact}.
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{cross_compatible_presentations_same_topology}
+    Suppose $A$ is a topological coordinate presentation on $X$ modelled on $E$ and
+        $B$ is a topological coordinate presentation on $X$ modelled on $E$.
+    Suppose for every $a\in A$ we have for every $b\in B$ we have
+        $a$ is topologically compatible with $b$ on $X$ modelled on $E$.
+    Then $\CoordinateTopology{X}{E}{A}=\CoordinateTopology{X}{E}{B}$.
+\end{theorem}
+\begin{proof}
+    $A\union B$ is a topological coordinate presentation on $X$ modelled on $E$ by
+        \obv{cross_compatible_presentation_union}.
+    $A\subseteq A\union B$ and $B\subseteq A\union B$ by
+        \obv{union_upper_left,union_upper_right}.
+    $\CoordinateTopology{X}{E}{A}=\CoordinateTopology{X}{E}{A\union B}$ by
+        \obv{coordinate_presentation_extension_topology}.
+    $\CoordinateTopology{X}{E}{B}=\CoordinateTopology{X}{E}{A\union B}$ by
+        \obv{coordinate_presentation_extension_topology}.
+\end{proof}

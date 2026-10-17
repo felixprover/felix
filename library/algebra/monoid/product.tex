@@ -1,0 +1,783 @@
+\import{algebra/monoid/homomorphism.tex}
+\import{set/dependent-operation.tex}
+\import{set/function-space.tex}
+
+\section{Products of monoids}
+
+The product carrier is the dependent product of the displayed carrier family.
+Its multiplication is the common coordinatewise binary graph from the set
+layer.  In particular, later group, ring, and module products reuse this
+monoid construction rather than defining another pointwise multiplication.
+
+\subsection{Coordinate families}
+
+\begin{definition}\label{product_monoid_carrier_op}
+    $\productMonoidCarrierOp:\Set\to\Set\to\Set
+        =\fun{M,i:\Set}{\carrier[M(i)]}$.
+\end{definition}
+
+\begin{definition}\label{product_monoid_carrier_family}
+    $\productMonoidCarrierFamily{I}{M}
+        =\Apply{\graphOnDomainOp}{
+            I,\Apply{\productMonoidCarrierOp}{M}}$.
+\end{definition}
+
+\begin{proposition}\label{product_monoid_carrier_family_type}
+    $\productMonoidCarrierFamily{I}{M}$ is a function on $I$.
+\end{proposition}
+\begin{proof}
+    $\productMonoidCarrierFamily{I}{M}\in
+        \funs{I}{\ran{\productMonoidCarrierFamily{I}{M}}}$ by
+        \auto{product_monoid_carrier_family,
+            logical_graph_on_domain_function}.
+    Follows by \obv{funs_is_function,funs}.
+\end{proof}
+
+\begin{proposition}\label{product_monoid_carrier_family_apply}
+    Let $i\in I$.
+    Then $(\productMonoidCarrierFamily{I}{M})(i)=\carrier[M(i)]$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{product_monoid_carrier_family,
+            product_monoid_carrier_op,
+            logical_graph_on_domain_apply}.
+\end{proof}
+
+\begin{definition}\label{product_monoid_mul_op}
+    $\productMonoidMulOp:\Set\to\Set\to\Set
+        =\fun{M,i:\Set}{\mul[M(i)]}$.
+\end{definition}
+
+\begin{definition}\label{product_monoid_mul_family}
+    $\productMonoidMulFamily{I}{M}
+        =\Apply{\graphOnDomainOp}{
+            I,\Apply{\productMonoidMulOp}{M}}$.
+\end{definition}
+
+\begin{proposition}\label{product_monoid_mul_family_type}
+    $\productMonoidMulFamily{I}{M}$ is a function on $I$.
+\end{proposition}
+\begin{proof}
+    $\productMonoidMulFamily{I}{M}\in
+        \funs{I}{\ran{\productMonoidMulFamily{I}{M}}}$ by
+        \auto{product_monoid_mul_family,
+            logical_graph_on_domain_function}.
+    Follows by \obv{funs_is_function,funs}.
+\end{proof}
+
+\begin{proposition}\label{product_monoid_mul_family_apply}
+    Let $i\in I$.
+    Then $(\productMonoidMulFamily{I}{M})(i)=\mul[M(i)]$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{product_monoid_mul_family,product_monoid_mul_op,
+            logical_graph_on_domain_apply}.
+\end{proof}
+
+\begin{definition}\label{product_monoid_neutral_op}
+    $\productMonoidNeutralOp:\Set\to\Set\to\Set
+        =\fun{M,i:\Set}{\neutral[M(i)]}$.
+\end{definition}
+
+\begin{definition}\label{product_monoid_neutral}
+    $\productMonoidNeutral{I}{M}
+        =\Apply{\graphOnDomainOp}{
+            I,\Apply{\productMonoidNeutralOp}{M}}$.
+\end{definition}
+
+\begin{proposition}\label{product_monoid_neutral_coordinate}
+    Let $i\in I$.
+    Then
+        $(\productMonoidNeutral{I}{M})(i)=\neutral[M(i)]$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{product_monoid_neutral,product_monoid_neutral_op,
+            logical_graph_on_domain_apply}.
+\end{proof}
+
+\begin{proposition}\label{product_monoid_neutral_type}
+    Suppose $M$ is a function on $I$.
+    Suppose for every $i\in I$ we have $M(i)$ is a monoid.
+    Then
+        $\productMonoidNeutral{I}{M}\in
+            \dependentProduct{I}{\productMonoidCarrierFamily{I}{M}}$.
+\end{proposition}
+\begin{proof}
+    Let $C=\productMonoidCarrierFamily{I}{M}$.
+    Let $z=\productMonoidNeutral{I}{M}$.
+    $C$ is a function on $I$ by
+        \auto{product_monoid_carrier_family_type}.
+    $z\in\funs{I}{\ran{z}}$ by
+        \auto{product_monoid_neutral,
+            logical_graph_on_domain_function}.
+    Hence $z$ is a function and $\dom{z}=I$ by
+        \obv{funs_is_function,funs}.
+    Show that for every $i\in I$ we have $z(i)\in C(i)$.
+    \begin{subproof}
+        Fix $i\in I$.
+        $C(i)=\carrier[M(i)]$ by
+            \auto{product_monoid_carrier_family_apply}.
+        $z(i)=\neutral[M(i)]$ by
+            \auto{product_monoid_neutral_coordinate}.
+        Follows by
+            \auto{monoid_is_unital_magma,unitalmagma_type}.
+    \end{subproof}
+    Show that $z\in\funs{I}{\unions{\ran{C}}}$.
+    \begin{subproof}
+        Show that for every $i\in\dom{z}$ we have
+            $z(i)\in\unions{\ran{C}}$.
+        \begin{subproof}
+            Fix $i\in\dom{z}$.
+            Hence $i\in I$.
+            $z(i)\in C(i)$.
+            Follows by \obv{indexed_family_member_union}.
+        \end{subproof}
+        Follows by \obv{funs_intro}.
+    \end{subproof}
+    Follows by \auto{dependent_product_iff}.
+\end{proof}
+
+\subsection{The indexed product}
+
+\begin{definition}\label{product_monoid}
+    $\ProductMonoid{I}{M}=\structure[unital magma]{
+        \carrier=\dependentProduct
+            {I}{\productMonoidCarrierFamily{I}{M}},
+        \mul=\dependentBinaryOperation
+            {I}{\productMonoidCarrierFamily{I}{M}}
+            {\productMonoidCarrierFamily{I}{M}}
+            {\productMonoidCarrierFamily{I}{M}}
+            {\productMonoidMulFamily{I}{M}},
+        \neutral=\productMonoidNeutral{I}{M}
+    }$.
+\end{definition}
+
+\begin{proposition}\label{product_monoid_fields}
+    Let $C=\productMonoidCarrierFamily{I}{M}$.
+    $\carrier[\ProductMonoid{I}{M}]=\dependentProduct{I}{C}$ and
+    $\mul[\ProductMonoid{I}{M}]
+        =\dependentBinaryOperation{I}{C}{C}{C}{
+            \productMonoidMulFamily{I}{M}}$ and
+    $\neutral[\ProductMonoid{I}{M}]
+        =\productMonoidNeutral{I}{M}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{product_monoid,unitalmagmaaggregateprojection_carrier,
+            unitalmagmaaggregateprojection_mul,
+            unitalmagmaaggregateprojection_neutral}.
+\end{proof}
+
+\begin{proposition}\label{product_monoid_mul_coordinate}
+    Suppose $M$ is a function on $I$.
+    Suppose for every $j\in I$ we have $M(j)$ is a monoid.
+    Let $P=\ProductMonoid{I}{M}$.
+    Let $x,y\in\carrier[P]$ and $i\in I$.
+    Then
+        $\apply{\mul[P](x,y)}{i}=\mul[M(i)](x(i),y(i))$.
+\end{proposition}
+\begin{proof}
+    Let $C=\productMonoidCarrierFamily{I}{M}$.
+    Let $b=\productMonoidMulFamily{I}{M}$.
+    $C$ and $b$ are functions on $I$ by
+        \auto{product_monoid_carrier_family_type,
+            product_monoid_mul_family_type}.
+    Show that for every $j\in I$ we have
+        $b(j)\in\funs{C(j)\times C(j)}{C(j)}$.
+    \begin{subproof}
+        Fix $j\in I$.
+        $C(j)=\carrier[M(j)]$ and $b(j)=\mul[M(j)]$ by
+            \auto{product_monoid_carrier_family_apply,
+                product_monoid_mul_family_apply}.
+        Follows by
+            \auto{monoid_is_magma,magma_mul_graph}.
+    \end{subproof}
+    $x,y\in\dependentProduct{I}{C}$ by
+        \auto{product_monoid_fields}.
+    $\mul[P]=\dependentBinaryOperation{I}{C}{C}{C}{b}$ by
+        \auto{product_monoid_fields}.
+    $b(i)=\mul[M(i)]$ by
+        \auto{product_monoid_mul_family_apply}.
+    Follows by \auto{dependent_binary_operation_coordinate}.
+\end{proof}
+
+\begin{proposition}\label{product_monoid_neutral_coordinate_exact}
+    Let $P=\ProductMonoid{I}{M}$.
+    Let $i\in I$.
+    Then $\apply{\neutral[P]}{i}=\neutral[M(i)]$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{product_monoid_fields,
+            product_monoid_neutral_coordinate}.
+\end{proof}
+
+\begin{theorem}\label{product_monoid_is_exact}
+    Suppose $M$ is a function on $I$.
+    Suppose for every $i\in I$ we have $M(i)$ is a monoid.
+    Then $\ProductMonoid{I}{M}$ is an exact monoid.
+\end{theorem}
+\begin{proof}
+    Let $C=\productMonoidCarrierFamily{I}{M}$.
+    Let $b=\productMonoidMulFamily{I}{M}$.
+    Let $P=\ProductMonoid{I}{M}$.
+    $C$ and $b$ are functions on $I$ by
+        \auto{product_monoid_carrier_family_type,
+            product_monoid_mul_family_type}.
+    Show that for every $i\in I$ we have
+        $b(i)\in\funs{C(i)\times C(i)}{C(i)}$.
+    \begin{subproof}
+        Fix $i\in I$.
+        $C(i)=\carrier[M(i)]$ and $b(i)=\mul[M(i)]$ by
+            \auto{product_monoid_carrier_family_apply,
+                product_monoid_mul_family_apply}.
+        Follows by \auto{monoid_is_magma,magma_mul_graph}.
+    \end{subproof}
+    $\carrier[P]=\dependentProduct{I}{C}$ by
+        \auto{product_monoid_fields}.
+    $\mul[P]\in\funs{\carrier[P]\times\carrier[P]}{
+        \carrier[P]}$ by
+        \auto{product_monoid_fields,
+            dependent_binary_operation_type}.
+    $\neutral[P]\in\carrier[P]$ by
+        \auto{product_monoid_fields,product_monoid_neutral_type}.
+    Hence for all $x,y\in\carrier[P]$ we have
+        $\mul[P](x,y)\in\carrier[P]$ by
+        \obv{funs_type_apply,times_tuple_intro}.
+    Show that for all $x,y,z\in\carrier[P]$ we have
+        $\mul[P](x,\mul[P](y,z))=\mul[P](\mul[P](x,y),z)$.
+    \begin{subproof}
+        Fix $x,y,z\in\carrier[P]$.
+        $\mul[P](y,z),\mul[P](x,y)\in\carrier[P]$.
+        Show that for every $i\in I$ we have
+            $\apply{\mul[P](x,\mul[P](y,z))}{i}
+                =\apply{\mul[P](\mul[P](x,y),z)}{i}$.
+        \begin{subproof}
+            Fix $i\in I$.
+            $x(i),y(i),z(i)\in\carrier[M(i)]$ by
+                \auto{product_monoid_fields,
+                    dependent_product_coordinate,
+                    product_monoid_carrier_family_apply}.
+            Follows by
+                \auto{product_monoid_mul_coordinate,monoid_assoc}.
+        \end{subproof}
+        Follows by
+            \auto{product_monoid_fields,
+                dependent_product_extensionality}.
+    \end{subproof}
+    Show that for every $x\in\carrier[P]$ we have
+        $\mul[P](x,\neutral[P])=x$.
+    \begin{subproof}
+        Fix $x\in\carrier[P]$.
+        Show that for every $i\in I$ we have
+            $\apply{\mul[P](x,\neutral[P])}{i}=x(i)$.
+        \begin{subproof}
+            Fix $i\in I$.
+            $x(i)\in\carrier[M(i)]$ by
+                \auto{product_monoid_fields,
+                    dependent_product_coordinate,
+                    product_monoid_carrier_family_apply}.
+            Follows by
+                \auto{product_monoid_mul_coordinate,
+                    product_monoid_neutral_coordinate_exact,
+                    monoid_is_unital_magma,unitalmagma_right}.
+        \end{subproof}
+        Follows by
+            \auto{product_monoid_fields,
+                dependent_product_extensionality}.
+    \end{subproof}
+    Show that for every $x\in\carrier[P]$ we have
+        $\mul[P](\neutral[P],x)=x$.
+    \begin{subproof}
+        Fix $x\in\carrier[P]$.
+        Show that for every $i\in I$ we have
+            $\apply{\mul[P](\neutral[P],x)}{i}=x(i)$.
+        \begin{subproof}
+            Fix $i\in I$.
+            $x(i)\in\carrier[M(i)]$ by
+                \auto{product_monoid_fields,
+                    dependent_product_coordinate,
+                    product_monoid_carrier_family_apply}.
+            Follows by
+                \auto{product_monoid_mul_coordinate,
+                    product_monoid_neutral_coordinate_exact,
+                    monoid_is_unital_magma,unitalmagma_left}.
+        \end{subproof}
+        Follows by
+            \auto{product_monoid_fields,
+                dependent_product_extensionality}.
+    \end{subproof}
+    Hence $P$ is a monoid by
+        \auto{product_monoid,unitalmagmaaggregateexact,
+            magma,unitalmagma,monoid}.
+    Follows by
+        \auto{product_monoid,unitalmagmaaggregateexact}.
+\end{proof}
+
+\subsection{Projections and the universal mediator}
+
+\begin{theorem}\label{product_monoid_projection_hom}
+    Suppose $M$ is a function on $I$.
+    Suppose for every $j\in I$ we have $M(j)$ is a monoid.
+    Let $i\in I$ and $C=\productMonoidCarrierFamily{I}{M}$.
+    Then $\dependentProjection{I}{C}{i}$ is a monoid homomorphism from
+        $\ProductMonoid{I}{M}$ to $M(i)$.
+\end{theorem}
+\begin{proof}
+    Let $P=\ProductMonoid{I}{M}$.
+    Let $p=\dependentProjection{I}{C}{i}$.
+    $P$ is a monoid by \obv{product_monoid_is_exact}.
+    Hence $P$ is a magma by \obv{monoid_is_magma}.
+    $M(i)$ is a magma by \obv{monoid_is_magma}.
+    $C$ is a function on $I$ by
+        \auto{product_monoid_carrier_family_type}.
+    $\carrier[P]=\dependentProduct{I}{C}$ by
+        \auto{product_monoid_fields}.
+    $C(i)=\carrier[M(i)]$ by
+        \auto{product_monoid_carrier_family_apply}.
+    Hence $p\in\funs{\carrier[P]}{\carrier[M(i)]}$ by
+        \auto{dependent_projection_type}.
+    Show that for all $x,y\in\carrier[P]$ we have
+        $p(\mul[P](x,y))=\mul[M(i)](p(x),p(y))$.
+    \begin{subproof}
+        Fix $x,y\in\carrier[P]$.
+        $\mul[P](x,y)\in\carrier[P]$ by
+            \obv{product_monoid_is_exact,monoid_is_magma,
+                magma_welldef}.
+        $p(\mul[P](x,y))=\apply{\mul[P](x,y)}{i}$ and
+            $p(x)=x(i)$ and $p(y)=y(i)$ by
+            \auto{dependent_projection_apply}.
+        Follows by \auto{product_monoid_mul_coordinate}.
+    \end{subproof}
+    Hence $p$ is a magma homomorphism from $P$ to $M(i)$ by
+        \obv{magma_hom}.
+    $p(\neutral[P])=\apply{\neutral[P]}{i}$ by
+        \auto{product_monoid_neutral_type,
+            product_monoid_fields,dependent_projection_apply}.
+    Hence $p(\neutral[P])=\neutral[M(i)]$ by
+        \obv{product_monoid_neutral_coordinate_exact}.
+    Follows by \obv{monoid_hom}.
+\end{proof}
+
+\begin{theorem}\label{product_monoid_mediator_hom}
+    Let $X$ be a monoid.
+    Suppose $M$ is a function on $I$.
+    Suppose for every $j\in I$ we have $M(j)$ is a monoid.
+    Suppose $f$ is a function on $I$ and for every $k\in I$ we have
+        $f(k)$ is a monoid homomorphism from $X$ to $M(k)$.
+    Let $C=\productMonoidCarrierFamily{I}{M}$.
+    Then $\dependentMediator{\carrier[X]}{I}{C}{f}$ is a monoid
+        homomorphism from $X$ to $\ProductMonoid{I}{M}$.
+\end{theorem}
+\begin{proof}
+    Let $P=\ProductMonoid{I}{M}$.
+    Let $h=\dependentMediator{\carrier[X]}{I}{C}{f}$.
+    $P$ is a monoid by \auto{product_monoid_is_exact}.
+    Hence $P$ is a magma by \obv{monoid_is_magma}.
+    $C$ is a function on $I$ by
+        \auto{product_monoid_carrier_family_type}.
+    For every $i\in I$ we have $f(i)\in\funs{\carrier[X]}{C(i)}$ by
+        \auto{monoid_hom_type,product_monoid_carrier_family_apply}.
+    $\carrier[P]=\dependentProduct{I}{C}$ by
+        \auto{product_monoid_fields}.
+    Hence $h\in\funs{\carrier[X]}{\carrier[P]}$ by
+        \auto{dependent_mediator_type}.
+    Show that for all $x,y\in\carrier[X]$ we have
+        $h(\mul[X](x,y))=\mul[P](h(x),h(y))$.
+    \begin{subproof}
+        Fix $x,y\in\carrier[X]$.
+        $\mul[X](x,y)\in\carrier[X]$ by
+            \obv{monoid_is_magma,magma_welldef}.
+        $h(x),h(y)\in\carrier[P]$ by \obv{funs_type_apply}.
+        $h(\mul[X](x,y))\in\carrier[P]$ by \obv{funs_type_apply}.
+        $\mul[P](h(x),h(y))\in\carrier[P]$ by
+            \obv{magma_welldef}.
+        Show that for every $i\in I$ we have
+            $\apply{h(\mul[X](x,y))}{i}
+                =\apply{\mul[P](h(x),h(y))}{i}$.
+        \begin{subproof}
+            Fix $i\in I$.
+            $\apply{h(\mul[X](x,y))}{i}=\apply{f(i)}{\mul[X](x,y)}$ and
+                $\apply{h(x)}{i}=\apply{f(i)}{x}$ and
+                $\apply{h(y)}{i}=\apply{f(i)}{y}$ by
+                \auto{dependent_mediator_coordinate}.
+            Follows by
+                \auto{monoid_hom_mul,product_monoid_mul_coordinate}.
+        \end{subproof}
+        Follows by
+            \auto{product_monoid_fields,
+                dependent_product_extensionality}.
+    \end{subproof}
+    Hence $h$ is a magma homomorphism from $X$ to $P$ by
+        \obv{magma_hom}.
+    Show that $h(\neutral[X])=\neutral[P]$.
+    \begin{subproof}
+        $\neutral[X]\in\carrier[X]$ by
+            \obv{monoid_is_unital_magma,unitalmagma_type}.
+        Hence $h(\neutral[X])\in\carrier[P]$ by
+            \obv{funs_type_apply}.
+        $\neutral[P]\in\carrier[P]$ by
+            \obv{monoid_is_unital_magma,unitalmagma_type}.
+        Show that for every $i\in I$ we have
+            $\apply{h(\neutral[X])}{i}=\apply{\neutral[P]}{i}$.
+        \begin{subproof}
+            Fix $i\in I$.
+            $\apply{h(\neutral[X])}{i}=\apply{f(i)}{\neutral[X]}$ by
+                \auto{dependent_mediator_coordinate}.
+            Follows by
+                \auto{monoid_hom_neutral,
+                    product_monoid_neutral_coordinate_exact}.
+        \end{subproof}
+        Follows by
+            \auto{product_monoid_fields,
+                dependent_product_extensionality,
+                product_monoid_neutral_type}.
+    \end{subproof}
+    Follows by \obv{monoid_hom}.
+\end{proof}
+
+\begin{theorem}\label{product_monoid_mediator_factorization}
+    Let $X$ be a monoid.
+    Suppose $M$ is a function on $I$.
+    Suppose for every $j\in I$ we have $M(j)$ is a monoid.
+    Suppose $f$ is a function on $I$ and for every $k\in I$ we have
+        $f(k)$ is a monoid homomorphism from $X$ to $M(k)$.
+    Let $C=\productMonoidCarrierFamily{I}{M}$ and $i\in I$.
+    Then
+        $\dependentProjection{I}{C}{i}\circ
+            \dependentMediator{\carrier[X]}{I}{C}{f}=f(i)$.
+\end{theorem}
+\begin{proof}
+    Let $p=\dependentProjection{I}{C}{i}$.
+    Let $h=\dependentMediator{\carrier[X]}{I}{C}{f}$.
+    $C$ is a function on $I$ by
+        \auto{product_monoid_carrier_family_type}.
+    $\carrier[\ProductMonoid{I}{M}]=\dependentProduct{I}{C}$ by
+        \auto{product_monoid_fields}.
+    For every $j\in I$ we have
+        $f(j)\in\funs{\carrier[X]}{C(j)}$ by
+        \auto{monoid_hom_type,
+            product_monoid_carrier_family_apply}.
+    $p$ is a monoid homomorphism from $\ProductMonoid{I}{M}$ to
+        $M(i)$ by \auto{product_monoid_projection_hom}.
+    $h$ is a monoid homomorphism from $X$ to
+        $\ProductMonoid{I}{M}$ by
+        \auto{product_monoid_mediator_hom}.
+    Hence $p\circ h\in\funs{\carrier[X]}{\carrier[M(i)]}$ by
+        \auto{monoid_hom_type,funs_circ}.
+    $f(i)\in\funs{\carrier[X]}{\carrier[M(i)]}$ by
+        \obv{monoid_hom_type}.
+    Show that for every $x\in\carrier[X]$ we have
+        $(p\circ h)(x)=\apply{f(i)}{x}$.
+    \begin{subproof}
+        Fix $x\in\carrier[X]$.
+        $h(x)\in\carrier[\ProductMonoid{I}{M}]$ by
+            \obv{monoid_hom_apply_type}.
+        $(p\circ h)(x)=p(h(x))$ by
+            \auto{circ_apply,monoid_hom_type,funs_is_function,
+                funs_ran,funs}.
+        $p(h(x))=\apply{h(x)}{i}$ by
+            \auto{product_monoid_fields,dependent_projection_apply}.
+        Follows by \auto{dependent_mediator_coordinate}.
+    \end{subproof}
+    Follows by \auto{typed_functions_equal_from_agreement}.
+\end{proof}
+
+\begin{theorem}\label{product_monoid_mediator_unique}
+    Let $X$ be a monoid.
+    Suppose $M$ is a function on $I$.
+    Suppose for every $j\in I$ we have $M(j)$ is a monoid.
+    Suppose $f$ is a function on $I$ and for every $k\in I$ we have
+        $f(k)$ is a monoid homomorphism from $X$ to $M(k)$.
+    Let $C=\productMonoidCarrierFamily{I}{M}$.
+    Suppose $h$ is a monoid homomorphism from $X$ to
+        $\ProductMonoid{I}{M}$.
+    Suppose for every $l\in I$ we have
+        $\dependentProjection{I}{C}{l}\circ h=f(l)$.
+    Then $h=\dependentMediator{\carrier[X]}{I}{C}{f}$.
+\end{theorem}
+\begin{proof}
+    Let $u=\dependentMediator{\carrier[X]}{I}{C}{f}$.
+    $C$ is a function on $I$ by
+        \auto{product_monoid_carrier_family_type}.
+    $\carrier[\ProductMonoid{I}{M}]=\dependentProduct{I}{C}$ by
+        \auto{product_monoid_fields}.
+    For every $j\in I$ we have
+        $f(j)\in\funs{\carrier[X]}{C(j)}$ by
+        \auto{monoid_hom_type,
+            product_monoid_carrier_family_apply}.
+    $u$ is a monoid homomorphism from $X$ to
+        $\ProductMonoid{I}{M}$ by
+        \auto{product_monoid_mediator_hom}.
+    Show that for every $x\in\carrier[X]$ we have $h(x)=u(x)$.
+    \begin{subproof}
+        Fix $x\in\carrier[X]$.
+        $h(x),u(x)\in\carrier[\ProductMonoid{I}{M}]$ by
+            \obv{monoid_hom_apply_type}.
+        Show that for every $i\in I$ we have
+            $\apply{h(x)}{i}=\apply{u(x)}{i}$.
+        \begin{subproof}
+            Fix $i\in I$.
+            Let $p=\dependentProjection{I}{C}{i}$.
+            $p$ is a monoid homomorphism from
+                $\ProductMonoid{I}{M}$ to $M(i)$ by
+                \auto{product_monoid_projection_hom}.
+            $(p\circ h)(x)=\apply{f(i)}{x}$ by \auto.
+            $(p\circ h)(x)=p(h(x))$ by
+                \auto{circ_apply,monoid_hom_type,funs_is_function,
+                    funs_ran,funs}.
+            $p(h(x))=\apply{h(x)}{i}$ by
+                \auto{product_monoid_fields,dependent_projection_apply}.
+            $\apply{u(x)}{i}=\apply{f(i)}{x}$ by
+                \auto{dependent_mediator_coordinate}.
+        \end{subproof}
+        Follows by
+            \auto{product_monoid_fields,
+                dependent_product_extensionality}.
+    \end{subproof}
+    Follows by \auto{monoid_hom_extensionality}.
+\end{proof}
+
+\subsection{Reindexing products}
+
+\begin{proposition}\label{product_monoid_carrier_family_reindex}
+    Suppose $M$ is a function on $I$.
+    Let $e\in\funs{J}{I}$.
+    Then
+        $\productMonoidCarrierFamily{I}{M}\circ e
+            =\productMonoidCarrierFamily{J}{M\circ e}$.
+\end{proposition}
+\begin{proof}
+    Let $C=\productMonoidCarrierFamily{I}{M}$.
+    Let $D=\productMonoidCarrierFamily{J}{M\circ e}$.
+    $C$ is a function on $I$ and $D$ is a function on $J$ by
+        \auto{product_monoid_carrier_family_type}.
+    $C\in\funs{I}{\ran{C}}$ by
+        \auto{function_exact_type_to_range}.
+    Hence $C$ is composable with $e$ by
+        \obv{funs_ran,funs}.
+    $M$ is composable with $e$ by \obv{funs_ran,funs}.
+    Hence $C\circ e$ is a function and $\dom{C\circ e}=J$ by
+        \auto{funs_circ,funs_is_function,funs}.
+    $\dom{D}=J$.
+    Show that for every $j\in\dom{C\circ e}$ we have
+        $(C\circ e)(j)=D(j)$.
+    \begin{subproof}
+        Fix $j\in\dom{C\circ e}$.
+        Hence $j\in J$.
+        Hence $j\in\dom{e}$ by \obv{funs}.
+        Hence $e(j)\in I$ by \obv{funs_type_apply}.
+        $(C\circ e)(j)=C(e(j))$ by
+            \obv{circ_apply,funs_is_function}.
+        $C(e(j))=\carrier[M(e(j))]$ by
+            \auto{product_monoid_carrier_family_apply}.
+        $(M\circ e)(j)=M(e(j))$ by
+            \obv{circ_apply,funs_is_function}.
+        $D(j)=\carrier[(M\circ e)(j)]$ by
+            \auto{product_monoid_carrier_family_apply}.
+    \end{subproof}
+    Follows by \auto{funext_on_domain}.
+\end{proof}
+
+\begin{theorem}\label{product_monoid_reindex_hom}
+    Suppose $M$ is a function on $I$.
+    Suppose for every $i\in I$ we have $M(i)$ is a monoid.
+    Let $e\in\funs{J}{I}$.
+    Let $C=\productMonoidCarrierFamily{I}{M}$.
+    Then $\dependentReindex{I}{J}{C}{e}$ is a monoid homomorphism from
+        $\ProductMonoid{I}{M}$ to $\ProductMonoid{J}{M\circ e}$.
+\end{theorem}
+\begin{proof}
+    Let $D=\productMonoidCarrierFamily{J}{M\circ e}$.
+    Let $P=\ProductMonoid{I}{M}$.
+    Let $Q=\ProductMonoid{J}{M\circ e}$.
+    Let $r=\dependentReindex{I}{J}{C}{e}$.
+    $M\in\funs{I}{\ran{M}}$ by
+        \auto{function_exact_type_to_range}.
+    $M$ is composable with $e$ by \obv{funs_ran,funs}.
+    Hence $M\circ e$ is a function on $J$ by
+        \auto{funs_circ,funs_is_function,funs}.
+    Show that for every $j\in J$ we have $(M\circ e)(j)$ is a monoid.
+    \begin{subproof}
+        Fix $j\in J$.
+        Hence $j\in\dom{e}$ by \auto{funs}.
+        $e(j)\in I$ by \obv{funs_type_apply}.
+        $(M\circ e)(j)=M(e(j))$ by
+            \obv{circ_apply,funs_is_function}.
+    \end{subproof}
+    $P$ is a monoid and $Q$ is a monoid by
+        \auto{product_monoid_is_exact}.
+    Hence $P$ is a magma and $Q$ is a magma by
+        \obv{monoid_is_magma}.
+    $C$ is a function on $I$ and $D$ is a function on $J$ by
+        \auto{product_monoid_carrier_family_type}.
+    $C\circ e=D$ by \auto{product_monoid_carrier_family_reindex}.
+    $\carrier[P]=\dependentProduct{I}{C}$ and
+        $\carrier[Q]=\dependentProduct{J}{D}$ by
+        \auto{product_monoid_fields}.
+    $r\in\funs{\dependentProduct{I}{C}}{
+        \dependentProduct{J}{C\circ e}}$ by
+        \auto{dependent_reindex_type}.
+    Hence $r\in\funs{\carrier[P]}{\carrier[Q]}$.
+    Show that for all $x,y\in\carrier[P]$ we have
+        $r(\mul[P](x,y))=\mul[Q](r(x),r(y))$.
+    \begin{subproof}
+        Fix $x,y\in\carrier[P]$.
+        $\mul[P](x,y)\in\carrier[P]$ by \obv{magma_welldef}.
+        $r(x),r(y)\in\carrier[Q]$ by \obv{funs_type_apply}.
+        Hence $r(\mul[P](x,y)),\mul[Q](r(x),r(y))
+            \in\carrier[Q]$ by
+            \obv{funs_type_apply,magma_welldef}.
+        $x,y,\mul[P](x,y)\in\funs{I}{\unions{\ran{C}}}$ by
+            \auto{product_monoid_fields,dependent_product_iff}.
+        Hence $x$ is composable with $e$ and $y$ is composable with $e$
+            and $\mul[P](x,y)$ is composable with $e$ by
+            \auto{funs_ran,funs}.
+        Show that for every $j\in J$ we have
+            $\apply{r(\mul[P](x,y))}{j}
+                =\apply{\mul[Q](r(x),r(y))}{j}$.
+        \begin{subproof}
+            Fix $j\in J$.
+            Hence $j\in\dom{e}$ by \auto{funs}.
+            $e(j)\in I$ by \obv{funs_type_apply}.
+            $r(\mul[P](x,y))=\mul[P](x,y)\circ e$ and
+                $r(x)=x\circ e$ and $r(y)=y\circ e$ by
+                \auto{dependent_reindex_apply}.
+            $\apply{r(\mul[P](x,y))}{j}
+                =\apply{\mul[P](x,y)}{e(j)}$ by
+                \auto{circ_apply,funs_is_function}.
+            $\apply{r(x)}{j}=x(e(j))$ and
+                $\apply{r(y)}{j}=y(e(j))$ by
+                \auto{circ_apply,funs_is_function}.
+            $(M\circ e)(j)=M(e(j))$ by
+                \obv{circ_apply,funs_is_function}.
+            Follows by \auto{product_monoid_mul_coordinate}.
+        \end{subproof}
+        Follows by
+            \auto{product_monoid_fields,
+                dependent_product_extensionality}.
+    \end{subproof}
+    Hence $r$ is a magma homomorphism from $P$ to $Q$ by
+        \obv{magma_hom}.
+    Show that $r(\neutral[P])=\neutral[Q]$.
+    \begin{subproof}
+        $\neutral[P]\in\carrier[P]$ and
+            $\neutral[Q]\in\carrier[Q]$ by
+            \obv{monoid_is_unital_magma,unitalmagma_type}.
+        Hence $r(\neutral[P])\in\carrier[Q]$ by
+            \obv{funs_type_apply}.
+        $\neutral[P]\in\funs{I}{\unions{\ran{C}}}$ by
+            \auto{product_monoid_fields,dependent_product_iff}.
+        Hence $\neutral[P]$ is composable with $e$ by
+            \auto{funs_ran,funs}.
+        Show that for every $j\in J$ we have
+            $\apply{r(\neutral[P])}{j}=\apply{\neutral[Q]}{j}$.
+        \begin{subproof}
+            Fix $j\in J$.
+            Hence $j\in\dom{e}$ by \auto{funs}.
+            $e(j)\in I$ by \obv{funs_type_apply}.
+            $r(\neutral[P])=\neutral[P]\circ e$ by
+                \auto{dependent_reindex_apply}.
+            $\apply{r(\neutral[P])}{j}
+                =\apply{\neutral[P]}{e(j)}$ by
+                \auto{circ_apply,funs_is_function}.
+            $(M\circ e)(j)=M(e(j))$ by
+                \obv{circ_apply,funs_is_function}.
+            Follows by
+                \auto{product_monoid_neutral_coordinate_exact}.
+        \end{subproof}
+        Follows by
+            \auto{product_monoid_fields,
+                dependent_product_extensionality}.
+    \end{subproof}
+    Follows by \auto{monoid_hom}.
+\end{proof}
+
+\begin{theorem}\label{bijective_product_monoid_reindex_isomorphism}
+    Suppose $M$ is a function on $I$.
+    Suppose for every $i\in I$ we have $M(i)$ is a monoid.
+    Let $e\in\bijections{J}{I}$.
+    Let $C=\productMonoidCarrierFamily{I}{M}$.
+    Then $\dependentReindex{I}{J}{C}{e}$ is a monoid isomorphism from
+        $\ProductMonoid{I}{M}$ to $\ProductMonoid{J}{M\circ e}$.
+\end{theorem}
+\begin{proof}
+    Let $r=\dependentReindex{I}{J}{C}{e}$.
+    $e\in\funs{J}{I}$ by \obv{bijections_to_funs}.
+    Hence $r$ is a monoid homomorphism from $\ProductMonoid{I}{M}$ to
+        $\ProductMonoid{J}{M\circ e}$ by
+        \auto{product_monoid_reindex_hom}.
+    $C$ is a function on $I$ by
+        \auto{product_monoid_carrier_family_type}.
+    $r\in\bijections{\dependentProduct{I}{C}}{
+        \dependentProduct{J}{C\circ e}}$ by
+        \auto{dependent_reindex_bijection}.
+    $C\circ e=\productMonoidCarrierFamily{J}{M\circ e}$ by
+        \auto{product_monoid_carrier_family_reindex}.
+    $\carrier[\ProductMonoid{I}{M}]=\dependentProduct{I}{C}$ and
+        $\carrier[\ProductMonoid{J}{M\circ e}]
+            =\dependentProduct{J}{
+                \productMonoidCarrierFamily{J}{M\circ e}}$ by
+        \auto{product_monoid_fields}.
+    Hence $r\in\bijections{\carrier[\ProductMonoid{I}{M}]}{
+        \carrier[\ProductMonoid{J}{M\circ e}]}$.
+    Follows by \obv{monoid_isomorphism}.
+\end{proof}
+
+\subsection{Empty, singleton, and binary products}
+
+\begin{proposition}\label{empty_product_monoid_is_exact}
+    $\ProductMonoid{\emptyset}{\emptyset}$ is an exact monoid.
+\end{proposition}
+\begin{proof}
+    $\emptyset$ is a function on $\emptyset$ by
+        \obv{emptyset_is_function_on_emptyset}.
+    For every $i\in\emptyset$ we have $\apply{\emptyset}{i}$ is a monoid by
+        \auto{emptyset}.
+    Follows by \obv{product_monoid_is_exact}.
+\end{proof}
+
+\begin{proposition}\label{singleton_product_monoid_is_exact}
+    Let $N$ be a monoid.
+    Then $\ProductMonoid{\{i\}}{\{i\}\times\{N\}}$
+        is an exact monoid.
+\end{proposition}
+\begin{proof}
+    Let $M=\{i\}\times\{N\}$.
+    $M\in\funs{\{i\}}{\{N\}}$ by \auto{constant_graph_type}.
+    Hence $M$ is a function on $\{i\}$ by
+        \obv{funs_is_function,funs}.
+    For every $j\in\{i\}$ we have $M(j)=N$ by
+        \auto{constant_graph_application}.
+    Hence for every $j\in\{i\}$ we have $M(j)$ is a monoid.
+    Follows by \auto{product_monoid_is_exact}.
+\end{proof}
+
+\begin{definition}\label{binary_product_monoid}
+    $\BinaryProductMonoid{M}{N}
+        =\ProductMonoid{\suc{\suc{\emptyset}}}{
+            \binaryFamily{M}{N}}$.
+\end{definition}
+
+\begin{proposition}\label{binary_product_monoid_is_exact}
+    Let $M,N$ be monoids.
+    Then $\BinaryProductMonoid{M}{N}$ is an exact monoid.
+\end{proposition}
+\begin{proof}
+    Let $I=\suc{\suc{\emptyset}}$ and $A=\binaryFamily{M}{N}$.
+    $A$ is a function on $I$ by
+        \auto{binary_family_type,funs_is_function,funs}.
+    Show that for every $i\in I$ we have $A(i)$ is a monoid.
+    \begin{subproof}
+        Fix $i\in I$.
+        $i=\emptyset$ or $i=\suc{\emptyset}$ by
+            \auto{suc_elim,emptyset}.
+        Follows by
+            \auto{binary_family_left,binary_family_right}.
+    \end{subproof}
+    Follows by
+        \auto{binary_product_monoid,product_monoid_is_exact}.
+\end{proof}

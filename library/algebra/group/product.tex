@@ -1,0 +1,2384 @@
+\import{algebra/monoid/product.tex}
+\import{algebra/monoid/finite-fold.tex}
+\import{algebra/group/subgroup.tex}
+\import{algebra/group/homomorphism.tex}
+\import{algebra/group/isomorphism.tex}
+\import{set/dependent-operation.tex}
+\import{set/finitely-supported-function.tex}
+
+\section{Products and direct sums of groups}
+
+The indexed group product extends the already constructed monoid product by
+coordinatewise inversion.  Thus its carrier, multiplication, and neutral
+element are not reimplemented at the group layer.
+
+\subsection{Coordinatewise inversion}
+
+\begin{definition}\label{product_group_inverse_op}
+    $\productGroupInverseOp:\Set\to\Set\to\Set
+        =\fun{G,i:\Set}{\groupInv[G(i)]}$.
+\end{definition}
+
+\begin{definition}\label{product_group_inverse_family}
+    $\productGroupInverseFamily{I}{G}
+        =\Apply{\graphOnDomainOp}{
+            I,\Apply{\productGroupInverseOp}{G}}$.
+\end{definition}
+
+\begin{proposition}\label{product_group_inverse_family_type}
+    $\productGroupInverseFamily{I}{G}$ is a function on $I$.
+\end{proposition}
+\begin{proof}
+    $\productGroupInverseFamily{I}{G}\in
+        \funs{I}{\ran{\productGroupInverseFamily{I}{G}}}$ by
+        \auto{product_group_inverse_family,
+            logical_graph_on_domain_function}.
+    Follows by \obv{funs_is_function,funs}.
+\end{proof}
+
+\begin{proposition}\label{product_group_inverse_family_apply}
+    Let $i\in I$.
+    Then $(\productGroupInverseFamily{I}{G})(i)=\groupInv[G(i)]$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{product_group_inverse_family,
+            product_group_inverse_op,
+            logical_graph_on_domain_apply}.
+\end{proof}
+
+\subsection{The indexed product}
+
+\begin{definition}\label{product_group}
+    $\ProductGroup{I}{G}=\structure[group]{
+        \carrier=\carrier[\ProductMonoid{I}{G}],
+        \mul=\mul[\ProductMonoid{I}{G}],
+        \neutral=\neutral[\ProductMonoid{I}{G}],
+        \groupInv=\dependentUnaryOperation
+            {I}{\productMonoidCarrierFamily{I}{G}}
+            {\productMonoidCarrierFamily{I}{G}}
+            {\productGroupInverseFamily{I}{G}}
+    }$.
+\end{definition}
+
+\begin{proposition}\label{product_group_fields}
+    Let $P=\ProductMonoid{I}{G}$.
+    Let $C=\productMonoidCarrierFamily{I}{G}$.
+    $\carrier[\ProductGroup{I}{G}]=\carrier[P]$ and
+    $\mul[\ProductGroup{I}{G}]=\mul[P]$ and
+    $\neutral[\ProductGroup{I}{G}]=\neutral[P]$ and
+    $\groupInv[\ProductGroup{I}{G}]
+        =\dependentUnaryOperation{I}{C}{C}{
+            \productGroupInverseFamily{I}{G}}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{product_group,groupaggregateprojection_carrier,
+            groupaggregateprojection_mul,groupaggregateprojection_neutral,
+            groupaggregateprojection_groupInv}.
+\end{proof}
+
+\begin{proposition}\label{product_group_mul_coordinate}
+    Suppose $G$ is a function on $I$.
+    Suppose for every $j\in I$ we have $G(j)$ is a group.
+    Let $P=\ProductGroup{I}{G}$.
+    Let $x,y\in\carrier[P]$ and $i\in I$.
+    Then $\apply{\mul[P](x,y)}{i}=\mul[G(i)](x(i),y(i))$.
+\end{proposition}
+\begin{proof}
+    Let $M=\ProductMonoid{I}{G}$.
+    $\carrier[P]=\carrier[M]$ and $\mul[P]=\mul[M]$ by
+        \auto{product_group_fields}.
+    For every $j\in I$ we have $G(j)$ is a monoid by
+        \obv{group_is_monoid}.
+    Follows by \auto{product_monoid_mul_coordinate}.
+\end{proof}
+
+\begin{proposition}\label{product_group_neutral_coordinate}
+    Let $P=\ProductGroup{I}{G}$ and $i\in I$.
+    Then $\apply{\neutral[P]}{i}=\neutral[G(i)]$.
+\end{proposition}
+\begin{proof}
+    $\neutral[P]=\neutral[\ProductMonoid{I}{G}]$ by
+        \auto{product_group_fields}.
+    Follows by \auto{product_monoid_neutral_coordinate_exact}.
+\end{proof}
+
+\begin{proposition}\label{product_group_inverse_coordinate}
+    Suppose $G$ is a function on $I$.
+    Suppose for every $j\in I$ we have $G(j)$ is a group.
+    Let $P=\ProductGroup{I}{G}$.
+    Let $x\in\carrier[P]$ and $i\in I$.
+    Then $\apply{\groupInv[P](x)}{i}=\groupInv[G(i)](x(i))$.
+\end{proposition}
+\begin{proof}
+    Let $C=\productMonoidCarrierFamily{I}{G}$.
+    Let $u=\productGroupInverseFamily{I}{G}$.
+    $C$ and $u$ are functions on $I$ by
+        \auto{product_monoid_carrier_family_type,
+            product_group_inverse_family_type}.
+    Show that for every $j\in I$ we have
+        $u(j)\in\funs{C(j)}{C(j)}$.
+    \begin{subproof}
+        Fix $j\in I$.
+        $u(j)=\groupInv[G(j)]$ and $C(j)=\carrier[G(j)]$ by
+            \auto{product_group_inverse_family_apply,
+                product_monoid_carrier_family_apply}.
+        Follows by \auto{group_inverse_graph}.
+    \end{subproof}
+    $\carrier[P]=\carrier[\ProductMonoid{I}{G}]
+        =\dependentProduct{I}{C}$ by
+        \auto{product_group_fields,product_monoid_fields}.
+    $\groupInv[P]=\dependentUnaryOperation{I}{C}{C}{u}$ by
+        \auto{product_group_fields}.
+    $u(i)=\groupInv[G(i)]$ by
+        \auto{product_group_inverse_family_apply}.
+    Follows by \auto{dependent_unary_operation_coordinate}.
+\end{proof}
+
+\begin{theorem}\label{product_group_is_exact}
+    Suppose $G$ is a function on $I$.
+    Suppose for every $i\in I$ we have $G(i)$ is a group.
+    Then $\ProductGroup{I}{G}$ is an exact group.
+\end{theorem}
+\begin{proof}
+    Let $M=\ProductMonoid{I}{G}$.
+    Let $P=\ProductGroup{I}{G}$.
+    Let $C=\productMonoidCarrierFamily{I}{G}$.
+    Let $u=\productGroupInverseFamily{I}{G}$.
+    For every $i\in I$ we have $G(i)$ is a monoid by
+        \obv{group_is_monoid}.
+    Hence $M$ is an exact monoid by \auto{product_monoid_is_exact}.
+    $\carrier[P]=\carrier[M]$ and $\mul[P]=\mul[M]$ and
+        $\neutral[P]=\neutral[M]$ by \auto{product_group_fields}.
+    Hence $\mul[P]\in\funs{\carrier[P]\times\carrier[P]}{
+        \carrier[P]}$ by \auto{monoid_is_magma,magma_mul_graph}.
+    $\neutral[P]\in\carrier[P]$ by
+        \auto{monoid_is_unital_magma,unitalmagma_type}.
+    $C$ and $u$ are functions on $I$ by
+        \auto{product_monoid_carrier_family_type,
+            product_group_inverse_family_type}.
+    Show that for every $i\in I$ we have
+        $u(i)\in\funs{C(i)}{C(i)}$.
+    \begin{subproof}
+        Fix $i\in I$.
+        $u(i)=\groupInv[G(i)]$ and $C(i)=\carrier[G(i)]$ by
+            \auto{product_group_inverse_family_apply,
+                product_monoid_carrier_family_apply}.
+        Follows by \auto{group_inverse_graph}.
+    \end{subproof}
+    $\carrier[P]=\dependentProduct{I}{C}$ by
+        \auto{product_group_fields,product_monoid_fields}.
+    Hence $\groupInv[P]\in\funs{\carrier[P]}{\carrier[P]}$ by
+        \auto{product_group_fields,dependent_unary_operation_type}.
+    For all $x,y,z\in\carrier[P]$ we have
+        $\mul[P](x,\mul[P](y,z))=\mul[P](\mul[P](x,y),z)$ by
+        \auto{monoid_assoc}.
+    For every $x\in\carrier[P]$ we have
+        $\mul[P](x,\neutral[P])=x$ and
+        $\mul[P](\neutral[P],x)=x$ by
+        \auto{monoid_is_unital_magma,
+            unitalmagma_right,unitalmagma_left}.
+    Show that for every $x\in\carrier[P]$ we have
+        $\mul[P](x,\groupInv[P](x))=\neutral[P]$.
+    \begin{subproof}
+        Fix $x\in\carrier[P]$.
+        $\groupInv[P](x)\in\carrier[P]$ by \obv{funs_type_apply}.
+        $\mul[P](x,\groupInv[P](x))\in\carrier[P]$ by
+            \obv{funs_type_apply,times_tuple_intro}.
+        Show that for every $i\in I$ we have
+            $\apply{\mul[P](x,\groupInv[P](x))}{i}
+                =\apply{\neutral[P]}{i}$.
+        \begin{subproof}
+            Fix $i\in I$.
+            $x(i)\in\carrier[G(i)]$ by
+                \auto{dependent_product_coordinate,
+                    product_monoid_carrier_family_apply}.
+            Follows by
+                \auto{product_group_mul_coordinate,
+                    product_group_inverse_coordinate,
+                    product_group_neutral_coordinate,
+                    group_inverse_right}.
+        \end{subproof}
+        Follows by \auto{dependent_product_extensionality}.
+    \end{subproof}
+    Show that for every $x\in\carrier[P]$ we have
+        $\mul[P](\groupInv[P](x),x)=\neutral[P]$.
+    \begin{subproof}
+        Fix $x\in\carrier[P]$.
+        $\groupInv[P](x)\in\carrier[P]$ by \obv{funs_type_apply}.
+        $\mul[P](\groupInv[P](x),x)\in\carrier[P]$ by
+            \obv{funs_type_apply,times_tuple_intro}.
+        Show that for every $i\in I$ we have
+            $\apply{\mul[P](\groupInv[P](x),x)}{i}
+                =\apply{\neutral[P]}{i}$.
+        \begin{subproof}
+            Fix $i\in I$.
+            $x(i)\in\carrier[G(i)]$ by
+                \auto{dependent_product_coordinate,
+                    product_monoid_carrier_family_apply}.
+            Follows by
+                \auto{product_group_mul_coordinate,
+                    product_group_inverse_coordinate,
+                    product_group_neutral_coordinate,
+                    group_inverse_left}.
+        \end{subproof}
+        Follows by \auto{dependent_product_extensionality}.
+    \end{subproof}
+    Hence $P$ is a group by
+        \auto{product_group,groupaggregateexact,group}.
+    Follows by \auto{product_group,groupaggregateexact}.
+\end{proof}
+
+\begin{proposition}\label{product_group_is_commutative}
+    Suppose $G$ is a function on $I$.
+    Suppose for every $i\in I$ we have $G(i)$ is a commutative group.
+    Then $\ProductGroup{I}{G}$ is a commutative group.
+\end{proposition}
+\begin{proof}
+    Let $P=\ProductGroup{I}{G}$.
+    For every $i\in I$ we have $G(i)$ is a group by
+        \obv{commutative_group_is_group}.
+    Hence $P$ is a group by \obv{product_group_is_exact}.
+    Let $C=\productMonoidCarrierFamily{I}{G}$.
+    $C$ is a function on $I$ by
+        \auto{product_monoid_carrier_family_type}.
+    $\carrier[P]=\dependentProduct{I}{C}$ by
+        \auto{product_group_fields,product_monoid_fields}.
+    Show that for all $x,y\in\carrier[P]$ we have
+        $\mul[P](x,y)=\mul[P](y,x)$.
+    \begin{subproof}
+        Fix $x,y\in\carrier[P]$.
+        $\mul[P](x,y),\mul[P](y,x)\in\carrier[P]$ by
+            \obv{group_is_monoid,monoid_is_magma,magma_welldef}.
+        Show that for every $i\in I$ we have
+            $\apply{\mul[P](x,y)}{i}=\apply{\mul[P](y,x)}{i}$.
+        \begin{subproof}
+            Fix $i\in I$.
+            $x(i),y(i)\in\carrier[G(i)]$ by
+                \auto{dependent_product_coordinate,
+                    product_monoid_carrier_family_apply}.
+            Follows by
+                \auto{product_group_mul_coordinate,
+                    commutative_group_commutative}.
+        \end{subproof}
+        Follows by \auto{dependent_product_extensionality}.
+    \end{subproof}
+    Hence $P$ is a commutative group by
+        \obv{group,commutative_group}.
+\end{proof}
+
+\subsection{Projections and mediators}
+
+\begin{theorem}\label{product_group_projection_hom}
+    Suppose $G$ is a function on $I$.
+    Suppose for every $j\in I$ we have $G(j)$ is a group.
+    Let $C=\productMonoidCarrierFamily{I}{G}$ and $i\in I$.
+    Then
+        $\groupHom{\dependentProjection{I}{C}{i}}{
+            \ProductGroup{I}{G}}{G(i)}$.
+\end{theorem}
+\begin{proof}
+    Let $P=\ProductGroup{I}{G}$.
+    Let $p=\dependentProjection{I}{C}{i}$.
+    $P$ is a group by \obv{product_group_is_exact}.
+    $C$ is a function on $I$ by
+        \auto{product_monoid_carrier_family_type}.
+    $\carrier[P]=\dependentProduct{I}{C}$ by
+        \auto{product_group_fields,product_monoid_fields}.
+    $C(i)=\carrier[G(i)]$ by
+        \auto{product_monoid_carrier_family_apply}.
+    Hence $p\in\funs{\carrier[P]}{\carrier[G(i)]}$ by
+        \auto{dependent_projection_type}.
+    For all $x,y\in\carrier[P]$ we have
+        $p(\mul[P](x,y))=\mul[G(i)](p(x),p(y))$ by
+        \auto{product_group_mul_coordinate,
+            dependent_projection_apply,
+            group_is_monoid,monoid_is_magma,magma_welldef}.
+    Follows by \auto{group_hom}.
+\end{proof}
+
+\begin{theorem}\label{product_group_mediator_hom}
+    Let $X$ be a group.
+    Suppose $G$ is a function on $I$.
+    Suppose for every $j\in I$ we have $G(j)$ is a group.
+    Suppose $f$ is a function on $I$ and for every $k\in I$ we have
+        $\groupHom{f(k)}{X}{G(k)}$.
+    Let $C=\productMonoidCarrierFamily{I}{G}$.
+    Then
+        $\groupHom{\dependentMediator{\carrier[X]}{I}{C}{f}}{X}{
+            \ProductGroup{I}{G}}$.
+\end{theorem}
+\begin{proof}
+    Let $P=\ProductGroup{I}{G}$.
+    Let $h=\dependentMediator{\carrier[X]}{I}{C}{f}$.
+    $P$ is a group by \auto{product_group_is_exact}.
+    $C$ is a function on $I$ by
+        \auto{product_monoid_carrier_family_type}.
+    For every $i\in I$ we have $f(i)\in\funs{\carrier[X]}{C(i)}$ by
+        \auto{group_hom_type,product_monoid_carrier_family_apply}.
+    $\carrier[P]=\dependentProduct{I}{C}$ by
+        \auto{product_group_fields,product_monoid_fields}.
+    Hence $h\in\funs{\carrier[X]}{\carrier[P]}$ by
+        \auto{dependent_mediator_type}.
+    Show that for all $x,y\in\carrier[X]$ we have
+        $h(\mul[X](x,y))=\mul[P](h(x),h(y))$.
+    \begin{subproof}
+        Fix $x,y\in\carrier[X]$.
+        $\mul[X](x,y)\in\carrier[X]$ by
+            \obv{group_is_monoid,monoid_is_magma,magma_welldef}.
+        Hence $h(\mul[X](x,y)),h(x),h(y)\in\carrier[P]$ by
+            \obv{funs_type_apply}.
+        Hence $\mul[P](h(x),h(y))\in\carrier[P]$ by
+            \obv{group_is_monoid,monoid_is_magma,magma_welldef}.
+        Show that for every $i\in I$ we have
+            $\apply{h(\mul[X](x,y))}{i}
+                =\apply{\mul[P](h(x),h(y))}{i}$.
+        \begin{subproof}
+            Fix $i\in I$.
+            $\apply{h(\mul[X](x,y))}{i}
+                =\apply{f(i)}{\mul[X](x,y)}$ and
+                $\apply{h(x)}{i}=\apply{f(i)}{x}$ and
+                $\apply{h(y)}{i}=\apply{f(i)}{y}$ by
+                \auto{dependent_mediator_coordinate}.
+            Follows by
+                \auto{group_hom_mul,product_group_mul_coordinate}.
+        \end{subproof}
+        Follows by \auto{dependent_product_extensionality}.
+    \end{subproof}
+    Follows by \auto{group_hom}.
+\end{proof}
+
+\begin{theorem}\label{product_group_mediator_factorization}
+    Let $X$ be a group.
+    Suppose $G$ is a function on $I$.
+    Suppose for every $j\in I$ we have $G(j)$ is a group.
+    Suppose $f$ is a function on $I$ and for every $k\in I$ we have
+        $\groupHom{f(k)}{X}{G(k)}$.
+    Let $C=\productMonoidCarrierFamily{I}{G}$ and $i\in I$.
+    Then
+        $\dependentProjection{I}{C}{i}\circ
+            \dependentMediator{\carrier[X]}{I}{C}{f}=f(i)$.
+\end{theorem}
+\begin{proof}
+    Let $p=\dependentProjection{I}{C}{i}$.
+    Let $h=\dependentMediator{\carrier[X]}{I}{C}{f}$.
+    $\groupHom{p}{\ProductGroup{I}{G}}{G(i)}$ by
+        \auto{product_group_projection_hom}.
+    $\groupHom{h}{X}{\ProductGroup{I}{G}}$ by
+        \auto{product_group_mediator_hom}.
+    Hence $p\circ h\in\funs{\carrier[X]}{\carrier[G(i)]}$ and
+        $f(i)\in\funs{\carrier[X]}{\carrier[G(i)]}$ by
+        \auto{group_hom_type,funs_circ}.
+    $C$ is a function on $I$ and
+        $\carrier[\ProductGroup{I}{G}]=\dependentProduct{I}{C}$ by
+        \auto{product_monoid_carrier_family_type,
+            product_group_fields,product_monoid_fields}.
+    For every $j\in I$ we have
+        $f(j)\in\funs{\carrier[X]}{C(j)}$ by
+        \auto{group_hom_type,product_monoid_carrier_family_apply}.
+    Show that for every $x\in\carrier[X]$ we have
+        $(p\circ h)(x)=\apply{f(i)}{x}$.
+    \begin{subproof}
+        Fix $x\in\carrier[X]$.
+        $h(x)\in\carrier[\ProductGroup{I}{G}]$ by
+            \obv{group_hom_apply_type}.
+        $(p\circ h)(x)=p(h(x))$ by
+            \auto{circ_apply,group_hom_type,funs_is_function,
+                funs_ran,funs}.
+        $p(h(x))=\apply{h(x)}{i}$ by
+            \auto{dependent_projection_apply}.
+        Follows by \auto{dependent_mediator_coordinate}.
+    \end{subproof}
+    Follows by \auto{typed_functions_equal_from_agreement}.
+\end{proof}
+
+\begin{theorem}\label{product_group_mediator_unique}
+    Let $X$ be a group.
+    Suppose $G$ is a function on $I$.
+    Suppose for every $j\in I$ we have $G(j)$ is a group.
+    Suppose $f$ is a function on $I$ and for every $k\in I$ we have
+        $\groupHom{f(k)}{X}{G(k)}$.
+    Let $C=\productMonoidCarrierFamily{I}{G}$.
+    Suppose $\groupHom{h}{X}{\ProductGroup{I}{G}}$.
+    Suppose for every $l\in I$ we have
+        $\dependentProjection{I}{C}{l}\circ h=f(l)$.
+    Then $h=\dependentMediator{\carrier[X]}{I}{C}{f}$.
+\end{theorem}
+\begin{proof}
+    Let $u=\dependentMediator{\carrier[X]}{I}{C}{f}$.
+    $\groupHom{u}{X}{\ProductGroup{I}{G}}$ by
+        \auto{product_group_mediator_hom}.
+    $C$ is a function on $I$ and
+        $\carrier[\ProductGroup{I}{G}]=\dependentProduct{I}{C}$ by
+        \auto{product_monoid_carrier_family_type,
+            product_group_fields,product_monoid_fields}.
+    For every $j\in I$ we have
+        $f(j)\in\funs{\carrier[X]}{C(j)}$ by
+        \auto{group_hom_type,product_monoid_carrier_family_apply}.
+    Show that for every $x\in\carrier[X]$ we have $h(x)=u(x)$.
+    \begin{subproof}
+        Fix $x\in\carrier[X]$.
+        $h(x),u(x)\in\carrier[\ProductGroup{I}{G}]$ by
+            \obv{group_hom_apply_type}.
+        Show that for every $i\in I$ we have
+            $\apply{h(x)}{i}=\apply{u(x)}{i}$.
+        \begin{subproof}
+            Fix $i\in I$.
+            Let $p=\dependentProjection{I}{C}{i}$.
+            $(p\circ h)(x)=\apply{f(i)}{x}$ by \auto.
+            $\groupHom{p}{\ProductGroup{I}{G}}{G(i)}$ by
+                \auto{product_group_projection_hom}.
+            $(p\circ h)(x)=p(h(x))$ by
+                \auto{circ_apply,group_hom_type,funs_is_function,
+                    funs_ran,funs}.
+            $p(h(x))=\apply{h(x)}{i}$ by
+                \auto{dependent_projection_apply}.
+            $\apply{u(x)}{i}=\apply{f(i)}{x}$ by
+                \auto{dependent_mediator_coordinate}.
+        \end{subproof}
+        Follows by \auto{dependent_product_extensionality}.
+    \end{subproof}
+    Follows by \auto{group_hom_extensionality}.
+\end{proof}
+
+\subsection{Reindexing and small products}
+
+\begin{theorem}\label{product_group_reindex_hom}
+    Suppose $G$ is a function on $I$.
+    Suppose for every $i\in I$ we have $G(i)$ is a group.
+    Let $e\in\funs{J}{I}$ and $C=\productMonoidCarrierFamily{I}{G}$.
+    Then
+        $\groupHom{\dependentReindex{I}{J}{C}{e}}{
+            \ProductGroup{I}{G}}{\ProductGroup{J}{G\circ e}}$.
+\end{theorem}
+\begin{proof}
+    Let $r=\dependentReindex{I}{J}{C}{e}$.
+    Let $P=\ProductGroup{I}{G}$ and $Q=\ProductGroup{J}{G\circ e}$.
+    For every $i\in I$ we have $G(i)$ is a monoid by
+        \obv{group_is_monoid}.
+    Hence $r$ is a monoid homomorphism from $\ProductMonoid{I}{G}$ to
+        $\ProductMonoid{J}{G\circ e}$ by
+        \auto{product_monoid_reindex_hom}.
+    $G\in\funs{I}{\ran{G}}$ by
+        \auto{function_exact_type_to_range}.
+    $G$ is composable with $e$ by \obv{funs_ran,funs}.
+    Hence $G\circ e$ is a function on $J$ by
+        \auto{funs_circ,funs_is_function,funs}.
+    Show that for every $j\in J$ we have $(G\circ e)(j)$ is a group.
+    \begin{subproof}
+        Fix $j\in J$.
+        Hence $j\in\dom{e}$ and $e(j)\in I$ by
+            \auto{funs,funs_type_apply}.
+        $(G\circ e)(j)=G(e(j))$ by
+            \obv{circ_apply,funs_is_function}.
+    \end{subproof}
+    Hence $P$ is a group and $Q$ is a group by
+        \auto{product_group_is_exact}.
+    $\carrier[P]=\carrier[\ProductMonoid{I}{G}]$ and
+        $\carrier[Q]=\carrier[\ProductMonoid{J}{G\circ e}]$ and
+        $\mul[P]=\mul[\ProductMonoid{I}{G}]$ and
+        $\mul[Q]=\mul[\ProductMonoid{J}{G\circ e}]$ by
+        \auto{product_group_fields}.
+    Hence $r\in\funs{\carrier[P]}{\carrier[Q]}$ and
+        for all $x,y\in\carrier[P]$ we have
+            $r(\mul[P](x,y))=\mul[Q](r(x),r(y))$ by
+        \auto{monoid_hom_type,monoid_hom_mul}.
+    Follows by \auto{group_hom}.
+\end{proof}
+
+\begin{theorem}\label{bijective_product_group_reindex_isomorphism}
+    Suppose $G$ is a function on $I$.
+    Suppose for every $i\in I$ we have $G(i)$ is a group.
+    Let $e\in\bijections{J}{I}$ and
+        $C=\productMonoidCarrierFamily{I}{G}$.
+    Then
+        $\groupIsomorphism{\dependentReindex{I}{J}{C}{e}}{
+            \ProductGroup{I}{G}}{\ProductGroup{J}{G\circ e}}$.
+\end{theorem}
+\begin{proof}
+    Let $r=\dependentReindex{I}{J}{C}{e}$.
+    $e\in\funs{J}{I}$ by \obv{bijections_to_funs}.
+    Hence $\groupHom{r}{\ProductGroup{I}{G}}{
+        \ProductGroup{J}{G\circ e}}$ by
+        \auto{product_group_reindex_hom}.
+    $C$ is a function on $I$ by
+        \auto{product_monoid_carrier_family_type}.
+    Hence $r\in\bijections{\dependentProduct{I}{C}}{
+        \dependentProduct{J}{C\circ e}}$ by
+        \auto{dependent_reindex_bijection}.
+    $C\circ e=\productMonoidCarrierFamily{J}{G\circ e}$ by
+        \auto{product_monoid_carrier_family_reindex,
+            bijections_to_funs}.
+    $\carrier[\ProductGroup{I}{G}]=\dependentProduct{I}{C}$ and
+        $\carrier[\ProductGroup{J}{G\circ e}]
+            =\dependentProduct{J}{
+                \productMonoidCarrierFamily{J}{G\circ e}}$ by
+        \auto{product_group_fields,product_monoid_fields}.
+    Hence $r\in\bijections{\carrier[\ProductGroup{I}{G}]}{
+        \carrier[\ProductGroup{J}{G\circ e}]}$.
+    Follows by \auto{group_isomorphism}.
+\end{proof}
+
+\begin{proposition}\label{empty_product_group_is_exact}
+    $\ProductGroup{\emptyset}{\emptyset}$ is an exact group.
+\end{proposition}
+\begin{proof}
+    $\emptyset$ is a function on $\emptyset$ by
+        \obv{emptyset_is_function_on_emptyset}.
+    For every $i\in\emptyset$ we have $\apply{\emptyset}{i}$ is a group
+        by \auto{emptyset}.
+    Follows by \obv{product_group_is_exact}.
+\end{proof}
+
+\begin{proposition}\label{singleton_product_group_is_exact}
+    Let $H$ be a group.
+    Then $\ProductGroup{\{i\}}{\{i\}\times\{H\}}$ is an exact group.
+\end{proposition}
+\begin{proof}
+    Let $G=\{i\}\times\{H\}$.
+    $G\in\funs{\{i\}}{\{H\}}$ by \auto{constant_graph_type}.
+    Hence $G$ is a function on $\{i\}$ by
+        \obv{funs_is_function,funs}.
+    For every $j\in\{i\}$ we have $G(j)=H$ by
+        \auto{constant_graph_application}.
+    Hence for every $j\in\{i\}$ we have $G(j)$ is a group by
+        \auto.
+    Follows by \auto{product_group_is_exact}.
+\end{proof}
+
+\begin{definition}\label{binary_product_group}
+    $\BinaryProductGroup{G}{H}
+        =\ProductGroup{\suc{\suc{\emptyset}}}{
+            \binaryFamily{G}{H}}$.
+\end{definition}
+
+\begin{proposition}\label{binary_product_group_is_exact}
+    Let $G,H$ be groups.
+    Then $\BinaryProductGroup{G}{H}$ is an exact group.
+\end{proposition}
+\begin{proof}
+    Let $I=\suc{\suc{\emptyset}}$ and $A=\binaryFamily{G}{H}$.
+    $A$ is a function on $I$ by
+        \auto{binary_family_type,funs_is_function,funs}.
+    Show that for every $i\in I$ we have $A(i)$ is a group.
+    \begin{subproof}
+        Fix $i\in I$.
+        $i=\emptyset$ or $i=\suc{\emptyset}$ by
+            \auto{suc_elim,emptyset}.
+        Follows by \auto{binary_family_left,binary_family_right}.
+    \end{subproof}
+    Follows by \auto{binary_product_group,product_group_is_exact}.
+\end{proof}
+
+\subsection{The finite-support product of commutative groups}
+
+\begin{proposition}\label{product_group_mul_support}
+    Suppose $G$ is a function on $I$.
+    Suppose for every $i\in I$ we have $G(i)$ is a group.
+    Let $P=\ProductGroup{I}{G}$ and $z=\neutral[P]$.
+    Let $x,y\in\carrier[P]$.
+    Then
+        $\dependentSupport{I}{\mul[P](x,y)}{z}\subseteq
+            \dependentSupport{I}{x}{z}\union
+                \dependentSupport{I}{y}{z}$.
+\end{proposition}
+\begin{proof}
+    Let $C=\productMonoidCarrierFamily{I}{G}$.
+    $\carrier[P]=\dependentProduct{I}{C}$ by
+        \auto{product_group_fields,product_monoid_fields}.
+    Hence $x,y\in\dependentProduct{I}{C}$.
+    Show that every element of
+        $\dependentSupport{I}{\mul[P](x,y)}{z}$ is an element of
+        $\dependentSupport{I}{x}{z}\union
+            \dependentSupport{I}{y}{z}$.
+    \begin{subproof}
+        Fix $i\in\dependentSupport{I}{\mul[P](x,y)}{z}$.
+        Hence $i\in I$ and
+            $\apply{\mul[P](x,y)}{i}\neq z(i)$ by
+            \obv{dependent_support_iff}.
+        Show that $i\in\dependentSupport{I}{x}{z}$ or
+            $i\in\dependentSupport{I}{y}{z}$.
+        \begin{subproof}
+            Suppose not.
+            Hence $x(i)=z(i)$ and $y(i)=z(i)$ by
+                \auto{dependent_support_iff}.
+            $z(i)=\neutral[G(i)]$ by
+                \auto{product_group_neutral_coordinate}.
+            $G(i)$ is a unital magma by
+                \obv{group_is_monoid,monoid_is_unital_magma}.
+            $\apply{\mul[P](x,y)}{i}
+                =\mul[G(i)](x(i),y(i))$ by
+                \obv{product_group_mul_coordinate}.
+            Hence $\apply{\mul[P](x,y)}{i}
+                =\mul[G(i)](\neutral[G(i)],\neutral[G(i)])$.
+            $\neutral[G(i)]\in\carrier[G(i)]$ by
+                \obv{unitalmagma_type}.
+            $\mul[G(i)](\neutral[G(i)],\neutral[G(i)])
+                =\neutral[G(i)]$ by \obv{unitalmagma_left}.
+            Hence $\apply{\mul[P](x,y)}{i}=z(i)$.
+            Contradiction.
+        \end{subproof}
+        Follows by \auto{union_iff}.
+    \end{subproof}
+    Follows by \obv{subseteq}.
+\end{proof}
+
+\begin{proposition}\label{product_group_inverse_support}
+    Suppose $G$ is a function on $I$.
+    Suppose for every $i\in I$ we have $G(i)$ is a group.
+    Let $P=\ProductGroup{I}{G}$ and $z=\neutral[P]$.
+    Let $x\in\carrier[P]$.
+    Then
+        $\dependentSupport{I}{\groupInv[P](x)}{z}
+            \subseteq\dependentSupport{I}{x}{z}$.
+\end{proposition}
+\begin{proof}
+    Let $C=\productMonoidCarrierFamily{I}{G}$.
+    $\carrier[P]=\dependentProduct{I}{C}$ by
+        \auto{product_group_fields,product_monoid_fields}.
+    Hence $x\in\dependentProduct{I}{C}$.
+    Show that every element of
+        $\dependentSupport{I}{\groupInv[P](x)}{z}$ is an element of
+        $\dependentSupport{I}{x}{z}$.
+    \begin{subproof}
+        Fix $i\in\dependentSupport{I}{\groupInv[P](x)}{z}$.
+        Hence $i\in I$ and
+            $\apply{\groupInv[P](x)}{i}\neq z(i)$ by
+            \obv{dependent_support_iff}.
+        Show that $i\in\dependentSupport{I}{x}{z}$.
+        \begin{subproof}
+            Suppose not.
+            Hence $x(i)=z(i)$ by \auto{dependent_support_iff}.
+            $z(i)=\neutral[G(i)]$ by
+                \auto{product_group_neutral_coordinate}.
+            $\apply{\groupInv[P](x)}{i}
+                =\groupInv[G(i)](x(i))$ by
+                \obv{product_group_inverse_coordinate}.
+            Hence $\apply{\groupInv[P](x)}{i}=z(i)$ by
+                \auto{group_inverse_neutral}.
+            Contradiction.
+        \end{subproof}
+    \end{subproof}
+    Follows by \obv{subseteq}.
+\end{proof}
+
+\begin{definition}\label{direct_sum_group}
+    $\DirectSumGroup{I}{G}
+        =\subgroupStructure{\ProductGroup{I}{G}}{
+            \dependentFinitelySupportedFunctions
+                {I}{\productMonoidCarrierFamily{I}{G}}{
+                    \productMonoidNeutral{I}{G}}}$.
+\end{definition}
+
+\begin{proposition}\label{direct_sum_group_carrier}
+    $\carrier[\DirectSumGroup{I}{G}]
+        =\dependentFinitelySupportedFunctions
+            {I}{\productMonoidCarrierFamily{I}{G}}{
+                \productMonoidNeutral{I}{G}}$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{direct_sum_group,subgroup_structure_carrier}.
+\end{proof}
+
+\begin{theorem}\label{direct_sum_group_subgroup}
+    Suppose $G$ is a function on $I$.
+    Suppose for every $i\in I$ we have $G(i)$ is a commutative group.
+    Let $P=\ProductGroup{I}{G}$.
+    Let $C=\productMonoidCarrierFamily{I}{G}$.
+    Let $z=\productMonoidNeutral{I}{G}$.
+    Let $D=\dependentFinitelySupportedFunctions{I}{C}{z}$.
+    Then $\subgroup{D}{P}$.
+\end{theorem}
+\begin{proof}
+    For every $i\in I$ we have $G(i)$ is a group by
+        \obv{commutative_group_is_group}.
+    $P$ is an exact group by \auto{product_group_is_exact}.
+    $\carrier[P]=\dependentProduct{I}{C}$ by
+        \auto{product_group_fields,product_monoid_fields}.
+    Show that every element of $D$ is an element of $\carrier[P]$.
+    \begin{subproof}
+        Fix $x\in D$.
+        $x\in\dependentProduct{I}{C}$ by
+            \auto{dependent_finitely_supported_functions_iff}.
+    \end{subproof}
+    Hence $D\subseteq\carrier[P]$ by \obv{subseteq}.
+    $z=\neutral[P]$ by
+        \auto{product_group_fields,product_monoid_fields}.
+    $z\in\dependentProduct{I}{C}$ by
+        \auto{product_monoid_neutral_type,commutative_group_is_group,
+            group_is_monoid}.
+    $\dependentSupport{I}{z}{z}=\emptyset$ by
+        \auto{setext,dependent_support_iff,emptyset}.
+    Hence $\dependentSupport{I}{z}{z}$ is finite by
+        \obv{emptyset_is_finite}.
+    Hence $\neutral[P]\in D$ by
+        \auto{dependent_finitely_supported_functions_iff}.
+    Show that for all $x,y\in D$ we have $\mul[P](x,y)\in D$.
+    \begin{subproof}
+        Fix $x,y\in D$.
+        Hence $x,y\in\carrier[P]$ by \obv{subseteq}.
+        $\mul[P](x,y)\in\carrier[P]$ by
+            \obv{group_is_monoid,monoid_is_magma,magma_welldef}.
+        $\dependentSupport{I}{x}{z}$ and
+            $\dependentSupport{I}{y}{z}$ are finite by
+            \auto{dependent_finitely_supported_functions_iff}.
+        Hence
+            $\dependentSupport{I}{x}{z}\union
+                \dependentSupport{I}{y}{z}$ is finite by
+            \obv{union_of_finite_is_finite}.
+        $\dependentSupport{I}{\mul[P](x,y)}{z}\subseteq
+            \dependentSupport{I}{x}{z}\union
+                \dependentSupport{I}{y}{z}$ by
+            \obv{product_group_mul_support}.
+        Hence $\dependentSupport{I}{\mul[P](x,y)}{z}$ is finite by
+            \obv{subseteq_finite_is_finite}.
+        $\mul[P](x,y)\in\dependentProduct{I}{C}$.
+        Follows by \auto{dependent_finitely_supported_functions_iff}.
+    \end{subproof}
+    Show that for every $x\in D$ we have $\groupInv[P](x)\in D$.
+    \begin{subproof}
+        Fix $x\in D$.
+        Hence $x\in\carrier[P]$ by \obv{subseteq}.
+        $\groupInv[P](x)\in\carrier[P]$ by
+            \obv{group_inverse_type}.
+        $\dependentSupport{I}{x}{z}$ is finite by
+            \auto{dependent_finitely_supported_functions_iff}.
+        $\dependentSupport{I}{\groupInv[P](x)}{z}
+            \subseteq\dependentSupport{I}{x}{z}$ by
+            \obv{product_group_inverse_support}.
+        Hence $\dependentSupport{I}{\groupInv[P](x)}{z}$ is finite by
+            \obv{subseteq_finite_is_finite}.
+        $\groupInv[P](x)\in\dependentProduct{I}{C}$.
+        Follows by \auto{dependent_finitely_supported_functions_iff}.
+    \end{subproof}
+    Follows by \obv{subgroup}.
+\end{proof}
+
+\begin{theorem}\label{direct_sum_group_is_exact}
+    Suppose $G$ is a function on $I$.
+    Suppose for every $i\in I$ we have $G(i)$ is a commutative group.
+    Then $\DirectSumGroup{I}{G}$ is an exact commutative group.
+\end{theorem}
+\begin{proof}
+    Let $P=\ProductGroup{I}{G}$.
+    Let $D=\dependentFinitelySupportedFunctions
+        {I}{\productMonoidCarrierFamily{I}{G}}{
+            \productMonoidNeutral{I}{G}}$.
+    $\subgroup{D}{P}$ by \auto{direct_sum_group_subgroup}.
+    Hence $D\subseteq\carrier[P]$ by \obv{subgroup_subseteq}.
+    Hence $\DirectSumGroup{I}{G}$ is an exact group by
+        \auto{direct_sum_group,subgroup_structure_is_exact_group}.
+    $P$ is a commutative group by
+        \auto{product_group_is_commutative}.
+    Show that for all $x,y\in\carrier[\DirectSumGroup{I}{G}]$ we have
+        $\mul[\DirectSumGroup{I}{G}](x,y)
+            =\mul[\DirectSumGroup{I}{G}](y,x)$.
+    \begin{subproof}
+        Fix $x,y\in\carrier[\DirectSumGroup{I}{G}]$.
+        Hence $x,y\in D$ by \auto{direct_sum_group_carrier}.
+        Hence $x,y\in\carrier[P]$ by \obv{subseteq}.
+        $\mul[P](x,y)=\mul[P](y,x)$ by
+            \obv{commutative_group_commutative}.
+        $\mul[\DirectSumGroup{I}{G}](x,y)=\mul[P](x,y)$ and
+            $\mul[\DirectSumGroup{I}{G}](y,x)=\mul[P](y,x)$ by
+            \auto{direct_sum_group,subgroup_structure_mul_apply}.
+    \end{subproof}
+    Hence $\DirectSumGroup{I}{G}$ is a commutative group by
+        \obv{group,commutative_group}.
+\end{proof}
+
+\begin{proposition}\label{direct_sum_group_mul_coordinate}
+    Suppose $G$ is a function on $I$.
+    Suppose for every $j\in I$ we have $G(j)$ is a commutative group.
+    Let $S=\DirectSumGroup{I}{G}$.
+    Let $x,y\in\carrier[S]$ and $i\in I$.
+    Then $\apply{\mul[S](x,y)}{i}=\mul[G(i)](x(i),y(i))$.
+\end{proposition}
+\begin{proof}
+    Let $P=\ProductGroup{I}{G}$.
+    Let $D=\dependentFinitelySupportedFunctions
+        {I}{\productMonoidCarrierFamily{I}{G}}{
+            \productMonoidNeutral{I}{G}}$.
+    $\subgroup{D}{P}$ by \auto{direct_sum_group_subgroup}.
+    Hence $D\subseteq\carrier[P]$ by \obv{subgroup_subseteq}.
+    $x,y\in D$ by \auto{direct_sum_group_carrier}.
+    Hence $x,y\in\carrier[P]$ by \obv{subseteq}.
+    $\mul[S](x,y)=\mul[P](x,y)$ by
+        \auto{direct_sum_group,subgroup_structure_mul_apply}.
+    For every $j\in I$ we have $G(j)$ is a group by
+        \obv{commutative_group_is_group}.
+    Follows by \auto{product_group_mul_coordinate}.
+\end{proof}
+
+\begin{theorem}\label{finite_direct_sum_group_eq_product_group}
+    Suppose $I$ is finite.
+    Suppose $G$ is a function on $I$.
+    Suppose for every $i\in I$ we have $G(i)$ is a commutative group.
+    Then $\DirectSumGroup{I}{G}=\ProductGroup{I}{G}$.
+\end{theorem}
+\begin{proof}
+    Let $P=\ProductGroup{I}{G}$.
+    Let $C=\productMonoidCarrierFamily{I}{G}$.
+    Let $z=\productMonoidNeutral{I}{G}$.
+    Let $D=\dependentFinitelySupportedFunctions{I}{C}{z}$.
+    $\carrier[P]=\dependentProduct{I}{C}$ by
+        \auto{product_group_fields,product_monoid_fields}.
+    Show that $D=\carrier[P]$.
+    \begin{subproof}
+        Show that every element of $D$ is an element of $\carrier[P]$.
+        \begin{subproof}
+            Fix $x\in D$.
+            $x\in\dependentProduct{I}{C}$ by
+                \auto{dependent_finitely_supported_functions_iff}.
+        \end{subproof}
+        Hence $D\subseteq\carrier[P]$ by \obv{subseteq}.
+        Show that every element of $\carrier[P]$ is an element of $D$.
+        \begin{subproof}
+            Fix $x\in\carrier[P]$.
+            Hence $x\in\dependentProduct{I}{C}$.
+            $\dependentSupport{I}{x}{z}\subseteq I$ by
+                \obv{dependent_support_subseteq}.
+            Hence $\dependentSupport{I}{x}{z}$ is finite by
+                \obv{subseteq_finite_is_finite}.
+            Follows by
+                \obv{dependent_finitely_supported_functions}.
+        \end{subproof}
+        Hence $\carrier[P]\subseteq D$ by \obv{subseteq}.
+        Follows by \obv{subseteq_antisymmetric}.
+    \end{subproof}
+    Hence $\DirectSumGroup{I}{G}
+        =\subgroupStructure{P}{\carrier[P]}$ by
+        \auto{direct_sum_group}.
+    $P$ is an exact group by
+        \auto{product_group_is_exact,commutative_group_is_group}.
+    Hence $\reduct[group]{P}=P$ by \obv{exact_group_reduct_eq}.
+    $\subgroupStructure{P}{\carrier[P]}=\reduct[group]{P}$ by
+        \obv{full_subgroup_structure_eq_group_reduct}.
+\end{proof}
+
+\subsection{Reindexing direct sums}
+
+\begin{proposition}\label{product_group_neutral_reindex}
+    Suppose $G$ is a function on $I$.
+    Suppose for every $i\in I$ we have $G(i)$ is a group.
+    Let $e\in\funs{J}{I}$.
+    Then
+        $\productMonoidNeutral{I}{G}\circ e
+            =\productMonoidNeutral{J}{G\circ e}$.
+\end{proposition}
+\begin{proof}
+    Let $C=\productMonoidCarrierFamily{I}{G}$.
+    Let $z=\productMonoidNeutral{I}{G}$.
+    Let $r=\dependentReindex{I}{J}{C}{e}$.
+    $C$ is a function on $I$ by
+        \auto{product_monoid_carrier_family_type}.
+    For every $i\in I$ we have $G(i)$ is a monoid by
+        \obv{group_is_monoid}.
+    Hence $r$ is a monoid homomorphism from $\ProductMonoid{I}{G}$ to
+        $\ProductMonoid{J}{G\circ e}$ by
+        \auto{product_monoid_reindex_hom}.
+    Hence
+        $r(\neutral[\ProductMonoid{I}{G}])
+            =\neutral[\ProductMonoid{J}{G\circ e}]$ by
+        \obv{monoid_hom_neutral}.
+    $z=\neutral[\ProductMonoid{I}{G}]$ by
+        \auto{product_monoid_fields}.
+    $z\in\dependentProduct{I}{C}$ by
+        \auto{product_monoid_neutral_type}.
+    $r(z)=z\circ e$ by \auto{dependent_reindex_apply}.
+    $\neutral[\ProductMonoid{J}{G\circ e}]
+        =\productMonoidNeutral{J}{G\circ e}$ by
+        \auto{product_monoid_fields}.
+    Follows by \auto.
+\end{proof}
+
+\begin{definition}\label{direct_sum_group_reindex}
+    $\directSumGroupReindex{I}{J}{G}{e}
+        =\dependentFiniteSupportPrecomposition{I}{J}{
+            \productMonoidCarrierFamily{I}{G}}{
+            \productMonoidNeutral{I}{G}}{e}$.
+\end{definition}
+
+\begin{proposition}\label{direct_sum_group_reindex_type}
+    Suppose $G$ is a function on $I$.
+    Suppose for every $i\in I$ we have $G(i)$ is a commutative group.
+    Let $e\in\funs{J}{I}$.
+    Suppose for every $i\in I$ we have $\preimg{e}{\{i\}}$ is finite.
+    Then
+        $\directSumGroupReindex{I}{J}{G}{e}\in
+            \funs{\carrier[\DirectSumGroup{I}{G}]}{
+                \carrier[\DirectSumGroup{J}{G\circ e}]}$.
+\end{proposition}
+\begin{proof}
+    Let $C=\productMonoidCarrierFamily{I}{G}$.
+    Let $D=\productMonoidCarrierFamily{J}{G\circ e}$.
+    Let $z=\productMonoidNeutral{I}{G}$.
+    Let $w=\productMonoidNeutral{J}{G\circ e}$.
+    For every $i\in I$ we have $G(i)$ is a group by
+        \obv{commutative_group_is_group}.
+    Hence for every $i\in I$ we have $G(i)$ is a monoid by
+        \obv{group_is_monoid}.
+    $C$ is a function on $I$ by
+        \auto{product_monoid_carrier_family_type}.
+    $z\in\dependentProduct{I}{C}$ by
+        \auto{product_monoid_neutral_type}.
+    $\dependentFiniteSupportPrecomposition{I}{J}{C}{z}{e}\in
+        \funs{\dependentFinitelySupportedFunctions{I}{C}{z}}{
+            \dependentFinitelySupportedFunctions{J}{C\circ e}{z\circ e}}
+        $ by \obv{dependent_finite_support_precomposition_type}.
+    $C\circ e=D$ by
+        \auto{product_monoid_carrier_family_reindex}.
+    $z\circ e=w$ by \auto{product_group_neutral_reindex}.
+    $\carrier[\DirectSumGroup{I}{G}]
+        =\dependentFinitelySupportedFunctions{I}{C}{z}$ and
+        $\carrier[\DirectSumGroup{J}{G\circ e}]
+        =\dependentFinitelySupportedFunctions{J}{D}{w}$ by
+        \auto{direct_sum_group_carrier}.
+    Follows by \auto{direct_sum_group_reindex}.
+\end{proof}
+
+\begin{proposition}\label{direct_sum_group_reindex_apply}
+    Suppose $G$ is a function on $I$.
+    Suppose for every $i\in I$ we have $G(i)$ is a commutative group.
+    Let $e\in\funs{J}{I}$.
+    Suppose for every $i\in I$ we have $\preimg{e}{\{i\}}$ is finite.
+    Let $x\in\carrier[\DirectSumGroup{I}{G}]$.
+    Then $\apply{\directSumGroupReindex{I}{J}{G}{e}}{x}=x\circ e$.
+\end{proposition}
+\begin{proof}
+    Let $C=\productMonoidCarrierFamily{I}{G}$.
+    Let $z=\productMonoidNeutral{I}{G}$.
+    For every $i\in I$ we have $G(i)$ is a group by
+        \obv{commutative_group_is_group}.
+    Hence for every $i\in I$ we have $G(i)$ is a monoid by
+        \obv{group_is_monoid}.
+    $C$ is a function on $I$ by
+        \auto{product_monoid_carrier_family_type}.
+    $z\in\dependentProduct{I}{C}$ by
+        \auto{product_monoid_neutral_type}.
+    $x\in\dependentFinitelySupportedFunctions{I}{C}{z}$ by
+        \auto{direct_sum_group_carrier}.
+    $\dependentFiniteSupportPrecomposition{I}{J}{C}{z}{e}$
+        is a function by
+        \auto{dependent_finite_support_precomposition_type,
+            funs_is_function}.
+    $\apply{\dependentFiniteSupportPrecomposition
+        {I}{J}{C}{z}{e}}{x}=x\circ e$ by
+        \obv{dependent_finite_support_precomposition_apply}.
+    Follows by \auto{direct_sum_group_reindex}.
+\end{proof}
+
+\begin{theorem}\label{direct_sum_group_reindex_hom}
+    Suppose $G$ is a function on $I$.
+    Suppose for every $i\in I$ we have $G(i)$ is a commutative group.
+    Let $e\in\funs{J}{I}$.
+    Suppose for every $i\in I$ we have $\preimg{e}{\{i\}}$ is finite.
+    Then
+        $\groupHom{\directSumGroupReindex{I}{J}{G}{e}}{
+            \DirectSumGroup{I}{G}}{\DirectSumGroup{J}{G\circ e}}$.
+\end{theorem}
+\begin{proof}
+    Let $S=\DirectSumGroup{I}{G}$.
+    Let $T=\DirectSumGroup{J}{G\circ e}$.
+    Let $P=\ProductGroup{I}{G}$.
+    Let $Q=\ProductGroup{J}{G\circ e}$.
+    Let $C=\productMonoidCarrierFamily{I}{G}$.
+    Let $r=\directSumGroupReindex{I}{J}{G}{e}$.
+    $G\in\funs{I}{\ran{G}}$ by
+        \auto{function_exact_type_to_range}.
+    $G$ is composable with $e$ by \obv{funs_ran,funs}.
+    Hence $G\circ e$ is a function on $J$ by
+        \auto{funs_circ,funs_is_function,funs}.
+    Show that for every $j\in J$ we have
+        $(G\circ e)(j)$ is a commutative group.
+    \begin{subproof}
+        Fix $j\in J$.
+        Hence $j\in\dom{e}$ and $e(j)\in I$ by
+            \auto{funs,funs_type_apply}.
+        $(G\circ e)(j)=G(e(j))$ by
+            \auto{circ_apply,funs_is_function}.
+    \end{subproof}
+    $r\in\funs{\carrier[S]}{\carrier[T]}$ by
+        \auto{direct_sum_group_reindex_type}.
+    $S$ is a commutative group and $T$ is a commutative group by
+        \auto{direct_sum_group_is_exact}.
+    Hence $S$ is a group and $T$ is a group by
+        \obv{commutative_group_is_group}.
+    For every $i\in I$ we have $G(i)$ is a group by
+        \obv{commutative_group_is_group}.
+    $C$ is a function on $I$ by
+        \auto{product_monoid_carrier_family_type}.
+    $\groupHom{\dependentReindex{I}{J}{C}{e}}{P}{Q}$ by
+        \auto{product_group_reindex_hom}.
+    $\subgroup{\carrier[S]}{P}$ and
+        $\subgroup{\carrier[T]}{Q}$ by
+        \auto{direct_sum_group_carrier,direct_sum_group_subgroup}.
+    Show that for all $x,y\in\carrier[S]$ we have
+        $r(\mul[S](x,y))=\mul[T](r(x),r(y))$.
+    \begin{subproof}
+        Fix $x,y\in\carrier[S]$.
+        $\carrier[S]\subseteq\carrier[P]$ and
+            $\carrier[T]\subseteq\carrier[Q]$ by
+            \obv{direct_sum_group_subgroup,subgroup_subseteq,
+                direct_sum_group_carrier}.
+        Hence $x,y\in\carrier[P]$ by \obv{subseteq}.
+        $P$ is a group by \auto{product_group_is_exact}.
+        Hence $\mul[P](x,y)\in\carrier[P]$ by
+            \obv{group_is_monoid,monoid_is_magma,magma_welldef}.
+        $\carrier[P]=\dependentProduct{I}{C}$ by
+            \auto{product_group_fields,product_monoid_fields}.
+        Hence $x,y,\mul[P](x,y)\in\dependentProduct{I}{C}$.
+        $\mul[S](x,y)=\mul[P](x,y)$ by
+            \auto{direct_sum_group,direct_sum_group_carrier,
+                subgroup_structure_mul_apply}.
+        $r(x),r(y)\in\carrier[T]$ by \obv{funs_type_apply}.
+        Hence $r(x),r(y)\in\carrier[Q]$ by \obv{subseteq}.
+        $\mul[T](r(x),r(y))=\mul[Q](r(x),r(y))$ by
+            \auto{direct_sum_group,direct_sum_group_carrier,
+                subgroup_structure_mul_apply}.
+        $r(\mul[S](x,y))=\mul[S](x,y)\circ e$ and
+            $r(x)=x\circ e$ and $r(y)=y\circ e$ by
+            \auto{direct_sum_group_reindex_apply,
+                group_is_monoid,monoid_is_magma,magma_welldef}.
+        $\apply{\dependentReindex{I}{J}{C}{e}}{x}=x\circ e$ and
+            $\apply{\dependentReindex{I}{J}{C}{e}}{y}=y\circ e$ and
+            $\apply{\dependentReindex{I}{J}{C}{e}}{
+                \mul[P](x,y)}=\mul[P](x,y)\circ e$ by
+            \obv{dependent_reindex_apply,
+                group_is_monoid,monoid_is_magma,magma_welldef,
+                product_group_fields,product_monoid_fields}.
+        $\apply{\dependentReindex{I}{J}{C}{e}}{
+            \mul[P](x,y)}
+            =\mul[Q](
+                \apply{\dependentReindex{I}{J}{C}{e}}{x},
+                \apply{\dependentReindex{I}{J}{C}{e}}{y})$ by
+            \obv{group_hom_mul}.
+        Follows by \auto.
+    \end{subproof}
+    Follows by \auto{group_hom}.
+\end{proof}
+
+\begin{theorem}\label{bijective_direct_sum_group_reindex_isomorphism}
+    Suppose $G$ is a function on $I$.
+    Suppose for every $i\in I$ we have $G(i)$ is a commutative group.
+    Let $e\in\bijections{J}{I}$.
+    Then
+        $\groupIsomorphism{\directSumGroupReindex{I}{J}{G}{e}}{
+            \DirectSumGroup{I}{G}}{\DirectSumGroup{J}{G\circ e}}$.
+\end{theorem}
+\begin{proof}
+    Let $C=\productMonoidCarrierFamily{I}{G}$.
+    Let $D=\productMonoidCarrierFamily{J}{G\circ e}$.
+    Let $z=\productMonoidNeutral{I}{G}$.
+    Let $w=\productMonoidNeutral{J}{G\circ e}$.
+    Let $r=\directSumGroupReindex{I}{J}{G}{e}$.
+    $e\in\funs{J}{I}$ by \obv{bijections_to_funs}.
+    For every $i\in I$ we have $\preimg{e}{\{i\}}$ is finite by
+        \obv{bijection_has_finite_fibers}.
+    Hence $\groupHom{r}{\DirectSumGroup{I}{G}}{
+        \DirectSumGroup{J}{G\circ e}}$ by
+        \auto{direct_sum_group_reindex_hom}.
+    For every $i\in I$ we have $G(i)$ is a group by
+        \obv{commutative_group_is_group}.
+    Hence for every $i\in I$ we have $G(i)$ is a monoid by
+        \obv{group_is_monoid}.
+    $C$ is a function on $I$ by
+        \auto{product_monoid_carrier_family_type}.
+    $z\in\dependentProduct{I}{C}$ by
+        \auto{product_monoid_neutral_type}.
+    $\dependentFiniteSupportPrecomposition{I}{J}{C}{z}{e}
+        \in\bijections{
+            \dependentFinitelySupportedFunctions{I}{C}{z}}{
+            \dependentFinitelySupportedFunctions{J}{C\circ e}{z\circ e}}
+        $ by \obv{dependent_finite_support_bijective_precomposition}.
+    $C\circ e=D$ by
+        \auto{product_monoid_carrier_family_reindex}.
+    $z\circ e=w$ by \auto{product_group_neutral_reindex}.
+    $\carrier[\DirectSumGroup{I}{G}]
+        =\dependentFinitelySupportedFunctions{I}{C}{z}$ and
+        $\carrier[\DirectSumGroup{J}{G\circ e}]
+        =\dependentFinitelySupportedFunctions{J}{D}{w}$ by
+        \auto{direct_sum_group_carrier}.
+    Hence $r\in\bijections{\carrier[\DirectSumGroup{I}{G}]}{
+        \carrier[\DirectSumGroup{J}{G\circ e}]}$ by
+        \auto{direct_sum_group_reindex}.
+    Follows by \auto{group_isomorphism}.
+\end{proof}
+
+\subsection{The canonical summand inclusions}
+
+\begin{definition}\label{direct_sum_group_inclusion}
+    $\directSumGroupInclusion{I}{G}{i}
+        =\dependentPointMassMap
+            {I}{\productMonoidCarrierFamily{I}{G}}{
+                \productMonoidNeutral{I}{G}}{i}$.
+\end{definition}
+
+\begin{proposition}\label{direct_sum_group_inclusion_type}
+    Suppose $G$ is a function on $I$.
+    Suppose for every $j\in I$ we have $G(j)$ is a commutative group.
+    Let $i\in I$.
+    Then
+        $\directSumGroupInclusion{I}{G}{i}\in
+            \funs{\carrier[G(i)]}{
+                \carrier[\DirectSumGroup{I}{G}]}$.
+\end{proposition}
+\begin{proof}
+    Let $C=\productMonoidCarrierFamily{I}{G}$.
+    Let $z=\productMonoidNeutral{I}{G}$.
+    $C$ is a function on $I$ by
+        \auto{product_monoid_carrier_family_type}.
+    For every $j\in I$ we have $G(j)$ is a group by
+        \obv{commutative_group_is_group}.
+    Hence for every $j\in I$ we have $G(j)$ is a monoid by
+        \obv{group_is_monoid}.
+    $z\in\dependentProduct{I}{C}$ by
+        \auto{product_monoid_neutral_type}.
+    $\dependentPointMassMap{I}{C}{z}{i}\in
+        \funs{C(i)}{
+            \dependentFinitelySupportedFunctions{I}{C}{z}}$ by
+        \obv{dependent_point_mass_map_type}.
+    $C(i)=\carrier[G(i)]$ by
+        \auto{product_monoid_carrier_family_apply}.
+    Follows by
+        \auto{direct_sum_group_inclusion,direct_sum_group_carrier}.
+\end{proof}
+
+\begin{proposition}\label{direct_sum_group_inclusion_apply}
+    Suppose $G$ is a function on $I$.
+    Suppose for every $j\in I$ we have $G(j)$ is a commutative group.
+    Let $i\in I$ and $a\in\carrier[G(i)]$.
+    Then
+        $\apply{\directSumGroupInclusion{I}{G}{i}}{a}
+            =\dependentPointMass
+                {I}{\productMonoidCarrierFamily{I}{G}}{
+                    \productMonoidNeutral{I}{G}}{i}{a}$.
+\end{proposition}
+\begin{proof}
+    Let $C=\productMonoidCarrierFamily{I}{G}$.
+    Let $z=\productMonoidNeutral{I}{G}$.
+    $C$ is a function on $I$ by
+        \auto{product_monoid_carrier_family_type}.
+    For every $j\in I$ we have $G(j)$ is a group by
+        \obv{commutative_group_is_group}.
+    Hence for every $j\in I$ we have $G(j)$ is a monoid by
+        \obv{group_is_monoid}.
+    $z\in\dependentProduct{I}{C}$ by
+        \auto{product_monoid_neutral_type}.
+    $C(i)=\carrier[G(i)]$ by
+        \auto{product_monoid_carrier_family_apply}.
+    Follows by
+        \auto{direct_sum_group_inclusion,
+            dependent_point_mass_map_apply}.
+\end{proof}
+
+\begin{theorem}\label{direct_sum_group_inclusion_hom}
+    Suppose $G$ is a function on $I$.
+    Suppose for every $j\in I$ we have $G(j)$ is a commutative group.
+    Let $i\in I$.
+    Then
+        $\groupHom
+            {\directSumGroupInclusion{I}{G}{i}}
+            {G(i)}{\DirectSumGroup{I}{G}}$.
+\end{theorem}
+\begin{proof}
+    Let $C=\productMonoidCarrierFamily{I}{G}$.
+    Let $z=\productMonoidNeutral{I}{G}$.
+    Let $S=\DirectSumGroup{I}{G}$.
+    Let $m=\directSumGroupInclusion{I}{G}{i}$.
+    $S$ is a commutative group by
+        \auto{direct_sum_group_is_exact}.
+    Hence $S$ is a group by \obv{commutative_group_is_group}.
+    $m\in\funs{\carrier[G(i)]}{\carrier[S]}$ by
+        \auto{direct_sum_group_inclusion_type}.
+    $C$ is a function on $I$ by
+        \auto{product_monoid_carrier_family_type}.
+    For every $j\in I$ we have $G(j)$ is a group by
+        \obv{commutative_group_is_group}.
+    Hence for every $j\in I$ we have $G(j)$ is a monoid by
+        \obv{group_is_monoid}.
+    $z\in\dependentProduct{I}{C}$ by
+        \auto{product_monoid_neutral_type}.
+    Show that for all $a,b\in\carrier[G(i)]$ we have
+        $m(\mul[G(i)](a,b))=\mul[S](m(a),m(b))$.
+    \begin{subproof}
+        Fix $a,b\in\carrier[G(i)]$.
+        $G(i)$ is a magma by
+            \obv{group_is_monoid,monoid_is_magma}.
+        $\mul[G(i)](a,b)\in\carrier[G(i)]$ by
+            \obv{magma_welldef}.
+        $m(a),m(b)\in\carrier[S]$ by
+            \obv{funs_type_apply}.
+        Hence $m(\mul[G(i)](a,b)),\mul[S](m(a),m(b))
+            \in\carrier[S]$ by
+            \obv{funs_type_apply,group_is_monoid,
+                monoid_is_magma,magma_welldef}.
+        Hence $m(\mul[G(i)](a,b)),\mul[S](m(a),m(b))
+            \in\dependentProduct{I}{C}$ by
+            \auto{direct_sum_group_carrier,
+                dependent_finitely_supported_functions_iff}.
+        Show that for every $j\in I$ we have
+            $\apply{m(\mul[G(i)](a,b))}{j}
+                =\apply{\mul[S](m(a),m(b))}{j}$.
+        \begin{subproof}
+            Fix $j\in I$.
+            \begin{byCase}
+            \caseOf{$j=i$.}
+                Follows by
+                    \auto{direct_sum_group_inclusion_apply,
+                        dependent_point_mass_selected,
+                        direct_sum_group_mul_coordinate,
+                        product_monoid_carrier_family_apply}.
+            \caseOf{$j\neq i$.}
+                $C(i)=\carrier[G(i)]$ by
+                    \auto{product_monoid_carrier_family_apply}.
+                $\mul[G(i)](a,b)\in C(i)$.
+                $\apply{m(\mul[G(i)](a,b))}{j}=z(j)$ and
+                    $\apply{m(a)}{j}=z(j)$ and
+                    $\apply{m(b)}{j}=z(j)$ by
+                    \auto{direct_sum_group_inclusion_apply,
+                        dependent_point_mass_other}.
+                $z(j)=\neutral[G(j)]$ by
+                    \auto{product_monoid_neutral_coordinate}.
+                $G(j)$ is a unital magma by
+                    \obv{group_is_monoid,monoid_is_unital_magma}.
+                $\apply{\mul[S](m(a),m(b))}{j}
+                    =\mul[G(j)](\apply{m(a)}{j},\apply{m(b)}{j})$ by
+                    \obv{direct_sum_group_mul_coordinate}.
+                Hence $\apply{\mul[S](m(a),m(b))}{j}
+                    =\mul[G(j)](\neutral[G(j)],\neutral[G(j)])$.
+                $\neutral[G(j)]\in\carrier[G(j)]$ by
+                    \obv{unitalmagma_type}.
+                $\mul[G(j)](\neutral[G(j)],\neutral[G(j)])
+                    =\neutral[G(j)]$ by \obv{unitalmagma_left}.
+            \end{byCase}
+        \end{subproof}
+        Follows by \obv{dependent_product_extensionality}.
+    \end{subproof}
+    Follows by \auto{group_hom}.
+\end{proof}
+
+\subsection{Coordinate maps on the direct sum}
+
+\begin{definition}\label{direct_sum_group_projection}
+    $\directSumGroupProjection{I}{G}{i}
+        =\restrl{\dependentProjection{I}{
+            \productMonoidCarrierFamily{I}{G}}{i}}{
+            \carrier[\DirectSumGroup{I}{G}]}$.
+\end{definition}
+
+\begin{theorem}\label{direct_sum_group_projection_hom}
+    Suppose $G$ is a function on $I$.
+    Suppose for every $j\in I$ we have $G(j)$ is a commutative group.
+    Let $i\in I$.
+    Then
+        $\groupHom{\directSumGroupProjection{I}{G}{i}}{
+            \DirectSumGroup{I}{G}}{G(i)}$.
+\end{theorem}
+\begin{proof}
+    Let $P=\ProductGroup{I}{G}$.
+    Let $D=\carrier[\DirectSumGroup{I}{G}]$.
+    Let $C=\productMonoidCarrierFamily{I}{G}$.
+    For every $j\in I$ we have $G(j)$ is a group by
+        \obv{commutative_group_is_group}.
+    $\groupHom{\dependentProjection{I}{C}{i}}{P}{G(i)}$ by
+        \auto{product_group_projection_hom}.
+    $\subgroup{D}{P}$ by
+        \auto{direct_sum_group_carrier,direct_sum_group_subgroup}.
+    Hence
+        $\groupHom{\restrl{\dependentProjection{I}{C}{i}}{D}}{
+            \subgroupStructure{P}{D}}{G(i)}$ by
+        \obv{group_hom_domain_restriction}.
+    $\subgroupStructure{P}{D}=\DirectSumGroup{I}{G}$ by
+        \auto{direct_sum_group,direct_sum_group_carrier}.
+    Follows by \auto{direct_sum_group_projection}.
+\end{proof}
+
+\begin{proposition}\label{direct_sum_group_projection_apply}
+    Suppose $G$ is a function on $I$.
+    Suppose for every $j\in I$ we have $G(j)$ is a commutative group.
+    Let $x\in\carrier[\DirectSumGroup{I}{G}]$ and $i\in I$.
+    Then $\apply{\directSumGroupProjection{I}{G}{i}}{x}=x(i)$.
+\end{proposition}
+\begin{proof}
+    Let $P=\ProductGroup{I}{G}$.
+    Let $D=\carrier[\DirectSumGroup{I}{G}]$.
+    Let $C=\productMonoidCarrierFamily{I}{G}$.
+    $\subgroup{D}{P}$ by
+        \auto{direct_sum_group_carrier,direct_sum_group_subgroup}.
+    Hence $D\subseteq\carrier[P]$ by \obv{subgroup_subseteq}.
+    $C$ is a function on $I$ by
+        \auto{product_monoid_carrier_family_type}.
+    $\carrier[P]=\dependentProduct{I}{C}$ by
+        \auto{product_group_fields,product_monoid_fields}.
+    Hence $x\in\dependentProduct{I}{C}$ by \auto{subseteq}.
+    $\dependentProjection{I}{C}{i}$ is a function and
+        $D\subseteq\dom{\dependentProjection{I}{C}{i}}$ by
+        \auto{dependent_projection_type,funs_is_function,funs_elim,
+            subseteq}.
+    $\apply{\restrl{\dependentProjection{I}{C}{i}}{D}}{x}
+        =\apply{\dependentProjection{I}{C}{i}}{x}$ by
+        \obv{restrl_of_function_apply}.
+    $\apply{\dependentProjection{I}{C}{i}}{x}=x(i)$ by
+        \obv{dependent_projection_apply}.
+    Follows by \auto{direct_sum_group_projection}.
+\end{proof}
+
+\begin{proposition}\label{direct_sum_group_projection_inclusion_selected}
+    Suppose $G$ is a function on $I$.
+    Suppose for every $j\in I$ we have $G(j)$ is a commutative group.
+    Let $i\in I$ and $a\in\carrier[G(i)]$.
+    Then
+        $\apply{\directSumGroupProjection{I}{G}{i}}{
+            \apply{\directSumGroupInclusion{I}{G}{i}}{a}}=a$.
+\end{proposition}
+\begin{proof}
+    Let $C=\productMonoidCarrierFamily{I}{G}$.
+    Let $z=\productMonoidNeutral{I}{G}$.
+    Let $p=\apply{\directSumGroupInclusion{I}{G}{i}}{a}$.
+    $p\in\carrier[\DirectSumGroup{I}{G}]$ by
+        \auto{direct_sum_group_inclusion_type,funs_type_apply}.
+    $p=\dependentPointMass{I}{C}{z}{i}{a}$ by
+        \auto{direct_sum_group_inclusion_apply}.
+    $C$ is a function on $I$ and $C(i)=\carrier[G(i)]$ by
+        \auto{product_monoid_carrier_family_type,
+            product_monoid_carrier_family_apply}.
+    For every $j\in I$ we have $G(j)$ is a group by
+        \obv{commutative_group_is_group}.
+    Hence for every $j\in I$ we have $G(j)$ is a monoid by
+        \obv{group_is_monoid}.
+    $z\in\dependentProduct{I}{C}$ by
+        \auto{product_monoid_neutral_type}.
+    $p(i)=a$ by \auto{dependent_point_mass_selected}.
+    Follows by \auto{direct_sum_group_projection_apply}.
+\end{proof}
+
+\begin{proposition}\label{direct_sum_group_projection_inclusion_other}
+    Suppose $G$ is a function on $I$.
+    Suppose for every $k\in I$ we have $G(k)$ is a commutative group.
+    Let $i,j\in I$.
+    Suppose $i\neq j$.
+    Let $a\in\carrier[G(i)]$.
+    Then
+        $\apply{\directSumGroupProjection{I}{G}{j}}{
+            \apply{\directSumGroupInclusion{I}{G}{i}}{a}}
+            =\neutral[G(j)]$.
+\end{proposition}
+\begin{proof}
+    Let $C=\productMonoidCarrierFamily{I}{G}$.
+    Let $z=\productMonoidNeutral{I}{G}$.
+    Let $p=\apply{\directSumGroupInclusion{I}{G}{i}}{a}$.
+    $p\in\carrier[\DirectSumGroup{I}{G}]$ by
+        \auto{direct_sum_group_inclusion_type,funs_type_apply}.
+    $p=\dependentPointMass{I}{C}{z}{i}{a}$ by
+        \auto{direct_sum_group_inclusion_apply}.
+    $C$ is a function on $I$ and $C(i)=\carrier[G(i)]$ by
+        \auto{product_monoid_carrier_family_type,
+            product_monoid_carrier_family_apply}.
+    For every $k\in I$ we have $G(k)$ is a group by
+        \obv{commutative_group_is_group}.
+    Hence for every $k\in I$ we have $G(k)$ is a monoid by
+        \obv{group_is_monoid}.
+    $z\in\dependentProduct{I}{C}$ by
+        \auto{product_monoid_neutral_type}.
+    $p(j)=z(j)$ by \auto{dependent_point_mass_other}.
+    $z(j)=\neutral[G(j)]$ by
+        \auto{product_monoid_neutral_coordinate}.
+    Follows by \auto{direct_sum_group_projection_apply}.
+\end{proof}
+
+\begin{definition}\label{direct_sum_group_inclusion_family_op}
+    $\directSumGroupInclusionFamilyOp:
+        \Set\to\Set\to\Set\to\Set
+        =\fun{I,G,i:\Set}{\directSumGroupInclusion{I}{G}{i}}$.
+\end{definition}
+
+\begin{definition}\label{direct_sum_group_inclusion_family}
+    $\directSumGroupInclusionFamily{I}{G}
+        =\Apply{\graphOnDomainOp}{
+            I,\Apply{\directSumGroupInclusionFamilyOp}{I,G}}$.
+\end{definition}
+
+\begin{proposition}\label{direct_sum_group_inclusion_family_type}
+    $\directSumGroupInclusionFamily{I}{G}$ is a function on $I$.
+\end{proposition}
+\begin{proof}
+    $\directSumGroupInclusionFamily{I}{G}\in
+        \funs{I}{\ran{\directSumGroupInclusionFamily{I}{G}}}$ by
+        \auto{direct_sum_group_inclusion_family,
+            logical_graph_on_domain_function}.
+    Follows by \obv{funs_is_function,funs}.
+\end{proof}
+
+\begin{proposition}\label{direct_sum_group_inclusion_family_apply}
+    Let $i\in I$.
+    Then
+        $(\directSumGroupInclusionFamily{I}{G})(i)
+            =\directSumGroupInclusion{I}{G}{i}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{direct_sum_group_inclusion_family,
+            direct_sum_group_inclusion_family_op,
+            logical_graph_on_domain_apply}.
+\end{proof}
+
+\subsection{Assembly from the summands}
+
+For a finitely supported section, its image under a family of homomorphisms is
+the finite fold of the coordinate images.  We first record the same family of
+images on an arbitrary subset of the index set; this makes extension by
+neutral values explicit in the proofs below.
+
+\begin{definition}\label{direct_sum_group_contribution_op}
+    $\directSumGroupContributionOp:
+        \Set\to\Set\to\Set\to\Set
+        =\fun{f,x,i:\Set}{\apply{\apply{f}{i}}{\apply{x}{i}}}$.
+\end{definition}
+
+\begin{definition}\label{direct_sum_group_contribution_on}
+    $\directSumGroupContributionOn{I}{G}{H}{f}{x}{A}
+        =\Apply{\graphOnOp}{
+            A,\carrier[H],
+            \Apply{\directSumGroupContributionOp}{f,x}}$.
+\end{definition}
+
+\begin{proposition}\label{direct_sum_group_contribution_on_type}
+    Suppose $G$ is a function on $I$ and $H$ is a group.
+    Suppose for every $i\in I$ we have $G(i)$ is a group.
+    Suppose $f$ is a function on $I$ and
+        for every $i\in I$ we have $\groupHom{f(i)}{G(i)}{H}$.
+    Let $x\in\carrier[\DirectSumGroup{I}{G}]$.
+    Suppose $A\subseteq I$.
+    Then
+        $\directSumGroupContributionOn{I}{G}{H}{f}{x}{A}
+            \in\funs{A}{\carrier[H]}$.
+\end{proposition}
+\begin{proof}
+    Let $C=\productMonoidCarrierFamily{I}{G}$.
+    Let $z=\productMonoidNeutral{I}{G}$.
+    $x\in\dependentFinitelySupportedFunctions{I}{C}{z}$ by
+        \auto{direct_sum_group_carrier}.
+    Hence $x\in\dependentProduct{I}{C}$ by
+        \obv{dependent_finitely_supported_functions}.
+    Show that for every $i\in A$ we have
+        $\apply{\apply{f}{i}}{x(i)}\in\carrier[H]$.
+    \begin{subproof}
+        Fix $i\in A$.
+        Hence $i\in I$ by \obv{subseteq}.
+        $x(i)\in C(i)$ by \obv{dependent_product_coordinate}.
+        $C(i)=\carrier[G(i)]$ by
+            \auto{product_monoid_carrier_family_apply}.
+        $f(i)\in\funs{\carrier[G(i)]}{\carrier[H]}$ by
+            \obv{group_hom_type}.
+        Follows by \obv{funs_type_apply}.
+    \end{subproof}
+    Hence for every $i\in A$ we have
+        $\Apply{\Apply{\directSumGroupContributionOp}{f,x}}{i}
+            \in\carrier[H]$ by
+        \auto{direct_sum_group_contribution_op}.
+    Follows by
+        \auto{direct_sum_group_contribution_on,
+            logical_graph_on_function}.
+\end{proof}
+
+\begin{proposition}\label{direct_sum_group_contribution_on_apply}
+    Suppose $G$ is a function on $I$ and $H$ is a group.
+    Suppose for every $j\in I$ we have $G(j)$ is a group.
+    Suppose $f$ is a function on $I$ and
+        for every $j\in I$ we have $\groupHom{f(j)}{G(j)}{H}$.
+    Let $x\in\carrier[\DirectSumGroup{I}{G}]$.
+    Suppose $A\subseteq I$.
+    Let $i\in A$.
+    Then
+        $\apply{\directSumGroupContributionOn{I}{G}{H}{f}{x}{A}}{i}
+            =\apply{\apply{f}{i}}{x(i)}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{direct_sum_group_contribution_on,
+            direct_sum_group_contribution_op,
+            logical_graph_on_apply}.
+\end{proof}
+
+\begin{proposition}\label{direct_sum_group_contribution_on_restriction}
+    Suppose $G$ is a function on $I$ and $H$ is a group.
+    Suppose for every $i\in I$ we have $G(i)$ is a group.
+    Suppose $f$ is a function on $I$ and
+        for every $i\in I$ we have $\groupHom{f(i)}{G(i)}{H}$.
+    Let $x\in\carrier[\DirectSumGroup{I}{G}]$.
+    Suppose $B\subseteq A$ and $A\subseteq I$.
+    Then
+        $\restrl{\directSumGroupContributionOn{I}{G}{H}{f}{x}{A}}{B}
+            =\directSumGroupContributionOn{I}{G}{H}{f}{x}{B}$.
+\end{proposition}
+\begin{proof}
+    Let $c_A=\directSumGroupContributionOn{I}{G}{H}{f}{x}{A}$.
+    Let $c_B=\directSumGroupContributionOn{I}{G}{H}{f}{x}{B}$.
+    $B\subseteq I$ by \obv{subseteq_transitive}.
+    $c_A\in\funs{A}{\carrier[H]}$ and
+        $c_B\in\funs{B}{\carrier[H]}$ by
+        \auto{direct_sum_group_contribution_on_type}.
+    Hence $\restrl{c_A}{B},c_B\in\funs{B}{\carrier[H]}$ by
+        \obv{funs_restrl}.
+    Show that for every $i\in B$ we have
+        $\apply{\restrl{c_A}{B}}{i}=c_B(i)$.
+    \begin{subproof}
+        Fix $i\in B$.
+        Hence $i\in A$ by \obv{subseteq}.
+        $c_A$ is a function and $B\subseteq\dom{c_A}$ by
+            \auto{funs_is_function,funs_elim}.
+        $\apply{\restrl{c_A}{B}}{i}=c_A(i)$ by
+            \obv{restrl_of_function_apply}.
+        $c_A(i)=\apply{\apply{f}{i}}{x(i)}$ and
+            $c_B(i)=\apply{\apply{f}{i}}{x(i)}$ by
+            \auto{direct_sum_group_contribution_on_apply}.
+    \end{subproof}
+    Follows by \auto{funs_elim,funext_on_domain}.
+\end{proof}
+
+\begin{definition}\label{direct_sum_group_contribution}
+    $\directSumGroupContribution{I}{G}{H}{f}{x}
+        =\directSumGroupContributionOn{I}{G}{H}{f}{x}{
+            \dependentSupport{I}{x}{
+                \productMonoidNeutral{I}{G}}}$.
+\end{definition}
+
+\begin{proposition}\label{direct_sum_group_contribution_type}
+    Suppose $G$ is a function on $I$ and $H$ is a group.
+    Suppose for every $i\in I$ we have $G(i)$ is a group.
+    Suppose $f$ is a function on $I$ and
+        for every $i\in I$ we have $\groupHom{f(i)}{G(i)}{H}$.
+    Let $x\in\carrier[\DirectSumGroup{I}{G}]$.
+    Then
+        $\directSumGroupContribution{I}{G}{H}{f}{x}\in
+            \funs{\dependentSupport{I}{x}{
+                \productMonoidNeutral{I}{G}}}{\carrier[H]}$.
+\end{proposition}
+\begin{proof}
+    $\dependentSupport{I}{x}{\productMonoidNeutral{I}{G}}
+        \subseteq I$ by \obv{dependent_support_subseteq}.
+    Follows by
+        \auto{direct_sum_group_contribution,
+            direct_sum_group_contribution_on_type}.
+\end{proof}
+
+\begin{proposition}\label{direct_sum_group_contribution_apply}
+    Suppose $G$ is a function on $I$ and $H$ is a group.
+    Suppose for every $j\in I$ we have $G(j)$ is a group.
+    Suppose $f$ is a function on $I$ and
+        for every $j\in I$ we have $\groupHom{f(j)}{G(j)}{H}$.
+    Let $x\in\carrier[\DirectSumGroup{I}{G}]$.
+    Let $i\in\dependentSupport{I}{x}{
+        \productMonoidNeutral{I}{G}}$.
+    Then
+        $\apply{\directSumGroupContribution{I}{G}{H}{f}{x}}{i}
+            =\apply{\apply{f}{i}}{x(i)}$.
+\end{proposition}
+\begin{proof}
+    $\dependentSupport{I}{x}{\productMonoidNeutral{I}{G}}
+        \subseteq I$ by \obv{dependent_support_subseteq}.
+    Follows by
+        \auto{direct_sum_group_contribution,
+            direct_sum_group_contribution_on_apply}.
+\end{proof}
+
+\begin{definition}\label{direct_sum_group_mediator_value_op}
+    $\directSumGroupMediatorValueOp:
+        \Set\to\Set\to\Set\to\Set\to\Set\to\Set
+        =\fun{I,G,H,f,x:\Set}{
+            \finiteFold{H}{
+                \dependentSupport{I}{x}{
+                    \productMonoidNeutral{I}{G}}}{
+                \directSumGroupContribution{I}{G}{H}{f}{x}}}$.
+\end{definition}
+
+\begin{definition}\label{direct_sum_group_mediator}
+    $\directSumGroupMediator{I}{G}{H}{f}
+        =\Apply{\graphOnOp}{
+            \carrier[\DirectSumGroup{I}{G}],\carrier[H],
+            \Apply{\directSumGroupMediatorValueOp}{I,G,H,f}}$.
+\end{definition}
+
+\begin{proposition}\label{direct_sum_group_mediator_value_type}
+    Suppose $G$ is a function on $I$.
+    Suppose for every $i\in I$ we have $G(i)$ is a commutative group.
+    Let $H$ be a commutative group.
+    Suppose $f$ is a function on $I$ and
+        for every $i\in I$ we have $\groupHom{f(i)}{G(i)}{H}$.
+    Let $x\in\carrier[\DirectSumGroup{I}{G}]$.
+    Then
+        $\Apply{\directSumGroupMediatorValueOp}{I,G,H,f,x}
+            \in\carrier[H]$.
+\end{proposition}
+\begin{proof}
+    Let $z=\productMonoidNeutral{I}{G}$.
+    Let $D=\dependentSupport{I}{x}{z}$.
+    Let $c=\directSumGroupContribution{I}{G}{H}{f}{x}$.
+    Let $C=\productMonoidCarrierFamily{I}{G}$.
+    $x\in\dependentFinitelySupportedFunctions{I}{C}{z}$ by
+        \auto{direct_sum_group_carrier}.
+    Hence $D$ is finite by
+        \auto{dependent_finitely_supported_functions_iff}.
+    $H$ is a group by \obv{commutative_group_is_group}.
+    Hence $H$ is a monoid by \obv{group_is_monoid}.
+    For all $u,v\in\carrier[H]$ we have
+        $\mul[H](u,v)=\mul[H](v,u)$ by
+        \obv{commutative_group_commutative}.
+    For every $i\in I$ we have $G(i)$ is a group by
+        \obv{commutative_group_is_group}.
+    $c\in\funs{D}{\carrier[H]}$ by
+        \auto{direct_sum_group_contribution_type}.
+    $\finiteFold{H}{D}{c}\in\carrier[H]$ by
+        \auto{monoid_finite_fold_canonical}.
+    Follows by \auto{direct_sum_group_mediator_value_op}.
+\end{proof}
+
+\begin{proposition}\label{direct_sum_group_mediator_type}
+    Suppose $G$ is a function on $I$.
+    Suppose for every $i\in I$ we have $G(i)$ is a commutative group.
+    Let $H$ be a commutative group.
+    Suppose $f$ is a function on $I$ and
+        for every $i\in I$ we have $\groupHom{f(i)}{G(i)}{H}$.
+    Then
+        $\directSumGroupMediator{I}{G}{H}{f}\in
+            \funs{\carrier[\DirectSumGroup{I}{G}]}{\carrier[H]}$.
+\end{proposition}
+\begin{proof}
+    For every $x\in\carrier[\DirectSumGroup{I}{G}]$ we have
+        $\Apply{\directSumGroupMediatorValueOp}{I,G,H,f,x}
+            \in\carrier[H]$ by
+        \obv{direct_sum_group_mediator_value_type}.
+    Follows by
+        \auto{direct_sum_group_mediator,logical_graph_on_function}.
+\end{proof}
+
+\begin{proposition}\label{direct_sum_group_mediator_apply}
+    Suppose $G$ is a function on $I$.
+    Suppose for every $i\in I$ we have $G(i)$ is a commutative group.
+    Let $H$ be a commutative group.
+    Suppose $f$ is a function on $I$ and
+        for every $i\in I$ we have $\groupHom{f(i)}{G(i)}{H}$.
+    Let $x\in\carrier[\DirectSumGroup{I}{G}]$.
+    Then
+        $\apply{\directSumGroupMediator{I}{G}{H}{f}}{x}
+            =\finiteFold{H}{
+                \dependentSupport{I}{x}{
+                    \productMonoidNeutral{I}{G}}}{
+                \directSumGroupContribution{I}{G}{H}{f}{x}}$.
+\end{proposition}
+\begin{proof}
+    $\apply{\directSumGroupMediator{I}{G}{H}{f}}{x}
+        =\Apply{\directSumGroupMediatorValueOp}{I,G,H,f,x}$ by
+        \auto{direct_sum_group_mediator,logical_graph_on_apply}.
+    Follows by \obv{direct_sum_group_mediator_value_op}.
+\end{proof}
+
+\begin{theorem}\label{direct_sum_group_mediator_expand_support}
+    Suppose $G$ is a function on $I$.
+    Suppose for every $i\in I$ we have $G(i)$ is a commutative group.
+    Let $H$ be a commutative group.
+    Suppose $f$ is a function on $I$ and
+        for every $i\in I$ we have $\groupHom{f(i)}{G(i)}{H}$.
+    Let $x\in\carrier[\DirectSumGroup{I}{G}]$.
+    Suppose $A$ is finite and $A\subseteq I$.
+    Suppose
+        $\dependentSupport{I}{x}{\productMonoidNeutral{I}{G}}
+            \subseteq A$.
+    Then
+        $\apply{\directSumGroupMediator{I}{G}{H}{f}}{x}
+            =\finiteFold{H}{A}{
+                \directSumGroupContributionOn{I}{G}{H}{f}{x}{A}}$.
+\end{theorem}
+\begin{proof}
+    Let $z=\productMonoidNeutral{I}{G}$.
+    Let $D=\dependentSupport{I}{x}{z}$.
+    Let $c_A=\directSumGroupContributionOn{I}{G}{H}{f}{x}{A}$.
+    Let $c_D=\directSumGroupContribution{I}{G}{H}{f}{x}$.
+    Let $C=\productMonoidCarrierFamily{I}{G}$.
+    $x\in\dependentFinitelySupportedFunctions{I}{C}{z}$ by
+        \auto{direct_sum_group_carrier}.
+    Hence $D$ is finite by
+        \auto{dependent_finitely_supported_functions_iff}.
+    $H$ is a group by \obv{commutative_group_is_group}.
+    Hence $H$ is a monoid by \obv{group_is_monoid}.
+    For all $u,v\in\carrier[H]$ we have
+        $\mul[H](u,v)=\mul[H](v,u)$ by
+        \obv{commutative_group_commutative}.
+    For every $i\in I$ we have $G(i)$ is a group by
+        \obv{commutative_group_is_group}.
+    $c_A\in\funs{A}{\carrier[H]}$ by
+        \auto{direct_sum_group_contribution_on_type}.
+    $D\subseteq I$ by \auto{subseteq_transitive}.
+    $\restrl{c_A}{D}=c_D$ by
+        \auto{direct_sum_group_contribution,
+            direct_sum_group_contribution_on_restriction}.
+    Show that for every $i\in A\setminus D$ we have
+        $c_A(i)=\neutral[H]$.
+    \begin{subproof}
+        Fix $i\in A\setminus D$.
+        Hence $i\in A$ and $i\notin D$ by \obv{setminus}.
+        Hence $i\in I$ by \obv{subseteq}.
+        $x(i)=z(i)$ by \auto{dependent_support_iff}.
+        $z(i)=\neutral[G(i)]$ by
+            \auto{product_monoid_neutral_coordinate}.
+        $c_A(i)=\apply{\apply{f}{i}}{x(i)}$ by
+            \auto{direct_sum_group_contribution_on_apply}.
+        $\apply{\apply{f}{i}}{\neutral[G(i)]}=\neutral[H]$ by
+            \obv{group_hom_neutral}.
+    \end{subproof}
+    Hence $\finiteFold{H}{A}{c_A}
+        =\finiteFold{H}{D}{\restrl{c_A}{D}}$ by
+        \auto{monoid_finite_fold_neutral_extension}.
+    $\apply{\directSumGroupMediator{I}{G}{H}{f}}{x}
+        =\finiteFold{H}{D}{c_D}$ by
+        \auto{direct_sum_group_mediator_apply}.
+\end{proof}
+
+\begin{proposition}\label{direct_sum_group_mul_support}
+    Suppose $G$ is a function on $I$.
+    Suppose for every $i\in I$ we have $G(i)$ is a commutative group.
+    Let $S=\DirectSumGroup{I}{G}$.
+    Let $z=\productMonoidNeutral{I}{G}$.
+    Let $x,y\in\carrier[S]$.
+    Then
+        $\dependentSupport{I}{\mul[S](x,y)}{z}\subseteq
+            \dependentSupport{I}{x}{z}\union
+                \dependentSupport{I}{y}{z}$.
+\end{proposition}
+\begin{proof}
+    Let $P=\ProductGroup{I}{G}$.
+    Let $D=\carrier[S]$.
+    $\subgroup{D}{P}$ by
+        \auto{direct_sum_group_carrier,direct_sum_group_subgroup}.
+    Hence $D\subseteq\carrier[P]$ by \obv{subgroup_subseteq}.
+    Hence $x,y\in\carrier[P]$ by \obv{subseteq}.
+    $\mul[S](x,y)=\mul[P](x,y)$ by
+        \auto{direct_sum_group,direct_sum_group_carrier,
+            subgroup_structure_mul_apply}.
+    $z=\neutral[P]$ by
+        \auto{product_group_fields,product_monoid_fields}.
+    For every $i\in I$ we have $G(i)$ is a group by
+        \obv{commutative_group_is_group}.
+    Follows by \auto{product_group_mul_support}.
+\end{proof}
+
+\begin{proposition}\label{direct_sum_group_contribution_on_mul}
+    Suppose $G$ is a function on $I$.
+    Suppose for every $i\in I$ we have $G(i)$ is a commutative group.
+    Let $H$ be a group.
+    Suppose $f$ is a function on $I$ and
+        for every $i\in I$ we have $\groupHom{f(i)}{G(i)}{H}$.
+    Let $S=\DirectSumGroup{I}{G}$ and $x,y\in\carrier[S]$.
+    Suppose $A\subseteq I$.
+    Then
+        $\directSumGroupContributionOn{I}{G}{H}{f}{
+                \mul[S](x,y)}{A}
+            =\monoidPointwiseMul{H}{A}{
+                \directSumGroupContributionOn{I}{G}{H}{f}{x}{A}}{
+                \directSumGroupContributionOn{I}{G}{H}{f}{y}{A}}$.
+\end{proposition}
+\begin{proof}
+    Let $c_x=\directSumGroupContributionOn{I}{G}{H}{f}{x}{A}$.
+    Let $c_y=\directSumGroupContributionOn{I}{G}{H}{f}{y}{A}$.
+    Let $q=\mul[S](x,y)$.
+    Let $c_q=\directSumGroupContributionOn{I}{G}{H}{f}{q}{A}$.
+    $S$ is a group by
+        \auto{direct_sum_group_is_exact,commutative_group_is_group}.
+    Hence $q\in\carrier[S]$ by
+        \auto{group_is_monoid,monoid_is_magma,magma_welldef}.
+    For every $i\in I$ we have $G(i)$ is a group by
+        \obv{commutative_group_is_group}.
+    $c_x,c_y,c_q\in\funs{A}{\carrier[H]}$ by
+        \auto{direct_sum_group_contribution_on_type}.
+    Hence $\monoidPointwiseMul{H}{A}{c_x}{c_y}
+        \in\funs{A}{\carrier[H]}$ by
+        \obv{monoid_pointwise_mul_type}.
+    Show that for every $i\in A$ we have
+        $c_q(i)=\apply{\monoidPointwiseMul{H}{A}{c_x}{c_y}}{i}$.
+    \begin{subproof}
+        Fix $i\in A$.
+        Hence $i\in I$ by \obv{subseteq}.
+        $c_q(i)=\apply{\apply{f}{i}}{q(i)}$ and
+            $c_x(i)=\apply{\apply{f}{i}}{x(i)}$ and
+            $c_y(i)=\apply{\apply{f}{i}}{y(i)}$ by
+            \auto{direct_sum_group_contribution_on_apply}.
+        $q(i)=\mul[G(i)](x(i),y(i))$ by
+            \auto{direct_sum_group_mul_coordinate}.
+        $\apply{\apply{f}{i}}{\mul[G(i)](x(i),y(i))}
+            =\mul[H](\apply{\apply{f}{i}}{x(i)},
+                \apply{\apply{f}{i}}{y(i)})$ by
+            \auto{group_hom_mul,direct_sum_group_carrier,
+                dependent_finitely_supported_functions_iff,
+                dependent_product_coordinate,
+                product_monoid_carrier_family_apply}.
+        $\apply{\monoidPointwiseMul{H}{A}{c_x}{c_y}}{i}
+            =\mul[H](c_x(i),c_y(i))$ by
+            \obv{monoid_pointwise_mul_apply}.
+        \begin{align*}
+            c_q(i)
+                &= \apply{\apply{f}{i}}{q(i)}
+                \\
+                &= \apply{\apply{f}{i}}{
+                    \mul[G(i)](x(i),y(i))}
+                \\
+                &= \mul[H](\apply{\apply{f}{i}}{x(i)},
+                    \apply{\apply{f}{i}}{y(i)})
+                \\
+                &= \mul[H](c_x(i),c_y(i))
+                \\
+                &= \apply{\monoidPointwiseMul{H}{A}{c_x}{c_y}}{i}
+        \end{align*}
+    \end{subproof}
+    Follows by \auto{funs_elim,funext_on_domain}.
+\end{proof}
+
+\begin{theorem}\label{direct_sum_group_mediator_hom}
+    Suppose $G$ is a function on $I$.
+    Suppose for every $i\in I$ we have $G(i)$ is a commutative group.
+    Let $H$ be a commutative group.
+    Suppose $f$ is a function on $I$ and
+        for every $i\in I$ we have $\groupHom{f(i)}{G(i)}{H}$.
+    Then
+        $\groupHom{\directSumGroupMediator{I}{G}{H}{f}}{
+            \DirectSumGroup{I}{G}}{H}$.
+\end{theorem}
+\begin{proof}
+    Let $S=\DirectSumGroup{I}{G}$.
+    Let $m=\directSumGroupMediator{I}{G}{H}{f}$.
+    Let $z=\productMonoidNeutral{I}{G}$.
+    $S$ is a commutative group by \auto{direct_sum_group_is_exact}.
+    Hence $S$ is a group by \obv{commutative_group_is_group}.
+    $H$ is a group by \obv{commutative_group_is_group}.
+    $m\in\funs{\carrier[S]}{\carrier[H]}$ by
+        \auto{direct_sum_group_mediator_type}.
+    Show that for all $x,y\in\carrier[S]$ we have
+        $m(\mul[S](x,y))=\mul[H](m(x),m(y))$.
+    \begin{subproof}
+        Fix $x,y\in\carrier[S]$.
+        Let $q=\mul[S](x,y)$.
+        $q\in\carrier[S]$ by
+            \auto{group_is_monoid,monoid_is_magma,magma_welldef}.
+        Let $D_x=\dependentSupport{I}{x}{z}$.
+        Let $D_y=\dependentSupport{I}{y}{z}$.
+        Let $D_q=\dependentSupport{I}{q}{z}$.
+        Let $A=D_x\union D_y$.
+        Let $c_x=\directSumGroupContributionOn{I}{G}{H}{f}{x}{A}$.
+        Let $c_y=\directSumGroupContributionOn{I}{G}{H}{f}{y}{A}$.
+        Let $c_q=\directSumGroupContributionOn{I}{G}{H}{f}{q}{A}$.
+        Let $h=\monoidPointwiseMul{H}{A}{c_x}{c_y}$.
+        Let $C=\productMonoidCarrierFamily{I}{G}$.
+        $x,y\in\dependentFinitelySupportedFunctions{I}{C}{z}$ by
+            \auto{direct_sum_group_carrier}.
+        Hence $D_x$ and $D_y$ are finite by
+            \auto{dependent_finitely_supported_functions_iff}.
+        Hence $A$ is finite by \obv{union_of_finite_is_finite}.
+        $D_x\subseteq A$ and $D_y\subseteq A$ by
+            \auto{subseteq,union_iff}.
+        $D_q\subseteq A$ by \auto{direct_sum_group_mul_support}.
+        $D_x,D_y\subseteq I$ by \auto{dependent_support_subseteq}.
+        Hence $A\subseteq I$ by \auto{subseteq,union_iff}.
+        $m(x)=\finiteFold{H}{A}{c_x}$ and
+            $m(y)=\finiteFold{H}{A}{c_y}$ and
+            $m(q)=\finiteFold{H}{A}{c_q}$ by
+            \auto{direct_sum_group_mediator_expand_support}.
+        $c_q=h$ by \auto{direct_sum_group_contribution_on_mul}.
+        $c_x,c_y\in\funs{A}{\carrier[H]}$ by
+            \auto{direct_sum_group_contribution_on_type,
+                commutative_group_is_group}.
+        $H$ is a monoid by \obv{group_is_monoid}.
+        For all $u,v\in\carrier[H]$ we have
+            $\mul[H](u,v)=\mul[H](v,u)$ by
+            \obv{commutative_group_commutative}.
+        $\finiteFold{H}{A}{h}
+            =\mul[H](\finiteFold{H}{A}{c_x},
+                \finiteFold{H}{A}{c_y})$ by
+            \auto{monoid_finite_fold_pointwise_mul}.
+        \begin{align*}
+            m(\mul[S](x,y))
+                &= m(q)
+                \\
+                &= \finiteFold{H}{A}{c_q}
+                \\
+                &= \finiteFold{H}{A}{h}
+                \\
+                &= \mul[H](\finiteFold{H}{A}{c_x},
+                    \finiteFold{H}{A}{c_y})
+                \\
+                &= \mul[H](m(x),m(y))
+        \end{align*}
+    \end{subproof}
+    Follows by \auto{group_hom}.
+\end{proof}
+
+\begin{theorem}\label{direct_sum_group_mediator_factorization}
+    Suppose $G$ is a function on $I$.
+    Suppose for every $j\in I$ we have $G(j)$ is a commutative group.
+    Let $H$ be a commutative group.
+    Suppose $f$ is a function on $I$ and
+        for every $j\in I$ we have $\groupHom{f(j)}{G(j)}{H}$.
+    Let $i\in I$.
+    Then
+        $\directSumGroupMediator{I}{G}{H}{f}\circ
+            \directSumGroupInclusion{I}{G}{i}=f(i)$.
+\end{theorem}
+\begin{proof}
+    Let $S=\DirectSumGroup{I}{G}$.
+    Let $m=\directSumGroupMediator{I}{G}{H}{f}$.
+    Let $u=\directSumGroupInclusion{I}{G}{i}$.
+    Let $C=\productMonoidCarrierFamily{I}{G}$.
+    Let $z=\productMonoidNeutral{I}{G}$.
+    $m\in\funs{\carrier[S]}{\carrier[H]}$ by
+        \auto{direct_sum_group_mediator_type}.
+    $u\in\funs{\carrier[G(i)]}{\carrier[S]}$ by
+        \auto{direct_sum_group_inclusion_type}.
+    Hence $m\circ u\in\funs{\carrier[G(i)]}{\carrier[H]}$ by
+        \obv{funs_circ}.
+    $f(i)\in\funs{\carrier[G(i)]}{\carrier[H]}$ by
+        \obv{group_hom_type}.
+    $m$ is a function and $u$ is a function by
+        \auto{funs_is_function}.
+    $m$ is composable with $u$ by \auto{funs_ran,funs}.
+    $H$ is a group by \obv{commutative_group_is_group}.
+    For all $v,w\in\carrier[H]$ we have
+        $\mul[H](v,w)=\mul[H](w,v)$ by
+        \obv{commutative_group_commutative}.
+    For every $j\in I$ we have $G(j)$ is a group by
+        \obv{commutative_group_is_group}.
+    Hence for every $j\in I$ we have $G(j)$ is a monoid by
+        \obv{group_is_monoid}.
+    $C$ is a function on $I$ by
+        \auto{product_monoid_carrier_family_type}.
+    $z\in\dependentProduct{I}{C}$ by
+        \auto{product_monoid_neutral_type}.
+    $C(i)=\carrier[G(i)]$ and $z(i)=\neutral[G(i)]$ by
+        \auto{product_monoid_carrier_family_apply,
+            product_monoid_neutral_coordinate}.
+    Show that for every $a\in\carrier[G(i)]$ we have
+        $(m\circ u)(a)=\apply{\apply{f}{i}}{a}$.
+    \begin{subproof}
+        Fix $a\in\carrier[G(i)]$.
+        Let $p=u(a)$.
+        $p\in\carrier[S]$ by \auto{funs_type_apply}.
+        $p=\dependentPointMass{I}{C}{z}{i}{a}$ by
+            \auto{direct_sum_group_inclusion_apply}.
+        Let $D=\dependentSupport{I}{p}{z}$.
+        Let $c=\directSumGroupContribution{I}{G}{H}{f}{p}$.
+        $c\in\funs{D}{\carrier[H]}$ by
+            \auto{direct_sum_group_contribution_type}.
+        $m(p)=\finiteFold{H}{D}{c}$ by
+            \auto{direct_sum_group_mediator_apply}.
+        $a\in\dom{u}$ by \obv{funs_elim}.
+        $(m\circ u)(a)=m(u(a))$ by \obv{circ_apply}.
+        \begin{align*}
+            (m\circ u)(a)
+                &= m(u(a))
+                \\
+                &= m(p)
+        \end{align*}
+        \begin{byCase}
+        \caseOf{$a=\neutral[G(i)]$.}
+            Hence $a=z(i)$.
+            Hence $D=\emptyset$ by
+                \auto{dependent_point_mass_support}.
+            Hence $c\in\funs{\emptyset}{\carrier[H]}$.
+            $H$ is a monoid by
+                \obv{commutative_group_is_group,group_is_monoid}.
+            $\finiteFold{H}{\emptyset}{c}=\neutral[H]$ by
+                \obv{monoid_finite_fold_empty}.
+            $\apply{\apply{f}{i}}{a}=\neutral[H]$ by
+                \auto{group_hom_neutral}.
+            \begin{align*}
+                (m\circ u)(a)
+                    &= m(p)
+                    \\
+                    &= \finiteFold{H}{D}{c}
+                    \\
+                    &= \finiteFold{H}{\emptyset}{c}
+                    \\
+                    &= \neutral[H]
+                    \\
+                    &= \apply{\apply{f}{i}}{a}
+            \end{align*}
+        \caseOf{$a\neq\neutral[G(i)]$.}
+            Hence $a\neq z(i)$.
+            Hence $D=\{i\}$ by
+                \auto{dependent_point_mass_support}.
+            Hence $c\in\funs{\{i\}}{\carrier[H]}$.
+            $H$ is a monoid by
+                \obv{commutative_group_is_group,group_is_monoid}.
+            $\finiteFold{H}{\{i\}}{c}=c(i)$ by
+                \obv{monoid_finite_fold_singleton}.
+            $c(i)=\apply{\apply{f}{i}}{p(i)}$ by
+                \auto{direct_sum_group_contribution_apply,
+                    singleton_iff}.
+            $p(i)=a$ by
+                \auto{dependent_point_mass_selected}.
+            \begin{align*}
+                (m\circ u)(a)
+                    &= m(p)
+                    \\
+                    &= \finiteFold{H}{D}{c}
+                    \\
+                    &= \finiteFold{H}{\{i\}}{c}
+                    \\
+                    &= c(i)
+                    \\
+                    &= \apply{\apply{f}{i}}{p(i)}
+                    \\
+                    &= \apply{\apply{f}{i}}{a}
+            \end{align*}
+        \end{byCase}
+    \end{subproof}
+    Follows by \auto{funs_elim,funext_on_domain}.
+\end{proof}
+
+\begin{theorem}\label{direct_sum_group_point_mass_decomposition}
+    Suppose $G$ is a function on $I$.
+    Suppose for every $i\in I$ we have $G(i)$ is a commutative group.
+    Let $S=\DirectSumGroup{I}{G}$.
+    Let $x\in\carrier[S]$.
+    Let $z=\productMonoidNeutral{I}{G}$.
+    Let $D=\dependentSupport{I}{x}{z}$.
+    Let $u=\directSumGroupInclusionFamily{I}{G}$.
+    Then
+        $\finiteFold{S}{D}{
+            \directSumGroupContribution{I}{G}{S}{u}{x}}=x$.
+\end{theorem}
+\begin{proof}
+    Let $C=\productMonoidCarrierFamily{I}{G}$.
+    Let $p=\directSumGroupContribution{I}{G}{S}{u}{x}$.
+    $S$ is a commutative group by \auto{direct_sum_group_is_exact}.
+    Hence $S$ is a group by \obv{commutative_group_is_group}.
+    For every $i\in I$ we have $G(i)$ is a group by
+        \obv{commutative_group_is_group}.
+    Hence for every $i\in I$ we have $G(i)$ is a monoid by
+        \obv{group_is_monoid}.
+    $u$ is a function on $I$ by
+        \auto{direct_sum_group_inclusion_family_type}.
+    Show that for every $i\in I$ we have $\groupHom{u(i)}{G(i)}{S}$.
+    \begin{subproof}
+        Fix $i\in I$.
+        $u(i)=\directSumGroupInclusion{I}{G}{i}$ by
+            \auto{direct_sum_group_inclusion_family_apply}.
+        Follows by \auto{direct_sum_group_inclusion_hom}.
+    \end{subproof}
+    $p\in\funs{D}{\carrier[S]}$ by
+        \auto{direct_sum_group_contribution_type}.
+    $x\in\dependentFinitelySupportedFunctions{I}{C}{z}$ by
+        \auto{direct_sum_group_carrier}.
+    Hence $x\in\dependentProduct{I}{C}$ and $D$ is finite by
+        \auto{dependent_finitely_supported_functions_iff}.
+    $S$ is a monoid by \obv{group_is_monoid}.
+    For all $a,b\in\carrier[S]$ we have
+        $\mul[S](a,b)=\mul[S](b,a)$ by
+        \obv{commutative_group_commutative}.
+    Let $v=\finiteFold{S}{D}{p}$.
+    $v\in\carrier[S]$ by \auto{monoid_finite_fold_canonical}.
+    Hence $v\in\dependentFinitelySupportedFunctions{I}{C}{z}$ by
+        \auto{direct_sum_group_carrier}.
+    Hence $v\in\dependentProduct{I}{C}$ by
+        \obv{dependent_finitely_supported_functions}.
+    Show that for every $j\in I$ we have $v(j)=x(j)$.
+    \begin{subproof}
+        Fix $j\in I$.
+        Let $r=\directSumGroupProjection{I}{G}{j}$.
+        $\groupHom{r}{S}{G(j)}$ by
+            \auto{direct_sum_group_projection_hom}.
+        Hence $r$ is a monoid homomorphism from $S$ to $G(j)$ by
+            \obv{group_hom_is_monoid_hom}.
+        Let $q=r\circ p$.
+        $q\in\funs{D}{\carrier[G(j)]}$ by
+            \auto{group_hom_type,funs_circ}.
+        For all $a,b\in\carrier[G(j)]$ we have
+            $\mul[G(j)](a,b)=\mul[G(j)](b,a)$ by
+            \obv{commutative_group_commutative}.
+        $r(v)=\finiteFold{G(j)}{D}{q}$ by
+            \auto{monoid_hom_preserves_finite_fold}.
+        $r(v)=v(j)$ by \auto{direct_sum_group_projection_apply}.
+        $r\in\funs{\carrier[S]}{\carrier[G(j)]}$ by
+            \obv{group_hom_type}.
+        $p\in\funs{D}{\carrier[S]}$.
+        $r$ and $p$ are functions by
+            \auto{funs_is_function}.
+        $r$ is composable with $p$ by \auto{funs_ran,funs}.
+        \begin{byCase}
+        \caseOf{$j\in D$.}
+            $\{j\}$ is finite and $\{j\}\subseteq D$ by
+                \auto{singleton_is_finite,subseteq,singleton_iff}.
+            Show that for every $i\in D\setminus\{j\}$ we have
+                $q(i)=\neutral[G(j)]$.
+            \begin{subproof}
+                Fix $i\in D\setminus\{j\}$.
+                Hence $i\in D$ and $i\neq j$ by
+                    \auto{setminus,singleton_iff}.
+                Hence $i\in I$ by
+                    \auto{dependent_support_iff}.
+                $i\in\dom{p}$ by \auto{funs_elim}.
+                $q(i)=r(p(i))$ by \auto{circ_apply}.
+                $p(i)=\apply{u(i)}{x(i)}$ by
+                    \auto{direct_sum_group_contribution_apply}.
+                $u(i)=\directSumGroupInclusion{I}{G}{i}$ by
+                    \auto{direct_sum_group_inclusion_family_apply}.
+                $x(i)\in C(i)=\carrier[G(i)]$ by
+                    \auto{dependent_product_coordinate,
+                        product_monoid_carrier_family_apply}.
+                Follows by
+                    \auto{direct_sum_group_projection_inclusion_other}.
+            \end{subproof}
+            Hence $\finiteFold{G(j)}{D}{q}
+                =\finiteFold{G(j)}{\{j\}}{\restrl{q}{\{j\}}}$ by
+                \obv{monoid_finite_fold_neutral_extension}.
+            $\restrl{q}{\{j\}}\in
+                \funs{\{j\}}{\carrier[G(j)]}$ by
+                \obv{funs_restrl}.
+            Hence $\finiteFold{G(j)}{\{j\}}{
+                \restrl{q}{\{j\}}}
+                =\apply{\restrl{q}{\{j\}}}{j}$ by
+                \obv{monoid_finite_fold_singleton}.
+            $q$ is a function and $\{j\}\subseteq\dom{q}$ by
+                \auto{funs_is_function,funs_elim,subseteq,
+                    singleton_iff}.
+            Hence $\apply{\restrl{q}{\{j\}}}{j}=q(j)$ by
+                \auto{restrl_of_function_apply,singleton_iff}.
+            $j\in\dom{p}$ by \auto{funs_elim}.
+            $q(j)=r(p(j))$ by \auto{circ_apply}.
+            $p(j)=\apply{u(j)}{x(j)}$ by
+                \auto{direct_sum_group_contribution_apply}.
+            $u(j)=\directSumGroupInclusion{I}{G}{j}$ by
+                \auto{direct_sum_group_inclusion_family_apply}.
+            $x(j)\in C(j)=\carrier[G(j)]$ by
+                \auto{dependent_product_coordinate,
+                    product_monoid_carrier_family_apply}.
+            Hence $q(j)=x(j)$ by
+                \auto{direct_sum_group_projection_inclusion_selected}.
+        \caseOf{$j\notin D$.}
+            Show that for every $i\in D$ we have
+                $q(i)=\neutral[G(j)]$.
+            \begin{subproof}
+                Fix $i\in D$.
+                Hence $i\in I$ by \auto{dependent_support_iff}.
+                $i\neq j$.
+                $i\in\dom{p}$ by \auto{funs_elim}.
+                $q(i)=r(p(i))$ by \auto{circ_apply}.
+                $p(i)=\apply{u(i)}{x(i)}$ by
+                    \auto{direct_sum_group_contribution_apply}.
+                $u(i)=\directSumGroupInclusion{I}{G}{i}$ by
+                    \auto{direct_sum_group_inclusion_family_apply}.
+                $x(i)\in C(i)=\carrier[G(i)]$ by
+                    \auto{dependent_product_coordinate,
+                        product_monoid_carrier_family_apply}.
+                Follows by
+                    \auto{direct_sum_group_projection_inclusion_other}.
+            \end{subproof}
+            Hence $\finiteFold{G(j)}{D}{q}=\neutral[G(j)]$ by
+                \obv{monoid_finite_fold_all_neutral}.
+            $x(j)=z(j)$ by \auto{dependent_support_iff}.
+            $z(j)=\neutral[G(j)]$ by
+                \auto{product_monoid_neutral_coordinate}.
+        \end{byCase}
+    \end{subproof}
+    $C$ is a function on $I$ by
+        \auto{product_monoid_carrier_family_type}.
+    $v,x\in\dependentProduct{I}{C}$.
+    Follows by \auto{dependent_product_extensionality}.
+\end{proof}
+
+\begin{theorem}\label{direct_sum_group_mediator_unique}
+    Suppose $G$ is a function on $I$.
+    Suppose for every $i\in I$ we have $G(i)$ is a commutative group.
+    Let $H$ be a commutative group.
+    Suppose $f$ is a function on $I$ and
+        for every $i\in I$ we have $\groupHom{f(i)}{G(i)}{H}$.
+    Suppose $\groupHom{h}{\DirectSumGroup{I}{G}}{H}$.
+    Suppose for every $i\in I$ we have
+        $h\circ\directSumGroupInclusion{I}{G}{i}=f(i)$.
+    Then $h=\directSumGroupMediator{I}{G}{H}{f}$.
+\end{theorem}
+\begin{proof}
+    Let $S=\DirectSumGroup{I}{G}$.
+    Let $m=\directSumGroupMediator{I}{G}{H}{f}$.
+    Let $z=\productMonoidNeutral{I}{G}$.
+    Let $C=\productMonoidCarrierFamily{I}{G}$.
+    Let $u=\directSumGroupInclusionFamily{I}{G}$.
+    $S$ is a commutative group by \auto{direct_sum_group_is_exact}.
+    Hence $S$ is a group by \obv{commutative_group_is_group}.
+    $H$ is a group by \obv{commutative_group_is_group}.
+    $h,m\in\funs{\carrier[S]}{\carrier[H]}$ by
+        \auto{group_hom_type,direct_sum_group_mediator_type}.
+    $h$ is a monoid homomorphism from $S$ to $H$ by
+        \auto{group_hom_is_monoid_hom}.
+    For all $a,b\in\carrier[S]$ we have
+        $\mul[S](a,b)=\mul[S](b,a)$ by
+        \obv{commutative_group_commutative}.
+    For all $a,b\in\carrier[H]$ we have
+        $\mul[H](a,b)=\mul[H](b,a)$ by
+        \obv{commutative_group_commutative}.
+    For every $i\in I$ we have $G(i)$ is a group by
+        \obv{commutative_group_is_group}.
+    $u$ is a function on $I$ by
+        \auto{direct_sum_group_inclusion_family_type}.
+    Show that for every $i\in I$ we have $\groupHom{u(i)}{G(i)}{S}$.
+    \begin{subproof}
+        Fix $i\in I$.
+        $u(i)=\directSumGroupInclusion{I}{G}{i}$ by
+            \auto{direct_sum_group_inclusion_family_apply}.
+        Follows by \auto{direct_sum_group_inclusion_hom}.
+    \end{subproof}
+    Show that for every $x\in\carrier[S]$ we have $h(x)=m(x)$.
+    \begin{subproof}
+        Fix $x\in\carrier[S]$.
+        Let $D=\dependentSupport{I}{x}{z}$.
+        Let $p=\directSumGroupContribution{I}{G}{S}{u}{x}$.
+        Let $c=\directSumGroupContribution{I}{G}{H}{f}{x}$.
+        $x\in\dependentFinitelySupportedFunctions{I}{C}{z}$ by
+            \auto{direct_sum_group_carrier}.
+        Hence $x\in\dependentProduct{I}{C}$ and $D$ is finite by
+            \auto{dependent_finitely_supported_functions_iff}.
+        $p\in\funs{D}{\carrier[S]}$ by
+            \auto{direct_sum_group_contribution_type}.
+        $c\in\funs{D}{\carrier[H]}$ by
+            \auto{direct_sum_group_contribution_type}.
+        Let $q=h\circ p$.
+        $q\in\funs{D}{\carrier[H]}$ by
+            \auto{group_hom_type,funs_circ}.
+        $h$ and $p$ are functions by
+            \auto{group_hom_type,funs_is_function}.
+        $h$ is composable with $p$ by
+            \auto{group_hom_type,funs_ran,funs}.
+        Show that $q=c$.
+        \begin{subproof}
+            Show that for every $i\in D$ we have $q(i)=c(i)$.
+            \begin{subproof}
+                Fix $i\in D$.
+                Hence $i\in I$ by \auto{dependent_support_iff}.
+                $i\in\dom{p}$ by \auto{funs_elim}.
+                $q(i)=h(p(i))$ by \auto{circ_apply}.
+                $p(i)=\apply{u(i)}{x(i)}$ by
+                    \auto{direct_sum_group_contribution_apply}.
+                $u(i)=\directSumGroupInclusion{I}{G}{i}$ by
+                    \auto{direct_sum_group_inclusion_family_apply}.
+                $x(i)\in C(i)=\carrier[G(i)]$ by
+                    \auto{dependent_product_coordinate,
+                        product_monoid_carrier_family_apply}.
+                Let $v=\directSumGroupInclusion{I}{G}{i}$.
+                $v\in\funs{\carrier[G(i)]}{\carrier[S]}$ by
+                    \auto{direct_sum_group_inclusion_type}.
+                Hence $v$ is a function by \auto{funs_is_function}.
+                $h$ is composable with $v$ by
+                    \auto{group_hom_type,funs_ran,funs}.
+                $x(i)\in\dom{v}$ by \auto{funs_elim}.
+                Hence $(h\circ v)(x(i))=h(v(x(i)))$ by
+                    \obv{circ_apply}.
+                $h\circ v=f(i)$ by \auto.
+                Hence $h(v(x(i)))=\apply{\apply{f}{i}}{x(i)}$ by
+                    \auto.
+                $c(i)=\apply{\apply{f}{i}}{x(i)}$ by
+                    \auto{direct_sum_group_contribution_apply}.
+                Follows by \auto.
+            \end{subproof}
+            Follows by \auto{funs_elim,funext_on_domain}.
+        \end{subproof}
+        $\finiteFold{S}{D}{p}=x$ by
+            \auto{direct_sum_group_point_mass_decomposition}.
+        $h(\finiteFold{S}{D}{p})=\finiteFold{H}{D}{q}$ by
+            \auto{monoid_hom_preserves_finite_fold}.
+        $m(x)=\finiteFold{H}{D}{c}$ by
+            \auto{direct_sum_group_mediator_apply}.
+        \begin{align*}
+            h(x)
+                &= h(\finiteFold{S}{D}{p})
+                \\
+                &= \finiteFold{H}{D}{q}
+                \\
+                &= \finiteFold{H}{D}{c}
+                \\
+                &= m(x)
+        \end{align*}
+    \end{subproof}
+    Follows by \auto{funs_elim,funext_on_domain}.
+\end{proof}
+
+\begin{theorem}\label{bijective_direct_sum_group_reindex_inverse}
+    Suppose $G$ is a function on $I$.
+    Suppose for every $i\in I$ we have $G(i)$ is a commutative group.
+    Let $e\in\bijections{J}{I}$.
+    Let $P=\directSumGroupReindex{I}{J}{G}{e}$.
+    Let $Q=\directSumGroupReindex{J}{I}{G\circ e}{\converse{e}}$.
+    Let $S=\carrier[\DirectSumGroup{I}{G}]$.
+    Let $T=\carrier[\DirectSumGroup{J}{G\circ e}]$.
+    Then $Q\circ P=\identity{S}$ and $P\circ Q=\identity{T}$.
+\end{theorem}
+\begin{proof}
+    Let $C=\productMonoidCarrierFamily{I}{G}$.
+    Let $D=\productMonoidCarrierFamily{J}{G\circ e}$.
+    Let $z=\productMonoidNeutral{I}{G}$.
+    Let $w=\productMonoidNeutral{J}{G\circ e}$.
+    $e\in\funs{J}{I}$ by \obv{bijections_to_funs}.
+    For every $i\in I$ we have $G(i)$ is a group by
+        \obv{commutative_group_is_group}.
+    Hence for every $i\in I$ we have $G(i)$ is a monoid by
+        \obv{group_is_monoid}.
+    $C$ is a function on $I$ by
+        \auto{product_monoid_carrier_family_type}.
+    $z\in\dependentProduct{I}{C}$ by
+        \auto{product_monoid_neutral_type}.
+    $C\circ e=D$ by
+        \auto{product_monoid_carrier_family_reindex}.
+    $z\circ e=w$ by \auto{product_group_neutral_reindex}.
+    Let $P_0=\dependentFiniteSupportPrecomposition{I}{J}{C}{z}{e}$.
+    Let $Q_0=\dependentFiniteSupportPrecomposition
+        {J}{I}{C\circ e}{z\circ e}{\converse{e}}$.
+    Let $S_0=\dependentFinitelySupportedFunctions{I}{C}{z}$.
+    Let $T_0=\dependentFinitelySupportedFunctions
+        {J}{C\circ e}{z\circ e}$.
+    $P_0\in\bijections{S_0}{T_0}$ and
+        $Q_0\in\bijections{T_0}{S_0}$ and
+        $Q_0\circ P_0=\identity{S_0}$ and
+        $P_0\circ Q_0=\identity{T_0}$ by
+        \auto{dependent_finite_support_bijective_precomposition_inverse}.
+    $P=P_0$ by \auto{direct_sum_group_reindex}.
+    $Q=Q_0$ by \auto{direct_sum_group_reindex}.
+    $S=S_0$ and $T=T_0$ by
+        \auto{direct_sum_group_carrier}.
+    \begin{align*}
+        Q\circ P
+            &= Q_0\circ P_0
+            \\
+            &= \identity{S_0}
+            \\
+            &= \identity{S}
+    \end{align*}
+    \begin{align*}
+        P\circ Q
+            &= P_0\circ Q_0
+            \\
+            &= \identity{T_0}
+            \\
+            &= \identity{T}
+    \end{align*}
+\end{proof}
+
+\begin{proposition}\label{empty_direct_sum_group_is_exact}
+    Suppose $G$ is a function on $\emptyset$.
+    Then $\DirectSumGroup{\emptyset}{G}$ is an exact commutative group.
+\end{proposition}
+\begin{proof}
+    For every $i\in\emptyset$ we have $G(i)$ is a commutative group by
+        \auto{emptyset}.
+    Follows by \obv{direct_sum_group_is_exact}.
+\end{proof}
+
+\begin{proposition}\label{empty_direct_sum_group_eq_product_group}
+    Suppose $G$ is a function on $\emptyset$.
+    Then
+        $\DirectSumGroup{\emptyset}{G}
+            =\ProductGroup{\emptyset}{G}$.
+\end{proposition}
+\begin{proof}
+    $\emptyset$ is finite by \obv{emptyset_is_finite}.
+    For every $i\in\emptyset$ we have $G(i)$ is a commutative group by
+        \auto{emptyset}.
+    Follows by \obv{finite_direct_sum_group_eq_product_group}.
+\end{proof}

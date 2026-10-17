@@ -1,0 +1,682 @@
+\import{algebra/group/action.tex}
+\import{algebra/group/index.tex}
+\import{cardinal/reconciliation.tex}
+\import{relation/quotient-lift.tex}
+\import{set/logical-graph.tex}
+
+\section{Orbits and stabilizers}
+
+The orbit itself is the existing action orbit.  For a group action, orbit
+membership is symmetric and transitive, so the orbits partition the acted-on
+set.
+
+\begin{proposition}\label{group_action_orbit_symmetric}
+    Suppose $\groupAction{p}{G}{X}$ and $x,y\in X$.
+    Then $y\in\actionOrbit{p}{G}{X}{x}$ iff
+        $x\in\actionOrbit{p}{G}{X}{y}$.
+\end{proposition}
+\begin{proof}
+    $G$ is a group and $\monoidAction{p}{G}{X}$ by
+        \obv{group_action_group,group_action_is_monoid_action}.
+    Show that if $y\in\actionOrbit{p}{G}{X}{x}$, then
+        $x\in\actionOrbit{p}{G}{X}{y}$.
+    \begin{subproof}
+        Assume $y\in\actionOrbit{p}{G}{X}{x}$.
+        Take $a\in\carrier[G]$ such that
+            $\actionApply{p}{a}{x}=y$ by \obv{action_orbit_iff}.
+        $\groupInv[G](a)\in\carrier[G]$ by \obv{group_inverse_type}.
+        $\mul[G](\groupInv[G](a),a)=\neutral[G]$ by
+            \obv{group_inverse_left}.
+        $\actionApply{p}{\mul[G](\groupInv[G](a),a)}{x}
+            =\actionApply{p}{\groupInv[G](a)}{
+                \actionApply{p}{a}{x}}$ by
+            \obv{group_action_mul}.
+        $\actionApply{p}{\neutral[G]}{x}=x$ by
+            \obv{group_action_neutral}.
+        Hence $\actionApply{p}{\groupInv[G](a)}{y}=x$.
+        Follows by \obv{action_orbit_iff}.
+    \end{subproof}
+    Show that if $x\in\actionOrbit{p}{G}{X}{y}$, then
+        $y\in\actionOrbit{p}{G}{X}{x}$.
+    \begin{subproof}
+        Assume $x\in\actionOrbit{p}{G}{X}{y}$.
+        Take $a\in\carrier[G]$ such that
+            $\actionApply{p}{a}{y}=x$ by \obv{action_orbit_iff}.
+        $\groupInv[G](a)\in\carrier[G]$ by \obv{group_inverse_type}.
+        $\mul[G](\groupInv[G](a),a)=\neutral[G]$ by
+            \obv{group_inverse_left}.
+        $\actionApply{p}{\mul[G](\groupInv[G](a),a)}{y}
+            =\actionApply{p}{\groupInv[G](a)}{
+                \actionApply{p}{a}{y}}$ by
+            \obv{group_action_mul}.
+        $\actionApply{p}{\neutral[G]}{y}=y$ by
+            \obv{group_action_neutral}.
+        Hence $\actionApply{p}{\groupInv[G](a)}{x}=y$.
+        Follows by \obv{action_orbit_iff}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{proposition}\label{group_action_orbit_transitive}
+    Suppose $\groupAction{p}{G}{X}$ and $x,y,z\in X$.
+    Suppose $y\in\actionOrbit{p}{G}{X}{x}$ and
+        $z\in\actionOrbit{p}{G}{X}{y}$.
+    Then $z\in\actionOrbit{p}{G}{X}{x}$.
+\end{proposition}
+\begin{proof}
+    $G$ is a group and $\monoidAction{p}{G}{X}$ by
+        \obv{group_action_group,group_action_is_monoid_action}.
+    Take $a,b\in\carrier[G]$ such that
+        $\actionApply{p}{a}{x}=y$ and
+        $\actionApply{p}{b}{y}=z$ by \auto{action_orbit_iff}.
+    $\mul[G](b,a)\in\carrier[G]$ by
+        \obv{group_action_group,group_is_monoid,monoid_is_magma,
+            magma_welldef}.
+    $\actionApply{p}{\mul[G](b,a)}{x}
+        =\actionApply{p}{b}{\actionApply{p}{a}{x}}$ by
+        \obv{group_action_mul}.
+    Hence $\actionApply{p}{\mul[G](b,a)}{x}=z$.
+    Follows by \obv{action_orbit_iff}.
+\end{proof}
+
+\begin{theorem}\label{group_action_orbit_eq_if_member}
+    Suppose $\groupAction{p}{G}{X}$ and $x,y\in X$.
+    Suppose $y\in\actionOrbit{p}{G}{X}{x}$.
+    Then
+        $\actionOrbit{p}{G}{X}{x}=\actionOrbit{p}{G}{X}{y}$.
+\end{theorem}
+\begin{proof}
+    $\monoidAction{p}{G}{X}$ by
+        \obv{group_action_is_monoid_action}.
+    Show that every element of $\actionOrbit{p}{G}{X}{x}$ is an
+        element of $\actionOrbit{p}{G}{X}{y}$.
+    \begin{subproof}
+        Fix $z\in\actionOrbit{p}{G}{X}{x}$.
+        $z\in X$ by \obv{action_orbit_subseteq,subseteq}.
+        $x\in\actionOrbit{p}{G}{X}{y}$ by
+            \obv{group_action_orbit_symmetric}.
+        Follows by \obv{group_action_orbit_transitive}.
+    \end{subproof}
+    Hence $\actionOrbit{p}{G}{X}{x}\subseteq
+        \actionOrbit{p}{G}{X}{y}$ by \obv{subseteq}.
+    Show that every element of $\actionOrbit{p}{G}{X}{y}$ is an
+        element of $\actionOrbit{p}{G}{X}{x}$.
+    \begin{subproof}
+        Fix $z\in\actionOrbit{p}{G}{X}{y}$.
+        $z\in X$ by \obv{action_orbit_subseteq,subseteq}.
+        Follows by \obv{group_action_orbit_transitive}.
+    \end{subproof}
+    Hence $\actionOrbit{p}{G}{X}{y}\subseteq
+        \actionOrbit{p}{G}{X}{x}$ by \obv{subseteq}.
+    Follows by \obv{subseteq_antisymmetric}.
+\end{proof}
+
+\begin{theorem}\label{group_action_orbits_partition}
+    Suppose $\groupAction{p}{G}{X}$.
+    Then
+        $\{\actionOrbit{p}{G}{X}{x}\mid x\in X\}$
+        is a partition of $X$.
+\end{theorem}
+\begin{proof}
+    $\monoidAction{p}{G}{X}$ by
+        \obv{group_action_is_monoid_action}.
+    Let $P=\{\actionOrbit{p}{G}{X}{x}\mid x\in X\}$.
+    Show that $\emptyset\notin P$.
+    \begin{subproof}
+        Suppose $\emptyset\in P$.
+        Take $x\in X$ such that
+            $\emptyset=\actionOrbit{p}{G}{X}{x}$.
+        $x\in\actionOrbit{p}{G}{X}{x}$ by
+            \obv{group_action_is_monoid_action,
+                action_orbit_contains_point}.
+        Hence $x\in\emptyset$.
+        Contradiction by \obv{emptyset}.
+    \end{subproof}
+    Show that for all $A,B\in P$ such that $A\neq B$ we have
+        $A$ is disjoint from $B$.
+    \begin{subproof}
+        Fix $A,B\in P$.
+        Assume $A\neq B$.
+        Take $x\in X$ such that $A=\actionOrbit{p}{G}{X}{x}$.
+        Take $y\in X$ such that $B=\actionOrbit{p}{G}{X}{y}$.
+        Show that there exists no $z$ such that $z\in A$ and $z\in B$.
+        \begin{subproof}
+            Assume there exists $z$ such that $z\in A$ and $z\in B$.
+            Take $z$ such that $z\in A$ and $z\in B$.
+            $z\in X$ by \auto{action_orbit_subseteq,subseteq}.
+            $A=\actionOrbit{p}{G}{X}{z}$ and
+                $B=\actionOrbit{p}{G}{X}{z}$ by
+                \obv{group_action_orbit_eq_if_member}.
+            Contradiction.
+        \end{subproof}
+        Follows by \obv{disjoint}.
+    \end{subproof}
+    Hence $P$ is a partition by \obv{partition}.
+    Show that $\unions{P}=X$.
+    \begin{subproof}
+        Show that every element of $\unions{P}$ is an element of $X$.
+        \begin{subproof}
+            Fix $y\in\unions{P}$.
+            Take $A\in P$ such that $y\in A$ by \obv{unions_iff}.
+            Take $x\in X$ such that
+                $A=\actionOrbit{p}{G}{X}{x}$.
+            Follows by \auto{action_orbit_subseteq,subseteq}.
+        \end{subproof}
+        Hence $\unions{P}\subseteq X$ by \obv{subseteq}.
+        Show that every element of $X$ is an element of $\unions{P}$.
+        \begin{subproof}
+            Fix $x\in X$.
+            $x\in\actionOrbit{p}{G}{X}{x}$ by
+                \obv{group_action_is_monoid_action,
+                    action_orbit_contains_point}.
+            $\actionOrbit{p}{G}{X}{x}\in P$.
+            Follows by \auto{unions_iff}.
+        \end{subproof}
+        Hence $X\subseteq\unions{P}$ by \obv{subseteq}.
+        Follows by \obv{subseteq_antisymmetric}.
+    \end{subproof}
+\end{proof}
+
+\subsection{Fixed points and equivariant maps}
+
+\begin{definition}\label{action_fixed_points}
+    $\actionFixedPoints{p}{G}{X}=
+        \{x\in X\mid
+            \text{for every $a\in\carrier[G]$ we have
+                $\actionApply{p}{a}{x}=x$}\}$.
+\end{definition}
+
+\begin{proposition}\label{action_fixed_points_iff}
+    $x\in\actionFixedPoints{p}{G}{X}$ iff
+        $x\in X$ and for every $a\in\carrier[G]$ we have
+            $\actionApply{p}{a}{x}=x$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{action_fixed_points}.
+\end{proof}
+
+\begin{proposition}\label{group_action_fixed_iff_singleton_orbit}
+    Suppose $\groupAction{p}{G}{X}$ and $x\in X$.
+    Then $x\in\actionFixedPoints{p}{G}{X}$ iff
+        $\actionOrbit{p}{G}{X}{x}=\{x\}$.
+\end{proposition}
+\begin{proof}
+    $\monoidAction{p}{G}{X}$ by
+        \obv{group_action_is_monoid_action}.
+    Show that if $x\in\actionFixedPoints{p}{G}{X}$, then
+        $\actionOrbit{p}{G}{X}{x}=\{x\}$.
+    \begin{subproof}
+        Assume $x\in\actionFixedPoints{p}{G}{X}$.
+        Show that every element of $\actionOrbit{p}{G}{X}{x}$
+            is equal to $x$.
+        \begin{subproof}
+            Fix $y\in\actionOrbit{p}{G}{X}{x}$.
+            Take $a\in\carrier[G]$ such that
+                $\actionApply{p}{a}{x}=y$ by \obv{action_orbit_iff}.
+            $\actionApply{p}{a}{x}=x$ by
+                \obv{action_fixed_points_iff}.
+        \end{subproof}
+        $x\in\actionOrbit{p}{G}{X}{x}$ by
+            \obv{group_action_is_monoid_action,
+                action_orbit_contains_point}.
+        Follows by \auto{setext,singleton_iff}.
+    \end{subproof}
+    Show that if $\actionOrbit{p}{G}{X}{x}=\{x\}$, then
+        $x\in\actionFixedPoints{p}{G}{X}$.
+    \begin{subproof}
+        Assume $\actionOrbit{p}{G}{X}{x}=\{x\}$.
+        Show that for every $a\in\carrier[G]$ we have
+            $\actionApply{p}{a}{x}=x$.
+        \begin{subproof}
+            Fix $a\in\carrier[G]$.
+            $\actionApply{p}{a}{x}\in\actionOrbit{p}{G}{X}{x}$ by
+                \auto{action_orbit_iff}.
+            Follows by \obv{singleton_iff}.
+        \end{subproof}
+        Follows by \obv{action_fixed_points_iff}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{equivariant_map_carries_orbit_onto_orbit}
+    Suppose $\groupAction{p}{G}{X}$ and $\groupAction{q}{G}{Y}$.
+    Suppose $f\in\funs{X}{Y}$ and for every $a\in\carrier[G]$
+        we have for every $z\in X$ we have
+            $f(\actionApply{p}{a}{z})=\actionApply{q}{a}{f(z)}$.
+    Let $x\in X$.
+    Then
+        $\img{f}{\actionOrbit{p}{G}{X}{x}}
+            =\actionOrbit{q}{G}{Y}{f(x)}$.
+\end{theorem}
+\begin{proof}
+    $\monoidAction{p}{G}{X}$ and $\monoidAction{q}{G}{Y}$ by
+        \obv{group_action_is_monoid_action}.
+    $f$ is a function by \obv{funs_is_function}.
+    $f(x)\in Y$ by \obv{funs_type_apply}.
+    Show that every element of
+        $\img{f}{\actionOrbit{p}{G}{X}{x}}$ is an element of
+        $\actionOrbit{q}{G}{Y}{f(x)}$.
+    \begin{subproof}
+        Fix $y\in\img{f}{\actionOrbit{p}{G}{X}{x}}$.
+        Take $z\in\dom{f}\inter\actionOrbit{p}{G}{X}{x}$ such that
+            $y=f(z)$ by
+            \obv{img_of_function_elim}.
+        Hence $z\in\actionOrbit{p}{G}{X}{x}$ by \obv{inter_elim_right}.
+        Hence $f(z)=y$.
+        Take $a\in\carrier[G]$ such that
+            $\actionApply{p}{a}{x}=z$ by \obv{action_orbit_iff}.
+        $f(\actionApply{p}{a}{x})=\actionApply{q}{a}{f(x)}$.
+        Hence $\actionApply{q}{a}{f(x)}=y$.
+        Follows by \auto{action_orbit_iff}.
+    \end{subproof}
+    Hence $\img{f}{\actionOrbit{p}{G}{X}{x}}\subseteq
+        \actionOrbit{q}{G}{Y}{f(x)}$ by \obv{subseteq}.
+    Show that every element of $\actionOrbit{q}{G}{Y}{f(x)}$
+        is an element of $\img{f}{\actionOrbit{p}{G}{X}{x}}$.
+    \begin{subproof}
+        Fix $y\in\actionOrbit{q}{G}{Y}{f(x)}$.
+        Take $a\in\carrier[G]$ such that
+            $\actionApply{q}{a}{f(x)}=y$ by \obv{action_orbit_iff}.
+        $\actionApply{p}{a}{x}\in\actionOrbit{p}{G}{X}{x}$ by
+            \auto{action_orbit_iff}.
+        $\actionApply{p}{a}{x}\in\dom{f}$ by
+            \auto{action_orbit_subseteq,subseteq,funs}.
+        Hence $\actionApply{p}{a}{x}\in
+            \dom{f}\inter\actionOrbit{p}{G}{X}{x}$ by
+            \obv{inter_intro}.
+        $f(\actionApply{p}{a}{x})=y$.
+        Follows by \auto{img_of_function_intro}.
+    \end{subproof}
+    Hence $\actionOrbit{q}{G}{Y}{f(x)}\subseteq
+        \img{f}{\actionOrbit{p}{G}{X}{x}}$ by \obv{subseteq}.
+    Follows by \obv{subseteq_antisymmetric}.
+\end{proof}
+
+\begin{proposition}\label{equivariant_map_preserves_fixed_points}
+    Suppose $\groupAction{p}{G}{X}$ and $\groupAction{q}{G}{Y}$.
+    Suppose $f\in\funs{X}{Y}$ and for every $a\in\carrier[G]$
+        we have for every $x\in X$ we have
+            $f(\actionApply{p}{a}{x})=\actionApply{q}{a}{f(x)}$.
+    Then
+        $\img{f}{\actionFixedPoints{p}{G}{X}}
+            \subseteq\actionFixedPoints{q}{G}{Y}$.
+\end{proposition}
+\begin{proof}
+    $\monoidAction{p}{G}{X}$ and $\monoidAction{q}{G}{Y}$ by
+        \obv{group_action_is_monoid_action}.
+    $f$ is a function by \obv{funs_is_function}.
+    Show that every element of $\img{f}{\actionFixedPoints{p}{G}{X}}$
+        is an element of $\actionFixedPoints{q}{G}{Y}$.
+    \begin{subproof}
+        Fix $y\in\img{f}{\actionFixedPoints{p}{G}{X}}$.
+        Take $x\in\dom{f}\inter\actionFixedPoints{p}{G}{X}$ such that
+            $y=f(x)$ by
+            \obv{img_of_function_elim}.
+        Hence $x\in\actionFixedPoints{p}{G}{X}$ by
+            \obv{inter_elim_right}.
+        Hence $f(x)=y$.
+        $x\in X$ by \obv{action_fixed_points_iff}.
+        Hence $y\in Y$ by \auto{funs_type_apply}.
+        Show that for every $a\in\carrier[G]$ we have
+            $\actionApply{q}{a}{y}=y$.
+        \begin{subproof}
+            Fix $a\in\carrier[G]$.
+            $\actionApply{p}{a}{x}=x$ by
+                \obv{action_fixed_points_iff}.
+            Follows by \auto.
+        \end{subproof}
+        Follows by \obv{action_fixed_points_iff}.
+    \end{subproof}
+    Follows by \obv{subseteq}.
+\end{proof}
+
+\subsection{The orbit--stabilizer bijection}
+
+\begin{definition}\label{orbit_stabilizer_map}
+    $\orbitStabilizerMap{p}{G}{X}{x}=
+        \quotientDescent{
+            \Apply{\graphOnDomainOp}{
+                \carrier[G],
+                \fun{a:\Set}{\actionApply{p}{a}{x}}}}
+            {\carrier[G]}
+            {\subgroupCosetRelation{G}{
+                \actionStabilizer{p}{G}{X}{x}}}$.
+\end{definition}
+
+\begin{lemma}\label{orbit_stabilizer_source_type}
+    Suppose $\groupAction{p}{G}{X}$ and $x\in X$.
+    Let
+        $e=\Apply{\graphOnDomainOp}{
+            \carrier[G],\fun{a:\Set}{\actionApply{p}{a}{x}}}$.
+    Then $e\in\funs{\carrier[G]}{\actionOrbit{p}{G}{X}{x}}$.
+\end{lemma}
+\begin{proof}
+    $\monoidAction{p}{G}{X}$ by
+        \obv{group_action_is_monoid_action}.
+    Show that for every $a\in\carrier[G]$ we have
+        $\actionApply{p}{a}{x}\in\actionOrbit{p}{G}{X}{x}$.
+    \begin{subproof}
+        Follows by \auto{action_orbit_iff}.
+    \end{subproof}
+    Follows by \auto{logical_graph_on_domain_type}.
+\end{proof}
+
+\begin{proposition}\label{orbit_stabilizer_source_apply}
+    Suppose $\groupAction{p}{G}{X}$ and $x\in X$.
+    Let $a\in\carrier[G]$.
+    Let
+        $e=\Apply{\graphOnDomainOp}{
+            \carrier[G],\fun{b:\Set}{\actionApply{p}{b}{x}}}$.
+    Then $e(a)=\actionApply{p}{a}{x}$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{logical_graph_on_domain_apply}.
+\end{proof}
+
+\begin{proposition}\label{orbit_stabilizer_source_image}
+    Suppose $\groupAction{p}{G}{X}$ and $x\in X$.
+    Let
+        $e=\Apply{\graphOnDomainOp}{
+            \carrier[G],\fun{a:\Set}{\actionApply{p}{a}{x}}}$.
+    Then $\img{e}{\carrier[G]}=\actionOrbit{p}{G}{X}{x}$.
+\end{proposition}
+\begin{proof}
+    Let $O=\actionOrbit{p}{G}{X}{x}$.
+    $\monoidAction{p}{G}{X}$ by
+        \obv{group_action_is_monoid_action}.
+    $e\in\funs{\carrier[G]}{O}$ by
+        \auto{orbit_stabilizer_source_type}.
+    Hence $e$ is a function and $\dom{e}=\carrier[G]$ by
+        \obv{funs_is_function,funs}.
+    Show that every element of $\img{e}{\carrier[G]}$ is an element
+        of $O$.
+    \begin{subproof}
+        Follows by \auto{img_subseteq_ran,funs_ran,subseteq}.
+    \end{subproof}
+    Hence $\img{e}{\carrier[G]}\subseteq O$ by \obv{subseteq}.
+    Show that every element of $O$ is an element of
+        $\img{e}{\carrier[G]}$.
+    \begin{subproof}
+        Fix $y\in O$.
+        Take $a\in\carrier[G]$ such that
+            $\actionApply{p}{a}{x}=y$ by \obv{action_orbit_iff}.
+        $e(a)=\actionApply{p}{a}{x}$ by
+            \obv{orbit_stabilizer_source_apply}.
+        Hence $e(a)=y$.
+        $a\in\dom{e}\inter\carrier[G]$ by \obv{inter_intro}.
+        Follows by \auto{img_of_function_intro}.
+    \end{subproof}
+    Hence $O\subseteq\img{e}{\carrier[G]}$ by \obv{subseteq}.
+    Follows by \obv{subseteq_antisymmetric}.
+\end{proof}
+
+\begin{lemma}\label{orbit_stabilizer_source_compatible}
+    Suppose $\groupAction{p}{G}{X}$ and $x\in X$.
+    Let $S=\actionStabilizer{p}{G}{X}{x}$ and
+        $E=\subgroupCosetRelation{G}{S}$.
+    Let
+        $e=\Apply{\graphOnDomainOp}{
+            \carrier[G],\fun{a:\Set}{\actionApply{p}{a}{x}}}$.
+    Then $\quotientCompatible{e}{\carrier[G]}{E}$.
+\end{lemma}
+\begin{proof}
+    $G$ is a group and $\monoidAction{p}{G}{X}$ by
+        \obv{group_action_group,group_action_is_monoid_action}.
+    $\subgroup{S}{G}$ by \auto{action_stabilizer_subgroup}.
+    Hence $S\subseteq\carrier[G]$ by \obv{subgroup_subseteq}.
+    Show that for all $a,b\in\carrier[G]$ such that $a\mathrel{E}b$
+        we have $e(a)=e(b)$.
+    \begin{subproof}
+        Fix $a,b\in\carrier[G]$.
+        Assume $a\mathrel{E}b$.
+        Let $h=\mul[G](\groupInv[G](a),b)$.
+        $h\in S$ by \auto{subgroup_coset_relation_iff}.
+        Hence $h\in\carrier[G]$ and
+            $\actionApply{p}{h}{x}=x$ by
+            \auto{subseteq,action_stabilizer_iff}.
+        $h=\mul[G](\groupInv[G](a),b)$.
+        Hence $\mul[G](a,h)=b$ by \obv{group_solve_left}.
+        $\actionApply{p}{\mul[G](a,h)}{x}
+            =\actionApply{p}{a}{\actionApply{p}{h}{x}}$ by
+            \obv{group_action_mul}.
+        Hence $\actionApply{p}{b}{x}=\actionApply{p}{a}{x}$.
+        $e(a)=\actionApply{p}{a}{x}$ and
+            $e(b)=\actionApply{p}{b}{x}$ by
+            \obv{orbit_stabilizer_source_apply}.
+    \end{subproof}
+    Follows by \obv{quotient_compatible}.
+\end{proof}
+
+\begin{proposition}\label{orbit_stabilizer_map_type}
+    Suppose $\groupAction{p}{G}{X}$ and $x\in X$.
+    Let $S=\actionStabilizer{p}{G}{X}{x}$ and
+        $E=\subgroupCosetRelation{G}{S}$.
+    Then $\orbitStabilizerMap{p}{G}{X}{x}\in
+        \funs{\quotient{\carrier[G]}{E}}
+            {\actionOrbit{p}{G}{X}{x}}$.
+\end{proposition}
+\begin{proof}
+    Let
+        $e=\Apply{\graphOnDomainOp}{
+            \carrier[G],\fun{a:\Set}{\actionApply{p}{a}{x}}}$.
+    $\subgroup{S}{G}$ by \auto{action_stabilizer_subgroup}.
+    Hence $E$ is an equivalence on $\carrier[G]$ by
+        \auto{subgroup_coset_relation_equivalence}.
+    $e\in\funs{\carrier[G]}{\actionOrbit{p}{G}{X}{x}}$ by
+        \obv{orbit_stabilizer_source_type}.
+    $\quotientCompatible{e}{\carrier[G]}{E}$ by
+        \obv{orbit_stabilizer_source_compatible}.
+    Follows by \auto{orbit_stabilizer_map,quotient_descent_type}.
+\end{proof}
+
+\begin{proposition}\label{orbit_stabilizer_map_apply}
+    Suppose $\groupAction{p}{G}{X}$ and $x\in X$.
+    Let $S=\actionStabilizer{p}{G}{X}{x}$ and
+        $E=\subgroupCosetRelation{G}{S}$.
+    Let $a\in\carrier[G]$.
+    Then
+        $\apply{\orbitStabilizerMap{p}{G}{X}{x}}
+            {\equivalenceClass{E}{a}}
+        =\actionApply{p}{a}{x}$.
+\end{proposition}
+\begin{proof}
+    Let
+        $e=\Apply{\graphOnDomainOp}{
+            \carrier[G],\fun{b:\Set}{\actionApply{p}{b}{x}}}$.
+    $\subgroup{S}{G}$ by \auto{action_stabilizer_subgroup}.
+    Hence $E$ is an equivalence on $\carrier[G]$ by
+        \auto{subgroup_coset_relation_equivalence}.
+    $e\in\funs{\carrier[G]}{\actionOrbit{p}{G}{X}{x}}$ by
+        \obv{orbit_stabilizer_source_type}.
+    $\quotientCompatible{e}{\carrier[G]}{E}$ by
+        \obv{orbit_stabilizer_source_compatible}.
+    $\apply{\quotientDescent{e}{\carrier[G]}{E}}
+        {\equivalenceClass{E}{a}}=e(a)$ by
+        \obv{quotient_descent_apply}.
+    $e(a)=\actionApply{p}{a}{x}$ by
+        \obv{orbit_stabilizer_source_apply}.
+    Follows by \auto{orbit_stabilizer_map}.
+\end{proof}
+
+\begin{theorem}\label{orbit_stabilizer_map_factorization}
+    Suppose $\groupAction{p}{G}{X}$ and $x\in X$.
+    Let $S=\actionStabilizer{p}{G}{X}{x}$ and
+        $E=\subgroupCosetRelation{G}{S}$.
+    Let
+        $e=\Apply{\graphOnDomainOp}{
+            \carrier[G],\fun{a:\Set}{\actionApply{p}{a}{x}}}$.
+    Then
+        $\orbitStabilizerMap{p}{G}{X}{x}
+            \circ\quotientProjection{\carrier[G]}{E}=e$.
+\end{theorem}
+\begin{proof}
+    $\subgroup{S}{G}$ by \auto{action_stabilizer_subgroup}.
+    Hence $E$ is an equivalence on $\carrier[G]$ by
+        \auto{subgroup_coset_relation_equivalence}.
+    $e\in\funs{\carrier[G]}{\actionOrbit{p}{G}{X}{x}}$ by
+        \obv{orbit_stabilizer_source_type}.
+    $\quotientCompatible{e}{\carrier[G]}{E}$ by
+        \obv{orbit_stabilizer_source_compatible}.
+    Follows by
+        \auto{orbit_stabilizer_map,quotient_descent_factorization}.
+\end{proof}
+
+\begin{theorem}\label{orbit_stabilizer_map_bijection}
+    Suppose $\groupAction{p}{G}{X}$ and $x\in X$.
+    Let $S=\actionStabilizer{p}{G}{X}{x}$ and
+        $E=\subgroupCosetRelation{G}{S}$.
+    Then $\orbitStabilizerMap{p}{G}{X}{x}\in
+        \bijections{\quotient{\carrier[G]}{E}}
+            {\actionOrbit{p}{G}{X}{x}}$.
+\end{theorem}
+\begin{proof}
+    Let $Q=\quotient{\carrier[G]}{E}$ and
+        $O=\actionOrbit{p}{G}{X}{x}$.
+    Let $g=\orbitStabilizerMap{p}{G}{X}{x}$.
+    $G$ is a group and $\monoidAction{p}{G}{X}$ by
+        \obv{group_action_group,group_action_is_monoid_action}.
+    $\subgroup{S}{G}$ by \auto{action_stabilizer_subgroup}.
+    Hence $S\subseteq\carrier[G]$ by \obv{subgroup_subseteq}.
+    $E$ is an equivalence on $\carrier[G]$ by
+        \auto{subgroup_coset_relation_equivalence}.
+    $g\in\funs{Q}{O}$ by \auto{orbit_stabilizer_map_type}.
+    Show that $g\in\surj{Q}{O}$.
+    \begin{subproof}
+        Show that for every $y\in O$ there exists $C\in Q$ such that
+            $g(C)=y$.
+        \begin{subproof}
+            Fix $y\in O$.
+            Take $a\in\carrier[G]$ such that
+                $\actionApply{p}{a}{x}=y$ by \obv{action_orbit_iff}.
+            $\equivalenceClass{E}{a}\in Q$ by \obv{quotient}.
+            $g(\equivalenceClass{E}{a})=\actionApply{p}{a}{x}$ by
+                \auto{orbit_stabilizer_map_apply}.
+        \end{subproof}
+        Follows by \obv{surj}.
+    \end{subproof}
+    Show that $g$ is injective.
+    \begin{subproof}
+        Show that for all $C,D\in Q$ such that $g(C)=g(D)$
+            we have $C=D$.
+        \begin{subproof}
+            Fix $C,D\in Q$.
+            Assume $g(C)=g(D)$.
+            Take $a\in\carrier[G]$ such that
+                $C=\equivalenceClass{E}{a}$ by \obv{quotient}.
+            Take $b\in\carrier[G]$ such that
+                $D=\equivalenceClass{E}{b}$ by \obv{quotient}.
+            $g(C)=\actionApply{p}{a}{x}$ and
+                $g(D)=\actionApply{p}{b}{x}$ by
+                \auto{orbit_stabilizer_map_apply}.
+            Hence $\actionApply{p}{a}{x}=\actionApply{p}{b}{x}$.
+            Let $h=\mul[G](\groupInv[G](a),b)$.
+            $\groupInv[G](a)\in\carrier[G]$ by
+                \obv{group_inverse_type}.
+            Hence $h\in\carrier[G]$ by
+                \auto{group_is_monoid,monoid_is_magma,magma_welldef}.
+            $\actionApply{p}{h}{x}
+                =\actionApply{p}{\groupInv[G](a)}{
+                    \actionApply{p}{b}{x}}$ by
+                \auto{group_action_mul}.
+            $\actionApply{p}{\mul[G](\groupInv[G](a),a)}{x}
+                =\actionApply{p}{\groupInv[G](a)}{
+                    \actionApply{p}{a}{x}}$ by
+                \obv{group_action_mul}.
+            $\mul[G](\groupInv[G](a),a)=\neutral[G]$ by
+                \obv{group_inverse_left}.
+            $\actionApply{p}{\neutral[G]}{x}=x$ by
+                \obv{group_action_neutral}.
+            \begin{align*}
+                \actionApply{p}{h}{x}
+                    &= \actionApply{p}{\groupInv[G](a)}{
+                        \actionApply{p}{b}{x}}
+                    \\
+                    &= \actionApply{p}{\groupInv[G](a)}{
+                        \actionApply{p}{a}{x}}
+                    \\
+                    &= \actionApply{p}{
+                        \mul[G](\groupInv[G](a),a)}{x}
+                    \\
+                    &= \actionApply{p}{\neutral[G]}{x}
+                    \\
+                    &= x
+            \end{align*}
+            Hence $h\in S$ by \obv{action_stabilizer_iff}.
+            Hence $a\mathrel{E}b$ by
+                \auto{subgroup_coset_relation_iff}.
+            Hence $C=D$ by
+                \obv{equiv_implies_equivanlence_classes_eq}.
+        \end{subproof}
+        $g$ is a function and $\dom{g}=Q$ by
+            \obv{funs_is_function,funs}.
+        Follows by \auto{injective_function}.
+    \end{subproof}
+    Follows by \obv{bijections}.
+\end{proof}
+
+\begin{theorem}\label{orbit_stabilizer_cardinality}
+    Suppose $\groupAction{p}{G}{X}$ and $x\in X$.
+    Let $S=\actionStabilizer{p}{G}{X}{x}$.
+    Then
+        $\card{\actionOrbit{p}{G}{X}{x}}=\groupIndex{G}{S}$.
+\end{theorem}
+\begin{proof}
+    Let $E=\subgroupCosetRelation{G}{S}$ and
+        $Q=\quotient{\carrier[G]}{E}$.
+    Let $O=\actionOrbit{p}{G}{X}{x}$.
+    $\orbitStabilizerMap{p}{G}{X}{x}\in\bijections{Q}{O}$ by
+        \auto{orbit_stabilizer_map_bijection}.
+    Hence $Q\approx O$ by \obv{equinum}.
+    Hence $\card{Q}=\card{O}$ by \obv{card_eq_iff_equinumerous}.
+    $\groupIndex{G}{S}=\card{Q}$ by \obv{group_index}.
+\end{proof}
+
+\begin{theorem}\label{orbit_stabilizer_finite_cardinality_iff}
+    Suppose $\groupAction{p}{G}{X}$ and $x\in X$.
+    Let $n$ be a natural number.
+    Let $S=\actionStabilizer{p}{G}{X}{x}$ and
+        $E=\subgroupCosetRelation{G}{S}$.
+    Then $\actionOrbit{p}{G}{X}{x}$ has finite cardinality $n$ iff
+        $\quotient{\carrier[G]}{E}$ has finite cardinality $n$.
+\end{theorem}
+\begin{proof}
+    Let $Q=\quotient{\carrier[G]}{E}$ and
+        $O=\actionOrbit{p}{G}{X}{x}$.
+    Let $g=\orbitStabilizerMap{p}{G}{X}{x}$.
+    $g\in\bijections{Q}{O}$ by
+        \auto{orbit_stabilizer_map_bijection}.
+    Show that if $O$ has finite cardinality $n$, then
+        $Q$ has finite cardinality $n$.
+    \begin{subproof}
+        Assume $O$ has finite cardinality $n$.
+        $\converse{g}\in\bijections{O}{Q}$ by
+            \obv{bijection_converse_is_bijection}.
+        Follows by \obv{finite_cardinality_bijection}.
+    \end{subproof}
+    Show that if $Q$ has finite cardinality $n$, then
+        $O$ has finite cardinality $n$.
+    \begin{subproof}
+        Assume $Q$ has finite cardinality $n$.
+        Follows by \obv{finite_cardinality_bijection}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{corollary}\label{finite_group_action_orbit_is_finite}
+    Suppose $\groupAction{p}{G}{X}$ and $x\in X$.
+    Suppose $\carrier[G]$ is finite.
+    Then $\actionOrbit{p}{G}{X}{x}$ is finite.
+\end{corollary}
+\begin{proof}
+    Let
+        $e=\Apply{\graphOnDomainOp}{
+            \carrier[G],\fun{a:\Set}{\actionApply{p}{a}{x}}}$.
+    $e\in\funs{\carrier[G]}{\actionOrbit{p}{G}{X}{x}}$ by
+        \obv{orbit_stabilizer_source_type}.
+    Hence $e$ is a function and $\dom{e}=\carrier[G]$ by
+        \obv{funs_is_function,funs}.
+    Hence $\img{e}{\carrier[G]}$ is finite by
+        \obv{finite_function_image,subseteq_refl}.
+    $\img{e}{\carrier[G]}=\actionOrbit{p}{G}{X}{x}$ by
+        \obv{orbit_stabilizer_source_image}.
+\end{proof}

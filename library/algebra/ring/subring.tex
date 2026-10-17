@@ -1,0 +1,1012 @@
+\import{algebra/ring/reducts.tex}
+\import{algebra/ring/homomorphism.tex}
+\import{algebra/group/subgroup.tex}
+
+\section{Subrings}
+
+A subring is represented by its carrier inside a fixed ambient ring.  The
+ambient ring guard is part of the predicate; totality of the additive reduct
+does not replace it.  Throughout the library, a subring of $R$ contains the
+ambient unit $\ringOne[R]$; a nonunital subring notion, if introduced later,
+will use a different name.
+
+\begin{definition}\label{subring}
+    $A$ is a subring of $R$ iff
+        $R$ is a ring and
+        $\subgroup{A}{\AdditiveGroup{R}}$ and
+        $\ringOne[R]\in A$ and
+        for all $x,y\in A$ we have $\ringMul[R](x,y)\in A$.
+\end{definition}
+
+\begin{proposition}\label{subring_iff}
+    $A$ is a subring of $R$ iff
+        $R$ is a ring and
+        $\subgroup{A}{\AdditiveGroup{R}}$ and
+        $\ringOne[R]\in A$ and
+        for all $x,y\in A$ we have $\ringMul[R](x,y)\in A$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{subring}.
+\end{proof}
+
+\begin{proposition}\label{subring_ambient_ring}
+    Suppose $A$ is a subring of $R$.
+    Then $R$ is a ring.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{subring}.
+\end{proof}
+
+\begin{proposition}\label{subring_additive_subgroup}
+    Suppose $A$ is a subring of $R$.
+    Then $\subgroup{A}{\AdditiveGroup{R}}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{subring}.
+\end{proof}
+
+\begin{corollary}\label{subring_subseteq_carrier}
+    Suppose $A$ is a subring of $R$.
+    Then $A\subseteq\carrier[R]$.
+\end{corollary}
+\begin{proof}
+    Follows by
+        \auto{subring_additive_subgroup,subgroup_subseteq,
+            additive_group_fields}.
+\end{proof}
+
+\begin{proposition}\label{subring_one}
+    Suppose $A$ is a subring of $R$.
+    Then $\ringOne[R]\in A$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{subring}.
+\end{proof}
+
+\begin{proposition}\label{subring_mul}
+    Suppose $A$ is a subring of $R$.
+    Let $x,y\in A$.
+    Then $\ringMul[R](x,y)\in A$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{subring}.
+\end{proof}
+
+\begin{proposition}\label{full_carrier_subring}
+    Let $R$ be a ring.
+    Then $\carrier[R]$ is a subring of $R$.
+\end{proposition}
+\begin{proof}
+    $\AdditiveGroup{R}$ is a group by
+        \obv{additive_group_is_exact_commutative_group,
+            commutative_group_is_group}.
+    $\subgroup{\carrier[\AdditiveGroup{R}]}{\AdditiveGroup{R}}$ by
+        \obv{full_carrier_subgroup}.
+    Hence $\subgroup{\carrier[R]}{\AdditiveGroup{R}}$ by
+        \auto{additive_group_fields}.
+    Follows by \obv{subring,ring_one_type,ring_mul_type}.
+\end{proof}
+
+\subsection{The induced ring}
+
+\begin{proposition}\label{subring_mul_restriction_type}
+    Suppose $A$ is a subring of $R$.
+    Then $\restrl{\ringMul[R]}{A\times A}\in\funs{A\times A}{A}$.
+\end{proposition}
+\begin{proof}
+    Let $f=\ringMul[R]$ and $m=\restrl{f}{A\times A}$.
+    $R$ is a ring by \obv{subring_ambient_ring}.
+    $A\times A\subseteq\carrier[R]\times A$ by
+        \obv{subring_subseteq_carrier,times_subseteq_left}.
+    $\carrier[R]\times A
+        \subseteq\carrier[R]\times\carrier[R]$ by
+        \obv{subring_subseteq_carrier,times_subseteq_right}.
+    Hence $A\times A\subseteq\carrier[R]\times\carrier[R]$ by
+        \obv{subseteq_transitive}.
+    $f\in\funs{\carrier[R]\times\carrier[R]}{\carrier[R]}$ by
+        \obv{ring_mul_graph}.
+    Hence $A\times A\subseteq\dom{f}$ by \auto{funs}.
+    Hence $m\in\funs{A\times A}{\carrier[R]}$ by
+        \auto{funs,funs_restrl}.
+    Hence $m$ is a function and $\dom{m}=A\times A$ by
+        \obv{funs_elim}.
+    Show that for every $p\in\dom{m}$ we have $m(p)\in A$.
+    \begin{subproof}
+        Fix $p\in\dom{m}$.
+        Hence $p\in A\times A$.
+        Take $x,y$ such that $x,y\in A$ and $p=(x,y)$ by
+            \obv{times_elem_is_tuple}.
+        $f$ is a function by \obv{funs_is_function}.
+        $m(p)=f(p)$ by \auto{restrl_of_function_apply}.
+        Hence $m(p)=\ringMul[R](x,y)$.
+        Follows by \auto{subring_mul}.
+    \end{subproof}
+    Hence $m$ is a function to $A$.
+    Follows by \auto{funs_intro}.
+\end{proof}
+
+\begin{proposition}\label{subring_mul_restriction_apply}
+    Suppose $A$ is a subring of $R$.
+    Let $x,y\in A$.
+    Then $(\restrl{\ringMul[R]}{A\times A})(x,y)
+        =\ringMul[R](x,y)$.
+\end{proposition}
+\begin{proof}
+    $A\times A\subseteq\carrier[R]\times A$ by
+        \obv{subring_subseteq_carrier,times_subseteq_left}.
+    $\carrier[R]\times A
+        \subseteq\carrier[R]\times\carrier[R]$ by
+        \obv{subring_subseteq_carrier,times_subseteq_right}.
+    Hence $A\times A\subseteq\carrier[R]\times\carrier[R]$ by
+        \obv{subseteq_transitive}.
+    Hence $A\times A\subseteq\dom{\ringMul[R]}$ by
+        \auto{subring_ambient_ring,ring_mul_graph,funs}.
+    $\ringMul[R]$ is a function by
+        \auto{subring_ambient_ring,ring_mul_graph,funs_is_function}.
+    $(x,y)\in A\times A$ by \obv{times_tuple_intro}.
+    Follows by \obv{restrl_of_function_apply}.
+\end{proof}
+
+\begin{definition}\label{induced_subring}
+    $\InducedSubring{R}{A}=\structure[ring]{
+        \carrier=\carrier[\subgroupStructure{\AdditiveGroup{R}}{A}],
+        \ringAdd=\mul[\subgroupStructure{\AdditiveGroup{R}}{A}],
+        \ringZero=\neutral[\subgroupStructure{\AdditiveGroup{R}}{A}],
+        \ringNeg=\groupInv[\subgroupStructure{\AdditiveGroup{R}}{A}],
+        \ringMul=\restrl{\ringMul[R]}{A\times A},
+        \ringOne=\ringOne[R]
+    }$.
+\end{definition}
+
+\begin{proposition}\label{induced_subring_fields}
+    Let $G=\subgroupStructure{\AdditiveGroup{R}}{A}$.
+    Then
+        $\carrier[\InducedSubring{R}{A}]=\carrier[G]$ and
+        $\ringAdd[\InducedSubring{R}{A}]=\mul[G]$ and
+        $\ringZero[\InducedSubring{R}{A}]=\neutral[G]$ and
+        $\ringNeg[\InducedSubring{R}{A}]=\groupInv[G]$ and
+        $\ringMul[\InducedSubring{R}{A}]
+            =\restrl{\ringMul[R]}{A\times A}$ and
+        $\ringOne[\InducedSubring{R}{A}]=\ringOne[R]$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{induced_subring,
+            ringaggregateprojection_carrier,ringaggregateprojection_ringAdd,
+            ringaggregateprojection_ringZero,ringaggregateprojection_ringNeg,
+            ringaggregateprojection_ringMul,ringaggregateprojection_ringOne}.
+\end{proof}
+
+\begin{proposition}\label{induced_subring_agreement}
+    Suppose $A$ is a subring of $R$.
+    Let $S=\InducedSubring{R}{A}$.
+    Then $\carrier[S]=A$ and
+        $\ringZero[S]=\ringZero[R]$ and
+        $\ringOne[S]=\ringOne[R]$ and
+        for all $x,y\in A$ we have
+            $\ringAdd[S](x,y)=\ringAdd[R](x,y)$ and
+            $\ringMul[S](x,y)=\ringMul[R](x,y)$ and
+        for every $z\in A$ we have
+            $\ringNeg[S](z)=\ringNeg[R](z)$.
+\end{proposition}
+\begin{proof}
+    Let $G=\subgroupStructure{\AdditiveGroup{R}}{A}$.
+    $\subgroup{A}{\AdditiveGroup{R}}$ by
+        \obv{subring_additive_subgroup}.
+    $\carrier[S]=A$ by
+        \auto{induced_subring_fields,subgroup_structure_carrier}.
+    $\ringZero[S]=\ringZero[R]$ by
+        \auto{induced_subring_fields,subgroup_structure_neutral,
+            additive_group_fields}.
+    $\ringOne[S]=\ringOne[R]$ by \auto{induced_subring_fields}.
+    For all $x,y\in A$ we have
+        $\ringAdd[S](x,y)=\ringAdd[R](x,y)$ by
+        \auto{induced_subring_fields,subgroup_structure_mul_apply,
+            additive_group_fields}.
+    For all $x,y\in A$ we have
+        $\ringMul[S](x,y)=\ringMul[R](x,y)$ by
+        \auto{induced_subring_fields,
+            subring_mul_restriction_apply}.
+    For every $z\in A$ we have
+        $\ringNeg[S](z)=\ringNeg[R](z)$ by
+        \auto{induced_subring_fields,subgroup_structure_inv_apply,
+            additive_group_fields}.
+\end{proof}
+
+\begin{theorem}\label{induced_subring_is_exact}
+    Suppose $A$ is a subring of $R$.
+    Then $\InducedSubring{R}{A}$ is an exact ring.
+\end{theorem}
+\begin{proof}
+    Let $G=\AdditiveGroup{R}$.
+    Let $H=\subgroupStructure{G}{A}$.
+    Let $S=\InducedSubring{R}{A}$.
+    $R$ is a ring and $\subgroup{A}{G}$ by
+        \obv{subring_ambient_ring,subring_additive_subgroup}.
+    $A\subseteq\carrier[R]$ by \obv{subring_subseteq_carrier}.
+    $G$ is an exact commutative group by
+        \auto{additive_group_is_exact_commutative_group}.
+    $H$ is an exact group by \auto{subgroup_structure_is_exact_group}.
+    Hence $H$ is a group and $H$ is a monoid and
+        $H$ is a unital magma and $H$ is a magma by
+        \obv{group_is_monoid,monoid_is_unital_magma,
+            monoid_is_magma}.
+    Show that for all $x,y\in\carrier[H]$ we have
+        $\mul[H](x,y)=\mul[H](y,x)$.
+    \begin{subproof}
+        Fix $x,y\in\carrier[H]$.
+        Hence $x,y\in A$ by \auto{subgroup_structure_carrier}.
+        Hence $x,y\in\carrier[G]$ by
+            \auto{subgroup_subseteq,subseteq}.
+        $\mul[H](x,y)=\mul[G](x,y)$ and
+            $\mul[H](y,x)=\mul[G](y,x)$ by
+            \auto{subgroup_structure_mul_apply}.
+        $\mul[G](x,y)=\mul[G](y,x)$ by
+            \obv{commutative_group_commutative}.
+    \end{subproof}
+    $\carrier[S]=\carrier[H]$ and $\ringAdd[S]=\mul[H]$ and
+        $\ringZero[S]=\neutral[H]$ and
+        $\ringNeg[S]=\groupInv[H]$ and
+        $\ringMul[S]=\restrl{\ringMul[R]}{A\times A}$ and
+        $\ringOne[S]=\ringOne[R]$ by
+        \auto{induced_subring_fields}.
+    $\ringAdd[S]\in
+        \funs{\carrier[S]\times\carrier[S]}{\carrier[S]}$ by
+        \auto{magma_mul_graph}.
+    $\ringZero[S]\in\carrier[S]$ by \auto{unitalmagma_type}.
+    $\ringNeg[S]\in\funs{\carrier[S]}{\carrier[S]}$ by
+        \auto{group_inverse_graph}.
+    $\ringMul[S]\in
+        \funs{\carrier[S]\times\carrier[S]}{\carrier[S]}$ by
+        \auto{subgroup_structure_carrier,
+            subring_mul_restriction_type}.
+    $\ringOne[S]\in\carrier[S]$ by
+        \auto{subring_one,subgroup_structure_carrier}.
+    For all $x,y,z\in\carrier[S]$ we have
+        $\ringAdd[S](x,\ringAdd[S](y,z))
+            =\ringAdd[S](\ringAdd[S](x,y),z)$ by
+        \auto{monoid_assoc}.
+    For all $x,y\in\carrier[S]$ we have
+        $\ringAdd[S](x,y)=\ringAdd[S](y,x)$ by \auto.
+    For every $x\in\carrier[S]$ we have
+        $\ringAdd[S](\ringZero[S],x)=x$ by
+        \auto{unitalmagma_left}.
+    For every $x\in\carrier[S]$ we have
+        $\ringAdd[S](\ringNeg[S](x),x)=\ringZero[S]$ by
+        \auto{group_inverse_left}.
+    Show that for all $x,y,z\in\carrier[S]$ we have
+        $\ringMul[S](x,\ringMul[S](y,z))
+            =\ringMul[S](\ringMul[S](x,y),z)$.
+    \begin{subproof}
+        Fix $x,y,z\in\carrier[S]$.
+        Hence $x,y,z\in A$ by
+            \auto{subgroup_structure_carrier}.
+        Hence $x,y,z\in\carrier[R]$ by \obv{subseteq}.
+        $\ringMul[R](x,y),\ringMul[R](y,z)\in A$ by
+            \obv{subring_mul}.
+        $\ringMul[S](x,y)=\ringMul[R](x,y)$ and
+            $\ringMul[S](y,z)=\ringMul[R](y,z)$ by
+            \auto{induced_subring_fields,
+                subring_mul_restriction_apply}.
+        Hence
+            $\ringMul[S](x,\ringMul[S](y,z))
+                =\ringMul[R](x,\ringMul[R](y,z))$ and
+            $\ringMul[S](\ringMul[S](x,y),z)
+                =\ringMul[R](\ringMul[R](x,y),z)$ by
+            \auto{induced_subring_fields,
+                subring_mul_restriction_apply}.
+        Follows by \obv{ring_mul_associative}.
+    \end{subproof}
+    Show that for every $x\in\carrier[S]$ we have
+        $\ringMul[S](\ringOne[S],x)=x$ and
+        $\ringMul[S](x,\ringOne[S])=x$.
+    \begin{subproof}
+        Fix $x\in\carrier[S]$.
+        Hence $x\in A$ by \auto{subgroup_structure_carrier}.
+        Hence $x\in\carrier[R]$ by \obv{subseteq}.
+        $\ringOne[R]\in A$ by \obv{subring_one}.
+        Follows by
+            \auto{induced_subring_fields,
+                subring_mul_restriction_apply,
+                ring_mul_one_left,ring_mul_one_right}.
+    \end{subproof}
+    Show that for all $x,y,z\in\carrier[S]$ we have
+        $\ringMul[S](x,\ringAdd[S](y,z))
+            =\ringAdd[S](\ringMul[S](x,y),\ringMul[S](x,z))$.
+    \begin{subproof}
+        Fix $x,y,z\in\carrier[S]$.
+        Hence $x,y,z\in A$ by
+            \auto{subgroup_structure_carrier}.
+        Hence $x,y,z\in\carrier[R]$ by \obv{subseteq}.
+        $\ringAdd[S](y,z)=\ringAdd[R](y,z)$ by
+            \auto{subgroup_structure_mul_apply,additive_group_fields}.
+        Hence $\ringAdd[S](y,z)\in A$ by
+            \auto{subgroup_mul,additive_group_fields}.
+        $\ringMul[S](x,y)=\ringMul[R](x,y)$ and
+            $\ringMul[S](x,z)=\ringMul[R](x,z)$ by
+            \auto{subring_mul_restriction_apply}.
+        Hence $\ringMul[S](x,y),\ringMul[S](x,z)\in A$ by
+            \auto{subring_mul}.
+        Follows by
+            \auto{induced_subring_fields,
+                subring_mul_restriction_apply,
+                subgroup_structure_mul_apply,additive_group_fields,
+                ring_distributive_left}.
+    \end{subproof}
+    Show that for all $x,y,z\in\carrier[S]$ we have
+        $\ringMul[S](\ringAdd[S](x,y),z)
+            =\ringAdd[S](\ringMul[S](x,z),\ringMul[S](y,z))$.
+    \begin{subproof}
+        Fix $x,y,z\in\carrier[S]$.
+        Hence $x,y,z\in A$ by
+            \auto{subgroup_structure_carrier}.
+        Hence $x,y,z\in\carrier[R]$ by \obv{subseteq}.
+        $\ringAdd[S](x,y)=\ringAdd[R](x,y)$ by
+            \auto{subgroup_structure_mul_apply,additive_group_fields}.
+        Hence $\ringAdd[S](x,y)\in A$ by
+            \auto{subgroup_mul,additive_group_fields}.
+        $\ringMul[S](x,z)=\ringMul[R](x,z)$ and
+            $\ringMul[S](y,z)=\ringMul[R](y,z)$ by
+            \auto{subring_mul_restriction_apply}.
+        Hence $\ringMul[S](x,z),\ringMul[S](y,z)\in A$ by
+            \auto{subring_mul}.
+        Follows by
+            \auto{induced_subring_fields,
+                subring_mul_restriction_apply,
+                subgroup_structure_mul_apply,additive_group_fields,
+                ring_distributive_right}.
+    \end{subproof}
+    Hence $S$ is a ring by
+        \auto{induced_subring,ringaggregateexact,ring}.
+    Follows by \auto{induced_subring,ringaggregateexact}.
+\end{proof}
+
+\begin{theorem}\label{induced_subring_natural_agreement}
+    Suppose $A$ is a subring of $R$.
+    Let $n$ be a natural number.
+    Then $\ringNatural{\InducedSubring{R}{A}}{n}=\ringNatural{R}{n}$.
+\end{theorem}
+\begin{proof}
+    Let $S=\InducedSubring{R}{A}$.
+    $S$ is a ring by \obv{induced_subring_is_exact}.
+    $\ringZero[S]=\ringZero[R]$ and $\ringOne[S]=\ringOne[R]$ by
+        \auto{induced_subring_agreement}.
+    Let $C=\{k\in\naturals\mid
+        \ringNatural{S}{k}=\ringNatural{R}{k}\}$.
+    $\ringNatural{S}{\emptyset}=\ringZero[S]$ and
+        $\ringNatural{R}{\emptyset}=\ringZero[R]$ by
+        \obv{ring_natural_zero}.
+    Hence $\emptyset\in C$ by \auto{omega_empty}.
+    Show that for every $k\in C$ we have $\suc{k}\in C$.
+    \begin{subproof}
+        Fix $k\in C$.
+        Hence $k$ is a natural number and
+            $\ringNatural{S}{k}=\ringNatural{R}{k}$.
+        $\ringNatural{S}{k}\in\carrier[S]$ by \obv{ring_natural_type}.
+        Hence $\ringNatural{S}{k}\in A$ by
+            \auto{induced_subring_agreement}.
+        $\ringNatural{S}{\suc{k}}
+            =\ringAdd[S](\ringNatural{S}{k},\ringOne[S])$ and
+            $\ringNatural{R}{\suc{k}}
+            =\ringAdd[R](\ringNatural{R}{k},\ringOne[R])$ by
+            \obv{ring_natural_successor}.
+        $\ringOne[S]\in\carrier[S]$ by \obv{ring_one_type}.
+        Hence $\ringOne[S]\in A$ by \auto{induced_subring_agreement}.
+        $\ringAdd[S](\ringNatural{S}{k},\ringOne[S])
+            =\ringAdd[R](\ringNatural{S}{k},\ringOne[S])$ by
+            \auto{induced_subring_agreement}.
+        Hence $\ringNatural{S}{\suc{k}}=\ringNatural{R}{\suc{k}}$ by
+            \auto.
+        $\suc{k}$ is a natural number by \obv{omega_successor}.
+    \end{subproof}
+    Hence $C$ is an inductive set by \obv{inductive_set}.
+    Hence every natural number is an element of $C$ by
+        \obv{omega_minimal}.
+    Hence $n\in C$.
+    Hence $\ringNatural{S}{n}=\ringNatural{R}{n}$.
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{induced_subring_power_agreement}
+    Suppose $A$ is a subring of $R$ and $x\in A$.
+    Let $n$ be a natural number.
+    Then $\ringPower{\InducedSubring{R}{A}}{x}{n}
+        =\ringPower{R}{x}{n}$.
+\end{theorem}
+\begin{proof}
+    Let $S=\InducedSubring{R}{A}$.
+    $S$ is a ring by \obv{induced_subring_is_exact}.
+    $A\subseteq\carrier[R]$ by \obv{subring_subseteq_carrier}.
+    Hence $x\in\carrier[R]$ by \obv{subseteq}.
+    $\ringOne[S]=\ringOne[R]$ by \auto{induced_subring_agreement}.
+    Let $C=\{k\in\naturals\mid
+        \ringPower{S}{x}{k}=\ringPower{R}{x}{k}\}$.
+    $\ringPower{S}{x}{\emptyset}=\ringOne[S]$ and
+        $\ringPower{R}{x}{\emptyset}=\ringOne[R]$ by
+        \obv{ring_power_zero}.
+    Hence $\emptyset\in C$ by \auto{omega_empty}.
+    Show that for every $k\in C$ we have $\suc{k}\in C$.
+    \begin{subproof}
+        Fix $k\in C$.
+        Hence $k$ is a natural number and
+            $\ringPower{S}{x}{k}=\ringPower{R}{x}{k}$.
+        $x\in\carrier[S]$ by \auto{induced_subring_agreement}.
+        $\ringPower{S}{x}{k}\in\carrier[S]$ by \obv{ring_power_type}.
+        Hence $\ringPower{S}{x}{k}\in A$ by
+            \auto{induced_subring_agreement}.
+        $\ringPower{S}{x}{\suc{k}}
+            =\ringMul[S](\ringPower{S}{x}{k},x)$ by
+            \obv{ring_power_successor}.
+        $\ringPower{R}{x}{\suc{k}}
+            =\ringMul[R](\ringPower{R}{x}{k},x)$ by
+            \obv{ring_power_successor}.
+        $\ringMul[S](\ringPower{S}{x}{k},x)
+            =\ringMul[R](\ringPower{S}{x}{k},x)$ by
+            \auto{induced_subring_agreement}.
+        Hence $\ringPower{S}{x}{\suc{k}}=\ringPower{R}{x}{\suc{k}}$ by
+            \auto.
+        $\suc{k}$ is a natural number by \obv{omega_successor}.
+    \end{subproof}
+    Hence $C$ is an inductive set by \obv{inductive_set}.
+    Hence every natural number is an element of $C$ by
+        \obv{omega_minimal}.
+    Hence $n\in C$.
+    Hence $\ringPower{S}{x}{n}=\ringPower{R}{x}{n}$.
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{induced_subring_additive_group}
+    Suppose $A$ is a subring of $R$.
+    Then $\AdditiveGroup{\InducedSubring{R}{A}}
+        =\subgroupStructure{\AdditiveGroup{R}}{A}$.
+\end{theorem}
+\begin{proof}
+    Let $S=\InducedSubring{R}{A}$ and
+        $H=\subgroupStructure{\AdditiveGroup{R}}{A}$.
+    $S$ is an exact ring by \auto{induced_subring_is_exact}.
+    $\AdditiveGroup{S}$ is an exact commutative group by
+        \obv{additive_group_is_exact_commutative_group}.
+    Hence $\AdditiveGroup{S}$ is an exact group by
+        \obv{commutative_group_is_group}.
+    $H$ is an exact group by
+        \auto{subring_additive_subgroup,
+            subgroup_structure_is_exact_group}.
+    $\carrier[\AdditiveGroup{S}]=\carrier[H]$ and
+        $\mul[\AdditiveGroup{S}]=\mul[H]$ and
+        $\neutral[\AdditiveGroup{S}]=\neutral[H]$ and
+        $\groupInv[\AdditiveGroup{S}]=\groupInv[H]$ by
+        \auto{additive_group_fields,induced_subring_fields}.
+    Follows by \auto{exact_group_extensionality}.
+\end{proof}
+
+\begin{theorem}\label{subring_of_induced_subring}
+    Let $R$ be a ring.
+    Suppose $A$ is a subring of $R$.
+    Suppose $B$ is a subring of $R$ and $B\subseteq A$.
+    Then $B$ is a subring of $\InducedSubring{R}{A}$.
+\end{theorem}
+\begin{proof}
+    Let $S=\InducedSubring{R}{A}$ and $G=\AdditiveGroup{R}$.
+    $S$ is a ring by \obv{induced_subring_is_exact}.
+    $\subgroup{A}{G}$ and $\subgroup{B}{G}$ by
+        \obv{subring_additive_subgroup}.
+    Hence $\subgroup{B}{\subgroupStructure{G}{A}}$ by
+        \obv{subgroup_of_induced_group_iff}.
+    $\AdditiveGroup{S}=\subgroupStructure{G}{A}$ by
+        \auto{induced_subring_additive_group}.
+    Hence $\subgroup{B}{\AdditiveGroup{S}}$.
+    $\ringOne[S]=\ringOne[R]$ and $\ringOne[R]\in B$ by
+        \auto{induced_subring_agreement,subring_one}.
+    Show that for all $x,y\in B$ we have $\ringMul[S](x,y)\in B$.
+    \begin{subproof}
+        Fix $x,y\in B$.
+        Hence $x,y\in A$ by \obv{subseteq}.
+        $\ringMul[S](x,y)=\ringMul[R](x,y)$ by
+            \auto{induced_subring_agreement}.
+        $\ringMul[R](x,y)\in B$ by \obv{subring_mul}.
+    \end{subproof}
+    Follows by \auto{subring}.
+\end{proof}
+
+\begin{theorem}\label{iterated_induced_subring}
+    Let $R$ be a ring.
+    Suppose $A$ is a subring of $R$.
+    Suppose $B$ is a subring of $R$ and $B\subseteq A$.
+    Then
+        $\InducedSubring{\InducedSubring{R}{A}}{B}
+            =\InducedSubring{R}{B}$.
+\end{theorem}
+\begin{proof}
+    Let $G=\AdditiveGroup{R}$ and $P=\InducedSubring{R}{A}$.
+    Let $S=\InducedSubring{P}{B}$ and $T=\InducedSubring{R}{B}$.
+    $B$ is a subring of $P$ by \obv{subring_of_induced_subring}.
+    Hence $S$ is an exact ring and $T$ is an exact ring by
+        \auto{induced_subring_is_exact}.
+    $\subgroup{A}{G}$ and $\subgroup{B}{G}$ by
+        \obv{subring_additive_subgroup}.
+    $\AdditiveGroup{P}=\subgroupStructure{G}{A}$ by
+        \auto{induced_subring_additive_group}.
+    $\AdditiveGroup{S}
+        =\subgroupStructure{\AdditiveGroup{P}}{B}$ by
+        \auto{induced_subring_additive_group}.
+    $\subgroupStructure{\subgroupStructure{G}{A}}{B}
+        =\subgroupStructure{G}{B}$ by
+        \obv{iterated_subgroup_structure}.
+    $\AdditiveGroup{T}=\subgroupStructure{G}{B}$ by
+        \auto{induced_subring_additive_group}.
+    Hence $\AdditiveGroup{S}=\AdditiveGroup{T}$.
+    Hence $\carrier[S]=\carrier[T]$ and
+        $\ringAdd[S]=\ringAdd[T]$ and
+        $\ringZero[S]=\ringZero[T]$ and
+        $\ringNeg[S]=\ringNeg[T]$ by
+        \auto{additive_group_fields}.
+    $\ringMul[P]=\restrl{\ringMul[R]}{A\times A}$ by
+        \auto{induced_subring_fields}.
+    $\ringMul[S]=\restrl{\ringMul[P]}{B\times B}$ by
+        \auto{induced_subring_fields}.
+    $B\times B\subseteq A\times B$ by \obv{times_subseteq_left}.
+    $A\times B\subseteq A\times A$ by \obv{times_subseteq_right}.
+    Hence $B\times B\subseteq A\times A$ by
+        \auto{subseteq_transitive}.
+    Hence
+        $\restrl{\restrl{\ringMul[R]}{A\times A}}{B\times B}
+            =\restrl{\ringMul[R]}{B\times B}$ by
+        \obv{restrl_restrl}.
+    Hence $\ringMul[S]=\restrl{\ringMul[R]}{B\times B}$.
+    $\ringMul[T]=\restrl{\ringMul[R]}{B\times B}$ by
+        \auto{induced_subring_fields}.
+    Hence $\ringMul[S]=\ringMul[T]$.
+    $\ringOne[S]=\ringOne[P]=\ringOne[R]$ and
+        $\ringOne[T]=\ringOne[R]$ by
+        \auto{induced_subring_fields}.
+    Hence $\ringOne[S]=\ringOne[T]$.
+    Follows by \auto{exact_ring_extensionality}.
+\end{proof}
+
+\subsection{Substructure records and inclusion}
+
+\begin{definition}\label{ring_substructure}
+    $\ringSubstructure{S}{R}$ iff
+        $S$ is a ring and
+        $\carrier[S]$ is a subring of $R$ and
+        $\AdditiveGroup{S}
+            =\subgroupStructure{\AdditiveGroup{R}}{\carrier[S]}$ and
+        $\ringMul[S]
+            =\restrl{\ringMul[R]}{
+                \carrier[S]\times\carrier[S]}$ and
+        $\ringOne[S]=\ringOne[R]$.
+\end{definition}
+
+\begin{proposition}\label{ring_substructure_is_ring}
+    Suppose $\ringSubstructure{S}{R}$.
+    Then $S$ is a ring.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{ring_substructure}.
+\end{proof}
+
+\begin{proposition}\label{ring_substructure_ambient_ring}
+    Suppose $\ringSubstructure{S}{R}$.
+    Then $R$ is a ring.
+\end{proposition}
+\begin{proof}
+    $\carrier[S]$ is a subring of $R$ by
+        \obv{ring_substructure}.
+    Follows by \obv{subring_ambient_ring}.
+\end{proof}
+
+\begin{proposition}\label{ring_substructure_carrier_subring}
+    Suppose $\ringSubstructure{S}{R}$.
+    Then $\carrier[S]$ is a subring of $R$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{ring_substructure}.
+\end{proof}
+
+\begin{corollary}\label{ring_substructure_carrier_subseteq}
+    Suppose $\ringSubstructure{S}{R}$.
+    Then $\carrier[S]\subseteq\carrier[R]$.
+\end{corollary}
+\begin{proof}
+    Follows by
+        \obv{ring_substructure_carrier_subring,
+            subring_subseteq_carrier}.
+\end{proof}
+
+\begin{proposition}\label{ring_substructure_additive_group}
+    Suppose $\ringSubstructure{S}{R}$.
+    Then $\AdditiveGroup{S}
+        =\subgroupStructure{\AdditiveGroup{R}}{\carrier[S]}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{ring_substructure}.
+\end{proof}
+
+\begin{proposition}\label{ring_substructure_mul_graph}
+    Suppose $\ringSubstructure{S}{R}$.
+    Then $\ringMul[S]=\restrl{\ringMul[R]}{
+        \carrier[S]\times\carrier[S]}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{ring_substructure}.
+\end{proof}
+
+\begin{proposition}\label{ring_substructure_one}
+    Suppose $\ringSubstructure{S}{R}$.
+    Then $\ringOne[S]=\ringOne[R]$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{ring_substructure}.
+\end{proof}
+
+\begin{proposition}\label{ring_substructure_mul_apply}
+    Suppose $\ringSubstructure{S}{R}$.
+    Let $x,y\in\carrier[S]$.
+    Then $\ringMul[S](x,y)=\ringMul[R](x,y)$.
+\end{proposition}
+\begin{proof}
+    $\carrier[S]$ is a subring of $R$ by
+        \obv{ring_substructure_carrier_subring}.
+    Follows by
+        \auto{ring_substructure_mul_graph,
+            subring_mul_restriction_apply}.
+\end{proof}
+
+\begin{proposition}\label{ring_substructure_intro}
+    Suppose $S$ is a ring and $\carrier[S]$ is a subring of $R$.
+    Suppose $\AdditiveGroup{S}
+        =\subgroupStructure{\AdditiveGroup{R}}{\carrier[S]}$.
+    Suppose $\ringMul[S]=\restrl{\ringMul[R]}{
+        \carrier[S]\times\carrier[S]}$.
+    Suppose $\ringOne[S]=\ringOne[R]$.
+    Then $\ringSubstructure{S}{R}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{ring_substructure}.
+\end{proof}
+
+\begin{theorem}\label{induced_subring_is_ring_substructure}
+    Suppose $A$ is a subring of $R$.
+    Then $\ringSubstructure{\InducedSubring{R}{A}}{R}$.
+\end{theorem}
+\begin{proof}
+    Let $S=\InducedSubring{R}{A}$.
+    $S$ is an exact ring by \auto{induced_subring_is_exact}.
+    $\carrier[S]=A$ by
+        \auto{induced_subring_fields,subgroup_structure_carrier}.
+    $\AdditiveGroup{S}=\subgroupStructure{\AdditiveGroup{R}}{A}$ by
+        \auto{induced_subring_additive_group}.
+    $\ringMul[S]=\restrl{\ringMul[R]}{A\times A}$ and
+        $\ringOne[S]=\ringOne[R]$ by
+        \auto{induced_subring_fields}.
+    Follows by \auto{ring_substructure_intro}.
+\end{proof}
+
+\begin{proposition}\label{induced_subring_inclusion_type}
+    Suppose $A$ is a subring of $R$.
+    Then $\subgroupInclusion{\AdditiveGroup{R}}{A}
+        \in\funs{\carrier[\InducedSubring{R}{A}]}{\carrier[R]}$.
+\end{proposition}
+\begin{proof}
+    $\subgroup{A}{\AdditiveGroup{R}}$ by
+        \obv{subring_additive_subgroup}.
+    Follows by
+        \auto{subgroup_inclusion_type,subgroup_structure_carrier,
+            additive_group_fields,induced_subring_fields}.
+\end{proof}
+
+\begin{theorem}\label{induced_subring_inclusion_hom}
+    Suppose $A$ is a subring of $R$.
+    Then $\subgroupInclusion{\AdditiveGroup{R}}{A}$ is a ring
+        homomorphism from $\InducedSubring{R}{A}$ to $R$.
+\end{theorem}
+\begin{proof}
+    Let $S=\InducedSubring{R}{A}$ and
+        $i=\subgroupInclusion{\AdditiveGroup{R}}{A}$.
+    Let $M=\MultiplicativeMonoid{S}$ and
+        $N=\MultiplicativeMonoid{R}$.
+    $S$ is an exact ring by \auto{induced_subring_is_exact}.
+    $R$ is a ring by \obv{subring_ambient_ring}.
+    $\AdditiveGroup{S}=\subgroupStructure{\AdditiveGroup{R}}{A}$ by
+        \auto{induced_subring_additive_group}.
+    Hence $\groupHom{i}{\AdditiveGroup{S}}{\AdditiveGroup{R}}$ by
+        \auto{subring_additive_subgroup,
+            subgroup_inclusion_group_hom}.
+    $i\in\funs{\carrier[S]}{\carrier[R]}$ by
+        \auto{induced_subring_inclusion_type}.
+    Hence $i\in\funs{\carrier[M]}{\carrier[N]}$ by
+        \auto{multiplicative_monoid_fields}.
+    $M$ is a monoid and $N$ is a monoid by
+        \obv{multiplicative_monoid_is_exact_monoid}.
+    Hence $M$ is a magma and $N$ is a magma by
+        \obv{monoid_is_magma}.
+    Show that for all $x,y\in\carrier[S]$ we have
+        $i(\ringMul[S](x,y))=\ringMul[R](i(x),i(y))$.
+    \begin{subproof}
+        Fix $x,y\in\carrier[S]$.
+        Hence $x,y\in A$ by
+            \auto{induced_subring_fields,subgroup_structure_carrier}.
+        $\ringMul[R](x,y)\in A$ by \obv{subring_mul}.
+        $\ringMul[S](x,y)=\ringMul[R](x,y)$ by
+            \auto{induced_subring_fields,
+                subring_mul_restriction_apply}.
+        $i(x)=x$ and $i(y)=y$ and
+            $i(\ringMul[R](x,y))=\ringMul[R](x,y)$ by
+            \auto{subring_additive_subgroup,
+                subgroup_inclusion_apply}.
+    \end{subproof}
+    Hence for all $x,y\in\carrier[M]$ we have
+        $i(\mul[M](x,y))=\mul[N](i(x),i(y))$ by
+        \auto{multiplicative_monoid_fields}.
+    Hence $i$ is a magma homomorphism from $M$ to $N$ by
+        \obv{magma_hom}.
+    $\ringOne[R]\in A$ by \obv{subring_one}.
+    $\ringOne[S]=\ringOne[R]$ by \auto{induced_subring_fields}.
+    Hence $i(\ringOne[S])=\ringOne[R]$ by
+        \auto{subring_additive_subgroup,
+            subgroup_inclusion_apply}.
+    Hence $i$ is a monoid homomorphism from $M$ to $N$ by
+        \auto{monoid_hom,multiplicative_monoid_fields}.
+    Follows by \auto{ring_hom}.
+\end{proof}
+
+\begin{theorem}\label{full_induced_subring_eq}
+    Let $R$ be a set.
+    Suppose $R$ is an exact ring.
+    Then $\InducedSubring{R}{\carrier[R]}=R$.
+\end{theorem}
+\begin{proof}
+    Let $A=\carrier[R]$ and $S=\InducedSubring{R}{A}$.
+    Hence $A$ is a subring of $R$ by \auto{full_carrier_subring}.
+    Hence $S$ is an exact ring by \auto{induced_subring_is_exact}.
+    Let $G=\AdditiveGroup{R}$ and $H=\subgroupStructure{G}{A}$.
+    $G$ is an exact commutative group by
+        \auto{additive_group_is_exact_commutative_group}.
+    Hence $G$ is an exact group by \obv{commutative_group_is_group}.
+    $A=\carrier[G]$ by \auto{additive_group_fields}.
+    $H=\reduct[group]{G}$ by
+        \auto{full_subgroup_structure_eq_group_reduct}.
+    $\reduct[group]{G}=G$ by \obv{exact_group_reduct_eq}.
+    Hence $H=G$.
+    $\carrier[S]=A=\carrier[R]$ and
+        $\ringAdd[S]=\ringAdd[R]$ and
+        $\ringZero[S]=\ringZero[R]$ and
+        $\ringNeg[S]=\ringNeg[R]$ and
+        $\ringOne[S]=\ringOne[R]$ by
+        \auto{induced_subring_fields,additive_group_fields}.
+    $\dom{\ringMul[R]}=A\times A$ by
+        \auto{ring_mul_graph,funs}.
+    $\ringMul[R]$ is a relation by
+        \auto{ring_mul_graph,funs_is_relation}.
+    Hence $\restrl{\ringMul[R]}{A\times A}=\ringMul[R]$ by
+        \auto{restrl_by_dom}.
+    Hence $\ringMul[S]=\ringMul[R]$ by
+        \auto{induced_subring_fields}.
+    Follows by \auto{exact_ring_extensionality}.
+\end{proof}
+
+\subsection{Changing endpoints of homomorphisms}
+
+\begin{theorem}\label{ring_hom_domain_restriction}
+    Suppose $f$ is a ring homomorphism from $R$ to $S$.
+    Suppose $A$ is a subring of $R$.
+    Then $\restrl{f}{A}$ is a ring homomorphism from
+        $\InducedSubring{R}{A}$ to $S$.
+\end{theorem}
+\begin{proof}
+    Let $T=\InducedSubring{R}{A}$ and $r=\restrl{f}{A}$.
+    $T$ is an exact ring by \auto{induced_subring_is_exact}.
+    $\groupHom{f}{\AdditiveGroup{R}}{\AdditiveGroup{S}}$ by
+        \obv{ring_hom_is_additive_group_hom}.
+    Hence $\groupHom{r}{
+        \subgroupStructure{\AdditiveGroup{R}}{A}}{
+        \AdditiveGroup{S}}$ by
+        \auto{subring_additive_subgroup,
+            group_hom_domain_restriction}.
+    $\AdditiveGroup{T}
+        =\subgroupStructure{\AdditiveGroup{R}}{A}$ by
+        \auto{induced_subring_additive_group}.
+    Hence $\groupHom{r}{\AdditiveGroup{T}}{\AdditiveGroup{S}}$.
+    $f\in\funs{\carrier[R]}{\carrier[S]}$ by
+        \obv{ring_hom_type}.
+    $A\subseteq\carrier[R]$ by \obv{subring_subseteq_carrier}.
+    Hence $r\in\funs{A}{\carrier[S]}$ by \auto{funs_restrl}.
+    $\carrier[T]=A$ by
+        \auto{induced_subring_fields,subgroup_structure_carrier}.
+    Hence $r\in\funs{\carrier[T]}{\carrier[S]}$.
+    Let $M=\MultiplicativeMonoid{T}$ and
+        $N=\MultiplicativeMonoid{S}$.
+    Hence $r\in\funs{\carrier[M]}{\carrier[N]}$ by
+        \auto{multiplicative_monoid_fields}.
+    $M$ is a monoid and $N$ is a monoid by
+        \obv{multiplicative_monoid_is_exact_monoid}.
+    Hence $M$ is a magma and $N$ is a magma by
+        \obv{monoid_is_magma}.
+    $f$ is a function and $A\subseteq\dom{f}$ by
+        \auto{ring_hom_type,funs_is_function,funs}.
+    Show that for all $x,y\in\carrier[T]$ we have
+        $r(\ringMul[T](x,y))=\ringMul[S](r(x),r(y))$.
+    \begin{subproof}
+        Fix $x,y\in\carrier[T]$.
+        Hence $x,y\in A$.
+        Hence $x,y\in\carrier[R]$ by
+            \obv{subring_subseteq_carrier,subseteq}.
+        $\ringMul[R](x,y)\in A$ by \obv{subring_mul}.
+        $\ringMul[T](x,y)=\ringMul[R](x,y)$ by
+            \auto{induced_subring_fields,
+                subring_mul_restriction_apply}.
+        Hence $r(\ringMul[T](x,y))=f(\ringMul[R](x,y))$ by
+            \auto{restrl_of_function_apply}.
+        $r(x)=f(x)$ and $r(y)=f(y)$ by
+            \auto{restrl_of_function_apply}.
+        Follows by \auto{ring_hom_mul}.
+    \end{subproof}
+    Hence for all $x,y\in\carrier[M]$ we have
+        $r(\mul[M](x,y))=\mul[N](r(x),r(y))$ by
+        \auto{multiplicative_monoid_fields}.
+    Hence $r$ is a magma homomorphism from $M$ to $N$ by
+        \obv{magma_hom}.
+    $\ringOne[T]=\ringOne[R]$ and $\ringOne[R]\in A$ by
+        \auto{induced_subring_fields,subring_one}.
+    Hence $r(\ringOne[T])=f(\ringOne[R])$ by
+        \auto{restrl_of_function_apply}.
+    Hence $r(\ringOne[T])=\ringOne[S]$ by
+        \obv{ring_hom_one}.
+    Hence $r$ is a monoid homomorphism from $M$ to $N$ by
+        \auto{monoid_hom,multiplicative_monoid_fields}.
+    Follows by \auto{ring_hom}.
+\end{proof}
+
+\begin{theorem}\label{ring_hom_codomain_corestriction}
+    Suppose $f$ is a ring homomorphism from $R$ to $S$.
+    Suppose $B$ is a subring of $S$.
+    Suppose $\ringImage{f}{R}\subseteq B$.
+    Then $f$ is a ring homomorphism from $R$ to
+        $\InducedSubring{S}{B}$.
+\end{theorem}
+\begin{proof}
+    Let $T=\InducedSubring{S}{B}$.
+    $T$ is an exact ring by \auto{induced_subring_is_exact}.
+    $\groupHom{f}{\AdditiveGroup{R}}{\AdditiveGroup{S}}$ by
+        \obv{ring_hom_is_additive_group_hom}.
+    $\ringImage{f}{R}=\img{f}{\carrier[R]}$ by
+        \obv{ring_image}.
+    $\carrier[\AdditiveGroup{R}]=\carrier[R]$ by
+        \auto{additive_group_fields}.
+    Hence $\groupHom{f}{\AdditiveGroup{R}}{
+        \subgroupStructure{\AdditiveGroup{S}}{B}}$ by
+        \auto{subring_additive_subgroup,
+            group_hom_codomain_corestriction}.
+    $\AdditiveGroup{T}
+        =\subgroupStructure{\AdditiveGroup{S}}{B}$ by
+        \auto{induced_subring_additive_group}.
+    Hence $\groupHom{f}{\AdditiveGroup{R}}{\AdditiveGroup{T}}$.
+    Hence $f\in\funs{\carrier[R]}{\carrier[T]}$ by
+        \auto{group_hom_type,additive_group_fields}.
+    Let $M=\MultiplicativeMonoid{R}$ and
+        $N=\MultiplicativeMonoid{T}$.
+    Hence $f\in\funs{\carrier[M]}{\carrier[N]}$ by
+        \auto{multiplicative_monoid_fields}.
+    $M$ is a monoid and $N$ is a monoid by
+        \obv{multiplicative_monoid_is_exact_monoid}.
+    Hence $M$ is a magma and $N$ is a magma by
+        \obv{monoid_is_magma}.
+    Show that for all $x,y\in\carrier[R]$ we have
+        $f(\ringMul[R](x,y))=\ringMul[T](f(x),f(y))$.
+    \begin{subproof}
+        Fix $x,y\in\carrier[R]$.
+        $f(x),f(y)\in\carrier[T]$ by \obv{funs_type_apply}.
+        Hence $f(x),f(y)\in B$ by
+            \auto{induced_subring_fields,
+                subgroup_structure_carrier}.
+        $\ringMul[T](f(x),f(y))=\ringMul[S](f(x),f(y))$ by
+            \auto{induced_subring_fields,
+                subring_mul_restriction_apply}.
+        Follows by \obv{ring_hom_mul}.
+    \end{subproof}
+    Hence for all $x,y\in\carrier[M]$ we have
+        $f(\mul[M](x,y))=\mul[N](f(x),f(y))$ by
+        \auto{multiplicative_monoid_fields}.
+    Hence $f$ is a magma homomorphism from $M$ to $N$ by
+        \obv{magma_hom}.
+    $\ringOne[T]=\ringOne[S]$ by \auto{induced_subring_fields}.
+    Hence $f(\ringOne[R])=\ringOne[T]$ by \obv{ring_hom_one}.
+    Hence $f$ is a monoid homomorphism from $M$ to $N$ by
+        \auto{monoid_hom,multiplicative_monoid_fields}.
+    Follows by \auto{ring_hom}.
+\end{proof}
+
+\subsection{Images and preimages}
+
+\begin{theorem}\label{ring_hom_subring_preimage}
+    Suppose $f$ is a ring homomorphism from $R$ to $S$.
+    Suppose $B$ is a subring of $S$.
+    Then $\preimg{f}{B}$ is a subring of $R$.
+\end{theorem}
+\begin{proof}
+    Let $A=\preimg{f}{B}$.
+    $R$ is a ring and $S$ is a ring by
+        \obv{ring_hom_source_ring,ring_hom_target_ring}.
+    $\groupHom{f}{\AdditiveGroup{R}}{\AdditiveGroup{S}}$ by
+        \obv{ring_hom_is_additive_group_hom}.
+    Hence $\subgroup{A}{\AdditiveGroup{R}}$ by
+        \auto{subring_additive_subgroup,
+            group_hom_subgroup_preimage}.
+    $f(\ringOne[R])=\ringOne[S]$ and $\ringOne[S]\in B$ by
+        \obv{ring_hom_one,subring_one}.
+    $\ringOne[R]\in\carrier[R]$ by \obv{ring_one_type}.
+    Hence $\ringOne[R]\in A$ by
+        \auto{ring_hom_is_additive_group_hom,
+            group_hom_preimage_iff,additive_group_fields}.
+    Show that for all $x,y\in A$ we have $\ringMul[R](x,y)\in A$.
+    \begin{subproof}
+        Fix $x,y\in A$.
+        Hence $x,y\in\carrier[R]$ and $f(x),f(y)\in B$ by
+            \auto{ring_hom_is_additive_group_hom,
+                group_hom_preimage_iff,additive_group_fields}.
+        $\ringMul[R](x,y)\in\carrier[R]$ by \obv{ring_mul_type}.
+        $f(\ringMul[R](x,y))=\ringMul[S](f(x),f(y))$ by
+            \obv{ring_hom_mul}.
+        $\ringMul[S](f(x),f(y))\in B$ by \obv{subring_mul}.
+        Follows by
+            \auto{ring_hom_is_additive_group_hom,
+                group_hom_preimage_iff,additive_group_fields}.
+    \end{subproof}
+    Follows by \auto{subring}.
+\end{proof}
+
+\begin{theorem}\label{ring_hom_subring_image}
+    Suppose $f$ is a ring homomorphism from $R$ to $S$.
+    Suppose $A$ is a subring of $R$.
+    Then $\img{f}{A}$ is a subring of $S$.
+\end{theorem}
+\begin{proof}
+    Let $B=\img{f}{A}$.
+    $S$ is a ring by \obv{ring_hom_target_ring}.
+    $\groupHom{f}{\AdditiveGroup{R}}{\AdditiveGroup{S}}$ by
+        \obv{ring_hom_is_additive_group_hom}.
+    Hence $\subgroup{B}{\AdditiveGroup{S}}$ by
+        \auto{subring_additive_subgroup,
+            group_hom_subgroup_image}.
+    $\ringOne[R]\in A$ and
+        $f(\ringOne[R])=\ringOne[S]$ by
+        \obv{subring_one,ring_hom_one}.
+    $A\subseteq\carrier[\AdditiveGroup{R}]$ by
+        \auto{subring_subseteq_carrier,additive_group_fields}.
+    Hence $\ringOne[S]\in B$ by
+        \auto{ring_hom_is_additive_group_hom,
+            group_hom_image_iff,additive_group_fields}.
+    Show that for all $z,w\in B$ we have $\ringMul[S](z,w)\in B$.
+    \begin{subproof}
+        Fix $z,w\in B$.
+        Take $x\in A$ such that $f(x)=z$ by
+            \auto{ring_hom_is_additive_group_hom,
+                group_hom_image_iff,subring_subseteq_carrier,
+                additive_group_fields}.
+        Take $y\in A$ such that $f(y)=w$ by
+            \auto{ring_hom_is_additive_group_hom,
+                group_hom_image_iff,subring_subseteq_carrier,
+                additive_group_fields}.
+        $\ringMul[R](x,y)\in A$ by \obv{subring_mul}.
+        $x,y\in\carrier[R]$ by
+            \auto{subring_subseteq_carrier,subseteq}.
+        $f(\ringMul[R](x,y))=\ringMul[S](z,w)$ by
+            \auto{ring_hom_mul}.
+        Follows by
+            \auto{ring_hom_is_additive_group_hom,
+                group_hom_image_iff,additive_group_fields}.
+    \end{subproof}
+    Follows by \auto{subring}.
+\end{proof}
+
+\begin{theorem}\label{ring_image_is_subring}
+    Suppose $f$ is a ring homomorphism from $R$ to $S$.
+    Then $\ringImage{f}{R}$ is a subring of $S$.
+\end{theorem}
+\begin{proof}
+    $\carrier[R]$ is a subring of $R$ by
+        \obv{ring_hom_source_ring,full_carrier_subring}.
+    Hence $\img{f}{\carrier[R]}$ is a subring of $S$ by
+        \obv{ring_hom_subring_image}.
+    Follows by \auto{ring_image}.
+\end{proof}

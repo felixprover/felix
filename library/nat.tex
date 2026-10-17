@@ -1,0 +1,554 @@
+\import{set/suc.tex}
+\import{function.tex}
+
+\section{Natural numbers}
+
+Inductive sets, the natural numbers, and the fact that $\emptyset$ belongs to
+$\naturals$ are supplied directly by the standard prelude.  Natural addition
+is the function represented by the least relation containing the zero cases
+and closed under simultaneous successor in its second argument and value.
+
+\begin{definition}\label{num_addition_bound}
+    $\numAdditionBound =
+        (\naturals\times\naturals)\times\naturals$.
+\end{definition}
+
+\begin{definition}\label{num_addition_closed_relations}
+    $\numAdditionClosedRelations =
+        \{R\in\pow{\numAdditionBound}\mid
+            \text{for all $a\in\naturals$ we have
+                $((a,\emptyset),a)\in R$ and
+            for all $x,y,z$ such that $((x,y),z)\in R$ we have
+                $((x,\suc{y}),\suc{z})\in R$}\}$.
+\end{definition}
+
+\begin{proposition}\label{num_addition_bound_closed}
+    $\numAdditionBound\in\numAdditionClosedRelations$.
+\end{proposition}
+\begin{proof}
+    $\numAdditionBound\in\pow{\numAdditionBound}$
+        by \obv{powerset_intro,subseteq_refl}.
+    For all $x\in\naturals$ we have
+        $((x,\emptyset),x)\in\numAdditionBound$
+        by \obv{num_addition_bound,times_tuple_intro,omega_empty}.
+    For all $x,y,z$ such that
+        $((x,y),z)\in\numAdditionBound$ we have
+        $((x,\suc{y}),\suc{z})\in\numAdditionBound$
+        by \auto{num_addition_bound,times_tuple_elim,times_tuple_intro,omega_successor}.
+    Follows by \obv{num_addition_closed_relations}.
+\end{proof}
+
+\begin{proposition}\label{num_addition_closed_relations_inhabited}
+    $\numAdditionClosedRelations$ is inhabited.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{num_addition_bound_closed}.
+\end{proof}
+
+\begin{definition}\label{num_addition_graph}
+    $\numAdditionGraph =
+        \inters{\numAdditionClosedRelations}$.
+\end{definition}
+
+\begin{proposition}\label{num_addition_graph_minimal}
+    Let $R\in\numAdditionClosedRelations$.
+    Then $\numAdditionGraph\subseteq R$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{num_addition_graph,inters_subseteq_elem}.
+\end{proof}
+
+\begin{proposition}\label{num_addition_graph_bound}
+    $\numAdditionGraph\subseteq\numAdditionBound$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{num_addition_graph_minimal,num_addition_bound_closed}.
+\end{proof}
+
+\begin{proposition}\label{num_addition_graph_zero_intro}
+    Let $x\in\naturals$.
+    Then $((x,\emptyset),x)\in\numAdditionGraph$.
+\end{proposition}
+\begin{proof}
+    For all $R\in\numAdditionClosedRelations$ we have
+        $((x,\emptyset),x)\in R$
+        by \obv{num_addition_closed_relations}.
+    Follows by \obv{num_addition_graph,inters_intro,num_addition_closed_relations_inhabited}.
+\end{proof}
+
+\begin{proposition}\label{num_addition_graph_successor_intro}
+    Suppose $((x,y),z)\in\numAdditionGraph$.
+    Then $((x,\suc{y}),\suc{z})\in\numAdditionGraph$.
+\end{proposition}
+\begin{proof}
+    For all $R\in\numAdditionClosedRelations$ we have
+        $((x,y),z)\in R$ by \auto{num_addition_graph_minimal,subseteq}.
+    For all $R\in\numAdditionClosedRelations$ we have
+        $((x,\suc{y}),\suc{z})\in R$
+        by \auto{num_addition_closed_relations}.
+    Follows by \obv{num_addition_graph,inters_intro,num_addition_closed_relations_inhabited}.
+\end{proof}
+
+\begin{proposition}\label{num_addition_graph_closed}
+    $\numAdditionGraph\in\numAdditionClosedRelations$.
+\end{proposition}
+\begin{proof}
+    $\numAdditionGraph\in\pow{\numAdditionBound}$
+        by \obv{powerset_intro,num_addition_graph_bound}.
+    Follows by \obv{num_addition_closed_relations,num_addition_graph_zero_intro,num_addition_graph_successor_intro}.
+\end{proof}
+
+\begin{definition}\label{num_addition_bases}
+    $\numAdditionBases =
+        \{w\in\numAdditionBound\mid
+            \text{there exists $x\in\naturals$ such that
+                $w=((x,\emptyset),x)$}\}$.
+\end{definition}
+
+\begin{definition}\label{num_addition_steps}
+    $\numAdditionSteps =
+        \{w\in\numAdditionBound\mid
+            \text{there exist $x,y,z$ such that
+                $((x,y),z)\in\numAdditionGraph$ and
+                $w=((x,\suc{y}),\suc{z})$}\}$.
+\end{definition}
+
+\begin{definition}\label{num_addition_generated}
+    $\numAdditionGenerated =
+        \numAdditionBases\union\numAdditionSteps$.
+\end{definition}
+
+\begin{proposition}\label{num_addition_generated_bound}
+    $\numAdditionGenerated\subseteq\numAdditionBound$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{num_addition_generated,num_addition_bases,num_addition_steps,subseteq,union_iff}.
+\end{proof}
+
+\begin{proposition}\label{num_addition_generated_subset_graph}
+    $\numAdditionGenerated\subseteq\numAdditionGraph$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{num_addition_generated,num_addition_bases,num_addition_steps,subseteq,union_iff,num_addition_graph_zero_intro,num_addition_graph_successor_intro}.
+\end{proof}
+
+\begin{proposition}\label{num_addition_generated_closed}
+    $\numAdditionGenerated\in\numAdditionClosedRelations$.
+\end{proposition}
+\begin{proof}
+    $\numAdditionGenerated\in\pow{\numAdditionBound}$
+        by \obv{powerset_intro,num_addition_generated_bound}.
+    For all $x\in\naturals$ we have
+        $((x,\emptyset),x)\in\numAdditionBound$
+        by \obv{num_addition_bound,times_tuple_intro,omega_empty}.
+    For all $x\in\naturals$ we have
+        $((x,\emptyset),x)\in\numAdditionBases$
+        by \obv{num_addition_bases}.
+    For all $x\in\naturals$ we have
+        $((x,\emptyset),x)\in\numAdditionGenerated$
+        by \auto{num_addition_generated,union_iff}.
+    For all $x,y,z$ such that
+        $((x,y),z)\in\numAdditionGenerated$ we have
+        $((x,y),z)\in\numAdditionGraph$
+        by \obv{num_addition_generated_subset_graph,subseteq}.
+    For all $x,y,z$ such that
+        $((x,y),z)\in\numAdditionGenerated$ we have
+        $((x,y),z)\in\numAdditionBound$
+        by \obv{num_addition_graph_bound,subseteq}.
+    For all $x,y,z$ such that
+        $((x,y),z)\in\numAdditionGenerated$ we have
+        $((x,\suc{y}),\suc{z})\in\numAdditionBound$
+        by \auto{num_addition_bound,times_tuple_elim,times_tuple_intro,omega_successor}.
+    For all $x,y,z$ such that
+        $((x,y),z)\in\numAdditionGenerated$ we have
+        $((x,\suc{y}),\suc{z})\in\numAdditionSteps$
+        by \auto{num_addition_steps}.
+    For all $x,y,z$ such that
+        $((x,y),z)\in\numAdditionGenerated$ we have
+        $((x,\suc{y}),\suc{z})\in\numAdditionGenerated$
+        by \auto{num_addition_generated,union_iff}.
+    Follows by \obv{num_addition_closed_relations}.
+\end{proof}
+
+\begin{proposition}\label{num_addition_graph_cases}
+    Suppose $w\in\numAdditionGraph$.
+    Then $w\in\numAdditionBases$ or $w\in\numAdditionSteps$.
+\end{proposition}
+\begin{proof}
+    $\numAdditionGraph\subseteq\numAdditionGenerated$
+        by \obv{num_addition_graph_minimal,num_addition_generated_closed}.
+    Follows by \auto{subseteq,num_addition_generated,union_iff}.
+\end{proof}
+
+\begin{proposition}\label{num_addition_graph_zero_elim}
+    Suppose $((x,\emptyset),z)\in\numAdditionGraph$.
+    Then $z=x$.
+\end{proposition}
+\begin{proof}
+    We have $((x,\emptyset),z)\in\numAdditionBases$ or
+        $((x,\emptyset),z)\in\numAdditionSteps$
+        by \obv{num_addition_graph_cases}.
+    Follows by \auto{num_addition_bases,num_addition_steps,pair_eq_iff,suc_neq_emptyset}.
+\end{proof}
+
+\begin{proposition}\label{num_addition_graph_successor_elim}
+    Suppose $((x,\suc{y}),z)\in\numAdditionGraph$.
+    Then there exists $w$ such that
+        $((x,y),w)\in\numAdditionGraph$ and $z=\suc{w}$.
+\end{proposition}
+\begin{proof}
+    We have $((x,\suc{y}),z)\in\numAdditionBases$ or
+        $((x,\suc{y}),z)\in\numAdditionSteps$
+        by \obv{num_addition_graph_cases}.
+    Follows by \auto{num_addition_bases,num_addition_steps,pair_eq_iff,suc_neq_emptyset,suc_injective}.
+\end{proof}
+
+\begin{proposition}\label{num_addition_graph_total}
+    Let $x,y\in\naturals$.
+    Then there exists $z\in\naturals$ such that
+        $((x,y),z)\in\numAdditionGraph$.
+\end{proposition}
+\begin{proof}
+    Let $D=\{u\in\naturals\mid
+        \text{there exists $v\in\naturals$ such that
+            $((x,u),v)\in\numAdditionGraph$}\}$.
+    $\emptyset\in D$
+        by \obv{omega_empty,num_addition_graph_zero_intro}.
+    For all $u\in D$ we have $\suc{u}\in D$
+        by \auto{omega_successor,num_addition_graph_successor_intro}.
+    Thus $D$ is an inductive set by \obv{inductive_set}.
+    Hence every element of $\naturals$ is an element of $D$
+        by \obv{omega_minimal}.
+    Thus $y\in D$.
+\end{proof}
+
+\begin{proposition}\label{num_addition_graph_unique}
+    Let $x,y\in\naturals$.
+    Suppose $((x,y),z),((x,y),z')\in\numAdditionGraph$.
+    Then $z=z'$.
+\end{proposition}
+\begin{proof}
+    Let $U=\{u\in\naturals\mid
+        \text{for all $v,w$ such that
+            $((x,u),v),((x,u),w)\in\numAdditionGraph$
+            we have $v=w$}\}$.
+    $\emptyset\in U$
+        by \obv{omega_empty,num_addition_graph_zero_elim}.
+    For all $u\in U$ we have $\suc{u}\in U$
+        by \auto{omega_successor,num_addition_graph_successor_elim,suc_injective}.
+    Thus $U$ is an inductive set by \obv{inductive_set}.
+    Hence every element of $\naturals$ is an element of $U$
+        by \obv{omega_minimal}.
+    Thus $y\in U$.
+\end{proof}
+
+\begin{proposition}\label{num_addition_graph_relation}
+    $\numAdditionGraph$ is a relation.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{relation,num_addition_graph_bound,num_addition_bound,subseteq,times_elem_is_tuple}.
+\end{proof}
+
+\begin{proposition}\label{num_addition_graph_rightunique}
+    $\numAdditionGraph$ is right-unique.
+\end{proposition}
+\begin{proof}
+    It suffices to show that for all $p,z,z'$ such that
+        $(p,z),(p,z')\in\numAdditionGraph$ we have $z=z'$
+        by \obv{rightunique}.
+    Fix $p,z,z'$.
+    Assume $(p,z),(p,z')\in\numAdditionGraph$.
+    We have $(p,z)\in\numAdditionBound$
+        by \obv{num_addition_graph_bound,subseteq}.
+    Thus $p\in\naturals\times\naturals$
+        by \auto{num_addition_bound,times_tuple_elim}.
+    Take $x,y$ such that $p=(x,y)$ and $x,y\in\naturals$
+        by \auto{times_elem_is_tuple}.
+    Then $((x,y),z),((x,y),z')\in\numAdditionGraph$.
+    Follows by \obv{num_addition_graph_unique}.
+\end{proof}
+
+\begin{proposition}\label{num_addition_graph_function}
+    $\numAdditionGraph$ is a function.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{num_addition_graph_relation,num_addition_graph_rightunique}.
+\end{proof}
+
+\begin{proposition}\label{num_addition_graph_domain}
+    $\dom{\numAdditionGraph}=\naturals\times\naturals$.
+\end{proposition}
+\begin{proof}
+    Every element of $\dom{\numAdditionGraph}$ is an element of
+        $\naturals\times\naturals$
+        by \auto{dom_iff,num_addition_graph_bound,num_addition_bound,subseteq,times_tuple_elim}.
+    Every element of $\naturals\times\naturals$ is an element of
+        $\dom{\numAdditionGraph}$
+        by \auto{times_elem_is_tuple,num_addition_graph_total,dom_iff}.
+    Follows by set extensionality.
+\end{proof}
+
+\begin{proposition}\label{num_addition_graph_funs}
+    $\numAdditionGraph\in
+        \funs{\naturals\times\naturals}{\naturals}$.
+\end{proposition}
+\begin{proof}
+    For all $p\in\dom{\numAdditionGraph}$ we have
+        $(p,\apply{\numAdditionGraph}{p})\in\numAdditionGraph$
+        by \obv{num_addition_graph_function,function_apply_elim}.
+    For all $p\in\dom{\numAdditionGraph}$ we have
+        $(p,\apply{\numAdditionGraph}{p})\in\numAdditionBound$
+        by \obv{num_addition_graph_bound,subseteq}.
+    For all $p\in\dom{\numAdditionGraph}$ we have
+        $\apply{\numAdditionGraph}{p}\in\naturals$
+        by \auto{num_addition_bound,times_tuple_elim}.
+    Thus $\numAdditionGraph$ is a function to $\naturals$
+        by \obv{num_addition_graph_function}.
+    Follows by \obv{funs_intro,num_addition_graph_domain}.
+\end{proof}
+
+\begin{abbreviation}\label{num_zero_is_emptyset}
+    $\zero = \emptyset$.
+\end{abbreviation}
+
+\begin{definition}\label{num_addition_is_set}
+    $x+y=\apply{\numAdditionGraph}{(x,y)}$.
+\end{definition}
+
+\begin{classification}\label{num_addition_on_naturals}
+    Suppose $x,y\in\naturals$.
+    Then $x+y\in\naturals$.
+\end{classification}
+\begin{proof}
+    $(x,y)\in\naturals\times\naturals$
+        by \obv{times_tuple_intro}.
+    $\apply{\numAdditionGraph}{(x,y)}\in\naturals$
+        by \obv{num_addition_graph_funs,funs_type_apply}.
+    Follows by \obv{num_addition_is_set}.
+\end{proof}
+
+\begin{proposition}\label{num_addition_zero_right}
+    For all $x\in\naturals$ we have $x+\emptyset=x$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{num_addition_is_set,num_addition_graph_function,num_addition_graph_zero_intro,function_apply_intro}.
+\end{proof}
+
+\begin{proposition}\label{num_addition_successor_right}
+    Let $x,y\in\naturals$.
+    Then $x+\suc{y}=\suc{x+y}$.
+\end{proposition}
+\begin{proof}
+    $(x,y)\in\dom{\numAdditionGraph}$
+        by \obv{num_addition_graph_domain,times_tuple_intro}.
+    $((x,y),\apply{\numAdditionGraph}{(x,y)})
+        \in\numAdditionGraph$
+        by \obv{num_addition_graph_function,function_apply_elim}.
+    $((x,\suc{y}),\suc{\apply{\numAdditionGraph}{(x,y)}})
+        \in\numAdditionGraph$
+        by \obv{num_addition_graph_successor_intro}.
+    $\apply{\numAdditionGraph}{(x,\suc{y})}
+        =\suc{\apply{\numAdditionGraph}{(x,y)}}$
+        by \obv{num_addition_graph_function,function_apply_intro}.
+    Follows by \auto{num_addition_is_set}.
+\end{proof}
+
+\begin{proposition}\label{num_addition_zero_left}
+    For all $x\in\naturals$ we have $\emptyset+x=x$.
+\end{proposition}
+\begin{proof}
+    Let $Z=\{u\in\naturals\mid \text{$\emptyset+u=u$}\}$.
+    $\emptyset\in Z$ by \obv{omega_empty,num_addition_zero_right}.
+    For all $u\in Z$ we have $\suc{u}\in Z$
+        by \auto{omega_successor,num_addition_successor_right}.
+    Thus $Z$ is an inductive set by \obv{inductive_set}.
+    Every element of $\naturals$ is an element of $Z$
+        by \obv{omega_minimal}.
+    Follows by \auto.
+\end{proof}
+
+\begin{proposition}\label{num_addition_successor_left}
+    Let $x,y\in\naturals$.
+    Then $\suc{x}+y=\suc{x+y}$.
+\end{proposition}
+\begin{proof}
+    Let $S=\{u\in\naturals\mid
+        \text{$\suc{x}+u=\suc{x+u}$}\}$.
+    $\emptyset\in S$
+        by \auto{omega_empty,omega_successor,num_addition_zero_right}.
+    For all $u\in S$ we have $\suc{u}\in S$
+        by \auto{omega_successor,num_addition_successor_right}.
+    Thus $S$ is an inductive set by \obv{inductive_set}.
+    Every element of $\naturals$ is an element of $S$
+        by \obv{omega_minimal}.
+    Follows by \auto.
+\end{proof}
+
+\begin{proposition}\label{num_addition_axiom_1}
+    For all $x\in\naturals$ we have
+        $x+\zero=\zero+x=x$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{num_addition_zero_right,num_addition_zero_left}.
+\end{proof}
+
+\begin{proposition}\label{num_addition_axiom_2}
+    Let $x,y\in\naturals$.
+    Then $x+\suc{y}=\suc{x}+y=\suc{x+y}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{num_addition_successor_right,num_addition_successor_left}.
+\end{proof}
+
+\begin{theorem}\label{natural_addition_commutative}
+    Let $m,n$ be natural numbers.
+    Then $m+n=n+m$.
+\end{theorem}
+\begin{proof}
+    Let $C=\{k\in\naturals\mid \text{$m+k=k+m$}\}$.
+    $\emptyset\in C$
+        by \obv{omega_empty,num_addition_zero_right,num_addition_zero_left}.
+    Show that for every $k\in C$ we have $\suc{k}\in C$.
+    \begin{subproof}
+        Fix $k\in C$.
+        Then $k$ is a natural number and $m+k=k+m$.
+        $m+\suc{k}=\suc{m+k}$
+            by \obv{num_addition_successor_right}.
+        $\suc{k}+m=\suc{k+m}$
+            by \obv{num_addition_successor_left}.
+        $\suc{k}$ is a natural number by \obv{omega_successor}.
+    \end{subproof}
+    Hence $C$ is an inductive set by \obv{inductive_set}.
+    Hence every natural number is an element of $C$
+        by \obv{omega_minimal}.
+    Thus $n\in C$.
+\end{proof}
+
+\begin{theorem}\label{natural_addition_associative}
+    Let $l,m,n$ be natural numbers.
+    Then $(l+m)+n=l+(m+n)$.
+\end{theorem}
+\begin{proof}
+    $l+m$ is a natural number by \obv{num_addition_on_naturals}.
+    Let $C=\{k\in\naturals\mid
+        \text{$(l+m)+k=l+(m+k)$}\}$.
+    $\emptyset\in C$
+        by \obv{omega_empty,num_addition_zero_right}.
+    Show that for every $k\in C$ we have $\suc{k}\in C$.
+    \begin{subproof}
+        Fix $k\in C$.
+        Then $k$ is a natural number and
+            $(l+m)+k=l+(m+k)$.
+        $m+k$ is a natural number by \obv{num_addition_on_naturals}.
+        $(l+m)+\suc{k}=\suc{(l+m)+k}$ and
+            $l+(m+\suc{k})=\suc{l+(m+k)}$
+            by \auto{num_addition_successor_right}.
+        $\suc{k}$ is a natural number by \obv{omega_successor}.
+        Follows by \obv{num_addition_successor_right}.
+    \end{subproof}
+    Hence $C$ is an inductive set by \obv{inductive_set}.
+    Hence every natural number is an element of $C$
+        by \obv{omega_minimal}.
+    Thus $n\in C$.
+\end{proof}
+
+\begin{theorem}\label{natural_addition_cancel_right}
+    Let $x,y,z$ be natural numbers.
+    Suppose $y+x=z+x$.
+    Then $y=z$.
+\end{theorem}
+\begin{proof}
+    Let $C=\{k\in\naturals\mid
+        \text{if $y+k=z+k$, then $y=z$}\}$.
+    Show that $\emptyset\in C$.
+    \begin{subproof}
+        $\emptyset$ is a natural number by \obv{omega_empty}.
+        Show that if $y+\emptyset=z+\emptyset$, then $y=z$.
+        \begin{subproof}
+            Assume $y+\emptyset=z+\emptyset$.
+            Follows by \obv{num_addition_zero_right}.
+        \end{subproof}
+    \end{subproof}
+    Show that for every $k\in C$ we have $\suc{k}\in C$.
+    \begin{subproof}
+        Fix $k\in C$.
+        If $y+k=z+k$, then $y=z$.
+        $\suc{k}$ is a natural number by \obv{omega_successor}.
+        Show that if $y+\suc{k}=z+\suc{k}$, then $y=z$.
+        \begin{subproof}
+            Assume $y+\suc{k}=z+\suc{k}$.
+            $\suc{y+k}=\suc{z+k}$
+                by \obv{num_addition_successor_right}.
+            Hence $y+k=z+k$ by \obv{suc_injective}.
+        \end{subproof}
+    \end{subproof}
+    Hence $C$ is an inductive set by \obv{inductive_set}.
+    Hence every natural number is an element of $C$
+        by \obv{omega_minimal}.
+    Thus $x\in C$.
+\end{proof}
+
+\begin{corollary}\label{natural_addition_cancel_left}
+    Let $x,y,z$ be natural numbers.
+    Suppose $x+y=x+z$.
+    Then $y=z$.
+\end{corollary}
+\begin{proof}
+    $y+x=z+x$ by \obv{natural_addition_commutative}.
+    Follows by \obv{natural_addition_cancel_right}.
+\end{proof}
+
+\begin{theorem}\label{natural_addition_left_subseteq_sum}
+    Let $m,k$ be natural numbers.
+    Then $m\subseteq m+k$.
+\end{theorem}
+\begin{proof}
+    Let $C=\{r\in\naturals\mid \text{$m\subseteq m+r$}\}$.
+    $\emptyset\in C$ by
+        \obv{omega_empty,num_addition_zero_right,subseteq_refl}.
+    Show that for every $r\in C$ we have $\suc{r}\in C$.
+    \begin{subproof}
+        Fix $r\in C$.
+        Then $r$ is a natural number and $m\subseteq m+r$.
+        $\suc{r}$ is a natural number by \obv{omega_successor}.
+        $m+r\subseteq\suc{m+r}$ by \obv{subseteq_self_suc_intro}.
+        Hence $m\subseteq\suc{m+r}$ by \obv{subseteq_transitive}.
+        $m+\suc{r}=\suc{m+r}$
+            by \obv{num_addition_successor_right}.
+        Thus $m\subseteq m+\suc{r}$.
+    \end{subproof}
+    Hence $C$ is an inductive set by \obv{inductive_set}.
+    Hence every natural number is an element of $C$
+        by \obv{omega_minimal}.
+    Thus $k\in C$.
+\end{proof}
+
+\begin{lemma}\label{num_naturals_is_equal_to_two_times_naturals}
+    $\{x+y \mid x \in \naturals, y \in \naturals \} = \naturals$.
+\end{lemma}
+\begin{proof}
+    We have for all $z\in \{x+y \mid x \in \naturals, y \in \naturals \}$
+        we have $z\in\naturals$ by \auto{num_addition_on_naturals}.
+    We have for all $z\in\naturals$
+        we have $z\in \{x+y \mid x \in \naturals, y \in \naturals \}$
+        by \auto{num_addition_axiom_1,omega_empty}.
+    Follows by set extensionality.
+\end{proof}
+
+\begin{theorem}\label{natural_zero_or_successor}
+    Let $n$ be a natural number.
+    Then $n=\emptyset$ or there exists a natural number $m$ such that
+        $n=\suc{m}$.
+\end{theorem}
+\begin{proof}
+    Let $C=\{k\in\naturals\mid
+        \text{$k=\emptyset$ or there exists $j\in\naturals$ such that
+            $k=\suc{j}$}\}$.
+    $\emptyset\in C$ by \obv{omega_empty}.
+    For every $k\in C$ we have $\suc{k}\in C$
+        by \obv{omega_successor}.
+    Hence $C$ is an inductive set by \obv{inductive_set}.
+    Hence every natural number is an element of $C$
+        by \obv{omega_minimal}.
+    Thus $n\in C$.
+\end{proof}

@@ -1,0 +1,578 @@
+\import{topology/urysohn/separator.tex}
+\import{topology/real-order-intervals.tex}
+\import{topology/real-map-linear.tex}
+\import{surreal/real-dyadic-estimates.tex}
+
+\section{The quarter-close Tietze correction}
+
+\subsection{Closed threshold sets}
+
+\begin{definition}\label{tietze_low_set}
+    $\tietzeLowSet{A}{e}{r}
+        =A\inter\preimg{e}{\realClosedLowerRay{
+            \surrealNeg{\surrealMul{\realQuarter}{r}}}}$.
+\end{definition}
+
+\begin{definition}\label{tietze_high_set}
+    $\tietzeHighSet{A}{e}{r}
+        =A\inter\preimg{e}{\realClosedUpperRay{
+            \surrealMul{\realQuarter}{r}}}$.
+\end{definition}
+
+These are the threshold preimages relative to the displayed domain $A$.
+The intersection gives them a stable meaning for arbitrary inputs and makes
+their containment in $A$ unconditional.  Whenever
+$e\in\funs{A}{\reals}$, we have $\dom{e}=A$, so each relative threshold set
+agrees with the corresponding ordinary preimage.
+
+\begin{proposition}\label{tietze_low_set_subset}
+    Then $\tietzeLowSet{A}{e}{r}\subseteq A$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{tietze_low_set,inter_lower_left}.
+\end{proof}
+
+\begin{proposition}\label{tietze_high_set_subset}
+    Then $\tietzeHighSet{A}{e}{r}\subseteq A$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{tietze_high_set,inter_lower_left}.
+\end{proof}
+
+\begin{proposition}\label{tietze_low_set_eq_preimage}
+    Suppose $e\in\funs{A}{\reals}$.
+    Then $\tietzeLowSet{A}{e}{r}
+        =\preimg{e}{\realClosedLowerRay{
+            \surrealNeg{\surrealMul{\realQuarter}{r}}}}$.
+\end{proposition}
+\begin{proof}
+    $\preimg{e}{\realClosedLowerRay{
+        \surrealNeg{\surrealMul{\realQuarter}{r}}}}\subseteq\dom{e}$
+        by \obv{preimg_subseteq_dom}.
+    $\dom{e}=A$ by \obv{funs}.
+    Follows by
+        \obv{tietze_low_set,inter_absorb_supseteq_left}.
+\end{proof}
+
+\begin{proposition}\label{tietze_high_set_eq_preimage}
+    Suppose $e\in\funs{A}{\reals}$.
+    Then $\tietzeHighSet{A}{e}{r}
+        =\preimg{e}{\realClosedUpperRay{
+            \surrealMul{\realQuarter}{r}}}$.
+\end{proposition}
+\begin{proof}
+    $\preimg{e}{\realClosedUpperRay{
+        \surrealMul{\realQuarter}{r}}}\subseteq\dom{e}$
+        by \obv{preimg_subseteq_dom}.
+    $\dom{e}=A$ by \obv{funs}.
+    Follows by
+        \obv{tietze_high_set,inter_absorb_supseteq_left}.
+\end{proof}
+
+\begin{proposition}\label{tietze_low_set_member_iff}
+    Suppose $e\in\funs{A}{\reals}$ and $r\in\reals$.
+    Then $x\in\tietzeLowSet{A}{e}{r}$ iff
+        $x\in A$ and
+        $\surrealLe{e(x)}
+            {\surrealNeg{\surrealMul{\realQuarter}{r}}}$.
+\end{proposition}
+\begin{proof}
+    $\surrealMul{\realQuarter}{r}\in\reals$
+        by \obv{real_quarter_is_real,surreal_real_multiplication_closed}.
+    Hence $\surrealNeg{\surrealMul{\realQuarter}{r}}\in\reals$
+        by \obv{surreal_real_negation_closed}.
+    $e$ is a function and $\dom{e}=A$
+        by \obv{funs_is_function,funs}.
+    If $x\in\tietzeLowSet{A}{e}{r}$, then
+        $x\in A$ and
+        $\surrealLe{e(x)}
+            {\surrealNeg{\surrealMul{\realQuarter}{r}}}$
+        by
+        \auto{tietze_low_set_eq_preimage,preimg_iff,real_closed_lower_ray_member_iff,function_apply_intro,dom_iff}.
+    If $x\in A$ and
+        $\surrealLe{e(x)}
+            {\surrealNeg{\surrealMul{\realQuarter}{r}}}$, then
+        $x\in\tietzeLowSet{A}{e}{r}$
+        by
+        \obv{tietze_low_set_eq_preimage,preimg_iff,real_closed_lower_ray_member_iff,function_apply_elim,funs_type_apply}.
+    Follows by \auto.
+\end{proof}
+
+\begin{proposition}\label{tietze_high_set_member_iff}
+    Suppose $e\in\funs{A}{\reals}$ and $r\in\reals$.
+    Then $x\in\tietzeHighSet{A}{e}{r}$ iff
+        $x\in A$ and
+        $\surrealLe{\surrealMul{\realQuarter}{r}}{e(x)}$.
+\end{proposition}
+\begin{proof}
+    $\surrealMul{\realQuarter}{r}\in\reals$
+        by \obv{real_quarter_is_real,surreal_real_multiplication_closed}.
+    $e$ is a function and $\dom{e}=A$
+        by \obv{funs_is_function,funs}.
+    If $x\in\tietzeHighSet{A}{e}{r}$, then
+        $x\in A$ and
+        $\surrealLe{\surrealMul{\realQuarter}{r}}{e(x)}$
+        by
+        \auto{tietze_high_set_eq_preimage,preimg_iff,real_closed_upper_ray_member_iff,function_apply_intro,dom_iff}.
+    If $x\in A$ and
+        $\surrealLe{\surrealMul{\realQuarter}{r}}{e(x)}$, then
+        $x\in\tietzeHighSet{A}{e}{r}$
+        by
+        \auto{tietze_high_set_eq_preimage,preimg_iff,real_closed_upper_ray_member_iff,function_apply_elim,funs_type_apply}.
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{tietze_low_set_closed_in_subspace}
+    Let $X$ be a topological space.
+    Suppose $A\subseteq\carrier[X]$.
+    Suppose $e\in\funs{A}{\reals}$ and
+        $e$ is continuous from $\subspaceTopology{X}{A}$ to
+            $\RealTopology$.
+    Let $r\in\reals$.
+    Then $\tietzeLowSet{A}{e}{r}
+        \in\closeds{\subspaceTopology{X}{A}}$.
+\end{theorem}
+\begin{proof}
+    $\carrier[\subspaceTopology{X}{A}]=A$
+        by \obv{subspace_topology_carrier_of_subset}.
+    $\surrealMul{\realQuarter}{r}\in\reals$
+        by \obv{real_quarter_is_real,surreal_real_multiplication_closed}.
+    Hence $\surrealNeg{\surrealMul{\realQuarter}{r}}\in\reals$
+        by \obv{surreal_real_negation_closed}.
+    Follows by
+        \auto{tietze_low_set_eq_preimage,continuous_closed_lower_level_set,subspace_topology_is_topological_space}.
+\end{proof}
+
+\begin{theorem}\label{tietze_high_set_closed_in_subspace}
+    Let $X$ be a topological space.
+    Suppose $A\subseteq\carrier[X]$.
+    Suppose $e\in\funs{A}{\reals}$ and
+        $e$ is continuous from $\subspaceTopology{X}{A}$ to
+            $\RealTopology$.
+    Let $r\in\reals$.
+    Then $\tietzeHighSet{A}{e}{r}
+        \in\closeds{\subspaceTopology{X}{A}}$.
+\end{theorem}
+\begin{proof}
+    $\carrier[\subspaceTopology{X}{A}]=A$
+        by \obv{subspace_topology_carrier_of_subset}.
+    $\surrealMul{\realQuarter}{r}\in\reals$
+        by \obv{real_quarter_is_real,surreal_real_multiplication_closed}.
+    Follows by
+        \auto{tietze_high_set_eq_preimage,continuous_closed_upper_level_set,subspace_topology_is_topological_space}.
+\end{proof}
+
+\begin{corollary}\label{tietze_low_set_closed}
+    Let $X$ be a topological space.
+    Let $A\in\closeds{X}$.
+    Suppose $e\in\funs{A}{\reals}$ and
+        $e$ is continuous from $\subspaceTopology{X}{A}$ to
+            $\RealTopology$.
+    Let $r\in\reals$.
+    Then $\tietzeLowSet{A}{e}{r}\in\closeds{X}$.
+\end{corollary}
+\begin{proof}
+    $A\subseteq\carrier[X]$ by \auto{closeds,pow_iff,subseteq}.
+    $\tietzeLowSet{A}{e}{r}
+        \in\closeds{\subspaceTopology{X}{A}}$
+        by \obv{tietze_low_set_closed_in_subspace}.
+    Follows by \obv{closed_of_closed_in_closed_subspace}.
+\end{proof}
+
+\begin{corollary}\label{tietze_high_set_closed}
+    Let $X$ be a topological space.
+    Let $A\in\closeds{X}$.
+    Suppose $e\in\funs{A}{\reals}$ and
+        $e$ is continuous from $\subspaceTopology{X}{A}$ to
+            $\RealTopology$.
+    Let $r\in\reals$.
+    Then $\tietzeHighSet{A}{e}{r}\in\closeds{X}$.
+\end{corollary}
+\begin{proof}
+    $A\subseteq\carrier[X]$ by \auto{closeds,pow_iff,subseteq}.
+    $\tietzeHighSet{A}{e}{r}
+        \in\closeds{\subspaceTopology{X}{A}}$
+        by \obv{tietze_high_set_closed_in_subspace}.
+    Follows by \obv{closed_of_closed_in_closed_subspace}.
+\end{proof}
+
+\begin{proposition}\label{tietze_low_high_disjoint}
+    Suppose $e\in\funs{A}{\reals}$ and $r\in\reals$ and
+        $\surrealLt{\surrealZero}{r}$.
+    Then $\tietzeLowSet{A}{e}{r}$ is disjoint from
+        $\tietzeHighSet{A}{e}{r}$.
+\end{proposition}
+\begin{proof}
+    Let $q=\surrealMul{\realQuarter}{r}$.
+    $q\in\reals$
+        by \auto{real_quarter_is_real,surreal_real_multiplication_closed}.
+    $\surreal{\realQuarter}$ and $\surreal{r}$
+        by
+        \obv{real_quarter_is_real,surreal_real_is_surreal}.
+    $\surrealLt{\surrealZero}{q}$
+        by \obv{real_quarter_positive,surreal_mul_pos_pos}.
+    $\surrealLt{\surrealNeg{q}}{\surrealZero}$
+        by
+        \obv{surreal_negation_lt_reverses,surreal_negation_empty,empty_surreal,surreal_real_is_surreal}.
+    Hence $\surrealLt{\surrealNeg{q}}{q}$
+        by
+        \obv{surreal_lt_transitive,surreal_real_is_surreal,surreal_negation_is_surreal,empty_surreal}.
+    It suffices to show that there exists no $x$ such that
+        $x\in\tietzeLowSet{A}{e}{r},\tietzeHighSet{A}{e}{r}$
+        by \obv{disjoint}.
+    Suppose there exists $x$ such that
+        $x\in\tietzeLowSet{A}{e}{r},\tietzeHighSet{A}{e}{r}$.
+    Take $x$ such that
+        $x\in\tietzeLowSet{A}{e}{r},\tietzeHighSet{A}{e}{r}$.
+    $\surrealLe{e(x)}{\surrealNeg{q}}$ and
+        $\surrealLe{q}{e(x)}$
+        by \auto{tietze_low_set_member_iff,tietze_high_set_member_iff}.
+    $x\in A$ by \auto{tietze_low_set_member_iff}.
+    Hence $e(x)\in\reals$ by \obv{funs_type_apply}.
+    $\surreal{q}$ and $\surreal{e(x)}$ and $\surreal{\surrealNeg{q}}$
+        by
+        \obv{surreal_real_is_surreal,surreal_negation_is_surreal}.
+    Hence $\surrealLe{q}{\surrealNeg{q}}$
+        by \obv{surreal_le_transitive}.
+    Contradiction by
+        \auto{surreal_le,surreal_lt_asymmetric}.
+\end{proof}
+
+\subsection{The scalar quarter estimate}
+
+\begin{theorem}\label{real_quarter_affine_range}
+    Let $r,u\in\reals$.
+    Suppose $\surrealLe{\surrealZero}{r}$ and
+        $\surrealLe{\surrealZero}{u}$ and
+        $\surrealLe{u}{\surrealOne}$.
+    Let $q=\surrealMul{\realQuarter}{r}$.
+    Let $h=\surrealMul{\realHalf}{r}$.
+    Let $c=\surrealNeg{q}$.
+    Then
+        $\surrealLe{c}{\surrealAdd{c}{\surrealMul{h}{u}}}$ and
+        $\surrealLe{\surrealAdd{c}{\surrealMul{h}{u}}}{q}$.
+\end{theorem}
+\begin{proof}
+    $q,h\in\reals$
+        by
+        \auto{real_quarter_is_real,real_half_is_real,surreal_real_multiplication_closed}.
+    Hence $c\in\reals$ by \auto{surreal_real_negation_closed}.
+    $\surrealLe{\surrealZero}{q}$
+        by \obv{real_quarter_scale_nonnegative}.
+    Hence $\surrealLe{c}{\surrealZero}$
+        by
+        \auto{surreal_negation_le_reverses,surreal_negation_empty,surreal_real_is_surreal,empty_surreal}.
+    Thus $\surrealLe{c}{q}$
+        by
+        \obv{surreal_le_transitive,surreal_real_is_surreal,empty_surreal}.
+    $\surrealAdd{q}{\surrealNeg{c}}=h$
+        by
+        \auto{surreal_negation_involutive,real_quarter_plus_quarter_eq_half,surreal_mul_distributive_right,surreal_real_is_surreal,real_quarter_is_real,real_half_is_real}.
+    Follows by \obv{real_affine_unit_interval_range}.
+\end{proof}
+
+\begin{theorem}\label{real_quarter_residual_low}
+    Let $r,z\in\reals$.
+    Suppose $\surrealLe{\surrealZero}{r}$.
+    Let $q=\surrealMul{\realQuarter}{r}$.
+    Let $t=\surrealMul{\realThreeQuarters}{r}$.
+    Let $c=\surrealNeg{q}$.
+    Suppose $\surrealLe{\surrealNeg{r}}{z}$ and
+        $\surrealLe{z}{c}$.
+    Then
+        $\surrealLe{\abs{\surrealAdd{z}{\surrealNeg{c}}}}{t}$.
+\end{theorem}
+\begin{proof}
+    $q,t\in\reals$
+        by
+        \auto{real_quarter_is_real,real_three_quarters_is_real,surreal_real_multiplication_closed}.
+    Hence $c\in\reals$ by \auto{surreal_real_negation_closed}.
+    $\surreal{q}$ and $\surreal{t}$
+        by \obv{surreal_real_is_surreal}.
+    $\surrealLe{\surrealZero}{t}$
+        by \obv{real_three_quarters_scale_nonnegative}.
+    Hence
+        $\surrealLe{\surrealAdd{c}{\surrealZero}}
+            {\surrealAdd{c}{t}}$
+        by
+        \obv{surreal_add_le_right,surreal_real_is_surreal,empty_surreal}.
+    $\surrealAdd{c}{\surrealZero}=c$
+        by \obv{surreal_add_zero_right,surreal_real_is_surreal}.
+    Hence $\surrealLe{c}{\surrealAdd{c}{t}}$.
+    $\surreal{z}$ and $\surreal{c}$ and $\surreal{\surrealAdd{c}{t}}$
+        by \obv{surreal_real_is_surreal,surreal_add_is_surreal}.
+    Hence $\surrealLe{z}{\surrealAdd{c}{t}}$
+        by
+        \obv{surreal_le_transitive}.
+    $\surrealAdd{q}{t}=r$
+        by \auto{real_quarter_spending_identity}.
+    Hence $\surrealNeg{r}=\surrealNeg{\surrealAdd{q}{t}}$.
+    $\surrealNeg{\surrealAdd{q}{t}}
+        =\surrealAdd{\surrealNeg{q}}{\surrealNeg{t}}$
+        by \obv{surreal_negation_additive}.
+    Hence $\surrealNeg{r}
+        =\surrealAdd{\surrealNeg{q}}{\surrealNeg{t}}$.
+    Hence $\surrealAdd{\surrealNeg{r}}{t}=\surrealNeg{q}$
+        by
+        \auto{surreal_add_associative,surreal_add_inverse_left,surreal_add_zero_right,surreal_negation_is_surreal,surreal_real_is_surreal}.
+    Hence $\surrealAdd{\surrealNeg{r}}{t}=c$.
+    $\surrealLe{\surrealAdd{\surrealNeg{r}}{t}}
+        {\surrealAdd{z}{t}}$
+        by
+        \obv{surreal_add_le_left,surreal_negation_is_surreal,surreal_real_is_surreal}.
+    Hence $\surrealLe{c}{\surrealAdd{z}{t}}$.
+    Follows by
+        \auto{surreal_abs_difference_le_iff,surreal_real_is_surreal}.
+\end{proof}
+
+\begin{theorem}\label{real_quarter_residual_middle}
+    Let $r,z,c\in\reals$.
+    Suppose $\surrealLe{\surrealZero}{r}$.
+    Let $q=\surrealMul{\realQuarter}{r}$.
+    Let $h=\surrealMul{\realHalf}{r}$.
+    Suppose $\surrealLe{\surrealNeg{q}}{z}$ and
+        $\surrealLe{z}{q}$ and
+        $\surrealLe{\surrealNeg{q}}{c}$ and
+        $\surrealLe{c}{q}$.
+    Then
+        $\surrealLe{\abs{\surrealAdd{z}{\surrealNeg{c}}}}{h}$.
+\end{theorem}
+\begin{proof}
+    $q,h\in\reals$
+        by
+        \auto{real_quarter_is_real,real_half_is_real,surreal_real_multiplication_closed}.
+    $\surrealAdd{q}{q}=h$
+        by
+        \auto{real_quarter_plus_quarter_eq_half,surreal_mul_distributive_right,real_quarter_is_real,real_half_is_real,surreal_real_is_surreal}.
+    Hence $\surrealAdd{\surrealNeg{q}}{h}=q$
+        by
+        \auto{surreal_add_associative,surreal_add_inverse_left,surreal_add_zero_left,surreal_negation_is_surreal,surreal_real_is_surreal}.
+    $\surrealLe{\surrealAdd{\surrealNeg{q}}{h}}
+        {\surrealAdd{c}{h}}$
+        by
+        \obv{surreal_add_le_left,surreal_negation_is_surreal,surreal_real_is_surreal}.
+    Hence $\surrealLe{q}{\surrealAdd{c}{h}}$.
+    $\surreal{z}$ and $\surreal{q}$ and
+        $\surreal{\surrealAdd{c}{h}}$
+        by \obv{surreal_real_is_surreal,surreal_add_is_surreal}.
+    Hence $\surrealLe{z}{\surrealAdd{c}{h}}$
+        by \obv{surreal_le_transitive}.
+    $\surrealLe{\surrealAdd{\surrealNeg{q}}{h}}
+        {\surrealAdd{z}{h}}$
+        by
+        \obv{surreal_add_le_left,surreal_negation_is_surreal,surreal_real_is_surreal}.
+    Hence $\surrealLe{q}{\surrealAdd{z}{h}}$.
+    $\surreal{c}$ and $\surreal{q}$ and
+        $\surreal{\surrealAdd{z}{h}}$
+        by \obv{surreal_real_is_surreal,surreal_add_is_surreal}.
+    Hence $\surrealLe{c}{\surrealAdd{z}{h}}$
+        by \obv{surreal_le_transitive}.
+    Follows by
+        \auto{surreal_abs_difference_le_iff,surreal_real_is_surreal}.
+\end{proof}
+
+\begin{theorem}\label{real_quarter_residual_high}
+    Let $r,z\in\reals$.
+    Suppose $\surrealLe{\surrealZero}{r}$.
+    Let $q=\surrealMul{\realQuarter}{r}$.
+    Let $t=\surrealMul{\realThreeQuarters}{r}$.
+    Suppose $\surrealLe{q}{z}$ and $\surrealLe{z}{r}$.
+    Then $\surrealLe{\abs{\surrealAdd{z}{\surrealNeg{q}}}}{t}$.
+\end{theorem}
+\begin{proof}
+    $q,t\in\reals$
+        by
+        \auto{real_quarter_is_real,real_three_quarters_is_real,surreal_real_multiplication_closed}.
+    $\surrealAdd{q}{t}=r$
+        by \auto{real_quarter_spending_identity}.
+    Hence $\surrealLe{z}{\surrealAdd{q}{t}}$.
+    $\surrealLe{\surrealZero}{t}$
+        by \obv{real_three_quarters_scale_nonnegative}.
+    Hence $\surrealLe{\surrealAdd{z}{\surrealZero}}
+        {\surrealAdd{z}{t}}$
+        by
+        \obv{surreal_add_le_right,surreal_real_is_surreal,empty_surreal}.
+    $\surrealAdd{z}{\surrealZero}=z$
+        by \obv{surreal_add_zero_right,surreal_real_is_surreal}.
+    Hence $\surrealLe{z}{\surrealAdd{z}{t}}$.
+    $\surreal{q}$ and $\surreal{z}$ and
+        $\surreal{\surrealAdd{z}{t}}$
+        by \obv{surreal_real_is_surreal,surreal_add_is_surreal}.
+    Hence $\surrealLe{q}{\surrealAdd{z}{t}}$
+        by \obv{surreal_le_transitive}.
+    Follows by
+        \auto{surreal_abs_difference_le_iff,surreal_real_is_surreal}.
+\end{proof}
+
+\subsection{The correction map}
+
+\begin{definition}\label{tietze_correction}
+    Let $X$ be a topological space.
+    $\tietzeCorrection{X}{h}{A}{e}{r}
+        =\realMapAffine{\carrier[X]}
+            {\surrealNeg{\surrealMul{\realQuarter}{r}}}
+            {\surrealMul{\realHalf}{r}}
+            {\normalShrinkerSeparator{X}{h}
+                {\tietzeHighSet{A}{e}{r}}
+                {\tietzeLowSet{A}{e}{r}}}$.
+\end{definition}
+
+\begin{theorem}\label{tietze_quarter_correction}
+    Let $X$ be a topological space.
+    Let $h$ be a normal shrinker for $X$.
+    Let $A\in\closeds{X}$.
+    Suppose $e\in\funs{A}{\reals}$ and
+        $e$ is continuous from $\subspaceTopology{X}{A}$ to
+            $\RealTopology$.
+    Let $r\in\reals$.
+    Suppose $\surrealLt{\surrealZero}{r}$.
+    Suppose for every $a\in A$ we have
+        $\surrealLe{\abs{e(a)}}{r}$.
+    Let $g=\tietzeCorrection{X}{h}{A}{e}{r}$.
+    Then $g\in\funs{\carrier[X]}{\reals}$ and
+        $g$ is continuous from $X$ to $\RealTopology$ and
+        (for every $x\in\carrier[X]$ we have
+            $\surrealLe{\surrealNeg{\surrealMul{\realQuarter}{r}}}
+                {g(x)}$ and
+            $\surrealLe{g(x)}{\surrealMul{\realQuarter}{r}}$ and
+            $\surrealLe{\abs{g(x)}}
+                {\surrealMul{\realQuarter}{r}}$) and
+        (for every $a\in A$ we have
+            $\surrealLe{\abs{\surrealAdd{e(a)}{\surrealNeg{g(a)}}}}
+                {\surrealMul{\realThreeQuarters}{r}}$).
+\end{theorem}
+\begin{proof}
+    Let $L=\tietzeLowSet{A}{e}{r}$.
+    Let $H=\tietzeHighSet{A}{e}{r}$.
+    Let $u=\normalShrinkerSeparator{X}{h}{H}{L}$.
+    Let $q=\surrealMul{\realQuarter}{r}$.
+    Let $s=\surrealMul{\realHalf}{r}$.
+    Let $t=\surrealMul{\realThreeQuarters}{r}$.
+    Let $c=\surrealNeg{q}$.
+    $L,H\in\closeds{X}$
+        by \auto{tietze_low_set_closed,tietze_high_set_closed}.
+    $L$ is disjoint from $H$ by \auto{tietze_low_high_disjoint}.
+    Hence $H$ is disjoint from $L$ by \obv{disjoint_symmetric}.
+    $u\in\funs{\carrier[X]}{\reals}$
+        by \auto{normal_shrinker_separator_typed_real}.
+    $u$ is continuous from $X$ to $\RealTopology$
+        by \auto{normal_shrinker_separator_continuous_real}.
+    For every $x\in\carrier[X]$ we have
+        $\surrealLe{\surrealZero}{u(x)}$ and
+        $\surrealLe{u(x)}{\surrealOne}$
+        by \auto{normal_shrinker_separator_between_zero_and_one}.
+    $q,s,t\in\reals$
+        by
+        \auto{real_quarter_is_real,real_half_is_real,real_three_quarters_is_real,surreal_real_multiplication_closed}.
+    Hence $c\in\reals$ by \auto{surreal_real_negation_closed}.
+    $g=\realMapAffine{\carrier[X]}{c}{s}{u}$
+        by \auto{tietze_correction}.
+    Hence $g\in\funs{\carrier[X]}{\reals}$
+        by \auto{real_map_affine_type}.
+    $g$ is continuous from $X$ to $\RealTopology$
+        by
+        \auto{real_map_affine_continuous,tietze_correction}.
+    $\surrealLe{\surrealZero}{r}$
+        by
+        \obv{surreal_le,surreal_real_is_surreal,empty_surreal}.
+    $\surrealLe{\surrealZero}{q}$
+        by \auto{real_quarter_scale_nonnegative}.
+    $\surrealAdd{q}{q}=s$
+        by
+        \auto{real_quarter_plus_quarter_eq_half,surreal_mul_distributive_right,real_quarter_is_real,real_half_is_real,surreal_real_is_surreal}.
+    Hence $\surrealAdd{c}{s}=q$
+        by
+        \auto{surreal_add_associative,surreal_add_inverse_left,surreal_add_zero_left,surreal_negation_is_surreal,surreal_real_is_surreal}.
+    $t=\surrealAdd{s}{q}$
+        by
+        \auto{real_three_quarters,real_quarter_plus_quarter_eq_half,surreal_mul_distributive_right,real_quarter_is_real,real_half_is_real,real_three_quarters_is_real,surreal_real_is_surreal}.
+    Hence $\surrealLe{s}{t}$
+        by
+        \auto{surreal_add_le_right,surreal_add_zero_right,surreal_real_is_surreal,empty_surreal}.
+    Show that for every $x\in\carrier[X]$ we have
+        $\surrealLe{c}{g(x)}$ and
+        $\surrealLe{g(x)}{q}$ and
+        $\surrealLe{\abs{g(x)}}{q}$.
+    \begin{subproof}
+        Fix $x\in\carrier[X]$.
+        $u(x)\in\reals$ by \obv{funs_type_apply}.
+        $g(x)=\surrealAdd{c}{\surrealMul{s}{u(x)}}$
+            by \auto{real_map_affine_apply}.
+        Hence $\surrealLe{c}{g(x)}$ and $\surrealLe{g(x)}{q}$
+            by \auto{real_quarter_affine_range}.
+        $g(x)\in\reals$ by \obv{funs_type_apply}.
+        $\surrealLe{\surrealNeg{g(x)}}{\surrealNeg{c}}$
+            by
+            \obv{surreal_negation_le_reverses,surreal_real_is_surreal}.
+        $\surrealNeg{c}=q$
+            by
+            \auto{surreal_negation_involutive,surreal_real_is_surreal}.
+        Hence $\surrealLe{\surrealNeg{g(x)}}{q}$ by \auto.
+        Hence $\surrealLe{\abs{g(x)}}{q}$
+            by \auto{surreal_abs_le_iff,surreal_real_is_surreal}.
+    \end{subproof}
+    Show that for every $a\in A$ we have
+        $\surrealLe{\abs{\surrealAdd{e(a)}{\surrealNeg{g(a)}}}}{t}$.
+    \begin{subproof}
+        Fix $a\in A$.
+        $A\subseteq\carrier[X]$ by \auto{closeds,pow_iff,subseteq}.
+        Hence $a\in\carrier[X]$ by \obv{subseteq}.
+        $e(a),g(a)\in\reals$ by \obv{funs_type_apply}.
+        $\surrealLe{e(a)}{r}$ and
+            $\surrealLe{\surrealNeg{e(a)}}{r}$
+            by \auto{surreal_abs_le_iff,surreal_real_is_surreal}.
+        $\surreal{\surrealNeg{e(a)}}$ and $\surreal{r}$
+            by
+            \obv{surreal_negation_is_surreal,surreal_real_is_surreal}.
+        Hence $\surrealLe{\surrealNeg{r}}
+            {\surrealNeg{\surrealNeg{e(a)}}}$
+            by \obv{surreal_negation_le_reverses}.
+        $\surrealNeg{\surrealNeg{e(a)}}=e(a)$
+            by
+            \obv{surreal_negation_involutive,surreal_real_is_surreal}.
+        Hence $\surrealLe{\surrealNeg{r}}{e(a)}$ by \auto.
+        \begin{byCase}
+        \caseOf{$a\in L$.}
+            $u(a)=\surrealZero$
+                by \auto{normal_shrinker_separator_zero_on_second}.
+            Hence $g(a)=c$
+                by
+                \auto{real_map_affine_apply,surreal_mul_zero_right,surreal_add_zero_right,surreal_real_is_surreal,empty_surreal}.
+            $\surrealLe{e(a)}{c}$
+                by \auto{tietze_low_set_member_iff}.
+            Follows by \auto{real_quarter_residual_low}.
+        \caseOf{$a\notin L$.}
+            \begin{byCase}
+            \caseOf{$a\in H$.}
+                $u(a)=\surrealOne$
+                    by \auto{normal_shrinker_separator_one_on_first}.
+                Hence $g(a)=q$
+                    by
+                    \auto{real_map_affine_apply,surreal_mul_one_right,surreal_real_is_surreal}.
+                $\surrealLe{q}{e(a)}$
+                    by \auto{tietze_high_set_member_iff}.
+                Follows by \auto{real_quarter_residual_high}.
+            \caseOf{$a\notin H$.}
+                It is not the case that $\surrealLe{e(a)}{c}$
+                    by \auto{tietze_low_set_member_iff}.
+                It is not the case that $\surrealLe{q}{e(a)}$
+                    by \auto{tietze_high_set_member_iff}.
+                $\surrealLe{c}{e(a)}$ and $\surrealLe{e(a)}{q}$
+                    by
+                    \auto{surreal_le_total,surreal_real_is_surreal}.
+                $\surrealLe{c}{g(a)}$ and $\surrealLe{g(a)}{q}$
+                    by \auto.
+                $\surrealLe{
+                    \abs{\surrealAdd{e(a)}{\surrealNeg{g(a)}}}}{s}$
+                    by \auto{real_quarter_residual_middle}.
+                $\surreal{
+                    \abs{\surrealAdd{e(a)}{\surrealNeg{g(a)}}}}$ and
+                    $\surreal{s}$ and $\surreal{t}$
+                    by
+                    \obv{surreal_abs_is_surreal,surreal_add_is_surreal,surreal_negation_is_surreal,surreal_real_is_surreal}.
+                Follows by \auto{surreal_le_transitive}.
+            \end{byCase}
+        \end{byCase}
+    \end{subproof}
+    Follows by \auto.
+\end{proof}

@@ -1,0 +1,221 @@
+\import{algebra/group/normal.tex}
+
+\section{Normalizers}
+
+The normalizer is defined for any displayed subset of the ambient carrier.
+Its subgroup theorem keeps that carrier condition explicit.  In particular,
+the construction returns a subgroup carrier rather than an induced group
+record.
+
+\begin{definition}\label{group_normalizer}
+    $\groupNormalizer{G}{A}=
+        \{a\in\carrier[G]\mid
+            \conjugateSubset{G}{a}{A}=A\}$.
+\end{definition}
+
+\begin{proposition}\label{group_normalizer_iff}
+    $a\in\groupNormalizer{G}{A}$ iff
+        $a\in\carrier[G]$ and
+        $\conjugateSubset{G}{a}{A}=A$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{group_normalizer}.
+\end{proof}
+
+\begin{proposition}\label{group_normalizer_subseteq}
+    $\groupNormalizer{G}{A}\subseteq\carrier[G]$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{subseteq,group_normalizer_iff}.
+\end{proof}
+
+\begin{theorem}\label{group_normalizer_subgroup}
+    Let $G$ be a group.
+    Suppose $A\subseteq\carrier[G]$.
+    Then $\subgroup{\groupNormalizer{G}{A}}{G}$.
+\end{theorem}
+\begin{proof}
+    Let $N=\groupNormalizer{G}{A}$.
+    $N\subseteq\carrier[G]$ by
+        \auto{group_normalizer_subseteq}.
+    $\neutral[G]\in\carrier[G]$ by
+        \obv{group_is_monoid,monoid_is_unital_magma,unitalmagma_type}.
+    $\conjugateSubset{G}{\neutral[G]}{A}=A$ by
+        \obv{conjugate_subset_by_neutral}.
+    Hence $\neutral[G]\in N$ by
+        \obv{group_normalizer_iff}.
+    Show that for all $a,b\in N$ we have $\mul[G](a,b)\in N$.
+    \begin{subproof}
+        Fix $a,b\in N$.
+        Hence $a,b\in\carrier[G]$ and
+            $\conjugateSubset{G}{a}{A}=A$ and
+            $\conjugateSubset{G}{b}{A}=A$ by
+            \auto{group_normalizer_iff}.
+        $\mul[G](a,b)\in\carrier[G]$ by
+            \obv{group_is_monoid,monoid_is_magma,magma_welldef}.
+        $\conjugateSubset{G}{\mul[G](a,b)}{A}=
+            \conjugateSubset{G}{a}{\conjugateSubset{G}{b}{A}}$ by
+            \obv{conjugate_subset_composition}.
+        Hence $\conjugateSubset{G}{\mul[G](a,b)}{A}=A$.
+        Follows by \obv{group_normalizer_iff}.
+    \end{subproof}
+    Show that for every $a\in N$ we have $\groupInv[G](a)\in N$.
+    \begin{subproof}
+        Fix $a\in N$.
+        Hence $a\in\carrier[G]$ and
+            $\conjugateSubset{G}{a}{A}=A$ by
+            \obv{group_normalizer_iff}.
+        Let $u=\groupInv[G](a)$.
+        $u\in\carrier[G]$ by \auto{group_inverse_type}.
+        $\mul[G](u,a)=\neutral[G]$ by
+            \auto{group_inverse_left}.
+        $\conjugateSubset{G}{\mul[G](u,a)}{A}=
+            \conjugateSubset{G}{u}{\conjugateSubset{G}{a}{A}}$ by
+            \obv{conjugate_subset_composition}.
+        $\conjugateSubset{G}{\neutral[G]}{A}=A$ by
+            \obv{conjugate_subset_by_neutral}.
+        Hence $\conjugateSubset{G}{u}{A}=A$.
+        Follows by \obv{group_normalizer_iff}.
+    \end{subproof}
+    Follows by \obv{subgroup}.
+\end{proof}
+
+\begin{proposition}\label{subgroup_closed_under_internal_conjugation}
+    Suppose $\subgroup{H}{G}$.
+    Let $a,x\in H$.
+    Then $\conjugate{G}{a}{x}\in H$.
+\end{proposition}
+\begin{proof}
+    $a,x\in\carrier[G]$ by
+        \auto{subgroup_subseteq,subseteq}.
+    $\groupInv[G](a)\in H$ by \obv{subgroup_inv}.
+    $\mul[G](a,x)\in H$ by \obv{subgroup_mul}.
+    Hence
+        $\mul[G](\mul[G](a,x),\groupInv[G](a))\in H$ by
+        \obv{subgroup_mul}.
+    Follows by \obv{group_conjugate}.
+\end{proof}
+
+\begin{theorem}\label{subgroup_subseteq_group_normalizer_of_conjugate_subseteq}
+    Suppose $\subgroup{H}{G}$.
+    Let $A$ be a subset of $\carrier[G]$.
+    Suppose for every $a\in H$ we have
+        $\conjugateSubset{G}{a}{A}\subseteq A$.
+    Then $H\subseteq\groupNormalizer{G}{A}$.
+\end{theorem}
+\begin{proof}
+    $G$ is a group and $H\subseteq\carrier[G]$ by
+        \obv{subgroup_ambient_group,subgroup_subseteq}.
+    Show that for every $a\in H$ we have
+        $a\in\groupNormalizer{G}{A}$.
+    \begin{subproof}
+        Fix $a\in H$.
+        Hence $a\in\carrier[G]$ by \obv{subseteq}.
+        Let $u=\groupInv[G](a)$.
+        $u\in H$ by \auto{subgroup_inv}.
+        Hence $u\in\carrier[G]$ by \obv{subseteq}.
+        $\conjugateSubset{G}{a}{A}\subseteq A$ and
+            $\conjugateSubset{G}{u}{A}\subseteq A$.
+        Show that $A\subseteq\conjugateSubset{G}{a}{A}$.
+        \begin{subproof}
+            Show that for every $y\in A$ we have
+                $y\in\conjugateSubset{G}{a}{A}$.
+            \begin{subproof}
+                Fix $y\in A$.
+                Hence $y\in\carrier[G]$ by \obv{subseteq}.
+                Let $x=\conjugate{G}{u}{y}$.
+                $y\in A\inter\carrier[G]$ by \obv{inter_intro}.
+                Hence $x\in\conjugateSubset{G}{u}{A}$ by
+                    \auto{conjugate_subset_iff}.
+                Hence $x\in A$ by \obv{subseteq}.
+                $x\in\carrier[G]$ by
+                    \obv{group_conjugate_type}.
+                Hence $x\in A\inter\carrier[G]$ by
+                    \obv{inter_intro}.
+                $u=\groupInv[G](a)$ and
+                    $x=\conjugate{G}{\groupInv[G](a)}{y}$.
+                $\conjugate{G}{a}{x}=y$ by
+                    \auto{group_conjugate_inverse_right}.
+                Follows by \auto{conjugate_subset_iff}.
+            \end{subproof}
+            Follows by \obv{subseteq}.
+        \end{subproof}
+        Hence $\conjugateSubset{G}{a}{A}=A$ by
+            \obv{subseteq_antisymmetric}.
+        Follows by \obv{group_normalizer_iff}.
+    \end{subproof}
+    Follows by \obv{subseteq}.
+\end{proof}
+
+\begin{theorem}\label{subgroup_subseteq_group_normalizer}
+    Suppose $\subgroup{H}{G}$.
+    Then $H\subseteq\groupNormalizer{G}{H}$.
+\end{theorem}
+\begin{proof}
+    $G$ is a group and $H\subseteq\carrier[G]$ by
+        \obv{subgroup_ambient_group,subgroup_subseteq}.
+    Show that for every $a\in H$ we have
+        $\conjugateSubset{G}{a}{H}\subseteq H$.
+    \begin{subproof}
+        Fix $a\in H$.
+        Hence $a\in\carrier[G]$ by \obv{subseteq}.
+        Show that for every $y\in\conjugateSubset{G}{a}{H}$
+            we have $y\in H$.
+        \begin{subproof}
+            Fix $y\in\conjugateSubset{G}{a}{H}$.
+            Take $x\in H\inter\carrier[G]$ such that
+                $y=\conjugate{G}{a}{x}$ by
+                \auto{conjugate_subset_iff}.
+            Hence $x\in H$ by \obv{inter_elim_left}.
+            $\conjugate{G}{a}{x}\in H$ by
+                \obv{subgroup_closed_under_internal_conjugation}.
+        \end{subproof}
+        Follows by \obv{subseteq}.
+    \end{subproof}
+    Follows by
+        \obv{subgroup_subseteq_group_normalizer_of_conjugate_subseteq}.
+\end{proof}
+
+\begin{theorem}\label{normal_subgroup_iff_normalizer_full}
+    Suppose $\subgroup{H}{G}$.
+    Then $\normalSubgroup{H}{G}$ iff
+        $\groupNormalizer{G}{H}=\carrier[G]$.
+\end{theorem}
+\begin{proof}
+    $G$ is a group and $H\subseteq\carrier[G]$ by
+        \obv{subgroup_ambient_group,subgroup_subseteq}.
+    Show that if $\normalSubgroup{H}{G}$, then
+        $\groupNormalizer{G}{H}=\carrier[G]$.
+    \begin{subproof}
+        Assume $\normalSubgroup{H}{G}$.
+        $\groupNormalizer{G}{H}\subseteq\carrier[G]$ by
+            \obv{group_normalizer_subseteq}.
+        Show that $\carrier[G]\subseteq\groupNormalizer{G}{H}$.
+        \begin{subproof}
+            Show that for every $a\in\carrier[G]$ we have
+                $a\in\groupNormalizer{G}{H}$.
+            \begin{subproof}
+                Fix $a\in\carrier[G]$.
+                $\conjugateSubset{G}{a}{H}=H$ by
+                    \obv{normal_subgroup_fixed_conjugate}.
+                Follows by \obv{group_normalizer_iff}.
+            \end{subproof}
+            Follows by \obv{subseteq}.
+        \end{subproof}
+        Follows by \obv{subseteq_antisymmetric}.
+    \end{subproof}
+    Show that if $\groupNormalizer{G}{H}=\carrier[G]$, then
+        $\normalSubgroup{H}{G}$.
+    \begin{subproof}
+        Assume $\groupNormalizer{G}{H}=\carrier[G]$.
+        Show that for every $a\in\carrier[G]$ we have
+            $\conjugateSubset{G}{a}{H}=H$.
+        \begin{subproof}
+            Fix $a\in\carrier[G]$.
+            Hence $a\in\groupNormalizer{G}{H}$.
+            Follows by \obv{group_normalizer_iff}.
+        \end{subproof}
+        Follows by \obv{normal_subgroup}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}

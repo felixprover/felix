@@ -1,0 +1,697 @@
+\import{topology/generated.tex}
+\import{topology/neighbourhood-filter.tex}
+\import{set.tex}
+\import{set/powerset.tex}
+\import{set/finite.tex}
+\import{set/finite-intersection-family.tex}
+
+\section{Topological basis}\label{form_sec_topobasis}
+
+\begin{abbreviation}\label{covers}
+    $C$ covers $X$ iff
+    for all $x\in X$ there exists $U\in C$ such that $x\in U$.
+\end{abbreviation}
+
+\begin{proposition}\label{covers_unions_intro}
+    Suppose $C$ covers $X$.
+    Then $X\subseteq\unions{C}$.
+\end{proposition}
+\begin{proof}
+    For all $x\in X$ there exists $U\in C$ such that $x\in U$.
+    For all $x\in X$ we have $x\in\unions{C}$ by \obv{unions_iff}.
+    Follows by \obv{subseteq}.
+\end{proof}
+
+\begin{proposition}\label{covers_unions_elim}
+    Suppose $X\subseteq\unions{C}$.
+    Then $C$ covers $X$.
+\end{proposition}
+\begin{proof}
+    For all $x\in X$ we have $x\in\unions{C}$ by \obv{subseteq}.
+    For all $x\in X$ there exists $U\in C$ such that $x\in U$
+        by \obv{unions_iff}.
+\end{proof}
+
+A topological basis is also called a base for the topology.
+
+\begin{definition}\label{topological_basis}
+    $B$ is a topological basis for $X$ iff
+    $B$ is a family of subsets of $X$ and $B$ covers $X$ and
+    for all $U, V, x$ such that $U, V\in B$ and $x\in U,V$
+    there exists $W\in B$ such that $x\in W\subseteq U, V$.
+\end{definition}
+
+Every hosted family has a canonical basis obtained by taking its finite
+intersections.  The empty intersection supplies the carrier, so the original
+family need not cover it.
+
+\begin{theorem}\label{finite_intersections_form_topological_basis}
+    $\finiteIntersectionsOn{S}{B}$ is a topological basis for $S$.
+\end{theorem}
+\begin{proof}
+    $\finiteIntersectionsOn{S}{B}$ is a family of subsets of $S$ by
+        \obv{finite_intersections_on_type}.
+    $S\in\finiteIntersectionsOn{S}{B}$ by
+        \obv{carrier_in_finite_intersections_on}.
+    Hence $\finiteIntersectionsOn{S}{B}$ covers $S$ by
+        \obv{subseteq_refl}.
+    Show that for all $U,V,x$ such that
+        $U,V\in\finiteIntersectionsOn{S}{B}$ and $x\in U,V$
+        there exists $W\in\finiteIntersectionsOn{S}{B}$ such that
+            $x\in W\subseteq U,V$.
+    \begin{subproof}
+        Fix $U,V,x$.
+        Assume $U,V\in\finiteIntersectionsOn{S}{B}$ and $x\in U,V$.
+        $U\inter V\in\finiteIntersectionsOn{S}{B}$ by
+            \obv{finite_intersections_on_intersection}.
+        $x\in U\inter V$ by \obv{inter}.
+        $U\inter V\subseteq U,V$ by \obv{inter,subseteq}.
+    \end{subproof}
+    Follows by \obv{topological_basis}.
+\end{proof}
+
+\begin{definition}\label{genopens}
+    $\genOpens{B}{X} = \left\{ U\in\pow{X} \middle| \textbox{for all $x\in U$ there exists $V\in B$
+    \\ such that $x\in V\subseteq U$}\right\}$.
+\end{definition}
+
+\begin{lemma}\label{emptyset_in_genopens}
+    Assume $B$ is a topological basis for $X$.
+    $\emptyset \in \genOpens{B}{X}$.
+\end{lemma}
+\begin{proof}
+    $\emptyset\in\pow{X}$ by \auto{emptyset_subseteq,pow_iff}.
+    For all $x\in\emptyset$ there exists $V\in B$
+        such that $x\in V\subseteq\emptyset$
+        by \auto{emptyset_subseteq,subseteq}.
+    Follows by \obv{genopens}.
+\end{proof}
+
+\begin{lemma}\label{union_in_genopens}
+    Assume $B$ is a topological basis for $X$ and
+        $F\subseteq \genOpens{B}{X}$.
+    Then $\unions{F}\in\genOpens{B}{X}$.
+\end{lemma}
+\begin{proof}
+    For all $x\in\unions{F}$ we have $x\in X$
+        by \auto{unions_iff,genopens,subseteq}.
+    We have $\unions{F}\in\pow{X}$ by \obv{pow_iff,subseteq}.
+
+    Show for all $x$ we have if $x\in\unions{F}$, then
+    there exists $W\in B$ such that $x\in W$ and
+    $W\subseteq\unions{F}$.
+    \begin{subproof}
+        Fix $x$.
+        Assume $x\in\unions{F}$.
+        Take $V$ such that $V\in F$ and $x\in V$ by \obv{unions_iff}.
+        $V\in\genOpens{B}{X}$ by \obv{subseteq}.
+        Take $W$ such that $W\in B$ and $x\in W\subseteq V$
+            by \obv{genopens}.
+        $V\subseteq\unions{F}$ by \auto{unions_iff,subseteq}.
+        $W\subseteq\unions{F}$ by \obv{subseteq_transitive}.
+    \end{subproof}
+    Follows by \obv{genopens}.
+\end{proof}
+
+\begin{lemma}\label{basis_is_in_genopens}
+    Assume $B$ is a topological basis for $X$.
+    $B \subseteq \genOpens{B}{X}$.
+\end{lemma}
+\begin{proof}
+    Show for all $V$ we have if $V\in B$, then
+    $V\in\genOpens{B}{X}$.
+    \begin{subproof}
+        Fix $V$.
+        Assume $V\in B$.
+        $V\subseteq X$
+            by \obv{topological_basis}.
+        $V\in\pow{X}$ by \obv{pow_iff,subseteq}.
+        For all $x\in V$ there exists $W\in B$
+            such that $x\in W\subseteq V$ by \obv{subseteq_refl}.
+        Follows by \obv{genopens}.
+    \end{subproof}
+    Follows by \obv{subseteq}.
+\end{proof}
+
+\begin{lemma}\label{all_is_in_genopens}
+    Assume $B$ is a topological basis for $X$.
+    $X \in \genOpens{B}{X}$.
+\end{lemma}
+\begin{proof}
+    $X\in\pow{X}$ by \auto{pow_iff,subseteq_refl}.
+    For all $x\in X$ there exists $V\in B$ such that $x\in V\subseteq X$
+        by \auto{topological_basis,pow_iff,subseteq}.
+    Follows by \obv{genopens}.
+\end{proof}
+
+\begin{lemma}\label{inters_in_genopens}
+    Assume $B$ is a topological basis for $X$ and
+        $A, C\in \genOpens{B}{X}$.
+    Then $(A\inter C) \in \genOpens{B}{X}$.
+\end{lemma}
+\begin{proof}
+    For all $x\in A\inter C$ we have $x\in X$
+        by \auto{genopens,inter_elim_left,pow_iff,subseteq}.
+    We have $(A\inter C)\in\pow{X}$ by \obv{pow_iff,subseteq}.
+
+    Show for all $x$ we have if $x\in A\inter C$, then
+    there exists $W\in B$ such that $x\in W$ and $W\subseteq A\inter C$.
+    \begin{subproof}
+        Fix $x$.
+        Assume $x\in A\inter C$.
+        $x\in A,C$ by \obv{inter_elim_left,inter_elim_right}.
+        Take $V'$ such that $V'\in B$ and $x\in V'\subseteq A$
+            by \obv{genopens}.
+        Take $V''$ such that $V''\in B$ and $x\in V''\subseteq C$
+            by \obv{genopens}.
+        Take $W$ such that $W\in B$ and $x\in W$ and
+            $W\subseteq V',V''$ by \auto{topological_basis}.
+        $W\subseteq A,C$ by \obv{subseteq_transitive}.
+        $W\subseteq A\inter C$ by \obv{inter_intro,subseteq}.
+    \end{subproof}
+    Follows by \obv{genopens}.
+\end{proof}
+
+\begin{theorem}\label{genopens_form_topology}
+    Suppose $B$ is a topological basis for $X$.
+    Then $\genOpens{B}{X}$ is a topology on $X$.
+\end{theorem}
+\begin{proof}
+    $\genOpens{B}{X}\subseteq\pow{X}$
+        by \obv{genopens,subseteq}.
+    Follows by
+        \obv{topology_family,all_is_in_genopens,inters_in_genopens,
+            union_in_genopens}.
+\end{proof}
+
+\begin{theorem}\label{genopens_least_topology}
+    Suppose $B$ is a topological basis for $S$.
+    Suppose $T$ is a topology on $S$ and $B\subseteq T$.
+    Then $\genOpens{B}{S}\subseteq T$.
+\end{theorem}
+\begin{proof}
+    Show that every element of $\genOpens{B}{S}$ is an element of $T$.
+    \begin{subproof}
+        Fix $U\in\genOpens{B}{S}$.
+        Let $F=\{V\in B\mid V\subseteq U\}$.
+        $F\subseteq B$ by \obv{subseteq}.
+        Hence $F\subseteq T$ by \obv{subseteq_transitive}.
+        Thus $\unions{F}\in T$ by \obv{topology_family}.
+        Show that $\unions{F}=U$.
+        \begin{subproof}
+            Show that every element of $\unions{F}$ is an element of $U$.
+            \begin{subproof}
+                Fix $x\in\unions{F}$.
+                Take $V\in F$ such that $x\in V$ by \obv{unions_iff}.
+                $V\subseteq U$.
+                Follows by \obv{subseteq}.
+            \end{subproof}
+            Show that every element of $U$ is an element of $\unions{F}$.
+            \begin{subproof}
+                Fix $x\in U$.
+                Take $V\in B$ such that $x\in V\subseteq U$ by
+                    \obv{genopens}.
+                Hence $V\in F$.
+                Follows by \auto{unions_iff}.
+            \end{subproof}
+            Follows by set extensionality.
+        \end{subproof}
+    \end{subproof}
+    Follows by \obv{subseteq}.
+\end{proof}
+
+\begin{theorem}\label{finite_intersection_genopens_eq_generated_opens}
+    Suppose $B$ is a family of subsets of $S$.
+    Then
+        $\genOpens{\finiteIntersectionsOn{S}{B}}{S}
+            =\generatedOpens{S}{B}$.
+\end{theorem}
+\begin{proof}
+    Let $G=\finiteIntersectionsOn{S}{B}$.
+    $\finiteIntersectionsOn{S}{B}$ is a topological basis for $S$ by
+        \obv{finite_intersections_form_topological_basis}.
+    Hence $G$ is a topological basis for $S$.
+    $G\subseteq\genOpens{G}{S}$ by \obv{basis_is_in_genopens}.
+    $B\subseteq\finiteIntersectionsOn{S}{B}$ by
+        \obv{generators_in_finite_intersections_on}.
+    Hence $B\subseteq G$.
+    Hence $B\subseteq\genOpens{G}{S}$ by \obv{subseteq_transitive}.
+    $\genOpens{G}{S}$ is a topology on $S$ by
+        \obv{genopens_form_topology}.
+    Hence $\generatedOpens{S}{B}\subseteq\genOpens{G}{S}$ by
+        \obv{generated_opens_least}.
+
+    $\generatedOpens{S}{B}$ is a topology on $S$ by
+        \obv{generated_opens_is_topology}.
+    $B\subseteq\generatedOpens{S}{B}$ by
+        \obv{generated_opens_contains}.
+    Hence $S\in\generatedOpens{S}{B}$ and
+        for all $A,E\in\generatedOpens{S}{B}$ we have
+            $A\inter E\in\generatedOpens{S}{B}$ by
+        \obv{topology_family}.
+    Thus $G\subseteq\generatedOpens{S}{B}$ by
+        \auto{finite_intersections_on_least}.
+    Hence $\genOpens{G}{S}\subseteq\generatedOpens{S}{B}$ by
+        \obv{genopens_least_topology}.
+    Hence $\genOpens{G}{S}=\generatedOpens{S}{B}$ by
+        \obv{subseteq_antisymmetric}.
+    Thus $\genOpens{\finiteIntersectionsOn{S}{B}}{S}
+        =\generatedOpens{S}{B}$.
+\end{proof}
+
+\begin{theorem}\label{generated_opens_iff_finite_intersections}
+    Suppose $B$ is a family of subsets of $S$.
+    Then $U\in\generatedOpens{S}{B}$ iff
+        $U\subseteq S$ and for every $x\in U$ there exists $D$ such that
+            $D\subseteq B$ and $D$ is finite and
+            $x\in\boundedIntersection{S}{D}\subseteq U$.
+\end{theorem}
+\begin{proof}
+    Let $G=\finiteIntersectionsOn{S}{B}$.
+    $\genOpens{\finiteIntersectionsOn{S}{B}}{S}
+        =\generatedOpens{S}{B}$ by
+        \obv{finite_intersection_genopens_eq_generated_opens}.
+    Hence $\genOpens{G}{S}=\generatedOpens{S}{B}$.
+    Show that if $U\in\generatedOpens{S}{B}$, then
+        $U\subseteq S$ and for every $x\in U$ there exists $D$ such that
+            $D\subseteq B$ and $D$ is finite and
+            $x\in\boundedIntersection{S}{D}\subseteq U$.
+    \begin{subproof}
+        Assume $U\in\generatedOpens{S}{B}$.
+        Hence $U\in\genOpens{G}{S}$.
+        $U\in\pow{S}$ by \obv{genopens}.
+        Hence $U\subseteq S$ by \obv{powerset_elim}.
+        Show that for every $x\in U$ there exists $D$ such that
+            $D\subseteq B$ and $D$ is finite and
+            $x\in\boundedIntersection{S}{D}\subseteq U$.
+        \begin{subproof}
+            Fix $x\in U$.
+            Take $V\in G$ such that $x\in V\subseteq U$ by
+                \obv{genopens}.
+            Hence $V\in\finiteIntersectionsOn{S}{B}$.
+            Take $D$ such that $D\subseteq B$ and $D$ is finite and
+                $V=\boundedIntersection{S}{D}$ by
+                \obv{finite_intersections_on}.
+            Follows by \auto.
+        \end{subproof}
+    \end{subproof}
+    Show that if $U\subseteq S$ and for every $x\in U$ there exists $D$
+        such that $D\subseteq B$ and $D$ is finite and
+            $x\in\boundedIntersection{S}{D}\subseteq U$, then
+        $U\in\generatedOpens{S}{B}$.
+    \begin{subproof}
+        Assume $U\subseteq S$ and for every $x\in U$ there exists $D$
+            such that $D\subseteq B$ and $D$ is finite and
+                $x\in\boundedIntersection{S}{D}\subseteq U$.
+        $U\in\pow{S}$ by \obv{powerset_intro}.
+        Show that for every $x\in U$ there exists $V\in G$ such that
+            $x\in V\subseteq U$.
+        \begin{subproof}
+            Fix $x\in U$.
+            Take $D$ such that $D\subseteq B$ and $D$ is finite and
+                $x\in\boundedIntersection{S}{D}\subseteq U$.
+            $\boundedIntersection{S}{D}\subseteq S$ by
+                \obv{bounded_intersection_subseteq}.
+            Hence $\boundedIntersection{S}{D}
+                \in\finiteIntersectionsOn{S}{B}$ by
+                \auto{finite_intersections_on_iff}.
+            Hence $\boundedIntersection{S}{D}\in G$.
+        \end{subproof}
+        Hence $U\in\genOpens{G}{S}$ by \obv{genopens}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{topological_basis_genopens_eq_generated_opens}
+    Suppose $B$ is a topological basis for $S$.
+    Then $\genOpens{B}{S}=\generatedOpens{S}{B}$.
+\end{theorem}
+\begin{proof}
+    $B$ is a family of subsets of $S$ by \obv{topological_basis}.
+    $B\subseteq\genOpens{B}{S}$ by \obv{basis_is_in_genopens}.
+    $\genOpens{B}{S}$ is a topology on $S$ by
+        \obv{genopens_form_topology}.
+    Hence $\generatedOpens{S}{B}\subseteq\genOpens{B}{S}$ by
+        \obv{generated_opens_least}.
+    $B\subseteq\generatedOpens{S}{B}$ by
+        \obv{generated_opens_contains}.
+    $\generatedOpens{S}{B}$ is a topology on $S$ by
+        \obv{generated_opens_is_topology}.
+    Hence $\genOpens{B}{S}\subseteq\generatedOpens{S}{B}$ by
+        \obv{genopens_least_topology}.
+    Follows by \obv{subseteq_antisymmetric}.
+\end{proof}
+
+\begin{definition}\label{topology_generated_by_basis}
+    $\topologyGeneratedByBasis{B}{X}=\GeneratedTopology{X}{B}$.
+\end{definition}
+
+\begin{classification}\label{topology_generated_by_basis_is_topological_space}
+    Suppose $B$ is a topological basis for $X$.
+    Then $\topologyGeneratedByBasis{B}{X}$ is a topological space.
+\end{classification}
+\begin{proof}
+    $B$ is a family of subsets of $X$ by \obv{topological_basis}.
+    Follows by
+        \auto{topology_generated_by_basis,
+            generated_topology_is_topological_space}.
+\end{proof}
+
+\begin{proposition}\label{topology_generated_by_basis_carrier}
+    $\carrier[\topologyGeneratedByBasis{B}{X}]=X$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{topology_generated_by_basis,generated_topology_carrier}.
+\end{proof}
+
+\begin{proposition}\label{topology_generated_by_basis_opens}
+    Suppose $B$ is a topological basis for $X$.
+    $\opens[\topologyGeneratedByBasis{B}{X}]=\genOpens{B}{X}$.
+\end{proposition}
+\begin{proof}
+    $\genOpens{B}{X}=\generatedOpens{X}{B}$ by
+        \obv{topological_basis_genopens_eq_generated_opens}.
+    Follows by
+        \auto{topology_generated_by_basis,generated_topology_opens}.
+\end{proof}
+
+\begin{definition}\label{open_basis}
+    Let $X$ be a topological space.
+    $B$ is an open basis of $X$ iff
+        $B\subseteq\opens[X]$ and
+        for all $U,x$ such that $U\in\opens[X]$ and $x\in U$
+        there exists $V\in B$ such that $x\in V\subseteq U$.
+\end{definition}
+
+\begin{proposition}\label{opens_form_open_basis}
+    Let $X$ be a topological space.
+    Then $\opens[X]$ is an open basis of $X$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{open_basis,subseteq_refl}.
+\end{proof}
+
+The corresponding prebasis notion is a presentation of an existing
+topological space.  Any hosted family can generate a topology; it is an open
+prebasis precisely when it generates all the given open sets.
+
+\begin{definition}\label{open_prebasis}
+    Let $X$ be a topological space.
+    $B$ is an open prebasis of $X$ iff
+        $B\subseteq\opens[X]$ and
+        $\generatedOpens{\carrier[X]}{B}=\opens[X]$.
+\end{definition}
+
+\begin{theorem}\label{generated_topology_generators_form_open_prebasis}
+    Suppose $B$ is a family of subsets of $S$.
+    Then $B$ is an open prebasis of $\GeneratedTopology{S}{B}$.
+\end{theorem}
+\begin{proof}
+    $\GeneratedTopology{S}{B}$ is a topological space by
+        \obv{generated_topology_is_topological_space}.
+    $B\subseteq\generatedOpens{S}{B}$ by
+        \obv{generated_opens_contains}.
+    Hence $B\subseteq\opens[\GeneratedTopology{S}{B}]$ by
+        \obv{generated_topology_opens}.
+    $\carrier[\GeneratedTopology{S}{B}]=S$ by
+        \obv{generated_topology_carrier}.
+    $\opens[\GeneratedTopology{S}{B}]=\generatedOpens{S}{B}$ by
+        \obv{generated_topology_opens}.
+    Hence
+        $\generatedOpens{\carrier[\GeneratedTopology{S}{B}]}{B}
+            =\opens[\GeneratedTopology{S}{B}]$.
+    Follows by \obv{open_prebasis}.
+\end{proof}
+
+\begin{proposition}\label{open_basis_member_is_neighbourhood}
+    Let $X$ be a topological space.
+    Suppose $B$ is an open basis of $X$.
+    Let $V\in B$ and $x\in V$.
+    Then $V\in\neighbourhoods{x}{X}$.
+\end{proposition}
+\begin{proof}
+    $B\subseteq\opens[X]$ by \obv{open_basis}.
+    Hence $V\in\opens[X]$ by \obv{subseteq}.
+    Thus $V\subseteq\carrier[X]$ by \obv{opens_type}.
+    Hence $V\in\pow{\carrier[X]}$ by \obv{powerset_intro}.
+    $V\subseteq V$ by \obv{subseteq_refl}.
+    Follows by \obv{neighbourhoods}.
+\end{proof}
+
+\begin{proposition}\label{open_basis_refines_neighbourhood}
+    Let $X$ be a topological space.
+    Suppose $B$ is an open basis of $X$.
+    Let $x\in\carrier[X]$ and $N\in\neighbourhoods{x}{X}$.
+    Then there exists $V\in B$ such that $x\in V\subseteq N$.
+\end{proposition}
+\begin{proof}
+    Take $O\in\opens[X]$ such that $x\in O\subseteq N$ by
+        \obv{neighbourhoods}.
+    Take $V\in B$ such that $x\in V\subseteq O$ by
+        \obv{open_basis}.
+    Hence $V\subseteq N$ by \obv{subseteq_transitive}.
+\end{proof}
+
+\begin{theorem}\label{topology_generated_by_basis_has_open_basis}
+    Suppose $B$ is a topological basis for $X$.
+    Then $B$ is an open basis of $\topologyGeneratedByBasis{B}{X}$.
+\end{theorem}
+\begin{proof}
+    $\topologyGeneratedByBasis{B}{X}$ is a topological space
+        by \obv{topology_generated_by_basis_is_topological_space}.
+    $B\subseteq\opens[\topologyGeneratedByBasis{B}{X}]$
+        by
+        \auto{basis_is_in_genopens,topology_generated_by_basis_opens}.
+    Show that for all $U,x$ such that
+        $U\in\opens[\topologyGeneratedByBasis{B}{X}]$ and $x\in U$
+        there exists $V\in B$ such that
+            $x\in V\subseteq U$.
+    \begin{subproof}
+        Fix $U,x$.
+        Assume $U\in\opens[\topologyGeneratedByBasis{B}{X}]$ and $x\in U$.
+        $U\in\genOpens{B}{X}$
+            by \obv{topology_generated_by_basis_opens}.
+        Follows by \obv{genopens}.
+    \end{subproof}
+    Follows by \obv{open_basis}.
+\end{proof}
+
+\begin{theorem}\label{open_basis_generates_opens}
+    Let $X$ be a topological space.
+    Suppose $B$ is an open basis of $X$.
+    Then $\opens[X]=\genOpens{B}{\carrier[X]}$.
+\end{theorem}
+\begin{proof}
+    Show that every element of $\opens[X]$ is an element of
+        $\genOpens{B}{\carrier[X]}$.
+    \begin{subproof}
+        Fix $U\in\opens[X]$.
+        $U\subseteq\carrier[X]$ by \obv{opens_type}.
+        Hence $U\in\pow{\carrier[X]}$ by \obv{pow_iff,subseteq}.
+        For every $x\in U$ there exists $V\in B$ such that
+            $x\in V\subseteq U$ by \obv{open_basis}.
+        Follows by \obv{genopens}.
+    \end{subproof}
+    Hence $\opens[X]\subseteq\genOpens{B}{\carrier[X]}$
+        by \obv{subseteq}.
+    Show that every element of $\genOpens{B}{\carrier[X]}$ is an element of
+        $\opens[X]$.
+    \begin{subproof}
+        Fix $U\in\genOpens{B}{\carrier[X]}$.
+        Let $F=\{V\in B\mid V\subseteq U\}$.
+        $F\subseteq B$ by \obv{subseteq}.
+        Hence $F\subseteq\opens[X]$
+            by \auto{open_basis,subseteq_transitive}.
+        Hence $\unions{F}\in\opens[X]$ by \obv{opens_unions}.
+        Show that $\unions{F}=U$.
+        \begin{subproof}
+            Show that every element of $\unions{F}$ is an element of $U$.
+            \begin{subproof}
+                Fix $x\in\unions{F}$.
+                Take $V\in F$ such that $x\in V$ by \obv{unions_iff}.
+                $V\subseteq U$.
+                Follows by \obv{subseteq}.
+            \end{subproof}
+            Show that every element of $U$ is an element of $\unions{F}$.
+            \begin{subproof}
+                Fix $x\in U$.
+                Take $V\in B$ such that $x\in V\subseteq U$
+                    by \obv{genopens}.
+                Hence $V\in F$.
+                Follows by \auto{unions_iff}.
+            \end{subproof}
+            Follows by set extensionality.
+        \end{subproof}
+    \end{subproof}
+    Hence $\genOpens{B}{\carrier[X]}\subseteq\opens[X]$
+        by \obv{subseteq}.
+    Follows by \obv{subseteq_antisymmetric}.
+\end{proof}
+
+\begin{theorem}\label{finite_intersections_of_open_prebasis_form_open_basis}
+    Let $X$ be a topological space.
+    Suppose $B$ is an open prebasis of $X$.
+    Then $\finiteIntersectionsOn{\carrier[X]}{B}$ is an open basis of $X$.
+\end{theorem}
+\begin{proof}
+    Let $S=\carrier[X]$.
+    $B\subseteq\opens[X]$ and
+        $\generatedOpens{\carrier[X]}{B}=\opens[X]$ by
+        \obv{open_prebasis}.
+    Hence $B\subseteq\opens[X]$ and
+        $\generatedOpens{S}{B}=\opens[X]$.
+    $B$ is a family of subsets of $S$ by
+        \obv{opens_type,subseteq}.
+    $\opens[X]$ is a topology on $S$ by
+        \obv{topological_space_opens_form_topology}.
+    Hence $S\in\opens[X]$ and
+        for all $A,E\in\opens[X]$ we have $A\inter E\in\opens[X]$ by
+        \obv{topology_family}.
+    Hence $\finiteIntersectionsOn{S}{B}\subseteq\opens[X]$ by
+        \obv{finite_intersections_on_least}.
+    Show that for all $U,x$ such that $U\in\opens[X]$ and $x\in U$
+        there exists $V\in\finiteIntersectionsOn{S}{B}$ such that
+            $x\in V\subseteq U$.
+    \begin{subproof}
+        Fix $U,x$.
+        Assume $U\in\opens[X]$ and $x\in U$.
+        Hence $U\in\generatedOpens{S}{B}$.
+        $\genOpens{\finiteIntersectionsOn{S}{B}}{S}
+            =\generatedOpens{S}{B}$ by
+            \obv{finite_intersection_genopens_eq_generated_opens}.
+        Hence $U\in\genOpens{\finiteIntersectionsOn{S}{B}}{S}$.
+        Follows by \obv{genopens}.
+    \end{subproof}
+    Hence $\finiteIntersectionsOn{S}{B}$ is an open basis of $X$ by
+        \obv{open_basis}.
+    Thus $\finiteIntersectionsOn{\carrier[X]}{B}$ is an open basis of $X$.
+\end{proof}
+
+\begin{theorem}\label{open_basis_iff_raw_basis_generates_opens}
+    Let $X$ be a topological space.
+    Then $B$ is an open basis of $X$ iff
+        $B$ is a topological basis for $\carrier[X]$ and
+        $\generatedOpens{\carrier[X]}{B}=\opens[X]$.
+\end{theorem}
+\begin{proof}
+    Show that if $B$ is an open basis of $X$, then
+        $B$ is a topological basis for $\carrier[X]$ and
+        $\generatedOpens{\carrier[X]}{B}=\opens[X]$.
+    \begin{subproof}
+        Assume $B$ is an open basis of $X$.
+        $B\subseteq\opens[X]$ by \obv{open_basis}.
+        Hence $B$ is a family of subsets of $\carrier[X]$ by
+            \obv{opens_type,subseteq}.
+        Show that $B$ covers $\carrier[X]$.
+        \begin{subproof}
+            Fix $x\in\carrier[X]$.
+            $\carrier[X]\in\opens[X]$ by \obv{carrier_open}.
+            Take $V\in B$ such that
+                $x\in V\subseteq\carrier[X]$ by \obv{open_basis}.
+            Follows by \auto.
+        \end{subproof}
+        Show that for all $U,V,x$ such that $U,V\in B$ and $x\in U,V$
+            there exists $W\in B$ such that $x\in W\subseteq U,V$.
+        \begin{subproof}
+            Fix $U,V,x$.
+            Assume $U,V\in B$ and $x\in U,V$.
+            $U,V\in\opens[X]$ by \obv{subseteq}.
+            Hence $U\inter V\in\opens[X]$ by \obv{opens_inter}.
+            $x\in U\inter V$ by \obv{inter}.
+            Take $W\in B$ such that $x\in W\subseteq U\inter V$ by
+                \obv{open_basis}.
+            $W\subseteq U,V$ by \auto{inter,subseteq}.
+            Follows by \auto.
+        \end{subproof}
+        Hence $B$ is a topological basis for $\carrier[X]$ by
+            \obv{topological_basis}.
+        $\opens[X]=\genOpens{B}{\carrier[X]}$ by
+            \obv{open_basis_generates_opens}.
+        $\genOpens{B}{\carrier[X]}
+            =\generatedOpens{\carrier[X]}{B}$ by
+            \obv{topological_basis_genopens_eq_generated_opens}.
+        Hence $\generatedOpens{\carrier[X]}{B}=\opens[X]$.
+    \end{subproof}
+
+    Show that if $B$ is a topological basis for $\carrier[X]$ and
+        $\generatedOpens{\carrier[X]}{B}=\opens[X]$, then
+        $B$ is an open basis of $X$.
+    \begin{subproof}
+        Assume $B$ is a topological basis for $\carrier[X]$ and
+            $\generatedOpens{\carrier[X]}{B}=\opens[X]$.
+        $B$ is a family of subsets of $\carrier[X]$ by
+            \obv{topological_basis}.
+        $B\subseteq\generatedOpens{\carrier[X]}{B}$ by
+            \obv{generated_opens_contains}.
+        Hence $B\subseteq\opens[X]$.
+        $\genOpens{B}{\carrier[X]}
+            =\generatedOpens{\carrier[X]}{B}$ by
+            \obv{topological_basis_genopens_eq_generated_opens}.
+        Show that for all $U,x$ such that $U\in\opens[X]$ and $x\in U$
+            there exists $V\in B$ such that $x\in V\subseteq U$.
+        \begin{subproof}
+            Fix $U,x$.
+            Assume $U\in\opens[X]$ and $x\in U$.
+            Hence $U\in\generatedOpens{\carrier[X]}{B}$.
+            Hence $U\in\genOpens{B}{\carrier[X]}$.
+            Follows by \obv{genopens}.
+        \end{subproof}
+        Follows by \obv{open_basis}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{corollary}\label{open_basis_is_open_prebasis}
+    Let $X$ be a topological space.
+    Suppose $B$ is an open basis of $X$.
+    Then $B$ is an open prebasis of $X$.
+\end{corollary}
+\begin{proof}
+    Follows by
+        \auto{open_prebasis,open_basis,
+            open_basis_iff_raw_basis_generates_opens}.
+\end{proof}
+
+\begin{theorem}\label{finite_covered_set_has_finite_subcover}
+    Suppose $K$ is finite and $C$ covers $K$.
+    Then there exists a finite set $D$ such that
+        $D\subseteq C$ and $D$ covers $K$.
+\end{theorem}
+\begin{proof}
+    Let $H=\{A\in\pow{K}\mid
+        \text{there exists a finite set $D$ such that $D\subseteq C$ and
+            $D$ covers $A$}\}$.
+    $\emptyset\in\pow{K}$ by \obv{powerset_bottom}.
+    $\emptyset$ is finite by \obv{emptyset_is_finite}.
+    $\emptyset\subseteq C$ by \obv{emptyset_subseteq}.
+    $\emptyset$ covers $\emptyset$ by \auto{emptyset}.
+    Hence $\emptyset\in H$.
+    Show that for every $A,x$ such that $A\in H$ and $x\in K$ we have
+        $\cons{x}{A}\in H$.
+    \begin{subproof}
+        Fix $A,x$.
+        Assume $A\in H$ and $x\in K$.
+        $A\subseteq K$ by \obv{pow_iff,subseteq}.
+        Hence $\cons{x}{A}\subseteq K$ by \obv{cons_subseteq_intro}.
+        Hence $\cons{x}{A}\in\pow{K}$ by \obv{pow_iff,subseteq}.
+        Take $D$ such that $D$ is finite and $D\subseteq C$ and
+            $D$ covers $A$ by \auto.
+        Take $U\in C$ such that $x\in U$.
+        $\cons{U}{D}$ is finite by \obv{finite_cons}.
+        $\cons{U}{D}\subseteq C$ by \obv{cons_subseteq_intro}.
+        Show that $\cons{U}{D}$ covers $\cons{x}{A}$.
+        \begin{subproof}
+            Fix $y\in\cons{x}{A}$.
+            \begin{byCase}
+                \caseOf{$y=x$.}
+                    $U\in\cons{U}{D}$ by \obv{cons_left}.
+                \caseOf{$y\neq x$.}
+                    Hence $y\in A$ by \auto{cons_iff}.
+                    Take $V\in D$ such that $y\in V$.
+                    $V\in\cons{U}{D}$ by \auto{cons_iff}.
+            \end{byCase}
+        \end{subproof}
+    \end{subproof}
+    $K\in H$ by \obv{finite_induction,subseteq_refl,pow_iff}.
+\end{proof}

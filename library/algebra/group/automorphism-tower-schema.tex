@@ -1,0 +1,192 @@
+\import{set/logical-graph.tex}
+
+\section{Set-coded automorphism-tower schemas}
+
+This low-dependency module contains only the exact record shapes used by the
+automorphism-tower construction.  The stage-group field is intentionally
+unbounded and is therefore declared as an owned set field.  It is still an
+ordinary set-valued record projection, not a universe member.  Group and
+diagram laws are stated in the semantic data module.  Local package exactness
+is expressed there by equality with the transparent constructor; this is
+stronger and more useful than merely satisfying the open schema.
+
+\begin{struct}\label{tower_stage_package}
+    A tower stage package $P$ is a onesorted structure equipped with
+    \begin{enumerate}
+        \item\label{tower_stage_package_group_field}
+            a set $\towerStageGroup[P]$;
+        \item\label{tower_stage_package_incoming_field}
+            an incoming-map family
+            $\towerIncoming[P]:
+                \carrier[P]\to\ran{\towerIncoming[P]}$;
+    \end{enumerate}.
+\end{struct}
+
+\begin{definition}\label{tower_stage_package_structure}
+    $\towerStagePackage{\alpha}{H}{q}=
+        \structure[tower stage package]{
+            \carrier=\suc{\alpha},
+            \towerStageGroup=H,
+            \towerIncoming=q
+        }$.
+\end{definition}
+
+\begin{proposition}\label{tower_stage_package_structure_carrier}
+    $\carrier[\towerStagePackage{\alpha}{H}{q}]=\suc{\alpha}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{tower_stage_package_structure,
+            tower_stage_packageaggregateprojection_carrier}.
+\end{proof}
+
+\begin{proposition}\label{tower_stage_package_structure_group}
+    $\towerStageGroup[\towerStagePackage{\alpha}{H}{q}]=H$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{tower_stage_package_structure,
+            tower_stage_packageaggregateprojection_towerStageGroup}.
+\end{proof}
+
+\begin{proposition}\label{tower_stage_package_structure_incoming}
+    $\towerIncoming[\towerStagePackage{\alpha}{H}{q}]=q$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{tower_stage_package_structure,
+            tower_stage_packageaggregateprojection_towerIncoming}.
+\end{proof}
+
+\begin{struct}\label{tower_segment_data}
+    A tower segment datum $T$ is a onesorted structure equipped with
+    \begin{enumerate}
+        \item\label{tower_segment_stage_family}
+            a stage family
+            $\towerStages[T]:\carrier[T]\to\ran{\towerStages[T]}$;
+        \item\label{tower_segment_bond_family}
+            a bond family
+            $\towerBonds[T]:
+                \subseteqrel{\carrier[T]}\to\ran{\towerBonds[T]}$;
+    \end{enumerate}.
+\end{struct}
+
+\begin{definition}\label{tower_segment_data_structure}
+    $\towerSegmentData{\theta}{A}{\Phi}=
+        \structure[tower segment datum]{
+            \carrier=\theta,
+            \towerStages=A,
+            \towerBonds=\Phi
+        }$.
+\end{definition}
+
+\begin{proposition}\label{tower_segment_data_structure_carrier}
+    $\carrier[\towerSegmentData{\theta}{A}{\Phi}]=\theta$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{tower_segment_data_structure,
+            tower_segment_dataaggregateprojection_carrier}.
+\end{proof}
+
+\begin{proposition}\label{tower_segment_data_structure_stages}
+    $\towerStages[\towerSegmentData{\theta}{A}{\Phi}]=A$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{tower_segment_data_structure,
+            tower_segment_dataaggregateprojection_towerStages}.
+\end{proof}
+
+\begin{proposition}\label{tower_segment_data_structure_bonds}
+    $\towerBonds[\towerSegmentData{\theta}{A}{\Phi}]=\Phi$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{tower_segment_data_structure,
+            tower_segment_dataaggregateprojection_towerBonds}.
+\end{proof}
+
+\begin{definition}\label{tower_segment_restriction}
+    $\towerSegmentRestriction{T}{\lambda}=
+        \towerSegmentData{\lambda}
+            {\restrl{\towerStages[T]}{\lambda}}
+            {\restrl{\towerBonds[T]}{\subseteqrel{\lambda}}}$.
+\end{definition}
+
+\begin{proposition}\label{tower_segment_restriction_carrier}
+    $\carrier[\towerSegmentRestriction{T}{\lambda}]=\lambda$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{tower_segment_restriction,
+            tower_segment_data_structure_carrier}.
+\end{proof}
+
+\begin{proposition}\label{tower_segment_restriction_stages}
+    $\towerStages[\towerSegmentRestriction{T}{\lambda}]=
+        \restrl{\towerStages[T]}{\lambda}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{tower_segment_restriction,
+            tower_segment_data_structure_stages}.
+\end{proof}
+
+\begin{proposition}\label{tower_segment_restriction_bonds}
+    $\towerBonds[\towerSegmentRestriction{T}{\lambda}]=
+        \restrl{\towerBonds[T]}{\subseteqrel{\lambda}}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{tower_segment_restriction,
+            tower_segment_data_structure_bonds}.
+\end{proof}
+
+\begin{definition}\label{tower_stage}
+    $\towerStage{T}{\alpha}=\apply{\towerStages[T]}{\alpha}$.
+\end{definition}
+
+\begin{definition}\label{tower_bond}
+    $\towerBond{T}{\alpha}{\beta}=
+        \apply{\towerBonds[T]}{(\alpha,\beta)}$.
+\end{definition}
+
+\begin{definition}\label{tower_bond_column_op}
+    $\towerBondColumnOp:\Set\to\Set\to\Set\to\Set
+        =\fun{T,\beta,\alpha:\Set}{
+            \towerBond{T}{\alpha}{\beta}}$.
+\end{definition}
+
+\begin{definition}\label{tower_incoming_family}
+    $\towerIncomingFamily{T}{\beta}=
+        \Apply{\graphOnDomainOp}{\beta,
+            \Apply{\towerBondColumnOp}{T,\beta}}$.
+\end{definition}
+
+\begin{proposition}\label{tower_incoming_family_type}
+    $\towerIncomingFamily{T}{\beta}\in
+        \funs{\beta}{\ran{\towerIncomingFamily{T}{\beta}}}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{tower_incoming_family,logical_graph_on_domain_function}.
+\end{proof}
+
+\begin{proposition}\label{tower_incoming_family_apply}
+    Let $\alpha\in\beta$.
+    Then $\apply{\towerIncomingFamily{T}{\beta}}{\alpha}=
+        \towerBond{T}{\alpha}{\beta}$.
+\end{proposition}
+\begin{proof}
+    Let $g=\towerIncomingFamily{T}{\beta}$.
+    $g=\Apply{\graphOnDomainOp}{\beta,
+        \Apply{\towerBondColumnOp}{T,\beta}}$ by
+        \obv{tower_incoming_family}.
+    Hence $g(\alpha)=
+        \Apply{\towerBondColumnOp}{T,\beta,\alpha}$ by
+        \auto{logical_graph_on_domain_apply}.
+    $\Apply{\towerBondColumnOp}{T,\beta,\alpha}=
+        \towerBond{T}{\alpha}{\beta}$ by
+        \obv{tower_bond_column_op}.
+\end{proof}

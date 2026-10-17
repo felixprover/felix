@@ -1,0 +1,205 @@
+\import{algebra/group/coset.tex}
+\import{cardinal/arithmetic.tex}
+\import{set/logical-graph.tex}
+
+\section{Index of a subgroup}
+
+The index of a subgroup is the cardinal of the existing quotient by the left
+coset relation.  No normality is required: this quotient is a set of cosets,
+not in general a quotient group.
+
+\begin{definition}\label{group_index}
+    $\groupIndex{G}{H}
+        =\card{\quotient{\carrier[G]}{
+            \subgroupCosetRelation{G}{H}}}$.
+\end{definition}
+
+\begin{theorem}\label{left_coset_equinumerous_subgroup}
+    Suppose $\subgroup{H}{G}$.
+    Let $a\in\carrier[G]$.
+    Then $H\approx\leftCoset{G}{a}{H}$.
+\end{theorem}
+\begin{proof}
+    Let $t=\LeftTranslation{G}{a}$ and $f=\restrl{t}{H}$.
+    $G$ is a group and $H\subseteq\carrier[G]$ by
+        \obv{subgroup_ambient_group,subgroup_subseteq}.
+    $t\in\bijections{\carrier[G]}{\carrier[G]}$ by
+        \auto{left_translation_bijection}.
+    Hence $t\in\funs{\carrier[G]}{\carrier[G]}$ and
+        $t$ is injective by \auto{bijections,surj}.
+    $t$ is a function by \obv{funs_is_function}.
+    $\dom{t}=\carrier[G]$ by \obv{funs}.
+    Hence for all $x,y\in\carrier[G]$ such that $t(x)=t(y)$
+        we have $x=y$ by \auto{injective_function}.
+    Hence $t\in\inj{\carrier[G]}{\carrier[G]}$ by \obv{inj}.
+    Hence $f\in\inj{H}{\carrier[G]}$ by \auto{inj_restrl}.
+    $t$ is a relation and $H\subseteq\dom{t}$ by
+        \obv{bijection_is_function,relation,bijections_dom}.
+    Hence $\ran{f}=\img{t}{H}$ by \auto{restrl_ran}.
+    Hence $\ran{f}=\leftCoset{G}{a}{H}$ by \obv{left_coset}.
+    $f\in\funs{H}{\carrier[G]}$ by \obv{inj}.
+    Hence $f$ is a function and $\dom{f}=H$ by
+        \obv{funs_is_function,funs}.
+    Hence $f\in\funs{H}{\ran{f}}$ by
+        \auto{function_exact_type_to_range}.
+    Hence $f\in\surj{H}{\ran{f}}$ by \obv{fun_to_surj}.
+    Hence $f\in\surj{H}{\leftCoset{G}{a}{H}}$.
+    $f$ is injective by \auto{inj,injective_function}.
+    Hence $f\in\bijections{H}{\leftCoset{G}{a}{H}}$ by
+        \obv{bijections}.
+    Follows by \obv{equinum}.
+\end{proof}
+
+\begin{lemma}\label{subgroup_coset_block_from_member}
+    Suppose $\subgroup{H}{G}$.
+    Let
+        $Q=\quotient{\carrier[G]}{\subgroupCosetRelation{G}{H}}$.
+    Let $C\in Q$ and $a\in C$.
+    Then $C=\leftCoset{G}{a}{H}$.
+\end{lemma}
+\begin{proof}
+    Let $E=\subgroupCosetRelation{G}{H}$ and
+        $D=\equivalenceClass{E}{a}$.
+    $E$ is an equivalence on $\carrier[G]$ by
+        \auto{subgroup_coset_relation_equivalence}.
+    Hence $Q$ is a partition of $\carrier[G]$ by
+        \auto{quotient_partition_of}.
+    $C\subseteq\carrier[G]$ by
+        \obv{partition_block_subseteq}.
+    Hence $a\in\carrier[G]$ by \obv{subseteq}.
+    Hence $D\in Q$ by \obv{quotient}.
+    $a\in D$ by \obv{equivclasses_inhabited_equivalenceon}.
+    Hence $C=D$ by \obv{partition_block_unique}.
+    $D=\leftCoset{G}{a}{H}$ by
+        \auto{subgroup_coset_equivalence_class}.
+\end{proof}
+
+\begin{theorem}\label{group_cardinal_product_formula}
+    Suppose $\subgroup{H}{G}$.
+    Then
+        $\card{\carrier[G]}
+            =\cardProduct{\card{H}}{\groupIndex{G}{H}}$.
+\end{theorem}
+\begin{proof}
+    Let $E=\subgroupCosetRelation{G}{H}$ and
+        $Q=\quotient{\carrier[G]}{E}$.
+    Let
+        $f=\Apply{\graphOnOp}{
+            H\times Q,\carrier[G],
+            \fun{p:\Set}{
+                \mul[G](\choice{\snd{p}},\fst{p})}}$.
+    $G$ is a group and $H\subseteq\carrier[G]$ by
+        \obv{subgroup_ambient_group,subgroup_subseteq}.
+    $E$ is an equivalence on $\carrier[G]$ by
+        \auto{subgroup_coset_relation_equivalence}.
+    $Q$ is a partition of $\carrier[G]$ by
+        \auto{quotient_partition_of}.
+    Show that for every $p\in H\times Q$ we have
+        $\mul[G](\choice{\snd{p}},\fst{p})\in\carrier[G]$.
+    \begin{subproof}
+        Fix $p\in H\times Q$.
+        $\fst{p}\in H$ and $\snd{p}\in Q$ by
+            \obv{fst_type,snd_type}.
+        Hence $\fst{p}\in\carrier[G]$ by \obv{subseteq}.
+        $\snd{p}$ is inhabited by
+            \obv{quotient_elems_inhabited}.
+        Hence $\choice{\snd{p}}\in\snd{p}$ by \obv{choice_in}.
+        Hence $\choice{\snd{p}}\in\carrier[G]$ by
+            \auto{partition_block_subseteq,subseteq}.
+        Follows by
+            \obv{group_is_monoid,monoid_is_magma,magma_welldef}.
+    \end{subproof}
+    Hence $f\in\funs{H\times Q}{\carrier[G]}$ by
+        \auto{logical_graph_on_function}.
+    Hence $f$ is a function and $\dom{f}=H\times Q$ by
+        \obv{funs_is_function,funs}.
+    Show that for every $p\in H\times Q$ we have
+        $f(p)=\mul[G](\choice{\snd{p}},\fst{p})$.
+    \begin{subproof}
+        Follows by \auto{logical_graph_on_apply}.
+    \end{subproof}
+    Show that $f\in\surj{H\times Q}{\carrier[G]}$.
+    \begin{subproof}
+        Show that for every $x\in\carrier[G]$ there exists
+            $p\in H\times Q$ such that $f(p)=x$.
+        \begin{subproof}
+            Fix $x\in\carrier[G]$.
+            Let $C=\equivalenceClass{E}{x}$.
+            $C\in Q$ by \obv{quotient}.
+            Hence $C$ is inhabited by \obv{quotient_elems_inhabited}.
+            Let $a=\choice{C}$.
+            $a\in C$ by \auto{choice_in}.
+            Hence $a\in\carrier[G]$ by
+                \auto{partition_block_subseteq,subseteq}.
+            Let $h=\mul[G](\groupInv[G](a),x)$.
+            $a\mathrel{E}x$ by
+                \obv{downward_closure_iff}.
+            Hence $h\in H$ by
+                \auto{subgroup_coset_relation_iff}.
+            Hence $h\in\carrier[G]$ by \obv{subseteq}.
+            $h=\mul[G](\groupInv[G](a),x)$.
+            Hence $(h,C)\in H\times Q$ by
+                \obv{times_tuple_intro}.
+            $\fst{(h,C)}=h$ and $\snd{(h,C)}=C$ by
+                \obv{fst_eq,snd_eq}.
+            Hence $f((h,C))=\mul[G](a,h)$ by \auto.
+            $\mul[G](a,h)=x$ by \obv{group_solve_left}.
+        \end{subproof}
+        Follows by \obv{surj}.
+    \end{subproof}
+    Show that $f$ is injective.
+    \begin{subproof}
+        Show that for all $p,q\in\dom{f}$ such that $f(p)=f(q)$
+            we have $p=q$.
+        \begin{subproof}
+            Fix $p,q\in\dom{f}$.
+            Assume $f(p)=f(q)$.
+            Hence $p,q\in H\times Q$.
+            Let $h=\fst{p}$ and $k=\fst{q}$.
+            Let $C=\snd{p}$ and $D=\snd{q}$.
+            $h,k\in H$ and $C,D\in Q$ by
+                \auto{fst_type,snd_type}.
+            Hence $h,k\in\carrier[G]$ by \obv{subseteq}.
+            $C$ is inhabited and $D$ is inhabited by
+                \obv{quotient_elems_inhabited}.
+            Let $a=\choice{C}$ and $b=\choice{D}$.
+            $a\in C$ and $b\in D$ by \auto{choice_in}.
+            Hence $a,b\in\carrier[G]$ by
+                \auto{partition_block_subseteq,subseteq}.
+            $f(p)=\mul[G](a,h)$ and $f(q)=\mul[G](b,k)$ by
+                \auto.
+            Hence $\mul[G](a,h)=\mul[G](b,k)$.
+            Let $z=\mul[G](a,h)$.
+            $z\in\leftCoset{G}{a}{H}$ by \auto{left_coset_iff}.
+            $C=\leftCoset{G}{a}{H}$ by
+                \auto{subgroup_coset_block_from_member}.
+            Hence $z\in C$.
+            $\mul[G](b,k)\in\leftCoset{G}{b}{H}$ by
+                \auto{left_coset_iff}.
+            $D=\leftCoset{G}{b}{H}$ by
+                \auto{subgroup_coset_block_from_member}.
+            Hence $z\in D$.
+            Hence $C=D$ by \obv{partition_block_unique}.
+            Hence $a=b$.
+            Hence $\mul[G](a,h)=\mul[G](a,k)$.
+            Hence $h=k$ by \obv{group_cancel_left}.
+            $p=(h,C)$ and $q=(k,D)$ by
+                \auto{times_elem_is_tuple,pair_eq_pair_of_proj}.
+        \end{subproof}
+        Follows by \obv{injective_function}.
+    \end{subproof}
+    Hence $f\in\bijections{H\times Q}{\carrier[G]}$ by
+        \obv{bijections}.
+    Hence $H\times Q\approx\carrier[G]$ by \obv{equinum}.
+    Hence $\card{H\times Q}=\card{\carrier[G]}$ by
+        \obv{card_eq_iff_equinumerous}.
+    $H\approx\card{H}$ and $Q\approx\card{Q}$ by
+        \obv{equinumerous_card}.
+    Hence
+        $\cardProduct{H}{Q}
+            =\cardProduct{\card{H}}{\card{Q}}$ by
+        \obv{cardinal_product_congruent}.
+    $\cardProduct{H}{Q}=\card{H\times Q}$ by
+        \obv{cardinal_product}.
+    $\groupIndex{G}{H}=\card{Q}$ by \obv{group_index}.
+\end{proof}

@@ -1,0 +1,144 @@
+\section{Filter convergence in indexed products}
+
+\import{topology/indexed-product-basis.tex}
+\import{topology/continuity-at.tex}
+\import{set/filter-finite.tex}
+
+The finite-coordinate basis turns convergence in an indexed product into
+coordinatewise convergence.  No finiteness assumption on the index set is
+needed for this local statement.
+
+\begin{theorem}\label{filter_converges_in_indexed_product_iff_coordinates}
+    Suppose $X$ is a function on $I$.
+    Suppose for every $i\in I$ we have $X(i)$ is a topological space.
+    Let $F$ be a filter on
+        $\dependentProduct{I}{\indexedTopologicalCarrierFamily{I}{X}}$.
+    Let $x\in
+        \dependentProduct{I}{\indexedTopologicalCarrierFamily{I}{X}}$.
+    Then $\filterConverges{F}{x}{\IndexedProductTopology{I}{X}}$ iff
+        for every $i\in I$ we have
+        $\filterConverges{
+            \filterPushforward{
+                \dependentProduct{I}{
+                    \indexedTopologicalCarrierFamily{I}{X}}}{
+                \carrier[X(i)]}{
+                \dependentProjection{I}{
+                    \indexedTopologicalCarrierFamily{I}{X}}{i}}{F}
+        }{x(i)}{X(i)}$.
+\end{theorem}
+\begin{proof}
+    Let $A=\indexedTopologicalCarrierFamily{I}{X}$.
+    Let $S=\dependentProduct{I}{A}$.
+    Let $P=\IndexedProductTopology{I}{X}$.
+    Let $B=\indexedProductBoxes{I}{X}$.
+
+    $\indexedTopologicalCarrierFamily{I}{X}$ is a function on $I$ by
+        \obv{indexed_topological_carrier_family_type}.
+    Hence $A$ is a function on $I$.
+    $P$ is a topological space by
+        \obv{indexed_product_topology_is_topological_space}.
+    $\carrier[P]=S$ by
+        \auto{indexed_product_topology_carrier}.
+    Hence $F$ is a filter on $\carrier[P]$ and
+        $x\in\carrier[P]$.
+
+    Show that if $\filterConverges{F}{x}{P}$, then for every $i\in I$
+        we have
+        $\filterConverges{
+            \filterPushforward{S}{\carrier[X(i)]}{
+                \dependentProjection{I}{A}{i}}{F}
+        }{x(i)}{X(i)}$.
+    \begin{subproof}
+        Assume $\filterConverges{F}{x}{P}$.
+        Fix $i\in I$.
+        Let $p=\dependentProjection{I}{A}{i}$.
+        $p$ is continuous from $P$ to $X(i)$ by
+            \auto{indexed_product_coordinate_continuous}.
+        Hence $p\in\funs{\carrier[P]}{\carrier[X(i)]}$ by
+            \obv{continuous_map}.
+        $p(x)=x(i)$ by
+            \auto{dependent_projection_apply}.
+        $\filterConverges{
+            \filterPushforward{\carrier[P]}{\carrier[X(i)]}{p}{F}
+        }{p(x)}{X(i)}$ by
+            \obv{continuous_map_preserves_filter_limits}.
+    \end{subproof}
+
+    Show that if for every $i\in I$ we have
+        $\filterConverges{
+            \filterPushforward{S}{\carrier[X(i)]}{
+                \dependentProjection{I}{A}{i}}{F}
+        }{x(i)}{X(i)}$, then $\filterConverges{F}{x}{P}$.
+    \begin{subproof}
+        Assume for every $i\in I$ we have
+            $\filterConverges{
+                \filterPushforward{S}{\carrier[X(i)]}{
+                    \dependentProjection{I}{A}{i}}{F}
+            }{x(i)}{X(i)}$.
+        $B$ is an open basis of $P$ by
+            \auto{indexed_product_boxes_form_open_basis}.
+        Show that for every $W\in B$ such that $x\in W$ we have
+            $W\in F$.
+        \begin{subproof}
+            Fix $W\in B$.
+            Assume $x\in W$.
+            Take $D$ such that
+                $D\subseteq\indexedProductPrebasis{I}{X}$ and
+                $D$ is finite and
+                $W=\boundedIntersection{S}{D}$ by
+                \auto{indexed_product_boxes_iff}.
+            Show that $D\subseteq F$.
+            \begin{subproof}
+                It suffices to show that every element of $D$ is an
+                    element of $F$ by \obv{subseteq}.
+                Fix $V\in D$.
+                Hence $V\in\indexedProductPrebasis{I}{X}$ by
+                    \obv{subseteq}.
+                Take $i\in I$ such that there exists $U\in\opens[X(i)]$
+                    such that
+                    $V=\preimg{
+                        \dependentProjection{I}{A}{i}}{U}$ by
+                    \auto{indexed_product_prebasis_iff}.
+                Take $U\in\opens[X(i)]$ such that
+                    $V=\preimg{
+                        \dependentProjection{I}{A}{i}}{U}$.
+                $x\in\boundedIntersection{S}{D}$.
+                Hence $x\in V$ by \auto{bounded_intersection_iff}.
+                Let $p=\dependentProjection{I}{A}{i}$.
+                $p\in\funs{S}{\carrier[X(i)]}$ by
+                    \auto{dependent_projection_type,
+                        indexed_topological_carrier_family_apply}.
+                $p(x)=x(i)$ by \auto{dependent_projection_apply}.
+                Hence $x(i)\in U$ by
+                    \auto{preimg_iff,funs_is_function,
+                        function_apply_intro}.
+                $U\subseteq\carrier[X(i)]$ by \obv{opens_type}.
+                Hence $x(i)\in\carrier[X(i)]$ by \obv{subseteq}.
+                Thus $U\in\neighbourhoods{x(i)}{X(i)}$ by
+                    \obv{open_set_containing_point_is_neighbourhood}.
+                $\filterConverges{
+                    \filterPushforward{S}{\carrier[X(i)]}{
+                        \dependentProjection{I}{A}{i}}{F}
+                }{x(i)}{X(i)}$.
+                $\neighbourhoods{x(i)}{X(i)}\subseteq
+                    \filterPushforward{S}{\carrier[X(i)]}{
+                        \dependentProjection{I}{A}{i}}{F}$ by
+                    \obv{filter_converges}.
+                Hence $U\in
+                    \filterPushforward{S}{\carrier[X(i)]}{
+                        \dependentProjection{I}{A}{i}}{F}$ by
+                    \obv{subseteq}.
+                Hence $\preimg{\dependentProjection{I}{A}{i}}{U}\in F$ by
+                    \obv{filter_pushforward_iff}.
+            \end{subproof}
+            $\boundedIntersection{
+                \dependentProduct{I}{
+                    \indexedTopologicalCarrierFamily{I}{X}}}{D}\in F$ by
+                \obv{filter_bounded_finite_intersection_in}.
+            Hence $\boundedIntersection{S}{D}\in F$.
+        \end{subproof}
+        Follows by
+            \obv{filter_converges_iff_open_basis_members}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}

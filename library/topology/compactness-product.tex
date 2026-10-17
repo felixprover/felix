@@ -1,0 +1,138 @@
+\section{Compactness of binary products}
+
+\import{topology/compactness-filter.tex}
+\import{topology/product-neighbourhood-filter.tex}
+
+Convergence in a binary product is coordinatewise.  This filter formulation
+isolates the topological fact needed for the compactness theorem.
+
+\begin{theorem}\label{filter_converges_in_binary_product_iff_coordinates}
+    Let $X,Y$ be topological spaces.
+    Let $F$ be a filter on $\carrier[X]\times\carrier[Y]$.
+    Let $x\in\carrier[X]$ and $y\in\carrier[Y]$.
+    Then
+        $\filterConverges{F}{(x,y)}{\BinaryProductTopology{X}{Y}}$ iff
+        $\filterConverges{
+            \filterPushforward{
+                \carrier[X]\times\carrier[Y]}{\carrier[X]}{
+                \firstProductProjection{\carrier[X]}{\carrier[Y]}}{F}
+        }{x}{X}$ and
+        $\filterConverges{
+            \filterPushforward{
+                \carrier[X]\times\carrier[Y]}{\carrier[Y]}{
+                \secondProductProjection{\carrier[X]}{\carrier[Y]}}{F}
+        }{y}{Y}$.
+\end{theorem}
+\begin{proof}
+    Let $S=\carrier[X]$ and $T=\carrier[Y]$.
+    Let $p_1=\firstProductProjection{S}{T}$ and
+        $p_2=\secondProductProjection{S}{T}$.
+    Let $F_1=\filterPushforward{S\times T}{S}{p_1}{F}$ and
+        $F_2=\filterPushforward{S\times T}{T}{p_2}{F}$.
+
+    $\BinaryProductTopology{X}{Y}$ is a topological space by
+        \obv{binary_product_topology_is_topological_space}.
+    $\carrier[\BinaryProductTopology{X}{Y}]=S\times T$ by
+        \obv{binary_product_topology_carrier}.
+    Hence $F$ is a filter on
+        $\carrier[\BinaryProductTopology{X}{Y}]$.
+    $p_1\in\funs{S\times T}{S}$ and
+        $p_2\in\funs{S\times T}{T}$ by
+        \auto{first_product_projection_type,
+            second_product_projection_type}.
+    $F_1$ is a filter on $S$ by
+        \auto{filter_pushforward_is_filter}.
+    $F_2$ is a filter on $T$ by
+        \auto{filter_pushforward_is_filter}.
+    $\neighbourhoods{x}{X}$ is a filter on $S$ by
+        \obv{neighbourhoods_is_filter}.
+    $\neighbourhoods{y}{Y}$ is a filter on $T$ by
+        \obv{neighbourhoods_is_filter}.
+
+    $\filterConverges{F_1}{x}{X}$ iff
+        $p_1$ tends from $F$ on $S\times T$ to
+            $\neighbourhoods{x}{X}$ on $S$ by
+        \auto{filter_converges,filter_tendsto,filter_refines}.
+    $\filterConverges{F_2}{y}{Y}$ iff
+        $p_2$ tends from $F$ on $S\times T$ to
+            $\neighbourhoods{y}{Y}$ on $T$ by
+        \auto{filter_converges,filter_tendsto,filter_refines}.
+
+    $\identity{S\times T}\in\funs{S\times T}{S\times T}$ by
+        \obv{id_elem_funs}.
+    $p_1\circ\identity{S\times T}=p_1$ and
+        $p_2\circ\identity{S\times T}=p_2$ by
+        \obv{funs_circ_identity_right}.
+    Hence $\identity{S\times T}$ tends from $F$ on $S\times T$ to
+        $\productFilter{S}{T}{
+            \neighbourhoods{x}{X}}{\neighbourhoods{y}{Y}}$ on
+            $S\times T$ iff
+        $\filterConverges{F_1}{x}{X}$ and
+        $\filterConverges{F_2}{y}{Y}$ by
+        \auto{filter_tendsto_product_iff}.
+
+    $\neighbourhoods{(x,y)}{\BinaryProductTopology{X}{Y}}
+        =\productFilter{\carrier[X]}{\carrier[Y]}{
+            \neighbourhoods{x}{X}}{\neighbourhoods{y}{Y}}$ by
+        \obv{neighbourhood_filter_of_product}.
+    $(x,y)\in S\times T$ by \obv{times_tuple_intro}.
+    Hence $(x,y)\in\carrier[\BinaryProductTopology{X}{Y}]$.
+    $\filterConverges{F}{(x,y)}{\BinaryProductTopology{X}{Y}}$ iff
+        $\identity{\carrier[\BinaryProductTopology{X}{Y}]}$ tends from
+            $F$ on $\carrier[\BinaryProductTopology{X}{Y}]$ to
+            $\neighbourhoods{(x,y)}{\BinaryProductTopology{X}{Y}}$ on
+            $\carrier[\BinaryProductTopology{X}{Y}]$ by
+        \obv{filter_converges_iff_identity_tendsto}.
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{binary_product_of_compact_spaces_is_compact}
+    Let $X,Y$ be compact topological spaces.
+    Then $\BinaryProductTopology{X}{Y}$ is compact.
+\end{theorem}
+\begin{proof}
+    Let $S=\carrier[X]$ and $T=\carrier[Y]$.
+    Let $p_1=\firstProductProjection{S}{T}$ and
+        $p_2=\secondProductProjection{S}{T}$.
+
+    $\BinaryProductTopology{X}{Y}$ is a topological space by
+        \obv{binary_product_topology_is_topological_space}.
+    $\carrier[\BinaryProductTopology{X}{Y}]=S\times T$ by
+        \auto{binary_product_topology_carrier}.
+    $p_1\in\funs{S\times T}{S}$ and
+        $p_2\in\funs{S\times T}{T}$ by
+        \auto{first_product_projection_type,
+            second_product_projection_type}.
+
+    Show that for every $U$ such that
+        $U$ is an ultrafilter on
+            $\carrier[\BinaryProductTopology{X}{Y}]$ there exists
+        $p\in\carrier[\BinaryProductTopology{X}{Y}]$ such that
+            $\filterConverges{U}{p}{\BinaryProductTopology{X}{Y}}$.
+    \begin{subproof}
+        Fix $U$.
+        Assume $U$ is an ultrafilter on
+            $\carrier[\BinaryProductTopology{X}{Y}]$.
+        Hence $U$ is an ultrafilter on $S\times T$.
+        Hence $U$ is a proper filter on $S\times T$ by
+            \auto{ultrafilter,maximalfilter}.
+        Hence $U$ is a filter on $S\times T$ by
+            \obv{proper_filter_is_filter}.
+        Let $U_1=\filterPushforward{S\times T}{S}{p_1}{U}$ and
+            $U_2=\filterPushforward{S\times T}{T}{p_2}{U}$.
+        $U_1$ is an ultrafilter on $S$ by
+            \auto{filter_pushforward_preserves_ultrafilters}.
+        $U_2$ is an ultrafilter on $T$ by
+            \auto{filter_pushforward_preserves_ultrafilters}.
+        Take $x\in S$ such that $\filterConverges{U_1}{x}{X}$ by
+            \auto{compact_iff_every_ultrafilter_converges}.
+        Take $y\in T$ such that $\filterConverges{U_2}{y}{Y}$ by
+            \auto{compact_iff_every_ultrafilter_converges}.
+        Hence $\filterConverges{U}{(x,y)}{
+            \BinaryProductTopology{X}{Y}}$ by
+            \auto{filter_converges_in_binary_product_iff_coordinates}.
+        $(x,y)\in S\times T$ by \obv{times_tuple_intro}.
+        Hence $(x,y)\in\carrier[\BinaryProductTopology{X}{Y}]$.
+    \end{subproof}
+    Follows by \obv{compact_iff_every_ultrafilter_converges}.
+\end{proof}

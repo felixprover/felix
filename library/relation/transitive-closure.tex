@@ -1,0 +1,397 @@
+\import{relation/closure.tex}
+
+\section{Transitive closures}
+
+\begin{definition}\label{transitive_supersets}
+    $\transitiveSupersets{R} =
+        \{S\in\pow{\fld{R}\times\fld{R}}\mid
+            \text{$R\subseteq S$ and $S$ is transitive}\}$.
+\end{definition}
+
+\begin{definition}\label{transitive_closure}
+    $\transitiveClosure{R} = \inters{\transitiveSupersets{R}}$.
+\end{definition}
+
+\begin{lemma}\label{field_square_is_transitive}
+    $\fld{R}\times\fld{R}$ is transitive.
+\end{lemma}
+\begin{proof}
+    Follows by \auto{transitive,times_tuple_elim,times_tuple_intro}.
+\end{proof}
+
+\begin{lemma}\label{transitive_supersets_inhabited}
+    Let $R$ be a relation.
+    Then $\transitiveSupersets{R}$ is inhabited.
+\end{lemma}
+\begin{proof}
+    $R\subseteq\fld{R}\times\fld{R}$
+        by \obv{relation_subseteq_times_fld}.
+    $\fld{R}\times\fld{R}\in\pow{\fld{R}\times\fld{R}}$
+        by \obv{powerset_intro,subseteq_refl}.
+    Thus $\fld{R}\times\fld{R}\in\transitiveSupersets{R}$
+        by \obv{transitive_supersets,field_square_is_transitive}.
+\end{proof}
+
+\begin{classification}\label{transitive_closure_type}
+    Let $R$ be a relation.
+    Then $\transitiveClosure{R}$ is a binary relation on $\fld{R}$.
+\end{classification}
+\begin{proof}
+    $\fld{R}\times\fld{R}\in\transitiveSupersets{R}$
+        by \obv{transitive_supersets,relation_subseteq_times_fld,powerset_intro,subseteq_refl,field_square_is_transitive}.
+    Hence $\transitiveClosure{R}\subseteq\fld{R}\times\fld{R}$
+        by \auto{transitive_closure,inters_subseteq_elem}.
+    Follows by definition.
+\end{proof}
+
+\begin{classification}\label{transitive_closure_binary_relation_on}
+    Suppose $R$ is a binary relation on $X$.
+    Then $\transitiveClosure{R}$ is a binary relation on $X$.
+\end{classification}
+\begin{proof}
+    $R$ is a relation by notion.
+    $\transitiveClosure{R}\subseteq\fld{R}\times\fld{R}$
+        by \obv{transitive_closure_type}.
+    $\fld{R}\subseteq X$ by \obv{binary_relation_field_subseteq}.
+    $\fld{R}\times\fld{R}\subseteq X\times\fld{R}$
+        by \obv{times_subseteq_left}.
+    $X\times\fld{R}\subseteq X\times X$
+        by \obv{times_subseteq_right}.
+    Hence $\transitiveClosure{R}\subseteq X\times X$
+        by \obv{subseteq_transitive}.
+    Follows by definition.
+\end{proof}
+
+\begin{proposition}\label{transitive_closure_is_relation}
+    Let $R$ be a relation.
+    Then $\transitiveClosure{R}$ is a relation.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{relation,transitive_closure_type,times_elem_is_tuple,subseteq}.
+\end{proof}
+
+\begin{proposition}\label{transitive_closure_contains}
+    Let $R$ be a relation.
+    Then $R\subseteq\transitiveClosure{R}$.
+\end{proposition}
+\begin{proof}
+    $\transitiveSupersets{R}$ is inhabited by \obv{transitive_supersets_inhabited}.
+    For every $S\in\transitiveSupersets{R}$ we have $R\subseteq S$
+        by \obv{transitive_supersets}.
+    Follows by \auto{transitive_closure,inters_greatest}.
+\end{proof}
+
+\begin{proposition}\label{transitive_closure_is_transitive}
+    Let $R$ be a relation.
+    Then $\transitiveClosure{R}$ is transitive.
+\end{proposition}
+\begin{proof}
+    $\transitiveSupersets{R}$ is inhabited by \obv{transitive_supersets_inhabited}.
+    Follows by \auto{transitive,transitive_closure,inters_iff_forall,transitive_supersets}.
+\end{proof}
+
+\begin{lemma}\label{transitive_closure_candidate}
+    Let $R$ be a relation.
+    Let $S$ be a transitive relation.
+    Suppose $R\subseteq S$.
+    Then $S\inter(\fld{R}\times\fld{R})\in\transitiveSupersets{R}$.
+\end{lemma}
+\begin{proof}
+    $R\subseteq\fld{R}\times\fld{R}$
+        by \obv{relation_subseteq_times_fld}.
+    Thus $R\subseteq S\inter(\fld{R}\times\fld{R})$
+        by \obv{subseteq_inter_iff}.
+    $S\inter(\fld{R}\times\fld{R})\subseteq\fld{R}\times\fld{R}$
+        by \obv{inter_lower_right}.
+    Hence $S\inter(\fld{R}\times\fld{R})
+        \in\pow{\fld{R}\times\fld{R}}$ by \obv{powerset_intro}.
+    $S\inter(\fld{R}\times\fld{R})$ is transitive
+        by \auto{transitive,inter,times_tuple_elim,times_tuple_intro}.
+    Follows by \obv{transitive_supersets}.
+\end{proof}
+
+\begin{proposition}\label{transitive_closure_least}
+    Let $R$ be a relation.
+    Let $S$ be a transitive relation.
+    Suppose $R\subseteq S$.
+    Then $\transitiveClosure{R}\subseteq S$.
+\end{proposition}
+\begin{proof}
+    $S\inter(\fld{R}\times\fld{R})\in\transitiveSupersets{R}$
+        by \obv{transitive_closure_candidate}.
+    $\transitiveClosure{R}\subseteq S\inter(\fld{R}\times\fld{R})$
+        by \auto{transitive_closure,inters_subseteq_elem}.
+    Follows by \auto{subseteq,inter}.
+\end{proof}
+
+\begin{proposition}\label{converse_transitive_closure}
+    Let $R$ be a relation.
+    Then $\converse{\transitiveClosure{R}}
+        =\transitiveClosure{\converse{R}}$.
+\end{proposition}
+\begin{proof}
+    $\converse{\transitiveClosure{R}}$ is a transitive relation by
+        \obv{transitive_closure_is_relation,
+            transitive_closure_is_transitive,converse_is_relation,
+            converse_transitive}.
+    $\converse{R}\subseteq\converse{\transitiveClosure{R}}$ by
+        \obv{transitive_closure_contains,converse_subseteq_intro}.
+    Hence $\transitiveClosure{\converse{R}}
+        \subseteq\converse{\transitiveClosure{R}}$
+        by \obv{transitive_closure_least}.
+
+    $\transitiveClosure{\converse{R}}$ is a transitive relation by
+        \obv{transitive_closure_is_relation,
+            transitive_closure_is_transitive}.
+    $\converse{\transitiveClosure{\converse{R}}}$ is a transitive relation
+        by \obv{converse_is_relation,converse_transitive}.
+    $R\subseteq\converse{\transitiveClosure{\converse{R}}}$ by
+        \auto{subseteq,relation,transitive_closure_contains,
+            converse_iff}.
+    Hence $\transitiveClosure{R}
+        \subseteq\converse{\transitiveClosure{\converse{R}}}$
+        by \obv{transitive_closure_least}.
+    Therefore $\converse{\transitiveClosure{R}}
+        \subseteq\transitiveClosure{\converse{R}}$ by
+        \auto{subseteq,relation,converse_iff}.
+    Follows by \obv{subseteq_antisymmetric}.
+\end{proof}
+
+\begin{proposition}\label{transitive_closure_eq}
+    Let $R$ be a transitive relation.
+    Then $\transitiveClosure{R}=R$.
+\end{proposition}
+\begin{proof}
+    $R\subseteq\transitiveClosure{R}$ by \obv{transitive_closure_contains}.
+    $\transitiveClosure{R}\subseteq R$
+        by \obv{transitive_closure_least,subseteq_refl}.
+    Follows by \obv{subseteq_antisymmetric}.
+\end{proof}
+
+\begin{definition}\label{reflexive_transitive_closure}
+    $\reflexiveTransitiveClosure{X}{R}
+        = \transitiveClosure{\reflexiveClosure{X}{R}}$.
+\end{definition}
+
+\begin{proposition}\label{reflexive_transitive_closure_is_relation}
+    Suppose $R$ is a binary relation on $X$.
+    Then $\reflexiveTransitiveClosure{X}{R}$ is a relation.
+\end{proposition}
+\begin{proof}
+    $R$ is a relation by \auto{relation,subseteq,times_elem_is_tuple}.
+    $\identity{X}$ is a relation by \obv{id_is_relation}.
+    Thus $\reflexiveClosure{X}{R}$ is a relation
+        by \auto{reflexive_closure,union_relations_is_relation}.
+    Follows by \auto{reflexive_transitive_closure,transitive_closure_is_relation}.
+\end{proof}
+
+\begin{classification}\label{reflexive_transitive_closure_type}
+    Suppose $R$ is a binary relation on $X$.
+    Then $\reflexiveTransitiveClosure{X}{R}$ is a binary relation on $X$.
+\end{classification}
+\begin{proof}
+    $\reflexiveClosure{X}{R}$ is a binary relation on $X$
+        by \obv{reflexive_closure_binary_relation_on}.
+    Hence $\transitiveClosure{\reflexiveClosure{X}{R}}$
+        is a binary relation on $X$
+        by \obv{transitive_closure_binary_relation_on}.
+    Follows by \obv{reflexive_transitive_closure}.
+\end{proof}
+
+\begin{proposition}\label{reflexive_transitive_closure_contains}
+    Suppose $R$ is a binary relation on $X$.
+    Then $R\subseteq\reflexiveTransitiveClosure{X}{R}$.
+\end{proposition}
+\begin{proof}
+    $R$ is a relation by \auto{relation,subseteq,times_elem_is_tuple}.
+    $\identity{X}$ is a relation by \obv{id_is_relation}.
+    Thus $\reflexiveClosure{X}{R}$ is a relation
+        by \auto{reflexive_closure,union_relations_is_relation}.
+    $R\subseteq\reflexiveClosure{X}{R}$
+        by \auto{reflexive_closure,union_upper_left}.
+    $\reflexiveClosure{X}{R}\subseteq\reflexiveTransitiveClosure{X}{R}$
+        by \auto{reflexive_transitive_closure,transitive_closure_contains}.
+    Follows by \obv{subseteq_transitive}.
+\end{proof}
+
+\begin{proposition}\label{reflexive_transitive_closure_is_reflexive}
+    Suppose $R$ is a binary relation on $X$.
+    Then $\reflexiveTransitiveClosure{X}{R}$ is reflexive on $X$.
+\end{proposition}
+\begin{proof}
+    $R$ is a relation by \auto{relation,subseteq,times_elem_is_tuple}.
+    $\identity{X}$ is a relation by \obv{id_is_relation}.
+    Thus $\reflexiveClosure{X}{R}$ is a relation
+        by \auto{reflexive_closure,union_relations_is_relation}.
+    $\reflexiveClosure{X}{R}\subseteq\reflexiveTransitiveClosure{X}{R}$
+        by \auto{reflexive_transitive_closure,transitive_closure_contains}.
+    Follows by \auto{reflexive_on,reflexive_closure_is_reflexive,subseteq}.
+\end{proof}
+
+\begin{proposition}\label{identity_subseteq_reflexive_transitive_closure}
+    Suppose $R$ is a binary relation on $X$.
+    Then $\identity{X}\subseteq
+        \reflexiveTransitiveClosure{X}{R}$.
+\end{proposition}
+\begin{proof}
+    $\reflexiveTransitiveClosure{X}{R}$ is reflexive on $X$
+        by \obv{reflexive_transitive_closure_is_reflexive}.
+    Show that for every $w\in\identity{X}$ we have
+        $w\in\reflexiveTransitiveClosure{X}{R}$.
+    \begin{subproof}
+        Fix $w\in\identity{X}$.
+        Take $x\in X$ such that $w=(x,x)$ by \obv{id_elem_inspect}.
+        $x\mathrel{\reflexiveTransitiveClosure{X}{R}}x$
+            by \obv{reflexive_on}.
+    \end{subproof}
+    Follows by \obv{subseteq}.
+\end{proof}
+
+\begin{proposition}\label{reflexive_transitive_closure_is_transitive}
+    Suppose $R$ is a binary relation on $X$.
+    Then $\reflexiveTransitiveClosure{X}{R}$ is transitive.
+\end{proposition}
+\begin{proof}
+    $R$ is a relation by \auto{relation,subseteq,times_elem_is_tuple}.
+    $\identity{X}$ is a relation by \obv{id_is_relation}.
+    Thus $\reflexiveClosure{X}{R}$ is a relation
+        by \auto{reflexive_closure,union_relations_is_relation}.
+    Follows by \auto{reflexive_transitive_closure,transitive_closure_is_transitive}.
+\end{proof}
+
+\begin{proposition}\label{reflexive_transitive_closure_least}
+    Suppose $R$ is a binary relation on $X$.
+    Let $S$ be a relation.
+    Suppose $S$ is transitive and $S$ is reflexive on $X$.
+    Suppose $R\subseteq S$.
+    Then $\reflexiveTransitiveClosure{X}{R}\subseteq S$.
+\end{proposition}
+\begin{proof}
+    $R$ is a relation by \obv{relation,subseteq,times_elem_is_tuple}.
+    $\identity{X}$ is a relation by \obv{id_is_relation}.
+    Thus $\reflexiveClosure{X}{R}$ is a relation
+        by \auto{reflexive_closure,union_relations_is_relation}.
+    $\identity{X}\subseteq S$
+        by \auto{subseteq,relation,id_iff,reflexive_on}.
+    Thus $\reflexiveClosure{X}{R}\subseteq S$
+        by \auto{reflexive_closure,union_subsets_is_subset}.
+    Follows by \auto{reflexive_transitive_closure,transitive_closure_least}.
+\end{proof}
+
+\begin{proposition}\label{transitive_closure_subseteq_reflexive_transitive_closure}
+    Suppose $R$ is a binary relation on $X$.
+    Then $\transitiveClosure{R}\subseteq
+        \reflexiveTransitiveClosure{X}{R}$.
+\end{proposition}
+\begin{proof}
+    $\reflexiveTransitiveClosure{X}{R}$ is a transitive relation by
+        \obv{reflexive_transitive_closure_is_relation,
+            reflexive_transitive_closure_is_transitive}.
+    $R\subseteq\reflexiveTransitiveClosure{X}{R}$
+        by \obv{reflexive_transitive_closure_contains}.
+    Follows by \obv{transitive_closure_least}.
+\end{proof}
+
+\begin{theorem}\label{reflexive_transitive_closure_first_step_eq}
+    Suppose $R$ is a binary relation on $X$.
+    Let $T=\reflexiveTransitiveClosure{X}{R}$.
+    Then $T=\identity{X}\union(T\circ R)$.
+\end{theorem}
+\begin{proof}
+    Let $S=\identity{X}\union(T\circ R)$.
+    $T$ is a transitive relation and $T$ is reflexive on $X$ by
+        \auto{reflexive_transitive_closure_is_relation,
+            reflexive_transitive_closure_is_transitive,
+            reflexive_transitive_closure_is_reflexive}.
+    $R\subseteq T$ by \obv{reflexive_transitive_closure_contains}.
+    $S$ is a relation by
+        \obv{circ_is_relation,id_is_relation,union_relations_is_relation}.
+    $S$ is reflexive on $X$ by
+        \auto{reflexive_on,union_iff,id_iff}.
+    Show that $R\subseteq S$.
+    \begin{subproof}
+        Show that for every $w\in R$ we have $w\in S$.
+        \begin{subproof}
+            Fix $w\in R$.
+            Take $x,y$ such that $w=(x,y)$ by \obv{relation}.
+            $x\mathrel{R}y$.
+            $(x,y)\in X\times X$ by \obv{subseteq}.
+            Hence $y\in X$ by \auto{times_tuple_elim}.
+            Thus $y\mathrel{T}y$ by \obv{reflexive_on}.
+            Hence $x\mathrel{T\circ R}y$ by \auto{circ_iff}.
+            Thus $(x,y)\in\identity{X}\union(T\circ R)$
+                by \auto{union_iff}.
+            Hence $(x,y)\in S$.
+        \end{subproof}
+        Follows by \obv{subseteq}.
+    \end{subproof}
+    $S$ is transitive by
+        \auto{transitive,union_iff,id_iff,circ_iff,subseteq}.
+    Hence $\reflexiveTransitiveClosure{X}{R}\subseteq S$
+        by \obv{reflexive_transitive_closure_least}.
+    Thus $T\subseteq S$.
+    $\identity{X}\subseteq T$ by
+        \obv{identity_subseteq_reflexive_transitive_closure}.
+    Show that every element of $T\circ R$ is an element of $T$.
+    \begin{subproof}
+        Fix $w\in T\circ R$.
+        Take $x,y,z$ such that $w=(x,z)$ and
+            $x\mathrel{R}y\mathrel{T}z$ by \obv{circ}.
+        $x\mathrel{T}y$ by \obv{subseteq}.
+        Hence $x\mathrel{T}z$ by \obv{transitive}.
+    \end{subproof}
+    $T\circ R\subseteq T$ by \obv{subseteq}.
+    Hence $\identity{X}\union(T\circ R)\subseteq T$
+        by \obv{union_subsets_is_subset}.
+    Thus $S\subseteq T$.
+    $T=S$ by \obv{subseteq_antisymmetric}.
+\end{proof}
+
+\begin{theorem}\label{reflexive_transitive_closure_first_step}
+    Suppose $R$ is a binary relation on $X$.
+    Let $x,y\in X$.
+    Then $x\mathrel{\reflexiveTransitiveClosure{X}{R}}y$ iff
+        $x=y$ or there exists $z\in X$ such that
+            $x\mathrel{R}z$ and
+            $z\mathrel{\reflexiveTransitiveClosure{X}{R}}y$.
+\end{theorem}
+\begin{proof}
+    Let $T=\reflexiveTransitiveClosure{X}{R}$.
+    $T=\identity{X}\union(T\circ R)$ by
+        \obv{reflexive_transitive_closure_first_step_eq}.
+    Hence $x\mathrel{T}y$ iff
+        $x\mathrel{\identity{X}}y$ or there exists $z$ such that
+            $x\mathrel{R}z$ and $z\mathrel{T}y$ by
+        \auto{union_iff,circ_iff}.
+    $R\subseteq X\times X$ by definition.
+    Follows by \auto{id_iff,subseteq,times_tuple_elim}.
+\end{proof}
+
+\begin{theorem}\label{converse_reflexive_transitive_closure}
+    Suppose $R$ is a binary relation on $X$.
+    Then $\converse{\reflexiveTransitiveClosure{X}{R}}
+        =\reflexiveTransitiveClosure{X}{\converse{R}}$.
+\end{theorem}
+\begin{proof}
+    $\reflexiveClosure{X}{R}$ is a binary relation on $X$ by notion.
+    Hence $\reflexiveClosure{X}{R}$ is a relation by notion.
+    Follows by
+        \auto{reflexive_transitive_closure,
+            converse_transitive_closure,converse_reflexive_closure}.
+\end{proof}
+
+\begin{theorem}\label{reflexive_transitive_closure_last_step}
+    Suppose $R$ is a binary relation on $X$.
+    Let $x,y\in X$.
+    Then $x\mathrel{\reflexiveTransitiveClosure{X}{R}}y$ iff
+        $x=y$ or there exists $z\in X$ such that
+            $x\mathrel{\reflexiveTransitiveClosure{X}{R}}z$ and
+            $z\mathrel{R}y$.
+\end{theorem}
+\begin{proof}
+    $\converse{R}$ is a binary relation on $X$
+        by \obv{converse_binary_relation_on}.
+    Follows by
+        \auto{converse_reflexive_transitive_closure,converse_iff,
+            reflexive_transitive_closure_first_step}.
+\end{proof}

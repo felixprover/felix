@@ -1,0 +1,651 @@
+\section{Finite joins and meets}
+
+\import{order/lattice.tex}
+\import{order/supremum.tex}
+\import{set/finite.tex}
+
+\begin{theorem}\label{finite_subset_has_supremum}
+    Let $L$ be a bounded lattice.
+    Suppose $S\subseteq\carrier[L]$ and $S$ is a finite set.
+    Then $\hasSupremum{L}{S}$.
+\end{theorem}
+\begin{proof}
+    $L$ is a lattice by \obv{bounded_lattice}.
+    Hence $L$ is an ordered set by \obv{lattice_is_ordered_set}.
+    $\leq[L]$ is an order on $\carrier[L]$ by
+        \obv{ordered_set_order_on_carrier}.
+    Let $C=\{T\in\pow{\carrier[L]}\mid
+        \hasSupremum{L}{T}\}$.
+    $\latticeBottom[L]\in\carrier[L]$ by \obv{lattice_bottom_type}.
+    For all $s\in\emptyset$ we have
+        $s\mathrel{\leq[L]}\latticeBottom[L]$ by \auto{emptyset}.
+    For all $v\in\carrier[L]$ such that
+        for all $s\in\emptyset$ we have $s\mathrel{\leq[L]}v$ we have
+        $\latticeBottom[L]\mathrel{\leq[L]}v$ by
+        \obv{lattice_bottom_leq}.
+    Hence $\latticeBottom[L]$ is a supremum of $\emptyset$ in $L$ by
+        \obv{supremum_element,least_upper_bound_iff_order_on}.
+    Thus $\hasSupremum{L}{\emptyset}$ by \obv{has_supremum_iff}.
+    Hence $\emptyset\in C$ by \obv{powerset_bottom}.
+
+    Show that for all $T,x$ such that $T\in C$ and $x\in S$ we have
+        $\cons{x}{T}\in C$.
+    \begin{subproof}
+        Fix $T,x$.
+        Assume $T\in C$ and $x\in S$.
+        $T\subseteq\carrier[L]$ by \obv{pow_iff,subseteq}.
+        $x\in\carrier[L]$ by \obv{elem_subseteq}.
+        Let $u=\supremum{L}{T}$.
+        $u\in\carrier[L]$ by \auto{supremum_type}.
+        $\join[L](x,u)\in\carrier[L]$ by
+            \obv{lattice_is_join_semilattice,join_type}.
+        Show for all $s\in\cons{x}{T}$ we have
+            $s\mathrel{\leq[L]}\join[L](x,u)$.
+        \begin{subproof}
+            Fix $s\in\cons{x}{T}$.
+            $s=x$ or $s\in T$ by \obv{cons_iff}.
+            \begin{byCase}
+            \caseOf{$s=x$.}
+                Follows by
+                    \auto{lattice_is_join_semilattice,join_ub}.
+            \caseOf{$s\in T$.}
+                $s\mathrel{\leq[L]}u$ by \auto{supremum_upper}.
+                $u\mathrel{\leq[L]}\join[L](x,u)$ by
+                    \auto{lattice_is_join_semilattice,join_ub}.
+                $\leq[L]$ is transitive by
+                    \obv{ordered_set_order_transitive}.
+                Follows by \obv{transitive}.
+            \end{byCase}
+        \end{subproof}
+        Show for all $v\in\carrier[L]$ such that
+            for all $s\in\cons{x}{T}$ we have $s\mathrel{\leq[L]}v$
+            we have $\join[L](x,u)\mathrel{\leq[L]}v$.
+        \begin{subproof}
+            Fix $v\in\carrier[L]$.
+            Assume for all $s\in\cons{x}{T}$ we have
+                $s\mathrel{\leq[L]}v$.
+            $x\mathrel{\leq[L]}v$ by \obv{cons_left}.
+            For all $s\in T$ we have $s\mathrel{\leq[L]}v$ by
+                \auto{cons_iff}.
+            Hence $u\mathrel{\leq[L]}v$ by \auto{supremum_least}.
+            Follows by
+                \obv{lattice_is_join_semilattice,join_lub}.
+        \end{subproof}
+        Hence $\join[L](x,u)$ is a supremum of $\cons{x}{T}$ in $L$ by
+            \auto{supremum_element,least_upper_bound_iff_order_on}.
+        Thus $\hasSupremum{L}{\cons{x}{T}}$ by
+            \obv{has_supremum_iff}.
+        $\cons{x}{T}\subseteq\carrier[L]$ by
+            \obv{cons_subseteq_intro}.
+        Hence $\cons{x}{T}\in\pow{\carrier[L]}$ by
+            \obv{pow_iff,subseteq}.
+    \end{subproof}
+    $S\in C$ by \obv{finite_induction}.
+\end{proof}
+
+\begin{definition}\label{finite_join}
+    Let $L$ be an ordered set.
+    $\finiteJoin{L}{S}=\supremum{L}{S}$.
+\end{definition}
+
+\begin{theorem}\label{finite_join_is_supremum}
+    Let $L$ be a bounded lattice.
+    Suppose $S\subseteq\carrier[L]$ and $S$ is a finite set.
+    Then $\finiteJoin{L}{S}$ is a supremum of $S$ in $L$.
+\end{theorem}
+\begin{proof}
+    Hence $L$ is an ordered set by \obv{lattice_is_ordered_set}.
+    $\hasSupremum{L}{S}$ by \obv{finite_subset_has_supremum}.
+    Follows by \auto{finite_join,supremum_spec}.
+\end{proof}
+
+\begin{proposition}\label{finite_join_type}
+    Let $L$ be a bounded lattice.
+    Suppose $S\subseteq\carrier[L]$ and $S$ is a finite set.
+    Then $\finiteJoin{L}{S}\in\carrier[L]$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{finite_join_is_supremum,supremum_element,
+            least_upper_bound_is_upper_bound,upper_bound}.
+\end{proof}
+
+\begin{proposition}\label{finite_join_upper}
+    Let $L$ be a bounded lattice.
+    Suppose $S\subseteq\carrier[L]$ and $S$ is a finite set.
+    Let $s\in S$.
+    Then $s\mathrel{\leq[L]}\finiteJoin{L}{S}$.
+\end{proposition}
+\begin{proof}
+    Hence $L$ is an ordered set by \obv{lattice_is_ordered_set}.
+    $\hasSupremum{L}{S}$ by \obv{finite_subset_has_supremum}.
+    Follows by \auto{finite_join,supremum_upper}.
+\end{proof}
+
+\begin{proposition}\label{finite_join_least}
+    Let $L$ be a bounded lattice.
+    Suppose $S\subseteq\carrier[L]$ and $S$ is a finite set.
+    Let $u\in\carrier[L]$.
+    Suppose for all $s\in S$ we have $s\mathrel{\leq[L]}u$.
+    Then $\finiteJoin{L}{S}\mathrel{\leq[L]}u$.
+\end{proposition}
+\begin{proof}
+    Hence $L$ is an ordered set by \obv{lattice_is_ordered_set}.
+    $\hasSupremum{L}{S}$ by \obv{finite_subset_has_supremum}.
+    Follows by \auto{finite_join,supremum_least}.
+\end{proof}
+
+\begin{proposition}\label{finite_join_leq_iff}
+    Let $L$ be a bounded lattice.
+    Suppose $S\subseteq\carrier[L]$ and $S$ is a finite set.
+    Let $u\in\carrier[L]$.
+    Then $\finiteJoin{L}{S}\mathrel{\leq[L]}u$ iff
+        for all $s\in S$ we have $s\mathrel{\leq[L]}u$.
+\end{proposition}
+\begin{proof}
+    $\finiteJoin{L}{S}\in\carrier[L]$ by \obv{finite_join_type}.
+    $\leq[L]$ is transitive by
+        \obv{bounded_lattice,lattice_is_ordered_set,
+            ordered_set_order_transitive}.
+    Show that if $\finiteJoin{L}{S}\mathrel{\leq[L]}u$, then
+        for all $s\in S$ we have $s\mathrel{\leq[L]}u$.
+    \begin{subproof}
+        Assume $\finiteJoin{L}{S}\mathrel{\leq[L]}u$.
+        Fix $s\in S$.
+        $s\mathrel{\leq[L]}\finiteJoin{L}{S}$ by
+            \obv{finite_join_upper}.
+        Follows by \obv{transitive}.
+    \end{subproof}
+    Follows by \auto{finite_join_least}.
+\end{proof}
+
+\begin{proposition}\label{finite_join_empty}
+    Let $L$ be a bounded lattice.
+    Then $\finiteJoin{L}{\emptyset}=\latticeBottom[L]$.
+\end{proposition}
+\begin{proof}
+    $\emptyset\subseteq\carrier[L]$ by \obv{emptyset_subseteq}.
+    $\emptyset$ is a finite set by \obv{emptyset_is_finite}.
+    $\finiteJoin{L}{\emptyset}\in\carrier[L]$ by
+        \obv{finite_join_type}.
+    $\latticeBottom[L]\in\carrier[L]$ by \obv{lattice_bottom_type}.
+    $\finiteJoin{L}{\emptyset}\mathrel{\leq[L]}\latticeBottom[L]$ by
+        \auto{finite_join_least,emptyset}.
+    $\latticeBottom[L]\mathrel{\leq[L]}\finiteJoin{L}{\emptyset}$ by
+        \obv{lattice_bottom_leq}.
+    Follows by
+        \auto{bounded_lattice,lattice_is_ordered_set,
+            ordered_set_order_antisymmetric,antisymmetric}.
+\end{proof}
+
+\begin{proposition}\label{finite_join_singleton}
+    Let $L$ be a bounded lattice.
+    Let $x\in\carrier[L]$.
+    Then $\finiteJoin{L}{\{x\}}=x$.
+\end{proposition}
+\begin{proof}
+    $\{x\}\subseteq\carrier[L]$ by \auto{subseteq,singleton_iff}.
+    $\{x\}$ is a finite set by \obv{singleton_is_finite}.
+    $\finiteJoin{L}{\{x\}}\in\carrier[L]$ by
+        \obv{finite_join_type}.
+    $\leq[L]$ is reflexive on $\carrier[L]$ by
+        \obv{bounded_lattice,lattice_is_ordered_set,
+            ordered_set_order_reflexive}.
+    For all $s\in\{x\}$ we have $s\mathrel{\leq[L]}x$ by
+        \auto{singleton_iff,reflexive_on}.
+    $\finiteJoin{L}{\{x\}}\mathrel{\leq[L]}x$ by
+        \obv{finite_join_least}.
+    $x\mathrel{\leq[L]}\finiteJoin{L}{\{x\}}$ by
+        \auto{finite_join_upper,singleton_iff}.
+    Follows by
+        \auto{bounded_lattice,lattice_is_ordered_set,
+            ordered_set_order_antisymmetric,antisymmetric}.
+\end{proof}
+
+\begin{proposition}\label{finite_join_cons}
+    Let $L$ be a bounded lattice.
+    Suppose $S\subseteq\carrier[L]$ and $S$ is a finite set.
+    Let $x\in\carrier[L]$.
+    Then
+        $\finiteJoin{L}{\cons{x}{S}}
+            =\join[L](x,\finiteJoin{L}{S})$.
+\end{proposition}
+\begin{proof}
+    $\cons{x}{S}\subseteq\carrier[L]$ by
+        \obv{cons_subseteq_intro}.
+    $\cons{x}{S}$ is a finite set by \obv{finite_cons}.
+    $\finiteJoin{L}{S}\in\carrier[L]$ and
+        $\finiteJoin{L}{\cons{x}{S}}\in\carrier[L]$ by
+        \obv{finite_join_type}.
+    $\join[L](x,\finiteJoin{L}{S})\in\carrier[L]$ by
+        \obv{bounded_lattice,lattice_is_join_semilattice,join_type}.
+    $x\mathrel{\leq[L]}\finiteJoin{L}{\cons{x}{S}}$ by
+        \obv{finite_join_upper,cons_left}.
+    For all $s\in S$ we have
+        $s\mathrel{\leq[L]}\finiteJoin{L}{\cons{x}{S}}$ by
+        \auto{finite_join_upper,cons_iff}.
+    Hence $\finiteJoin{L}{S}
+        \mathrel{\leq[L]}\finiteJoin{L}{\cons{x}{S}}$ by
+        \obv{finite_join_least}.
+    Thus $\join[L](x,\finiteJoin{L}{S})
+        \mathrel{\leq[L]}\finiteJoin{L}{\cons{x}{S}}$ by
+        \obv{bounded_lattice,lattice_is_join_semilattice,join_lub}.
+    $x\mathrel{\leq[L]}\join[L](x,\finiteJoin{L}{S})$ by
+        \auto{bounded_lattice,lattice_is_join_semilattice,join_ub}.
+    For all $s\in S$ we have
+        $s\mathrel{\leq[L]}\join[L](x,\finiteJoin{L}{S})$ by
+        \auto{finite_join_upper,bounded_lattice,
+            lattice_is_ordered_set,ordered_set_order_transitive,
+            lattice_is_join_semilattice,join_ub,transitive}.
+    Hence for all $s\in\cons{x}{S}$ we have
+        $s\mathrel{\leq[L]}\join[L](x,\finiteJoin{L}{S})$ by
+        \auto{cons_iff}.
+    Thus $\finiteJoin{L}{\cons{x}{S}}
+        \mathrel{\leq[L]}\join[L](x,\finiteJoin{L}{S})$ by
+        \obv{finite_join_least}.
+    Follows by
+        \auto{bounded_lattice,lattice_is_ordered_set,
+            ordered_set_order_antisymmetric,antisymmetric}.
+\end{proof}
+
+\begin{proposition}\label{finite_join_pair}
+    Let $L$ be a bounded lattice.
+    Let $x,y\in\carrier[L]$.
+    Then $\finiteJoin{L}{\{x,y\}}=\join[L](x,y)$.
+\end{proposition}
+\begin{proof}
+    $\{y\}\subseteq\carrier[L]$ by \auto{subseteq,singleton_iff}.
+    $\{y\}$ is a finite set by \obv{singleton_is_finite}.
+    $\{x,y\}=\cons{x}{\{y\}}$ by
+        \obv{setext,pairset_iff,cons_iff,singleton_iff}.
+    $\finiteJoin{L}{\{y\}}=y$ by \obv{finite_join_singleton}.
+    Follows by \auto{finite_join_cons}.
+\end{proof}
+
+\begin{proposition}\label{finite_join_monotone}
+    Let $L$ be a bounded lattice.
+    Suppose $A,B\subseteq\carrier[L]$.
+    Suppose $A$ and $B$ are finite sets.
+    Suppose $A\subseteq B$.
+    Then $\finiteJoin{L}{A}\mathrel{\leq[L]}\finiteJoin{L}{B}$.
+\end{proposition}
+\begin{proof}
+    $\finiteJoin{L}{B}\in\carrier[L]$ by \obv{finite_join_type}.
+    For all $a\in A$ we have
+        $a\mathrel{\leq[L]}\finiteJoin{L}{B}$ by
+        \obv{finite_join_upper,elem_subseteq}.
+    Follows by \obv{finite_join_least}.
+\end{proof}
+
+\begin{proposition}\label{finite_join_monotone_of_finite_supset}
+    Let $L$ be a bounded lattice.
+    Suppose $B\subseteq\carrier[L]$ and $B$ is a finite set.
+    Suppose $A\subseteq B$.
+    Then $\finiteJoin{L}{A}\mathrel{\leq[L]}\finiteJoin{L}{B}$.
+\end{proposition}
+\begin{proof}
+    $A\subseteq\carrier[L]$ by \obv{subseteq_transitive}.
+    $A$ is a finite set by \obv{subseteq_finite_is_finite}.
+    Follows by \obv{finite_join_monotone}.
+\end{proof}
+
+\begin{proposition}\label{finite_join_union}
+    Let $L$ be a bounded lattice.
+    Suppose $A,B\subseteq\carrier[L]$.
+    Suppose $A$ and $B$ are finite sets.
+    Then
+        $\finiteJoin{L}{A\union B}
+            =\join[L](\finiteJoin{L}{A},\finiteJoin{L}{B})$.
+\end{proposition}
+\begin{proof}
+    $A\union B\subseteq\carrier[L]$ by
+        \auto{subseteq,union_iff}.
+    $A\union B$ is a finite set by \obv{union_of_finite_is_finite}.
+    $\finiteJoin{L}{A},\finiteJoin{L}{B},
+        \finiteJoin{L}{A\union B}\in\carrier[L]$ by
+        \obv{finite_join_type}.
+    $\join[L](\finiteJoin{L}{A},\finiteJoin{L}{B})\in\carrier[L]$ by
+        \obv{bounded_lattice,lattice_is_join_semilattice,join_type}.
+    $\finiteJoin{L}{A}\mathrel{\leq[L]}
+        \finiteJoin{L}{A\union B}$ and
+        $\finiteJoin{L}{B}\mathrel{\leq[L]}
+        \finiteJoin{L}{A\union B}$ by
+        \obv{finite_join_monotone,union_upper_left,union_upper_right}.
+    Hence $\join[L](\finiteJoin{L}{A},\finiteJoin{L}{B})
+        \mathrel{\leq[L]}\finiteJoin{L}{A\union B}$ by
+        \obv{bounded_lattice,lattice_is_join_semilattice,join_lub}.
+    $\finiteJoin{L}{A}\mathrel{\leq[L]}
+        \join[L](\finiteJoin{L}{A},\finiteJoin{L}{B})$ and
+        $\finiteJoin{L}{B}\mathrel{\leq[L]}
+        \join[L](\finiteJoin{L}{A},\finiteJoin{L}{B})$ by
+        \obv{bounded_lattice,lattice_is_join_semilattice,join_ub}.
+    For all $s\in A\union B$ we have
+        $s\mathrel{\leq[L]}
+            \join[L](\finiteJoin{L}{A},\finiteJoin{L}{B})$ by
+        \auto{union_iff,finite_join_upper,bounded_lattice,
+            lattice_is_ordered_set,ordered_set_order_transitive,
+            transitive}.
+    Hence $\finiteJoin{L}{A\union B}\mathrel{\leq[L]}
+        \join[L](\finiteJoin{L}{A},\finiteJoin{L}{B})$ by
+        \obv{finite_join_least}.
+    Follows by
+        \auto{bounded_lattice,lattice_is_ordered_set,
+            ordered_set_order_antisymmetric,antisymmetric}.
+\end{proof}
+
+\begin{theorem}\label{finite_subset_has_infimum}
+    Let $L$ be a bounded lattice.
+    Suppose $S\subseteq\carrier[L]$ and $S$ is a finite set.
+    Then $\hasInfimum{L}{S}$.
+\end{theorem}
+\begin{proof}
+    $L$ is a lattice by \obv{bounded_lattice}.
+    Hence $L$ is an ordered set by \obv{lattice_is_ordered_set}.
+    $\leq[L]$ is an order on $\carrier[L]$ by
+        \obv{ordered_set_order_on_carrier}.
+    Let $C=\{T\in\pow{\carrier[L]}\mid
+        \hasInfimum{L}{T}\}$.
+    $\latticeTop[L]\in\carrier[L]$ by \obv{lattice_top_type}.
+    For all $s\in\emptyset$ we have
+        $\latticeTop[L]\mathrel{\leq[L]}s$ by \auto{emptyset}.
+    For all $v\in\carrier[L]$ such that
+        for all $s\in\emptyset$ we have $v\mathrel{\leq[L]}s$ we have
+        $v\mathrel{\leq[L]}\latticeTop[L]$ by
+        \obv{lattice_leq_top}.
+    Hence $\latticeTop[L]$ is an infimum of $\emptyset$ in $L$ by
+        \obv{infimum_element,greatest_lower_bound_iff_order_on}.
+    Thus $\hasInfimum{L}{\emptyset}$ by \obv{has_infimum_iff}.
+    Hence $\emptyset\in C$ by \obv{powerset_bottom}.
+
+    Show that for all $T,x$ such that $T\in C$ and $x\in S$ we have
+        $\cons{x}{T}\in C$.
+    \begin{subproof}
+        Fix $T,x$.
+        Assume $T\in C$ and $x\in S$.
+        $T\subseteq\carrier[L]$ by \obv{pow_iff,subseteq}.
+        $x\in\carrier[L]$ by \obv{elem_subseteq}.
+        Let $u=\infimum{L}{T}$.
+        $u\in\carrier[L]$ by \auto{infimum_type}.
+        $\meet[L](x,u)\in\carrier[L]$ by
+            \obv{lattice_is_meet_semilattice,meet_type}.
+        Show for all $s\in\cons{x}{T}$ we have
+            $\meet[L](x,u)\mathrel{\leq[L]}s$.
+        \begin{subproof}
+            Fix $s\in\cons{x}{T}$.
+            $s=x$ or $s\in T$ by \obv{cons_iff}.
+            \begin{byCase}
+            \caseOf{$s=x$.}
+                Follows by
+                    \auto{lattice_is_meet_semilattice,meet_lb}.
+            \caseOf{$s\in T$.}
+                $\meet[L](x,u)\mathrel{\leq[L]}u$ by
+                    \auto{lattice_is_meet_semilattice,meet_lb}.
+                $u\mathrel{\leq[L]}s$ by \auto{infimum_lower}.
+                $\leq[L]$ is transitive by
+                    \obv{ordered_set_order_transitive}.
+                Follows by \obv{transitive}.
+            \end{byCase}
+        \end{subproof}
+        Show for all $v\in\carrier[L]$ such that
+            for all $s\in\cons{x}{T}$ we have $v\mathrel{\leq[L]}s$
+            we have $v\mathrel{\leq[L]}\meet[L](x,u)$.
+        \begin{subproof}
+            Fix $v\in\carrier[L]$.
+            Assume for all $s\in\cons{x}{T}$ we have
+                $v\mathrel{\leq[L]}s$.
+            $v\mathrel{\leq[L]}x$ by \obv{cons_left}.
+            For all $s\in T$ we have $v\mathrel{\leq[L]}s$ by
+                \auto{cons_iff}.
+            Hence $v\mathrel{\leq[L]}u$ by \auto{infimum_greatest}.
+            Follows by
+                \obv{lattice_is_meet_semilattice,meet_glb}.
+        \end{subproof}
+        Hence $\meet[L](x,u)$ is an infimum of $\cons{x}{T}$ in $L$ by
+            \auto{infimum_element,greatest_lower_bound_iff_order_on}.
+        Thus $\hasInfimum{L}{\cons{x}{T}}$ by
+            \obv{has_infimum_iff}.
+        $\cons{x}{T}\subseteq\carrier[L]$ by
+            \obv{cons_subseteq_intro}.
+        Hence $\cons{x}{T}\in\pow{\carrier[L]}$ by
+            \obv{pow_iff,subseteq}.
+    \end{subproof}
+    $S\in C$ by \obv{finite_induction}.
+\end{proof}
+
+\begin{definition}\label{finite_meet}
+    Let $L$ be an ordered set.
+    $\finiteMeet{L}{S}=\infimum{L}{S}$.
+\end{definition}
+
+\begin{theorem}\label{finite_meet_is_infimum}
+    Let $L$ be a bounded lattice.
+    Suppose $S\subseteq\carrier[L]$ and $S$ is a finite set.
+    Then $\finiteMeet{L}{S}$ is an infimum of $S$ in $L$.
+\end{theorem}
+\begin{proof}
+    Hence $L$ is an ordered set by \obv{lattice_is_ordered_set}.
+    $\hasInfimum{L}{S}$ by \obv{finite_subset_has_infimum}.
+    Follows by \auto{finite_meet,infimum_spec}.
+\end{proof}
+
+\begin{proposition}\label{finite_meet_type}
+    Let $L$ be a bounded lattice.
+    Suppose $S\subseteq\carrier[L]$ and $S$ is a finite set.
+    Then $\finiteMeet{L}{S}\in\carrier[L]$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{finite_meet_is_infimum,infimum_element,
+            greatest_lower_bound_is_lower_bound,lower_bound}.
+\end{proof}
+
+\begin{proposition}\label{finite_meet_lower}
+    Let $L$ be a bounded lattice.
+    Suppose $S\subseteq\carrier[L]$ and $S$ is a finite set.
+    Let $s\in S$.
+    Then $\finiteMeet{L}{S}\mathrel{\leq[L]}s$.
+\end{proposition}
+\begin{proof}
+    Hence $L$ is an ordered set by \obv{lattice_is_ordered_set}.
+    $\hasInfimum{L}{S}$ by \obv{finite_subset_has_infimum}.
+    Follows by \auto{finite_meet,infimum_lower}.
+\end{proof}
+
+\begin{proposition}\label{finite_meet_greatest}
+    Let $L$ be a bounded lattice.
+    Suppose $S\subseteq\carrier[L]$ and $S$ is a finite set.
+    Let $u\in\carrier[L]$.
+    Suppose for all $s\in S$ we have $u\mathrel{\leq[L]}s$.
+    Then $u\mathrel{\leq[L]}\finiteMeet{L}{S}$.
+\end{proposition}
+\begin{proof}
+    Hence $L$ is an ordered set by \obv{lattice_is_ordered_set}.
+    $\hasInfimum{L}{S}$ by \obv{finite_subset_has_infimum}.
+    Follows by \auto{finite_meet,infimum_greatest}.
+\end{proof}
+
+\begin{proposition}\label{finite_meet_geq_iff}
+    Let $L$ be a bounded lattice.
+    Suppose $S\subseteq\carrier[L]$ and $S$ is a finite set.
+    Let $u\in\carrier[L]$.
+    Then $u\mathrel{\leq[L]}\finiteMeet{L}{S}$ iff
+        for all $s\in S$ we have $u\mathrel{\leq[L]}s$.
+\end{proposition}
+\begin{proof}
+    $\finiteMeet{L}{S}\in\carrier[L]$ by \obv{finite_meet_type}.
+    $\leq[L]$ is transitive by
+        \obv{bounded_lattice,lattice_is_ordered_set,
+            ordered_set_order_transitive}.
+    Show that if $u\mathrel{\leq[L]}\finiteMeet{L}{S}$, then
+        for all $s\in S$ we have $u\mathrel{\leq[L]}s$.
+    \begin{subproof}
+        Assume $u\mathrel{\leq[L]}\finiteMeet{L}{S}$.
+        Fix $s\in S$.
+        $\finiteMeet{L}{S}\mathrel{\leq[L]}s$ by
+            \obv{finite_meet_lower}.
+        Follows by \obv{transitive}.
+    \end{subproof}
+    Follows by \auto{finite_meet_greatest}.
+\end{proof}
+
+\begin{proposition}\label{finite_meet_empty}
+    Let $L$ be a bounded lattice.
+    Then $\finiteMeet{L}{\emptyset}=\latticeTop[L]$.
+\end{proposition}
+\begin{proof}
+    $\emptyset\subseteq\carrier[L]$ by \obv{emptyset_subseteq}.
+    $\emptyset$ is a finite set by \obv{emptyset_is_finite}.
+    $\finiteMeet{L}{\emptyset}\in\carrier[L]$ by
+        \obv{finite_meet_type}.
+    $\latticeTop[L]\in\carrier[L]$ by \obv{lattice_top_type}.
+    $\latticeTop[L]\mathrel{\leq[L]}\finiteMeet{L}{\emptyset}$ by
+        \auto{finite_meet_greatest,emptyset}.
+    $\finiteMeet{L}{\emptyset}\mathrel{\leq[L]}\latticeTop[L]$ by
+        \obv{lattice_leq_top}.
+    Follows by
+        \auto{bounded_lattice,lattice_is_ordered_set,
+            ordered_set_order_antisymmetric,antisymmetric}.
+\end{proof}
+
+\begin{proposition}\label{finite_meet_singleton}
+    Let $L$ be a bounded lattice.
+    Let $x\in\carrier[L]$.
+    Then $\finiteMeet{L}{\{x\}}=x$.
+\end{proposition}
+\begin{proof}
+    $\{x\}\subseteq\carrier[L]$ by \auto{subseteq,singleton_iff}.
+    $\{x\}$ is a finite set by \obv{singleton_is_finite}.
+    $\finiteMeet{L}{\{x\}}\in\carrier[L]$ by
+        \obv{finite_meet_type}.
+    $\leq[L]$ is reflexive on $\carrier[L]$ by
+        \obv{bounded_lattice,lattice_is_ordered_set,
+            ordered_set_order_reflexive}.
+    For all $s\in\{x\}$ we have $x\mathrel{\leq[L]}s$ by
+        \auto{singleton_iff,reflexive_on}.
+    $x\mathrel{\leq[L]}\finiteMeet{L}{\{x\}}$ by
+        \obv{finite_meet_greatest}.
+    $\finiteMeet{L}{\{x\}}\mathrel{\leq[L]}x$ by
+        \auto{finite_meet_lower,singleton_iff}.
+    Follows by
+        \auto{bounded_lattice,lattice_is_ordered_set,
+            ordered_set_order_antisymmetric,antisymmetric}.
+\end{proof}
+
+\begin{proposition}\label{finite_meet_cons}
+    Let $L$ be a bounded lattice.
+    Suppose $S\subseteq\carrier[L]$ and $S$ is a finite set.
+    Let $x\in\carrier[L]$.
+    Then
+        $\finiteMeet{L}{\cons{x}{S}}
+            =\meet[L](x,\finiteMeet{L}{S})$.
+\end{proposition}
+\begin{proof}
+    $\cons{x}{S}\subseteq\carrier[L]$ by
+        \obv{cons_subseteq_intro}.
+    $\cons{x}{S}$ is a finite set by \obv{finite_cons}.
+    $\finiteMeet{L}{S}\in\carrier[L]$ and
+        $\finiteMeet{L}{\cons{x}{S}}\in\carrier[L]$ by
+        \obv{finite_meet_type}.
+    $\meet[L](x,\finiteMeet{L}{S})\in\carrier[L]$ by
+        \obv{bounded_lattice,lattice_is_meet_semilattice,meet_type}.
+    $\finiteMeet{L}{\cons{x}{S}}\mathrel{\leq[L]}x$ by
+        \obv{finite_meet_lower,cons_left}.
+    For all $s\in S$ we have
+        $\finiteMeet{L}{\cons{x}{S}}\mathrel{\leq[L]}s$ by
+        \auto{finite_meet_lower,cons_iff}.
+    Hence $\finiteMeet{L}{\cons{x}{S}}
+        \mathrel{\leq[L]}\finiteMeet{L}{S}$ by
+        \obv{finite_meet_greatest}.
+    Thus $\finiteMeet{L}{\cons{x}{S}}
+        \mathrel{\leq[L]}\meet[L](x,\finiteMeet{L}{S})$ by
+        \obv{bounded_lattice,lattice_is_meet_semilattice,meet_glb}.
+    $\meet[L](x,\finiteMeet{L}{S})\mathrel{\leq[L]}x$ by
+        \auto{bounded_lattice,lattice_is_meet_semilattice,meet_lb}.
+    For all $s\in S$ we have
+        $\meet[L](x,\finiteMeet{L}{S})\mathrel{\leq[L]}s$ by
+        \auto{finite_meet_lower,bounded_lattice,
+            lattice_is_ordered_set,ordered_set_order_transitive,
+            lattice_is_meet_semilattice,meet_lb,transitive}.
+    Hence for all $s\in\cons{x}{S}$ we have
+        $\meet[L](x,\finiteMeet{L}{S})\mathrel{\leq[L]}s$ by
+        \auto{cons_iff}.
+    Thus $\meet[L](x,\finiteMeet{L}{S})
+        \mathrel{\leq[L]}\finiteMeet{L}{\cons{x}{S}}$ by
+        \obv{finite_meet_greatest}.
+    Follows by
+        \auto{bounded_lattice,lattice_is_ordered_set,
+            ordered_set_order_antisymmetric,antisymmetric}.
+\end{proof}
+
+\begin{proposition}\label{finite_meet_pair}
+    Let $L$ be a bounded lattice.
+    Let $x,y\in\carrier[L]$.
+    Then $\finiteMeet{L}{\{x,y\}}=\meet[L](x,y)$.
+\end{proposition}
+\begin{proof}
+    $\{y\}\subseteq\carrier[L]$ by \auto{subseteq,singleton_iff}.
+    $\{y\}$ is a finite set by \obv{singleton_is_finite}.
+    $\{x,y\}=\cons{x}{\{y\}}$ by
+        \obv{setext,pairset_iff,cons_iff,singleton_iff}.
+    $\finiteMeet{L}{\{y\}}=y$ by \obv{finite_meet_singleton}.
+    Follows by \auto{finite_meet_cons}.
+\end{proof}
+
+\begin{proposition}\label{finite_meet_monotone}
+    Let $L$ be a bounded lattice.
+    Suppose $A,B\subseteq\carrier[L]$.
+    Suppose $A$ and $B$ are finite sets.
+    Suppose $A\subseteq B$.
+    Then $\finiteMeet{L}{B}\mathrel{\leq[L]}\finiteMeet{L}{A}$.
+\end{proposition}
+\begin{proof}
+    $\finiteMeet{L}{B}\in\carrier[L]$ by \obv{finite_meet_type}.
+    For all $a\in A$ we have
+        $\finiteMeet{L}{B}\mathrel{\leq[L]}a$ by
+        \obv{finite_meet_lower,elem_subseteq}.
+    Follows by \obv{finite_meet_greatest}.
+\end{proof}
+
+\begin{proposition}\label{finite_meet_union}
+    Let $L$ be a bounded lattice.
+    Suppose $A,B\subseteq\carrier[L]$.
+    Suppose $A$ and $B$ are finite sets.
+    Then
+        $\finiteMeet{L}{A\union B}
+            =\meet[L](\finiteMeet{L}{A},\finiteMeet{L}{B})$.
+\end{proposition}
+\begin{proof}
+    $A\union B\subseteq\carrier[L]$ by
+        \auto{subseteq,union_iff}.
+    $A\union B$ is a finite set by \obv{union_of_finite_is_finite}.
+    $\finiteMeet{L}{A},\finiteMeet{L}{B},
+        \finiteMeet{L}{A\union B}\in\carrier[L]$ by
+        \obv{finite_meet_type}.
+    $\meet[L](\finiteMeet{L}{A},\finiteMeet{L}{B})\in\carrier[L]$ by
+        \obv{bounded_lattice,lattice_is_meet_semilattice,meet_type}.
+    $\finiteMeet{L}{A\union B}\mathrel{\leq[L]}
+        \finiteMeet{L}{A}$ and
+        $\finiteMeet{L}{A\union B}\mathrel{\leq[L]}
+        \finiteMeet{L}{B}$ by
+        \obv{finite_meet_monotone,union_upper_left,union_upper_right}.
+    Hence $\finiteMeet{L}{A\union B}\mathrel{\leq[L]}
+        \meet[L](\finiteMeet{L}{A},\finiteMeet{L}{B})$ by
+        \obv{bounded_lattice,lattice_is_meet_semilattice,meet_glb}.
+    $\meet[L](\finiteMeet{L}{A},\finiteMeet{L}{B})
+        \mathrel{\leq[L]}\finiteMeet{L}{A}$ and
+        $\meet[L](\finiteMeet{L}{A},\finiteMeet{L}{B})
+        \mathrel{\leq[L]}\finiteMeet{L}{B}$ by
+        \obv{bounded_lattice,lattice_is_meet_semilattice,meet_lb}.
+    For all $s\in A\union B$ we have
+        $\meet[L](\finiteMeet{L}{A},\finiteMeet{L}{B})
+            \mathrel{\leq[L]}s$ by
+        \auto{union_iff,finite_meet_lower,bounded_lattice,
+            lattice_is_ordered_set,ordered_set_order_transitive,
+            transitive}.
+    Hence $\meet[L](\finiteMeet{L}{A},\finiteMeet{L}{B})
+        \mathrel{\leq[L]}\finiteMeet{L}{A\union B}$ by
+        \obv{finite_meet_greatest}.
+    Follows by
+        \auto{bounded_lattice,lattice_is_ordered_set,
+            ordered_set_order_antisymmetric,antisymmetric}.
+\end{proof}

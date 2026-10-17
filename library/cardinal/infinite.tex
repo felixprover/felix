@@ -1,0 +1,680 @@
+\section{Infinite-cardinal arithmetic}
+
+\import{cardinal/successor.tex}
+\import{cardinal/arithmetic.tex}
+\import{cardinal/comparison.tex}
+\import{cardinal/reconciliation.tex}
+\import{order/ordinal-pair.tex}
+
+\begin{theorem}\label{naturals_subseteq_infinite_cardinal}
+    Let $\kappa$ be an infinite cardinal.
+    Then $\naturals\subseteq\kappa$.
+\end{theorem}
+\begin{proof}
+    $\kappa$ is an ordinal by \auto{cardinal,initial_ordinal}.
+    $\naturals$ is an ordinal by \obv{omega_is_ordinal}.
+    Suppose not.
+    Hence $\kappa\subseteq\naturals$
+        by \obv{ordinal_subseteq_or_subseteq}.
+    Hence $\kappa\in\naturals$ or $\kappa=\naturals$
+        by \obv{ordinal_subseteq_implies_elem_or_eq}.
+    Hence $\kappa\in\naturals$.
+    Hence $\kappa$ is finite by \obv{natural_number_is_finite}.
+    Contradiction.
+\end{proof}
+
+\begin{proposition}\label{finite_below_infinite}
+    Suppose $F$ is finite and $\kappa$ is an infinite cardinal.
+    Then $\cardLt{F}{\kappa}$.
+\end{proposition}
+\begin{proof}
+    $\cardLt{F}{\naturals}$ by
+        \obv{below_omega_iff_finite}.
+    $\naturals\subseteq\kappa$ by
+        \obv{naturals_subseteq_infinite_cardinal}.
+    Hence $\cardLe{\naturals}{\kappa}$ by
+        \obv{subseteq_cardinal_le}.
+    Follows by \obv{cardinal_lt_le_transitive}.
+\end{proof}
+
+\begin{corollary}\label{zero_one_in_infinite_cardinal}
+    Let $\kappa$ be an infinite cardinal.
+    Then $\emptyset\in\kappa$ and $\suc{\emptyset}\in\kappa$.
+\end{corollary}
+\begin{proof}
+    $\emptyset,\suc{\emptyset}\in\naturals$
+        by \obv{omega_empty,omega_successor}.
+    Follows by \auto{naturals_subseteq_infinite_cardinal,subseteq}.
+\end{proof}
+
+\begin{proposition}\label{successor_injection_into_infinite_square}
+    Let $\kappa$ be an infinite cardinal.
+    Then there exists $e\in\inj{\suc{\kappa}}{\kappa\times\kappa}$.
+\end{proposition}
+\begin{proof}
+    Let $z=\emptyset$.
+    Let $o=\suc{\emptyset}$.
+    $z,o\in\kappa$ by \obv{zero_one_in_infinite_cardinal}.
+    $z\neq o$ by \obv{suc_neq_emptyset}.
+    Let $f=\{(x,(x,z))\mid x\in\kappa\}$.
+    Let $g=\{(\kappa,(z,o))\}$.
+    $f$ is a relation by \auto{relation}.
+    $f$ is right-unique by \auto{rightunique,pair_eq_iff}.
+    $\dom{f}=\kappa$ by \auto{setext,dom_iff,pair_eq_iff}.
+    For every $x\in\kappa$ we have $(x,z)\in\kappa\times\kappa$
+        by \obv{times_tuple_intro}.
+    For every $x\in\kappa$ we have $f(x)=(x,z)$
+        by \obv{function_apply_intro}.
+    Hence $f\in\funs{\kappa}{\kappa\times\kappa}$
+        by \auto{funs_intro}.
+    Show that $f$ is injective.
+    \begin{subproof}
+        Show that for all $x,y$ such that $x\in\dom{f}$ and
+            $y\in\dom{f}$ and $f(x)=f(y)$ we have $x=y$.
+        \begin{subproof}
+            Fix $x,y$.
+            Assume $x\in\dom{f}$ and $y\in\dom{f}$ and $f(x)=f(y)$.
+            Hence $x,y\in\kappa$.
+            $f(x)=(x,z)$ and $f(y)=(y,z)$
+                by \obv{function_apply_intro}.
+            Follows by \auto{pair_eq_iff}.
+        \end{subproof}
+        Follows by \auto{injective_function}.
+    \end{subproof}
+    Hence $f\in\inj{\kappa}{\kappa\times\kappa}$
+        by \auto{inj,injective_function}.
+    $g$ is a relation by \auto{relation,singleton_iff}.
+    $g$ is right-unique by \auto{rightunique,singleton_iff,pair_eq_iff}.
+    $\dom{g}=\{\kappa\}$
+        by \auto{setext,dom_iff,singleton_iff,pair_eq_iff}.
+    $(z,o)\in\kappa\times\kappa$ by \obv{times_tuple_intro}.
+    For every $x\in\{\kappa\}$ we have $g(x)=(z,o)$
+        by \auto{singleton_iff,function_apply_intro,pair_eq_iff}.
+    Hence $g\in\funs{\{\kappa\}}{\kappa\times\kappa}$
+        by \auto{funs_intro}.
+    Show that $g$ is injective.
+    \begin{subproof}
+        Show that for all $x,y$ such that $x\in\dom{g}$ and
+            $y\in\dom{g}$ and $g(x)=g(y)$ we have $x=y$.
+        \begin{subproof}
+            Fix $x,y$.
+            Assume $x\in\dom{g}$ and $y\in\dom{g}$ and $g(x)=g(y)$.
+            Hence $x,y\in\{\kappa\}$.
+            Follows by \auto{singleton_iff}.
+        \end{subproof}
+        Follows by \auto{injective_function}.
+    \end{subproof}
+    Hence $g\in\inj{\{\kappa\}}{\kappa\times\kappa}$
+        by \auto{inj,injective_function}.
+    $\kappa\inter\{\kappa\}=\emptyset$
+        by \auto{setext,inter,singleton_iff,emptyset,in_irrefl}.
+    Show that $\ran{f}\inter\ran{g}=\emptyset$.
+    \begin{subproof}
+        Show that every element of $\ran{f}\inter\ran{g}$ is an element
+            of $\emptyset$.
+        \begin{subproof}
+            Fix $w\in\ran{f}\inter\ran{g}$.
+            Hence $w\in\ran{f}$ and $w\in\ran{g}$ by \obv{inter}.
+            Take $x\in\dom{f}$ such that $f(x)=w$
+                by \obv{fun_ran_iff}.
+            Take $y\in\dom{g}$ such that $g(y)=w$
+                by \obv{fun_ran_iff}.
+            Hence $x\in\kappa$ and $y\in\{\kappa\}$.
+            $f(x)=(x,z)$ by \obv{function_apply_intro}.
+            $g(y)=(z,o)$
+                by \obv{singleton_iff,function_apply_intro,pair_eq_iff}.
+            Hence $(x,z)=(z,o)$.
+            Hence $z=o$ by \auto{pair_eq_iff}.
+            Contradiction.
+        \end{subproof}
+        Hence $\ran{f}\inter\ran{g}\subseteq\emptyset$
+            by \obv{subseteq}.
+        Follows by \obv{subseteq_emptyset_iff}.
+    \end{subproof}
+    Hence $f\union g\in\inj{\kappa\union\{\kappa\}}{\kappa\times\kappa}$
+        by \obv{union_inj_disjoint}.
+    $\kappa\union\{\kappa\}=\{\kappa\}\union\kappa$
+        by \obv{union_comm}.
+    $\{\kappa\}\union\kappa=\cons{\kappa}{\kappa}$
+        by \obv{union_eq_cons}.
+    $\cons{\kappa}{\kappa}=\suc{\kappa}$ by \obv{suc_eq_cons}.
+    Follows by \auto.
+\end{proof}
+
+\begin{proposition}\label{successor_equinumerous_from_square}
+    Let $\kappa$ be an infinite cardinal.
+    Suppose $\kappa\times\kappa\approx\kappa$.
+    Then $\suc{\kappa}\approx\kappa$.
+\end{proposition}
+\begin{proof}
+    $\cardLe{\suc{\kappa}}{\kappa\times\kappa}$
+        by \obv{successor_injection_into_infinite_square,cardinal_le}.
+    $\cardLe{\kappa\times\kappa}{\kappa}$
+        by \auto{equinum_cardinal_le}.
+    Hence $\cardLe{\suc{\kappa}}{\kappa}$
+        by \obv{cardinal_le_transitive}.
+    $\kappa\subseteq\suc{\kappa}$ by \obv{subseteq_self_suc_intro}.
+    Hence $\cardLe{\kappa}{\suc{\kappa}}$ by \obv{subseteq_cardinal_le}.
+    Take $e$ such that $e\in\inj{\suc{\kappa}}{\kappa}$
+        by \auto{cardinal_le}.
+    Take $i$ such that $i\in\inj{\kappa}{\suc{\kappa}}$
+        by \auto{cardinal_le}.
+    $e$ is an injective function from $\suc{\kappa}$ to $\kappa$
+        by \auto{inj,funs,funs_is_function,injective_function}.
+    $i$ is an injective function from $\kappa$ to $\suc{\kappa}$
+        by \auto{inj,funs,funs_is_function,injective_function}.
+    Follows by \obv{cantorschroederbernstein}.
+\end{proof}
+
+\begin{proposition}\label{infinite_cardinal_injection_into_square}
+    Let $\kappa$ be an infinite cardinal.
+    Then there exists $e\in\inj{\kappa}{\kappa\times\kappa}$.
+\end{proposition}
+\begin{proof}
+    Take $f$ such that
+        $f\in\inj{\suc{\kappa}}{\kappa\times\kappa}$
+        by \auto{successor_injection_into_infinite_square}.
+    $\kappa\subseteq\suc{\kappa}$ by \obv{subseteq_self_suc_intro}.
+    Hence $\restrl{f}{\kappa}\in\inj{\kappa}{\kappa\times\kappa}$
+        by \obv{inj_restrl}.
+\end{proof}
+
+\begin{proposition}\label{infinite_cardinal_limit_from_smaller_squares}
+    Let $\kappa$ be an infinite cardinal.
+    Suppose for every infinite cardinal $\lambda\in\kappa$ we have
+        $\lambda\times\lambda\approx\lambda$.
+    Then $\kappa$ is a limit ordinal.
+\end{proposition}
+\begin{proof}
+    $\kappa$ is an ordinal by \auto{cardinal,initial_ordinal}.
+    $\emptyset\in\kappa$ by \obv{zero_one_in_infinite_cardinal}.
+    Hence $\emptyset\precedes\kappa$.
+    Suppose not.
+    Hence $\kappa$ is a successor ordinal
+        by \obv{positive_ordinal_is_limit_or_successor}.
+    Take an ordinal $\alpha$ such that $\kappa=\suc{\alpha}$
+        by \obv{successor_ordinal}.
+    $\alpha\in\kappa$ by \obv{suc_intro_self}.
+    Show that $\alpha$ is infinite.
+    \begin{subproof}
+        Suppose not.
+        Hence $\alpha$ is finite.
+        Hence $\cons{\alpha}{\alpha}$ is finite by \obv{finite_cons}.
+        $\suc{\alpha}=\cons{\alpha}{\alpha}$ by \obv{suc_eq_cons}.
+        Hence $\kappa$ is finite.
+        Contradiction.
+    \end{subproof}
+    Let $\lambda=\card{\alpha}$.
+    $\lambda$ is a cardinal by \obv{card_is_cardinal}.
+    Show that $\lambda$ is infinite.
+    \begin{subproof}
+        Suppose not.
+        Hence $\lambda$ is finite.
+        $\lambda\approx\alpha$ by \auto{card_equinumerous}.
+        Hence $\alpha$ is finite by \obv{finite_equinumerous}.
+        Contradiction.
+    \end{subproof}
+    $\lambda$ is an ordinal by \auto{cardinal,initial_ordinal}.
+    $\lambda\subseteq\alpha$
+        by \auto{equinum_refl,card_least_equinumerous_ordinal}.
+    Hence $\lambda\in\alpha$ or $\lambda=\alpha$
+        by \obv{ordinal_subseteq_implies_elem_or_eq}.
+    Hence $\lambda\in\kappa$ by \obv{ordinal_transitivity}.
+    Hence $\lambda\times\lambda\approx\lambda$.
+    Hence $\suc{\lambda}\approx\lambda$
+        by \obv{successor_equinumerous_from_square}.
+    $\lambda\approx\alpha$ by \auto{card_equinumerous}.
+    Hence $\alpha\approx\lambda$ by \obv{equinum_sym}.
+    Take $f$ such that $f\in\bijections{\alpha}{\lambda}$
+        by \obv{equinum}.
+    $\alpha\notin\alpha$ and $\lambda\notin\lambda$
+        by \obv{in_irrefl}.
+    Hence $\cons{(\alpha,\lambda)}{f}
+        \in\bijections{\cons{\alpha}{\alpha}}{\cons{\lambda}{\lambda}}$
+        by \obv{bijection_cons}.
+    $\suc{\alpha}=\cons{\alpha}{\alpha}$ and
+        $\suc{\lambda}=\cons{\lambda}{\lambda}$
+        by \obv{suc_eq_cons}.
+    Hence $\suc{\alpha}\approx\suc{\lambda}$ by \auto{equinum}.
+    Hence $\suc{\alpha}\approx\lambda$ by \obv{equinum_tran}.
+    Hence $\suc{\alpha}\approx\alpha$ by \obv{equinum_tran}.
+    Hence $\kappa\approx\alpha$.
+    $\kappa$ is an initial ordinal by \obv{cardinal}.
+    Hence not $\alpha\approx\kappa$ by \obv{initial_ordinal}.
+    Contradiction by \obv{equinum_sym}.
+\end{proof}
+
+\begin{lemma}\label{infinite_cardinal_square_step}
+    Let $\kappa$ be an infinite cardinal.
+    Suppose for every infinite cardinal $\lambda\in\kappa$ we have
+        $\lambda\times\lambda\approx\lambda$.
+    Then $\kappa\times\kappa\approx\kappa$.
+\end{lemma}
+\begin{proof}
+    $\kappa$ is a limit ordinal
+        by \obv{infinite_cardinal_limit_from_smaller_squares}.
+    Hence $\kappa$ is an ordinal by \obv{limit_ordinal}.
+    Let $R=\ordinalPairOrder{\kappa}$.
+    $R$ is a strict well order on $\kappa\times\kappa$
+        by \auto{ordinal_pair_order_is_strict_well_order}.
+    Let $\gamma=\orderType{\kappa\times\kappa}{R}$.
+    $\gamma$ is an ordinal by \obv{order_type_is_ordinal}.
+    Let $c=\orderCollapse{\kappa\times\kappa}{R}$.
+    $\orderIsomorphism{c}{\kappa\times\kappa}{R}
+        {\gamma}{\memrel{\gamma}}$
+        by \auto{order_collapse_is_isomorphism}.
+    Hence $c\in\bijections{\kappa\times\kappa}{\gamma}$
+        by \obv{order_isomorphism}.
+    Hence $\kappa\times\kappa\approx\gamma$ by \obv{equinum}.
+    Take $i$ such that $i\in\inj{\kappa}{\kappa\times\kappa}$
+        by \auto{infinite_cardinal_injection_into_square}.
+    Hence $\cardLe{\kappa}{\kappa\times\kappa}$
+        by \obv{cardinal_le}.
+    Show that $\cardLe{\kappa\times\kappa}{\kappa}$.
+    \begin{subproof}
+        Suppose not.
+        Show that not $\kappa\times\kappa\approx\kappa$.
+        \begin{subproof}
+            Suppose $\kappa\times\kappa\approx\kappa$.
+            Hence $\cardLe{\kappa\times\kappa}{\kappa}$
+                by \obv{equinum_cardinal_le}.
+            Contradiction.
+        \end{subproof}
+        Show that not $\kappa\approx\kappa\times\kappa$.
+        \begin{subproof}
+            Suppose $\kappa\approx\kappa\times\kappa$.
+            Hence $\kappa\times\kappa\approx\kappa$
+                by \obv{equinum_sym}.
+            Contradiction.
+        \end{subproof}
+        Hence $\cardLt{\kappa}{\kappa\times\kappa}$
+            by \obv{cardinal_lt}.
+        $\card{\kappa}=\kappa$ by \obv{card_of_cardinal}.
+        Hence $\kappa\in\card{\kappa\times\kappa}$
+            by \auto{card_elem_iff_cardinal_lt}.
+        $\card{\kappa\times\kappa}=\card{\gamma}$
+            by \obv{card_eq_iff_equinumerous}.
+        Hence $\kappa\in\card{\gamma}$.
+        $\card{\gamma}\subseteq\gamma$
+            by \obv{equinum_refl,card_least_equinumerous_ordinal}.
+        Hence $\kappa\in\gamma$ by \obv{subseteq}.
+        Hence $\kappa\subseteq\gamma$
+            by \obv{ordinal_elem_implies_subseteq}.
+        Let $h=\converse{c}$.
+        $\orderIsomorphism{h}{\gamma}{\memrel{\gamma}}
+            {\kappa\times\kappa}{R}$
+            by \auto{order_isomorphism_inverse}.
+        Hence $h\in\bijections{\gamma}{\kappa\times\kappa}$
+            by \obv{order_isomorphism}.
+        Hence $h\in\inj{\gamma}{\kappa\times\kappa}$
+            by \auto{bijections,bijections_to_funs,inj,funs_is_function,funs,injective_function}.
+        Hence $h$ is a function and $\dom{h}=\gamma$
+            by \auto{inj,funs_is_function,funs}.
+        Let $q=h(\kappa)$.
+        $q\in\kappa\times\kappa$ by \auto{funs_type_apply,inj}.
+        Let $\sigma=\suc{\ordinalPairLevel{q}}$.
+        $\ordinalPairLevel{q}\in\kappa$
+            by \obv{ordinal_pair_level_belongs}.
+        Hence $\sigma\in\kappa$ by \auto{suc_elem_limitordinal}.
+        Let $r=\restrl{h}{\kappa}$.
+        $r\in\inj{\kappa}{\kappa\times\kappa}$
+            by \auto{inj_restrl}.
+        Hence $r$ is a function and $\dom{r}=\kappa$ and
+            $r$ is injective
+            by \auto{inj,funs_is_function,funs,injective_function}.
+        Show that for every $\alpha\in\dom{r}$ we have
+            $r(\alpha)\in\sigma\times\sigma$.
+        \begin{subproof}
+            Fix $\alpha\in\dom{r}$.
+            Hence $\alpha\in\kappa$.
+            Hence $\alpha\in\gamma$ by \obv{ordinal_transitivity}.
+            $(\alpha,\kappa)\in\memrel{\gamma}$
+                by \obv{memrel_elem_intro}.
+            Hence $h(\alpha)\mathrel{R}h(\kappa)$
+                by \auto{order_isomorphism}.
+            $h(\alpha)\in\kappa\times\kappa$
+                by \auto{bijections_to_funs,funs_type_apply}.
+            $h(\kappa)=q$ and
+                $\sigma=\suc{\ordinalPairLevel{q}}$ and
+                $R=\ordinalPairOrder{\kappa}$.
+            Hence $h(\alpha)\in\sigma\times\sigma$
+                by \auto{ordinal_pair_predecessor_bound}.
+            $r(\alpha)=h(\alpha)$
+                by \auto{restrl_of_function_apply}.
+        \end{subproof}
+        Hence $r\in\funs{\kappa}{\sigma\times\sigma}$
+            by \obv{funs_intro}.
+        Hence $r\in\inj{\kappa}{\sigma\times\sigma}$
+            by \obv{inj,injective_function}.
+        \begin{byCase}
+            \caseOf{$\sigma$ is finite.}
+                Hence $\sigma\times\sigma$ is finite
+                    by \obv{finite_times}.
+                $\ran{r}\subseteq\sigma\times\sigma$
+                    by \obv{inj,funs_ran}.
+                Hence $\ran{r}$ is finite
+                    by \obv{subseteq_finite_is_finite}.
+                $r\in\surj{\kappa}{\ran{r}}$
+                    by \obv{fun_to_surj}.
+                Hence $r\in\bijections{\kappa}{\ran{r}}$
+                    by \obv{bijections}.
+                Hence $\ran{r}\approx\kappa$
+                    by \auto{equinum,equinum_sym}.
+                Hence $\kappa$ is finite
+                    by \obv{finite_equinumerous}.
+                Contradiction.
+            \caseOf{$\sigma$ is infinite.}
+                Let $\lambda=\card{\sigma}$.
+                $\lambda$ is a cardinal by \obv{card_is_cardinal}.
+                Show that $\lambda$ is infinite.
+                \begin{subproof}
+                    Suppose not.
+                    Hence $\lambda$ is finite.
+                    $\lambda\approx\sigma$ by \auto{card_equinumerous}.
+                    Hence $\sigma$ is finite
+                        by \obv{finite_equinumerous}.
+                    Contradiction.
+                \end{subproof}
+                $\lambda$ is an ordinal
+                    by \auto{cardinal,initial_ordinal}.
+                $\sigma$ is an ordinal
+                    by \obv{elem_of_ordinal_is_ordinal}.
+                $\lambda\subseteq\sigma$
+                    by \auto{equinum_refl,card_least_equinumerous_ordinal}.
+                Hence $\lambda\in\sigma$ or $\lambda=\sigma$
+                    by \obv{ordinal_subseteq_implies_elem_or_eq}.
+                Hence $\lambda\in\kappa$ by \obv{ordinal_transitivity}.
+                Hence $\lambda\times\lambda\approx\lambda$.
+                $\sigma\approx\lambda$ by \obv{equinumerous_card}.
+                Hence $\sigma\times\sigma\approx
+                    \lambda\times\lambda$
+                    by \obv{times_equinum_congruent}.
+                Hence $\sigma\times\sigma\approx\lambda$
+                    by \obv{equinum_tran}.
+                $\cardLe{\kappa}{\sigma\times\sigma}$
+                    by \obv{cardinal_le}.
+                $\cardLe{\sigma\times\sigma}{\lambda}$
+                    by \auto{equinum_cardinal_le}.
+                Hence $\cardLe{\kappa}{\lambda}$
+                    by \obv{cardinal_le_transitive}.
+                Hence $\kappa\subseteq\lambda$
+                    by \auto{cardinal,initial_ordinal_cardinal_le_iff_subseteq}.
+                Hence $\lambda\in\lambda$ by \obv{subseteq}.
+                Contradiction by \auto{in_irrefl}.
+        \end{byCase}
+    \end{subproof}
+    Take $j$ such that $j\in\inj{\kappa\times\kappa}{\kappa}$
+        by \auto{cardinal_le}.
+    $i$ is an injective function from $\kappa$ to $\kappa\times\kappa$
+        by \auto{inj,funs,funs_is_function,injective_function}.
+    $j$ is an injective function from $\kappa\times\kappa$ to $\kappa$
+        by \auto{inj,funs,funs_is_function,injective_function}.
+    Follows by \obv{cantorschroederbernstein}.
+\end{proof}
+
+\begin{theorem}\label{infinite_cardinal_square}
+    Let $\kappa$ be an infinite cardinal.
+    Then $\kappa\times\kappa\approx\kappa$.
+\end{theorem}
+\begin{proof}[Proof by \in-induction on $\kappa$]
+    Follows by \obv{infinite_cardinal_square_step}.
+\end{proof}
+
+\begin{classification}\label{infinite_cardinal_is_limit_ordinal}
+    Let $\kappa$ be an infinite cardinal.
+    Then $\kappa$ is a limit ordinal.
+\end{classification}
+\begin{proof}
+    For every infinite cardinal $\lambda\in\kappa$ we have
+        $\lambda\times\lambda\approx\lambda$
+        by \obv{infinite_cardinal_square}.
+    Follows by \obv{infinite_cardinal_limit_from_smaller_squares}.
+\end{proof}
+
+\begin{proposition}\label{card_of_infinite_set_is_infinite_cardinal}
+    Suppose $X$ is infinite.
+    Then $\card{X}$ is an infinite cardinal.
+\end{proposition}
+\begin{proof}
+    $\card{X}$ is a cardinal by \obv{card_is_cardinal}.
+    Show that $\card{X}$ is infinite.
+    \begin{subproof}
+        Suppose not.
+        Hence $\card{X}$ is finite.
+        $\card{X}\approx X$ by \obv{card_equinumerous}.
+        Hence $X$ is finite by \obv{finite_equinumerous}.
+        Contradiction.
+    \end{subproof}
+\end{proof}
+
+\begin{theorem}\label{infinite_cons_equinumerous}
+    Suppose $X$ is infinite.
+    Then $\cons{x}{X}\approx X$.
+\end{theorem}
+\begin{proof}
+    \begin{byCase}
+        \caseOf{$x\in X$.}
+            $\cons{x}{X}=X$ by \obv{cons_absorb}.
+            Follows by \obv{equinum_refl}.
+        \caseOf{$x\notin X$.}
+            Let $\kappa=\card{X}$.
+            $\kappa$ is an infinite cardinal
+                by \obv{card_of_infinite_set_is_infinite_cardinal}.
+            $X\approx\kappa$ by \obv{equinumerous_card}.
+            Take $f$ such that $f\in\bijections{X}{\kappa}$
+                by \obv{equinum}.
+            $\kappa\notin\kappa$ by \obv{in_irrefl}.
+            Hence $\cons{(x,\kappa)}{f}
+                \in\bijections{\cons{x}{X}}{\cons{\kappa}{\kappa}}$
+                by \obv{bijection_cons}.
+            Hence $\cons{x}{X}\approx\cons{\kappa}{\kappa}$
+                by \obv{equinum}.
+            $\cons{\kappa}{\kappa}=\suc{\kappa}$
+                by \obv{suc_eq_cons}.
+            Hence $\cons{x}{X}\approx\suc{\kappa}$.
+            $\kappa\times\kappa\approx\kappa$
+                by \obv{infinite_cardinal_square}.
+            Hence $\suc{\kappa}\approx\kappa$
+                by \obv{successor_equinumerous_from_square}.
+            Hence $\cons{x}{X}\approx\kappa$
+                by \obv{equinum_tran}.
+            $\kappa\approx X$ by \auto{card_equinumerous}.
+            Follows by \obv{equinum_tran}.
+    \end{byCase}
+\end{proof}
+
+\begin{theorem}\label{infinite_finite_union_equinumerous}
+    Suppose $X$ is infinite and $F$ is finite.
+    Then $X\union F\approx X$.
+\end{theorem}
+\begin{proof}
+    Let $C=\{Y\in\pow{F}\mid X\union Y\approx X\}$.
+    $\emptyset\in\pow{F}$ by \obv{powerset_bottom}.
+    $X\union\emptyset=X$ by \obv{union_emptyset}.
+    Hence $\emptyset\in C$ by \obv{equinum_refl}.
+    Show that for all $Y,y$ such that $Y\in C$ and $y\in F$ we have
+        $\cons{y}{Y}\in C$.
+    \begin{subproof}
+        Fix $Y,y$.
+        Assume $Y\in C$ and $y\in F$.
+        Hence $Y\in\pow{F}$ and $X\union Y\approx X$.
+        Hence $Y\subseteq F$ by \obv{powerset_elim}.
+        Hence $\cons{y}{Y}\subseteq F$ by \obv{cons_subseteq_intro}.
+        Hence $\cons{y}{Y}\in\pow{F}$ by \obv{powerset_intro}.
+        Show that $X\union Y$ is infinite.
+        \begin{subproof}
+            Suppose not.
+            Hence $X\union Y$ is finite.
+            $X\subseteq X\union Y$ by \obv{union_upper_left}.
+            Hence $X$ is finite by \obv{subseteq_finite_is_finite}.
+            Contradiction.
+        \end{subproof}
+        Hence $\cons{y}{X\union Y}\approx X\union Y$
+            by \obv{infinite_cons_equinumerous}.
+        Hence $\cons{y}{X\union Y}\approx X$ by \obv{equinum_tran}.
+        $X\union\cons{y}{Y}=\cons{y}{X\union Y}$
+            by \auto{setext,union_iff,cons_iff}.
+        Hence $X\union\cons{y}{Y}\approx X$.
+    \end{subproof}
+    Hence $F\in C$ by \obv{finite_induction}.
+\end{proof}
+
+\begin{theorem}\label{infinite_cardinal_product_square}
+    Let $\kappa$ be an infinite cardinal.
+    Then $\cardProduct{\kappa}{\kappa}=\kappa$.
+\end{theorem}
+\begin{proof}
+    $\kappa\times\kappa\approx\kappa$
+        by \obv{infinite_cardinal_square}.
+    Hence $\card{\kappa\times\kappa}=\card{\kappa}$
+        by \auto{card_eq_iff_equinumerous}.
+    $\card{\kappa}=\kappa$ by \obv{card_of_cardinal}.
+    Follows by \obv{cardinal_product}.
+\end{proof}
+
+\begin{theorem}\label{infinite_cardinal_product_absorption}
+    Let $\kappa,\lambda$ be cardinals.
+    Suppose $\kappa$ is infinite and $\lambda\neq\cardZero$ and
+        $\lambda\subseteq\kappa$.
+    Then $\cardProduct{\kappa}{\lambda}=\kappa$.
+\end{theorem}
+\begin{proof}
+    $\cardZero=\emptyset$ by \obv{cardinal_zero}.
+    Hence $\lambda\neq\emptyset$.
+    Hence $\lambda$ is inhabited by \obv{nonempty_inhabited}.
+    Take $b$ such that $b\in\lambda$.
+    $\{b\}\subseteq\lambda$ by \auto{subseteq,singleton_iff}.
+    Hence $\kappa\times\{b\}\subseteq\kappa\times\lambda$
+        by \obv{times_subseteq_right}.
+    $\kappa\times\{b\}\approx\kappa$
+        by \obv{times_singleton_right_equinum}.
+    Hence $\cardLe{\kappa}{\kappa\times\{b\}}$
+        by \auto{equinum_sym,equinum_cardinal_le}.
+    $\cardLe{\kappa\times\{b\}}{\kappa\times\lambda}$
+        by \obv{subseteq_cardinal_le}.
+    Hence $\cardLe{\kappa}{\kappa\times\lambda}$
+        by \obv{cardinal_le_transitive}.
+    $\kappa\times\lambda\subseteq\kappa\times\kappa$
+        by \obv{times_subseteq_right}.
+    Hence $\cardLe{\kappa\times\lambda}{\kappa\times\kappa}$
+        by \obv{subseteq_cardinal_le}.
+    $\kappa\times\kappa\approx\kappa$
+        by \obv{infinite_cardinal_square}.
+    Hence $\cardLe{\kappa\times\kappa}{\kappa}$
+        by \obv{equinum_cardinal_le}.
+    Hence $\cardLe{\kappa\times\lambda}{\kappa}$
+        by \obv{cardinal_le_transitive}.
+    Hence $\kappa\times\lambda\approx\kappa$
+        by \obv{cardinal_le_antisymmetric_up_to_equinum}.
+    Hence $\card{\kappa\times\lambda}=\card{\kappa}$
+        by \auto{card_eq_iff_equinumerous}.
+    $\card{\kappa}=\kappa$ by \obv{card_of_cardinal}.
+    Follows by \obv{cardinal_product}.
+\end{proof}
+
+\begin{theorem}\label{infinite_cardinal_sum_absorption}
+    Let $\kappa,\lambda$ be cardinals.
+    Suppose $\kappa$ is infinite and $\lambda\subseteq\kappa$.
+    Then $\cardSum{\kappa}{\lambda}=\kappa$.
+\end{theorem}
+\begin{proof}
+    Let $d=\suc{\cardOne}$.
+    $\cardOne\in\naturals$
+        by \auto{cardinal_one,omega_empty,omega_successor}.
+    Hence $d\in\naturals$ by \auto{omega_successor}.
+    Hence $d$ is a cardinal by \obv{natural_number_is_cardinal}.
+    Hence $d$ is an ordinal by \auto{cardinal,initial_ordinal}.
+    $d\neq\cardZero$
+        by \auto{cardinal_zero,suc_neq_emptyset}.
+    $\naturals\subseteq\kappa$
+        by \obv{naturals_subseteq_infinite_cardinal}.
+    Hence $d\in\kappa$ by \obv{subseteq}.
+    $\kappa$ is an ordinal by \auto{cardinal,initial_ordinal}.
+    Hence $d\subseteq\kappa$
+        by \obv{ordinal_elem_implies_subseteq}.
+    Hence $\cardProduct{\kappa}{d}=\kappa$
+        by \obv{infinite_cardinal_product_absorption}.
+    $\cardSum{\cardOne}{\cardOne}=d$
+        by \obv{cardinal_sum_natural_successor}.
+    $\cardProduct{\kappa}{\cardSum{\cardOne}{\cardOne}}
+        =\cardSum{\cardProduct{\kappa}{\cardOne}}
+            {\cardProduct{\kappa}{\cardOne}}$
+        by \obv{cardinal_product_distributes_over_sum}.
+    $\cardProduct{\kappa}{\cardOne}=\kappa$
+        by \obv{cardinal_product_one_right}.
+    Hence $\cardSum{\kappa}{\kappa}=\kappa$.
+    $\cardLe{\kappa}{\kappa}$ by \obv{subseteq_refl,subseteq_cardinal_le}.
+    $\cardLe{\lambda}{\kappa}$ by \obv{subseteq_cardinal_le}.
+    Hence $\cardLe{\cardSum{\kappa}{\lambda}}
+        {\cardSum{\kappa}{\kappa}}$
+        by \obv{cardinal_sum_monotone}.
+    Hence $\cardLe{\cardSum{\kappa}{\lambda}}{\kappa}$.
+    $\cardZero\subseteq\lambda$
+        by \obv{cardinal_zero,emptyset_subseteq}.
+    Hence $\cardLe{\cardZero}{\lambda}$
+        by \obv{subseteq_cardinal_le}.
+    Hence $\cardLe{\cardSum{\kappa}{\cardZero}}
+        {\cardSum{\kappa}{\lambda}}$
+        by \obv{cardinal_sum_monotone}.
+    $\cardSum{\kappa}{\cardZero}=\kappa$
+        by \obv{cardinal_sum_zero_right}.
+    Hence $\cardLe{\kappa}{\cardSum{\kappa}{\lambda}}$.
+    Hence $\cardSum{\kappa}{\lambda}\approx\kappa$
+        by \obv{cardinal_le_antisymmetric_up_to_equinum}.
+    $\cardSum{\kappa}{\lambda}$ and $\kappa$ are initial ordinals
+        by \auto{cardinal_sum_is_cardinal,cardinal}.
+    Follows by \obv{equinumerous_initial_ordinals_are_equal}.
+\end{proof}
+
+\begin{theorem}\label{inclusive_initial_segment_below_cardinal_successor}
+    Let $\kappa$ be an infinite cardinal.
+    Let $\beta\in\cardSucc{\kappa}$.
+    Then $\card{\suc{\beta}}\subseteq\kappa$.
+\end{theorem}
+\begin{proof}
+    $\card{\beta}\subseteq\kappa$
+        by \obv{card_of_below_cardinal_successor}.
+    $\cardSucc{\kappa}$ is a cardinal
+        by \obv{cardinal_successor_is_cardinal}.
+    Hence $\cardSucc{\kappa}$ is an ordinal
+        by \auto{cardinal,initial_ordinal}.
+    Hence $\beta$ is an ordinal by \obv{elem_of_ordinal_is_ordinal}.
+    \begin{byCase}
+        \caseOf{$\beta$ is finite.}
+            Hence $\beta$ is a natural number
+                by \obv{finite_ordinal_is_natural_number}.
+            Hence $\suc{\beta}$ is a natural number
+                by \obv{omega_successor}.
+            Hence $\suc{\beta}$ is a cardinal
+                by \obv{natural_number_is_cardinal}.
+            Hence $\card{\suc{\beta}}=\suc{\beta}$
+                by \obv{card_of_cardinal}.
+            $\naturals\subseteq\kappa$
+                by \obv{naturals_subseteq_infinite_cardinal}.
+            Hence $\suc{\beta}\in\kappa$ by \obv{subseteq}.
+            $\kappa$ and $\suc{\beta}$ are ordinals
+                by \auto{cardinal,initial_ordinal,natural_number_is_ordinal}.
+            Hence $\suc{\beta}\subseteq\kappa$
+                by \obv{ordinal_elem_implies_subseteq}.
+        \caseOf{$\beta$ is infinite.}
+            $\cons{\beta}{\beta}\approx\beta$
+                by \obv{infinite_cons_equinumerous}.
+            $\suc{\beta}=\cons{\beta}{\beta}$ by \obv{suc_eq_cons}.
+            Hence $\suc{\beta}\approx\beta$.
+            Hence $\card{\suc{\beta}}=\card{\beta}$
+                by \auto{card_eq_iff_equinumerous}.
+    \end{byCase}
+\end{proof}
+
+\begin{corollary}\label{inclusive_initial_segment_cardinal_le}
+    Let $\kappa$ be an infinite cardinal.
+    Let $\beta\in\cardSucc{\kappa}$.
+    Then $\cardLe{\suc{\beta}}{\kappa}$.
+\end{corollary}
+\begin{proof}
+    $\card{\suc{\beta}}\subseteq\kappa$
+        by \obv{inclusive_initial_segment_below_cardinal_successor}.
+    $\card{\kappa}=\kappa$ by \obv{card_of_cardinal}.
+    Hence $\card{\suc{\beta}}\subseteq\card{\kappa}$.
+    Follows by \auto{card_subseteq_iff_cardinal_le}.
+\end{proof}

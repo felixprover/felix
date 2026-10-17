@@ -1,0 +1,497 @@
+\import{topology/topological-space.tex}
+\import{topology/pseudometric.tex}
+
+\section{Metric spaces}
+
+Metrics add identity of indiscernibles to pseudometric spaces.  Since this
+refinement adds a law but no field, concrete metric values are constructed as
+pseudometric records and then shown to satisfy the separation law.
+
+\begin{struct}\label{metric_space}
+    A metric space $M$ is a pseudometric space such that
+    \begin{enumerate}
+        \item\label{metric_distance_zero_iff}
+            for all $x,y\in\carrier[M]$ we have
+                $\metricDistance[M](x,y)=\surrealZero$ iff $x=y$.
+    \end{enumerate}
+\end{struct}
+
+\begin{classification}\label{metric_is_pseudometric_space}
+    Let $M$ be a metric space.
+    Then $M$ is a pseudometric space.
+\end{classification}
+\begin{proof}
+    Follows by \obv{metric_space}.
+\end{proof}
+
+The inherited laws retain their established metric-facing names.
+
+\begin{proposition}\label{metric_distance_graph}
+    Let $M$ be a metric space.
+    Then $\metricDistance[M]\in
+        \funs{\carrier[M]\times\carrier[M]}{\reals}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{pseudometric_distance_graph}.
+\end{proof}
+
+\begin{proposition}\label{metric_distance_nonnegative}
+    Let $M$ be a metric space.
+    Let $x,y\in\carrier[M]$.
+    Then $\surrealLe{\surrealZero}{\metricDistance[M](x,y)}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{metric_space}.
+\end{proof}
+
+\begin{proposition}\label{metric_distance_symmetric}
+    Let $M$ be a metric space.
+    Let $x,y\in\carrier[M]$.
+    Then $\metricDistance[M](x,y)=\metricDistance[M](y,x)$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{metric_space}.
+\end{proof}
+
+\begin{proposition}\label{metric_triangle}
+    Let $M$ be a metric space.
+    Let $x,y,z\in\carrier[M]$.
+    Then $\surrealLe{\metricDistance[M](x,z)}
+        {\surrealAdd{\metricDistance[M](x,y)}
+            {\metricDistance[M](y,z)}}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{metric_space}.
+\end{proof}
+
+\begin{proposition}\label{metric_distance_type}
+    Let $M$ be a metric space.
+    Let $x,y\in\carrier[M]$.
+    Then $\metricDistance[M](x,y)\in\reals$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \obv{metric_is_pseudometric_space,pseudometric_distance_type}.
+\end{proof}
+
+\begin{definition}\label{metric_ball}
+    $\metricBall{M}{x}{r}=
+        \{y\in\carrier[M]\mid
+            \surrealLt{\metricDistance[M](x,y)}{r}\}$.
+\end{definition}
+
+\begin{proposition}\label{metric_ball_iff}
+    $y\in\metricBall{M}{x}{r}$ iff
+        $y\in\carrier[M]$ and
+        $\surrealLt{\metricDistance[M](x,y)}{r}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{metric_ball}.
+\end{proof}
+
+\begin{proposition}\label{metric_ball_subset_carrier}
+    $\metricBall{M}{x}{r}\subseteq\carrier[M]$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{metric_ball_iff,subseteq}.
+\end{proof}
+
+\begin{proposition}\label{metric_ball_contains_centre}
+    Let $M$ be a pseudometric space.
+    Let $x\in\carrier[M]$.
+    Let $r\in\reals$.
+    Suppose $\surrealLt{\surrealZero}{r}$.
+    Then $x\in\metricBall{M}{x}{r}$.
+\end{proposition}
+\begin{proof}
+    $\metricDistance[M](x,x)=\surrealZero$
+        by \obv{pseudometric_distance_self}.
+    Follows by \obv{metric_ball_iff}.
+\end{proof}
+
+\begin{proposition}\label{metric_ball_monotone}
+    Let $M$ be a pseudometric space.
+    Let $x\in\carrier[M]$.
+    Let $r,s\in\reals$.
+    Suppose $\surrealLe{r}{s}$.
+    Then $\metricBall{M}{x}{r}\subseteq\metricBall{M}{x}{s}$.
+\end{proposition}
+\begin{proof}
+    $\surreal{r}$ and $\surreal{s}$
+        by \obv{surreal_real_is_surreal}.
+    Show that for every $y\in\metricBall{M}{x}{r}$ we have
+        $y\in\metricBall{M}{x}{s}$.
+    \begin{subproof}
+        Fix $y\in\metricBall{M}{x}{r}$.
+        $y\in\carrier[M]$ and
+            $\surrealLt{\metricDistance[M](x,y)}{r}$
+            by \obv{metric_ball}.
+        $\metricDistance[M](x,y)\in\reals$
+            by \obv{pseudometric_distance_type}.
+        Hence $\surreal{\metricDistance[M](x,y)}$
+            by \obv{surreal_real_is_surreal}.
+        $\surrealLt{\metricDistance[M](x,y)}{s}$
+            by \obv{surreal_lt_le_transitive}.
+        Follows by \obv{metric_ball}.
+    \end{subproof}
+    Follows by \obv{subseteq}.
+\end{proof}
+
+\begin{proposition}\label{metric_ball_symmetric_membership}
+    Let $M$ be a pseudometric space.
+    Let $x,y\in\carrier[M]$.
+    Then $y\in\metricBall{M}{x}{r}$ iff
+        $x\in\metricBall{M}{y}{r}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{metric_ball_iff,pseudometric_distance_symmetric}.
+\end{proof}
+
+\begin{theorem}\label{metric_ball_triangle}
+    Let $M$ be a pseudometric space.
+    Let $x,y,z\in\carrier[M]$.
+    Let $r,s\in\reals$.
+    Suppose $y\in\metricBall{M}{x}{r}$ and
+        $z\in\metricBall{M}{y}{s}$.
+    Then $z\in\metricBall{M}{x}{\surrealAdd{r}{s}}$.
+\end{theorem}
+\begin{proof}
+    $\surreal{r}$ and $\surreal{s}$
+        by \obv{surreal_real_is_surreal}.
+    $\metricDistance[M](x,y)$,
+        $\metricDistance[M](y,z)$, and
+        $\metricDistance[M](x,z)$ are elements of $\reals$
+        by \obv{pseudometric_distance_type}.
+    Hence $\surreal{\metricDistance[M](x,y)}$ and
+        $\surreal{\metricDistance[M](y,z)}$ and
+        $\surreal{\metricDistance[M](x,z)}$
+        by \obv{surreal_real_is_surreal}.
+    $\surrealLt{\metricDistance[M](x,y)}{r}$ and
+        $\surrealLt{\metricDistance[M](y,z)}{s}$
+        by \auto{metric_ball_iff}.
+    Hence
+    $\surrealLt
+        {\surrealAdd{\metricDistance[M](x,y)}
+            {\metricDistance[M](y,z)}}
+        {\surrealAdd{r}{s}}$
+        by \obv{surreal_add_lt_both}.
+    $\surrealLe{\metricDistance[M](x,z)}
+        {\surrealAdd{\metricDistance[M](x,y)}
+            {\metricDistance[M](y,z)}}$
+        by \obv{pseudometric_triangle}.
+    Hence $\surrealLt{\metricDistance[M](x,z)}
+        {\surrealAdd{r}{s}}$
+        by \auto{surreal_le_lt_transitive,surreal_add_is_surreal}.
+    Follows by \obv{metric_ball}.
+\end{proof}
+
+\begin{theorem}\label{metric_balls_disjoint}
+    Let $M$ be a pseudometric space.
+    Let $p,q\in\carrier[M]$.
+    Let $r,s\in\reals$.
+    Suppose
+        $\surrealLe{\surrealAdd{r}{s}}{\metricDistance[M](p,q)}$.
+    Then
+        $\metricBall{M}{p}{r}\inter\metricBall{M}{q}{s}
+            =\emptyset$.
+\end{theorem}
+\begin{proof}
+    Suppose not.
+    Take $z$ such that
+        $z\in\metricBall{M}{p}{r}\inter\metricBall{M}{q}{s}$
+        by \obv{nonempty_inhabited}.
+    Hence $z\in\metricBall{M}{p}{r}$ and
+        $z\in\metricBall{M}{q}{s}$ by \obv{inter}.
+    Thus $z\in\carrier[M]$ and
+        $\surrealLt{\metricDistance[M](p,z)}{r}$ and
+        $\surrealLt{\metricDistance[M](q,z)}{s}$
+        by \obv{metric_ball_iff}.
+    $\metricDistance[M](q,z)=\metricDistance[M](z,q)$
+        by \obv{pseudometric_distance_symmetric}.
+    Hence $\surrealLt{\metricDistance[M](z,q)}{s}$.
+    $\metricDistance[M](p,z)$ and
+        $\metricDistance[M](z,q)$ are elements of $\reals$
+        by \obv{pseudometric_distance_type}.
+    $\metricDistance[M](p,q)\in\reals$
+        by \obv{pseudometric_distance_type}.
+    $\surrealAdd{\metricDistance[M](p,z)}
+        {\metricDistance[M](z,q)}\in\reals$
+        by \obv{surreal_real_addition_closed}.
+    $\surrealAdd{r}{s}\in\reals$
+        by \obv{surreal_real_addition_closed}.
+    Hence
+        $\surrealLt{
+            \surrealAdd{\metricDistance[M](p,z)}
+                {\metricDistance[M](z,q)}}
+            {\surrealAdd{r}{s}}$
+        by \obv{surreal_add_lt_both,surreal_real_is_surreal}.
+    $\surrealLe{\metricDistance[M](p,q)}
+        {\surrealAdd{\metricDistance[M](p,z)}
+            {\metricDistance[M](z,q)}}$
+        by \obv{pseudometric_triangle}.
+    $\surreal{\metricDistance[M](p,q)}$ and
+        $\surreal{\surrealAdd{\metricDistance[M](p,z)}
+            {\metricDistance[M](z,q)}}$ and
+        $\surreal{\surrealAdd{r}{s}}$
+        by \obv{surreal_real_is_surreal}.
+    Hence
+        $\surrealLt{\metricDistance[M](p,q)}{\surrealAdd{r}{s}}$
+        by \obv{surreal_le_lt_transitive}.
+    Contradiction by \auto{surreal_le,surreal_lt_asymmetric}.
+\end{proof}
+
+\begin{definition}\label{metric_open}
+    $\metricOpen{M}{U}$ iff
+        $U\subseteq\carrier[M]$ and
+        for every $x\in U$ there exists $r\in\reals$ such that
+            $\surrealLt{\surrealZero}{r}$ and
+            $\metricBall{M}{x}{r}\subseteq U$.
+\end{definition}
+
+\begin{definition}\label{metric_opens}
+    $\metricOpens{M}=
+        \{U\in\pow{\carrier[M]}\mid\metricOpen{M}{U}\}$.
+\end{definition}
+
+\begin{proposition}\label{metric_opens_iff}
+    $U\in\metricOpens{M}$ iff $\metricOpen{M}{U}$.
+\end{proposition}
+\begin{proof}
+    If $U\in\metricOpens{M}$, then $\metricOpen{M}{U}$
+        by \obv{metric_opens}.
+    If $\metricOpen{M}{U}$, then $U\in\pow{\carrier[M]}$
+        by \auto{metric_open,pow_iff,subseteq}.
+    Follows by \auto{metric_opens}.
+\end{proof}
+
+\begin{theorem}\label{metric_ball_is_open}
+    Let $M$ be a pseudometric space.
+    Let $x\in\carrier[M]$.
+    Let $r\in\reals$.
+    Suppose $\surrealLt{\surrealZero}{r}$.
+    Then $\metricBall{M}{x}{r}\in\metricOpens{M}$.
+\end{theorem}
+\begin{proof}
+    Let $U=\metricBall{M}{x}{r}$.
+    $U\subseteq\carrier[M]$ by \auto{metric_ball_subset_carrier}.
+    Show that for every $y\in U$ there exists $s\in\reals$ such that
+        $\surrealLt{\surrealZero}{s}$ and
+        $\metricBall{M}{y}{s}\subseteq U$.
+    \begin{subproof}
+        Fix $y\in U$.
+        Then $y\in\carrier[M]$ and
+            $\surrealLt{\metricDistance[M](x,y)}{r}$
+            by \obv{metric_ball_iff}.
+        Let $d=\metricDistance[M](x,y)$.
+        $d\in\reals$ by \auto{pseudometric_distance_type}.
+        Hence $\surrealNeg{d}\in\reals$
+            by \obv{surreal_real_negation_closed}.
+        Let $s=\surrealAdd{r}{\surrealNeg{d}}$.
+        $s\in\reals$ by \auto{surreal_real_addition_closed}.
+        Hence $\surreal{s}$ by \obv{surreal_real_is_surreal}.
+        $\surreal{d}$ and $\surreal{r}$
+            by \obv{surreal_real_is_surreal}.
+        Hence $\surrealLt{\surrealZero}{s}$
+            by \obv{surreal_subtraction_positive}.
+        Show that $\metricBall{M}{y}{s}\subseteq U$.
+        \begin{subproof}
+            Show that for every $z\in\metricBall{M}{y}{s}$ we have
+                $z\in U$.
+            \begin{subproof}
+                Fix $z\in\metricBall{M}{y}{s}$.
+                Then $z\in\carrier[M]$ and
+                    $\surrealLt{\metricDistance[M](y,z)}{s}$
+                    by \obv{metric_ball_iff}.
+                $\metricDistance[M](y,z)$ and
+                    $\metricDistance[M](x,z)$ are elements of $\reals$
+                    by \obv{pseudometric_distance_type}.
+                Hence $\surreal{\metricDistance[M](y,z)}$ and
+                    $\surreal{\metricDistance[M](x,z)}$
+                    by \obv{surreal_real_is_surreal}.
+                $\surrealLe{\metricDistance[M](x,z)}
+                    {\surrealAdd{d}{\metricDistance[M](y,z)}}$
+                    by \auto{pseudometric_triangle}.
+                $\surrealLt{
+                    \surrealAdd{d}{\metricDistance[M](y,z)}}
+                    {\surrealAdd{d}{s}}$
+                    by \obv{surreal_add_lt_right}.
+                Hence $\surrealLt{\metricDistance[M](x,z)}
+                    {\surrealAdd{d}{s}}$
+                    by \auto{surreal_le_lt_transitive,surreal_add_is_surreal}.
+                $\surrealAdd{d}{s}=r$
+                    by
+                    \auto{surreal_add_associative,surreal_add_commutative,surreal_add_inverse_right,surreal_add_zero_left,surreal_negation_is_surreal}.
+                Hence $\surrealLt{\metricDistance[M](x,z)}{r}$.
+                Follows by \obv{metric_ball}.
+            \end{subproof}
+            Follows by \obv{subseteq}.
+        \end{subproof}
+    \end{subproof}
+    Hence $\metricOpen{M}{U}$ by \obv{metric_open}.
+    Follows by \obv{metric_opens_iff}.
+\end{proof}
+
+\begin{proposition}\label{metric_open_empty}
+    $\metricOpen{M}{\emptyset}$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{metric_open,emptyset_subseteq,emptyset}.
+\end{proof}
+
+\begin{proposition}\label{metric_open_carrier}
+    Let $M$ be a pseudometric space.
+    Then $\metricOpen{M}{\carrier[M]}$.
+\end{proposition}
+\begin{proof}
+    $\surrealOne\in\reals$ by \obv{surreal_one_is_real}.
+    $\surrealLt{\surrealZero}{\surrealOne}$
+        by \obv{surreal_zero_lt_one}.
+    For every $x\in\carrier[M]$ we have
+        $\metricBall{M}{x}{\surrealOne}\subseteq\carrier[M]$
+        by \obv{metric_ball_subset_carrier}.
+    Follows by \obv{metric_open,subseteq_refl}.
+\end{proof}
+
+\begin{theorem}\label{metric_open_intersection}
+    Let $M$ be a pseudometric space.
+    Suppose $\metricOpen{M}{U}$ and $\metricOpen{M}{V}$.
+    Then $\metricOpen{M}{U\inter V}$.
+\end{theorem}
+\begin{proof}
+    $U\subseteq\carrier[M]$ and $V\subseteq\carrier[M]$
+        by \obv{metric_open}.
+    Hence $U\inter V\subseteq\carrier[M]$
+        by \obv{inter,subseteq}.
+    Show that for every $x\in U\inter V$ there exists $t\in\reals$
+        such that $\surrealLt{\surrealZero}{t}$ and
+            $\metricBall{M}{x}{t}\subseteq U\inter V$.
+    \begin{subproof}
+        Fix $x\in U\inter V$.
+        $x\in U$ and $x\in V$ by \obv{inter}.
+        Take $r\in\reals$ such that
+            $\surrealLt{\surrealZero}{r}$ and
+            $\metricBall{M}{x}{r}\subseteq U$
+            by \obv{metric_open}.
+        Take $s\in\reals$ such that
+            $\surrealLt{\surrealZero}{s}$ and
+            $\metricBall{M}{x}{s}\subseteq V$
+            by \obv{metric_open}.
+        $x\in\carrier[M]$ by \obv{subseteq}.
+        $\surreal{r}$ and $\surreal{s}$
+            by \obv{surreal_real_is_surreal}.
+        $\surrealLe{r}{s}$ or $\surrealLe{s}{r}$
+            by \obv{surreal_le_total}.
+        \begin{byCase}
+            \caseOf{$\surrealLe{r}{s}$.}
+                $\metricBall{M}{x}{r}\subseteq\metricBall{M}{x}{s}$
+                    by \obv{metric_ball_monotone}.
+                Hence $\metricBall{M}{x}{r}\subseteq V$
+                    by \obv{subseteq_transitive}.
+                Hence $\metricBall{M}{x}{r}\subseteq U\inter V$
+                    by \obv{inter,subseteq}.
+            \caseOf{not $\surrealLe{r}{s}$.}
+                Hence $\surrealLe{s}{r}$.
+                $\metricBall{M}{x}{s}\subseteq\metricBall{M}{x}{r}$
+                    by \obv{metric_ball_monotone}.
+                Hence $\metricBall{M}{x}{s}\subseteq U$
+                    by \obv{subseteq_transitive}.
+                Hence $\metricBall{M}{x}{s}\subseteq U\inter V$
+                    by \obv{inter,subseteq}.
+        \end{byCase}
+    \end{subproof}
+    Follows by \obv{metric_open}.
+\end{proof}
+
+\begin{theorem}\label{metric_open_arbitrary_union}
+    Suppose for every $U\in F$ we have $\metricOpen{M}{U}$.
+    Then $\metricOpen{M}{\unions{F}}$.
+\end{theorem}
+\begin{proof}
+    Show that for every $x\in\unions{F}$ we have $x\in\carrier[M]$.
+    \begin{subproof}
+        Fix $x\in\unions{F}$.
+        Take $U\in F$ such that $x\in U$ by \obv{unions_iff}.
+        $\metricOpen{M}{U}$.
+        $U\subseteq\carrier[M]$ by \obv{metric_open}.
+        Follows by \obv{subseteq}.
+    \end{subproof}
+    Hence $\unions{F}\subseteq\carrier[M]$ by \obv{subseteq}.
+    Show that for every $x\in\unions{F}$ there exists $r\in\reals$
+        such that $\surrealLt{\surrealZero}{r}$ and
+            $\metricBall{M}{x}{r}\subseteq\unions{F}$.
+    \begin{subproof}
+        Fix $x\in\unions{F}$.
+        Take $U\in F$ such that $x\in U$ by \obv{unions_iff}.
+        $\metricOpen{M}{U}$.
+        Take $r\in\reals$ such that
+            $\surrealLt{\surrealZero}{r}$ and
+            $\metricBall{M}{x}{r}\subseteq U$
+            by \obv{metric_open}.
+        $U\subseteq\unions{F}$ by \auto{unions_iff,subseteq}.
+        Hence $\metricBall{M}{x}{r}\subseteq\unions{F}$
+            by \obv{subseteq_transitive}.
+    \end{subproof}
+    Follows by \obv{metric_open}.
+\end{proof}
+
+\begin{theorem}\label{metric_opens_form_topology}
+    Let $M$ be a pseudometric space.
+    Then $\metricOpens{M}$ is a topology on $\carrier[M]$.
+\end{theorem}
+\begin{proof}
+    $\metricOpens{M}\subseteq\pow{\carrier[M]}$
+        by \obv{metric_opens,subseteq}.
+    $\carrier[M]\in\metricOpens{M}$
+        by \auto{metric_opens_iff,metric_open_carrier}.
+    For all $U,V\in\metricOpens{M}$ we have
+        $U\inter V\in\metricOpens{M}$
+        by \auto{metric_opens_iff,metric_open_intersection}.
+    Show that for every $F\subseteq\metricOpens{M}$ we have
+        $\unions{F}\in\metricOpens{M}$.
+    \begin{subproof}
+        Fix $F\subseteq\metricOpens{M}$.
+        For every $U\in F$ we have $\metricOpen{M}{U}$
+            by \auto{subseteq,metric_opens_iff}.
+        Hence $\metricOpen{M}{\unions{F}}$
+            by \obv{metric_open_arbitrary_union}.
+        Follows by \obv{metric_opens_iff}.
+    \end{subproof}
+    Follows by \obv{topology_family}.
+\end{proof}
+
+\begin{definition}\label{metric_convergence}
+    $\metricConverges{M}{s}{x}$ iff
+        $M$ is a metric space and
+        $s\in\funs{\naturals}{\carrier[M]}$ and
+        $x\in\carrier[M]$ and
+        for every $e\in\reals$ such that
+            $\surrealLt{\surrealZero}{e}$ there exists $N\in\naturals$
+            such that for every $n\in\naturals$ such that $N\subseteq n$
+                we have $s(n)\in\metricBall{M}{x}{e}$.
+\end{definition}
+
+\begin{definition}\label{metric_cauchy_sequence}
+    $\metricCauchy{M}{s}$ iff
+        $M$ is a metric space and
+        $s\in\funs{\naturals}{\carrier[M]}$ and
+        for every $e\in\reals$ such that
+            $\surrealLt{\surrealZero}{e}$ there exists $N\in\naturals$
+            such that for all $m,n\in\naturals$ such that
+                $N\subseteq m$ and $N\subseteq n$ we have
+                $\surrealLt{\metricDistance[M](s(m),s(n))}{e}$.
+\end{definition}
+
+\begin{definition}\label{sequentially_complete_metric_space}
+    $M$ is sequentially complete metric iff
+        $M$ is a metric space and
+        for every $s$ such that $\metricCauchy{M}{s}$ there exists
+            $x\in\carrier[M]$ such that $\metricConverges{M}{s}{x}$.
+\end{definition}
+
+The shorter phrase is retained as an explicit abbreviation.  Its meaning is
+sequential until the uniform-completeness bridge is invoked.
+
+\begin{abbreviation}\label{complete_metric_space}
+    $M$ is complete metric iff $M$ is sequentially complete metric.
+\end{abbreviation}

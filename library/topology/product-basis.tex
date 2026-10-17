@@ -1,0 +1,391 @@
+\section{The rectangle basis}
+
+\import{topology/product.tex}
+\import{topology/basis.tex}
+
+The open rectangles give the concrete presentation of the binary product
+topology.  They are defined on the literal product carrier, in agreement with
+the initial-topology construction.
+
+\begin{definition}\label{product_rectangles}
+    $\productRectangles{X}{Y}
+        =\{R\in\pow{\carrier[X]\times\carrier[Y]}\mid
+            \text{there exists $U\in\opens[X]$ such that there exists
+                $V\in\opens[Y]$ such that $R=U\times V$}\}$.
+\end{definition}
+
+\begin{definition}\label{binary_product_prebasis}
+    $\binaryProductPrebasis{X}{Y}
+        =\initialPrebasis{
+            \carrier[X]\times\carrier[Y]}{
+            \suc{\suc{\emptyset}}}{
+            \binaryProductSpaceFamily{X}{Y}}{
+            \binaryProductProjectionFamily{X}{Y}}$.
+\end{definition}
+
+\begin{proposition}\label{product_rectangles_are_topological_basis}
+    Let $X,Y$ be topological spaces.
+    Then $\productRectangles{X}{Y}$ is a topological basis for
+        $\carrier[X]\times\carrier[Y]$.
+\end{proposition}
+\begin{proof}
+    $\productRectangles{X}{Y}\subseteq
+        \pow{\carrier[X]\times\carrier[Y]}$ by
+        \obv{product_rectangles,subseteq}.
+    Hence $\productRectangles{X}{Y}$ is a family of subsets of
+        $\carrier[X]\times\carrier[Y]$ by
+        \auto{pow_iff,subseteq}.
+
+    $\carrier[X]\in\opens[X]$ and $\carrier[Y]\in\opens[Y]$ by
+        \obv{carrier_open}.
+    $\carrier[X]\times\carrier[Y]
+        \in\pow{\carrier[X]\times\carrier[Y]}$ by
+        \obv{powerset_top}.
+    Hence $\carrier[X]\times\carrier[Y]
+        \in\productRectangles{X}{Y}$ by
+        \obv{product_rectangles}.
+    Thus $\productRectangles{X}{Y}$ covers
+        $\carrier[X]\times\carrier[Y]$ by
+        \obv{subseteq_refl}.
+
+    Show that for all $A,B,p$ such that
+        $A,B\in\productRectangles{X}{Y}$ and $p\in A,B$
+        there exists $C\in\productRectangles{X}{Y}$ such that
+            $p\in C\subseteq A,B$.
+    \begin{subproof}
+        Fix $A,B,p$.
+        Assume $A,B\in\productRectangles{X}{Y}$ and $p\in A,B$.
+        Take $U\in\opens[X]$ such that there exists $V\in\opens[Y]$
+            such that $A=U\times V$ by \obv{product_rectangles}.
+        Take $V\in\opens[Y]$ such that $A=U\times V$.
+        Take $P\in\opens[X]$ such that there exists $Q\in\opens[Y]$
+            such that $B=P\times Q$ by \obv{product_rectangles}.
+        Take $Q\in\opens[Y]$ such that $B=P\times Q$.
+        $U\inter P\in\opens[X]$ and $V\inter Q\in\opens[Y]$ by
+            \obv{opens_inter}.
+        $(U\inter P)\times(V\inter Q)
+            \subseteq\carrier[X]\times\carrier[Y]$ by
+            \auto{opens_type,inter,subseteq,times}.
+        Hence $(U\inter P)\times(V\inter Q)
+            \in\pow{\carrier[X]\times\carrier[Y]}$ by
+            \obv{powerset_intro}.
+        Thus $(U\inter P)\times(V\inter Q)
+            \in\productRectangles{X}{Y}$ by
+            \auto{product_rectangles}.
+        $(U\inter P)\times(V\inter Q)
+            =(U\times V)\inter(P\times Q)$ by \obv{inter_times}.
+        Hence $(U\inter P)\times(V\inter Q)=A\inter B$.
+        $p\in A\inter B$ by \obv{inter}.
+        $A\inter B\subseteq A,B$ by \obv{inter,subseteq}.
+    \end{subproof}
+    Follows by \obv{topological_basis}.
+\end{proof}
+
+\begin{proposition}\label{binary_product_prebasis_is_rectangular}
+    Let $X,Y$ be topological spaces.
+    Then $\binaryProductPrebasis{X}{Y}
+        \subseteq\productRectangles{X}{Y}$.
+\end{proposition}
+\begin{proof}
+    It suffices to show that every element of
+        $\binaryProductPrebasis{X}{Y}$ is an element of
+        $\productRectangles{X}{Y}$ by \obv{subseteq}.
+    Fix $W\in\binaryProductPrebasis{X}{Y}$.
+    Let $I=\suc{\suc{\emptyset}}$.
+    Let $S=\carrier[X]\times\carrier[Y]$.
+    Hence $W\in\initialPrebasis{S}{I}{
+        \binaryProductSpaceFamily{X}{Y}}{
+        \binaryProductProjectionFamily{X}{Y}}$ by
+        \obv{binary_product_prebasis}.
+    Take $i\in I$ such that there exists
+        $U\in\opens[(\binaryProductSpaceFamily{X}{Y})(i)]$ such that
+        $W=\preimg{(\binaryProductProjectionFamily{X}{Y})(i)}{U}$ by
+        \obv{initial_prebasis}.
+    Take $U\in\opens[(\binaryProductSpaceFamily{X}{Y})(i)]$ such that
+        $W=\preimg{(\binaryProductProjectionFamily{X}{Y})(i)}{U}$.
+    $i=\emptyset$ or $i=\suc{\emptyset}$ by
+        \auto{suc_elim,emptyset}.
+
+    Show that if $i=\emptyset$, then $W\in\productRectangles{X}{Y}$.
+    \begin{subproof}
+        Assume $i=\emptyset$.
+        Hence $U\in\opens[X]$ and
+            $W=\preimg{
+                \firstProductProjection{\carrier[X]}{\carrier[Y]}}{U}$
+            by
+            \auto{binary_product_space_family,
+                binary_product_projection_family,binary_family_left}.
+        $U\subseteq\carrier[X]$ by \obv{opens_type}.
+        Hence $W=U\times\carrier[Y]$ by
+            \auto{first_product_projection_preimage}.
+        $\carrier[Y]\in\opens[Y]$ by \obv{carrier_open}.
+        $U\times\carrier[Y]\subseteq S$ by
+            \auto{opens_type,times,subseteq}.
+        Hence $U\times\carrier[Y]\in\pow{S}$ by
+            \obv{powerset_intro}.
+        Follows by \auto{product_rectangles}.
+    \end{subproof}
+
+    Show that if $i=\suc{\emptyset}$, then
+        $W\in\productRectangles{X}{Y}$.
+    \begin{subproof}
+        Assume $i=\suc{\emptyset}$.
+        Hence $U\in\opens[Y]$ and
+            $W=\preimg{
+                \secondProductProjection{\carrier[X]}{\carrier[Y]}}{U}$
+            by
+            \auto{binary_product_space_family,
+                binary_product_projection_family,binary_family_right}.
+        $U\subseteq\carrier[Y]$ by \obv{opens_type}.
+        Hence $W=\carrier[X]\times U$ by
+            \auto{second_product_projection_preimage}.
+        $\carrier[X]\in\opens[X]$ by \obv{carrier_open}.
+        $\carrier[X]\times U\subseteq S$ by
+            \auto{opens_type,times,subseteq}.
+        Hence $\carrier[X]\times U\in\pow{S}$ by
+            \obv{powerset_intro}.
+        Follows by \auto{product_rectangles}.
+    \end{subproof}
+\end{proof}
+
+\begin{proposition}\label{product_rectangles_in_generated_product_opens}
+    Let $X,Y$ be topological spaces.
+    Then $\productRectangles{X}{Y}\subseteq
+        \generatedOpens{
+            \carrier[X]\times\carrier[Y]}{
+            \binaryProductPrebasis{X}{Y}}$.
+\end{proposition}
+\begin{proof}
+    It suffices to show that every element of $\productRectangles{X}{Y}$
+        is an element of
+        $\generatedOpens{
+            \carrier[X]\times\carrier[Y]}{
+            \binaryProductPrebasis{X}{Y}}$ by
+        \obv{subseteq}.
+    Fix $W\in\productRectangles{X}{Y}$.
+    Let $I=\suc{\suc{\emptyset}}$.
+    Let $S=\carrier[X]\times\carrier[Y]$.
+    $\binaryProductPrebasis{X}{Y}$ is a family of subsets of $S$ by
+        \auto{binary_product_prebasis,initial_prebasis_type}.
+    Take $U\in\opens[X]$ such that there exists $V\in\opens[Y]$
+        such that $W=U\times V$ by \obv{product_rectangles}.
+    Take $V\in\opens[Y]$ such that $W=U\times V$.
+    $U\subseteq\carrier[X]$ and $V\subseteq\carrier[Y]$ by
+        \obv{opens_type}.
+    Let $A=\preimg{
+        \firstProductProjection{\carrier[X]}{\carrier[Y]}}{U}$.
+    Let $B=\preimg{
+        \secondProductProjection{\carrier[X]}{\carrier[Y]}}{V}$.
+    $A=U\times\carrier[Y]$ by
+        \obv{first_product_projection_preimage}.
+    $B=\carrier[X]\times V$ by
+        \obv{second_product_projection_preimage}.
+    $A,B\subseteq S$ by \auto{times,subseteq}.
+    Hence $A,B\in\pow{S}$ by \obv{powerset_intro}.
+    $\emptyset\in I$ and $\suc{\emptyset}\in I$ by
+        \auto{suc_iff,emptyset}.
+    $(\binaryProductSpaceFamily{X}{Y})(\emptyset)=X$ and
+        $(\binaryProductProjectionFamily{X}{Y})(\emptyset)
+            =\firstProductProjection{\carrier[X]}{\carrier[Y]}$ by
+        \auto{binary_product_space_family,
+            binary_product_projection_family,binary_family_left}.
+    Hence $A\in\binaryProductPrebasis{X}{Y}$ by
+        \auto{binary_product_prebasis,initial_prebasis}.
+    $(\binaryProductSpaceFamily{X}{Y})(\suc{\emptyset})=Y$ and
+        $(\binaryProductProjectionFamily{X}{Y})(\suc{\emptyset})
+            =\secondProductProjection{\carrier[X]}{\carrier[Y]}$ by
+        \auto{binary_product_space_family,
+            binary_product_projection_family,binary_family_right}.
+    Hence $B\in\binaryProductPrebasis{X}{Y}$ by
+        \auto{binary_product_prebasis,initial_prebasis}.
+    $\binaryProductPrebasis{X}{Y}\subseteq
+        \generatedOpens{S}{\binaryProductPrebasis{X}{Y}}$ by
+        \obv{generated_opens_contains}.
+    Hence $A\in\generatedOpens{S}{\binaryProductPrebasis{X}{Y}}$ by
+        \obv{subseteq}.
+    Hence $B\in\generatedOpens{S}{\binaryProductPrebasis{X}{Y}}$ by
+        \obv{subseteq}.
+    $\generatedOpens{S}{\binaryProductPrebasis{X}{Y}}$ is a topology on
+        $S$ by
+        \obv{generated_opens_is_topology}.
+    Hence $A\inter B\in
+        \generatedOpens{S}{\binaryProductPrebasis{X}{Y}}$ by
+        \obv{topology_family}.
+    $U\inter\carrier[X]=U$ by
+        \obv{inter_absorb_supseteq_right}.
+    $\carrier[Y]\inter V=V$ by
+        \obv{inter_absorb_supseteq_left}.
+    $(U\inter\carrier[X])\times(\carrier[Y]\inter V)
+        =(U\times\carrier[Y])\inter(\carrier[X]\times V)$ by
+        \obv{inter_times}.
+    Hence $W=A\inter B$.
+\end{proof}
+
+\begin{theorem}\label{product_rectangles_generate_product_opens}
+    Let $X,Y$ be topological spaces.
+    Then
+        $\generatedOpens{
+            \carrier[X]\times\carrier[Y]}{
+            \productRectangles{X}{Y}}
+        =\opens[\BinaryProductTopology{X}{Y}]$.
+\end{theorem}
+\begin{proof}
+    Let $S=\carrier[X]\times\carrier[Y]$.
+    $\binaryProductPrebasis{X}{Y}$ is a family of subsets of $S$ by
+        \auto{binary_product_prebasis,initial_prebasis_type}.
+    $\productRectangles{X}{Y}$ is a topological basis for
+        $\carrier[X]\times\carrier[Y]$ by
+        \obv{product_rectangles_are_topological_basis}.
+    Hence $\productRectangles{X}{Y}$ is a topological basis for $S$.
+    Hence $\productRectangles{X}{Y}$ is a family of subsets of $S$ by
+        \obv{topological_basis}.
+    $\binaryProductPrebasis{X}{Y}
+        \subseteq\productRectangles{X}{Y}$ by
+        \obv{binary_product_prebasis_is_rectangular}.
+    $\productRectangles{X}{Y}\subseteq
+        \generatedOpens{
+            \carrier[X]\times\carrier[Y]}{
+            \binaryProductPrebasis{X}{Y}}$ by
+        \obv{product_rectangles_in_generated_product_opens}.
+    Hence $\productRectangles{X}{Y}\subseteq
+        \generatedOpens{S}{\binaryProductPrebasis{X}{Y}}$.
+    $\binaryProductPrebasis{X}{Y}\subseteq
+        \generatedOpens{S}{\productRectangles{X}{Y}}$ by
+        \auto{generated_opens_contains,subseteq_transitive}.
+    $\generatedOpens{S}{\productRectangles{X}{Y}}$ is a topology on $S$
+        by
+        \obv{generated_opens_is_topology}.
+    Hence $\generatedOpens{S}{\binaryProductPrebasis{X}{Y}}
+        \subseteq\generatedOpens{S}{\productRectangles{X}{Y}}$ by
+        \obv{generated_opens_least}.
+    $\generatedOpens{S}{\binaryProductPrebasis{X}{Y}}$ is a topology on
+        $S$ by
+        \obv{generated_opens_is_topology}.
+    Hence $\generatedOpens{S}{\productRectangles{X}{Y}}
+        \subseteq\generatedOpens{S}{\binaryProductPrebasis{X}{Y}}$ by
+        \obv{generated_opens_least}.
+    Thus $\generatedOpens{S}{\productRectangles{X}{Y}}
+        =\generatedOpens{S}{\binaryProductPrebasis{X}{Y}}$ by
+        \obv{subseteq_antisymmetric}.
+    $\opens[\BinaryProductTopology{X}{Y}]
+        =\generatedOpens{S}{\binaryProductPrebasis{X}{Y}}$ by
+        \auto{binary_product_topology,binary_product_prebasis,
+            initial_topology_opens}.
+\end{proof}
+
+\begin{theorem}\label{product_rectangles_form_open_basis}
+    Let $X,Y$ be topological spaces.
+    Then $\productRectangles{X}{Y}$ is an open basis of
+        $\BinaryProductTopology{X}{Y}$.
+\end{theorem}
+\begin{proof}
+    $\BinaryProductTopology{X}{Y}$ is a topological space by
+        \obv{binary_product_topology_is_topological_space}.
+    $\productRectangles{X}{Y}$ is a topological basis for
+        $\carrier[X]\times\carrier[Y]$ by
+        \obv{product_rectangles_are_topological_basis}.
+    $\carrier[\BinaryProductTopology{X}{Y}]
+        =\carrier[X]\times\carrier[Y]$ by
+        \obv{binary_product_topology_carrier}.
+    Hence $\productRectangles{X}{Y}$ is a topological basis for
+        $\carrier[\BinaryProductTopology{X}{Y}]$.
+    $\generatedOpens{
+        \carrier[X]\times\carrier[Y]}{
+        \productRectangles{X}{Y}}
+        =\opens[\BinaryProductTopology{X}{Y}]$ by
+        \obv{product_rectangles_generate_product_opens}.
+    Hence $\generatedOpens{
+        \carrier[\BinaryProductTopology{X}{Y}]}{
+        \productRectangles{X}{Y}}
+        =\opens[\BinaryProductTopology{X}{Y}]$.
+    $\productRectangles{X}{Y}$ is a family of subsets of
+        $\carrier[\BinaryProductTopology{X}{Y}]$ by
+        \obv{topological_basis}.
+    Hence $\productRectangles{X}{Y}\subseteq
+        \generatedOpens{
+            \carrier[\BinaryProductTopology{X}{Y}]}{
+            \productRectangles{X}{Y}}$ by
+        \obv{generated_opens_contains}.
+    Hence $\productRectangles{X}{Y}
+        \subseteq\opens[\BinaryProductTopology{X}{Y}]$.
+    Show that for all $U,p$ such that
+        $U\in\opens[\BinaryProductTopology{X}{Y}]$ and $p\in U$
+        there exists $V\in\productRectangles{X}{Y}$ such that
+            $p\in V\subseteq U$.
+    \begin{subproof}
+        Fix $U,p$.
+        Assume $U\in\opens[\BinaryProductTopology{X}{Y}]$ and $p\in U$.
+        Hence $U\in\generatedOpens{
+            \carrier[\BinaryProductTopology{X}{Y}]}{
+            \productRectangles{X}{Y}}$.
+        $\genOpens{\productRectangles{X}{Y}}{
+            \carrier[\BinaryProductTopology{X}{Y}]}
+            =\generatedOpens{
+                \carrier[\BinaryProductTopology{X}{Y}]}{
+                \productRectangles{X}{Y}}$ by
+            \obv{topological_basis_genopens_eq_generated_opens}.
+        Hence $U\in\genOpens{\productRectangles{X}{Y}}{
+            \carrier[\BinaryProductTopology{X}{Y}]}$.
+        Follows by \obv{genopens}.
+    \end{subproof}
+    Follows by \obv{open_basis}.
+\end{proof}
+
+\begin{theorem}\label{product_of_open_sets_is_open}
+    Let $X,Y$ be topological spaces.
+    Let $U\in\opens[X]$ and $V\in\opens[Y]$.
+    Then $U\times V\in\opens[\BinaryProductTopology{X}{Y}]$.
+\end{theorem}
+\begin{proof}
+    $U\times V\subseteq\carrier[X]\times\carrier[Y]$ by
+        \auto{opens_type,times,subseteq}.
+    Hence $U\times V\in\pow{\carrier[X]\times\carrier[Y]}$ by \obv{powerset_intro}.
+    Hence $U\times V\in\productRectangles{X}{Y}$ by \obv{product_rectangles}.
+    $\productRectangles{X}{Y}\subseteq\opens[\BinaryProductTopology{X}{Y}]$ by
+        \auto{product_rectangles_form_open_basis,open_basis}.
+    Follows by \obv{subseteq}.
+\end{proof}
+
+\begin{definition}\label{product_basis}
+    $\productBasis{B}{C}=\{\fst{p}\times\snd{p}\mid p\in B\times C\}$.
+\end{definition}
+
+\begin{proposition}\label{product_basis_iff}
+    $W\in\productBasis{B}{C}$ iff there exists $U\in B$ such that
+        there exists $V\in C$ such that $W=U\times V$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{product_basis,times,fst_eq,snd_eq}.
+\end{proof}
+
+\begin{theorem}\label{product_of_open_bases}
+    Let $X,Y$ be topological spaces.
+    Let $B$ be an open basis of $X$ and $C$ be an open basis of $Y$.
+    Then $\productBasis{B}{C}$ is an open basis of $\BinaryProductTopology{X}{Y}$.
+\end{theorem}
+\begin{proof}
+    Let $P=\BinaryProductTopology{X}{Y}$.
+    $P$ is a topological space by \obv{binary_product_topology_is_topological_space}.
+    $B\subseteq\opens[X]$ and $C\subseteq\opens[Y]$ by \obv{open_basis}.
+    $\productBasis{B}{C}\subseteq\opens[P]$ by
+        \auto{product_basis_iff,product_of_open_sets_is_open,subseteq}.
+    Show that for all $W,p$ such that $W\in\opens[P]$ and $p\in W$
+        there exists $R\in\productBasis{B}{C}$ such that $p\in R\subseteq W$.
+    \begin{subproof}
+        Fix $W,p$.
+        Assume $W\in\opens[P]$ and $p\in W$.
+        Take $Q\in\productRectangles{X}{Y}$ such that $p\in Q\subseteq W$
+            by \auto{product_rectangles_form_open_basis,open_basis}.
+        Take $U\in\opens[X]$ such that there exists $V\in\opens[Y]$
+            such that $Q=U\times V$ by \obv{product_rectangles}.
+        Take $V\in\opens[Y]$ such that $Q=U\times V$.
+        $\fst{p}\in U$ and $\snd{p}\in V$ by \auto{fst_type,snd_type}.
+        Take $D\in B$ such that $\fst{p}\in D\subseteq U$ by \obv{open_basis}.
+        Take $E\in C$ such that $\snd{p}\in E\subseteq V$ by \obv{open_basis}.
+        $D\times E\in\productBasis{B}{C}$ by \auto{product_basis_iff}.
+        $p\in D\times E$ by \auto{times,times_elem_is_tuple,fst_eq,snd_eq}.
+        $D\times E\subseteq Q$ by \auto{times,subseteq}.
+        Hence $D\times E\subseteq W$ by \obv{subseteq_transitive}.
+    \end{subproof}
+    Follows by \auto{open_basis}.
+\end{proof}

@@ -1,0 +1,438 @@
+\import{algebra/group/isomorphism.tex}
+\import{order/directed.tex}
+
+\section{Directed systems of groups}
+
+The index object is carrier-bearing; the component and bond fields are
+ordinary set-coded families.  A bond graph does not remember its endpoints,
+so every structural law names the corresponding component groups explicitly.
+
+\begin{struct}\label{group_direct_system}
+    A group direct system $S$ is a directed quasiordered set equipped with
+    \begin{enumerate}
+        \item\label{group_direct_system_group_family}
+            a component-group family
+            $\directSystemGroups[S]:
+                \carrier[S]\to\ran{\directSystemGroups[S]}$;
+        \item\label{group_direct_system_bond_family}
+            a bonding-map family
+            $\directSystemBonds[S]:
+                \leq[S]\to\ran{\directSystemBonds[S]}$;
+    \end{enumerate}
+    such that
+    \begin{enumerate}
+        \item\label{group_direct_system_component_group}
+            for every $i\in\carrier[S]$ we have
+                $\apply{\directSystemGroups[S]}{i}$ is a group.
+        \item\label{group_direct_system_bond_hom}
+            for all $i,j\in\carrier[S]$ such that
+                $i\mathrel{\leq[S]}j$ we have
+                $\groupHom
+                    {\apply{\directSystemBonds[S]}{(i,j)}}
+                    {\apply{\directSystemGroups[S]}{i}}
+                    {\apply{\directSystemGroups[S]}{j}}$.
+        \item\label{group_direct_system_identity}
+            for every $i\in\carrier[S]$ we have
+                $\apply{\directSystemBonds[S]}{(i,i)}
+                    =\identity{\carrier[\apply{\directSystemGroups[S]}{i}]}$.
+        \item\label{group_direct_system_composition}
+            for all $i,j,k\in\carrier[S]$ such that
+                $i\mathrel{\leq[S]}j$ and
+                $j\mathrel{\leq[S]}k$ we have
+                $\apply{\directSystemBonds[S]}{(i,k)}
+                    =\apply{\directSystemBonds[S]}{(j,k)}
+                        \circ
+                     \apply{\directSystemBonds[S]}{(i,j)}$.
+    \end{enumerate}
+\end{struct}
+
+\begin{definition}\label{direct_system_group}
+    $\directSystemGroup{S}{i}=
+        \apply{\directSystemGroups[S]}{i}$.
+\end{definition}
+
+\begin{definition}\label{direct_system_bond}
+    $\directSystemBond{S}{i}{j}=
+        \apply{\directSystemBonds[S]}{(i,j)}$.
+\end{definition}
+
+\begin{proposition}\label{group_direct_system_is_directed}
+    Let $S$ be a group direct system.
+    Then $S$ is a directed quasiordered set.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{group_direct_system}.
+\end{proof}
+
+\begin{proposition}\label{direct_system_group_is_group}
+    Let $S$ be a group direct system.
+    Let $i\in\carrier[S]$.
+    Then $\directSystemGroup{S}{i}$ is a group.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{direct_system_group,group_direct_system_component_group}.
+\end{proof}
+
+\begin{proposition}\label{direct_system_bond_hom}
+    Let $S$ be a group direct system.
+    Let $i,j\in\carrier[S]$.
+    Suppose $i\mathrel{\leq[S]}j$.
+    Then $\groupHom
+        {\directSystemBond{S}{i}{j}}
+        {\directSystemGroup{S}{i}}
+        {\directSystemGroup{S}{j}}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{direct_system_group,direct_system_bond,
+            group_direct_system_bond_hom}.
+\end{proof}
+
+\begin{proposition}\label{direct_system_bond_identity}
+    Let $S$ be a group direct system.
+    Let $i\in\carrier[S]$.
+    Then $\directSystemBond{S}{i}{i}
+        =\identity{\carrier[\directSystemGroup{S}{i}]}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{direct_system_group,direct_system_bond,
+            group_direct_system_identity}.
+\end{proof}
+
+\begin{proposition}\label{direct_system_bond_composition}
+    Let $S$ be a group direct system.
+    Let $i,j,k\in\carrier[S]$.
+    Suppose $i\mathrel{\leq[S]}j$ and $j\mathrel{\leq[S]}k$.
+    Then $\directSystemBond{S}{i}{k}
+        =\directSystemBond{S}{j}{k}\circ
+            \directSystemBond{S}{i}{j}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{direct_system_bond,group_direct_system_composition}.
+\end{proof}
+
+\begin{definition}\label{embedding_group_direct_system}
+    $\embeddingGroupDirectSystem{S}$ iff
+        $S$ is a group direct system and
+        for all $i,j\in\carrier[S]$ such that
+            $i\mathrel{\leq[S]}j$ we have
+            $\groupEmbedding
+                {\directSystemBond{S}{i}{j}}
+                {\directSystemGroup{S}{i}}
+                {\directSystemGroup{S}{j}}$.
+\end{definition}
+
+\begin{proposition}\label{embedding_group_direct_system_intro}
+    Let $S$ be a group direct system.
+    Suppose for all $i,j\in\carrier[S]$ such that
+        $i\mathrel{\leq[S]}j$ we have
+        $\groupEmbedding
+            {\directSystemBond{S}{i}{j}}
+            {\directSystemGroup{S}{i}}
+            {\directSystemGroup{S}{j}}$.
+    Then $\embeddingGroupDirectSystem{S}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{embedding_group_direct_system}.
+\end{proof}
+
+\begin{proposition}\label{embedding_group_direct_system_is_system}
+    Suppose $\embeddingGroupDirectSystem{S}$.
+    Then $S$ is a group direct system.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{embedding_group_direct_system}.
+\end{proof}
+
+\begin{proposition}\label{embedding_direct_system_bond}
+    Suppose $\embeddingGroupDirectSystem{S}$.
+    Let $i,j\in\carrier[S]$.
+    Suppose $i\mathrel{\leq[S]}j$.
+    Then $\groupEmbedding
+        {\directSystemBond{S}{i}{j}}
+        {\directSystemGroup{S}{i}}
+        {\directSystemGroup{S}{j}}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{embedding_group_direct_system}.
+\end{proof}
+
+\begin{definition}\label{group_direct_system_structure}
+    $\groupDirectSystemStructure{I}{G}{\Phi}=
+        \structure[group direct system]{
+            \carrier=\carrier[I],
+            \leq=\leq[I],
+            \directSystemGroups=G,
+            \directSystemBonds=\Phi
+        }$.
+\end{definition}
+
+\begin{proposition}\label{group_direct_system_structure_carrier}
+    $\carrier[\groupDirectSystemStructure{I}{G}{\Phi}]=\carrier[I]$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{group_direct_system_structure,group_direct_systemaggregateprojection_carrier}.
+\end{proof}
+
+\begin{proposition}\label{group_direct_system_structure_order}
+    $\leq[\groupDirectSystemStructure{I}{G}{\Phi}]=\leq[I]$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{group_direct_system_structure,group_direct_systemaggregateprojection_leq}.
+\end{proof}
+
+\begin{proposition}\label{group_direct_system_structure_groups}
+    $\directSystemGroups[\groupDirectSystemStructure{I}{G}{\Phi}]=G$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{group_direct_system_structure,group_direct_systemaggregateprojection_directSystemGroups}.
+\end{proof}
+
+\begin{proposition}\label{group_direct_system_structure_bonds}
+    $\directSystemBonds[\groupDirectSystemStructure{I}{G}{\Phi}]=\Phi$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{group_direct_system_structure,group_direct_systemaggregateprojection_directSystemBonds}.
+\end{proof}
+
+\begin{theorem}\label{group_direct_system_structure_is_system}
+    Let $I$ be a directed quasiordered set.
+    Let $G\in\funs{\carrier[I]}{\ran{G}}$.
+    Suppose for every $i\in\carrier[I]$ we have $G(i)$ is a group.
+    Let $\Phi\in\funs{\leq[I]}{\ran{\Phi}}$.
+    Suppose for all $i,j\in\carrier[I]$ such that
+        $i\mathrel{\leq[I]}j$ we have
+        $\groupHom{\Phi((i,j))}{G(i)}{G(j)}$.
+    Suppose for every $i\in\carrier[I]$ we have
+        $\Phi((i,i))=\identity{\carrier[G(i)]}$.
+    Suppose for all $i,j,k\in\carrier[I]$ such that
+        $i\mathrel{\leq[I]}j$ and $j\mathrel{\leq[I]}k$ we have
+        $\Phi((i,k))=\Phi((j,k))\circ\Phi((i,j))$.
+    Then $\groupDirectSystemStructure{I}{G}{\Phi}$ is an exact
+        group direct system.
+\end{theorem}
+\begin{proof}
+    Let $S=\groupDirectSystemStructure{I}{G}{\Phi}$.
+    $\carrier[S]=\carrier[I]$ by
+        \auto{group_direct_system_structure_carrier}.
+    $\leq[S]=\leq[I]$ by
+        \auto{group_direct_system_structure_order}.
+    $\directSystemGroups[S]=G$ by
+        \auto{group_direct_system_structure_groups}.
+    $\directSystemBonds[S]=\Phi$ by
+        \auto{group_direct_system_structure_bonds}.
+    $\leq[S]\subseteq\carrier[S]\times\carrier[S]$ by
+        \obv{quasiorder_relation}.
+    $\leq[S]$ is reflexive on $\carrier[S]$ and
+        $\leq[S]$ is transitive by
+        \obv{quasiorder_refl,quasiorder_tran}.
+    $S$ is a quasiordered set by \auto{group_direct_system_structure,quasiordered_set,group_direct_systemaggregateexact,group_direct_systemaggregateprojection_carrier,group_direct_systemaggregateprojection_leq}.
+    $\carrier[I]$ is inhabited by
+        \obv{directed_quasiordered_set_carrier_inhabited}.
+    Hence $\carrier[S]$ is inhabited.
+    Show that for all $i,j\in\carrier[S]$ there exists
+        $k\in\carrier[S]$ such that
+        $i\mathrel{\leq[S]}k$ and $j\mathrel{\leq[S]}k$.
+    \begin{subproof}
+        Fix $i,j\in\carrier[S]$.
+        Hence $i,j\in\carrier[I]$.
+        Take $k\in\carrier[I]$ such that
+            $i\mathrel{\leq[I]}k$ and $j\mathrel{\leq[I]}k$ by
+            \obv{directed_common_upper_bound}.
+        Hence $k\in\carrier[S]$ and
+            $i\mathrel{\leq[S]}k$ and
+            $j\mathrel{\leq[S]}k$.
+        Follows by \auto.
+    \end{subproof}
+    Hence $S$ is a directed quasiordered set by \obv{directed_quasiordered_set_intro}.
+    $\directSystemGroups[S]\in
+        \funs{\carrier[S]}{\ran{\directSystemGroups[S]}}$.
+    $\directSystemBonds[S]\in
+        \funs{\leq[S]}{\ran{\directSystemBonds[S]}}$.
+    For every $i\in\carrier[S]$ we have
+        $\apply{\directSystemGroups[S]}{i}$ is a group by \auto.
+    For all $i,j\in\carrier[S]$ such that
+        $i\mathrel{\leq[S]}j$ we have
+        $\groupHom
+            {\apply{\directSystemBonds[S]}{(i,j)}}
+            {\apply{\directSystemGroups[S]}{i}}
+            {\apply{\directSystemGroups[S]}{j}}$ by \auto.
+    For every $i\in\carrier[S]$ we have
+        $\apply{\directSystemBonds[S]}{(i,i)}
+            =\identity{\carrier[\apply{\directSystemGroups[S]}{i}]}$ by
+        \auto.
+    For all $i,j,k\in\carrier[S]$ such that
+        $i\mathrel{\leq[S]}j$ and $j\mathrel{\leq[S]}k$ we have
+        $\apply{\directSystemBonds[S]}{(i,k)}
+            =\apply{\directSystemBonds[S]}{(j,k)}\circ
+                \apply{\directSystemBonds[S]}{(i,j)}$ by \auto.
+    $S$ is a group direct system by \auto{group_direct_system_structure,group_direct_system,group_direct_systemaggregateexact,group_direct_systemaggregateprojection_carrier,group_direct_systemaggregateprojection_leq,group_direct_systemaggregateprojection_directSystemGroups,group_direct_systemaggregateprojection_directSystemBonds}.
+    Follows by \auto{group_direct_system_structure,group_direct_systemaggregateexact}.
+\end{proof}
+
+\subsection{Cocones and the semantic direct-limit property}
+
+\begin{definition}\label{group_cocone}
+    $\groupCocone{S}{L}{\iota}$ iff
+        $S$ is a group direct system and $L$ is a group and
+        $\iota\in\funs{\carrier[S]}{\ran{\iota}}$ and
+        for every $i\in\carrier[S]$ we have
+            $\groupHom{\iota(i)}{\directSystemGroup{S}{i}}{L}$ and
+        for all $a,b\in\carrier[S]$ such that
+            $a\mathrel{\leq[S]}b$ we have
+            $\iota(b)\circ\directSystemBond{S}{a}{b}=\iota(a)$.
+\end{definition}
+
+\begin{definition}\label{group_cocone_mediator}
+    $\groupCoconeMediator{S}{L}{\iota}{H}{\kappa}{u}$ iff
+        $\groupHom{u}{L}{H}$ and
+        for every $i\in\carrier[S]$ we have
+            $u\circ\iota(i)=\kappa(i)$.
+\end{definition}
+
+\begin{definition}\label{group_cocone_isomorphism}
+    $\groupCoconeIsomorphism{S}{L}{\iota}{M}{\kappa}{u}$ iff
+        $\groupIsomorphism{u}{L}{M}$ and
+        for every $i\in\carrier[S]$ we have
+            $u\circ\iota(i)=\kappa(i)$.
+\end{definition}
+
+\begin{definition}\label{group_direct_limit_cocone}
+    $\directLimitCocone{S}{L}{\iota}$ iff
+        $\groupCocone{S}{L}{\iota}$ and
+        for all $H,\kappa$ such that $\groupCocone{S}{H}{\kappa}$
+        there exists $u$ such that
+            $\groupCoconeMediator{S}{L}{\iota}{H}{\kappa}{u}$ and
+            for every $v$ such that
+                $\groupCoconeMediator{S}{L}{\iota}{H}{\kappa}{v}$
+            we have $v=u$.
+\end{definition}
+
+\begin{proposition}\label{group_cocone_system}
+    Suppose $\groupCocone{S}{L}{\iota}$.
+    Then $S$ is a group direct system.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{group_cocone}.
+\end{proof}
+
+\begin{proposition}\label{group_cocone_target}
+    Suppose $\groupCocone{S}{L}{\iota}$.
+    Then $L$ is a group.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{group_cocone}.
+\end{proof}
+
+\begin{proposition}\label{group_cocone_family_type}
+    Suppose $\groupCocone{S}{L}{\iota}$.
+    Then $\iota\in\funs{\carrier[S]}{\ran{\iota}}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{group_cocone}.
+\end{proof}
+
+\begin{proposition}\label{group_cocone_leg_hom}
+    Suppose $\groupCocone{S}{L}{\iota}$.
+    Let $i\in\carrier[S]$.
+    Then $\groupHom{\iota(i)}{\directSystemGroup{S}{i}}{L}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{group_cocone}.
+\end{proof}
+
+\begin{proposition}\label{group_cocone_compatibility}
+    Suppose $\groupCocone{S}{L}{\iota}$.
+    Let $i,j\in\carrier[S]$.
+    Suppose $i\mathrel{\leq[S]}j$.
+    Then $\iota(j)\circ\directSystemBond{S}{i}{j}=\iota(i)$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{group_cocone}.
+\end{proof}
+
+\begin{proposition}\label{group_cocone_mediator_hom}
+    Suppose $\groupCoconeMediator{S}{L}{\iota}{H}{\kappa}{u}$.
+    Then $\groupHom{u}{L}{H}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{group_cocone_mediator}.
+\end{proof}
+
+\begin{proposition}\label{group_cocone_mediator_compatibility}
+    Suppose $\groupCoconeMediator{S}{L}{\iota}{H}{\kappa}{u}$.
+    Let $i\in\carrier[S]$.
+    Then $u\circ\iota(i)=\kappa(i)$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{group_cocone_mediator}.
+\end{proof}
+
+\begin{proposition}\label{group_cocone_isomorphism_is_iso}
+    Suppose $\groupCoconeIsomorphism{S}{L}{\iota}{M}{\kappa}{u}$.
+    Then $\groupIsomorphism{u}{L}{M}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{group_cocone_isomorphism}.
+\end{proof}
+
+\begin{proposition}\label{group_cocone_isomorphism_compatibility}
+    Suppose $\groupCoconeIsomorphism{S}{L}{\iota}{M}{\kappa}{u}$.
+    Let $i\in\carrier[S]$.
+    Then $u\circ\iota(i)=\kappa(i)$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{group_cocone_isomorphism}.
+\end{proof}
+
+\begin{proposition}\label{group_cocone_isomorphism_is_mediator}
+    Suppose $\groupCoconeIsomorphism{S}{L}{\iota}{M}{\kappa}{u}$.
+    Then $\groupCoconeMediator{S}{L}{\iota}{M}{\kappa}{u}$.
+\end{proposition}
+\begin{proof}
+    $\groupHom{u}{L}{M}$ by
+        \obv{group_cocone_isomorphism_is_iso,group_isomorphism_is_hom}.
+    Follows by
+        \obv{group_cocone_mediator,group_cocone_isomorphism_compatibility}.
+\end{proof}
+
+\begin{proposition}\label{direct_limit_cocone_is_cocone}
+    Suppose $\directLimitCocone{S}{L}{\iota}$.
+    Then $\groupCocone{S}{L}{\iota}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{group_direct_limit_cocone}.
+\end{proof}
+
+\begin{theorem}\label{direct_limit_cocone_universal}
+    Suppose $\directLimitCocone{S}{L}{\iota}$ and
+        $\groupCocone{S}{H}{\kappa}$.
+    Then there exists $u$ such that
+        $\groupCoconeMediator{S}{L}{\iota}{H}{\kappa}{u}$ and
+        for every $v$ such that
+            $\groupCoconeMediator{S}{L}{\iota}{H}{\kappa}{v}$
+        we have $v=u$.
+\end{theorem}
+\begin{proof}
+    Follows by \obv{group_direct_limit_cocone}.
+\end{proof}
+
+\begin{proposition}\label{direct_limit_cocone_mediator_unique}
+    Suppose $\directLimitCocone{S}{L}{\iota}$ and
+        $\groupCocone{S}{H}{\kappa}$.
+    Suppose $\groupCoconeMediator{S}{L}{\iota}{H}{\kappa}{u}$ and
+        $\groupCoconeMediator{S}{L}{\iota}{H}{\kappa}{v}$.
+    Then $u=v$.
+\end{proposition}
+\begin{proof}
+    Take $w$ such that
+        $\groupCoconeMediator{S}{L}{\iota}{H}{\kappa}{w}$ and
+        for every $z$ such that
+            $\groupCoconeMediator{S}{L}{\iota}{H}{\kappa}{z}$
+        we have $z=w$ by
+        \obv{direct_limit_cocone_universal}.
+    $u=w$ and $v=w$.
+\end{proof}

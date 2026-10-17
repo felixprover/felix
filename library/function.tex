@@ -1,0 +1,1730 @@
+\section{Functions}
+
+\import{set.tex}
+\import{relation.tex}
+\import{relation/uniqueness.tex}
+
+
+\begin{abbreviation}\label{function}
+    $f$ is a function iff $f$ is right-unique and $f$ is a relation.
+\end{abbreviation}
+
+% The builtin "-(-)" notation desugars to "\apply{-}{-}".
+\begin{definition}\label{apply}
+    $\apply{f}{x} = \unions{\img{f}{\{x\}}}$.
+\end{definition}
+
+\begin{abbreviation}\label{constantly_on}
+    $f$ is constantly $c$ on $A$ iff
+        for every $x\in A$ we have $f(x)=c$.
+\end{abbreviation}
+
+\begin{proposition}\label{function_rightunique}
+    Let $f$ be a function.
+    Suppose $(a,b), (a, b')\in f$.
+    Then $b = b'$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{rightunique}.
+\end{proof}
+
+\begin{proposition}\label{function_apply_intro}
+    Let $f$ be a function.
+    Suppose $(a,b)\in f$.
+    Then $f(a) = b$.
+\end{proposition}
+\begin{proof}
+    $b\in\img{f}{\{a\}}$ by \auto{img_iff,singleton_iff}.
+    For all $b'\in \img{f}{\{a\}}$ we have $(a, b')\in f$
+        by \auto{img_iff,singleton_iff}.
+    For all $b', b''\in \img{f}{\{a\}}$ we have $b' = b''$ by \auto{rightunique}.
+    Then $\img{f}{\{a\}} = \{b\}$ by \auto{singleton_iff_inhabited_subsingleton}.
+    Then $\unions{\img{f}{\{a\}}} = b$ by \auto{unions_iff,singleton_iff,setext}.
+    Thus $f(a) = b$ by \obv{apply}.
+\end{proof}
+
+\begin{proposition}\label{function_member_elim}
+    Let $f$ be a function.
+    Suppose $w\in f$.
+    Then there exists $x\in\dom{f}$ such that $w = (x, f(x))$.
+\end{proposition}
+\begin{proof}
+    Take $x,b$ such that $w = (x,b)$ by \obv{relation}.
+    $x\in\dom{f}$ by \auto{dom_iff}.
+    $f(x) = b$ by \obv{function_apply_intro}.
+    Follows by \auto.
+\end{proof}
+
+\begin{proposition}\label{function_apply_elim}
+    Let $f$ be a function.
+    Suppose $x\in\dom{f}$.
+    Then $(x,f(x))\in f$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{dom_iff,function_apply_intro}.
+\end{proof}
+
+\begin{proposition}\label{function_apply_iff}
+    Let $f$ be a function.
+    $(a,b)\in f$ iff $a\in\dom{f}$ and $f(a) = b$.
+\end{proposition}
+\begin{proof}
+    If $(a,b)\in f$, then $a\in\dom{f}$ and $f(a) = b$
+        by \auto{dom_iff,function_apply_intro}.
+    If $a\in\dom{f}$ and $f(a) = b$, then $(a,b)\in f$
+        by \auto{function_apply_elim}.
+    Follows by \auto.
+\end{proof}
+
+\begin{proposition}\label{function_preimage_iff}
+    Let $f$ be a function.
+    $x\in\preimg{f}{B}$ iff $x\in\dom{f}$ and $f(x)\in B$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{preimg_iff,function_apply_iff}.
+\end{proof}
+
+\begin{proposition}\label{fun_subseteq}
+    Let $f, g$ be functions.
+    Suppose $\dom{f}\subseteq \dom{g}$.
+    Suppose for all $x\in\dom{f}$ we have $f(x) = g(x)$.
+    Then $f\subseteq g$.
+\end{proposition}
+\begin{proof}
+    For all $x,y$ such that $(x,y)\in f$ we have $(x,y)\in g$
+        by \auto{dom_iff,subseteq,function_apply_intro,function_apply_elim}.
+    Follows by \auto{subseteq,relation}.
+\end{proof}
+
+\begin{proposition}\label{subfunction_apply}
+    Let $f,g$ be functions.
+    Suppose $f\subseteq g$.
+    Let $x\in\dom{f}$.
+    Then $f(x)=g(x)$.
+\end{proposition}
+\begin{proof}
+    $(x,f(x))\in f$ by \obv{function_apply_elim}.
+    Hence $(x,f(x))\in g$ by \obv{subseteq}.
+    Follows by \obv{function_apply_intro}.
+\end{proof}
+
+\begin{proposition}[Function extensionality]\label{funext}
+    Let $f, g$ be functions.
+    Suppose $\dom{f} = \dom{g}$.
+    Suppose for all $x$ we have  $f(x) = g(x)$.
+    Then $f = g$.
+\end{proposition}
+\begin{proof}
+    $f\subseteq g$ and $g\subseteq f$ by \obv{fun_subseteq,subseteq}.
+    Follows by \obv{subseteq_antisymmetric}.
+\end{proof}
+
+\begin{proposition}\label{funext_on_domain}
+    Let $f,g$ be functions.
+    Suppose $\dom{f}=\dom{g}$.
+    Suppose for every $x\in\dom{f}$ we have $f(x)=g(x)$.
+    Then $f=g$.
+\end{proposition}
+\begin{proof}
+    $\dom{f}\subseteq\dom{g}$ and $\dom{g}\subseteq\dom{f}$ by
+        \obv{subseteq_refl}.
+    Hence $f\subseteq g$ by \obv{fun_subseteq}.
+    For every $x\in\dom{g}$ we have $g(x)=f(x)$.
+    Hence $g\subseteq f$ by \obv{fun_subseteq}.
+    Follows by \obv{subseteq_antisymmetric}.
+\end{proof}
+
+\begin{proposition}\label{fun_ran_iff}
+    Let $f$ be a function.
+    $b\in\ran{f}$ iff there exists $a\in\dom{f}$ such that $f(a) = b$.
+\end{proposition}
+\begin{proof}
+    If $b\in\ran{f}$, then there exists $a\in\dom{f}$ such that $f(a) = b$
+        by \auto{ran_iff,function_apply_iff}.
+    If there exists $a\in\dom{f}$ such that $f(a) = b$, then $b\in\ran{f}$
+        by \auto{ran_iff,function_apply_iff}.
+    Follows by \auto.
+\end{proof}
+
+\begin{abbreviation}\label{function_on}
+    $f$ is a function on $X$ iff $f$ is a function and $X = \dom{f}$.
+\end{abbreviation}
+
+\begin{abbreviation}\label{function_to}
+    $f$ is a function to $Y$ iff $f$ is a function and for all $x\in\dom{f}$ we have $f(x)\in Y$.
+\end{abbreviation}
+
+\begin{proposition}\label{function_on_weaken_codom}
+    Let $f$ be a function to $B$.
+    Suppose $B\subseteq C$.
+    Then $f$ is a function to $C$.
+\end{proposition}
+\begin{proof}
+    For all $x\in\dom{f}$ we have $f(x)\in C$ by \obv{subseteq}.
+\end{proof}
+
+\begin{proposition}\label{function_to_ran}
+    Let $f$ be a function to $B$.
+    Then $\ran{f}\subseteq B$.
+\end{proposition}
+\begin{proof}
+    For all $b\in\ran{f}$ there exists $a\in\dom{f}$ such that $f(a) = b$
+        by \auto{fun_ran_iff}.
+    Every element of $\ran{f}$ is an element of $B$ by \auto.
+    Follows by \obv{subseteq}.
+\end{proof}
+
+\begin{definition}\label{funs}
+    $\funs{A}{B} = \{ f\in\rels{A}{B}\mid \text{$A= \dom{f}$ and $f$ is right-unique}\}$.
+\end{definition}
+
+\begin{abbreviation}\label{function_from_to}
+    $f$ is a function from $X$ to $Y$ iff $f\in\funs{X}{Y}$.
+\end{abbreviation}
+
+\begin{proposition}\label{funs_is_relation}
+    Let $f\in\funs{A}{B}$.
+    Then $f$ is a relation.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{funs,rels_is_relation}.
+\end{proof}
+
+\begin{classification}\label{funs_is_function}
+    Let $f$ be a function from $A$ to $B$.
+    Then $f$ is a function.
+\end{classification}
+\begin{proof}
+    $f$ is a relation by \obv{funs_is_relation}.
+    $f$ is right-unique by \obv{funs}.
+\end{proof}
+
+\begin{proposition}\label{funs_subseteq_rels}
+    $\funs{A}{B}\subseteq\rels{A}{B}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{funs,subseteq}.
+\end{proof}
+
+\begin{proposition}\label{funs_intro}
+    Let $f$ be a function to $B$ such that $A=\dom{f}$.
+    Then $f\in\funs{A}{B}$.
+\end{proposition}
+\begin{proof}
+    $\dom{f}\subseteq A$ by \obv{subseteq_refl}.
+    $\ran{f}\subseteq B$ by \obv{function_to_ran}.
+    Thus $f\in\rels{A}{B}$ by \obv{rels_intro_dom_and_ran}.
+    Thus $f\in\funs{A}{B}$ by \obv{funs}.
+\end{proof}
+
+\begin{proposition}\label{function_exact_type_to_range}
+    Let $f$ be a function.
+    Then $f\in\funs{\dom{f}}{\ran{f}}$.
+\end{proposition}
+\begin{proof}
+    For every $x\in\dom{f}$ we have $f(x)\in\ran{f}$ by
+        \auto{fun_ran_iff}.
+    Hence $f$ is a function to $\ran{f}$.
+    Follows by \obv{funs_intro}.
+\end{proof}
+
+\begin{proposition}\label{funs_elim}
+    Let $f\in\funs{A}{B}$.
+    Then $f$ is a function to $B$ such that $A= \dom{f}$.
+\end{proposition}
+\begin{proof}
+    $f$ is a function by \obv{funs_is_function}.
+    $A = \dom{f}$ by \obv{funs}.
+    For all $a\in\dom{f}$ we have $f(a)\in B$
+        by \auto{funs,rels_type_ran,function_apply_iff}.
+\end{proof}
+
+\begin{proposition}\label{preimg_codom_of_function}
+    Let $f\in\funs{A}{E}$.
+    Then $\preimg{f}{E}=A$.
+\end{proposition}
+\begin{proof}
+    Show that for every $x\in\preimg{f}{E}$ we have $x\in A$.
+    \begin{subproof}
+        Fix $x\in\preimg{f}{E}$.
+        $x\in\dom{f}$ by \obv{preimg_subseteq_dom,subseteq}.
+        $\dom{f}=A$ by \obv{funs_elim}.
+    \end{subproof}
+    Show that for every $x\in A$ we have $x\in\preimg{f}{E}$.
+    \begin{subproof}
+        Fix $x\in A$.
+        $A=\dom{f}$ by \obv{funs}.
+        Hence $x\in\dom{f}$.
+        $f$ is a function by \obv{funs_is_function}.
+        $(x,f(x))\in f$ by \obv{function_apply_elim}.
+        $f(x)\in E$ by \obv{funs,rels_type_ran}.
+        Follows by \obv{preimg_iff}.
+    \end{subproof}
+    Follows by set extensionality.
+\end{proof}
+
+\begin{proposition}\label{preimg_relative_complement_of_function}
+    Let $f\in\funs{A}{E}$.
+    Then
+        $A\setminus\preimg{f}{C}
+            =\preimg{f}{E\setminus C}$.
+\end{proposition}
+\begin{proof}
+    $f$ is right-unique by \obv{funs}.
+    $\preimg{f}{E\setminus C}
+        =\preimg{f}{E}\setminus\preimg{f}{C}$
+        by \obv{preimg_setminus_of_rightunique}.
+    $\preimg{f}{E}=A$ by \obv{preimg_codom_of_function}.
+\end{proof}
+
+\subsection{Pointwise graph families}
+
+These constructors act on set-coded families of set-coded relations.  Their
+domains are explicit because graph application is totalized off domain.
+
+\begin{definition}\label{pointwise_composition_family}
+    $\pointwiseCompositionFamily{A}{g}{f}=
+        \{(i,\apply{g}{i}\circ\apply{f}{i})\mid i\in A\}$.
+\end{definition}
+
+\begin{proposition}\label{pointwise_composition_family_iff}
+    $(i,h)\in\pointwiseCompositionFamily{A}{g}{f}$ iff
+        $i\in A$ and $h=\apply{g}{i}\circ\apply{f}{i}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{pointwise_composition_family,pair_eq_iff}.
+\end{proof}
+
+\begin{proposition}\label{pointwise_composition_family_type}
+    $\pointwiseCompositionFamily{A}{g}{f}\in
+        \funs{A}{\ran{\pointwiseCompositionFamily{A}{g}{f}}}$.
+\end{proposition}
+\begin{proof}
+    Let $F=\pointwiseCompositionFamily{A}{g}{f}$.
+    Show that $F$ is a relation.
+    \begin{subproof}
+        Show that for every $w\in F$ there exist $i,h$ such that
+            $w=(i,h)$.
+        \begin{subproof}
+            Fix $w\in F$.
+            Take $i\in A$ such that
+                $w=(i,\apply{g}{i}\circ\apply{f}{i})$ by
+                \obv{pointwise_composition_family}.
+            Follows by \auto.
+        \end{subproof}
+        Follows by \obv{relation}.
+    \end{subproof}
+    Show that $F$ is right-unique.
+    \begin{subproof}
+        Follows by
+            \auto{rightunique,pointwise_composition_family_iff}.
+    \end{subproof}
+    $\dom{F}=A$ by
+        \auto{setext,dom_iff,pointwise_composition_family_iff}.
+    For every $i\in\dom{F}$ we have $\apply{F}{i}\in\ran{F}$ by
+        \auto{fun_ran_iff}.
+    Hence $F$ is a function to $\ran{F}$.
+    Follows by \auto{funs_intro}.
+\end{proof}
+
+\begin{proposition}\label{pointwise_composition_family_apply}
+    Let $i\in A$.
+    Then $\apply{\pointwiseCompositionFamily{A}{g}{f}}{i}
+        =\apply{g}{i}\circ\apply{f}{i}$.
+\end{proposition}
+\begin{proof}
+    $\pointwiseCompositionFamily{A}{g}{f}$ is a function by
+        \auto{pointwise_composition_family_type,funs_is_function}.
+    $(i,\apply{g}{i}\circ\apply{f}{i})\in
+        \pointwiseCompositionFamily{A}{g}{f}$ by
+        \obv{pointwise_composition_family_iff}.
+    Follows by \obv{function_apply_intro}.
+\end{proof}
+
+\begin{definition}\label{pointwise_converse_family}
+    $\pointwiseConverseFamily{A}{f}=
+        \{(i,\converse{\apply{f}{i}})\mid i\in A\}$.
+\end{definition}
+
+\begin{proposition}\label{pointwise_converse_family_iff}
+    $(i,h)\in\pointwiseConverseFamily{A}{f}$ iff
+        $i\in A$ and $h=\converse{\apply{f}{i}}$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{pointwise_converse_family,pair_eq_iff}.
+\end{proof}
+
+\begin{proposition}\label{pointwise_converse_family_type}
+    $\pointwiseConverseFamily{A}{f}\in
+        \funs{A}{\ran{\pointwiseConverseFamily{A}{f}}}$.
+\end{proposition}
+\begin{proof}
+    Let $F=\pointwiseConverseFamily{A}{f}$.
+    Show that $F$ is a relation.
+    \begin{subproof}
+        Show that for every $w\in F$ there exist $i,h$ such that
+            $w=(i,h)$.
+        \begin{subproof}
+            Fix $w\in F$.
+            Take $i\in A$ such that
+                $w=(i,\converse{\apply{f}{i}})$ by
+                \obv{pointwise_converse_family}.
+            Follows by \auto.
+        \end{subproof}
+        Follows by \obv{relation}.
+    \end{subproof}
+    Show that $F$ is right-unique.
+    \begin{subproof}
+        Follows by
+            \auto{rightunique,pointwise_converse_family_iff}.
+    \end{subproof}
+    $\dom{F}=A$ by
+        \auto{setext,dom_iff,pointwise_converse_family_iff}.
+    For every $i\in\dom{F}$ we have $\apply{F}{i}\in\ran{F}$ by
+        \auto{fun_ran_iff}.
+    Hence $F$ is a function to $\ran{F}$.
+    Follows by \auto{funs_intro}.
+\end{proof}
+
+\begin{proposition}\label{pointwise_converse_family_apply}
+    Let $i\in A$.
+    Then $\apply{\pointwiseConverseFamily{A}{f}}{i}
+        =\converse{\apply{f}{i}}$.
+\end{proposition}
+\begin{proof}
+    $\pointwiseConverseFamily{A}{f}$ is a function by
+        \auto{pointwise_converse_family_type,funs_is_function}.
+    $(i,\converse{\apply{f}{i}})\in
+        \pointwiseConverseFamily{A}{f}$ by
+        \obv{pointwise_converse_family_iff}.
+    Follows by \obv{function_apply_intro}.
+\end{proof}
+
+\begin{proposition}\label{funs_weaken_codom}
+    Let $f\in\funs{A}{B}$.
+    Suppose $B\subseteq D$.
+    Then $f\in\funs{A}{D}$.
+\end{proposition}
+\begin{proof}
+    $f\in\rels{A}{D}$ by \obv{funs,rels_weaken_codom}.
+    Follows by \obv{funs}.
+\end{proof}
+
+\begin{classification}\label{funs_type_apply}
+    Let $f$ be a function from $A$ to $B$.
+    Let $a\in A$.
+    Then $f(a)\in B$.
+\end{classification}
+\begin{proof}
+    $(a,f(a)) \in f$ by \auto{funs_elim,function_apply_iff}.
+    Thus $f(a)\in B$ by \obv{funs,rels_type_ran}.
+\end{proof}
+
+\begin{classification}\label{function_from_domain_consumer}
+    Let $f$ be a function from $A$ to $B$.
+    Let $a\in A$.
+    Then $a\in\dom{f}$.
+\end{classification}
+\begin{proof}
+    $A=\dom{f}$ by \obv{funs}.
+\end{proof}
+
+\begin{proposition}\label{funs_tuple_intro}
+    Let $f\in\funs{A}{B}$.
+    Let $a\in A$.
+    Then there exists $b\in B$ such that $(a,b)\in f$.
+\end{proposition}
+\begin{proof}
+    $(a,f(a)) \in f$ by \auto{funs_elim,function_apply_iff}.
+    $f(a)\in B$ by \obv{funs_type_apply}.
+\end{proof}
+
+
+\begin{proposition}\label{funs_ran}
+    Let $f\in\funs{A}{B}$.
+    Then $\ran{f}\subseteq B$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{funs_elim,function_to_ran}.
+\end{proof}
+
+
+
+\subsection{Image of a function}
+
+\begin{proposition}\label{img_of_function_intro}
+    Let $f$ be a function.
+    Suppose $x\in\dom{f}\inter X$.
+    Then $f(x)\in \img{f}{X}$.
+\end{proposition}
+\begin{proof}
+    $x\in X$ by \obv{inter_elim_right}.
+    Thus $(x,f(x))\in f$ by \obv{function_apply_elim,inter_elim_left}.
+    Follows by \auto{img_iff}.
+\end{proof}
+
+\begin{proposition}\label{img_of_function_elim}
+    Let $f$ be a function.
+    Suppose $y\in \img{f}{X}$.
+    Then there exists $x\in\dom{f}\inter X$ such that $y = f(x)$.
+\end{proposition}
+\begin{proof}
+    Take $x$ such that $x\in X$ and $(x,y)\in f$ by \obv{img_iff}.
+    Then $x\in\dom{f}$ and $y = f(x)$ by \auto{dom_intro,function_apply_iff}.
+    Follows by \auto{inter_intro}.
+\end{proof}
+
+\begin{proposition}\label{img_of_function}
+    Suppose $f$ is a function.
+    $\img{f}{X} = \{ f(x) \mid x\in\dom{f}\inter X\}$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{setext,img_of_function_intro,img_of_function_elim}.
+\end{proof}
+
+\begin{classification}\label{funs_image_subseteq}
+    Suppose $f\in\funs{X}{Y}$.
+    Let $A\subseteq X$.
+    Then $\img{f}{A}\subseteq Y$.
+\end{classification}
+\begin{proof}
+    $\img{f}{A}\subseteq\ran{f}$ by \obv{img_subseteq_ran}.
+    $\ran{f}\subseteq Y$ by \obv{funs_ran}.
+    Follows by \obv{subseteq_transitive}.
+\end{proof}
+
+\subsection{Families of functions}
+
+\begin{abbreviation}\label{family_of_functions}
+    $F$ is a family of functions iff
+    every element of $F$ is a function.
+\end{abbreviation}
+
+\begin{proposition}\label{unions_of_compatible_family_of_function_is_function}
+    Let $F$ be a family of functions.
+    Suppose that for all $f,g \in F$ we have $f\subseteq g$ or $g\subseteq f$.
+    Then $\unions{F}$ is a function.
+\end{proposition}
+\begin{proof}
+    $\unions{F}$ is a relation by \obv{unions_of_family_of_relations_is_relation}.
+    For all $x,y, y'$ such that $(x,y),(x,y')\in \unions{F}$
+        there exists $f\in F$ such that $(x,y),(x,y')\in f$
+        by \auto{unions_iff,subseteq}.
+    Thus $\unions{F}$ is right-unique by \auto{rightunique}.
+\end{proof}
+
+
+\subsection{The empty function}
+
+\begin{proposition}\label{emptyset_is_function}
+    $\emptyset$ is a function.
+\end{proposition}
+\begin{proof}
+    $\emptyset$ is a relation by \auto{relation,emptyset}.
+    $\emptyset$ is right-unique by \auto{rightunique,emptyset}.
+\end{proof}
+
+\begin{proposition}\label{emptyset_is_function_on_emptyset}
+    $\emptyset$ is a function on $\emptyset$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{emptyset_is_function,dom_emptyset}.
+\end{proof}
+
+\begin{proposition}\label{codom_of_emptyset_can_be_anything}
+    $\emptyset$ is a function to $X$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{emptyset_is_function,dom_emptyset}.
+\end{proof}
+
+\begin{proposition}\label{emptyset_is_injective}
+    $\emptyset$ is injective.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{injective,emptyset}.
+\end{proof}
+
+\subsection{One-point extensions}
+
+\begin{proposition}\label{extend_function_at_new_point}
+    Let $f\in\funs{D}{B}$.
+    Suppose $x\notin D$ and $b\in B$.
+    Then $\cons{(x,b)}{f}\in\funs{\cons{x}{D}}{B}$.
+\end{proposition}
+\begin{proof}
+    Let $g=\cons{(x,b)}{f}$.
+    $g$ is a relation by \auto{relation,cons_iff,funs_is_relation}.
+    Show that $g$ is right-unique.
+    \begin{subproof}
+        Show for all $u,v,w$ such that $(u,v),(u,w)\in g$ we have $v=w$.
+        \begin{subproof}
+            Fix $u,v,w$.
+            Assume $(u,v),(u,w)\in g$.
+            $(u,v)=(x,b)$ or $(u,v)\in f$ by \obv{cons_iff}.
+            $(u,w)=(x,b)$ or $(u,w)\in f$ by \obv{cons_iff}.
+            Follows by \auto{pair_eq_iff,dom_iff,funs,funs_is_function,function_rightunique}.
+        \end{subproof}
+        Follows by \obv{rightunique}.
+    \end{subproof}
+    $\dom{g}=\cons{x}{D}$ by \auto{dom_cons,funs}.
+    For every $u\in\dom{g}$ we have $g(u)\in B$
+        by \auto{cons_iff,pair_eq_iff,funs,funs_is_function,funs_type_apply,function_apply_intro,function_apply_elim}.
+    Thus $g$ is a function to $B$.
+    Follows by \auto{funs_intro}.
+\end{proof}
+
+
+\subsection{Function composition}
+
+\begin{proposition}\label{commuting_squares_composition}
+    Suppose $d\circ p=q\circ a$ and
+        $e\circ b=c\circ d$.
+    Then $e\circ(b\circ p)=(c\circ q)\circ a$.
+\end{proposition}
+\begin{proof}
+    \begin{align*}
+        e\circ(b\circ p)
+            &= (e\circ b)\circ p
+                \explanation{by \obv{circ_assoc}}
+            \\
+            &= (c\circ d)\circ p
+            \\
+            &= c\circ(d\circ p)
+                \explanation{by \obv{circ_assoc}}
+            \\
+            &= c\circ(q\circ a)
+            \\
+            &= (c\circ q)\circ a
+                \explanation{by \obv{circ_assoc}}
+    \end{align*}
+\end{proof}
+
+\begin{abbreviation}\label{composable}
+    $g$ is composable with $f$ iff $\ran{f}\subseteq \dom{g}$.
+\end{abbreviation}
+
+\begin{proposition}\label{function_circ}
+    Suppose $f$ and $g$ are right-unique.
+    Then $g\circ f$ is a function.
+\end{proposition}
+\begin{proof}
+    $g\circ f$ is a relation by \obv{circ_is_relation}.
+    $g\circ f$ is right-unique by \obv{circ_rightunique}.
+\end{proof}
+
+\begin{proposition}\label{circ_apply}
+    Let $f, g$ be functions.
+    Suppose $g$ is composable with $f$.
+    Let $x\in\dom{f}$.
+    Then $(g\circ f)(x) = g(f(x))$.
+\end{proposition}
+\begin{proof}
+    $(x,f(x))\in f$ by \obv{function_apply_elim}.
+    $f(x)\in\ran{f}$ by \auto{ran_iff}.
+    $f(x)\in\dom{g}$ by \obv{subseteq}.
+    $(f(x),g(f(x)))\in g$ by \obv{function_apply_elim}.
+    $(x, g(f(x)))\in g\circ f$ by \auto{circ_iff}.
+    $g\circ f$ is a function by \obv{function_circ}.
+    Thus $(g\circ f)(x) = g(f(x))$ by \obv{function_apply_intro}.
+\end{proof}
+
+\begin{proposition}\label{dom_of_circ}
+    Let $f, g$ be functions.
+    Suppose $g$ is composable with $f$.
+    $\dom{g\circ f} = \preimg{f}{\dom{g}}$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{setext,dom_iff,preimg_iff,circ_iff}.
+\end{proof}
+
+\begin{proposition}\label{dom_circ_exact}
+    Let $f, g$ be functions.
+    Suppose $\ran{f} = \dom{g}$.
+    $\dom{g\circ f} = \dom{f}$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{setext,circ_iff,ran_iff,dom_iff}.
+\end{proof}
+
+\begin{proposition}\label{ran_of_circ_intro}
+    Let $f, g$ be functions.
+    Suppose $g$ is composable with $f$.
+    Suppose $y\in \img{g}{\ran{f}}$.
+    Then $y\in \ran{g\circ f}$.
+\end{proposition}
+\begin{proof}
+    Take $x$ such that $x\in\ran{f}$ and $(x, y)\in g$ by \obv{img_iff}.
+    Take $x'$ such that $(x', x)\in f$ by \obv{ran_iff}.
+    Then $(x', y) \in g\circ f$ by \auto{circ_iff}.
+    Follows by \obv{ran_intro}.
+\end{proof}
+
+\begin{proposition}\label{ran_of_circ_elim}
+    Let $f, g$ be functions.
+    Suppose $g$ is composable with $f$.
+    Suppose $y\in \ran{g\circ f}$.
+    Then $y\in \img{g}{\ran{f}}$.
+\end{proposition}
+\begin{proof}
+    Take $x$ such that $(x, y)\in g\circ f$ by \obv{ran_iff}.
+    $x\in\dom{f}$ by \auto{circ_iff,dom_iff}.
+    $f(x)\in\ran{f}$ by \auto{fun_ran_iff}.
+    $(f(x), y)\in g$
+        by \auto{function_apply_intro,apply,circ_iff}.
+    Follows by \auto{img_iff}.
+\end{proof}
+
+\begin{proposition}\label{ran_of_circ}
+    Let $f, g$ be functions.
+    Suppose $g$ is composable with $f$.
+    Then $\ran{g\circ f} = \img{g}{\ran{f}}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{setext,ran_of_circ_intro,ran_of_circ_elim}.
+\end{proof}
+
+\begin{proposition}\label{ran_circ_exact}
+    Let $f, g$ be functions.
+    Suppose $\ran{f} = \dom{g}$.
+    Then $\ran{g\circ f} = \ran{g}$.
+\end{proposition}
+\begin{proof}
+    $\ran{g\circ f} = \img{g}{\ran{f}}$ by \obv{subseteq_refl,ran_of_circ}.
+    $\img{g}{\ran{f}} = \img{g}{\dom{g}}$.
+    $\img{g}{\dom{g}} = \ran{g}$ by \obv{img_dom}.
+\end{proof}
+
+
+\begin{proposition}\label{img_of_circ_elim}
+    Let $f, g$ be functions.
+    Let $A$ be a set.
+    Suppose $\ran{f}\subseteq \dom{g}$.
+    Suppose $c\in\img{g\circ f}{A}$.
+    Then $c\in\img{g}{\img{f}{A}}$.
+\end{proposition}
+\begin{proof}
+    Take $a$ such that $a\in A$ and $(a,c)\in g\circ f$ by \obv{img_iff}.
+    Take $b$ such that $(a,b)\in f$ and $(b, c)\in g$ by \obv{circ_iff}.
+    Then $b\in\img{f}{A}$ by \auto{img_iff}.
+    Follows by \auto{img_iff}.
+\end{proof}
+
+\begin{proposition}\label{img_of_circ}
+    Let $f, g$ be functions.
+    Let $A$ be a set.
+    Suppose $\ran{f}\subseteq\dom{g}$.
+    Then $\img{g\circ f}{A} = \img{g}{\img{f}{A}}$.
+\end{proposition}
+\begin{proof}
+    For all $c$ we have $c\in\img{g}{\img{f}{A}}$
+        iff $c\in\img{g\circ f}{A}$
+        by \auto{circ_iff,img_iff}.
+    Follows by \obv{setext}.
+\end{proof}
+
+\begin{proposition}\label{funs_circ}
+    Let $f\in\funs{A}{B}$.
+    Let $g\in\funs{B}{C}$.
+    Then $g\circ f\in\funs{A}{C}$.
+\end{proposition}
+\begin{proof}
+    $\dom{f} = A$ by \obv{funs}.
+    $\dom{g} = B$ by \obv{funs}.
+    $f$ is a function and $g$ is a function by \obv{funs_is_function}.
+    $g$ is composable with $f$ by \obv{funs_ran,funs}.
+    $g\circ f$ is a function by \obv{function_circ,funs_is_function}.
+    We have for all $x\in\dom{g\circ f}$ we have $x\in A$
+        by \auto{dom_of_circ,preimg_subseteq_dom,subseteq}.
+    Show that for all $x\in A$ we have $x\in\dom{g\circ f}$.
+    \begin{subproof}
+        Fix $x\in A$.
+        $(x,f(x))\in f$ by \obv{function_apply_elim}.
+        $f(x)\in B$ by \obv{funs_type_apply}.
+        Hence $f(x)\in\dom{g}$.
+        $(f(x),g(f(x)))\in g$ by \obv{function_apply_elim}.
+        Thus $(x,g(f(x)))\in g\circ f$ by \auto{circ_iff}.
+        Follows by \obv{dom_intro}.
+    \end{subproof}
+    Hence $\dom{g\circ f}=A$ by set extensionality.
+    For all $x\in A$ we have $f(x)\in B$ by \obv{funs_type_apply}.
+    For all $x\in A$ we have $g(f(x))\in C$ by \obv{funs_type_apply}.
+    For all $x\in A$ we have $(g\circ f)(x)=g(f(x))$ by \obv{circ_apply}.
+    Thus for all $x\in\dom{g\circ f}$ we have $(g\circ f)(x)\in C$
+        by \auto.
+    Thus $g\circ f$ is a function to $C$.
+    Follows by \obv{funs_intro}.
+\end{proof}
+
+\subsection{Function restriction}
+
+\begin{classification}\label{restrl_of_function_is_function}
+    Let $f$ be a function.
+    Let $A$ be a set.
+    $\restrl{f}{A}$ is a function.
+\end{classification}
+\begin{proof}
+    $\restrl{f}{A}\subseteq f$ by \obv{restrl_subseteq}.
+    $\restrl{f}{A}$ is right-unique
+        by \obv{subseteq_of_rightunique_is_rightunique}.
+\end{proof}
+
+\begin{proposition}\label{restrl_apply}
+    Let $x\in A$.
+    Then $(\restrl{f}{A})(x)=f(x)$.
+\end{proposition}
+\begin{proof}
+    For every $y$ we have $y\in\img{\restrl{f}{A}}{\{x\}}$
+        iff $y\in\img{f}{\{x\}}$ by \auto{img_singleton_iff,restrl_iff}.
+    Hence $\img{\restrl{f}{A}}{\{x\}}=\img{f}{\{x\}}$
+        by set extensionality.
+    Follows by \obv{apply}.
+\end{proof}
+
+\begin{proposition}\label{restrl_of_function_apply}
+    Let $f$ be a function.
+    Suppose $A\subseteq\dom{f}$.
+    Let $a\in A$.
+    Then $(\restrl{f}{A})(a) = f(a)$.
+\end{proposition}
+\begin{proof}
+    $a\in\dom{f}$ by \obv{subseteq}.
+    Then $(a,f(a))\in f$ by \obv{function_apply_elim}.
+    Then $(a,f(a))\in \restrl{f}{A}$ by \obv{restrl_iff}.
+    Thus $(\restrl{f}{A})(a) = f(a)$
+        by \obv{restrl_of_function_is_function,function_apply_intro}.
+\end{proof}
+
+\begin{proposition}\label{restrictions_agree}
+    Let $f,g$ be functions.
+    Suppose for every $x\in X$ such that $x\in\dom{f}\union\dom{g}$
+        we have $x\in\dom{f}\inter\dom{g}$ and $f(x)=g(x)$.
+    Then $\restrl{f}{X}=\restrl{g}{X}$.
+\end{proposition}
+\begin{proof}
+    Show for every $w\in\restrl{f}{X}$ we have $w\in\restrl{g}{X}$.
+    \begin{subproof}
+        Fix $w\in\restrl{f}{X}$.
+        $w\in f$ by \obv{restrl_subseteq,subseteq}.
+        Take $x\in\dom{f}$ such that $w=(x,f(x))$
+            by \obv{function_member_elim}.
+        $x\in X$ by \auto{restrl_iff}.
+        $x\in\dom{f}\union\dom{g}$ by \auto{union_iff}.
+        Hence $x\in\dom{g}$ and $f(x)=g(x)$ by \auto{inter}.
+        Thus $(x,g(x))\in g$ by \obv{function_apply_elim}.
+        Follows by \obv{restrl_iff}.
+    \end{subproof}
+    Show for every $w\in\restrl{g}{X}$ we have $w\in\restrl{f}{X}$.
+    \begin{subproof}
+        Fix $w\in\restrl{g}{X}$.
+        $w\in g$ by \obv{restrl_subseteq,subseteq}.
+        Take $x\in\dom{g}$ such that $w=(x,g(x))$
+            by \obv{function_member_elim}.
+        $x\in X$ by \auto{restrl_iff}.
+        $x\in\dom{f}\union\dom{g}$ by \auto{union_iff}.
+        Hence $x\in\dom{f}$ and $f(x)=g(x)$ by \auto{inter}.
+        Thus $(x,f(x))\in f$ by \obv{function_apply_elim}.
+        Follows by \obv{restrl_iff}.
+    \end{subproof}
+    Follows by set extensionality.
+\end{proof}
+
+\begin{proposition}\label{funs_restrl}
+    Let $f\in\funs{B}{C}$.
+    Suppose $A\subseteq B$.
+    Then $\restrl{f}{A}\in\funs{A}{C}$.
+\end{proposition}
+\begin{proof}
+    $f$ is a function and $\dom{f}=B$
+        by \obv{funs_is_function,funs}.
+    Let $g=\restrl{f}{A}$.
+    $\dom{g}=\dom{f}\inter A$ by \auto{dom_of_restrl_eq_inter}.
+    Hence $\dom{g}=A$ by \auto{inter_absorb_supseteq_left}.
+    For every $a\in A$ we have $g(a)=f(a)$
+        by \auto{restrl_of_function_apply}.
+    For every $a\in A$ we have $a\in B$ by \obv{subseteq}.
+    For every $a\in A$ we have $f(a)\in C$
+        by \obv{funs_type_apply}.
+    Hence for every $a\in\dom{g}$ we have $g(a)\in C$ by \auto.
+    Hence $g$ is a function to $C$.
+    Follows by \auto{funs_intro}.
+\end{proof}
+
+\begin{proposition}\label{subfunction_eq_restrl}
+    Let $f,g$ be functions.
+    Suppose $f\subseteq g$.
+    Then $f=\restrl{g}{\dom{f}}$.
+\end{proposition}
+\begin{proof}
+    Show that $f\subseteq\restrl{g}{\dom{f}}$.
+    \begin{subproof}
+        Show that for every $w\in f$ we have
+            $w\in\restrl{g}{\dom{f}}$.
+        \begin{subproof}
+            Fix $w\in f$.
+            Take $x\in\dom{f}$ such that $w=(x,f(x))$
+                by \obv{function_member_elim}.
+            Then $w\in g$ by \obv{elem_subseteq}.
+            Thus $w\in\restrl{g}{\dom{f}}$ by \auto{restrl_iff}.
+        \end{subproof}
+        Follows by \obv{subseteq}.
+    \end{subproof}
+
+    Show that $\restrl{g}{\dom{f}}\subseteq f$.
+    \begin{subproof}
+        Show that for every $w\in\restrl{g}{\dom{f}}$ we have $w\in f$.
+        \begin{subproof}
+            Fix $w\in\restrl{g}{\dom{f}}$.
+            $\restrl{g}{\dom{f}}\subseteq g$ by \obv{restrl_subseteq}.
+            Take $x,y$ such that $w=(x,y)$ by \obv{relation}.
+            $(x,y)\in g$ and $x\in\dom{f}$ by \auto{restrl_iff}.
+            Then $(x,f(x))\in f$ by \obv{function_apply_elim}.
+            Hence $(x,f(x))\in g$ by \obv{elem_subseteq}.
+            Thus $y=f(x)$ by \obv{function_rightunique}.
+            Hence $w\in f$.
+        \end{subproof}
+        Follows by \obv{subseteq}.
+    \end{subproof}
+    Follows by \obv{subseteq_antisymmetric}.
+\end{proof}
+
+\begin{theorem}\label{function_eq_restriction_from_agreement}
+    Let $f\in\funs{A}{C}$.
+    Let $g\in\funs{B}{D}$.
+    Suppose $A\subseteq B$.
+    Suppose for every $x\in A$ we have $f(x)=g(x)$.
+    Then $f=\restrl{g}{A}$.
+\end{theorem}
+\begin{proof}
+    $f$ and $g$ are functions and
+        $\dom{f}=A$ and $\dom{g}=B$ by
+        \obv{funs_is_function,funs_elim}.
+    Hence $\dom{f}\subseteq\dom{g}$.
+    For every $x\in\dom{f}$ we have $f(x)=g(x)$.
+    Hence $f\subseteq g$ by \obv{fun_subseteq}.
+    Hence $f=\restrl{g}{\dom{f}}$ by
+        \obv{subfunction_eq_restrl}.
+\end{proof}
+
+\begin{theorem}\label{typed_functions_equal_from_agreement}
+    Let $f\in\funs{A}{B}$.
+    Let $g\in\funs{A}{C}$.
+    Suppose for every $x\in A$ we have $f(x)=g(x)$.
+    Then $f=g$.
+\end{theorem}
+\begin{proof}
+    $f$ and $g$ are functions and $\dom{f}=A=\dom{g}$ by
+        \obv{funs_is_function,funs_elim}.
+    Follows by \obv{funext_on_domain}.
+\end{proof}
+
+\begin{proposition}\label{function_apply_default}
+    Suppose $x\notin\dom{f}$.
+    Then $f(x) = \emptyset$.
+\end{proposition}
+\begin{proof}
+    $\img{f}{\{x\}} = \emptyset$ by \auto{setext,emptyset,img_singleton_iff,dom_intro}.
+    Follows by \obv{apply,unions_emptyset}.
+\end{proof}
+
+
+
+\subsection{Injections}
+
+\begin{proposition}\label{injective_function}
+    Suppose $f$ is a function.
+    $f$ is injective iff for all $x,y\in\dom{f}$ we have $f(x) = f(y) \implies x = y$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{injective,function_apply_iff}.
+\end{proof}
+
+\begin{abbreviation}\label{injection}
+    $f$ is an injection iff $f$ is an injective function.
+\end{abbreviation}
+
+\begin{definition}\label{inj}
+    $\inj{A}{B} = \{f\in\funs{A}{B}\mid \text{for all $x,y\in A$ such that $f(x)=f(y)$ we have $x = y$}\}$.
+\end{definition}
+
+\begin{proposition}\label{inj_weaken_codom}
+    Let $f\in\inj{A}{B}$.
+    Suppose $B\subseteq C$.
+    Then $f\in\inj{A}{C}$.
+\end{proposition}
+\begin{proof}
+    $f\in\funs{A}{B}$ by \obv{inj}.
+    Hence $f\in\funs{A}{C}$ by \obv{funs_weaken_codom}.
+    For all $x,y\in A$ such that $f(x)=f(y)$ we have $x=y$
+        by \obv{inj}.
+    Follows by \obv{inj}.
+\end{proof}
+
+\begin{abbreviation}\label{injection_from_to}
+    $f$ is an injection from $A$ to $B$ iff $f\in\inj{A}{B}$.
+\end{abbreviation}
+
+\begin{proposition}\label{inj_circ}
+    Let $f\in\inj{A}{B}$.
+    Let $g\in\inj{B}{C}$.
+    Then $g\circ f\in\inj{A}{C}$.
+\end{proposition}
+\begin{proof}
+    $f\in\funs{A}{B}$ and $g\in\funs{B}{C}$ by \obv{inj}.
+    $f$ is a function and $g$ is a function by \obv{funs_is_function}.
+    $\dom{f}=A$ and $\dom{g}=B$ by \obv{funs}.
+    $f$ is injective and $g$ is injective
+        by \auto{inj,injective_function}.
+    $g\circ f\in\funs{A}{C}$ by \obv{funs_circ}.
+    $g\circ f$ is injective by \obv{circ_injective}.
+    $g\circ f$ is a function by \obv{funs_is_function}.
+    $\dom{g\circ f}=A$ by \obv{funs}.
+    Follows by \auto{inj,injective_function,funs}.
+\end{proof}
+
+\begin{proposition}\label{inj_restrl}
+    Suppose $f\in\inj{B}{C}$.
+    Suppose $A\subseteq B$.
+    Then $\restrl{f}{A}\in\inj{A}{C}$.
+\end{proposition}
+\begin{proof}
+    $f\in\funs{B}{C}$ by \obv{inj}.
+    Hence $f$ is a function by \obv{funs_is_function}.
+    $\dom{f}=B$ by \obv{funs}.
+    Let $g=\restrl{f}{A}$.
+    $\dom{g}=\dom{f}\inter A$ by \auto{dom_of_restrl_eq_inter}.
+    Hence $\dom{g}=A$ by \auto{inter_absorb_supseteq_left}.
+    Show that for all $x\in\dom{g}$ we have $g(x)\in C$.
+    \begin{subproof}
+        Fix $x\in\dom{g}$.
+        Then $x\in A$ by \obv{restrl_dom}.
+        Hence $x\in B$ by \obv{elem_subseteq}.
+        $g(x)=f(x)$ by \auto{restrl_of_function_apply}.
+        Thus $g(x)\in C$ by \auto{funs_type_apply}.
+    \end{subproof}
+    Thus $g$ is a function to $C$.
+    $A=\dom{g}$.
+    Hence $g\in\funs{A}{C}$ by \obv{funs_intro}.
+    $f$ is injective by \auto{inj,injective_function}.
+    Thus $g$ is injective by \obv{restrl_injective}.
+    Thus $g\in\inj{A}{C}$ by \auto{inj,injective_function}.
+\end{proof}
+
+\begin{proposition}\label{union_inj_disjoint}
+    Suppose $f\in\inj{A}{C}$ and $g\in\inj{B}{C}$.
+    Suppose $A\inter B=\emptyset$ and
+        $\ran{f}\inter\ran{g}=\emptyset$.
+    Then $f\union g\in\inj{A\union B}{C}$.
+\end{proposition}
+\begin{proof}
+    $f\in\funs{A}{C}$ and $g\in\funs{B}{C}$ by \obv{inj}.
+    Thus $f$ and $g$ are functions by \obv{funs_is_function}.
+    $\dom{f}=A$ and $\dom{g}=B$ by \obv{funs}.
+    $f$ and $g$ are injective by \auto{inj,injective_function}.
+    Let $h=f\union g$.
+    $h$ is a relation by \obv{union_relations_is_relation}.
+    Show that $h$ is right-unique.
+    \begin{subproof}
+        Show that for all $x,y,z$ such that
+            $(x,y)\in h$ and $(x,z)\in h$ we have $y=z$.
+        \begin{subproof}
+            Fix $x$.
+            Fix $y$.
+            Fix $z$.
+            Assume $(x,y)\in h$ and $(x,z)\in h$.
+            $(x,y)\in f$ or $(x,y)\in g$ by \auto{union}.
+            $(x,z)\in f$ or $(x,z)\in g$ by \auto{union}.
+            \begin{byCase}
+            \caseOf{$(x,y)\in f$ and $(x,z)\in f$.}
+                Thus $y=z$ by \obv{rightunique}.
+            \caseOf{$(x,y)\in f$ and $(x,z)\in g$.}
+                Show that $y=z$.
+                \begin{subproof}
+                    Suppose not.
+                    $x\in\dom{f}$ and $x\in\dom{g}$ by \obv{dom_intro}.
+                    Hence $x\in A\inter B$ by \obv{inter_intro}.
+                    Thus $x\in\emptyset$.
+                    Contradiction by \obv{emptyset}.
+                \end{subproof}
+            \caseOf{$(x,y)\in g$ and $(x,z)\in f$.}
+                Show that $y=z$.
+                \begin{subproof}
+                    Suppose not.
+                    $x\in\dom{f}$ and $x\in\dom{g}$ by \obv{dom_intro}.
+                    Hence $x\in A\inter B$ by \obv{inter_intro}.
+                    Thus $x\in\emptyset$.
+                    Contradiction by \obv{emptyset}.
+                \end{subproof}
+            \caseOf{$(x,y)\in g$ and $(x,z)\in g$.}
+                Thus $y=z$ by \obv{rightunique}.
+            \end{byCase}
+        \end{subproof}
+        Follows by \obv{rightunique}.
+    \end{subproof}
+    \begin{align*}
+        \dom{h}
+            &= \dom{f}\union\dom{g}
+                \explanation{by \auto{dom_union}}
+            \\
+            &= A\union B
+    \end{align*}
+    $\ran{f}\subseteq C$ and $\ran{g}\subseteq C$ by \obv{funs_ran}.
+    $\ran{h}=\ran{f}\union\ran{g}$ by \auto{ran_union}.
+    Thus $\ran{h}\subseteq C$ by \auto{subseteq,union_iff}.
+    For all $x\in\dom{h}$ we have $h(x)\in C$
+        by \auto{fun_ran_iff,subseteq}.
+    Thus $h$ is a function to $C$.
+    Hence $h\in\funs{A\union B}{C}$ by \obv{funs_intro}.
+    Show that $h$ is injective.
+    \begin{subproof}
+        Show that for all $x,x',y$ such that
+            $(x,y)\in h$ and $(x',y)\in h$ we have $x=x'$.
+        \begin{subproof}
+            Fix $x$.
+            Fix $x'$.
+            Fix $y$.
+            Assume $(x,y)\in h$ and $(x',y)\in h$.
+            $(x,y)\in f$ or $(x,y)\in g$ by \auto{union}.
+            $(x',y)\in f$ or $(x',y)\in g$ by \auto{union}.
+            \begin{byCase}
+            \caseOf{$(x,y)\in f$ and $(x',y)\in f$.}
+                Thus $x=x'$ by \obv{injective}.
+            \caseOf{$(x,y)\in f$ and $(x',y)\in g$.}
+                Show that $x=x'$.
+                \begin{subproof}
+                    Suppose not.
+                    $y\in\ran{f}$ and $y\in\ran{g}$ by \obv{ran_intro}.
+                    Hence $y\in\ran{f}\inter\ran{g}$ by \obv{inter_intro}.
+                    Thus $y\in\emptyset$.
+                    Contradiction by \obv{emptyset}.
+                \end{subproof}
+            \caseOf{$(x,y)\in g$ and $(x',y)\in f$.}
+                Show that $x=x'$.
+                \begin{subproof}
+                    Suppose not.
+                    $y\in\ran{f}$ and $y\in\ran{g}$ by \obv{ran_intro}.
+                    Hence $y\in\ran{f}\inter\ran{g}$ by \obv{inter_intro}.
+                    Thus $y\in\emptyset$.
+                    Contradiction by \obv{emptyset}.
+                \end{subproof}
+            \caseOf{$(x,y)\in g$ and $(x',y)\in g$.}
+                Thus $x=x'$ by \obv{injective}.
+            \end{byCase}
+        \end{subproof}
+        Follows by \obv{injective}.
+    \end{subproof}
+    Thus $h\in\inj{A\union B}{C}$
+        by \auto{inj,injective_function}.
+\end{proof}
+
+\subsection{Surjections}
+
+\begin{definition}\label{surjection}
+    $f$ is a surjection onto $Y$ iff
+        $f$ is a function and $\ran{f}=Y$.
+\end{definition}
+
+The relation-level phrase ``surjective on $Y$'' means only that the relation
+is right-total on $Y$; it does not prescribe a codomain.  As in Isabelle/ZF,
+actual functions onto a specified target are expressed through the typed
+space $\surj{A}{B}$ below.  The untyped phrase ``surjection onto $Y$'' still
+has its conventional exact-range meaning.
+
+\begin{definition}\label{surj}
+    $\surj{A}{B} = \{f\in\funs{A}{B}\mid \text{for all $b\in B$ there exists $a\in A$ such that $f(a) = b$}\}$.
+\end{definition}
+
+\begin{abbreviation}\label{surjection_from_to}
+    $f$ is a surjection from $A$ to $B$ iff $f\in\surj{A}{B}$.
+\end{abbreviation}
+
+\begin{lemma}\label{function_surjective_on_ran}
+    Let $f$ be a function.
+    Then $f$ is surjective on $\ran{f}$.
+\end{lemma}
+\begin{proof}
+    For all $y\in\ran{f}$ there exists $x$ such that $x\mathrel{f}y$
+        by \obv{ran_iff}.
+    Follows by \obv{righttotal}.
+\end{proof}
+
+\begin{lemma}\label{surjection_ran}
+    Let $f$ be a function.
+    Then $f$ is a surjection onto $\ran{f}$.
+\end{lemma}
+\begin{proof}
+    Follows by \obv{surjection}.
+\end{proof}
+
+\begin{lemma}\label{surj_to_fun}
+    Let $f\in\surj{A}{B}$.
+    Then $f\in\funs{A}{B}$.
+\end{lemma}
+\begin{proof}
+    Follows by \obv{surj}.
+\end{proof}
+
+\begin{lemma}\label{fun_to_surj}
+    Let $f\in\funs{A}{B}$.
+    Then $f\in\surj{A}{\ran{f}}$.
+\end{lemma}
+\begin{proof}
+    $f\in\rels{A}{\ran{f}}$ by \obv{funs,rels_restrict_ran}.
+    Thus $f\in\funs{A}{\ran{f}}$ by \obv{funs}.
+    $f$ is a function by \obv{funs_is_function}.
+    $A = \dom{f}$ by \obv{funs}.
+    For all $b\in\ran{f}$ there exists $a\in\dom{f}$ such that $f(a) = b$
+        by \obv{fun_ran_iff}.
+    For all $b\in\ran{f}$ there exists $a\in A$ such that $f(a) = b$
+        by \auto.
+    Follows by \obv{surj}.
+\end{proof}
+
+\begin{corollary}\label{ran_of_surj}
+    Let $f\in\surj{A}{B}$.
+    Then $\ran{f} = B$.
+\end{corollary}
+\begin{proof}
+    $f\in\funs{A}{B}$ by \obv{surj_to_fun}.
+    $\ran{f}\subseteq B$ by \obv{funs_ran}.
+    Every element of $\ran{f}$ is an element of $B$
+        by \obv{subseteq}.
+    $f$ is a function by \obv{funs_is_function}.
+    $A = \dom{f}$ by \obv{funs}.
+    For all $b\in B$ there exists $a\in A$ such that $f(a) = b$
+        by \obv{surj}.
+    For all $b\in B$ there exists $a\in\dom{f}$ such that $f(a) = b$
+        by \auto.
+    Every element of $B$ is an element of $\ran{f}$
+        by \auto{fun_ran_iff}.
+    Follows by set extensionality.
+\end{proof}
+
+\begin{corollary}\label{funs_surj_iff}
+    Let $f\in\funs{A}{B}$.
+    Then $f\in\surj{A}{B}$ iff $\ran{f} = B$.
+\end{corollary}
+\begin{proof}
+    Follows by \auto{surj,fun_to_surj,ran_of_surj}.
+\end{proof}
+
+\begin{corollary}\label{surjection_onto_iff_surj}
+    Let $f$ be a function from $A$ to $B$.
+    Then $f$ is a surjection onto $B$ iff $f\in\surj{A}{B}$.
+\end{corollary}
+\begin{proof}
+    $f$ is a function by \obv{funs_is_function}.
+    Follows by \auto{surjection,funs_surj_iff}.
+\end{proof}
+
+\begin{proposition}\label{surjections_circ}
+    Let $f\in\surj{A}{B}$.
+    Let $g\in\surj{B}{C}$.
+    Then $g\circ f\in\surj{A}{C}$.
+\end{proposition}
+\begin{proof}
+    $\dom{f} = A$ by \auto{surj,funs}.
+    $\dom{g} = B = \ran{f}$ by \auto{surj,funs,ran_of_surj}.
+    $\dom{g\circ f} = A$ by \auto{surj_to_fun,funs_is_function,dom_circ_exact}.
+    $f\in\funs{A}{B}$ and $g\in\funs{B}{C}$ by \obv{surj_to_fun}.
+    $f$ is a function and $g$ is a function by \obv{funs_is_function}.
+    $g\circ f\in\funs{A}{C}$ by \obv{funs_circ}.
+    $\ran{g\circ f}=\ran{g}$ by \obv{ran_circ_exact}.
+    $\ran{g}=C$ by \obv{ran_of_surj}.
+    Follows by \auto{funs_surj_iff}.
+\end{proof}
+
+
+
+\subsection{Bijections}
+
+\begin{definition}\label{bijections}
+    $\bijections{A}{B} = \{ f\in\surj{A}{B} \mid \text{$f$ is injective}\}$.
+\end{definition}
+
+\begin{abbreviation}\label{bijection}
+    $f$ is a bijection from $A$ to $B$ iff $f\in\bijections{A}{B}$.
+\end{abbreviation}
+
+\begin{proposition}\label{bijections_to_funs}
+    Every element of $\bijections{A}{B}$ is an element of $\funs{A}{B}$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{bijections,surj}.
+\end{proof}
+
+\begin{proposition}\label{bijection_is_function}
+    Every element of $\bijections{A}{B}$ is a function.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{bijections_to_funs,funs_is_function}.
+\end{proof}
+
+\begin{proposition}\label{bijections_dom}
+    Let $f\in\bijections{A}{B}$.
+    Then $\dom{f} = A$.
+\end{proposition}
+\begin{proof}
+    $f\in\funs{A}{B}$ by \obv{bijections_to_funs}.
+    Follows by \obv{funs}.
+\end{proof}
+
+\begin{proposition}\label{injective_function_bijection_to_range}
+    Suppose $f$ is a function and $f$ is injective.
+    Then $f\in\bijections{\dom{f}}{\ran{f}}$.
+\end{proposition}
+\begin{proof}
+    $f\in\funs{\dom{f}}{\ran{f}}$ by
+        \obv{function_exact_type_to_range}.
+    Hence $f\in\surj{\dom{f}}{\ran{f}}$ by \obv{fun_to_surj}.
+    Follows by \obv{bijections}.
+\end{proof}
+
+\begin{proposition}\label{bijection_restriction_to_image}
+    Suppose $e\in\bijections{A}{B}$ and $C\subseteq A$.
+    Then $\restrl{e}{C}\in\bijections{C}{\img{e}{C}}$.
+\end{proposition}
+\begin{proof}
+    $e\in\funs{A}{B}$ by \obv{bijections_to_funs}.
+    Hence $e$ is a function and $\dom{e}=A$ by
+        \obv{funs_is_function,funs}.
+    $e$ is injective by \obv{bijections}.
+    Hence $e\in\inj{A}{B}$ by \auto{inj,injective_function}.
+    Hence $\restrl{e}{C}\in\inj{C}{B}$ by \obv{inj_restrl}.
+    Hence $\restrl{e}{C}$ is a function and
+        $\restrl{e}{C}$ is injective and
+        $\dom{\restrl{e}{C}}=C$ by
+        \auto{inj,funs_is_function,injective_function,funs}.
+    Hence $\restrl{e}{C}\in
+        \bijections{\dom{\restrl{e}{C}}}{\ran{\restrl{e}{C}}}$ by
+        \obv{injective_function_bijection_to_range}.
+    $C\subseteq\dom{e}$.
+    $\ran{\restrl{e}{C}}=\img{e}{C}$ by \obv{restrl_ran}.
+\end{proof}
+
+\begin{proposition}\label{bijection_circ}
+    Let $f$ be a bijection from $A$ to $B$.
+    Let $g$ be a bijection from $B$ to $C$.
+    Then $g\circ f$ is a bijection from $A$ to $C$.
+\end{proposition}
+\begin{proof}
+    $g\circ f\in\surj{A}{C}$ by \auto{bijections,surjections_circ}.
+    $g\circ f$ is injective by \obv{bijections,circ_injective}.
+    Follows by \obv{bijections}.
+\end{proof}
+
+\subsection{Converse as a function}
+
+\begin{proposition}\label{converse_of_function_is_injective}
+    Let $f$ be a function.
+    Then $\converse{f}$ is injective. % i.e. an injective relation.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{rightunique,injective,converse_elim}.
+\end{proof}
+
+\begin{proposition}\label{injective_converse_is_function}
+    Suppose $f$ is injective. % NOTE: f need not be a function!
+    Then $\converse{f}$ is a function.
+\end{proposition}
+\begin{proof}
+    $\converse{f}$ is a relation by \obv{converse_is_relation}.
+    $\converse{f}$ is right-unique
+        by \auto{rightunique,injective,converse_iff}.
+\end{proof}
+
+\begin{proposition}\label{converse_inj_ran_dom}
+    Let $f\in\inj{A}{B}$.
+    Then $\converse{f}\in\inj{\ran{f}}{A}$.
+\end{proposition}
+\begin{proof}
+    $f\in\funs{A}{B}$ by \obv{inj}.
+    Thus $f$ is a function by \obv{funs_is_function}.
+    $\dom{f}=A$ by \obv{funs}.
+    $f$ is injective by \auto{inj,injective_function}.
+    $\converse{f}$ is a function
+        by \obv{injective_converse_is_function}.
+    $\dom{\converse{f}}=\ran{f}$ by \obv{dom_converse}.
+    $\ran{\converse{f}}=A$ by \obv{ran_converse}.
+    For all $x\in\dom{\converse{f}}$ we have
+        $(\converse{f})(x)\in A$ by \auto{fun_ran_iff}.
+    Thus $\converse{f}$ is a function to $A$.
+    Hence $\converse{f}\in\funs{\ran{f}}{A}$ by \obv{funs_intro}.
+    $\converse{f}$ is injective
+        by \obv{converse_of_function_is_injective}.
+    Follows by \auto{inj,injective_function}.
+\end{proof}
+
+\begin{proposition}\label{bijective_converse_is_function}
+    Let $f$ be a bijection from $A$ to $B$.
+    Then $\converse{f}$ is a function.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{bijections,injective_converse_is_function}.
+\end{proof}
+
+\begin{proposition}\label{bijective_converse_are_funs}
+    Let $f$ be a bijection from $A$ to $B$.
+    Then $\converse{f}\in\funs{B}{A}$.
+\end{proposition}
+\begin{proof}
+    $\dom{\converse{f}} = \ran{f} = B$ by \obv{bijections,dom_converse,ran_of_surj}.
+    $\converse{f}$ is a function by \obv{bijective_converse_is_function}.
+    $\ran{\converse{f}}=\dom{f}=A$
+        by \obv{ran_converse,bijections_dom}.
+    For all $x\in\dom{\converse{f}}$ we have $(\converse{f})(x)\in A$
+        by \auto{fun_ran_iff}.
+    Thus $\converse{f}$ is a function to $A$.
+    Follows by \obv{funs_intro}.
+\end{proof}
+
+\begin{proposition}\label{bijective_converse_are_surjs}
+    Let $f$ be a bijection from $A$ to $B$.
+    Then $\converse{f}\in\surj{B}{A}$.
+\end{proposition}
+\begin{proof}
+    We have $\converse{f}\in\funs{B}{A}$ by \obv{bijective_converse_are_funs}.
+    We have $\dom{f} = A$ by \obv{bijections_dom}.
+    Thus $\ran{\converse{f}} = A$ by \obv{ran_converse}.
+    Follows by \obv{funs_surj_iff}.
+\end{proof}
+
+\begin{proposition}\label{bijection_converse_is_bijection}
+    Let $f$ be a bijection from $A$ to $B$.
+    Then $\converse{f}$ is a bijection from $B$ to $A$.
+\end{proposition}
+\begin{proof}
+    $\converse{f}\in\funs{B}{A}$ by \obv{bijective_converse_are_funs}.
+    $\converse{f}$ is injective by \obv{bijection_is_function,converse_of_function_is_injective}.
+    $\converse{f}\in\surj{B}{A}$ by \obv{bijective_converse_are_surjs}.
+    Follows by \obv{bijections}.
+\end{proof}
+
+\subsubsection{Inverses of a function}
+
+At graph level, an inverse must carry its own domain contract.  This is
+essential because application of a set-coded graph is totalized outside its
+domain.  The definitions therefore state exactly the required range/domain
+compatibility.  The following typed equivalences provide the more usual
+source-and-target-oriented interface.
+
+\begin{definition}\label{leftinverse}
+    $g$ is a left inverse of $f$ iff
+        $f$ is a function and $g$ is a function and
+        $g$ is composable with $f$ and
+        for all $x\in\dom{f}$ we have $g(f(x)) = x$.
+\end{definition}
+
+\begin{definition}\label{rightinverse}
+    $g$ is a right inverse of $f$ iff
+        $f$ is a function and $g$ is a function and
+        $f$ is composable with $g$ and
+        for all $y\in\dom{g}$ we have $f(g(y)) = y$.
+\end{definition}
+
+\begin{proposition}\label{leftinverse_from_to_iff}
+    Let $f$ be a function from $A$ to $B$.
+    Let $g$ be a function from $B$ to $A$.
+    Then $g$ is a left inverse of $f$ iff
+        for all $x\in A$ we have $g(f(x))=x$.
+\end{proposition}
+\begin{proof}
+    $f$ is a function and $g$ is a function
+        by \obv{funs_is_function}.
+    $\dom{f}=A$ and $\dom{g}=B$ by \obv{funs}.
+    $\ran{f}\subseteq B$ by \obv{funs_ran}.
+    Hence $g$ is composable with $f$.
+    Follows by \auto{leftinverse}.
+\end{proof}
+
+\begin{proposition}\label{rightinverse_from_to_iff}
+    Let $f$ be a function from $A$ to $B$.
+    Let $g$ be a function from $B$ to $A$.
+    Then $g$ is a right inverse of $f$ iff
+        for all $y\in B$ we have $f(g(y))=y$.
+\end{proposition}
+\begin{proof}
+    $f$ is a function and $g$ is a function
+        by \obv{funs_is_function}.
+    $\dom{f}=A$ and $\dom{g}=B$ by \obv{funs}.
+    $\ran{g}\subseteq A$ by \obv{funs_ran}.
+    Hence $f$ is composable with $g$.
+    Follows by \auto{rightinverse}.
+\end{proof}
+
+\begin{proposition}\label{leftinverse_implies_injection}
+    Suppose $g$ is a left inverse of $f$.
+    Then $f$ is an injection.
+\end{proposition}
+\begin{proof}
+    Show that for all $x,y\in\dom{f}$ we have
+        $f(x)=f(y)\implies x=y$.
+    \begin{subproof}
+        Fix $x,y\in\dom{f}$.
+        Assume $f(x)=f(y)$.
+        $g(f(x))=x$ and $g(f(y))=y$ by \obv{leftinverse}.
+        Thus $x=y$.
+    \end{subproof}
+    Thus $f$ is injective by \obv{injective_function}.
+\end{proof}
+
+\begin{proposition}\label{rightinverse_implies_surjection}
+    Let $f$ be a function from $A$ to $B$.
+    Let $g$ be a function from $B$ to $A$.
+    Suppose $g$ is a right inverse of $f$.
+    Then $f$ is a surjection from $A$ to $B$.
+\end{proposition}
+\begin{proof}
+    For all $y\in B$ we have $g(y)\in A$
+        by \obv{funs_type_apply}.
+    For all $y\in B$ we have $f(g(y))=y$
+        by \obv{rightinverse_from_to_iff}.
+    Follows by \auto{surj}.
+\end{proof}
+
+\begin{proposition}\label{injective_converse_is_leftinverse}
+    Let $f$ be an injection.
+    Then $\converse{f}$ is a left inverse of $f$.
+\end{proposition}
+\begin{proof}
+    $\converse{f}$ is a function by \obv{injective_converse_is_function}.
+    $\dom{\converse{f}}=\ran{f}$ by \obv{dom_converse}.
+    $\ran{f}\subseteq\dom{\converse{f}}$
+        by \obv{subseteq_refl}.
+    Hence $\converse{f}$ is composable with $f$ by assumption.
+    For all $x\in\dom{f}$ we have $(x,f(x))\in f$
+        by \obv{function_apply_elim}.
+    For all $x\in\dom{f}$ we have $(f(x),x)\in\converse{f}$
+        by \auto{converse_iff}.
+    Thus for all $x\in\dom{f}$ we have $(\converse{f})(f(x))=x$
+        by \obv{function_apply_intro}.
+    Follows by \obv{leftinverse}.
+\end{proof}
+
+
+
+\subsection{Identity function}
+
+\begin{proposition}\label{id_rightunique}
+    $\identity{A}$ is right-unique.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{id,rightunique,pair_eq_iff}.
+\end{proof}
+
+\begin{proposition}\label{id_is_function}
+    $\identity{A}$ is a function.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{id_is_relation,id_rightunique}.
+\end{proof}
+
+\begin{proposition}\label{id_is_function_on}
+    $\identity{A}$ is a function on $A$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{id_is_function,id_dom}.
+\end{proof}
+
+\begin{proposition}\label{id_is_function_to}
+    $\identity{A}$ is a function to $A$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{id_is_function,id_dom,id_iff,function_apply_intro}.
+\end{proof}
+
+\begin{proposition}\label{id_is_function_from_to}
+    $\identity{A}$ is a function from $A$ to $A$.
+\end{proposition}
+\begin{proof}
+    $\identity{A}\in\rels{A}{A}$ by \obv{id_elem_rels}.
+    Follows by \obv{funs,id_is_function_on,id_is_function_to}.
+\end{proof}
+
+\begin{proposition}\label{id_apply}
+    Suppose $a\in A$.
+    Then $(\identity{A})(a)=a$.
+\end{proposition}
+\begin{proof}
+    $(a,a)\in\identity{A}$ by \obv{id_iff}.
+    Follows by \obv{id_is_function,function_apply_intro}.
+\end{proof}
+
+\begin{proposition}\label{id_elem_funs}
+    $\identity{A}\in\funs{A}{A}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{id_is_function_from_to}.
+\end{proof}
+
+
+\begin{proposition}\label{id_elem_surjections}
+    $\identity{A}\in\surj{A}{A}$.
+\end{proposition}
+\begin{proof}
+    We have $\identity{A}\in\funs{A}{A}$ by \obv{id_elem_funs}.
+    $\ran{\identity{A}}=A$ by \obv{id_ran}.
+    Follows by \obv{funs_surj_iff}.
+\end{proof}
+
+\begin{proposition}\label{id_elem_bijections}
+    $\identity{A}\in\bijections{A}{A}$.
+\end{proposition}
+\begin{proof}
+    $\identity{A}\in\surj{A}{A}$ by \obv{id_elem_surjections}.
+    $\identity{A}$ is injective by \obv{identity_injective}.
+    Follows by \obv{bijections}.
+\end{proof}
+
+\subsection{Identity and converse composition laws}
+
+\begin{proposition}\label{funs_circ_identity_right}
+    Let $f\in\funs{A}{B}$.
+    Then $f\circ\identity{A}=f$.
+\end{proposition}
+\begin{proof}
+    $f$ is a relation by \obv{funs_is_relation}.
+    Show that for all $x,y$ we have
+        $x\mathrel{f\circ\identity{A}}y$ iff $x\mathrel{f}y$.
+    \begin{subproof}
+        Fix $x,y$.
+        Show that if $x\mathrel{f\circ\identity{A}}y$, then
+            $x\mathrel{f}y$.
+        \begin{subproof}
+            Assume $x\mathrel{f\circ\identity{A}}y$.
+            Take $z$ such that
+                $x\mathrel{\identity{A}}z\mathrel{f}y$ by
+                \obv{circ_iff}.
+            Hence $x=z$ by \auto{id_iff}.
+        \end{subproof}
+        Show that if $x\mathrel{f}y$, then
+            $x\mathrel{f\circ\identity{A}}y$.
+        \begin{subproof}
+            Assume $x\mathrel{f}y$.
+            Hence $x\in\dom{f}$ by \auto{dom_iff}.
+            Hence $x\in A$ by \obv{funs_elim}.
+            Hence $x\mathrel{\identity{A}}x$ by \obv{id_iff}.
+            Follows by \auto{circ_iff}.
+        \end{subproof}
+        Follows by \auto.
+    \end{subproof}
+    Follows by \obv{relext,circ_is_relation}.
+\end{proof}
+
+\begin{proposition}\label{funs_identity_circ_left}
+    Let $f\in\funs{A}{B}$.
+    Then $\identity{B}\circ f=f$.
+\end{proposition}
+\begin{proof}
+    $f$ is a relation by \obv{funs_is_relation}.
+    Show that for all $x,y$ we have
+        $x\mathrel{\identity{B}\circ f}y$ iff $x\mathrel{f}y$.
+    \begin{subproof}
+        Fix $x,y$.
+        Show that if $x\mathrel{\identity{B}\circ f}y$, then
+            $x\mathrel{f}y$.
+        \begin{subproof}
+            Assume $x\mathrel{\identity{B}\circ f}y$.
+            Take $z$ such that
+                $x\mathrel{f}z\mathrel{\identity{B}}y$ by
+                \obv{circ_iff}.
+            Hence $z=y$ by \auto{id_iff}.
+        \end{subproof}
+        Show that if $x\mathrel{f}y$, then
+            $x\mathrel{\identity{B}\circ f}y$.
+        \begin{subproof}
+            Assume $x\mathrel{f}y$.
+            Hence $y\in\ran{f}$ by \auto{ran_iff}.
+            Hence $y\in B$ by \auto{funs_ran,subseteq}.
+            Hence $y\mathrel{\identity{B}}y$ by \obv{id_iff}.
+            Follows by \auto{circ_iff}.
+        \end{subproof}
+        Follows by \auto.
+    \end{subproof}
+    Follows by \obv{relext,circ_is_relation}.
+\end{proof}
+
+\begin{theorem}\label{bijection_converse_circ}
+    Let $f\in\bijections{A}{B}$.
+    Then $\converse{f}\circ f=\identity{A}$.
+\end{theorem}
+\begin{proof}
+    $f$ is a function and $f$ is injective and $\dom{f}=A$ by
+        \obv{bijections,bijection_is_function,bijections_dom}.
+    Show that for all $x,z$ we have
+        $x\mathrel{\converse{f}\circ f}z$ iff
+        $x\mathrel{\identity{A}}z$.
+    \begin{subproof}
+        Fix $x,z$.
+        Show that if $x\mathrel{\converse{f}\circ f}z$, then
+            $x\mathrel{\identity{A}}z$.
+        \begin{subproof}
+            Assume $x\mathrel{\converse{f}\circ f}z$.
+            Take $y$ such that
+                $x\mathrel{f}y\mathrel{\converse{f}}z$ by
+                \obv{circ_iff}.
+            Hence $z\mathrel{f}y$ by \obv{converse_iff}.
+            Hence $x=z$ by \obv{injective}.
+            $x\in A$ by \auto{dom_iff}.
+            Follows by \obv{id_iff}.
+        \end{subproof}
+        Show that if $x\mathrel{\identity{A}}z$, then
+            $x\mathrel{\converse{f}\circ f}z$.
+        \begin{subproof}
+            Assume $x\mathrel{\identity{A}}z$.
+            Hence $x=z\in A$ by \obv{id_iff}.
+            Hence $(x,f(x))\in f$ by
+                \obv{function_apply_elim}.
+            Hence $(f(x),x)\in\converse{f}$ by
+                \obv{converse_iff}.
+            Follows by \auto{circ_iff}.
+        \end{subproof}
+        Follows by \auto.
+    \end{subproof}
+    Follows by
+        \obv{relext,circ_is_relation,id_is_relation}.
+\end{proof}
+
+\begin{theorem}\label{bijection_circ_converse}
+    Let $f\in\bijections{A}{B}$.
+    Then $f\circ\converse{f}=\identity{B}$.
+\end{theorem}
+\begin{proof}
+    $f$ is a function and $f\in\surj{A}{B}$ by
+        \obv{bijections,bijection_is_function}.
+    Hence $f\in\funs{A}{B}$ by \obv{surj_to_fun}.
+    Show that for all $x,z$ we have
+        $x\mathrel{f\circ\converse{f}}z$ iff
+        $x\mathrel{\identity{B}}z$.
+    \begin{subproof}
+        Fix $x,z$.
+        Show that if $x\mathrel{f\circ\converse{f}}z$, then
+            $x\mathrel{\identity{B}}z$.
+        \begin{subproof}
+            Assume $x\mathrel{f\circ\converse{f}}z$.
+            Take $y$ such that
+                $x\mathrel{\converse{f}}y\mathrel{f}z$ by
+                \obv{circ_iff}.
+            Hence $y\mathrel{f}x$ by \obv{converse_iff}.
+            Hence $x=z$ by \obv{rightunique}.
+            $x\in\ran{f}$ by \auto{ran_iff}.
+            Hence $x\in B$ by \auto{funs_ran,subseteq}.
+            Follows by \obv{id_iff}.
+        \end{subproof}
+        Show that if $x\mathrel{\identity{B}}z$, then
+            $x\mathrel{f\circ\converse{f}}z$.
+        \begin{subproof}
+            Assume $x\mathrel{\identity{B}}z$.
+            Hence $x=z\in B$ by \obv{id_iff}.
+            Take $y\in A$ such that $f(y)=x$ by \obv{surj}.
+            Hence $y\in\dom{f}$ by \obv{funs_elim}.
+            Hence $(y,x)\in f$ by \auto{function_apply_elim}.
+            Hence $(x,y)\in\converse{f}$ by \obv{converse_iff}.
+            Follows by \auto{circ_iff}.
+        \end{subproof}
+        Follows by \auto.
+    \end{subproof}
+    Follows by
+        \obv{relext,circ_is_relation,id_is_relation}.
+\end{proof}

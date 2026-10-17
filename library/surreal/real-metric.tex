@@ -1,0 +1,359 @@
+\import{surreal/absolute-value-estimates.tex}
+\import{topology/metric.tex}
+\import{set/logical-graph.tex}
+
+\section{The canonical metric on the surreal reals}
+
+The distance between two real surreals is the absolute value of their
+difference.  The logical operation is restricted to the real carrier to form
+the set-coded distance graph required by the metric-space structure.
+
+\begin{definition}\label{surreal_real_metric_distance_op}
+    $\surrealRealMetricDistanceOp:\Set\to\Set\to\Set
+        =\fun{x,y:\Set}{
+            \abs{\surrealAdd{x}{\surrealNeg{y}}}}$.
+\end{definition}
+
+\begin{definition}\label{surreal_real_metric_distance_graph}
+    $\surrealRealMetricDistanceGraph=
+        \Apply{\binaryGraphOnOp}
+            {\reals,\reals,\surrealRealMetricDistanceOp}$.
+\end{definition}
+
+\begin{proposition}\label{surreal_real_metric_difference_closed}
+    Let $x,y\in\reals$.
+    Then $\abs{\surrealAdd{x}{\surrealNeg{y}}}\in\reals$.
+\end{proposition}
+\begin{proof}
+    $\surrealNeg{y}\in\reals$
+        by \obv{surreal_real_negation_closed}.
+    Hence $\surrealAdd{x}{\surrealNeg{y}}\in\reals$
+        by \obv{surreal_real_addition_closed}.
+    Follows by \obv{surreal_real_abs_closed}.
+\end{proof}
+
+\begin{proposition}\label{surreal_real_metric_distance_graph_type}
+    $\surrealRealMetricDistanceGraph
+        \in\funs{\reals\times\reals}{\reals}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{surreal_real_metric_distance_graph,logical_binary_graph_on_function,surreal_real_metric_distance_op,surreal_real_metric_difference_closed}.
+\end{proof}
+
+\begin{proposition}\label{surreal_real_metric_distance_graph_application}
+    Let $x,y\in\reals$.
+    Then
+        $\apply{\surrealRealMetricDistanceGraph}{(x,y)}
+            =\abs{\surrealAdd{x}{\surrealNeg{y}}}$.
+\end{proposition}
+\begin{proof}
+    $((x,y),\abs{\surrealAdd{x}{\surrealNeg{y}}})
+        \in\surrealRealMetricDistanceGraph$
+        by
+        \auto{surreal_real_metric_distance_graph,logical_binary_graph_on_membership,surreal_real_metric_distance_op}.
+    Follows by
+        \obv{surreal_real_metric_distance_graph_type,funs_is_function,function_apply_intro}.
+\end{proof}
+
+\begin{proposition}\label{surreal_real_metric_distance_nonnegative}
+    Let $x,y\in\reals$.
+    Then
+        $\surrealLe{\surrealZero}
+            {\apply{\surrealRealMetricDistanceGraph}{(x,y)}}$.
+\end{proposition}
+\begin{proof}
+    $\surreal{x}$ and $\surreal{y}$
+        by \obv{surreal_real_is_surreal}.
+    Hence $\surreal{\surrealAdd{x}{\surrealNeg{y}}}$
+        by \obv{surreal_negation_is_surreal,surreal_add_is_surreal}.
+    Follows by
+        \auto{surreal_real_metric_distance_graph_application,surreal_abs_nonnegative_value}.
+\end{proof}
+
+\begin{proposition}\label{surreal_real_difference_zero_iff}
+    Suppose $\surreal{x}$ and $\surreal{y}$.
+    Then
+        $\surrealAdd{x}{\surrealNeg{y}}=\surrealZero$ iff $x=y$.
+\end{proposition}
+\begin{proof}
+    $\surreal{\surrealNeg{y}}$
+        by \obv{surreal_negation_is_surreal}.
+    Show that if
+        $\surrealAdd{x}{\surrealNeg{y}}=\surrealZero$, then $x=y$.
+    \begin{subproof}
+        Assume $\surrealAdd{x}{\surrealNeg{y}}=\surrealZero$.
+        $\surrealAdd{\surrealAdd{x}{\surrealNeg{y}}}{y}
+            =\surrealAdd{\surrealZero}{y}$.
+        Follows by
+            \obv{surreal_add_negated_cancel_right,surreal_add_zero_left,empty_surreal}.
+    \end{subproof}
+    Show that if $x=y$, then
+        $\surrealAdd{x}{\surrealNeg{y}}=\surrealZero$.
+    \begin{subproof}
+        Assume $x=y$.
+        Follows by
+            \auto{surreal_add_inverse_right,empty_surreal}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{proposition}\label{surreal_real_metric_distance_zero_iff}
+    Let $x,y\in\reals$.
+    Then
+        $\apply{\surrealRealMetricDistanceGraph}{(x,y)}=\surrealZero$
+        iff $x=y$.
+\end{proposition}
+\begin{proof}
+    $\surreal{x}$ and $\surreal{y}$
+        by \obv{surreal_real_is_surreal}.
+    Hence $\surreal{\surrealAdd{x}{\surrealNeg{y}}}$
+        by \obv{surreal_negation_is_surreal,surreal_add_is_surreal}.
+    Follows by
+        \auto{surreal_real_metric_distance_graph_application,surreal_abs_eq_zero_iff,surreal_real_difference_zero_iff}.
+\end{proof}
+
+\begin{proposition}\label{surreal_real_metric_distance_symmetric}
+    Let $x,y\in\reals$.
+    Then
+        $\apply{\surrealRealMetricDistanceGraph}{(x,y)}
+            =\apply{\surrealRealMetricDistanceGraph}{(y,x)}$.
+\end{proposition}
+\begin{proof}
+    $\surreal{x}$ and $\surreal{y}$
+        by \obv{surreal_real_is_surreal}.
+    $\surreal{\surrealAdd{x}{\surrealNeg{y}}}$
+        by \obv{surreal_negation_is_surreal,surreal_add_is_surreal}.
+    $\surrealNeg{\surrealAdd{x}{\surrealNeg{y}}}
+        =\surrealAdd{y}{\surrealNeg{x}}$
+        by \obv{surreal_difference_negation}.
+    Hence
+        $\abs{\surrealAdd{x}{\surrealNeg{y}}}
+            =\abs{\surrealAdd{y}{\surrealNeg{x}}}$
+        by \auto{surreal_abs_negation}.
+    Follows by
+        \obv{surreal_real_metric_distance_graph_application}.
+\end{proof}
+
+\begin{proposition}\label{surreal_difference_chain}
+    Suppose $\surreal{x}$ and $\surreal{y}$ and $\surreal{z}$.
+    Then
+        $\surrealAdd{
+            \surrealAdd{x}{\surrealNeg{y}}}
+            {\surrealAdd{y}{\surrealNeg{z}}}
+        =\surrealAdd{x}{\surrealNeg{z}}$.
+\end{proposition}
+\begin{proof}
+    $\surreal{\surrealNeg{y}}$ and $\surreal{\surrealNeg{z}}$
+        by \obv{surreal_negation_is_surreal}.
+    Follows by
+        \auto{surreal_add_associative,surreal_add_is_surreal,surreal_add_inverse_left,surreal_add_zero_left}.
+\end{proof}
+
+\begin{proposition}\label{surreal_real_metric_triangle}
+    Let $x,y,z\in\reals$.
+    Then
+        $\surrealLe{
+            \apply{\surrealRealMetricDistanceGraph}{(x,z)}}
+            {\surrealAdd{
+                \apply{\surrealRealMetricDistanceGraph}{(x,y)}}
+                {\apply{\surrealRealMetricDistanceGraph}{(y,z)}}}$.
+\end{proposition}
+\begin{proof}
+    $\surreal{x}$ and $\surreal{y}$ and $\surreal{z}$
+        by \obv{surreal_real_is_surreal}.
+    Let $a=\surrealAdd{x}{\surrealNeg{y}}$.
+    Let $b=\surrealAdd{y}{\surrealNeg{z}}$.
+    $\surreal{a}$ and $\surreal{b}$
+        by \obv{surreal_negation_is_surreal,surreal_add_is_surreal}.
+    $\surrealAdd{a}{b}=\surrealAdd{x}{\surrealNeg{z}}$
+        by \auto{surreal_difference_chain}.
+    $\surrealLe{\abs{\surrealAdd{a}{b}}}
+        {\surrealAdd{\abs{a}}{\abs{b}}}$
+        by \obv{surreal_abs_triangle}.
+    Follows by
+        \auto{surreal_real_metric_distance_graph_application}.
+\end{proof}
+
+\begin{instance}\label{surreal_real_pseudometric_space}
+    The pseudometric space
+    $\RealMetric=
+        \structure[pseudometric space]{
+            \carrier=\reals,
+            \metricDistance=\surrealRealMetricDistanceGraph
+        }$.
+\end{instance}
+\begin{proof}
+    $\carrier[\RealMetric]=\reals$
+        by \obv{pseudometric_spaceaggregateprojection_carrier}.
+    $\metricDistance[\RealMetric]=\surrealRealMetricDistanceGraph$
+        by \obv{pseudometric_spaceaggregateprojection_metricDistance}.
+    $\metricDistance[\RealMetric]
+        \in\funs{
+            \carrier[\RealMetric]\times\carrier[\RealMetric]}
+            {\reals}$
+        by \obv{surreal_real_metric_distance_graph_type}.
+    For all $x,y\in\carrier[\RealMetric]$ we have
+        $\metricDistance[\RealMetric](x,y)
+            =\apply{\surrealRealMetricDistanceGraph}{(x,y)}$
+        by \obv{surreal_real_metric_distance_graph_application}.
+    For all $x,y\in\carrier[\RealMetric]$ we have
+        $\surrealLe{\surrealZero}{\metricDistance[\RealMetric](x,y)}$
+        by \auto{surreal_real_metric_distance_nonnegative}.
+    For every $x\in\carrier[\RealMetric]$ we have
+        $\metricDistance[\RealMetric](x,x)=\surrealZero$ by
+        \auto{surreal_real_metric_distance_zero_iff}.
+    For all $x,y\in\carrier[\RealMetric]$ we have
+        $\metricDistance[\RealMetric](x,y)
+            =\metricDistance[\RealMetric](y,x)$
+        by \auto{surreal_real_metric_distance_symmetric}.
+    For all $x,y,z\in\carrier[\RealMetric]$ we have
+        $\surrealLe{\metricDistance[\RealMetric](x,z)}
+            {\surrealAdd{\metricDistance[\RealMetric](x,y)}
+                {\metricDistance[\RealMetric](y,z)}}$
+        by \auto{surreal_real_metric_triangle}.
+    Follows by \obv{pseudometric_spaceaggregateexact}.
+\end{proof}
+
+\begin{theorem}\label{surreal_real_metric_space}
+    $\RealMetric$ is a metric space.
+\end{theorem}
+\begin{proof}
+    $\RealMetric$ is a pseudometric space by
+        \obv{surreal_real_pseudometric_space}.
+    $\carrier[\RealMetric]=\reals$ by
+        \obv{surreal_real_pseudometric_spaceprojection_carrier}.
+    $\metricDistance[\RealMetric]=\surrealRealMetricDistanceGraph$ by
+        \obv{surreal_real_pseudometric_spaceprojection_metricDistance}.
+    For all $x,y\in\carrier[\RealMetric]$ we have
+        $\metricDistance[\RealMetric](x,y)
+            =\apply{\surrealRealMetricDistanceGraph}{(x,y)}$ by
+        \obv{surreal_real_metric_distance_graph_application}.
+    For all $x,y\in\carrier[\RealMetric]$ we have
+        $\metricDistance[\RealMetric](x,y)=\surrealZero$ iff $x=y$
+        by \auto{surreal_real_metric_distance_zero_iff}.
+    Follows by \obv{metric_space,pseudometric_space}.
+\end{proof}
+
+\begin{proposition}\label{surreal_real_metric_carrier}
+    $\carrier[\RealMetric]=\reals$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{surreal_real_pseudometric_spaceprojection_carrier}.
+\end{proof}
+
+\begin{proposition}\label{surreal_real_metric_distance}
+    Let $x,y\in\reals$.
+    Then
+        $\metricDistance[\RealMetric](x,y)
+            =\abs{\surrealAdd{x}{\surrealNeg{y}}}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+    \auto{surreal_real_pseudometric_spaceprojection_metricDistance,
+        surreal_real_metric_distance_graph_application}.
+\end{proof}
+
+\begin{proposition}\label{real_metric_negation_invariant}
+    Let $x,y\in\reals$.
+    Then
+        $\metricDistance[\RealMetric](\surrealNeg{x},\surrealNeg{y})
+            =\metricDistance[\RealMetric](x,y)$.
+\end{proposition}
+\begin{proof}
+    $\surrealNeg{x},\surrealNeg{y}\in\reals$
+        by \obv{surreal_real_negation_closed}.
+    Hence
+        $\metricDistance[\RealMetric](\surrealNeg{x},\surrealNeg{y})
+            =\abs{\surrealAdd{\surrealNeg{x}}
+                {\surrealNeg{\surrealNeg{y}}}}$
+        by \obv{surreal_real_metric_distance}.
+    $\surrealAdd{\surrealNeg{x}}{\surrealNeg{\surrealNeg{y}}}
+        =\surrealNeg{\surrealAdd{x}{\surrealNeg{y}}}$
+        by
+        \obv{surreal_negation_additive,surreal_negation_involutive,surreal_negation_is_surreal,surreal_real_is_surreal}.
+    Hence
+        $\abs{\surrealAdd{\surrealNeg{x}}
+                {\surrealNeg{\surrealNeg{y}}}}
+            =\abs{\surrealAdd{x}{\surrealNeg{y}}}$
+        by
+        \auto{surreal_abs_negation,surreal_negation_is_surreal,surreal_add_is_surreal,surreal_real_is_surreal}.
+    Follows by \obv{surreal_real_metric_distance}.
+\end{proof}
+
+\begin{proposition}\label{real_metric_translation_invariant}
+    Let $c,x,y\in\reals$.
+    Then
+        $\metricDistance[\RealMetric]
+            (\surrealAdd{x}{c},\surrealAdd{y}{c})
+        =\metricDistance[\RealMetric](x,y)$.
+\end{proposition}
+\begin{proof}
+    $\surrealAdd{x}{c},\surrealAdd{y}{c}\in\reals$
+        by \obv{surreal_real_addition_closed}.
+    Hence
+        $\metricDistance[\RealMetric]
+            (\surrealAdd{x}{c},\surrealAdd{y}{c})
+        =\abs{\surrealAdd{\surrealAdd{x}{c}}
+            {\surrealNeg{\surrealAdd{y}{c}}}}$
+        by \obv{surreal_real_metric_distance}.
+    $\surrealAdd{\surrealAdd{x}{c}}
+        {\surrealNeg{\surrealAdd{y}{c}}}
+        =\surrealAdd{x}{\surrealNeg{y}}$
+        by
+        \auto{surreal_negation_additive,surreal_add_associative,surreal_add_commutative,surreal_add_inverse_right,surreal_add_zero_right,surreal_negation_is_surreal,surreal_real_is_surreal}.
+    Follows by \auto{surreal_real_metric_distance}.
+\end{proof}
+
+\begin{theorem}\label{real_metric_add_increment}
+    Let $x_1,x_2,y_1,y_2\in\reals$.
+    Then
+        $\surrealLe{
+            \metricDistance[\RealMetric]
+                (\surrealAdd{x_1}{y_1},\surrealAdd{x_2}{y_2})}
+            {\surrealAdd{
+                \metricDistance[\RealMetric](x_1,x_2)}
+                {\metricDistance[\RealMetric](y_1,y_2)}}$.
+\end{theorem}
+\begin{proof}
+    $\surrealAdd{x_1}{y_1},\surrealAdd{x_2}{y_2}\in\reals$
+        by \obv{surreal_real_addition_closed}.
+    Follows by
+        \auto{surreal_real_metric_distance,surreal_abs_difference_of_sums_bound,surreal_real_is_surreal}.
+\end{proof}
+
+\begin{proposition}\label{real_metric_scale}
+    Let $c,x,y\in\reals$.
+    Then
+        $\metricDistance[\RealMetric]
+            (\surrealMul{c}{x},\surrealMul{c}{y})
+        =\surrealMul{\abs{c}}{\metricDistance[\RealMetric](x,y)}$.
+\end{proposition}
+\begin{proof}
+    $\surrealMul{c}{x},\surrealMul{c}{y}\in\reals$
+        by \obv{surreal_real_multiplication_closed}.
+    Follows by
+        \auto{surreal_real_metric_distance,surreal_abs_scaled_difference,surreal_real_is_surreal}.
+\end{proof}
+
+\begin{proposition}\label{surreal_real_metric_zero_one_distance}
+    $\metricDistance[\RealMetric](\surrealZero,\surrealOne)
+        =\surrealOne$.
+\end{proposition}
+\begin{proof}
+    $\surrealZero,\surrealOne\in\reals$
+        by \obv{surreal_zero_is_real,surreal_one_is_real}.
+    Hence
+        $\metricDistance[\RealMetric](\surrealZero,\surrealOne)
+            =\abs{\surrealAdd{\surrealZero}{\surrealNeg{\surrealOne}}}$
+        by \obv{surreal_real_metric_distance}.
+    $\surrealAdd{\surrealZero}{\surrealNeg{\surrealOne}}
+        =\surrealNeg{\surrealOne}$
+        by \obv{surreal_add_zero_left,surreal_negation_is_surreal,surreal_one_is_surreal}.
+    $\abs{\surrealNeg{\surrealOne}}=\abs{\surrealOne}$
+        by \obv{surreal_abs_negation,surreal_one_is_surreal}.
+    $\surrealLe{\surrealZero}{\surrealOne}$
+        by \obv{surreal_zero_lt_one,surreal_le}.
+    Hence $\abs{\surrealOne}=\surrealOne$
+        by \obv{surreal_abs_nonnegative,surreal_one_is_surreal}.
+\end{proof}

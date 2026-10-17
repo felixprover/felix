@@ -1,0 +1,311 @@
+\section{Maximal filters and ultrafilters}
+
+\import{set/filter-generation.tex}
+\import{set/finite-intersection.tex}
+
+\begin{definition}\label{ultrafilter}
+    $F$ is an ultrafilter on $S$ iff
+        $F$ is a maximal proper filter on $S$.
+\end{definition}
+
+\begin{corollary}\label{pure_filter_is_ultrafilter}
+    Suppose $a\in S$.
+    Then $\pureFilter{S}{a}$ is an ultrafilter on $S$.
+\end{corollary}
+\begin{proof}
+    $\pureFilter{S}{a}$ is a maximal proper filter on $S$ by
+        \obv{pure_filter_is_maximal_proper_filter}.
+    Follows by \obv{ultrafilter}.
+\end{proof}
+
+\begin{proposition}\label{filter_subseteq_powerset}
+    Suppose $F$ is a filter on $S$.
+    Then $F\subseteq\pow{S}$.
+\end{proposition}
+\begin{proof}
+    It suffices to show that every element of $F$ is an element of $\pow{S}$
+        by \obv{subseteq}.
+    Fix $A\in F$.
+    $A\subseteq S$ by \obv{filter}.
+    Follows by \obv{powerset_intro}.
+\end{proof}
+
+\begin{proposition}\label{filter_has_finite_intersection_property}
+    Suppose $F$ is a proper filter on $S$.
+    Then $F$ has the finite intersection property.
+\end{proposition}
+\begin{proof}
+    $F$ is a filter on $S$ and $\emptyset\notin F$
+        by \obv{proper_filter}.
+    $F$ is inhabited by \obv{filter}.
+    For every $G$ such that $G\subseteq F$ and $G$ is finite and
+        $G$ is inhabited we have $\inters{G}\in F$
+        by \obv{filter_finite_intersection_in}.
+    Thus for every $G$ such that $G\subseteq F$ and $G$ is finite and
+        $G$ is inhabited we have $\inters{G}\neq\emptyset$
+        by \auto.
+    Follows by \obv{finite_intersection_property}.
+\end{proof}
+
+\begin{proposition}\label{filter_has_proper_finite_intersection_property}
+    Suppose $F$ is a proper filter on $S$.
+    Then $F$ has the proper finite intersection property.
+\end{proposition}
+\begin{proof}
+    $F$ is a filter on $S$ by \obv{proper_filter}.
+    $F$ has the finite intersection property
+        by \obv{filter_has_finite_intersection_property}.
+    $F$ is inhabited by \obv{filter}.
+    Follows by \obv{proper_finite_intersection_property}.
+\end{proof}
+
+\begin{lemma}\label{maximal_proper_fip_contains_supersets}
+    Suppose $D$ is maximal with respect to the proper finite intersection property on $X$.
+    Suppose $A\in D$ and $A\subseteq B\subseteq X$.
+    Then $B\in D$.
+\end{lemma}
+\begin{proof}
+    Let $E=\cons{B}{D}$.
+    $D\subseteq\pow{X}$ by
+        \obv{maximal_proper_finite_intersection_property_on}.
+    $B\in\pow{X}$ by \obv{powerset_intro}.
+    Thus $E\subseteq\pow{X}$ by \auto{cons_subseteq_intro}.
+
+    Show $E$ has the proper finite intersection property.
+    \begin{subproof}
+        $B\in E$ by \obv{cons_left}.
+        Thus $E$ is inhabited.
+        Show that for every $F$ such that $F\subseteq E$ and $F$ is finite
+            and $F$ is inhabited we have $\inters{F}\neq\emptyset$.
+        \begin{subproof}
+            Fix $F$.
+            Assume $F\subseteq E$ and $F$ is finite and $F$ is inhabited.
+            Let $G=\cons{A}{F\setminus\{B\}}$.
+            Show $F\setminus\{B\}\subseteq D$.
+            \begin{subproof}
+                It suffices to show that every element of $F\setminus\{B\}$
+                    is an element of $D$ by \obv{subseteq}.
+                Fix $Y\in F\setminus\{B\}$.
+                $Y\in E$ and $Y\neq B$ by
+                    \auto{setminus,subseteq,singleton_iff}.
+                Follows by \auto{cons}.
+            \end{subproof}
+            Hence $G\subseteq D$ by \auto{cons_subseteq_intro}.
+            $F\setminus\{B\}\subseteq F$ by \obv{setminus_subseteq}.
+            Thus $F\setminus\{B\}$ is finite
+                by \obv{subseteq_finite_is_finite}.
+            Hence $G$ is finite by \obv{finite_cons}.
+            $A\in G$ by \obv{cons_left}.
+            Thus $G$ is inhabited.
+            $\inters{G}\neq\emptyset$ by
+                \auto{maximal_proper_finite_intersection_property_on,proper_finite_intersection_property,finite_intersection_property}.
+            Take $x$ such that $x\in\inters{G}$ by \obv{nonempty_inhabited}.
+            Show $x\in\inters{F}$.
+            \begin{subproof}
+                Show that for every $Y\in F$ we have $x\in Y$.
+                \begin{subproof}
+                    Fix $Y\in F$.
+                    \begin{byCase}
+                    \caseOf{$Y=B$.}
+                        $A\in G$ by \obv{cons_left}.
+                        Thus $x\in A$ by \obv{inters_destr}.
+                        Hence $x\in B$ by \obv{subseteq}.
+                    \caseOf{$Y\neq B$.}
+                        $Y\in F\setminus\{B\}$ by
+                            \auto{setminus,singleton_iff}.
+                        Hence $Y\in G$ by \auto{cons}.
+                        Follows by \obv{inters_destr}.
+                    \end{byCase}
+                \end{subproof}
+                Follows by \obv{inters_intro}.
+            \end{subproof}
+            Follows by \auto{emptyset}.
+        \end{subproof}
+        Follows by \obv{proper_finite_intersection_property,finite_intersection_property}.
+    \end{subproof}
+
+    $D\subseteq E$ by \obv{subseteq_cons_self}.
+    Thus $E=D$ by \obv{maximal_proper_finite_intersection_property_on}.
+    $B\in E$ by \obv{cons_left}.
+\end{proof}
+
+\begin{lemma}\label{maximal_proper_fip_closed_under_intersections}
+    Suppose $D$ is maximal with respect to the proper finite intersection property on $X$.
+    Suppose $A,B\in D$.
+    Then $A\inter B\in D$.
+\end{lemma}
+\begin{proof}
+    Let $K=A\inter B$.
+    Let $E=\cons{K}{D}$.
+    $D\subseteq\pow{X}$ by
+        \obv{maximal_proper_finite_intersection_property_on}.
+    $A,B\subseteq X$ by \obv{subseteq,powerset_elim}.
+    Thus $K\subseteq X$ by \auto{inter_subseteq}.
+    Hence $K\in\pow{X}$ by \obv{powerset_intro}.
+    Thus $E\subseteq\pow{X}$ by \auto{cons_subseteq_intro}.
+
+    Show $E$ has the proper finite intersection property.
+    \begin{subproof}
+        $K\in E$ by \obv{cons_left}.
+        Thus $E$ is inhabited.
+        Show that for every $F$ such that $F\subseteq E$ and $F$ is finite
+            and $F$ is inhabited we have $\inters{F}\neq\emptyset$.
+        \begin{subproof}
+            Fix $F$.
+            Assume $F\subseteq E$ and $F$ is finite and $F$ is inhabited.
+            Let $G=\cons{A}{\cons{B}{F\setminus\{K\}}}$.
+            Show $F\setminus\{K\}\subseteq D$.
+            \begin{subproof}
+                It suffices to show that every element of $F\setminus\{K\}$
+                    is an element of $D$ by \obv{subseteq}.
+                Fix $Y\in F\setminus\{K\}$.
+                $Y\in E$ and $Y\neq K$ by
+                    \auto{setminus,subseteq,singleton_iff}.
+                Follows by \auto{cons}.
+            \end{subproof}
+            $\cons{B}{F\setminus\{K\}}\subseteq D$
+                by \obv{cons_subseteq_intro}.
+            Hence $G\subseteq D$ by \auto{cons_subseteq_intro}.
+            $F\setminus\{K\}\subseteq F$ by \obv{setminus_subseteq}.
+            Thus $F\setminus\{K\}$ is finite
+                by \obv{subseteq_finite_is_finite}.
+            Hence $G$ is finite by \obv{finite_cons}.
+            $A\in G$ by \obv{cons_left}.
+            Thus $G$ is inhabited.
+            $\inters{G}\neq\emptyset$ by
+                \auto{maximal_proper_finite_intersection_property_on,proper_finite_intersection_property,finite_intersection_property}.
+            Take $x$ such that $x\in\inters{G}$ by \obv{nonempty_inhabited}.
+            Show $x\in\inters{F}$.
+            \begin{subproof}
+                Show that for every $Y\in F$ we have $x\in Y$.
+                \begin{subproof}
+                    Fix $Y\in F$.
+                    \begin{byCase}
+                    \caseOf{$Y=K$.}
+                        $A,B\in G$ by \auto{cons}.
+                        Thus $x\in A$ and $x\in B$ by \obv{inters_destr}.
+                        Hence $x\in K$ by \obv{inter_intro}.
+                    \caseOf{$Y\neq K$.}
+                        $Y\in F\setminus\{K\}$ by
+                            \auto{setminus,singleton_iff}.
+                        Hence $Y\in G$ by \auto{cons}.
+                        Follows by \obv{inters_destr}.
+                    \end{byCase}
+                \end{subproof}
+                Follows by \obv{inters_intro}.
+            \end{subproof}
+            Follows by \auto{emptyset}.
+        \end{subproof}
+        Follows by \obv{proper_finite_intersection_property,finite_intersection_property}.
+    \end{subproof}
+
+    $D\subseteq E$ by \obv{subseteq_cons_self}.
+    Thus $E=D$ by \obv{maximal_proper_finite_intersection_property_on}.
+    $K\in E$ by \obv{cons_left}.
+\end{proof}
+
+\begin{theorem}\label{maximal_proper_fip_is_proper_filter}
+    Suppose $D$ is maximal with respect to the proper finite intersection property on $X$.
+    Then $D$ is a proper filter on $X$.
+\end{theorem}
+\begin{proof}
+    $D$ is a family of subsets of $X$ and $D$ is inhabited
+        by \auto{maximal_proper_finite_intersection_property_on,proper_finite_intersection_property,subseteq,powerset_elim}.
+    Take $C$ such that $C\in D$.
+    $C\subseteq X$ by
+        \obv{maximal_proper_finite_intersection_property_on,subseteq,powerset_elim}.
+    Hence $X\in D$ by
+        \obv{maximal_proper_fip_contains_supersets,subseteq_refl}.
+
+    Show $\emptyset\notin D$.
+    \begin{subproof}
+        Suppose not.
+        $\{\emptyset\}\subseteq D$ by \obv{singleton_subset_intro}.
+        $\{\emptyset\}$ is finite and inhabited
+            by \obv{singleton_is_finite,singleton_inhabited}.
+        Thus $\inters{\{\emptyset\}}\neq\emptyset$ by
+            \auto{maximal_proper_finite_intersection_property_on,proper_finite_intersection_property,finite_intersection_property}.
+        $\inters{\{\emptyset\}}=\emptyset$ by \obv{inters_emptyset}.
+        Contradiction.
+    \end{subproof}
+
+    $D$ is closed under binary intersections
+        by \obv{maximal_proper_fip_closed_under_intersections}.
+    Show $D$ is upward-closed in $X$.
+    \begin{subproof}
+        For every $A,B$ such that $A\subseteq B\subseteq X$ and $A\in D$
+            we have $B\in D$ by \obv{maximal_proper_fip_contains_supersets}.
+    \end{subproof}
+    Hence $D$ is a filter on $X$ by \obv{filter}.
+    Follows by \obv{proper_filter}.
+\end{proof}
+
+\begin{theorem}\label{maximal_proper_fip_is_ultrafilter}
+    Suppose $D$ is maximal with respect to the proper finite intersection property on $X$.
+    Then $D$ is an ultrafilter on $X$.
+\end{theorem}
+\begin{proof}
+    $D$ is a proper filter on $X$
+        by \obv{maximal_proper_fip_is_proper_filter}.
+    Show that for every $E$ such that
+        $E$ is a proper filter on $X$ and $D\subseteq E$
+        we have $E=D$.
+    \begin{subproof}
+        Fix $E$.
+        Assume $E$ is a proper filter on $X$ and $D\subseteq E$.
+        Hence $E$ is a filter on $X$ by \obv{proper_filter}.
+        $E\subseteq\pow{X}$ by \obv{filter_subseteq_powerset}.
+        $E$ has the proper finite intersection property by
+            \obv{filter_has_proper_finite_intersection_property}.
+        Follows by \obv{maximal_proper_finite_intersection_property_on}.
+    \end{subproof}
+    Thus $D$ is a maximal proper filter on $X$
+        by \obv{maximalfilter,subset}.
+    Follows by \obv{ultrafilter}.
+\end{proof}
+
+\begin{theorem}\label{filter_extension_to_ultrafilter}
+    Suppose $F$ is a proper filter on $S$.
+    Then there exists $U$ such that $F\subseteq U$ and
+        $U$ is an ultrafilter on $S$.
+\end{theorem}
+\begin{proof}
+    $F\subseteq\pow{S}$ by \obv{filter_subseteq_powerset}.
+    $F$ has the proper finite intersection property by
+        \obv{filter_has_proper_finite_intersection_property}.
+    Take $U$ such that $F\subseteq U$ and
+        $U$ is maximal with respect to the proper finite intersection property on $S$
+        by \obv{maximal_proper_fip_extension}.
+    $U$ is an ultrafilter on $S$ by \obv{maximal_proper_fip_is_ultrafilter}.
+\end{proof}
+
+\begin{corollary}\label{filter_extension_to_maximal_proper_filter}
+    Suppose $F$ is a proper filter on $S$.
+    Then there exists $U$ such that $F\subseteq U$ and
+        $U$ is a maximal proper filter on $S$.
+\end{corollary}
+\begin{proof}
+    Take $U$ such that $F\subseteq U$ and $U$ is an ultrafilter on $S$
+        by \obv{filter_extension_to_ultrafilter}.
+    $U$ is a maximal proper filter on $S$ by \obv{ultrafilter}.
+\end{proof}
+
+\begin{theorem}\label{hosted_fip_extension_to_ultrafilter}
+    Suppose $B$ has the finite intersection property on $S$.
+    Then there exists $U$ such that $B\subseteq U$ and
+        $U$ is an ultrafilter on $S$.
+\end{theorem}
+\begin{proof}
+    $B$ is a family of subsets of $S$ by
+        \obv{finite_intersection_property_on}.
+    $\generatedFilter{S}{B}$ is a proper filter on $S$ iff
+        $B$ has the finite intersection property on $S$ by
+        \obv{generated_filter_is_proper_iff_hosted_fip}.
+    Hence $\generatedFilter{S}{B}$ is a proper filter on $S$.
+    Take $U$ such that $\generatedFilter{S}{B}\subseteq U$ and
+        $U$ is an ultrafilter on $S$ by
+        \obv{filter_extension_to_ultrafilter}.
+    $B\subseteq\generatedFilter{S}{B}$ by
+        \obv{generated_filter_contains}.
+    Hence $B\subseteq U$ by \obv{subseteq_transitive}.
+\end{proof}

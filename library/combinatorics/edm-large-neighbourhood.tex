@@ -1,0 +1,451 @@
+\section{The large-neighbourhood branch}
+
+\import{function.tex}
+\import{combinatorics/graph-cardinality.tex}
+\import{set/equinumerosity.tex}
+\import{set/iteration.tex}
+\import{set/choice.tex}
+\import{cardinal.tex}
+\import{cardinal/countability.tex}
+
+\subsection{Large neighbourhoods and good vertices}
+
+\begin{definition}\label{large_neighbourhood}
+    $\largeNeighbourhood{E}{X}{\kappa}$ iff for every $Y$ such that
+        $Y\subseteq X$ and $Y\approx\kappa$ there exists $x\in Y$ such that
+        $\graphNeighbourhood{E}{x}{Y}\approx\kappa$.
+\end{definition}
+
+\begin{definition}\label{edm_good_vertices}
+    $\edmGoodVertices{E}{Y}{\kappa}
+        =\{x\in Y\mid
+            \graphNeighbourhood{E}{x}{Y}\approx\kappa\}$.
+\end{definition}
+
+\begin{proposition}\label{edm_good_vertices_iff}
+    $x\in\edmGoodVertices{E}{Y}{\kappa}$ iff
+        $x\in Y$ and
+        $\graphNeighbourhood{E}{x}{Y}\approx\kappa$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{edm_good_vertices}.
+\end{proof}
+
+\begin{proposition}\label{edm_good_vertices_inhabited}
+    Suppose $\largeNeighbourhood{E}{X}{\kappa}$.
+    Suppose $Y\subseteq X$ and $Y\approx\kappa$.
+    Then $\edmGoodVertices{E}{Y}{\kappa}$ is inhabited.
+\end{proposition}
+\begin{proof}
+    Take $x\in Y$ such that
+        $\graphNeighbourhood{E}{x}{Y}\approx\kappa$ by
+        \obv{large_neighbourhood}.
+    Hence $x\in\edmGoodVertices{E}{Y}{\kappa}$ by
+        \obv{edm_good_vertices_iff}.
+\end{proof}
+
+\begin{proposition}\label{edm_good_vertex_choice}
+    Suppose $\largeNeighbourhood{E}{X}{\kappa}$.
+    Suppose $Y\subseteq X$ and $Y\approx\kappa$.
+    Then $\choice{\edmGoodVertices{E}{Y}{\kappa}}
+        \in\edmGoodVertices{E}{Y}{\kappa}$.
+\end{proposition}
+\begin{proof}
+    $\edmGoodVertices{E}{Y}{\kappa}$ is inhabited by
+        \obv{edm_good_vertices_inhabited}.
+    Follows by \obv{choice_in}.
+\end{proof}
+
+\subsection{The reservoir step}
+
+\begin{definition}\label{edm_reservoir_step}
+    $\edmReservoirStep{E}{X}{\kappa}
+        =\{(Y,
+            \graphNeighbourhood{E}
+                {\choice{\edmGoodVertices{E}{Y}{\kappa}}}{Y})
+            \mid Y\in\pow{X}\}$.
+\end{definition}
+
+\begin{theorem}\label{edm_reservoir_step_type}
+    $\edmReservoirStep{E}{X}{\kappa}
+        \in\funs{\pow{X}}{\pow{X}}$.
+\end{theorem}
+\begin{proof}
+    Let $T=\edmReservoirStep{E}{X}{\kappa}$.
+    $T$ is a relation by \auto{edm_reservoir_step,relation}.
+    $T$ is right-unique by
+        \auto{edm_reservoir_step,rightunique,pair_eq_iff}.
+    $\dom{T}=\pow{X}$ by
+        \auto{setext,dom_iff,edm_reservoir_step,pair_eq_iff}.
+    Show that for every $Y\in\pow{X}$ we have
+        $\graphNeighbourhood{E}
+            {\choice{\edmGoodVertices{E}{Y}{\kappa}}}{Y}
+            \in\pow{X}$.
+    \begin{subproof}
+        Fix $Y\in\pow{X}$.
+        Hence $Y\subseteq X$ by \obv{powerset_elim}.
+        $\graphNeighbourhood{E}
+            {\choice{\edmGoodVertices{E}{Y}{\kappa}}}{Y}
+            \subseteq Y$ by \obv{graph_neighbourhood_subseteq}.
+        Hence $\graphNeighbourhood{E}
+            {\choice{\edmGoodVertices{E}{Y}{\kappa}}}{Y}
+            \subseteq X$ by \obv{subseteq_transitive}.
+        Follows by \obv{powerset_intro}.
+    \end{subproof}
+    For every $Y\in\dom{T}$ we have
+        $T(Y)=\graphNeighbourhood{E}
+            {\choice{\edmGoodVertices{E}{Y}{\kappa}}}{Y}$ by
+        \auto{edm_reservoir_step,function_apply_intro}.
+    Hence $T$ is a function to $\pow{X}$ by \auto.
+    Follows by \auto{funs_intro}.
+\end{proof}
+
+\begin{proposition}\label{edm_reservoir_step_apply}
+    Let $Y\in\pow{X}$.
+    Then $(\edmReservoirStep{E}{X}{\kappa})(Y)
+        =\graphNeighbourhood{E}
+            {\choice{\edmGoodVertices{E}{Y}{\kappa}}}{Y}$.
+\end{proposition}
+\begin{proof}
+    $\edmReservoirStep{E}{X}{\kappa}$ is a function by
+        \auto{edm_reservoir_step_type,funs_is_function}.
+    $(Y,\graphNeighbourhood{E}
+            {\choice{\edmGoodVertices{E}{Y}{\kappa}}}{Y})
+        \in\edmReservoirStep{E}{X}{\kappa}$ by
+        \obv{edm_reservoir_step}.
+    Follows by \obv{function_apply_intro}.
+\end{proof}
+
+\subsection{The reservoir iteration}
+
+\begin{proposition}\label{edm_reservoir_iteration_type}
+    $\iterationSet{\edmReservoirStep{E}{X}{\kappa}}{X}
+        \in\funs{\naturals}{\pow{X}}$.
+\end{proposition}
+\begin{proof}
+    $\edmReservoirStep{E}{X}{\kappa}
+        \in\funs{\pow{X}}{\pow{X}}$ by
+        \obv{edm_reservoir_step_type}.
+    $X\in\pow{X}$ by \obv{powerset_intro,subseteq_refl}.
+    Follows by \obv{iteration_set_type}.
+\end{proof}
+
+\begin{proposition}\label{edm_reservoir_iteration_zero}
+    $(\iterationSet{\edmReservoirStep{E}{X}{\kappa}}{X})(\emptyset)=X$.
+\end{proposition}
+\begin{proof}
+    $\edmReservoirStep{E}{X}{\kappa}
+        \in\funs{\pow{X}}{\pow{X}}$ by
+        \obv{edm_reservoir_step_type}.
+    $X\in\pow{X}$ by \obv{powerset_intro,subseteq_refl}.
+    Follows by \obv{iteration_set_zero}.
+\end{proof}
+
+\begin{proposition}\label{edm_reservoir_iteration_successor}
+    Let $n$ be a natural number.
+    Then
+    \[
+        (\iterationSet{\edmReservoirStep{E}{X}{\kappa}}{X})(\suc{n})
+        =\graphNeighbourhood{E}
+            {\choice{\edmGoodVertices{E}
+                {(\iterationSet{\edmReservoirStep{E}{X}{\kappa}}{X})(n)}
+                {\kappa}}}
+            {(\iterationSet{\edmReservoirStep{E}{X}{\kappa}}{X})(n)}
+    \].
+\end{proposition}
+\begin{proof}
+    Let $T=\edmReservoirStep{E}{X}{\kappa}$.
+    Let $R=\iterationSet{\edmReservoirStep{E}{X}{\kappa}}{X}$.
+    $T\in\funs{\pow{X}}{\pow{X}}$ by
+        \auto{edm_reservoir_step_type}.
+    $X\in\pow{X}$ by \obv{powerset_intro,subseteq_refl}.
+    $R\in\funs{\naturals}{\pow{X}}$ by
+        \auto{edm_reservoir_iteration_type}.
+    Hence $R(n)\in\pow{X}$ by \obv{funs_type_apply}.
+    $R(\suc{n})=T(R(n))$ by
+        \auto{iteration_set_successor}.
+    $T(R(n))=\graphNeighbourhood{E}
+        {\choice{\edmGoodVertices{E}{R(n)}{\kappa}}}{R(n)}$ by
+        \auto{edm_reservoir_step_apply}.
+\end{proof}
+
+\subsection{A countably infinite clique}
+
+\begin{theorem}\label{large_neighbourhood_gives_clique}
+    Let $\kappa$ be an infinite cardinal.
+    Suppose $X\approx\kappa$.
+    Suppose $E$ is a simple graph on $X$.
+    Suppose $\largeNeighbourhood{E}{X}{\kappa}$.
+    Then $E$ has a countably infinite clique in $X$.
+\end{theorem}
+\begin{proof}
+    Let $T=\edmReservoirStep{E}{X}{\kappa}$.
+    Let $R=\iterationSet{\edmReservoirStep{E}{X}{\kappa}}{X}$.
+    $T\in\funs{\pow{X}}{\pow{X}}$ by
+        \auto{edm_reservoir_step_type}.
+    $R\in\funs{\naturals}{\pow{X}}$ by
+        \auto{edm_reservoir_iteration_type}.
+    Hence $R$ is a function and $\dom{R}=\naturals$ by
+        \obv{funs_is_function,funs}.
+
+    Let $v=\{(n,\choice{\edmGoodVertices{E}{R(n)}{\kappa}})
+        \mid n\in\naturals\}$.
+    $v$ is a relation by \auto{relation}.
+    $v$ is right-unique by \auto{rightunique,pair_eq_iff}.
+    $\dom{v}=\naturals$ by \auto{setext,dom_iff,pair_eq_iff}.
+    Hence $v$ is a function on $\naturals$.
+    For every $n\in\naturals$ we have
+        $v(n)=\choice{\edmGoodVertices{E}{R(n)}{\kappa}}$ by
+        \obv{function_apply_intro}.
+
+    Let $C=\{n\in\naturals\mid
+        R(n)\subseteq X\land
+        R(n)\approx\kappa\land
+        v(n)\in\edmGoodVertices{E}{R(n)}{\kappa}\land
+        R(\suc{n})=\graphNeighbourhood{E}{v(n)}{R(n)}\}$.
+    Show that $\emptyset\in C$.
+    \begin{subproof}
+        $\emptyset\in\naturals$ by \obv{omega_empty}.
+        $R(\emptyset)=X$ by
+            \auto{edm_reservoir_iteration_zero}.
+        Hence $R(\emptyset)\subseteq X$ and
+            $R(\emptyset)\approx\kappa$ by
+            \obv{subseteq_refl}.
+        Hence $\edmGoodVertices{E}{R(\emptyset)}{\kappa}$ is inhabited by
+            \obv{edm_good_vertices_inhabited}.
+        Hence $\choice{\edmGoodVertices{E}{R(\emptyset)}{\kappa}}
+            \in\edmGoodVertices{E}{R(\emptyset)}{\kappa}$ by
+            \obv{choice_in}.
+        $v(\emptyset)=
+            \choice{\edmGoodVertices{E}{R(\emptyset)}{\kappa}}$.
+        Hence $v(\emptyset)\in
+            \edmGoodVertices{E}{R(\emptyset)}{\kappa}$.
+        \begin{align*}
+            R(\suc{\emptyset})
+                &= \graphNeighbourhood{E}
+                    {\choice{\edmGoodVertices{E}{R(\emptyset)}{\kappa}}}
+                    {R(\emptyset)}
+                    \explanation{by
+                        \auto{edm_reservoir_iteration_successor}}
+                \\
+                &= \graphNeighbourhood{E}{v(\emptyset)}{R(\emptyset)}
+        \end{align*}
+    \end{subproof}
+    Show that for every $n\in C$ we have $\suc{n}\in C$.
+    \begin{subproof}
+        Fix $n\in C$.
+        Hence $n\in\naturals$ and
+            $R(n)\subseteq X$ and
+            $R(n)\approx\kappa$ and
+            $v(n)\in\edmGoodVertices{E}{R(n)}{\kappa}$ and
+            $R(\suc{n})=\graphNeighbourhood{E}{v(n)}{R(n)}$.
+        $\suc{n}\in\naturals$ by \obv{omega_successor}.
+        Hence $R(\suc{n})\in\pow{X}$ by \obv{funs_type_apply}.
+        Hence $R(\suc{n})\subseteq X$ by \obv{powerset_elim}.
+        $\graphNeighbourhood{E}{v(n)}{R(n)}\approx\kappa$ by
+            \auto{edm_good_vertices_iff}.
+        Hence $R(\suc{n})\approx\kappa$.
+        Hence $\edmGoodVertices{E}{R(\suc{n})}{\kappa}$ is inhabited by
+            \obv{edm_good_vertices_inhabited}.
+        Hence $\choice{\edmGoodVertices{E}{R(\suc{n})}{\kappa}}
+            \in\edmGoodVertices{E}{R(\suc{n})}{\kappa}$ by
+            \obv{choice_in}.
+        $v(\suc{n})=
+            \choice{\edmGoodVertices{E}{R(\suc{n})}{\kappa}}$.
+        Hence $v(\suc{n})\in
+            \edmGoodVertices{E}{R(\suc{n})}{\kappa}$.
+        \begin{align*}
+            R(\suc{\suc{n}})
+                &= \graphNeighbourhood{E}
+                    {\choice{\edmGoodVertices{E}{R(\suc{n})}{\kappa}}}
+                    {R(\suc{n})}
+                    \explanation{by
+                        \auto{edm_reservoir_iteration_successor}}
+                \\
+                &= \graphNeighbourhood{E}{v(\suc{n})}{R(\suc{n})}
+        \end{align*}
+    \end{subproof}
+    Hence $C$ is an inductive set by \obv{inductive_set}.
+    Hence $\naturals\subseteq C$ by \obv{omega_minimal,subseteq}.
+    Show that for every $n\in\naturals$ we have $v(n)\in X$.
+    \begin{subproof}
+        Fix $n\in\naturals$.
+        Hence $n\in C$ by \obv{subseteq}.
+        Hence $R(n)\subseteq X$ and
+            $v(n)\in\edmGoodVertices{E}{R(n)}{\kappa}$.
+        Hence $v(n)\in R(n)$ by \obv{edm_good_vertices_iff}.
+        Follows by \obv{subseteq}.
+    \end{subproof}
+    Hence $v$ is a function to $X$.
+    Hence $v\in\funs{\naturals}{X}$ by \obv{funs_intro}.
+
+    Let $D=\{n\in\naturals\mid
+        \text{for every $m\in n$ we have
+            $R(n)\subseteq\graphNeighbourhood{E}{v(m)}{X}$}\}$.
+    Show that $\emptyset\in D$.
+    \begin{subproof}
+        $\emptyset\in\naturals$ by \obv{omega_empty}.
+        For every $m\in\emptyset$ we have
+            $R(\emptyset)\subseteq\graphNeighbourhood{E}{v(m)}{X}$ by
+            \auto{emptyset}.
+    \end{subproof}
+    Show that for every $n\in D$ we have $\suc{n}\in D$.
+    \begin{subproof}
+        Fix $n\in D$.
+        Hence $n\in\naturals$ and for every $m\in n$ we have
+            $R(n)\subseteq\graphNeighbourhood{E}{v(m)}{X}$.
+        Hence $n\in C$ by \obv{subseteq}.
+        Hence $R(n)\subseteq X$ and
+            $R(\suc{n})=\graphNeighbourhood{E}{v(n)}{R(n)}$.
+        $\suc{n}\in\naturals$ by \obv{omega_successor}.
+        Show that for every $m\in\suc{n}$ we have
+            $R(\suc{n})\subseteq\graphNeighbourhood{E}{v(m)}{X}$.
+        \begin{subproof}
+            Fix $m\in\suc{n}$.
+            \begin{byCase}
+                \caseOf{$m=n$.}
+                    Hence $\graphNeighbourhood{E}{v(n)}{R(n)}
+                        \subseteq\graphNeighbourhood{E}{v(n)}{X}$ by
+                        \obv{graph_neighbourhood_monotone}.
+                    $R(\suc{n})=
+                        \graphNeighbourhood{E}{v(n)}{R(n)}$.
+                \caseOf{$m\neq n$.}
+                    Hence $m\in n$ by \auto{suc_iff}.
+                    Hence $R(n)\subseteq
+                        \graphNeighbourhood{E}{v(m)}{X}$.
+                    $R(\suc{n})=
+                        \graphNeighbourhood{E}{v(n)}{R(n)}$.
+                    $\graphNeighbourhood{E}{v(n)}{R(n)}\subseteq R(n)$ by
+                        \obv{graph_neighbourhood_subseteq}.
+                    Hence $R(\suc{n})\subseteq R(n)$.
+                    Show that every element of $R(\suc{n})$ is an element of
+                        $\graphNeighbourhood{E}{v(m)}{X}$.
+                    \begin{subproof}
+                        Fix $z\in R(\suc{n})$.
+                        Hence $z\in R(n)$ by \obv{subseteq}.
+                        Follows by \obv{subseteq}.
+                    \end{subproof}
+                    Follows by \obv{subseteq}.
+            \end{byCase}
+        \end{subproof}
+    \end{subproof}
+    Hence $D$ is an inductive set by \obv{inductive_set}.
+    Hence $\naturals\subseteq D$ by \obv{omega_minimal,subseteq}.
+
+    Show that $v$ is injective.
+    \begin{subproof}
+        Show that for all $m,n$ such that $m,n\in\dom{v}$ and
+            $v(m)=v(n)$ we have $m=n$.
+        \begin{subproof}
+            Fix $m,n$.
+            Assume $m,n\in\dom{v}$ and $v(m)=v(n)$.
+            Hence $m,n\in\naturals$.
+            \begin{byCase}
+                \caseOf{$m=n$.}
+                    Follows.
+                \caseOf{$m\neq n$.}
+                    $m$ and $n$ are ordinals by
+                        \obv{natural_number_is_ordinal}.
+                    $m\in n$ or $n\in m$ by
+                        \obv{ordinal_elem_connex}.
+                    \begin{byCase}
+                        \caseOf{$m\in n$.}
+                            $n\in D$ by \obv{subseteq}.
+                            $n\in C$ by \obv{subseteq}.
+                            Hence for every $j\in n$ we have
+                                $R(n)\subseteq
+                                    \graphNeighbourhood{E}{v(j)}{X}$.
+                            Hence $R(n)\subseteq
+                                \graphNeighbourhood{E}{v(m)}{X}$.
+                            $v(n)\in\edmGoodVertices{E}{R(n)}{\kappa}$.
+                            Hence $v(n)\in R(n)$ by
+                                \auto{edm_good_vertices_iff}.
+                            Hence $v(n)\in
+                                \graphNeighbourhood{E}{v(m)}{X}$ by
+                                \obv{subseteq}.
+                            $E$ is irreflexive by
+                                \obv{simple_graph_irreflexive}.
+                            Hence $v(m)\neq v(n)$ by
+                                \obv{graph_neighbourhood_distinct}.
+                            Contradiction.
+                        \caseOf{$m\notin n$.}
+                            Hence $n\in m$.
+                            $m\in D$ by \obv{subseteq}.
+                            $m\in C$ by \obv{subseteq}.
+                            Hence for every $j\in m$ we have
+                                $R(m)\subseteq
+                                    \graphNeighbourhood{E}{v(j)}{X}$.
+                            Hence $R(m)\subseteq
+                                \graphNeighbourhood{E}{v(n)}{X}$.
+                            $v(m)\in\edmGoodVertices{E}{R(m)}{\kappa}$.
+                            Hence $v(m)\in R(m)$ by
+                                \auto{edm_good_vertices_iff}.
+                            Hence $v(m)\in
+                                \graphNeighbourhood{E}{v(n)}{X}$ by
+                                \obv{subseteq}.
+                            $E$ is irreflexive by
+                                \obv{simple_graph_irreflexive}.
+                            Hence $v(n)\neq v(m)$ by
+                                \obv{graph_neighbourhood_distinct}.
+                            Contradiction.
+                    \end{byCase}
+            \end{byCase}
+        \end{subproof}
+        Follows by \auto{injective_function}.
+    \end{subproof}
+    Hence $v\in\bijections{\dom{v}}{\ran{v}}$ by
+        \obv{injective_function_bijection_to_range}.
+    Hence $v\in\bijections{\naturals}{\ran{v}}$.
+
+    Let $K=\ran{v}$.
+    $v\in\bijections{\naturals}{K}$.
+    Hence $K$ is countably infinite by
+        \auto{countably_infinite_iff_natural_bijection}.
+    $K\subseteq X$ by \auto{funs_ran}.
+    Show that for all $x,y\in K$ such that $x\neq y$ we have
+        $x\mathrel{E}y$.
+    \begin{subproof}
+        Fix $x,y\in K$.
+        Assume $x\neq y$.
+        Take $m\in\dom{v}$ such that $v(m)=x$ by
+            \obv{fun_ran_iff}.
+        Take $n\in\dom{v}$ such that $v(n)=y$ by
+            \obv{fun_ran_iff}.
+        Hence $m,n\in\naturals$ and $m\neq n$.
+        $m$ and $n$ are ordinals by \obv{natural_number_is_ordinal}.
+        $m\in n$ or $n\in m$ by \obv{ordinal_elem_connex}.
+        \begin{byCase}
+            \caseOf{$m\in n$.}
+                $n\in D$ by \obv{subseteq}.
+                $n\in C$ by \obv{subseteq}.
+                Hence for every $j\in n$ we have
+                    $R(n)\subseteq\graphNeighbourhood{E}{v(j)}{X}$.
+                Hence $R(n)\subseteq\graphNeighbourhood{E}{v(m)}{X}$.
+                $v(n)\in\edmGoodVertices{E}{R(n)}{\kappa}$.
+                Hence $v(n)\in R(n)$ by
+                    \auto{edm_good_vertices_iff}.
+                Hence $v(n)\in\graphNeighbourhood{E}{v(m)}{X}$ by
+                    \obv{subseteq}.
+                Hence $v(m)\mathrel{E}v(n)$ by
+                    \obv{graph_neighbourhood_edge}.
+            \caseOf{$m\notin n$.}
+                Hence $n\in m$ by \obv{ordinal_elem_connex}.
+                $m\in D$ by \obv{subseteq}.
+                $m\in C$ by \obv{subseteq}.
+                Hence for every $j\in m$ we have
+                    $R(m)\subseteq\graphNeighbourhood{E}{v(j)}{X}$.
+                Hence $R(m)\subseteq\graphNeighbourhood{E}{v(n)}{X}$.
+                $v(m)\in\edmGoodVertices{E}{R(m)}{\kappa}$.
+                Hence $v(m)\in R(m)$ by
+                    \auto{edm_good_vertices_iff}.
+                Hence $v(m)\in\graphNeighbourhood{E}{v(n)}{X}$ by
+                    \obv{subseteq}.
+                Hence $v(n)\mathrel{E}v(m)$ by
+                    \obv{graph_neighbourhood_edge}.
+                Hence $v(m)\mathrel{E}v(n)$ by
+                    \obv{simple_graph_edge_symmetric}.
+        \end{byCase}
+    \end{subproof}
+    Hence $K$ is a clique in $X$ with respect to $E$ by
+        \obv{clique_in_graph}.
+\end{proof}

@@ -1,0 +1,327 @@
+\section{Restricting and inserting coordinates}
+
+\import{set/function-power.tex}
+\import{set/function-partition.tex}
+
+Restriction forgets any selected group of coordinates. Insertion restores a
+specified coordinate with a specified value. The two maps are inverse on the
+corresponding coordinate fibre, not on the whole larger function space.
+
+\subsection{Restriction}
+
+\begin{definition}\label{function_restriction}
+    $\functionRestriction{I}{J}{A}=\functionReindex{I}{J}{A}{\identity{J}}$.
+\end{definition}
+
+\begin{proposition}\label{function_restriction_type}
+    Suppose $J\subseteq I$.
+    Then $\functionRestriction{I}{J}{A}\in\funs{\funs{I}{A}}{\funs{J}{A}}$.
+\end{proposition}
+\begin{proof}
+    $\identity{J}\in\funs{J}{J}$ by \obv{id_elem_funs}.
+    Hence $\identity{J}\in\funs{J}{I}$ by \obv{funs_weaken_codom}.
+    Follows by \auto{function_restriction,function_reindex_type}.
+\end{proof}
+
+\begin{proposition}\label{function_restriction_apply}
+    Suppose $J\subseteq I$.
+    Let $x\in\funs{I}{A}$.
+    Then $(\functionRestriction{I}{J}{A})(x)=\restrl{x}{J}$.
+\end{proposition}
+\begin{proof}
+    $\identity{J}\in\funs{J}{I}$ by \auto{id_elem_funs,funs_weaken_codom}.
+    $(\functionRestriction{I}{J}{A})(x)=x\circ\identity{J}$ by
+        \auto{function_restriction,function_reindex_apply}.
+    $x\circ\identity{J}\in\funs{J}{A}$ by \obv{funs_circ}.
+    $\restrl{x}{J}\in\funs{J}{A}$ by \obv{funs_restrl}.
+    For every $j\in J$ we have $(x\circ\identity{J})(j)=(\restrl{x}{J})(j)$ by
+        \auto{circ_apply,restrl_of_function_apply,id_apply,funs_is_function,funs,funs_ran}.
+    Follows by \auto{typed_functions_equal_from_agreement}.
+\end{proof}
+
+\subsection{Inserting one coordinate}
+
+The index set I denotes the full coordinate set. Insertion starts with a
+function on I minus the selected coordinate and adjoins its prescribed value.
+
+\begin{definition}\label{function_insertion_op}
+    $\functionInsertionOp:\Set\to\Set\to\Set\to\Set
+        =\fun{i,a,x:\Set}{\cons{(i,a)}{x}}$.
+\end{definition}
+
+\begin{definition}\label{function_insertion}
+    $\functionInsertion{I}{A}{i}{a}
+        =\Apply{\graphOnDomainOp}{\funs{I\setminus\{i\}}{A},
+            \Apply{\functionInsertionOp}{i,a}}$.
+\end{definition}
+
+\begin{proposition}\label{function_insertion_type}
+    Let $i\in I$ and $a\in A$.
+    Then $\functionInsertion{I}{A}{i}{a}\in
+        \funs{\funs{I\setminus\{i\}}{A}}{\funs{I}{A}}$.
+\end{proposition}
+\begin{proof}
+    $i\notin I\setminus\{i\}$ by \auto{setminus,singleton_iff}.
+    $\cons{i}{I\setminus\{i\}}=I$ by \obv{cons_remove}.
+    For every $x\in\funs{I\setminus\{i\}}{A}$ we have
+        $\cons{(i,a)}{x}\in\funs{I}{A}$ by \auto{extend_function_at_new_point}.
+    Follows by \auto{function_insertion,function_insertion_op,logical_graph_on_domain_type}.
+\end{proof}
+
+\begin{proposition}\label{function_insertion_apply}
+    Let $x\in\funs{I\setminus\{i\}}{A}$.
+    Then $(\functionInsertion{I}{A}{i}{a})(x)=\cons{(i,a)}{x}$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{function_insertion,function_insertion_op,logical_graph_on_domain_apply}.
+\end{proof}
+
+\begin{proposition}\label{function_insertion_selected_coordinate}
+    Let $i\in I$ and $a\in A$.
+    Let $x\in\funs{I\setminus\{i\}}{A}$.
+    Then $\apply{\apply{\functionInsertion{I}{A}{i}{a}}{x}}{i}=a$.
+\end{proposition}
+\begin{proof}
+    Let $y=(\functionInsertion{I}{A}{i}{a})(x)$.
+    $y\in\funs{I}{A}$ by \auto{function_insertion_type,funs_type_apply}.
+    Hence $y$ is a function by \obv{funs_is_function}.
+    $(i,a)\in y$ by \auto{function_insertion_apply,cons_iff}.
+    Follows by \auto{function_apply_intro}.
+\end{proof}
+
+\begin{proposition}\label{function_insertion_other_coordinate}
+    Let $i\in I$ and $a\in A$.
+    Let $x\in\funs{I\setminus\{i\}}{A}$ and $j\in I\setminus\{i\}$.
+    Then $\apply{\apply{\functionInsertion{I}{A}{i}{a}}{x}}{j}=x(j)$.
+\end{proposition}
+\begin{proof}
+    Let $y=(\functionInsertion{I}{A}{i}{a})(x)$.
+    $y\in\funs{I}{A}$ by \auto{function_insertion_type,funs_type_apply}.
+    Hence $y$ is a function by \obv{funs_is_function}.
+    $(j,x(j))\in x$ by \auto{funs_is_function,funs,function_apply_elim}.
+    Hence $(j,x(j))\in y$ by \auto{function_insertion_apply,cons_iff}.
+    Follows by \auto{function_apply_intro}.
+\end{proof}
+
+\begin{proposition}\label{function_evaluation_insertion_selected}
+    Let $i\in I$ and $a\in A$.
+    Then $\functionEvaluation{I}{A}{i}\circ\functionInsertion{I}{A}{i}{a}
+        =\funs{I\setminus\{i\}}{A}\times\{a\}$.
+\end{proposition}
+\begin{proof}
+    Let $D=I\setminus\{i\}$ and $S=\functionInsertion{I}{A}{i}{a}$.
+    Let $p=\functionEvaluation{I}{A}{i}$.
+    $S\in\funs{\funs{D}{A}}{\funs{I}{A}}$ by \auto{function_insertion_type}.
+    $p\in\funs{\funs{I}{A}}{A}$ by \auto{function_evaluation_type}.
+    Hence $p\circ S\in\funs{\funs{D}{A}}{A}$ by \obv{funs_circ}.
+    $\funs{D}{A}\times\{a\}\in\funs{\funs{D}{A}}{\{a\}}$ by \obv{constant_graph_type}.
+    For every $x\in\funs{D}{A}$ we have
+        $(p\circ S)(x)=(\funs{D}{A}\times\{a\})(x)$ by
+        \auto{circ_apply,function_evaluation_apply,function_insertion_selected_coordinate,
+            constant_graph_application,funs_type_apply,funs_is_function,funs,funs_ran}.
+    Follows by \auto{typed_functions_equal_from_agreement}.
+\end{proof}
+
+\begin{proposition}\label{function_evaluation_insertion_other}
+    Let $i\in I$ and $a\in A$.
+    Let $j\in I\setminus\{i\}$.
+    Then $\functionEvaluation{I}{A}{j}\circ\functionInsertion{I}{A}{i}{a}
+        =\functionEvaluation{I\setminus\{i\}}{A}{j}$.
+\end{proposition}
+\begin{proof}
+    Let $D=I\setminus\{i\}$ and $S=\functionInsertion{I}{A}{i}{a}$.
+    Let $p=\functionEvaluation{I}{A}{j}$ and $q=\functionEvaluation{D}{A}{j}$.
+    $j\in I$ by \obv{setminus}.
+    $S\in\funs{\funs{D}{A}}{\funs{I}{A}}$ by \auto{function_insertion_type}.
+    $p\in\funs{\funs{I}{A}}{A}$ by \auto{function_evaluation_type}.
+    Hence $p\circ S\in\funs{\funs{D}{A}}{A}$ by \obv{funs_circ}.
+    $q\in\funs{\funs{D}{A}}{A}$ by \auto{function_evaluation_type}.
+    For every $x\in\funs{D}{A}$ we have $(p\circ S)(x)=q(x)$ by
+        \auto{circ_apply,function_evaluation_apply,function_insertion_other_coordinate,
+            funs_type_apply,funs_is_function,funs,funs_ran}.
+    Follows by \auto{typed_functions_equal_from_agreement}.
+\end{proof}
+
+\subsection{Deletion and restoration}
+
+\begin{theorem}\label{function_restriction_insertion_apply}
+    Let $i\in I$ and $a\in A$.
+    Let $x\in\funs{I\setminus\{i\}}{A}$.
+    Then $(\functionRestriction{I}{I\setminus\{i\}}{A})(
+        (\functionInsertion{I}{A}{i}{a})(x))=x$.
+\end{theorem}
+\begin{proof}
+    Let $D=I\setminus\{i\}$ and $y=(\functionInsertion{I}{A}{i}{a})(x)$.
+    $D\subseteq I$ by \auto{setminus_subseteq}.
+    $y\in\funs{I}{A}$ by \auto{function_insertion_type,funs_type_apply}.
+    $\restrl{y}{D}\in\funs{D}{A}$ by \obv{funs_restrl}.
+    For every $j\in D$ we have $(\restrl{y}{D})(j)=x(j)$ by
+        \auto{restrl_of_function_apply,function_insertion_other_coordinate,funs_is_function,funs}.
+    Hence $\restrl{y}{D}=x$ by \auto{typed_functions_equal_from_agreement}.
+    Follows by \auto{function_restriction_apply}.
+\end{proof}
+
+\begin{theorem}\label{function_insertion_restriction_apply}
+    Let $i\in I$ and $a\in A$.
+    Let $y\in\funs{I}{A}$.
+    Suppose $y(i)=a$.
+    Then $(\functionInsertion{I}{A}{i}{a})(
+        (\functionRestriction{I}{I\setminus\{i\}}{A})(y))=y$.
+\end{theorem}
+\begin{proof}
+    Let $D=I\setminus\{i\}$ and $x=(\functionRestriction{I}{D}{A})(y)$.
+    $D\subseteq I$ by \auto{setminus_subseteq}.
+    $x=\restrl{y}{D}$ by \auto{function_restriction_apply}.
+    Hence $x\in\funs{D}{A}$ by \auto{funs_restrl}.
+    Let $z=(\functionInsertion{I}{A}{i}{a})(x)$.
+    $z\in\funs{I}{A}$ by \auto{function_insertion_type,funs_type_apply}.
+    Show that for every $j\in I$ we have $z(j)=y(j)$.
+    \begin{subproof}
+        Fix $j\in I$.
+        \begin{byCase}
+            \caseOf{$j=i$.}
+                Follows by \auto{function_insertion_selected_coordinate}.
+            \caseOf{$j\neq i$.}
+                $j\in D$ by \auto{setminus,singleton_iff}.
+                $z(j)=x(j)$ by \auto{function_insertion_other_coordinate}.
+                Follows by \auto{restrl_of_function_apply,funs_is_function,funs}.
+        \end{byCase}
+    \end{subproof}
+    Follows by \auto{typed_functions_equal_from_agreement}.
+\end{proof}
+
+\begin{theorem}\label{function_restriction_insertion}
+    Let $i\in I$ and $a\in A$.
+    Then $\functionRestriction{I}{I\setminus\{i\}}{A}\circ
+        \functionInsertion{I}{A}{i}{a}=\identity{\funs{I\setminus\{i\}}{A}}$.
+\end{theorem}
+\begin{proof}
+    Let $D=I\setminus\{i\}$ and $S=\functionInsertion{I}{A}{i}{a}$.
+    Let $R=\functionRestriction{I}{D}{A}$.
+    $D\subseteq I$ by \auto{setminus_subseteq}.
+    $S\in\funs{\funs{D}{A}}{\funs{I}{A}}$ by \auto{function_insertion_type}.
+    $R\in\funs{\funs{I}{A}}{\funs{D}{A}}$ by \auto{function_restriction_type}.
+    $R\circ S\in\funs{\funs{D}{A}}{\funs{D}{A}}$ by \obv{funs_circ}.
+    $\identity{\funs{D}{A}}\in\funs{\funs{D}{A}}{\funs{D}{A}}$ by \obv{id_elem_funs}.
+    For every $x\in\funs{D}{A}$ we have
+        $(R\circ S)(x)=(\identity{\funs{D}{A}})(x)$ by
+        \auto{function_restriction_insertion_apply,circ_apply,id_apply,funs_is_function,funs,funs_ran}.
+    Follows by \auto{typed_functions_equal_from_agreement}.
+\end{proof}
+
+\subsection{The coordinate fibre}
+
+\begin{proposition}\label{function_evaluation_fibre}
+    Let $i\in I$.
+    Then $y\in\fibre{\functionEvaluation{I}{A}{i}}{a}$ iff
+        $y\in\funs{I}{A}$ and $y(i)=a$.
+\end{proposition}
+\begin{proof}
+    $\functionEvaluation{I}{A}{i}\in\funs{\funs{I}{A}}{A}$ by
+        \obv{function_evaluation_type}.
+    Follows by \auto{function_fibre_iff,function_evaluation_apply,funs_is_function,funs}.
+\end{proof}
+
+\begin{proposition}\label{function_evaluation_singleton_fibre}
+    Let $a\in A$.
+    Then $\fibre{\functionEvaluation{\{i\}}{A}{i}}{a}=\{\{i\}\times\{a\}\}$.
+\end{proposition}
+\begin{proof}
+    $i\in\{i\}$ by \obv{singleton_intro}.
+    $\{i\}\times\{a\}\in\funs{\{i\}}{A}$ by
+        \auto{constant_graph_type,singleton_subset_intro,funs_weaken_codom}.
+    $(\{i\}\times\{a\})(i)=a$ by \obv{constant_graph_application}.
+    Hence $\{i\}\times\{a\}\in\fibre{\functionEvaluation{\{i\}}{A}{i}}{a}$ by
+        \auto{function_evaluation_fibre}.
+    Show that every element of $\fibre{\functionEvaluation{\{i\}}{A}{i}}{a}$
+        is equal to $\{i\}\times\{a\}$.
+    \begin{subproof}
+        Fix $y\in\fibre{\functionEvaluation{\{i\}}{A}{i}}{a}$.
+        Hence $y\in\funs{\{i\}}{A}$ and $y(i)=a$ by \obv{function_evaluation_fibre}.
+        Follows by \auto{function_diagonal_singleton,function_diagonal_apply}.
+    \end{subproof}
+    Follows by \auto{setext,singleton_iff}.
+\end{proof}
+
+\begin{theorem}\label{function_insertion_range}
+    Let $i\in I$ and $a\in A$.
+    Then $\ran{\functionInsertion{I}{A}{i}{a}}
+        =\fibre{\functionEvaluation{I}{A}{i}}{a}$.
+\end{theorem}
+\begin{proof}
+    Let $D=I\setminus\{i\}$ and $S=\functionInsertion{I}{A}{i}{a}$.
+    $D\subseteq I$ by \auto{setminus_subseteq}.
+    $S\in\funs{\funs{D}{A}}{\funs{I}{A}}$ by \auto{function_insertion_type}.
+    Hence $S$ is a function and $\dom{S}=\funs{D}{A}$ by \obv{funs_is_function,funs}.
+    Show that every element of $\ran{S}$ is an element of
+        $\fibre{\functionEvaluation{I}{A}{i}}{a}$.
+    \begin{subproof}
+        Fix $y\in\ran{S}$.
+        Take $x\in\dom{S}$ such that $S(x)=y$ by \obv{fun_ran_iff}.
+        $y\in\funs{I}{A}$ by \auto{funs_type_apply}.
+        $y(i)=a$ by \auto{function_insertion_selected_coordinate}.
+        Follows by \auto{function_evaluation_fibre}.
+    \end{subproof}
+    Show that every element of $\fibre{\functionEvaluation{I}{A}{i}}{a}$
+        is an element of $\ran{S}$.
+    \begin{subproof}
+        Fix $y\in\fibre{\functionEvaluation{I}{A}{i}}{a}$.
+        Hence $y\in\funs{I}{A}$ and $y(i)=a$ by \obv{function_evaluation_fibre}.
+        Let $x=(\functionRestriction{I}{D}{A})(y)$.
+        $x\in\funs{D}{A}$ by \auto{function_restriction_type,funs_type_apply}.
+        $S(x)=y$ by \auto{function_insertion_restriction_apply}.
+        Follows by \auto{fun_ran_iff}.
+    \end{subproof}
+    Follows by \auto{setext}.
+\end{proof}
+
+\begin{theorem}\label{function_insertion_bijection}
+    Let $i\in I$ and $a\in A$.
+    Then $\functionInsertion{I}{A}{i}{a}\in
+        \bijections{\funs{I\setminus\{i\}}{A}}{\fibre{\functionEvaluation{I}{A}{i}}{a}}$.
+\end{theorem}
+\begin{proof}
+    Let $D=I\setminus\{i\}$ and $S=\functionInsertion{I}{A}{i}{a}$.
+    Let $R=\functionRestriction{I}{D}{A}$.
+    $D\subseteq I$ by \auto{setminus_subseteq}.
+    $S\in\funs{\funs{D}{A}}{\funs{I}{A}}$ by \auto{function_insertion_type}.
+    $R\in\funs{\funs{I}{A}}{\funs{D}{A}}$ by \auto{function_restriction_type}.
+    For every $x\in\funs{D}{A}$ we have $R(S(x))=x$ by
+        \auto{function_restriction_insertion_apply}.
+    Hence $R$ is a left inverse of $S$ by \obv{leftinverse_from_to_iff}.
+    Hence $S$ is an injection by \obv{leftinverse_implies_injection}.
+    $S\in\bijections{\dom{S}}{\ran{S}}$ by \obv{injective_function_bijection_to_range}.
+    $\dom{S}=\funs{D}{A}$ by \obv{funs}.
+    $\ran{S}=\fibre{\functionEvaluation{I}{A}{i}}{a}$ by \auto{function_insertion_range}.
+\end{proof}
+
+\begin{theorem}\label{function_insertion_converse}
+    Let $i\in I$ and $a\in A$.
+    Then $\converse{\functionInsertion{I}{A}{i}{a}}
+        =\restrl{\functionRestriction{I}{I\setminus\{i\}}{A}}{
+            \fibre{\functionEvaluation{I}{A}{i}}{a}}$.
+\end{theorem}
+\begin{proof}
+    Let $D=I\setminus\{i\}$ and $S=\functionInsertion{I}{A}{i}{a}$.
+    Let $R=\functionRestriction{I}{D}{A}$ and $F=\fibre{\functionEvaluation{I}{A}{i}}{a}$.
+    $D\subseteq I$ by \auto{setminus_subseteq}.
+    $F\subseteq\funs{I}{A}$ by \auto{subseteq,function_evaluation_fibre}.
+    $S\in\bijections{\funs{D}{A}}{F}$ by \auto{function_insertion_bijection}.
+    Hence $S$ is an injection by \auto{bijections,surj,funs_is_function}.
+    Hence $\converse{S}$ is a left inverse of $S$ by
+        \obv{injective_converse_is_leftinverse}.
+    $\converse{S}\in\funs{F}{\funs{D}{A}}$ by
+        \obv{bijection_converse_is_bijection,bijections_to_funs}.
+    $R\in\funs{\funs{I}{A}}{\funs{D}{A}}$ by \auto{function_restriction_type}.
+    $\restrl{R}{F}\in\funs{F}{\funs{D}{A}}$ by \obv{funs_restrl}.
+    Show that for every $y\in F$ we have $(\converse{S})(y)=(\restrl{R}{F})(y)$.
+    \begin{subproof}
+        Fix $y\in F$.
+        $y\in\funs{I}{A}$ and $y(i)=a$ by \auto{function_evaluation_fibre}.
+        $R(y)\in\funs{D}{A}$ by \obv{funs_type_apply}.
+        $S(R(y))=y$ by \auto{function_insertion_restriction_apply}.
+        Hence $(\converse{S})(y)=R(y)$ by \auto{leftinverse,bijections_dom}.
+        Follows by \auto{restrl_of_function_apply,funs_is_function,funs}.
+    \end{subproof}
+    Follows by \auto{typed_functions_equal_from_agreement}.
+\end{proof}

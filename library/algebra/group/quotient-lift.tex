@@ -1,0 +1,473 @@
+\import{algebra/group/homomorphism.tex}
+\import{algebra/group/quotient.tex}
+
+\section{Homomorphisms induced on quotient groups}
+
+The graph induced by a group homomorphism is the ordinary quotient descent
+of its underlying function.  Its definition therefore records the source
+group and the normal subgroup, but not an ambient target group.
+
+\begin{theorem}\label{group_hom_kernel_coset_relation_iff}
+    Suppose $\groupHom{f}{G}{H}$.
+    Let $a,b\in\carrier[G]$.
+    Then
+        $a\mathrel{
+            \subgroupCosetRelation{G}{\groupKernel{f}{G}}}b$
+        iff $f(a)=f(b)$.
+\end{theorem}
+\begin{proof}
+    Let $N=\groupKernel{f}{G}$.
+    Let $E=\subgroupCosetRelation{G}{N}$.
+    $G$ is a group and $H$ is a group by
+        \obv{group_hom_source_group,group_hom_target_group}.
+    $\normalSubgroup{N}{G}$ by \auto{group_kernel_normal_subgroup}.
+    Show that if $a\mathrel{E}b$, then $f(a)=f(b)$.
+    \begin{subproof}
+        Assume $a\mathrel{E}b$.
+        Let $n=\mul[G](\groupInv[G](a),b)$.
+        $n\in N$ by \auto{subgroup_coset_relation_iff}.
+        Hence $n\in\carrier[G]$ and $f(n)=\neutral[H]$ by
+            \obv{group_kernel_iff}.
+        $f(n)=\mul[H](f(\groupInv[G](a)),f(b))$ by
+            \auto{group_hom_mul,group_inverse_type}.
+        $f(\groupInv[G](a))=\groupInv[H](f(a))$ by
+            \obv{group_hom_inverse}.
+        Hence
+            $\mul[H](\groupInv[H](f(a)),f(b))=\neutral[H]$.
+        $f(a),f(b)\in\carrier[H]$ by
+            \obv{group_hom_apply_type}.
+        $\groupInv[H](f(a))\in\carrier[H]$ by
+            \obv{group_inverse_type}.
+        Hence $f(b)=\groupInv[H](\groupInv[H](f(a)))$ by
+            \obv{group_inverse_unique_right}.
+        Follows by \obv{group_inverse_involutive}.
+    \end{subproof}
+    Show that if $f(a)=f(b)$, then $a\mathrel{E}b$.
+    \begin{subproof}
+        Assume $f(a)=f(b)$.
+        Let $n=\mul[G](\groupInv[G](a),b)$.
+        $\groupInv[G](a)\in\carrier[G]$ by
+            \obv{group_inverse_type}.
+        Hence $n\in\carrier[G]$ by
+            \auto{group_is_monoid,monoid_is_magma,magma_welldef}.
+        $f(n)=\mul[H](f(\groupInv[G](a)),f(b))$ by
+            \auto{group_hom_mul}.
+        $f(\groupInv[G](a))=\groupInv[H](f(a))$ by
+            \obv{group_hom_inverse}.
+        Hence
+            $f(n)=\mul[H](\groupInv[H](f(a)),f(a))$.
+        $f(a)\in\carrier[H]$ by \obv{group_hom_apply_type}.
+        Hence $f(n)=\neutral[H]$ by \obv{group_inverse_left}.
+        Thus $n\in N$ by \auto{group_kernel_iff}.
+        Follows by \auto{subgroup_coset_relation_iff}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{definition}\label{group_quotient_lift}
+    $\groupQuotientLift{f}{G}{N}=
+        \quotientDescent
+            {f}{\carrier[G]}{\subgroupCosetRelation{G}{N}}$.
+\end{definition}
+
+\begin{proposition}\label{group_quotient_lift_compatible}
+    Suppose $\groupHom{f}{G}{H}$ and $\normalSubgroup{N}{G}$.
+    Suppose $N\subseteq\groupKernel{f}{G}$.
+    Then
+        $\quotientCompatible
+            {f}{\carrier[G]}{\subgroupCosetRelation{G}{N}}$.
+\end{proposition}
+\begin{proof}
+    Let $E=\subgroupCosetRelation{G}{N}$ and
+        $K=\groupKernel{f}{G}$.
+    Show that for all $a,b\in\carrier[G]$ such that
+        $a\mathrel{E}b$ we have $f(a)=f(b)$.
+    \begin{subproof}
+        Fix $a,b\in\carrier[G]$ such that $a\mathrel{E}b$.
+        $\mul[G](\groupInv[G](a),b)\in N$ by
+            \auto{subgroup_coset_relation_iff}.
+        Hence $\mul[G](\groupInv[G](a),b)\in K$ by
+            \obv{elem_subseteq}.
+        Hence
+            $a\mathrel{\subgroupCosetRelation{G}{K}}b$ by
+            \obv{subgroup_coset_relation_iff,
+                group_kernel_normal_subgroup,
+                normal_subgroup_is_subgroup}.
+        Follows by \auto{group_hom_kernel_coset_relation_iff}.
+    \end{subproof}
+    Follows by \obv{quotient_compatible}.
+\end{proof}
+
+\begin{proposition}\label{group_quotient_lift_type}
+    Suppose $\groupHom{f}{G}{H}$ and $\normalSubgroup{N}{G}$.
+    Suppose $N\subseteq\groupKernel{f}{G}$.
+    Then $\groupQuotientLift{f}{G}{N}\in
+        \funs{\carrier[\quotientGroup{G}{N}]}{\carrier[H]}$.
+\end{proposition}
+\begin{proof}
+    Let $E=\subgroupCosetRelation{G}{N}$.
+    $E$ is an equivalence on $\carrier[G]$ by
+        \auto{normal_subgroup_is_subgroup,
+            subgroup_coset_relation_equivalence}.
+    $f\in\funs{\carrier[G]}{\carrier[H]}$ by
+        \obv{group_hom_type}.
+    $\quotientCompatible{f}{\carrier[G]}{E}$ by
+        \obv{group_quotient_lift_compatible}.
+    Hence $\quotientDescent{f}{\carrier[G]}{E}\in
+        \funs{\quotient{\carrier[G]}{E}}{\carrier[H]}$ by
+        \obv{quotient_descent_type}.
+    $\quotient{\carrier[G]}{E}=\groupQuotientCarrier{G}{N}$ by
+        \obv{group_quotient_carrier}.
+    $\carrier[\quotientGroup{G}{N}]=
+        \groupQuotientCarrier{G}{N}$ by
+        \obv{quotient_group_carrier}.
+    Follows by \auto{group_quotient_lift}.
+\end{proof}
+
+\begin{proposition}\label{group_quotient_lift_apply}
+    Suppose $\groupHom{f}{G}{H}$ and $\normalSubgroup{N}{G}$.
+    Suppose $N\subseteq\groupKernel{f}{G}$.
+    Let $a\in\carrier[G]$.
+    Then
+        $\apply{\groupQuotientLift{f}{G}{N}}
+            {\equivalenceClass{\subgroupCosetRelation{G}{N}}{a}}
+        =f(a)$.
+\end{proposition}
+\begin{proof}
+    Let $E=\subgroupCosetRelation{G}{N}$.
+    $E$ is an equivalence on $\carrier[G]$ by
+        \auto{normal_subgroup_is_subgroup,
+            subgroup_coset_relation_equivalence}.
+    $f\in\funs{\carrier[G]}{\carrier[H]}$ by
+        \obv{group_hom_type}.
+    $\quotientCompatible{f}{\carrier[G]}{E}$ by
+        \obv{group_quotient_lift_compatible}.
+    Follows by
+        \auto{group_quotient_lift,quotient_descent_apply}.
+\end{proof}
+
+\begin{theorem}\label{group_quotient_lift_factorization}
+    Suppose $\groupHom{f}{G}{H}$ and $\normalSubgroup{N}{G}$.
+    Suppose $N\subseteq\groupKernel{f}{G}$.
+    Then
+        $\groupQuotientLift{f}{G}{N}\circ
+            \groupQuotientProjection{G}{N}=f$.
+\end{theorem}
+\begin{proof}
+    Let $E=\subgroupCosetRelation{G}{N}$.
+    $E$ is an equivalence on $\carrier[G]$ by
+        \auto{normal_subgroup_is_subgroup,
+            subgroup_coset_relation_equivalence}.
+    $f\in\funs{\carrier[G]}{\carrier[H]}$ by
+        \obv{group_hom_type}.
+    $\quotientCompatible{f}{\carrier[G]}{E}$ by
+        \obv{group_quotient_lift_compatible}.
+    $\groupQuotientProjection{G}{N}=
+        \quotientProjection{\carrier[G]}{E}$ by
+        \obv{group_quotient_projection}.
+    Follows by
+        \auto{group_quotient_lift,quotient_descent_factorization}.
+\end{proof}
+
+\begin{theorem}\label{group_quotient_lift_unique}
+    Suppose $\groupHom{f}{G}{H}$ and $\normalSubgroup{N}{G}$.
+    Suppose $N\subseteq\groupKernel{f}{G}$.
+    Let $h\in
+        \funs{\carrier[\quotientGroup{G}{N}]}{\carrier[H]}$.
+    Suppose
+        $h\circ\groupQuotientProjection{G}{N}=f$.
+    Then $h=\groupQuotientLift{f}{G}{N}$.
+\end{theorem}
+\begin{proof}
+    Let $E=\subgroupCosetRelation{G}{N}$ and
+        $q=\groupQuotientProjection{G}{N}$.
+    $E$ is an equivalence on $\carrier[G]$ by
+        \auto{normal_subgroup_is_subgroup,
+            subgroup_coset_relation_equivalence}.
+    $f\in\funs{\carrier[G]}{\carrier[H]}$ by
+        \obv{group_hom_type}.
+    $\quotientCompatible{f}{\carrier[G]}{E}$ by
+        \obv{group_quotient_lift_compatible}.
+    $\carrier[\quotientGroup{G}{N}]=
+        \quotient{\carrier[G]}{E}$ by
+        \auto{quotient_group_carrier,group_quotient_carrier}.
+    Hence $h\in\funs{\quotient{\carrier[G]}{E}}{\carrier[H]}$.
+    $q\in\funs{\carrier[G]}{\quotient{\carrier[G]}{E}}$ by
+        \auto{group_quotient_projection_type,
+            group_quotient_carrier}.
+    $h$ is a function and $q$ is a function and
+        $\dom{q}=\carrier[G]$ by \auto{funs_elim}.
+    Hence $h$ is composable with $q$ by
+        \auto{funs_elim,funs_ran}.
+    Show that for every $a\in\carrier[G]$ we have
+        $h(\equivalenceClass{E}{a})=f(a)$.
+    \begin{subproof}
+        Fix $a\in\carrier[G]$.
+        Hence $a\in\dom{q}$.
+        $q(a)=\equivalenceClass{E}{a}$ by
+            \auto{group_quotient_projection_apply}.
+        $(h\circ q)(a)=h(q(a))$ by \obv{circ_apply}.
+    \end{subproof}
+    Follows by
+        \auto{group_quotient_lift,quotient_descent_unique}.
+\end{proof}
+
+\begin{theorem}\label{group_quotient_lift_hom}
+    Suppose $\groupHom{f}{G}{H}$ and $\normalSubgroup{N}{G}$.
+    Suppose $N\subseteq\groupKernel{f}{G}$.
+    Then
+        $\groupHom
+            {\groupQuotientLift{f}{G}{N}}
+            {\quotientGroup{G}{N}}{H}$.
+\end{theorem}
+\begin{proof}
+    Let $E=\subgroupCosetRelation{G}{N}$.
+    Let $Q=\quotientGroup{G}{N}$ and
+        $g=\groupQuotientLift{f}{G}{N}$.
+    $Q$ is a group by \obv{quotient_group_is_group}.
+    $\groupQuotientLift{f}{G}{N}\in
+        \funs{\carrier[\quotientGroup{G}{N}]}{\carrier[H]}$ by
+        \obv{group_quotient_lift_type}.
+    Hence $g\in\funs{\carrier[Q]}{\carrier[H]}$.
+    Show that for all $U,V\in\carrier[Q]$ we have
+        $g(\mul[Q](U,V))=\mul[H](g(U),g(V))$.
+    \begin{subproof}
+        Fix $U,V\in\carrier[Q]$.
+        Take $a\in\carrier[G]$ such that
+            $U=\equivalenceClass{E}{a}$ by
+            \auto{quotient_group_carrier,
+                group_quotient_carrier,quotient}.
+        Take $b\in\carrier[G]$ such that
+            $V=\equivalenceClass{E}{b}$ by
+            \auto{quotient_group_carrier,
+                group_quotient_carrier,quotient}.
+        $\mul[G](a,b)\in\carrier[G]$ by
+            \obv{group_is_monoid,monoid_is_magma,magma_welldef}.
+        $\mul[Q](U,V)=
+            \equivalenceClass{E}{\mul[G](a,b)}$ by
+            \auto{quotient_group_mul_apply}.
+        Hence $g(\mul[Q](U,V))=f(\mul[G](a,b))$ by
+            \auto{group_quotient_lift_apply}.
+        $f(\mul[G](a,b))=\mul[H](f(a),f(b))$ by
+            \obv{group_hom_mul}.
+        $g(U)=f(a)$ and $g(V)=f(b)$ by
+            \auto{group_quotient_lift_apply}.
+    \end{subproof}
+    Follows by \auto{group_hom}.
+\end{proof}
+
+\begin{theorem}\label{group_quotient_lift_range}
+    Suppose $\groupHom{f}{G}{H}$ and $\normalSubgroup{N}{G}$.
+    Suppose $N\subseteq\groupKernel{f}{G}$.
+    Then $\ran{\groupQuotientLift{f}{G}{N}}=\ran{f}$.
+\end{theorem}
+\begin{proof}
+    Let $E=\subgroupCosetRelation{G}{N}$.
+    $E$ is an equivalence on $\carrier[G]$ by
+        \auto{normal_subgroup_is_subgroup,
+            subgroup_coset_relation_equivalence}.
+    $f$ is a relation and $\dom{f}=\carrier[G]$ by
+        \auto{group_hom_type,funs_is_relation,funs_elim}.
+    Hence $\dom{f}\subseteq\carrier[G]$ by \obv{subseteq_refl}.
+    Follows by
+        \auto{group_quotient_lift,quotient_descent_range}.
+\end{proof}
+
+\begin{theorem}\label{group_quotient_lift_kernel}
+    Suppose $\groupHom{f}{G}{H}$ and $\normalSubgroup{N}{G}$.
+    Suppose $N\subseteq\groupKernel{f}{G}$.
+    Let $q=\groupQuotientProjection{G}{N}$.
+    Let $g=\groupQuotientLift{f}{G}{N}$ and
+        $Q=\quotientGroup{G}{N}$.
+    Then
+        $\groupKernel{g}{Q}=
+            \img{q}{\groupKernel{f}{G}}$.
+\end{theorem}
+\begin{proof}
+    Let $E=\subgroupCosetRelation{G}{N}$.
+    Let $K=\groupKernel{f}{G}$ and
+        $S=\img{q}{K}$.
+    $\groupHom
+        {\groupQuotientLift{f}{G}{N}}
+        {\quotientGroup{G}{N}}{H}$ by
+        \obv{group_quotient_lift_hom}.
+    Hence $\groupHom{g}{Q}{H}$.
+    $\groupHom{q}{G}{Q}$ by
+        \auto{group_quotient_projection_hom}.
+    Show that $\groupKernel{g}{Q}\subseteq S$.
+    \begin{subproof}
+        Show that for every $U\in\groupKernel{g}{Q}$ we have $U\in S$.
+        \begin{subproof}
+            Fix $U\in\groupKernel{g}{Q}$.
+            Hence $U\in\carrier[Q]$ and $g(U)=\neutral[H]$ by
+                \obv{group_kernel_iff}.
+            Take $x\in\carrier[G]$ such that
+                $U=\equivalenceClass{E}{x}$ by
+                \auto{quotient_group_carrier,
+                    group_quotient_carrier,quotient}.
+            $g(U)=f(x)$ by
+                \auto{group_quotient_lift_apply}.
+            Hence $x\in K$ by \auto{group_kernel_iff}.
+            $q(x)=\equivalenceClass{E}{x}$ by
+                \auto{group_quotient_projection_apply}.
+            Hence $q(x)=U$.
+            Follows by
+                \auto{group_hom_image_iff,
+                    group_kernel_subgroup,subgroup_subseteq}.
+        \end{subproof}
+        Follows by \obv{subseteq}.
+    \end{subproof}
+    Show that $S\subseteq\groupKernel{g}{Q}$.
+    \begin{subproof}
+        Show that for every $U\in S$ we have
+            $U\in\groupKernel{g}{Q}$.
+        \begin{subproof}
+            Fix $U\in S$.
+            Take $x\in K$ such that $q(x)=U$ by
+                \auto{group_hom_image_iff,
+                    group_kernel_subgroup,subgroup_subseteq}.
+            Hence $x\in\carrier[G]$ and $f(x)=\neutral[H]$ by
+                \obv{group_kernel_iff}.
+            $q(x)=\equivalenceClass{E}{x}$ by
+                \auto{group_quotient_projection_apply}.
+            Hence $U=\equivalenceClass{E}{x}$.
+            Hence $U\in\carrier[Q]$ by
+                \auto{quotient_group_carrier,
+                    group_quotient_carrier,quotient}.
+            $g(U)=f(x)$ by
+                \auto{group_quotient_lift_apply}.
+            Follows by \auto{group_kernel_iff}.
+        \end{subproof}
+        Follows by \obv{subseteq}.
+    \end{subproof}
+    Hence $\groupKernel{g}{Q}=S$ by
+        \obv{subseteq_antisymmetric}.
+\end{proof}
+
+\begin{theorem}\label{group_quotient_lift_injective_iff}
+    Suppose $\groupHom{f}{G}{H}$ and $\normalSubgroup{N}{G}$.
+    Suppose $N\subseteq\groupKernel{f}{G}$.
+    Then $\groupQuotientLift{f}{G}{N}$ is injective iff
+        $\groupKernel{f}{G}=N$.
+\end{theorem}
+\begin{proof}
+    Let $q=\groupQuotientProjection{G}{N}$.
+    Let $g=\groupQuotientLift{f}{G}{N}$.
+    Let $Q=\quotientGroup{G}{N}$ and
+        $K=\groupKernel{f}{G}$.
+    $\groupHom
+        {\groupQuotientLift{f}{G}{N}}
+        {\quotientGroup{G}{N}}{H}$ by
+        \obv{group_quotient_lift_hom}.
+    Hence $\groupHom{g}{Q}{H}$.
+    $\groupHom{q}{G}{Q}$ by
+        \auto{group_quotient_projection_hom}.
+    $\groupKernel
+        {\groupQuotientLift{f}{G}{N}}
+        {\quotientGroup{G}{N}}=
+        \img{\groupQuotientProjection{G}{N}}
+            {\groupKernel{f}{G}}$ by
+        \obv{group_quotient_lift_kernel}.
+    Hence $\groupKernel{g}{Q}=\img{q}{K}$.
+    $\groupKernel{q}{G}=N$ by
+        \auto{group_quotient_projection_kernel}.
+    $K\subseteq\carrier[G]$ by
+        \auto{group_kernel_subgroup,subgroup_subseteq}.
+    Show that if $g$ is injective, then $K=N$.
+    \begin{subproof}
+        Assume $g$ is injective.
+        $\groupKernel{g}{Q}=\trivialSubgroupCarrier{Q}$ by
+            \obv{group_hom_injective_iff_kernel_trivial}.
+        Show that $K\subseteq N$.
+        \begin{subproof}
+            Show that for every $x\in K$ we have $x\in N$.
+            \begin{subproof}
+                Fix $x\in K$.
+                Hence $x\in\carrier[G]$ by
+                    \auto{group_kernel_iff}.
+                $q(x)\in\img{q}{K}$ by
+                    \auto{group_hom_image_iff}.
+                Hence $q(x)\in\trivialSubgroupCarrier{Q}$.
+                Hence $q(x)=\neutral[Q]$ by
+                    \obv{trivial_subgroup_carrier,singleton_iff}.
+                Hence $x\in\groupKernel{q}{G}$ by
+                    \auto{group_kernel_iff}.
+            \end{subproof}
+            Follows by \obv{subseteq}.
+        \end{subproof}
+        Follows by \obv{subseteq_antisymmetric}.
+    \end{subproof}
+    Show that if $K=N$, then $g$ is injective.
+    \begin{subproof}
+        Assume $K=N$.
+        Show that $\img{q}{K}=\trivialSubgroupCarrier{Q}$.
+        \begin{subproof}
+            Show that $\img{q}{K}\subseteq\trivialSubgroupCarrier{Q}$.
+            \begin{subproof}
+                Show that for every $U\in\img{q}{K}$ we have
+                    $U\in\trivialSubgroupCarrier{Q}$.
+                \begin{subproof}
+                    Fix $U\in\img{q}{K}$.
+                    Take $x\in K$ such that $q(x)=U$ by
+                        \auto{group_hom_image_iff,
+                            group_kernel_subgroup,subgroup_subseteq}.
+                    Hence $x\in\groupKernel{q}{G}$.
+                    Hence $q(x)=\neutral[Q]$ by
+                        \auto{group_kernel_iff}.
+                    Follows by
+                        \auto{trivial_subgroup_carrier,singleton_intro}.
+                \end{subproof}
+                Follows by \obv{subseteq}.
+            \end{subproof}
+            Show that $\trivialSubgroupCarrier{Q}\subseteq\img{q}{K}$.
+            \begin{subproof}
+                Show that for every $U\in\trivialSubgroupCarrier{Q}$
+                    we have $U\in\img{q}{K}$.
+                \begin{subproof}
+                    Fix $U\in\trivialSubgroupCarrier{Q}$.
+                    Hence $U=\neutral[Q]$ by
+                        \obv{trivial_subgroup_carrier,singleton_iff}.
+                    $\neutral[G]\in K$ by
+                        \obv{group_kernel_iff,group_hom_neutral,
+                            group_hom_source_group,group_is_monoid,
+                            monoid_is_unital_magma,unitalmagma_type}.
+                    $q(\neutral[G])=\neutral[Q]$ by
+                        \obv{group_hom_neutral}.
+                    Follows by \auto{group_hom_image_iff}.
+                \end{subproof}
+                Follows by \obv{subseteq}.
+            \end{subproof}
+            Follows by \obv{subseteq_antisymmetric}.
+        \end{subproof}
+        Hence
+            $\groupKernel{g}{Q}=\trivialSubgroupCarrier{Q}$.
+        Follows by
+            \obv{group_hom_injective_iff_kernel_trivial}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{group_quotient_lift_surjective_iff}
+    Suppose $\groupHom{f}{G}{H}$ and $\normalSubgroup{N}{G}$.
+    Suppose $N\subseteq\groupKernel{f}{G}$.
+    Then
+        $\groupQuotientLift{f}{G}{N}\in
+            \surj{\carrier[\quotientGroup{G}{N}]}{\carrier[H]}$
+        iff $f\in\surj{\carrier[G]}{\carrier[H]}$.
+\end{theorem}
+\begin{proof}
+    Let $E=\subgroupCosetRelation{G}{N}$.
+    $E$ is an equivalence on $\carrier[G]$ by
+        \auto{normal_subgroup_is_subgroup,
+            subgroup_coset_relation_equivalence}.
+    $f\in\funs{\carrier[G]}{\carrier[H]}$ by
+        \obv{group_hom_type}.
+    $\quotientCompatible{f}{\carrier[G]}{E}$ by
+        \obv{group_quotient_lift_compatible}.
+    $\carrier[\quotientGroup{G}{N}]=
+        \quotient{\carrier[G]}{E}$ by
+        \auto{quotient_group_carrier,group_quotient_carrier}.
+    Follows by
+        \auto{group_quotient_lift,
+            quotient_descent_surjective_iff}.
+\end{proof}

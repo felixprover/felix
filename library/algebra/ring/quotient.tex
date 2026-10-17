@@ -1,0 +1,775 @@
+\import{algebra/ring/congruence.tex}
+\import{algebra/ring/homomorphism.tex}
+\import{algebra/group/quotient.tex}
+\import{relation/quotient-lift.tex}
+
+\section{Quotient rings}
+
+Let $I$ be a two-sided ideal of a ring $R$.  The additive structure of
+$R/I$ is the existing quotient of the additive group.  Multiplication is
+descended directly through the same additive-coset relation, without choosing
+representatives, and the quotient unit is literally the projection of
+$1_R$.
+
+\subsection{The descended multiplication graph}
+
+\begin{definition}\label{quotient_ring_representative_multiplication}
+    $\quotientRingRepresentativeMultiplication{R}{I}=
+        \groupQuotientProjection{\AdditiveGroup{R}}{I}
+            \circ\ringMul[R]$.
+\end{definition}
+
+\begin{proposition}\label{quotient_ring_representative_multiplication_type}
+    Suppose $I$ is a two-sided ideal of $R$.
+    Let $G=\AdditiveGroup{R}$.
+    Then $\quotientRingRepresentativeMultiplication{R}{I}\in
+        \funs{\carrier[R]\times\carrier[R]}{
+            \groupQuotientCarrier{G}{I}}$.
+\end{proposition}
+\begin{proof}
+    $G$ is a commutative group by
+        \obv{additive_group_is_exact_commutative_group}.
+    $\subgroup{I}{G}$ by
+        \obv{two_sided_ideal,left_ideal_additive_subgroup}.
+    Hence $\normalSubgroup{I}{G}$ by
+        \obv{commutative_group_subgroup_is_normal}.
+    $\ringMul[R]\in
+        \funs{\carrier[R]\times\carrier[R]}{\carrier[R]}$ by
+        \obv{ring_mul_graph}.
+    $\groupQuotientProjection{G}{I}\in
+        \funs{\carrier[G]}{\groupQuotientCarrier{G}{I}}$ by
+        \obv{group_quotient_projection_type}.
+    $\carrier[G]=\carrier[R]$ by \auto{additive_group_fields}.
+    Follows by
+        \auto{quotient_ring_representative_multiplication,funs_circ}.
+\end{proof}
+
+\begin{proposition}\label{quotient_ring_representative_multiplication_apply}
+    Suppose $I$ is a two-sided ideal of $R$.
+    Let $a,b\in\carrier[R]$.
+    Let $G=\AdditiveGroup{R}$ and $E=\subgroupCosetRelation{G}{I}$.
+    Then
+        $\apply{\quotientRingRepresentativeMultiplication{R}{I}}{(a,b)}
+            =\equivalenceClass{E}{\ringMul[R](a,b)}$.
+\end{proposition}
+\begin{proof}
+    $R$ is a ring by \obv{two_sided_ideal_ring}.
+    $G$ is a commutative group by
+        \obv{additive_group_is_exact_commutative_group}.
+    $\subgroup{I}{G}$ by
+        \obv{two_sided_ideal,left_ideal_additive_subgroup}.
+    Hence $\normalSubgroup{I}{G}$ by
+        \obv{commutative_group_subgroup_is_normal}.
+    Let $q=\groupQuotientProjection{G}{I}$.
+    $\ringMul[R]$ is a function and
+        $\dom{\ringMul[R]}=\carrier[R]\times\carrier[R]$ by
+        \auto{ring_mul_graph,funs_elim}.
+    $q$ is a function and $\dom{q}=\carrier[G]$ by
+        \auto{group_quotient_projection_type,funs_elim}.
+    $\carrier[G]=\carrier[R]$ by \auto{additive_group_fields}.
+    $\ran{\ringMul[R]}\subseteq\carrier[R]$ by
+        \auto{ring_mul_graph,funs_ran}.
+    Hence $\ran{\ringMul[R]}\subseteq\dom{q}$.
+    Hence $q$ is composable with $\ringMul[R]$.
+    $\ringMul[R](a,b)\in\carrier[R]$ by \obv{ring_mul_type}.
+    $(q\circ\ringMul[R])((a,b))=q(\ringMul[R](a,b))$ by
+        \auto{circ_apply,times_tuple_intro}.
+    $q(\ringMul[R](a,b))
+        =\equivalenceClass{E}{\ringMul[R](a,b)}$ by
+        \auto{group_quotient_projection_apply}.
+    Follows by \auto{quotient_ring_representative_multiplication}.
+\end{proof}
+
+\begin{proposition}\label{quotient_ring_representative_multiplication_compatible}
+    Suppose $I$ is a two-sided ideal of $R$.
+    Let $G=\AdditiveGroup{R}$ and $E=\subgroupCosetRelation{G}{I}$.
+    Then
+        $\quotientBinaryCompatible
+            {\quotientRingRepresentativeMultiplication{R}{I}}
+            {\carrier[R]}{E}{\carrier[R]}{E}$.
+\end{proposition}
+\begin{proof}
+    $\subgroup{I}{G}$ by
+        \obv{two_sided_ideal,left_ideal_additive_subgroup}.
+    $E$ is an equivalence on $\carrier[G]$ by
+        \auto{subgroup_coset_relation_equivalence}.
+    $\carrier[G]=\carrier[R]$ by \auto{additive_group_fields}.
+    Show that for all $a,a'\in\carrier[R]$ we have
+        for all $b,b'\in\carrier[R]$ such that
+            $a\mathrel{E}a'$ and $b\mathrel{E}b'$ we have
+            $\apply{\quotientRingRepresentativeMultiplication{R}{I}}{
+                (a,b)}
+            =\apply{\quotientRingRepresentativeMultiplication{R}{I}}{
+                (a',b')}$.
+    \begin{subproof}
+        Fix $a,a'\in\carrier[R]$.
+        Show that for all $b,b'\in\carrier[R]$ such that
+            $a\mathrel{E}a'$ and $b\mathrel{E}b'$ we have
+            $\apply{\quotientRingRepresentativeMultiplication{R}{I}}{
+                (a,b)}
+            =\apply{\quotientRingRepresentativeMultiplication{R}{I}}{
+                (a',b')}$.
+        \begin{subproof}
+            Fix $b,b'\in\carrier[R]$.
+            Assume $a\mathrel{E}a'$ and $b\mathrel{E}b'$.
+            $\ringMul[R](a,b)\mathrel{E}\ringMul[R](a',b')$ by
+                \obv{ideal_coset_relation_multiplication_congruent}.
+            $\ringMul[R](a,b),\ringMul[R](a',b')\in\carrier[R]$ by
+                \obv{ring_mul_type}.
+            Hence
+                $\equivalenceClass{E}{\ringMul[R](a,b)}
+                    =\equivalenceClass{E}{\ringMul[R](a',b')}$ by
+                \obv{equiv_implies_equivanlence_classes_eq}.
+            Follows by
+                \obv{quotient_ring_representative_multiplication_apply}.
+        \end{subproof}
+    \end{subproof}
+    Follows by \obv{quotient_binary_compatible}.
+\end{proof}
+
+\begin{definition}\label{quotient_ring_multiplication_graph}
+    $\quotientRingMultiplicationGraph{R}{I}=
+        \quotientBinaryDescent
+            {\quotientRingRepresentativeMultiplication{R}{I}}
+            {\carrier[R]}
+            {\subgroupCosetRelation{\AdditiveGroup{R}}{I}}
+            {\carrier[R]}
+            {\subgroupCosetRelation{\AdditiveGroup{R}}{I}}$.
+\end{definition}
+
+\begin{proposition}\label{quotient_ring_multiplication_graph_type}
+    Suppose $I$ is a two-sided ideal of $R$.
+    Let $G=\AdditiveGroup{R}$.
+    Then $\quotientRingMultiplicationGraph{R}{I}\in
+        \funs{
+            \groupQuotientCarrier{G}{I}\times
+            \groupQuotientCarrier{G}{I}}
+            {\groupQuotientCarrier{G}{I}}$.
+\end{proposition}
+\begin{proof}
+    Let $E=\subgroupCosetRelation{G}{I}$ and
+        $f=\quotientRingRepresentativeMultiplication{R}{I}$.
+    $\subgroup{I}{G}$ by
+        \obv{two_sided_ideal,left_ideal_additive_subgroup}.
+    $E$ is an equivalence on $\carrier[G]$ by
+        \auto{subgroup_coset_relation_equivalence}.
+    $\carrier[G]=\carrier[R]$ by \auto{additive_group_fields}.
+    $f\in\funs{\carrier[R]\times\carrier[R]}{
+        \groupQuotientCarrier{G}{I}}$ by
+        \auto{quotient_ring_representative_multiplication_type}.
+    $\quotientBinaryCompatible{f}{\carrier[R]}{E}{\carrier[R]}{E}$ by
+        \auto{quotient_ring_representative_multiplication_compatible}.
+    Follows by
+        \auto{quotient_ring_multiplication_graph,
+            group_quotient_carrier,quotient_binary_descent_type}.
+\end{proof}
+
+\begin{proposition}\label{quotient_ring_multiplication_graph_apply}
+    Suppose $I$ is a two-sided ideal of $R$.
+    Let $a,b\in\carrier[R]$.
+    Let $G=\AdditiveGroup{R}$ and $E=\subgroupCosetRelation{G}{I}$.
+    Then
+        $\apply{\quotientRingMultiplicationGraph{R}{I}}{
+            (\equivalenceClass{E}{a},\equivalenceClass{E}{b})}
+        =\equivalenceClass{E}{\ringMul[R](a,b)}$.
+\end{proposition}
+\begin{proof}
+    Let $f=\quotientRingRepresentativeMultiplication{R}{I}$.
+    $\subgroup{I}{G}$ by
+        \obv{two_sided_ideal,left_ideal_additive_subgroup}.
+    $E$ is an equivalence on $\carrier[G]$ by
+        \auto{subgroup_coset_relation_equivalence}.
+    $\carrier[G]=\carrier[R]$ by \auto{additive_group_fields}.
+    $f\in\funs{\carrier[R]\times\carrier[R]}{
+        \groupQuotientCarrier{G}{I}}$ by
+        \auto{quotient_ring_representative_multiplication_type}.
+    $\quotientBinaryCompatible{f}{\carrier[R]}{E}{\carrier[R]}{E}$ by
+        \auto{quotient_ring_representative_multiplication_compatible}.
+    $\apply{\quotientBinaryDescent{f}{\carrier[R]}{E}{\carrier[R]}{E}}{
+        (\equivalenceClass{E}{a},\equivalenceClass{E}{b})}
+        =f((a,b))$ by \obv{quotient_binary_descent_apply}.
+    $f((a,b))=\equivalenceClass{E}{\ringMul[R](a,b)}$ by
+        \auto{quotient_ring_representative_multiplication_apply}.
+    Follows by \auto{quotient_ring_multiplication_graph}.
+\end{proof}
+
+\subsection{The exact quotient ring}
+
+\begin{definition}\label{quotient_ring}
+    $\QuotientRing{R}{I}=\structure[ring]{
+        \carrier=\carrier[\quotientGroup{\AdditiveGroup{R}}{I}],
+        \ringAdd=\mul[\quotientGroup{\AdditiveGroup{R}}{I}],
+        \ringZero=\neutral[\quotientGroup{\AdditiveGroup{R}}{I}],
+        \ringNeg=\groupInv[\quotientGroup{\AdditiveGroup{R}}{I}],
+        \ringMul=\quotientRingMultiplicationGraph{R}{I},
+        \ringOne=
+            \apply{\groupQuotientProjection{\AdditiveGroup{R}}{I}}{
+                \ringOne[R]}
+    }$.
+\end{definition}
+
+\begin{proposition}\label{quotient_ring_fields}
+    Let $G=\AdditiveGroup{R}$ and $Q=\quotientGroup{G}{I}$.
+    Let $S=\QuotientRing{R}{I}$.
+    Then $\carrier[S]=\carrier[Q]$ and
+        $\ringAdd[S]=\mul[Q]$ and
+        $\ringZero[S]=\neutral[Q]$ and
+        $\ringNeg[S]=\groupInv[Q]$ and
+        $\ringMul[S]=\quotientRingMultiplicationGraph{R}{I}$ and
+        $\ringOne[S]
+            =\apply{\groupQuotientProjection{G}{I}}{\ringOne[R]}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{quotient_ring,
+            ringaggregateprojection_carrier,ringaggregateprojection_ringAdd,
+            ringaggregateprojection_ringZero,ringaggregateprojection_ringNeg,
+            ringaggregateprojection_ringMul,ringaggregateprojection_ringOne}.
+\end{proof}
+
+\begin{proposition}\label{quotient_ring_carrier}
+    $\carrier[\QuotientRing{R}{I}]
+        =\groupQuotientCarrier{\AdditiveGroup{R}}{I}$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{quotient_ring_fields,quotient_group_carrier}.
+\end{proof}
+
+\begin{proposition}\label{quotient_ring_zero}
+    Let $G=\AdditiveGroup{R}$ and $E=\subgroupCosetRelation{G}{I}$.
+    Then $\ringZero[\QuotientRing{R}{I}]
+        =\equivalenceClass{E}{\ringZero[R]}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{quotient_ring_fields,quotient_group_neutral,
+            additive_group_fields}.
+\end{proof}
+
+\begin{proposition}\label{quotient_ring_one}
+    Suppose $I$ is a two-sided ideal of $R$.
+    Let $G=\AdditiveGroup{R}$ and $E=\subgroupCosetRelation{G}{I}$.
+    Then $\ringOne[\QuotientRing{R}{I}]
+        =\equivalenceClass{E}{\ringOne[R]}$.
+\end{proposition}
+\begin{proof}
+    $R$ is a ring by \obv{two_sided_ideal_ring}.
+    $G$ is a commutative group by
+        \obv{additive_group_is_exact_commutative_group}.
+    $\subgroup{I}{G}$ by
+        \obv{two_sided_ideal,left_ideal_additive_subgroup}.
+    Hence $\normalSubgroup{I}{G}$ by
+        \obv{commutative_group_subgroup_is_normal}.
+    $\ringOne[R]\in\carrier[G]$ by
+        \auto{ring_one_type,additive_group_fields}.
+    Follows by
+        \auto{quotient_ring_fields,group_quotient_projection_apply}.
+\end{proof}
+
+\begin{proposition}\label{quotient_ring_add_apply}
+    Suppose $I$ is a two-sided ideal of $R$.
+    Let $a,b\in\carrier[R]$.
+    Let $G=\AdditiveGroup{R}$ and $E=\subgroupCosetRelation{G}{I}$.
+    Then
+        $\ringAdd[\QuotientRing{R}{I}]
+            (\equivalenceClass{E}{a},\equivalenceClass{E}{b})
+        =\equivalenceClass{E}{\ringAdd[R](a,b)}$.
+\end{proposition}
+\begin{proof}
+    $G$ is a commutative group by
+        \obv{two_sided_ideal_ring,
+            additive_group_is_exact_commutative_group}.
+    $\subgroup{I}{G}$ by
+        \obv{two_sided_ideal,left_ideal_additive_subgroup}.
+    Hence $\normalSubgroup{I}{G}$ by
+        \obv{commutative_group_subgroup_is_normal}.
+    $a,b\in\carrier[G]$ by \auto{additive_group_fields}.
+    $\ringAdd[R](a,b)=\mul[G](a,b)$ by
+        \auto{additive_group_fields}.
+    Follows by
+        \auto{quotient_ring_fields,quotient_group_mul_apply}.
+\end{proof}
+
+\begin{proposition}\label{quotient_ring_neg_apply}
+    Suppose $I$ is a two-sided ideal of $R$.
+    Let $a\in\carrier[R]$.
+    Let $G=\AdditiveGroup{R}$ and $E=\subgroupCosetRelation{G}{I}$.
+    Then
+        $\ringNeg[\QuotientRing{R}{I}](\equivalenceClass{E}{a})
+        =\equivalenceClass{E}{\ringNeg[R](a)}$.
+\end{proposition}
+\begin{proof}
+    $G$ is a commutative group by
+        \obv{two_sided_ideal_ring,
+            additive_group_is_exact_commutative_group}.
+    $\subgroup{I}{G}$ by
+        \obv{two_sided_ideal,left_ideal_additive_subgroup}.
+    Hence $\normalSubgroup{I}{G}$ by
+        \obv{commutative_group_subgroup_is_normal}.
+    $a\in\carrier[G]$ by \auto{additive_group_fields}.
+    $\ringNeg[R](a)=\groupInv[G](a)$ by
+        \auto{additive_group_fields}.
+    Follows by
+        \auto{quotient_ring_fields,quotient_group_inv_apply}.
+\end{proof}
+
+\begin{proposition}\label{quotient_ring_mul_apply}
+    Suppose $I$ is a two-sided ideal of $R$.
+    Let $a,b\in\carrier[R]$.
+    Let $G=\AdditiveGroup{R}$ and $E=\subgroupCosetRelation{G}{I}$.
+    Then
+        $\ringMul[\QuotientRing{R}{I}]
+            (\equivalenceClass{E}{a},\equivalenceClass{E}{b})
+        =\equivalenceClass{E}{\ringMul[R](a,b)}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{quotient_ring_fields,
+            quotient_ring_multiplication_graph_apply}.
+\end{proof}
+
+\begin{theorem}\label{quotient_ring_is_exact}
+    Suppose $I$ is a two-sided ideal of $R$.
+    Then $\QuotientRing{R}{I}$ is an exact ring.
+\end{theorem}
+\begin{proof}
+    Let $G=\AdditiveGroup{R}$ and $E=\subgroupCosetRelation{G}{I}$.
+    Let $Q=\quotientGroup{G}{I}$ and $S=\QuotientRing{R}{I}$.
+    $R$ is a ring by \obv{two_sided_ideal_ring}.
+    $G$ is a commutative group by
+        \obv{additive_group_is_exact_commutative_group}.
+    Hence $G$ is a group by \obv{commutative_group_is_group}.
+    $\subgroup{I}{G}$ by
+        \obv{two_sided_ideal,left_ideal_additive_subgroup}.
+    Hence $\normalSubgroup{I}{G}$ by
+        \obv{commutative_group_subgroup_is_normal}.
+    $Q$ is an exact commutative group by
+        \auto{commutative_quotient_group_is_exact}.
+    Hence $Q$ is a group and $Q$ is a monoid and
+        $Q$ is a unital magma by
+        \obv{commutative_group_is_group,group_is_monoid,
+            monoid_is_unital_magma}.
+    $\carrier[S]=\carrier[Q]$ and
+        $\ringAdd[S]=\mul[Q]$ and
+        $\ringZero[S]=\neutral[Q]$ and
+        $\ringNeg[S]=\groupInv[Q]$ and
+        $\ringMul[S]=\quotientRingMultiplicationGraph{R}{I}$ and
+        $\ringOne[S]
+            =\apply{\groupQuotientProjection{G}{I}}{\ringOne[R]}$ by
+        \obv{quotient_ring_fields}.
+    $\ringAdd[S]\in
+        \funs{\carrier[S]\times\carrier[S]}{\carrier[S]}$ by
+        \auto{monoid_is_magma,magma_mul_graph}.
+    $\ringZero[S]\in\carrier[S]$ by \auto{unitalmagma_type}.
+    $\ringNeg[S]\in\funs{\carrier[S]}{\carrier[S]}$ by
+        \auto{group_inverse_graph}.
+    $\ringMul[S]\in
+        \funs{\carrier[S]\times\carrier[S]}{\carrier[S]}$ by
+        \auto{quotient_ring_multiplication_graph_type,
+            quotient_group_carrier}.
+    $\groupQuotientProjection{G}{I}\in
+        \funs{\carrier[G]}{\carrier[Q]}$ by
+        \auto{group_quotient_projection_type,quotient_group_carrier}.
+    $\ringOne[R]\in\carrier[G]$ by
+        \auto{ring_one_type,additive_group_fields}.
+    Hence $\ringOne[S]\in\carrier[S]$ by \auto{funs_type_apply}.
+    For all $U,V,W\in\carrier[S]$ we have
+        $\ringAdd[S](U,\ringAdd[S](V,W))
+            =\ringAdd[S](\ringAdd[S](U,V),W)$ by
+        \auto{monoid_assoc}.
+    For all $U,V\in\carrier[S]$ we have
+        $\ringAdd[S](U,V)=\ringAdd[S](V,U)$ by
+        \auto{commutative_group_commutative}.
+    For every $U\in\carrier[S]$ we have
+        $\ringAdd[S](\ringZero[S],U)=U$ by
+        \auto{unitalmagma_left}.
+    For every $U\in\carrier[S]$ we have
+        $\ringAdd[S](\ringNeg[S](U),U)=\ringZero[S]$ by
+        \auto{group_inverse_left}.
+    Show that for all $U,V,W\in\carrier[S]$ we have
+        $\ringMul[S](U,\ringMul[S](V,W))
+            =\ringMul[S](\ringMul[S](U,V),W)$.
+    \begin{subproof}
+        Fix $U,V,W\in\carrier[S]$.
+        Take $a\in\carrier[G]$ such that
+            $U=\equivalenceClass{E}{a}$ by
+            \auto{quotient_ring_carrier,group_quotient_carrier,quotient}.
+        Take $b\in\carrier[G]$ such that
+            $V=\equivalenceClass{E}{b}$ by
+            \auto{quotient_ring_carrier,group_quotient_carrier,quotient}.
+        Take $c\in\carrier[G]$ such that
+            $W=\equivalenceClass{E}{c}$ by
+            \auto{quotient_ring_carrier,group_quotient_carrier,quotient}.
+        Hence $a,b,c\in\carrier[R]$ by \auto{additive_group_fields}.
+        $\ringMul[R](a,b),\ringMul[R](b,c)\in\carrier[R]$ by
+            \obv{ring_mul_type}.
+        $\ringMul[S](V,W)=\equivalenceClass{E}{\ringMul[R](b,c)}$ and
+            $\ringMul[S](U,V)=\equivalenceClass{E}{\ringMul[R](a,b)}$ by
+            \auto{quotient_ring_mul_apply}.
+        Hence
+            $\ringMul[S](U,\ringMul[S](V,W))
+                =\equivalenceClass{E}{
+                    \ringMul[R](a,\ringMul[R](b,c))}$ and
+            $\ringMul[S](\ringMul[S](U,V),W)
+                =\equivalenceClass{E}{
+                    \ringMul[R](\ringMul[R](a,b),c)}$ by
+            \auto{quotient_ring_mul_apply}.
+        Follows by \obv{ring_mul_associative}.
+    \end{subproof}
+    Show that for every $U\in\carrier[S]$ we have
+        $\ringMul[S](\ringOne[S],U)=U$ and
+        $\ringMul[S](U,\ringOne[S])=U$.
+    \begin{subproof}
+        Fix $U\in\carrier[S]$.
+        Take $a\in\carrier[G]$ such that
+            $U=\equivalenceClass{E}{a}$ by
+            \auto{quotient_ring_carrier,group_quotient_carrier,quotient}.
+        Hence $a\in\carrier[R]$ by \auto{additive_group_fields}.
+        $\ringOne[R]\in\carrier[R]$ by \obv{ring_one_type}.
+        $\ringOne[S]=\equivalenceClass{E}{\ringOne[R]}$ by
+            \auto{quotient_ring_one}.
+        $\ringMul[S](\ringOne[S],U)
+            =\equivalenceClass{E}{\ringMul[R](\ringOne[R],a)}$ by
+            \auto{quotient_ring_mul_apply}.
+        $\ringMul[S](U,\ringOne[S])
+            =\equivalenceClass{E}{\ringMul[R](a,\ringOne[R])}$ by
+            \auto{quotient_ring_mul_apply}.
+        Follows by \auto{ring_mul_one_left,ring_mul_one_right}.
+    \end{subproof}
+    Show that for all $U,V,W\in\carrier[S]$ we have
+        $\ringMul[S](U,\ringAdd[S](V,W))
+            =\ringAdd[S](\ringMul[S](U,V),\ringMul[S](U,W))$.
+    \begin{subproof}
+        Fix $U,V,W\in\carrier[S]$.
+        Take $a\in\carrier[G]$ such that
+            $U=\equivalenceClass{E}{a}$ by
+            \auto{quotient_ring_carrier,group_quotient_carrier,quotient}.
+        Take $b\in\carrier[G]$ such that
+            $V=\equivalenceClass{E}{b}$ by
+            \auto{quotient_ring_carrier,group_quotient_carrier,quotient}.
+        Take $c\in\carrier[G]$ such that
+            $W=\equivalenceClass{E}{c}$ by
+            \auto{quotient_ring_carrier,group_quotient_carrier,quotient}.
+        Hence $a,b,c\in\carrier[R]$ by \auto{additive_group_fields}.
+        $\ringAdd[R](b,c),\ringMul[R](a,b),\ringMul[R](a,c)
+            \in\carrier[R]$ by \obv{ring_add_type,ring_mul_type}.
+        $\ringAdd[S](V,W)=\equivalenceClass{E}{\ringAdd[R](b,c)}$ by
+            \auto{quotient_ring_add_apply}.
+        $\ringMul[S](U,V)=\equivalenceClass{E}{\ringMul[R](a,b)}$ and
+            $\ringMul[S](U,W)=\equivalenceClass{E}{\ringMul[R](a,c)}$ by
+            \auto{quotient_ring_mul_apply}.
+        Hence
+            $\ringMul[S](U,\ringAdd[S](V,W))
+                =\equivalenceClass{E}{
+                    \ringMul[R](a,\ringAdd[R](b,c))}$ by
+            \auto{quotient_ring_mul_apply}.
+        Hence
+            $\ringAdd[S](\ringMul[S](U,V),\ringMul[S](U,W))
+                =\equivalenceClass{E}{
+                    \ringAdd[R](\ringMul[R](a,b),\ringMul[R](a,c))}$ by
+            \auto{quotient_ring_add_apply}.
+        Follows by \auto{ring_distributive_left}.
+    \end{subproof}
+    Show that for all $U,V,W\in\carrier[S]$ we have
+        $\ringMul[S](\ringAdd[S](U,V),W)
+            =\ringAdd[S](\ringMul[S](U,W),\ringMul[S](V,W))$.
+    \begin{subproof}
+        Fix $U,V,W\in\carrier[S]$.
+        Take $a\in\carrier[G]$ such that
+            $U=\equivalenceClass{E}{a}$ by
+            \auto{quotient_ring_carrier,group_quotient_carrier,quotient}.
+        Take $b\in\carrier[G]$ such that
+            $V=\equivalenceClass{E}{b}$ by
+            \auto{quotient_ring_carrier,group_quotient_carrier,quotient}.
+        Take $c\in\carrier[G]$ such that
+            $W=\equivalenceClass{E}{c}$ by
+            \auto{quotient_ring_carrier,group_quotient_carrier,quotient}.
+        Hence $a,b,c\in\carrier[R]$ by \auto{additive_group_fields}.
+        $\ringAdd[R](a,b),\ringMul[R](a,c),\ringMul[R](b,c)
+            \in\carrier[R]$ by \obv{ring_add_type,ring_mul_type}.
+        $\ringAdd[S](U,V)=\equivalenceClass{E}{\ringAdd[R](a,b)}$ by
+            \auto{quotient_ring_add_apply}.
+        $\ringMul[S](U,W)=\equivalenceClass{E}{\ringMul[R](a,c)}$ and
+            $\ringMul[S](V,W)=\equivalenceClass{E}{\ringMul[R](b,c)}$ by
+            \auto{quotient_ring_mul_apply}.
+        Hence
+            $\ringMul[S](\ringAdd[S](U,V),W)
+                =\equivalenceClass{E}{
+                    \ringMul[R](\ringAdd[R](a,b),c)}$ by
+            \auto{quotient_ring_mul_apply}.
+        Hence
+            $\ringAdd[S](\ringMul[S](U,W),\ringMul[S](V,W))
+                =\equivalenceClass{E}{
+                    \ringAdd[R](\ringMul[R](a,c),\ringMul[R](b,c))}$ by
+            \auto{quotient_ring_add_apply}.
+        Follows by \auto{ring_distributive_right}.
+    \end{subproof}
+    Hence $S$ is a ring by
+        \auto{quotient_ring,ringaggregateexact,ring}.
+    Follows by \auto{quotient_ring,ringaggregateexact}.
+\end{proof}
+
+\subsection{The canonical projection}
+
+\begin{theorem}\label{quotient_ring_additive_group}
+    Suppose $I$ is a two-sided ideal of $R$.
+    Then
+        $\AdditiveGroup{\QuotientRing{R}{I}}
+            =\quotientGroup{\AdditiveGroup{R}}{I}$.
+\end{theorem}
+\begin{proof}
+    Let $G=\AdditiveGroup{R}$ and $Q=\quotientGroup{G}{I}$.
+    Let $S=\QuotientRing{R}{I}$ and $H=\AdditiveGroup{S}$.
+    $Q$ is an exact commutative group by
+        \auto{two_sided_ideal,left_ideal_additive_subgroup,
+            additive_group_is_exact_commutative_group,
+            commutative_group_subgroup_is_normal,
+            commutative_quotient_group_is_exact}.
+    $S$ is an exact ring by \auto{quotient_ring_is_exact}.
+    Hence $H$ is an exact commutative group by
+        \auto{additive_group_is_exact_commutative_group}.
+    $\carrier[H]=\carrier[S]=\carrier[Q]$ by
+        \auto{additive_group_fields,quotient_ring_fields}.
+    Hence $\carrier[H]=\carrier[Q]$.
+    $\mul[H]=\ringAdd[S]=\mul[Q]$ by
+        \auto{additive_group_fields,quotient_ring_fields}.
+    Hence $\mul[H]=\mul[Q]$.
+    $\neutral[H]=\ringZero[S]=\neutral[Q]$ by
+        \auto{additive_group_fields,quotient_ring_fields}.
+    Hence $\neutral[H]=\neutral[Q]$.
+    $\groupInv[H]=\ringNeg[S]=\groupInv[Q]$ by
+        \auto{additive_group_fields,quotient_ring_fields}.
+    Hence $\groupInv[H]=\groupInv[Q]$.
+    Hence $H=Q$ by structure extensionality.
+\end{proof}
+
+\begin{theorem}\label{quotient_ring_projection_hom}
+    Suppose $I$ is a two-sided ideal of $R$.
+    Then $\groupQuotientProjection{\AdditiveGroup{R}}{I}$ is a ring
+        homomorphism from $R$ to $\QuotientRing{R}{I}$.
+\end{theorem}
+\begin{proof}
+    Let $G=\AdditiveGroup{R}$ and $Q=\quotientGroup{G}{I}$.
+    Let $S=\QuotientRing{R}{I}$ and $q=\groupQuotientProjection{G}{I}$.
+    Let $M=\MultiplicativeMonoid{R}$ and
+        $N=\MultiplicativeMonoid{S}$.
+    $R$ is a ring by \obv{two_sided_ideal_ring}.
+    $G$ is a commutative group by
+        \obv{additive_group_is_exact_commutative_group}.
+    $\subgroup{I}{G}$ by
+        \auto{two_sided_ideal,left_ideal_additive_subgroup}.
+    Hence $\normalSubgroup{I}{G}$ by
+        \obv{commutative_group_subgroup_is_normal}.
+    $S$ is an exact ring by \auto{quotient_ring_is_exact}.
+    $\AdditiveGroup{S}=Q$ by \auto{quotient_ring_additive_group}.
+    $\groupHom{q}{G}{Q}$ by \auto{group_quotient_projection_hom}.
+    Hence $\groupHom{q}{G}{\AdditiveGroup{S}}$ by \auto.
+    $M$ is a monoid and $N$ is a monoid by
+        \auto{multiplicative_monoid_is_exact_monoid}.
+    $q\in\funs{\carrier[M]}{\carrier[N]}$ by
+        \auto{group_quotient_projection_type,quotient_ring_carrier,
+            additive_group_fields,multiplicative_monoid_fields}.
+    Show that for all $a,b\in\carrier[M]$ we have
+        $q(\mul[M](a,b))=\mul[N](q(a),q(b))$.
+    \begin{subproof}
+        Fix $a,b\in\carrier[M]$.
+        Hence $a,b\in\carrier[R]$ by
+            \auto{multiplicative_monoid_fields}.
+        $\mul[M](a,b)=\ringMul[R](a,b)$ and
+            $\mul[N](q(a),q(b))=\ringMul[S](q(a),q(b))$ by
+            \auto{multiplicative_monoid_fields}.
+        $q(a)=\equivalenceClass{\subgroupCosetRelation{G}{I}}{a}$ and
+            $q(b)=\equivalenceClass{\subgroupCosetRelation{G}{I}}{b}$ and
+            $q(\ringMul[R](a,b))=
+                \equivalenceClass{\subgroupCosetRelation{G}{I}}{
+                    \ringMul[R](a,b)}$ by
+            \auto{ring_mul_type,additive_group_fields,
+                group_quotient_projection_apply}.
+        $\ringMul[S](q(a),q(b))=
+            \equivalenceClass{\subgroupCosetRelation{G}{I}}{
+                \ringMul[R](a,b)}$ by
+            \auto{quotient_ring_mul_apply}.
+    \end{subproof}
+    Hence $q$ is a magma homomorphism from $M$ to $N$ by
+        \obv{monoid_is_magma,magma_hom}.
+    $q(\neutral[M])=\neutral[N]$ by
+        \auto{multiplicative_monoid_fields,quotient_ring_fields}.
+    Hence $q$ is a monoid homomorphism from $M$ to $N$ by
+        \obv{monoid_hom}.
+    Follows by \auto{ring_hom}.
+\end{proof}
+
+\begin{corollary}\label{quotient_ring_projection_eq_iff_ideal_congruence}
+    Suppose $I$ is a two-sided ideal of $R$.
+    Let $x,y\in\carrier[R]$.
+    Let $q=\groupQuotientProjection{\AdditiveGroup{R}}{I}$.
+    Then $q(x)=q(y)$ iff $x\mathrel{\idealCongruence{R}{I}}y$.
+\end{corollary}
+\begin{proof}
+    Follows by
+        \auto{ideal_congruence_quotient_projection_eq_iff}.
+\end{proof}
+
+\begin{theorem}\label{quotient_ring_projection_surjective}
+    Suppose $I$ is a two-sided ideal of $R$.
+    Then $\groupQuotientProjection{\AdditiveGroup{R}}{I}$ is a ring
+        surjection from $R$ to $\QuotientRing{R}{I}$.
+\end{theorem}
+\begin{proof}
+    Let $G=\AdditiveGroup{R}$ and $q=\groupQuotientProjection{G}{I}$.
+    $G$ is a commutative group by
+        \obv{two_sided_ideal_ring,
+            additive_group_is_exact_commutative_group}.
+    $\subgroup{I}{G}$ by
+        \auto{two_sided_ideal,left_ideal_additive_subgroup}.
+    Hence $\normalSubgroup{I}{G}$ by
+        \obv{commutative_group_subgroup_is_normal}.
+    $q\in\surj{\carrier[G]}{\groupQuotientCarrier{G}{I}}$ by
+        \auto{group_quotient_projection_surjective}.
+    Hence $q\in\surj{\carrier[R]}{\carrier[\QuotientRing{R}{I}]}$ by
+        \auto{additive_group_fields,quotient_ring_carrier}.
+    Follows by
+        \auto{ring_surjection,quotient_ring_projection_hom}.
+\end{proof}
+
+\begin{theorem}\label{quotient_ring_projection_kernel}
+    Suppose $I$ is a two-sided ideal of $R$.
+    Let $q=\groupQuotientProjection{\AdditiveGroup{R}}{I}$.
+    Then $\ringKernel{q}{R}=I$.
+\end{theorem}
+\begin{proof}
+    Let $G=\AdditiveGroup{R}$ and $Q=\quotientGroup{G}{I}$.
+    $G$ is a commutative group by
+        \obv{two_sided_ideal_ring,
+            additive_group_is_exact_commutative_group}.
+    $\subgroup{I}{G}$ by
+        \auto{two_sided_ideal,left_ideal_additive_subgroup}.
+    Hence $\normalSubgroup{I}{G}$ by
+        \obv{commutative_group_subgroup_is_normal}.
+    $\AdditiveGroup{\QuotientRing{R}{I}}=Q$ by
+        \auto{quotient_ring_additive_group}.
+    Follows by
+        \auto{ring_kernel,group_quotient_projection_kernel}.
+\end{proof}
+
+\begin{theorem}\label{quotient_ring_zero_eq_one_iff}
+    Suppose $I$ is a two-sided ideal of $R$.
+    Then
+        $\ringZero[\QuotientRing{R}{I}]
+            =\ringOne[\QuotientRing{R}{I}]$ iff
+        $\ringOne[R]\in I$.
+\end{theorem}
+\begin{proof}
+    Let $S=\QuotientRing{R}{I}$ and
+        $q=\groupQuotientProjection{\AdditiveGroup{R}}{I}$.
+    $q$ is a ring homomorphism from $R$ to $S$ by
+        \auto{quotient_ring_projection_hom}.
+    $\ringKernel{q}{R}=I$ by
+        \auto{quotient_ring_projection_kernel}.
+    $q(\ringZero[R])=\ringZero[S]$ by \obv{ring_hom_zero}.
+    $q(\ringOne[R])=\ringOne[S]$ by \obv{ring_hom_one}.
+    Show that if $\ringZero[S]=\ringOne[S]$, then
+        $\ringOne[R]\in I$.
+    \begin{subproof}
+        Assume $\ringZero[S]=\ringOne[S]$.
+        $\ringOne[R]\in\carrier[R]$ by
+            \obv{two_sided_ideal_ring,ring_one_type}.
+        $q(\ringOne[R])=\ringZero[S]$.
+        Hence $\ringOne[R]\in\ringKernel{q}{R}$ by
+            \auto{ring_kernel_iff}.
+    \end{subproof}
+    Show that if $\ringOne[R]\in I$, then
+        $\ringZero[S]=\ringOne[S]$.
+    \begin{subproof}
+        Assume $\ringOne[R]\in I$.
+        Hence $\ringOne[R]\in\ringKernel{q}{R}$.
+        Hence $q(\ringOne[R])=\ringZero[S]$ by
+            \auto{ring_kernel_iff}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{quotient_ring_trivial_iff}
+    Suppose $I$ is a two-sided ideal of $R$.
+    Let $S=\QuotientRing{R}{I}$.
+    Then $\carrier[S]=\{\ringZero[S]\}$ iff $\ringOne[R]\in I$.
+\end{theorem}
+\begin{proof}
+    $S$ is an exact ring by \auto{quotient_ring_is_exact}.
+    Show that if $\carrier[S]=\{\ringZero[S]\}$, then
+        $\ringOne[R]\in I$.
+    \begin{subproof}
+        Assume $\carrier[S]=\{\ringZero[S]\}$.
+        $\ringOne[S]\in\carrier[S]$ by \obv{ring_one_type}.
+        Hence $\ringOne[S]\in\{\ringZero[S]\}$.
+        Hence $\ringOne[S]=\ringZero[S]$ by \auto{singleton_iff}.
+        Follows by \auto{quotient_ring_zero_eq_one_iff}.
+    \end{subproof}
+    Show that if $\ringOne[R]\in I$, then
+        $\carrier[S]=\{\ringZero[S]\}$.
+    \begin{subproof}
+        Assume $\ringOne[R]\in I$.
+        Hence $\ringZero[S]=\ringOne[S]$ by
+            \auto{quotient_ring_zero_eq_one_iff}.
+        Show that $\carrier[S]\subseteq\{\ringZero[S]\}$.
+        \begin{subproof}
+            Show that for every $x\in\carrier[S]$ we have
+                $x\in\{\ringZero[S]\}$.
+            \begin{subproof}
+                Fix $x\in\carrier[S]$.
+                $x=\ringMul[S](\ringOne[S],x)$ by
+                    \obv{ring_mul_one_left}.
+                Hence $x=\ringMul[S](\ringZero[S],x)$.
+                Hence $x=\ringZero[S]$ by \obv{ring_mul_zero_left}.
+                Follows by \auto{singleton_iff}.
+            \end{subproof}
+            Follows by \obv{subseteq}.
+        \end{subproof}
+        $\{\ringZero[S]\}\subseteq\carrier[S]$ by
+            \obv{ring_zero_type,singleton_subset_intro}.
+        Follows by \obv{subseteq_antisymmetric}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{quotient_ring_is_commutative}
+    Let $R$ be a commutative ring.
+    Suppose $I$ is a two-sided ideal of $R$.
+    Then $\QuotientRing{R}{I}$ is a commutative ring.
+\end{theorem}
+\begin{proof}
+    Let $G=\AdditiveGroup{R}$ and $E=\subgroupCosetRelation{G}{I}$.
+    Let $S=\QuotientRing{R}{I}$.
+    $S$ is an exact ring by \auto{quotient_ring_is_exact}.
+    Show that for all $U,V\in\carrier[S]$ we have
+        $\ringMul[S](U,V)=\ringMul[S](V,U)$.
+    \begin{subproof}
+        Fix $U,V\in\carrier[S]$.
+        Take $a\in\carrier[G]$ such that
+            $U=\equivalenceClass{E}{a}$ by
+            \auto{quotient_ring_carrier,group_quotient_carrier,quotient}.
+        Take $b\in\carrier[G]$ such that
+            $V=\equivalenceClass{E}{b}$ by
+            \auto{quotient_ring_carrier,group_quotient_carrier,quotient}.
+        Hence $a,b\in\carrier[R]$ by \auto{additive_group_fields}.
+        $\ringMul[S](U,V)=
+            \equivalenceClass{E}{\ringMul[R](a,b)}$ and
+            $\ringMul[S](V,U)=
+            \equivalenceClass{E}{\ringMul[R](b,a)}$ by
+            \auto{quotient_ring_mul_apply}.
+        $\ringMul[R](a,b)=\ringMul[R](b,a)$ by
+            \obv{commutative_ring_mul_commutative}.
+    \end{subproof}
+    Hence $S$ is a commutative ring by \obv{commutative_ring_intro}.
+\end{proof}
+
+\begin{corollary}\label{commutative_quotient_ring_is_commutative}
+    Let $R$ be a commutative ring.
+    Let $I$ be an ideal of $R$.
+    Then $\QuotientRing{R}{I}$ is a commutative ring.
+\end{corollary}
+\begin{proof}
+    $I$ is a two-sided ideal of $R$ by
+        \auto{commutative_ideal_iff_two_sided_ideal}.
+    Follows by \obv{quotient_ring_is_commutative}.
+\end{proof}

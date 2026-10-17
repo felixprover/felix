@@ -1,0 +1,339 @@
+\import{order/order-type.tex}
+\import{set/equinumerosity.tex}
+
+\section{Hartogs's lemma and initial ordinals}
+
+We first record the ordinary transport of a relation along a bijection.  The
+carrier arguments keep the set-coded relation explicitly bounded, including
+away from its intended domain.
+
+\begin{definition}\label{transported_relation}
+    $\transportedRelation{f}{A}{R}{B}
+        =\{w\in B\times B\mid
+            \exists x,y\in A.\ w=(f(x),f(y))\land x\mathrel{R}y\}$.
+\end{definition}
+
+\begin{proposition}\label{transported_relation_binary_on}
+    $\transportedRelation{f}{A}{R}{B}$ is a binary relation on $B$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{transported_relation,subseteq}.
+\end{proof}
+
+\begin{proposition}\label{transported_relation_iff}
+    Suppose $f\in\bijections{A}{B}$.
+    Let $x,y\in A$.
+    Then $x\mathrel{R}y$ iff
+        $f(x)\mathrel{\transportedRelation{f}{A}{R}{B}}f(y)$.
+\end{proposition}
+\begin{proof}
+    $f\in\funs{A}{B}$ and $f$ is a function and $\dom{f}=A$
+        by \obv{bijections_to_funs,bijection_is_function,bijections_dom}.
+    $f$ is injective by \obv{bijections}.
+    $f(x),f(y)\in B$ by \obv{funs_type_apply}.
+    Show that if $x\mathrel{R}y$, then
+        $f(x)\mathrel{\transportedRelation{f}{A}{R}{B}}f(y)$.
+    \begin{subproof}
+        Assume $x\mathrel{R}y$.
+        Follows by
+            \obv{transported_relation,times_tuple_intro,pair_eq_iff}.
+    \end{subproof}
+    Show that if
+        $f(x)\mathrel{\transportedRelation{f}{A}{R}{B}}f(y)$,
+        then $x\mathrel{R}y$.
+    \begin{subproof}
+        Assume
+            $f(x)\mathrel{\transportedRelation{f}{A}{R}{B}}f(y)$.
+        Take $u,v\in A$ such that
+            $(f(x),f(y))=(f(u),f(v))$ and $u\mathrel{R}v$
+            by \obv{transported_relation}.
+        $f(x)=f(u)$ and $f(y)=f(v)$ by \obv{pair_eq_iff}.
+        Hence $x=u$ and $y=v$ by \auto{injective_function}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{transported_relation_isomorphism}
+    Suppose $f\in\bijections{A}{B}$.
+    Suppose $R$ is a binary relation on $A$.
+    Then
+        $\orderIsomorphism{f}{A}{R}{B}
+            {\transportedRelation{f}{A}{R}{B}}$.
+\end{theorem}
+\begin{proof}
+    $\transportedRelation{f}{A}{R}{B}$ is a binary relation on $B$
+        by \obv{transported_relation_binary_on}.
+    For all $x,y\in A$ we have $x\mathrel{R}y$ iff
+        $f(x)\mathrel{\transportedRelation{f}{A}{R}{B}}f(y)$
+        by \obv{transported_relation_iff}.
+    Follows by \obv{order_isomorphism}.
+\end{proof}
+
+\begin{proposition}\label{unions_of_family_of_ordinals_is_ordinal}
+    Suppose every element of $F$ is an ordinal.
+    Then $\unions{F}$ is an ordinal.
+\end{proposition}
+\begin{proof}
+    Show that $\unions{F}$ is \in-transitive.
+    \begin{subproof}
+        Show that for all $x,y$ such that $x\in y\in\unions{F}$
+            we have $x\in\unions{F}$.
+        \begin{subproof}
+            Fix $x,y$.
+            Assume $x\in y\in\unions{F}$.
+            Take $\alpha\in F$ such that $y\in\alpha$
+                by \obv{unions_iff}.
+            Hence $x\in\alpha$ by \obv{ordinal_transitivity}.
+            Follows by \auto{unions_iff}.
+        \end{subproof}
+        Follows by \obv{transitiveset}.
+    \end{subproof}
+    Show that every element of $\unions{F}$ is \in-transitive.
+    \begin{subproof}
+        Fix $x\in\unions{F}$.
+        Take $\alpha\in F$ such that $x\in\alpha$
+            by \obv{unions_iff}.
+        $x$ is an ordinal by \obv{elem_of_ordinal_is_ordinal}.
+        Follows by \obv{ordinal}.
+    \end{subproof}
+    Follows by \obv{ordinal}.
+\end{proof}
+
+The following family is a set: both the carrier and its relation are selected
+from powersets determined by $X$.  Thus its order types can be collected by
+ordinary replacement without quantifying over all well-orders as a class.
+
+\begin{definition}\label{well_order_codes}
+    $\wellOrderCodes{X}
+        =\{p\in\pow{X}\times\pow{X\times X}\mid
+            \text{$\snd{p}$ is a strict well order on $\fst{p}$}\}$.
+\end{definition}
+
+\begin{definition}\label{well_order_types}
+    $\wellOrderTypes{X}
+        =\{\orderType{\fst{p}}{\snd{p}}\mid
+            p\in\wellOrderCodes{X}\}$.
+\end{definition}
+
+\begin{definition}\label{hartogs_successors}
+    $\hartogsSuccessors{X}
+        =\{\suc{\alpha}\mid\alpha\in\wellOrderTypes{X}\}$.
+\end{definition}
+
+\begin{definition}\label{hartogs}
+    $\hartogs{X}=\unions{\hartogsSuccessors{X}}$.
+\end{definition}
+
+\begin{proposition}\label{well_order_type_family_is_ordinal}
+    Every element of $\wellOrderTypes{X}$ is an ordinal.
+\end{proposition}
+\begin{proof}
+    Fix $\alpha\in\wellOrderTypes{X}$.
+    Take $p\in\wellOrderCodes{X}$ such that
+        $\alpha=\orderType{\fst{p}}{\snd{p}}$
+        by \obv{well_order_types}.
+    $\snd{p}$ is a strict well order on $\fst{p}$
+        by \obv{well_order_codes}.
+    Follows by \obv{order_type_is_ordinal}.
+\end{proof}
+
+\begin{proposition}\label{hartogs_successor_family_is_ordinal}
+    Every element of $\hartogsSuccessors{X}$ is an ordinal.
+\end{proposition}
+\begin{proof}
+    Fix $\beta\in\hartogsSuccessors{X}$.
+    Take $\alpha\in\wellOrderTypes{X}$ such that $\beta=\suc{\alpha}$
+        by \obv{hartogs_successors}.
+    $\alpha$ is an ordinal by \obv{well_order_type_family_is_ordinal}.
+    Follows by \obv{suc_ordinal}.
+\end{proof}
+
+\begin{theorem}\label{hartogs_is_ordinal}
+    $\hartogs{X}$ is an ordinal.
+\end{theorem}
+\begin{proof}
+    Follows by
+        \auto{hartogs,unions_of_family_of_ordinals_is_ordinal,hartogs_successor_family_is_ordinal}.
+\end{proof}
+
+\begin{proposition}\label{order_type_belongs_to_hartogs}
+    Suppose $A\subseteq X$.
+    Suppose $R$ is a strict well order on $A$.
+    Then $\orderType{A}{R}\in\hartogs{X}$.
+\end{proposition}
+\begin{proof}
+    $A\in\pow{X}$ by \obv{powerset_intro}.
+    $R\subseteq A\times A$
+        by \auto{strict_well_order,strict_linear_order}.
+    $A\times A\subseteq X\times X$
+        by \auto{times_subseteq_left,times_subseteq_right,subseteq_transitive}.
+    Hence $R\subseteq X\times X$ by \obv{subseteq_transitive}.
+    Hence $R\in\pow{X\times X}$ by \obv{powerset_intro}.
+    Hence $(A,R)\in\pow{X}\times\pow{X\times X}$
+        by \obv{times_tuple_intro}.
+    Hence $(A,R)\in\wellOrderCodes{X}$
+        by \obv{well_order_codes,fst_eq,snd_eq}.
+    Hence $\orderType{A}{R}\in\wellOrderTypes{X}$
+        by \obv{well_order_types,fst_eq,snd_eq}.
+    Hence $\suc{\orderType{A}{R}}\in\hartogsSuccessors{X}$
+        by \obv{hartogs_successors}.
+    $\orderType{A}{R}\in\suc{\orderType{A}{R}}$
+        by \obv{suc_intro_self}.
+    Hence $\orderType{A}{R}\in\unions{\hartogsSuccessors{X}}$
+        by \auto{unions_iff}.
+    Follows by \obv{hartogs}.
+\end{proof}
+
+\begin{theorem}[Hartogs]\label{hartogs_theorem}
+    There exists no $f$ such that $f\in\inj{\hartogs{X}}{X}$.
+\end{theorem}
+\begin{proof}
+    Assume there exists $f$ such that $f\in\inj{\hartogs{X}}{X}$.
+    Take $f$ such that $f\in\inj{\hartogs{X}}{X}$.
+    Let $H=\hartogs{X}$.
+    Let $Y=\ran{f}$.
+    $f\in\funs{H}{X}$ by \obv{inj}.
+    Hence $f$ is a function and $\dom{f}=H$
+        by \obv{funs_is_function,funs}.
+    $f$ is injective by \auto{inj,injective_function}.
+    $Y\subseteq X$ by \auto{funs_ran}.
+    $f\in\surj{H}{Y}$ by \auto{fun_to_surj}.
+    Hence $f\in\bijections{H}{Y}$ by \obv{bijections}.
+    $H$ is an ordinal by \obv{hartogs_is_ordinal}.
+    Hence $\memrel{H}$ is a strict well order on $H$
+        by \obv{ordinal_membership_is_strict_well_order}.
+    Let $S=\transportedRelation{f}{H}{\memrel{H}}{Y}$.
+    $\orderIsomorphism{f}{H}{\memrel{H}}{Y}{S}$
+        by
+        \auto{transported_relation_isomorphism,strict_well_order,strict_linear_order}.
+    Hence $S$ is a strict well order on $Y$
+        by \obv{order_isomorphism_preserves_strict_well_order}.
+    $\orderIsomorphism{\converse{f}}{Y}{S}{H}{\memrel{H}}$
+        by \obv{order_isomorphism_inverse}.
+    Hence $\orderIsomorphic{Y}{S}{H}{\memrel{H}}$
+        by \obv{order_isomorphic}.
+    Hence $H=\orderType{Y}{S}$
+        by \obv{ordinal_order_type_unique}.
+    $\orderType{Y}{S}\in\hartogs{X}$
+        by \obv{order_type_belongs_to_hartogs}.
+    Hence $H\in H$.
+    Contradiction by \obv{in_irrefl}.
+\end{proof}
+
+\begin{theorem}\label{below_hartogs_injection}
+    Let $\alpha\in\hartogs{X}$.
+    Then there exists $f\in\inj{\alpha}{X}$.
+\end{theorem}
+\begin{proof}
+    $\hartogs{X}$ is an ordinal by \obv{hartogs_is_ordinal}.
+    Hence $\alpha$ is an ordinal by \obv{elem_of_ordinal_is_ordinal}.
+    $\alpha\in\unions{\hartogsSuccessors{X}}$ by \obv{hartogs}.
+    Take $\gamma\in\hartogsSuccessors{X}$ such that $\alpha\in\gamma$
+        by \obv{unions_iff}.
+    Take $\beta\in\wellOrderTypes{X}$ such that $\gamma=\suc{\beta}$
+        by \obv{hartogs_successors}.
+    $\beta$ is an ordinal by \obv{well_order_type_family_is_ordinal}.
+    $\alpha=\beta$ or $\alpha\in\beta$ by \obv{suc_iff}.
+    Hence $\alpha\subseteq\beta$
+        by \obv{subseteq_refl,ordinal_elem_implies_subseteq}.
+    Take $p\in\wellOrderCodes{X}$ such that
+        $\beta=\orderType{\fst{p}}{\snd{p}}$
+        by \obv{well_order_types}.
+    Let $A=\fst{p}$.
+    Let $R=\snd{p}$.
+    $p\in\pow{X}\times\pow{X\times X}$ and
+        $R$ is a strict well order on $A$ by \auto{well_order_codes}.
+    Hence $A\in\pow{X}$ by \auto{fst_type}.
+    Hence $A\subseteq X$ by \obv{powerset_elim}.
+    $\orderIsomorphism{\orderCollapse{A}{R}}
+        {A}{R}{\beta}{\memrel{\beta}}$
+        by \auto{order_collapse_is_isomorphism}.
+    Hence $\orderIsomorphism{\converse{\orderCollapse{A}{R}}}
+        {\beta}{\memrel{\beta}}{A}{R}$
+        by \obv{order_isomorphism_inverse}.
+    Let $g=\converse{\orderCollapse{A}{R}}$.
+    $g\in\bijections{\beta}{A}$ by \auto{order_isomorphism}.
+    Hence $g\in\funs{\beta}{A}$ and $g$ is injective
+        by \obv{bijections,bijections_to_funs}.
+    Hence $g\in\funs{\beta}{X}$ by \obv{funs_weaken_codom}.
+    Hence $g\in\inj{\beta}{X}$
+        by \auto{inj,funs_is_function,funs,injective_function}.
+    $\restrl{g}{\alpha}\in\inj{\alpha}{X}$ by \obv{inj_restrl}.
+\end{proof}
+
+An initial ordinal is an ordinal which is not equinumerous with any smaller
+ordinal.  Cardinals will be introduced as a synonym for these objects in the
+next layer.
+
+\begin{definition}\label{initial_ordinal}
+    $\kappa$ is an initial ordinal iff $\kappa$ is an ordinal and
+        for every $\alpha\in\kappa$ we have
+            $\lnot(\alpha\approx\kappa)$.
+\end{definition}
+
+\begin{theorem}\label{initial_ordinal_le_equinumerous_ordinal}
+    Suppose $\kappa$ is an initial ordinal.
+    Let $\alpha$ be an ordinal.
+    Suppose $\alpha\approx\kappa$.
+    Then $\kappa\subseteq\alpha$.
+\end{theorem}
+\begin{proof}
+    Suppose not.
+    Hence $\alpha\subseteq\kappa$
+        by \obv{ordinal_subseteq_or_subseteq}.
+    Hence $\alpha\in\kappa$ or $\alpha=\kappa$
+        by \obv{ordinal_subseteq_implies_elem_or_eq}.
+    Hence $\alpha\in\kappa$ by \obv{subseteq_refl}.
+    $\lnot(\alpha\approx\kappa)$ by \obv{initial_ordinal}.
+    Contradiction.
+\end{proof}
+
+\begin{proposition}\label{initial_ordinal_characterization}
+    $\kappa$ is an initial ordinal iff $\kappa$ is an ordinal and
+        for every ordinal $\alpha$ such that $\alpha\approx\kappa$
+            we have $\kappa\subseteq\alpha$.
+\end{proposition}
+\begin{proof}
+    Show that if $\kappa$ is an initial ordinal, then $\kappa$ is an
+        ordinal and for every ordinal $\alpha$ such that
+        $\alpha\approx\kappa$ we have $\kappa\subseteq\alpha$.
+    \begin{subproof}
+        Assume $\kappa$ is an initial ordinal.
+        For every ordinal $\alpha$ such that $\alpha\approx\kappa$
+            we have $\kappa\subseteq\alpha$
+            by \obv{initial_ordinal_le_equinumerous_ordinal}.
+    \end{subproof}
+    Show that if $\kappa$ is an ordinal and for every ordinal $\alpha$
+        such that $\alpha\approx\kappa$ we have
+        $\kappa\subseteq\alpha$, then $\kappa$ is an initial ordinal.
+    \begin{subproof}
+        Assume $\kappa$ is an ordinal and for every ordinal $\alpha$
+            such that $\alpha\approx\kappa$ we have
+            $\kappa\subseteq\alpha$.
+        Show that for every $\alpha\in\kappa$ we have
+            $\lnot(\alpha\approx\kappa)$.
+        \begin{subproof}
+            Fix $\alpha\in\kappa$.
+            $\alpha$ is an ordinal by \obv{elem_of_ordinal_is_ordinal}.
+            Suppose $\alpha\approx\kappa$.
+            Hence $\kappa\subseteq\alpha$.
+            Hence $\alpha\in\alpha$ by \obv{subseteq}.
+            Contradiction by \obv{in_irrefl}.
+        \end{subproof}
+        Follows by \obv{initial_ordinal}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{proposition}\label{equinumerous_initial_ordinals_are_equal}
+    Let $\kappa,\lambda$ be initial ordinals.
+    Suppose $\kappa\approx\lambda$.
+    Then $\kappa=\lambda$.
+\end{proposition}
+\begin{proof}
+    $\kappa\subseteq\lambda$
+        by \obv{initial_ordinal_le_equinumerous_ordinal,equinum_sym}.
+    $\lambda\subseteq\kappa$
+        by \obv{initial_ordinal_le_equinumerous_ordinal}.
+    Follows by \obv{subseteq_antisymmetric}.
+\end{proof}

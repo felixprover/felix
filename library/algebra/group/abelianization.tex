@@ -1,0 +1,293 @@
+\import{algebra/group/commutator.tex}
+\import{algebra/group/first-isomorphism.tex}
+
+\section{Abelianization}
+
+The abelianization of a group is its exact quotient by the commutator
+subgroup.  Its universal map is the representative-free descent of the
+original homomorphism; the graph is not a second quotient-map construction.
+
+\begin{definition}\label{abelianization}
+    Let $G$ be a group.
+    $\Abelianization{G}=\quotientGroup{G}{\commutatorSubgroup{G}}$.
+\end{definition}
+
+\begin{proposition}\label{abelianization_carrier}
+    Let $G$ be a group.
+    Then $\carrier[\Abelianization{G}]=
+        \groupQuotientCarrier{G}{\commutatorSubgroup{G}}$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{abelianization,quotient_group_carrier}.
+\end{proof}
+
+\begin{theorem}\label{abelianization_is_exact_commutative_group}
+    Let $G$ be a group.
+    Then $\Abelianization{G}$ is an exact commutative group.
+\end{theorem}
+\begin{proof}
+    Let $N=\commutatorSubgroup{G}$.
+    $\normalSubgroup{N}{G}$ by \auto{commutator_subgroup_normal}.
+    Hence $\quotientGroup{G}{N}$ is an exact group by
+        \obv{quotient_group_is_exact_group}.
+    $N\subseteq N$ by \obv{subseteq_refl}.
+    Hence $\quotientGroup{G}{N}$ is a commutative group by
+        \auto{quotient_group_commutative_iff_commutator_subgroup}.
+    Follows by \auto{abelianization}.
+\end{proof}
+
+\begin{theorem}\label{commutator_subgroup_subseteq_commutative_kernel}
+    Let $G$ be a group.
+    Let $A$ be a commutative group.
+    Suppose $\groupHom{f}{G}{A}$.
+    Then
+        $\commutatorSubgroup{G}\subseteq\groupKernel{f}{G}$.
+\end{theorem}
+\begin{proof}
+    $G$ is a group and $A$ is a group by
+        \obv{group_hom_source_group,commutative_group_is_group}.
+    Let $K=\groupKernel{f}{G}$.
+    $\subgroup{K}{G}$ by \auto{group_kernel_subgroup}.
+    Show that for all $x,y\in\carrier[G]$ we have
+        $\groupCommutator{G}{x}{y}\in K$.
+    \begin{subproof}
+        Fix $x,y\in\carrier[G]$.
+        $f(x),f(y)\in\carrier[A]$ by
+            \obv{group_hom_apply_type}.
+        $\commutesIn{A}{f(x)}{f(y)}$ by
+            \obv{commutes_in,commutative_group_commutative}.
+        Hence $\groupCommutator{A}{f(x)}{f(y)}=\neutral[A]$ by
+            \obv{group_commutator_neutral_iff_commutes}.
+        $f(\groupCommutator{G}{x}{y})=
+            \groupCommutator{A}{f(x)}{f(y)}$ by
+            \obv{group_hom_commutator}.
+        Follows by
+            \auto{group_commutator_type,group_kernel_iff}.
+    \end{subproof}
+    Follows by \obv{commutator_subgroup_least}.
+\end{proof}
+
+\begin{definition}\label{abelianization_factor_map}
+    Let $G$ be a group.
+    $\abelianizationFactorMap{f}{G}=
+        \quotientDescent
+            {f}{\carrier[G]}
+            {\subgroupCosetRelation{G}{\commutatorSubgroup{G}}}$.
+\end{definition}
+
+\begin{proposition}\label{abelianization_factor_compatible}
+    Let $G$ be a group.
+    Let $A$ be a commutative group.
+    Suppose $\groupHom{f}{G}{A}$.
+    Let $E=\subgroupCosetRelation{G}{\commutatorSubgroup{G}}$.
+    Then $\quotientCompatible{f}{\carrier[G]}{E}$.
+\end{proposition}
+\begin{proof}
+    Let $C=\commutatorSubgroup{G}$ and
+        $K=\groupKernel{f}{G}$.
+    $C\subseteq K$ by
+        \auto{commutator_subgroup_subseteq_commutative_kernel}.
+    Show that for all $x,y\in\carrier[G]$ such that $x\mathrel{E}y$ we have
+        $f(x)=f(y)$.
+    \begin{subproof}
+        Fix $x,y\in\carrier[G]$ such that $x\mathrel{E}y$.
+        $\mul[G](\groupInv[G](x),y)\in C$ by
+            \auto{subgroup_coset_relation_iff}.
+        Hence $\mul[G](\groupInv[G](x),y)\in K$ by
+            \obv{subseteq}.
+        Hence
+            $x\mathrel{\subgroupCosetRelation{G}{K}}y$ by
+            \obv{subgroup_coset_relation_iff}.
+        Follows by \auto{group_hom_kernel_coset_relation_iff}.
+    \end{subproof}
+    Follows by \obv{quotient_compatible}.
+\end{proof}
+
+\begin{proposition}\label{abelianization_factor_type}
+    Let $G$ be a group.
+    Let $A$ be a commutative group.
+    Suppose $\groupHom{f}{G}{A}$.
+    Then $\abelianizationFactorMap{f}{G}\in
+        \funs{\carrier[\Abelianization{G}]}{\carrier[A]}$.
+\end{proposition}
+\begin{proof}
+    Let $C=\commutatorSubgroup{G}$ and
+        $E=\subgroupCosetRelation{G}{C}$.
+    $\normalSubgroup{C}{G}$ by \auto{commutator_subgroup_normal}.
+    Hence $E$ is an equivalence on $\carrier[G]$ by
+        \auto{normal_subgroup_is_subgroup,
+            subgroup_coset_relation_equivalence}.
+    $f\in\funs{\carrier[G]}{\carrier[A]}$ by
+        \obv{group_hom_type}.
+    $\quotientCompatible{f}{\carrier[G]}{E}$ by
+        \obv{abelianization_factor_compatible}.
+    $\quotientDescent{f}{\carrier[G]}{E}\in
+        \funs{\quotient{\carrier[G]}{E}}{\carrier[A]}$ by
+        \obv{quotient_descent_type}.
+    $\carrier[\Abelianization{G}]=\quotient{\carrier[G]}{E}$ by
+        \auto{abelianization_carrier,group_quotient_carrier}.
+    Follows by \auto{abelianization_factor_map}.
+\end{proof}
+
+\begin{proposition}\label{abelianization_factor_apply}
+    Let $G$ be a group.
+    Let $A$ be a commutative group.
+    Suppose $\groupHom{f}{G}{A}$.
+    Let $x\in\carrier[G]$.
+    Then
+        $\apply{\abelianizationFactorMap{f}{G}}
+            {\equivalenceClass
+                {\subgroupCosetRelation{G}{\commutatorSubgroup{G}}}{x}}
+            =f(x)$.
+\end{proposition}
+\begin{proof}
+    Let $C=\commutatorSubgroup{G}$ and
+        $E=\subgroupCosetRelation{G}{C}$.
+    $\normalSubgroup{C}{G}$ by \auto{commutator_subgroup_normal}.
+    Hence $E$ is an equivalence on $\carrier[G]$ by
+        \auto{normal_subgroup_is_subgroup,
+            subgroup_coset_relation_equivalence}.
+    $f\in\funs{\carrier[G]}{\carrier[A]}$ by
+        \obv{group_hom_type}.
+    $\quotientCompatible{f}{\carrier[G]}{E}$ by
+        \obv{abelianization_factor_compatible}.
+    Follows by
+        \auto{abelianization_factor_map,quotient_descent_apply}.
+\end{proof}
+
+\begin{theorem}\label{abelianization_factorization}
+    Let $G$ be a group.
+    Let $A$ be a commutative group.
+    Suppose $\groupHom{f}{G}{A}$.
+    Let $q=\groupQuotientProjection{G}{\commutatorSubgroup{G}}$.
+    Then $\abelianizationFactorMap{f}{G}\circ q=f$.
+\end{theorem}
+\begin{proof}
+    Let $C=\commutatorSubgroup{G}$ and
+        $E=\subgroupCosetRelation{G}{C}$.
+    $\normalSubgroup{C}{G}$ by \auto{commutator_subgroup_normal}.
+    Hence $E$ is an equivalence on $\carrier[G]$ by
+        \auto{normal_subgroup_is_subgroup,
+            subgroup_coset_relation_equivalence}.
+    $f\in\funs{\carrier[G]}{\carrier[A]}$ by
+        \obv{group_hom_type}.
+    $\quotientCompatible{f}{\carrier[G]}{E}$ by
+        \obv{abelianization_factor_compatible}.
+    $\quotientDescent{f}{\carrier[G]}{E}\circ
+        \quotientProjection{\carrier[G]}{E}=f$ by
+        \obv{quotient_descent_factorization}.
+    Follows by
+        \auto{abelianization_factor_map,group_quotient_projection}.
+\end{proof}
+
+\begin{theorem}\label{abelianization_factor_hom}
+    Let $G$ be a group.
+    Let $A$ be a commutative group.
+    Suppose $\groupHom{f}{G}{A}$.
+    Then
+        $\groupHom
+            {\abelianizationFactorMap{f}{G}}{\Abelianization{G}}{A}$.
+\end{theorem}
+\begin{proof}
+    Let $C=\commutatorSubgroup{G}$ and
+        $E=\subgroupCosetRelation{G}{C}$.
+    Let $Q=\Abelianization{G}$ and
+        $g=\abelianizationFactorMap{f}{G}$.
+    $\normalSubgroup{C}{G}$ by \auto{commutator_subgroup_normal}.
+    $Q=\quotientGroup{G}{C}$ by \obv{abelianization}.
+    $Q$ is a group by
+        \obv{abelianization_is_exact_commutative_group,
+            commutative_group_is_group}.
+    $g\in\funs{\carrier[Q]}{\carrier[A]}$ by
+        \auto{abelianization_factor_type}.
+    Show that for all $U,V\in\carrier[Q]$ we have
+        $g(\mul[Q](U,V))=\mul[A](g(U),g(V))$.
+    \begin{subproof}
+        Fix $U,V\in\carrier[Q]$.
+        $\carrier[Q]=\quotient{\carrier[G]}{E}$ by
+            \auto{abelianization_carrier,group_quotient_carrier}.
+        Take $x\in\carrier[G]$ such that
+            $U=\equivalenceClass{E}{x}$ by \obv{quotient}.
+        Take $y\in\carrier[G]$ such that
+            $V=\equivalenceClass{E}{y}$ by \obv{quotient}.
+        $\mul[G](x,y)\in\carrier[G]$ by
+            \obv{group_is_monoid,monoid_is_magma,magma_welldef}.
+        $\mul[Q](U,V)=
+            \equivalenceClass{E}{\mul[G](x,y)}$ by
+            \auto{abelianization,quotient_group_mul_apply}.
+        Hence $g(\mul[Q](U,V))=f(\mul[G](x,y))$ by
+            \auto{abelianization_factor_apply}.
+        $g(U)=f(x)$ and $g(V)=f(y)$ by
+            \auto{abelianization_factor_apply}.
+        Follows by \auto{group_hom_mul}.
+    \end{subproof}
+    Follows by \auto{group_hom}.
+\end{proof}
+
+\begin{theorem}\label{abelianization_factor_unique}
+    Let $G$ be a group.
+    Let $A$ be a commutative group.
+    Suppose $\groupHom{f}{G}{A}$.
+    Let $q=\groupQuotientProjection{G}{\commutatorSubgroup{G}}$.
+    Suppose $\groupHom{h}{\Abelianization{G}}{A}$ and $h\circ q=f$.
+    Then $h=\abelianizationFactorMap{f}{G}$.
+\end{theorem}
+\begin{proof}
+    Let $C=\commutatorSubgroup{G}$ and
+        $E=\subgroupCosetRelation{G}{C}$.
+    Let $Q=\Abelianization{G}$.
+    $\normalSubgroup{C}{G}$ by \auto{commutator_subgroup_normal}.
+    Hence $E$ is an equivalence on $\carrier[G]$ by
+        \auto{normal_subgroup_is_subgroup,
+            subgroup_coset_relation_equivalence}.
+    $f\in\funs{\carrier[G]}{\carrier[A]}$ by
+        \obv{group_hom_type}.
+    $\quotientCompatible{f}{\carrier[G]}{E}$ by
+        \obv{abelianization_factor_compatible}.
+    $\carrier[Q]=\quotient{\carrier[G]}{E}$ by
+        \auto{abelianization_carrier,group_quotient_carrier}.
+    Hence $h\in\funs{\quotient{\carrier[G]}{E}}{\carrier[A]}$ by
+        \auto{group_hom_type}.
+    Show that for every $x\in\carrier[G]$ we have
+        $h(\equivalenceClass{E}{x})=f(x)$.
+    \begin{subproof}
+        Fix $x\in\carrier[G]$.
+        $q(x)=\equivalenceClass{E}{x}$ by
+            \auto{group_quotient_projection_apply}.
+        $q\in\funs{\carrier[G]}{\carrier[Q]}$ by
+            \auto{group_quotient_projection_type,
+                abelianization_carrier}.
+        $h\in\funs{\carrier[Q]}{\carrier[A]}$ by
+            \obv{group_hom_type}.
+        $q$ is a function and $h$ is a function and
+            $\dom{q}=\carrier[G]$ by \auto{funs_elim}.
+        $h$ is composable with $q$ by
+            \auto{funs_elim,funs_ran,funs}.
+        Hence $(h\circ q)(x)=h(q(x))$ by \obv{circ_apply}.
+    \end{subproof}
+    $h=\quotientDescent{f}{\carrier[G]}{E}$ by
+        \obv{quotient_descent_unique}.
+    Follows by \obv{abelianization_factor_map}.
+\end{proof}
+
+\begin{theorem}\label{abelianization_universal_property}
+    Let $G$ be a group.
+    Let $A$ be a commutative group.
+    Suppose $\groupHom{f}{G}{A}$.
+    Let $q=\groupQuotientProjection{G}{\commutatorSubgroup{G}}$.
+    Then
+        $\groupHom
+            {\abelianizationFactorMap{f}{G}}{\Abelianization{G}}{A}$ and
+        $\abelianizationFactorMap{f}{G}\circ q=f$ and for every $h$
+        such that $\groupHom{h}{\Abelianization{G}}{A}$ and $h\circ q=f$
+        we have $h=\abelianizationFactorMap{f}{G}$.
+\end{theorem}
+\begin{proof}
+    Let $g=\abelianizationFactorMap{f}{G}$.
+    $\groupHom{g}{\Abelianization{G}}{A}$ by
+        \auto{abelianization_factor_hom}.
+    $g\circ q=f$ by \auto{abelianization_factorization}.
+    For every $h$ such that
+        $\groupHom{h}{\Abelianization{G}}{A}$ and $h\circ q=f$
+        we have $h=g$ by \obv{abelianization_factor_unique}.
+\end{proof}

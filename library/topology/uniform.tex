@@ -1,0 +1,342 @@
+\import{topology/topological-space.tex}
+\import{set/filter.tex}
+\import{relation.tex}
+
+\section{Uniform spaces}
+
+Uniformities use the ordinary, possibly improper notion of filter.  The
+diagonal axiom makes the uniformity proper whenever the carrier is inhabited;
+on the empty carrier the unique uniformity is the improper filter.
+
+\begin{struct}\label{uniform_space}
+    A uniform space $X$ is a onesorted structure equipped with
+    \begin{enumerate}
+        \item\label{uniformity_family}
+            a family of entourages
+            $\uniformity[X]\subseteq
+                \pow{\carrier[X]\times\carrier[X]}$;
+    \end{enumerate}
+    such that
+    \begin{enumerate}
+        \item\label{uniformity_filter}
+            $\uniformity[X]$ is a filter on
+                $\carrier[X]\times\carrier[X]$.
+        \item\label{uniformity_diagonal}
+            for every $U\in\uniformity[X]$ we have
+                $\identity{\carrier[X]}\subseteq U$.
+        \item\label{uniformity_converse}
+            for every $U\in\uniformity[X]$ we have
+                $\converse{U}\in\uniformity[X]$.
+        \item\label{uniformity_square}
+            for every $U\in\uniformity[X]$ there exists
+                $V\in\uniformity[X]$ such that
+                $V\circ V\subseteq U$.
+    \end{enumerate}
+\end{struct}
+
+\begin{theorem}\label{uniform_space_from_filter}
+    Suppose $F$ is a filter on $S\times S$.
+    Suppose for every $U\in F$ we have $\identity{S}\subseteq U$.
+    Suppose for every $U\in F$ we have $\converse{U}\in F$.
+    Suppose for every $U\in F$ there exists $V\in F$ such that
+        $V\circ V\subseteq U$.
+    Then
+        $\structure[uniform space]{
+            \carrier=S,
+            \uniformity=F
+        }$
+        is a uniform space.
+\end{theorem}
+\begin{proof}
+    Let $X=
+        \structure[uniform space]{
+            \carrier=S,
+            \uniformity=F
+        }$.
+    $\carrier[X]=S$ by
+        \auto{uniform_spaceaggregateprojection_carrier}.
+    $\uniformity[X]=F$ by
+        \auto{uniform_spaceaggregateprojection_uniformity}.
+    Hence $\uniformity[X]$ is a filter on
+        $\carrier[X]\times\carrier[X]$.
+    Hence $\uniformity[X]\subseteq
+        \pow{\carrier[X]\times\carrier[X]}$
+        by \auto{filter,pow_iff,subseteq}.
+    For every $U\in\uniformity[X]$ we have
+        $\identity{\carrier[X]}\subseteq U$.
+    For every $U\in\uniformity[X]$ we have
+        $\converse{U}\in\uniformity[X]$.
+    For every $U\in\uniformity[X]$ there exists
+        $V\in\uniformity[X]$ such that $V\circ V\subseteq U$
+        by \auto.
+    Hence $X$ is a uniform space by
+        \auto{uniform_space,uniform_spaceaggregateexact}.
+\end{proof}
+
+\begin{proposition}\label{uniform_entourage_type}
+    Let $X$ be a uniform space and $U\in\uniformity[X]$.
+    Then $U\subseteq\carrier[X]\times\carrier[X]$.
+\end{proposition}
+\begin{proof}
+    $U\in\pow{\carrier[X]\times\carrier[X]}$
+        by \auto{uniformity_filter,filter,pow_iff,subseteq}.
+    Follows by \auto{pow_iff,subseteq}.
+\end{proof}
+
+\begin{proposition}\label{uniform_top_entourage}
+    Let $X$ be a uniform space.
+    Then $\carrier[X]\times\carrier[X]\in\uniformity[X]$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{uniformity_filter,filter}.
+\end{proof}
+
+\begin{proposition}\label{uniform_entourage_intersection}
+    Let $X$ be a uniform space and $U,V\in\uniformity[X]$.
+    Then $U\inter V\in\uniformity[X]$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{uniformity_filter,filter}.
+\end{proof}
+
+\begin{proposition}\label{uniform_entourage_upward}
+    Let $X$ be a uniform space and $U\in\uniformity[X]$.
+    Suppose $U\subseteq V\subseteq\carrier[X]\times\carrier[X]$.
+    Then $V\in\uniformity[X]$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{uniformity_filter,filter}.
+\end{proof}
+
+\begin{proposition}\label{uniform_entourage_reflexive}
+    Let $X$ be a uniform space, $U\in\uniformity[X]$, and
+        $x\in\carrier[X]$.
+    Then $(x,x)\in U$.
+\end{proposition}
+\begin{proof}
+    $(x,x)\in\identity{\carrier[X]}$ by \obv{id_iff}.
+    Follows by \auto{uniformity_diagonal,subseteq}.
+\end{proof}
+
+\begin{theorem}\label{inhabited_uniformity_is_proper_filter}
+    Let $X$ be a uniform space.
+    Suppose $\carrier[X]$ is inhabited.
+    Then $\uniformity[X]$ is a proper filter on
+        $\carrier[X]\times\carrier[X]$.
+\end{theorem}
+\begin{proof}
+    $\uniformity[X]$ is a filter on
+        $\carrier[X]\times\carrier[X]$ by \obv{uniformity_filter}.
+    $\uniformity[X]\subseteq
+        \pow{\carrier[X]\times\carrier[X]}$
+        by \obv{filter,pow_iff,subseteq}.
+    Hence $\uniformity[X]$ is a family of subsets of
+        $\carrier[X]\times\carrier[X]$
+        by \obv{pow_iff,subseteq}.
+    $\carrier[X]\times\carrier[X]\in\uniformity[X]$
+        by \obv{uniform_top_entourage}.
+    Take $x$ such that $x\in\carrier[X]$.
+    $(x,x)\in\identity{\carrier[X]}$ by \obv{id_iff}.
+    Hence $\identity{\carrier[X]}$ is inhabited.
+    For every $U\in\uniformity[X]$ we have
+        $\identity{\carrier[X]}\subseteq U$
+        by \obv{uniformity_diagonal}.
+    Hence $\emptyset\notin\uniformity[X]$
+        by \auto{emptyset,subseteq}.
+    $\uniformity[X]$ is closed under binary intersections
+        by \obv{uniform_entourage_intersection}.
+    $\uniformity[X]$ is upward-closed in
+        $\carrier[X]\times\carrier[X]$
+        by \obv{uniform_entourage_upward}.
+    Follows by \obv{proper_filter}.
+\end{proof}
+
+\begin{definition}\label{uniform_ball}
+    $\uniformBall{X}{U}{x}=\img{U}{\{x\}}$.
+\end{definition}
+
+\begin{proposition}\label{uniform_ball_iff}
+    $y\in\uniformBall{X}{U}{x}$ iff $(x,y)\in U$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{uniform_ball,img_singleton_iff}.
+\end{proof}
+
+\begin{proposition}\label{uniform_ball_monotone}
+    Suppose $U\subseteq V$.
+    Then $\uniformBall{X}{U}{x}\subseteq\uniformBall{X}{V}{x}$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{uniform_ball_iff,subseteq}.
+\end{proof}
+
+\begin{proposition}\label{uniform_ball_subset_carrier}
+    Let $X$ be a uniform space, $U\in\uniformity[X]$, and
+        $x\in\carrier[X]$.
+    Then $\uniformBall{X}{U}{x}\subseteq\carrier[X]$.
+\end{proposition}
+\begin{proof}
+    $U\subseteq\carrier[X]\times\carrier[X]$
+        by \obv{uniform_entourage_type}.
+    Follows by
+        \auto{uniform_ball_iff,subseteq,times_tuple_elim}.
+\end{proof}
+
+\begin{proposition}\label{uniform_ball_contains_centre}
+    Let $X$ be a uniform space.
+    Let $U\in\uniformity[X]$.
+    Let $x\in\carrier[X]$.
+    Then $x\in\uniformBall{X}{U}{x}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{uniform_ball_iff,uniform_entourage_reflexive}.
+\end{proof}
+
+\begin{definition}\label{uniform_open}
+    $\uniformOpen{X}{A}$ iff
+        $A\subseteq\carrier[X]$ and
+        for every $x\in A$ there exists $U\in\uniformity[X]$ such that
+            $\uniformBall{X}{U}{x}\subseteq A$.
+\end{definition}
+
+\begin{definition}\label{uniform_opens}
+    $\uniformOpens{X}=
+        \{A\in\pow{\carrier[X]}\mid\uniformOpen{X}{A}\}$.
+\end{definition}
+
+\begin{proposition}\label{uniform_opens_iff}
+    $A\in\uniformOpens{X}$ iff $\uniformOpen{X}{A}$.
+\end{proposition}
+\begin{proof}
+    If $A\in\uniformOpens{X}$, then $\uniformOpen{X}{A}$
+        by \obv{uniform_opens}.
+    If $\uniformOpen{X}{A}$, then $A\in\pow{\carrier[X]}$
+        by \auto{uniform_open,pow_iff,subseteq}.
+    Follows by \auto{uniform_opens}.
+\end{proof}
+
+\begin{proposition}\label{uniform_open_empty}
+    $\uniformOpen{X}{\emptyset}$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{uniform_open,emptyset_subseteq,emptyset}.
+\end{proof}
+
+\begin{proposition}\label{uniform_open_carrier}
+    Let $X$ be a uniform space.
+    Then $\uniformOpen{X}{\carrier[X]}$.
+\end{proposition}
+\begin{proof}
+    Let $U=\carrier[X]\times\carrier[X]$.
+    $U\in\uniformity[X]$ by \auto{uniform_top_entourage}.
+    For every $x\in\carrier[X]$ we have
+        $\uniformBall{X}{U}{x}\subseteq\carrier[X]$
+        by \obv{uniform_ball_subset_carrier}.
+    Follows by \obv{uniform_open,subseteq_refl}.
+\end{proof}
+
+\begin{theorem}\label{uniform_open_intersection}
+    Let $X$ be a uniform space.
+    Suppose $\uniformOpen{X}{A}$ and $\uniformOpen{X}{B}$.
+    Then $\uniformOpen{X}{A\inter B}$.
+\end{theorem}
+\begin{proof}
+    $A\subseteq\carrier[X]$ and $B\subseteq\carrier[X]$
+        by \obv{uniform_open}.
+    Hence $A\inter B\subseteq\carrier[X]$
+        by \obv{inter,subseteq}.
+    Show that for every $x\in A\inter B$ there exists
+        $W\in\uniformity[X]$ such that
+            $\uniformBall{X}{W}{x}\subseteq A\inter B$.
+    \begin{subproof}
+        Fix $x\in A\inter B$.
+        $x\in A$ and $x\in B$ by \obv{inter}.
+        Take $U\in\uniformity[X]$ such that
+            $\uniformBall{X}{U}{x}\subseteq A$
+            by \obv{uniform_open}.
+        Take $V\in\uniformity[X]$ such that
+            $\uniformBall{X}{V}{x}\subseteq B$
+            by \obv{uniform_open}.
+        Let $W=U\inter V$.
+        $W\in\uniformity[X]$
+            by \auto{uniform_entourage_intersection}.
+        Show that for every $y\in\uniformBall{X}{W}{x}$ we have
+            $y\in\uniformBall{X}{U}{x}\inter\uniformBall{X}{V}{x}$.
+        \begin{subproof}
+            Fix $y\in\uniformBall{X}{W}{x}$.
+            $(x,y)\in W$ by \obv{uniform_ball_iff}.
+            Hence $(x,y)\in U$ and $(x,y)\in V$ by \obv{inter}.
+            Hence $y\in\uniformBall{X}{U}{x}$ and
+                $y\in\uniformBall{X}{V}{x}$
+                by \obv{uniform_ball_iff}.
+            Follows by \obv{inter}.
+        \end{subproof}
+        Hence $\uniformBall{X}{W}{x}
+            \subseteq\uniformBall{X}{U}{x}\inter\uniformBall{X}{V}{x}$
+            by \obv{subseteq}.
+        Hence $\uniformBall{X}{W}{x}\subseteq A\inter B$
+            by \auto{inter,subseteq,subseteq_transitive}.
+    \end{subproof}
+    Follows by \obv{uniform_open}.
+\end{proof}
+
+\begin{theorem}\label{uniform_open_arbitrary_union}
+    Suppose for every $A\in F$ we have $\uniformOpen{X}{A}$.
+    Then $\uniformOpen{X}{\unions{F}}$.
+\end{theorem}
+\begin{proof}
+    Show that for every $x\in\unions{F}$ we have $x\in\carrier[X]$.
+    \begin{subproof}
+        Fix $x\in\unions{F}$.
+        Take $A\in F$ such that $x\in A$ by \obv{unions_iff}.
+        $A\subseteq\carrier[X]$ by \auto{uniform_open}.
+        Follows by \obv{subseteq}.
+    \end{subproof}
+    Hence $\unions{F}\subseteq\carrier[X]$ by \obv{subseteq}.
+    Show that for every $x\in\unions{F}$ there exists
+        $U\in\uniformity[X]$ such that
+            $\uniformBall{X}{U}{x}\subseteq\unions{F}$.
+    \begin{subproof}
+        Fix $x\in\unions{F}$.
+        Take $A\in F$ such that $x\in A$ by \obv{unions_iff}.
+        Take $U\in\uniformity[X]$ such that
+            $\uniformBall{X}{U}{x}\subseteq A$
+            by \auto{uniform_open}.
+        $A\subseteq\unions{F}$ by \auto{unions_iff,subseteq}.
+        Hence $\uniformBall{X}{U}{x}\subseteq\unions{F}$
+            by \obv{subseteq_transitive}.
+    \end{subproof}
+    Follows by \obv{uniform_open}.
+\end{proof}
+
+\begin{theorem}\label{uniform_opens_form_topology}
+    Let $X$ be a uniform space.
+    Then $\uniformOpens{X}$ is a topology on $\carrier[X]$.
+\end{theorem}
+\begin{proof}
+    $\uniformOpens{X}\subseteq\pow{\carrier[X]}$
+        by \obv{uniform_opens,subseteq}.
+    $\carrier[X]\in\uniformOpens{X}$
+        by \auto{uniform_opens_iff,uniform_open_carrier}.
+    For all $A,B\in\uniformOpens{X}$ we have
+        $A\inter B\in\uniformOpens{X}$
+        by \auto{uniform_opens_iff,uniform_open_intersection}.
+    Show that for every $F\subseteq\uniformOpens{X}$ we have
+        $\unions{F}\in\uniformOpens{X}$.
+    \begin{subproof}
+        Fix $F\subseteq\uniformOpens{X}$.
+        For every $A\in F$ we have $\uniformOpen{X}{A}$
+            by \auto{subseteq,uniform_opens_iff}.
+        Hence $\uniformOpen{X}{\unions{F}}$
+            by \obv{uniform_open_arbitrary_union}.
+        Follows by \obv{uniform_opens_iff}.
+    \end{subproof}
+    Follows by \obv{topology_family}.
+\end{proof}
+
+\begin{definition}\label{separated_uniform_space}
+    $X$ is separated uniform iff
+        $X$ is a uniform space and
+        $\inters{\uniformity[X]}=\identity{\carrier[X]}$.
+\end{definition}

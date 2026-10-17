@@ -1,0 +1,687 @@
+\import{algebra/module/kernel-image.tex}
+\import{algebra/group/quotient.tex}
+
+\section{Quotient modules}
+
+Let $N$ be a submodule of a left module $M$.  Its additive quotient is the
+existing exact quotient group.  Only scalar multiplication is descended: for
+each scalar, multiplication followed by the quotient projection is constant
+on additive cosets, and hence factors through the quotient without choosing a
+representative.
+
+\begin{definition}\label{quotient_module_representative_scalar}
+    $\quotientModuleRepresentativeScalar{R}{M}{N}{a}
+        =\groupQuotientProjection{\ModuleAdditiveGroup{M}}{N}
+            \circ\moduleScalarMap{M}{a}$.
+\end{definition}
+
+\begin{proposition}\label{quotient_module_representative_scalar_type}
+    Let $R$ be a ring.
+    Let $M$ be a left module over $R$.
+    Suppose $N$ is a submodule of $M$ over $R$.
+    Let $a\in\carrier[R]$.
+    Let $G=\ModuleAdditiveGroup{M}$.
+    Then
+        $\quotientModuleRepresentativeScalar{R}{M}{N}{a}\in
+            \funs{\carrier[M]}{\groupQuotientCarrier{G}{N}}$.
+\end{proposition}
+\begin{proof}
+    $G$ is a commutative group by
+        \obv{module_additive_group_is_exact_commutative_group}.
+    $\subgroup{N}{G}$ by \obv{submodule_additive_subgroup}.
+    Hence $\normalSubgroup{N}{G}$ by
+        \obv{commutative_group_subgroup_is_normal}.
+    Let $q=\groupQuotientProjection{G}{N}$ and
+        $s=\moduleScalarMap{M}{a}$.
+    $q\in\funs{\carrier[G]}{\groupQuotientCarrier{G}{N}}$ by
+        \auto{group_quotient_projection_type}.
+    $s\in\funs{\carrier[M]}{\carrier[M]}$ by
+        \auto{module_scalar_map_type}.
+    $\carrier[G]=\carrier[M]$ by
+        \auto{module_additive_group_fields}.
+    Hence $q\circ s\in
+        \funs{\carrier[M]}{\groupQuotientCarrier{G}{N}}$ by
+        \obv{funs_circ}.
+    Follows by \auto{quotient_module_representative_scalar}.
+\end{proof}
+
+\begin{proposition}\label{quotient_module_representative_scalar_apply}
+    Let $R$ be a ring.
+    Let $M$ be a left module over $R$.
+    Suppose $N$ is a submodule of $M$ over $R$.
+    Let $a\in\carrier[R]$ and $x\in\carrier[M]$.
+    Let $G=\ModuleAdditiveGroup{M}$ and
+        $E=\subgroupCosetRelation{G}{N}$.
+    Then
+        $\apply{\quotientModuleRepresentativeScalar{R}{M}{N}{a}}{x}
+            =\equivalenceClass{E}{\scalarMul[M](a,x)}$.
+\end{proposition}
+\begin{proof}
+    $G$ is a commutative group by
+        \obv{module_additive_group_is_exact_commutative_group}.
+    $\subgroup{N}{G}$ by \obv{submodule_additive_subgroup}.
+    Hence $\normalSubgroup{N}{G}$ by
+        \obv{commutative_group_subgroup_is_normal}.
+    Let $q=\groupQuotientProjection{G}{N}$ and
+        $s=\moduleScalarMap{M}{a}$.
+    $q$ and $s$ are functions by
+        \auto{group_quotient_projection_type,module_scalar_map_type,
+            funs_is_function}.
+    $\dom{s}=\carrier[M]=\carrier[G]=\dom{q}$ and
+        $\ran{s}\subseteq\carrier[M]$ by
+        \auto{module_scalar_map_type,group_quotient_projection_type,
+            module_additive_group_fields,funs,funs_ran}.
+    Hence $q$ is composable with $s$.
+    $s(x)=\scalarMul[M](a,x)$ by \auto{module_scalar_map_apply}.
+    Hence $s(x)\in\carrier[G]$ by
+        \auto{module_scalar_type,module_additive_group_fields}.
+    $(q\circ s)(x)=q(s(x))$ by \obv{circ_apply}.
+    $q(s(x))=\equivalenceClass{E}{s(x)}$ by
+        \auto{group_quotient_projection_apply}.
+    Follows by \auto{quotient_module_representative_scalar}.
+\end{proof}
+
+\begin{proposition}\label{quotient_module_representative_scalar_compatible}
+    Let $R$ be a ring.
+    Let $M$ be a left module over $R$.
+    Suppose $N$ is a submodule of $M$ over $R$.
+    Let $a\in\carrier[R]$.
+    Let $G=\ModuleAdditiveGroup{M}$ and
+        $E=\subgroupCosetRelation{G}{N}$.
+    Then
+        $\quotientCompatible{
+            \quotientModuleRepresentativeScalar{R}{M}{N}{a}}
+            {\carrier[M]}{E}$.
+\end{proposition}
+\begin{proof}
+    Let $s=\moduleScalarMap{M}{a}$ and
+        $h=\quotientModuleRepresentativeScalar{R}{M}{N}{a}$.
+    $G$ is a group by \obv{module_additive_group_is_group}.
+    $\groupHom{s}{G}{G}$ by \auto{module_scalar_map_group_hom}.
+    Show that for all $x,y\in\carrier[M]$ such that $x\mathrel{E}y$
+        we have $h(x)=h(y)$.
+    \begin{subproof}
+        Fix $x,y\in\carrier[M]$.
+        Assume $x\mathrel{E}y$.
+        Hence $x,y\in\carrier[G]$ and
+            $\mul[G](\groupInv[G](x),y)\in N$ by
+            \auto{subgroup_coset_relation_iff,
+                module_additive_group_fields}.
+        Let $d=\mul[G](\groupInv[G](x),y)$.
+        $\groupInv[G](x)\in\carrier[G]$ by
+            \obv{group_inverse_type}.
+        Hence $d\in\carrier[G]$ by
+            \obv{group_is_monoid,monoid_is_magma,magma_welldef}.
+        Hence $d\in\carrier[M]$ by
+            \auto{module_additive_group_fields}.
+        $s(d)=\scalarMul[M](a,d)$ by
+            \auto{module_scalar_map_apply}.
+        Hence $s(d)\in N$ by \auto{submodule_scalar}.
+        $s(d)=\mul[G](s(\groupInv[G](x)),s(y))$ by
+            \auto{group_hom_mul}.
+        $s(\groupInv[G](x))=\groupInv[G](s(x))$ by
+            \obv{group_hom_inverse}.
+        Hence $\mul[G](\groupInv[G](s(x)),s(y))\in N$.
+        $s(x),s(y)\in\carrier[G]$ by
+            \obv{group_hom_apply_type}.
+        Hence $s(x)\mathrel{E}s(y)$ by
+            \auto{subgroup_coset_relation_iff}.
+        Hence
+            $\equivalenceClass{E}{s(x)}
+                =\equivalenceClass{E}{s(y)}$ by
+            \auto{submodule_additive_subgroup,
+                subgroup_coset_relation_equivalence,
+                equiv_implies_equivanlence_classes_eq}.
+        $s(x)=\scalarMul[M](a,x)$ and
+            $s(y)=\scalarMul[M](a,y)$ by
+            \auto{module_scalar_map_apply}.
+        $h(x)=\equivalenceClass{E}{\scalarMul[M](a,x)}$ and
+            $h(y)=\equivalenceClass{E}{\scalarMul[M](a,y)}$ by
+            \auto{quotient_module_representative_scalar_apply}.
+    \end{subproof}
+    Follows by \auto{quotient_compatible}.
+\end{proof}
+
+\begin{definition}\label{quotient_module_scalar_section}
+    $\quotientModuleScalarSection{R}{M}{N}{a}
+        =\quotientDescent{
+            \quotientModuleRepresentativeScalar{R}{M}{N}{a}}
+            {\carrier[M]}
+            {\subgroupCosetRelation{\ModuleAdditiveGroup{M}}{N}}$.
+\end{definition}
+
+\begin{proposition}\label{quotient_module_scalar_section_type}
+    Let $R$ be a ring.
+    Let $M$ be a left module over $R$.
+    Suppose $N$ is a submodule of $M$ over $R$.
+    Let $a\in\carrier[R]$.
+    Let $G=\ModuleAdditiveGroup{M}$ and
+        $Q=\quotientGroup{G}{N}$.
+    Then $\quotientModuleScalarSection{R}{M}{N}{a}\in
+        \funs{\carrier[Q]}{\carrier[Q]}$.
+\end{proposition}
+\begin{proof}
+    Let $E=\subgroupCosetRelation{G}{N}$ and
+        $h=\quotientModuleRepresentativeScalar{R}{M}{N}{a}$.
+    $\subgroup{N}{G}$ by \obv{submodule_additive_subgroup}.
+    $E$ is an equivalence on $\carrier[G]$ by
+        \auto{subgroup_coset_relation_equivalence}.
+    $\carrier[G]=\carrier[M]$ by
+        \auto{module_additive_group_fields}.
+    Hence $E$ is an equivalence on $\carrier[M]$.
+    $h\in\funs{\carrier[M]}{\groupQuotientCarrier{G}{N}}$ by
+        \auto{quotient_module_representative_scalar_type}.
+    $\quotientCompatible{h}{\carrier[M]}{E}$ by
+        \auto{quotient_module_representative_scalar_compatible}.
+    Hence $\quotientDescent{h}{\carrier[M]}{E}\in
+        \funs{\quotient{\carrier[M]}{E}}{
+            \groupQuotientCarrier{G}{N}}$ by
+        \obv{quotient_descent_type}.
+    $\quotient{\carrier[M]}{E}
+        =\groupQuotientCarrier{G}{N}=\carrier[Q]$ by
+        \auto{module_additive_group_fields,group_quotient_carrier,
+            quotient_group_carrier}.
+    Follows by \auto{quotient_module_scalar_section}.
+\end{proof}
+
+\begin{proposition}\label{quotient_module_scalar_section_apply}
+    Let $R$ be a ring.
+    Let $M$ be a left module over $R$.
+    Suppose $N$ is a submodule of $M$ over $R$.
+    Let $a\in\carrier[R]$ and $x\in\carrier[M]$.
+    Let $G=\ModuleAdditiveGroup{M}$ and
+        $E=\subgroupCosetRelation{G}{N}$.
+    Then
+        $\apply{\quotientModuleScalarSection{R}{M}{N}{a}}{
+            \equivalenceClass{E}{x}}
+        =\equivalenceClass{E}{\scalarMul[M](a,x)}$.
+\end{proposition}
+\begin{proof}
+    Let $h=\quotientModuleRepresentativeScalar{R}{M}{N}{a}$.
+    $\subgroup{N}{G}$ by \obv{submodule_additive_subgroup}.
+    $E$ is an equivalence on $\carrier[G]$ by
+        \auto{subgroup_coset_relation_equivalence}.
+    $\carrier[G]=\carrier[M]$ by
+        \auto{module_additive_group_fields}.
+    Hence $E$ is an equivalence on $\carrier[M]$.
+    $h\in\funs{\carrier[M]}{\groupQuotientCarrier{G}{N}}$ by
+        \auto{quotient_module_representative_scalar_type}.
+    $\quotientCompatible{h}{\carrier[M]}{E}$ by
+        \auto{quotient_module_representative_scalar_compatible}.
+    $\apply{\quotientDescent{h}{\carrier[M]}{E}}{
+        \equivalenceClass{E}{x}}=h(x)$ by
+        \obv{quotient_descent_apply}.
+    $h(x)=\equivalenceClass{E}{\scalarMul[M](a,x)}$ by
+        \auto{quotient_module_representative_scalar_apply}.
+    Follows by \auto{quotient_module_scalar_section}.
+\end{proof}
+
+\begin{definition}\label{quotient_module_scalar_op}
+    $\quotientModuleScalarOp:
+        \Set\to\Set\to\Set\to\Set\to\Set\to\Set
+        =\fun{R,M,N,a,U:\Set}{
+            \apply{\quotientModuleScalarSection{R}{M}{N}{a}}{U}}$.
+\end{definition}
+
+\begin{definition}\label{quotient_module_additive_group}
+    $\quotientModuleAdditiveGroup{M}{N}
+        =\quotientGroup{\ModuleAdditiveGroup{M}}{N}$.
+\end{definition}
+
+\begin{definition}\label{quotient_module_scalar_graph}
+    $\quotientModuleScalarGraph{R}{M}{N}
+        =\Apply{\heteroBinaryGraphOnOp}{
+            \carrier[R],
+            \carrier[\quotientModuleAdditiveGroup{M}{N}],
+            \Apply{\quotientModuleScalarOp}{R,M,N}}$.
+\end{definition}
+
+\begin{definition}\label{quotient_module}
+    $\QuotientModule{R}{M}{N}=
+        \structure[left module over R]{
+            \carrier=\carrier[\quotientModuleAdditiveGroup{M}{N}],
+            \mul=\mul[\quotientModuleAdditiveGroup{M}{N}],
+            \neutral=\neutral[\quotientModuleAdditiveGroup{M}{N}],
+            \groupInv=\groupInv[\quotientModuleAdditiveGroup{M}{N}],
+            \scalarMul=\quotientModuleScalarGraph{R}{M}{N}
+        }$.
+\end{definition}
+
+\begin{proposition}\label{quotient_module_fields}
+    Let $G=\ModuleAdditiveGroup{M}$ and $Q=\quotientGroup{G}{N}$.
+    Let $P=\QuotientModule{R}{M}{N}$.
+    Then $\carrier[P]=\carrier[Q]$ and
+        $\mul[P]=\mul[Q]$ and
+        $\neutral[P]=\neutral[Q]$ and
+        $\groupInv[P]=\groupInv[Q]$ and
+        $\scalarMul[P]=\Apply{\heteroBinaryGraphOnOp}{
+            \carrier[R],\carrier[Q],
+            \Apply{\quotientModuleScalarOp}{R,M,N}}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{quotient_module,quotient_module_additive_group,
+            quotient_module_scalar_graph,
+            left_moduleaggregateprojection_carrier,
+            left_moduleaggregateprojection_mul,
+            left_moduleaggregateprojection_neutral,
+            left_moduleaggregateprojection_groupInv,
+            left_moduleaggregateprojection_scalarMul}.
+\end{proof}
+
+\begin{proposition}\label{quotient_module_scalar_type}
+    Let $R$ be a ring.
+    Let $M$ be a left module over $R$.
+    Suppose $N$ is a submodule of $M$ over $R$.
+    Let $P=\QuotientModule{R}{M}{N}$.
+    Then $\scalarMul[P]\in
+        \funs{\carrier[R]\times\carrier[P]}{\carrier[P]}$.
+\end{proposition}
+\begin{proof}
+    Let $G=\ModuleAdditiveGroup{M}$ and $Q=\quotientGroup{G}{N}$.
+    $\carrier[P]=\carrier[Q]$ by \auto{quotient_module_fields}.
+    Show that for all $a,U$ such that $a\in\carrier[R]$ and
+        $U\in\carrier[Q]$ we have
+        $\Apply{\quotientModuleScalarOp}{R,M,N,a,U}\in\carrier[Q]$.
+    \begin{subproof}
+        Fix $a,U$.
+        Assume $a\in\carrier[R]$ and $U\in\carrier[Q]$.
+        $\quotientModuleScalarSection{R}{M}{N}{a}\in
+            \funs{\carrier[Q]}{\carrier[Q]}$ by
+            \obv{quotient_module_scalar_section_type}.
+        $\apply{\quotientModuleScalarSection{R}{M}{N}{a}}{U}
+            \in\carrier[Q]$ by \obv{funs_type_apply}.
+        Follows by \obv{quotient_module_scalar_op}.
+    \end{subproof}
+    Follows by
+        \auto{quotient_module_fields,
+            logical_heterogeneous_binary_graph_on_type}.
+\end{proof}
+
+\begin{proposition}\label{quotient_module_scalar_apply}
+    Let $R$ be a ring.
+    Let $M$ be a left module over $R$.
+    Suppose $N$ is a submodule of $M$ over $R$.
+    Let $a\in\carrier[R]$ and $x\in\carrier[M]$.
+    Let $G=\ModuleAdditiveGroup{M}$ and
+        $E=\subgroupCosetRelation{G}{N}$.
+    Let $P=\QuotientModule{R}{M}{N}$.
+    Then
+        $\scalarMul[P](a,\equivalenceClass{E}{x})
+            =\equivalenceClass{E}{\scalarMul[M](a,x)}$.
+\end{proposition}
+\begin{proof}
+    Let $Q=\quotientGroup{G}{N}$.
+    $\subgroup{N}{G}$ by \obv{submodule_additive_subgroup}.
+    Hence $E$ is an equivalence on $\carrier[G]$ by
+        \auto{subgroup_coset_relation_equivalence}.
+    $\carrier[G]=\carrier[M]$ by
+        \auto{module_additive_group_fields}.
+    Hence $\equivalenceClass{E}{x}\in\carrier[Q]$ by
+        \auto{quotient_group_carrier,group_quotient_carrier,quotient}.
+    $\carrier[P]=\carrier[Q]$ and
+        $\scalarMul[P]=\Apply{\heteroBinaryGraphOnOp}{
+            \carrier[R],\carrier[Q],
+            \Apply{\quotientModuleScalarOp}{R,M,N}}$ by
+        \auto{quotient_module_fields}.
+    Hence
+        $\scalarMul[P](a,\equivalenceClass{E}{x})
+            =\Apply{\quotientModuleScalarOp}{
+                R,M,N,a,\equivalenceClass{E}{x}}$ by
+        \auto{logical_heterogeneous_binary_graph_on_apply}.
+    $\Apply{\quotientModuleScalarOp}{
+        R,M,N,a,\equivalenceClass{E}{x}}
+        =\apply{\quotientModuleScalarSection{R}{M}{N}{a}}{
+            \equivalenceClass{E}{x}}$ by
+        \obv{quotient_module_scalar_op}.
+    Follows by \obv{quotient_module_scalar_section_apply}.
+\end{proof}
+
+\begin{proposition}\label{quotient_module_add_apply}
+    Let $R$ be a ring.
+    Let $M$ be a left module over $R$.
+    Suppose $N$ is a submodule of $M$ over $R$.
+    Let $x,y\in\carrier[M]$.
+    Let $G=\ModuleAdditiveGroup{M}$ and
+        $E=\subgroupCosetRelation{G}{N}$.
+    Let $P=\QuotientModule{R}{M}{N}$.
+    Then
+        $\mul[P](\equivalenceClass{E}{x},
+            \equivalenceClass{E}{y})
+        =\equivalenceClass{E}{\mul[M](x,y)}$.
+\end{proposition}
+\begin{proof}
+    Let $Q=\quotientGroup{G}{N}$.
+    $x,y\in\carrier[G]$ by \auto{module_additive_group_fields}.
+    $\normalSubgroup{N}{G}$ by
+        \obv{submodule_additive_subgroup,
+            module_additive_group_is_exact_commutative_group,
+            commutative_group_subgroup_is_normal}.
+    $\mul[P]=\mul[Q]$ by
+        \auto{quotient_module_fields,
+            quotient_module_additive_group}.
+    $\mul[G](x,y)=\mul[M](x,y)$ by
+        \auto{module_additive_group_fields}.
+    Follows by \auto{quotient_group_mul_apply}.
+\end{proof}
+
+\begin{theorem}\label{quotient_module_is_exact}
+    Let $R$ be a ring.
+    Let $M$ be a left module over $R$.
+    Suppose $N$ is a submodule of $M$ over $R$.
+    Then $\QuotientModule{R}{M}{N}$ is an exact left module over $R$.
+\end{theorem}
+\begin{proof}
+    Let $G=\ModuleAdditiveGroup{M}$ and
+        $Q=\quotientModuleAdditiveGroup{M}{N}$.
+    Let $P=\QuotientModule{R}{M}{N}$.
+    Let $E=\subgroupCosetRelation{G}{N}$.
+    $G$ is a commutative group by
+        \obv{module_additive_group_is_exact_commutative_group}.
+    $\subgroup{N}{G}$ by \obv{submodule_additive_subgroup}.
+    $Q=\quotientGroup{G}{N}$ by
+        \obv{quotient_module_additive_group}.
+    Hence $Q$ is an exact commutative group by
+        \auto{commutative_quotient_group_is_exact}.
+    $\carrier[P]=\carrier[Q]$ and $\mul[P]=\mul[Q]$ and
+        $\neutral[P]=\neutral[Q]$ and
+        $\groupInv[P]=\groupInv[Q]$ by
+        \auto{quotient_module_fields}.
+    $\scalarMul[P]\in
+        \funs{\carrier[R]\times\carrier[P]}{\carrier[P]}$ by
+        \obv{quotient_module_scalar_type}.
+    $\carrier[Q]=\groupQuotientCarrier{G}{N}$ by
+        \auto{quotient_module_additive_group,quotient_group_carrier}.
+
+    Show that for all $a,U,V$ such that $a\in\carrier[R]$ and
+        $U,V\in\carrier[P]$ we have
+        $\scalarMul[P](a,\mul[P](U,V))
+            =\mul[P](\scalarMul[P](a,U),\scalarMul[P](a,V))$.
+    \begin{subproof}
+        Fix $a,U,V$.
+        Assume $a\in\carrier[R]$ and $U,V\in\carrier[P]$.
+        Hence $U,V\in\carrier[Q]$.
+        Take $x\in\carrier[G]$ such that
+            $U=\equivalenceClass{E}{x}$ by
+            \auto{group_quotient_carrier,quotient}.
+        Take $y\in\carrier[G]$ such that
+            $V=\equivalenceClass{E}{y}$ by
+            \auto{group_quotient_carrier,quotient}.
+        Hence $x,y\in\carrier[M]$ by
+            \auto{module_additive_group_fields}.
+        $\mul[G](x,y)=\mul[M](x,y)$ by
+            \auto{module_additive_group_fields}.
+        Hence $\mul[G](x,y)\in\carrier[M]$ by
+            \auto{module_is_group,group_is_monoid,
+                monoid_is_magma,magma_welldef}.
+        $\mul[P](U,V)=
+            \equivalenceClass{E}{\mul[M](x,y)}$ by
+            \auto{quotient_module_add_apply}.
+        Hence
+            $\scalarMul[P](a,\mul[P](U,V))
+                =\equivalenceClass{E}{
+                    \scalarMul[M](a,\mul[M](x,y))}$ by
+            \auto{quotient_module_scalar_apply}.
+        $\scalarMul[M](a,x),\scalarMul[M](a,y)\in\carrier[M]$ by
+            \obv{module_scalar_type}.
+        $\scalarMul[P](a,U)=
+            \equivalenceClass{E}{\scalarMul[M](a,x)}$ and
+            $\scalarMul[P](a,V)=
+            \equivalenceClass{E}{\scalarMul[M](a,y)}$ by
+            \auto{quotient_module_scalar_apply}.
+        Hence
+            $\mul[P](\scalarMul[P](a,U),\scalarMul[P](a,V))
+                =\equivalenceClass{E}{
+                    \mul[M](\scalarMul[M](a,x),
+                        \scalarMul[M](a,y))}$ by
+            \auto{quotient_module_add_apply}.
+        Follows by \auto{module_scalar_vector_distributive}.
+    \end{subproof}
+
+    Show that for all $a,b,U$ such that $a,b\in\carrier[R]$ and
+        $U\in\carrier[P]$ we have
+        $\scalarMul[P](\ringAdd[R](a,b),U)
+            =\mul[P](\scalarMul[P](a,U),\scalarMul[P](b,U))$.
+    \begin{subproof}
+        Fix $a,b,U$.
+        Assume $a,b\in\carrier[R]$ and $U\in\carrier[P]$.
+        Hence $U\in\carrier[Q]$.
+        Take $x\in\carrier[G]$ such that
+            $U=\equivalenceClass{E}{x}$ by
+            \auto{group_quotient_carrier,quotient}.
+        Hence $x\in\carrier[M]$ by
+            \auto{module_additive_group_fields}.
+        $\ringAdd[R](a,b)\in\carrier[R]$ by \obv{ring_add_type}.
+        Hence
+            $\scalarMul[P](\ringAdd[R](a,b),U)
+                =\equivalenceClass{E}{
+                    \scalarMul[M](\ringAdd[R](a,b),x)}$ by
+            \auto{quotient_module_scalar_apply}.
+        $\scalarMul[M](a,x),\scalarMul[M](b,x)\in\carrier[M]$ by
+            \obv{module_scalar_type}.
+        $\scalarMul[P](a,U)=
+            \equivalenceClass{E}{\scalarMul[M](a,x)}$ and
+            $\scalarMul[P](b,U)=
+            \equivalenceClass{E}{\scalarMul[M](b,x)}$ by
+            \auto{quotient_module_scalar_apply}.
+        Hence
+            $\mul[P](\scalarMul[P](a,U),\scalarMul[P](b,U))
+                =\equivalenceClass{E}{
+                    \mul[M](\scalarMul[M](a,x),
+                        \scalarMul[M](b,x))}$ by
+            \auto{quotient_module_add_apply}.
+        Follows by \auto{module_scalar_add_distributive}.
+    \end{subproof}
+
+    Show that for all $a,b,U$ such that $a,b\in\carrier[R]$ and
+        $U\in\carrier[P]$ we have
+        $\scalarMul[P](a,\scalarMul[P](b,U))
+            =\scalarMul[P](\ringMul[R](a,b),U)$.
+    \begin{subproof}
+        Fix $a,b,U$.
+        Assume $a,b\in\carrier[R]$ and $U\in\carrier[P]$.
+        Hence $U\in\carrier[Q]$.
+        Take $x\in\carrier[G]$ such that
+            $U=\equivalenceClass{E}{x}$ by
+            \auto{group_quotient_carrier,quotient}.
+        Hence $x\in\carrier[M]$ by
+            \auto{module_additive_group_fields}.
+        $\scalarMul[M](b,x)\in\carrier[M]$ by
+            \obv{module_scalar_type}.
+        $\scalarMul[P](b,U)=
+            \equivalenceClass{E}{\scalarMul[M](b,x)}$ by
+            \auto{quotient_module_scalar_apply}.
+        Hence
+            $\scalarMul[P](a,\scalarMul[P](b,U))
+                =\equivalenceClass{E}{
+                    \scalarMul[M](a,\scalarMul[M](b,x))}$ by
+            \auto{quotient_module_scalar_apply}.
+        $\ringMul[R](a,b)\in\carrier[R]$ by \obv{ring_mul_type}.
+        Hence
+            $\scalarMul[P](\ringMul[R](a,b),U)
+                =\equivalenceClass{E}{
+                    \scalarMul[M](\ringMul[R](a,b),x)}$ by
+            \auto{quotient_module_scalar_apply}.
+        Follows by \auto{module_scalar_associative}.
+    \end{subproof}
+
+    Show that for every $U\in\carrier[P]$ we have
+        $\scalarMul[P](\ringOne[R],U)=U$.
+    \begin{subproof}
+        Fix $U\in\carrier[P]$.
+        Hence $U\in\carrier[Q]$.
+        Take $x\in\carrier[G]$ such that
+            $U=\equivalenceClass{E}{x}$ by
+            \auto{group_quotient_carrier,quotient}.
+        Hence $x\in\carrier[M]$ by
+            \auto{module_additive_group_fields}.
+        $\ringOne[R]\in\carrier[R]$ by \obv{ring_one_type}.
+        $\scalarMul[P](\ringOne[R],U)
+            =\equivalenceClass{E}{\scalarMul[M](\ringOne[R],x)}$ by
+            \auto{quotient_module_scalar_apply}.
+        $\scalarMul[M](\ringOne[R],x)=x$ by
+            \obv{module_scalar_one}.
+    \end{subproof}
+    $P$ is a left module over $R$ by
+        \auto{quotient_module,left_moduleaggregateexact,left_module,
+            commutative_group}.
+    Follows by \auto{quotient_module,left_moduleaggregateexact}.
+\end{proof}
+
+\begin{theorem}\label{quotient_module_additive_group_exact}
+    Let $R$ be a ring.
+    Let $M$ be a left module over $R$.
+    Suppose $N$ is a submodule of $M$ over $R$.
+    Then
+        $\ModuleAdditiveGroup{\QuotientModule{R}{M}{N}}
+            =\quotientGroup{\ModuleAdditiveGroup{M}}{N}$.
+\end{theorem}
+\begin{proof}
+    Let $P=\QuotientModule{R}{M}{N}$ and
+        $G=\ModuleAdditiveGroup{M}$.
+    Let $Q=\quotientGroup{G}{N}$.
+    $P$ is an exact left module over $R$ by
+        \auto{quotient_module_is_exact}.
+    Hence $\ModuleAdditiveGroup{P}$ is an exact group by
+        \obv{module_additive_group_is_exact_commutative_group,
+            commutative_group_is_group}.
+    $G$ is a commutative group by
+        \obv{module_additive_group_is_exact_commutative_group}.
+    $\subgroup{N}{G}$ by \obv{submodule_additive_subgroup}.
+    Hence $Q$ is an exact group by
+        \auto{commutative_quotient_group_is_exact,
+            commutative_group_is_group}.
+    $\carrier[\ModuleAdditiveGroup{P}]=\carrier[Q]$ and
+        $\mul[\ModuleAdditiveGroup{P}]=\mul[Q]$ and
+        $\neutral[\ModuleAdditiveGroup{P}]=\neutral[Q]$ and
+        $\groupInv[\ModuleAdditiveGroup{P}]=\groupInv[Q]$ by
+        \auto{module_additive_group_fields,quotient_module_fields,
+            quotient_module_additive_group}.
+    Follows by \auto{exact_group_extensionality}.
+\end{proof}
+
+\begin{proposition}\label{quotient_module_carrier}
+    Let $R$ be a ring.
+    Let $M$ be a left module over $R$.
+    Suppose $N$ is a submodule of $M$ over $R$.
+    Then
+        $\carrier[\QuotientModule{R}{M}{N}]
+            =\groupQuotientCarrier{\ModuleAdditiveGroup{M}}{N}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{quotient_module_fields,quotient_module_additive_group,
+            quotient_group_carrier}.
+\end{proof}
+
+\begin{theorem}\label{quotient_module_projection_linear}
+    Let $R$ be a ring.
+    Let $M$ be a left module over $R$.
+    Suppose $N$ is a submodule of $M$ over $R$.
+    Let $G=\ModuleAdditiveGroup{M}$ and
+        $q=\groupQuotientProjection{G}{N}$.
+    Then $q$ is a linear map from $M$ to
+        $\QuotientModule{R}{M}{N}$ over $R$.
+\end{theorem}
+\begin{proof}
+    Let $P=\QuotientModule{R}{M}{N}$ and
+        $Q=\quotientGroup{G}{N}$.
+    $G$ is a commutative group by
+        \obv{module_additive_group_is_exact_commutative_group}.
+    $\subgroup{N}{G}$ by \auto{submodule_additive_subgroup}.
+    Hence $\normalSubgroup{N}{G}$ by
+        \obv{commutative_group_subgroup_is_normal}.
+    $P$ is a left module over $R$ by
+        \auto{quotient_module_is_exact}.
+    $\groupHom{q}{G}{Q}$ by
+        \auto{group_quotient_projection_hom}.
+    $\ModuleAdditiveGroup{P}=Q$ by
+        \auto{quotient_module_additive_group_exact}.
+    Hence $\groupHom{q}{\ModuleAdditiveGroup{M}}{
+        \ModuleAdditiveGroup{P}}$.
+    Show that for all $a,x$ such that $a\in\carrier[R]$ and
+        $x\in\carrier[M]$ we have
+        $q(\scalarMul[M](a,x))=\scalarMul[P](a,q(x))$.
+    \begin{subproof}
+        Fix $a,x$.
+        Assume $a\in\carrier[R]$ and $x\in\carrier[M]$.
+        Let $E=\subgroupCosetRelation{G}{N}$.
+        $\scalarMul[M](a,x)\in\carrier[M]$ by
+            \obv{module_scalar_type}.
+        Hence $\scalarMul[M](a,x)\in\carrier[G]$ by
+            \auto{module_additive_group_fields}.
+        $q(\scalarMul[M](a,x))=
+            \equivalenceClass{E}{\scalarMul[M](a,x)}$ by
+            \auto{group_quotient_projection_apply}.
+        $x\in\carrier[G]$ by
+            \auto{module_additive_group_fields}.
+        Hence $q(x)=\equivalenceClass{E}{x}$ by
+            \auto{group_quotient_projection_apply}.
+        $\scalarMul[P](a,\equivalenceClass{E}{x})
+            =\equivalenceClass{E}{\scalarMul[M](a,x)}$ by
+            \obv{quotient_module_scalar_apply}.
+    \end{subproof}
+    Follows by \auto{linear_map}.
+\end{proof}
+
+\begin{theorem}\label{quotient_module_projection_surjective}
+    Let $R$ be a ring.
+    Let $M$ be a left module over $R$.
+    Suppose $N$ is a submodule of $M$ over $R$.
+    Let $G=\ModuleAdditiveGroup{M}$ and
+        $q=\groupQuotientProjection{G}{N}$.
+    Then $q\in\surj{\carrier[M]}{
+        \carrier[\QuotientModule{R}{M}{N}]}$.
+\end{theorem}
+\begin{proof}
+    $G$ is a commutative group by
+        \obv{module_additive_group_is_exact_commutative_group}.
+    $\subgroup{N}{G}$ by \obv{submodule_additive_subgroup}.
+    Hence $\normalSubgroup{N}{G}$ by
+        \obv{commutative_group_subgroup_is_normal}.
+    $q\in\surj{\carrier[G]}{\groupQuotientCarrier{G}{N}}$ by
+        \auto{group_quotient_projection_surjective}.
+    $\carrier[G]=\carrier[M]$ by
+        \auto{module_additive_group_fields}.
+    $\carrier[\QuotientModule{R}{M}{N}]
+        =\groupQuotientCarrier{G}{N}$ by
+        \auto{quotient_module_carrier}.
+\end{proof}
+
+\begin{corollary}\label{quotient_module_projection_module_surjection}
+    Let $R$ be a ring.
+    Let $M$ be a left module over $R$.
+    Suppose $N$ is a submodule of $M$ over $R$.
+    Let $q=\groupQuotientProjection{\ModuleAdditiveGroup{M}}{N}$.
+    Then $q$ is a module surjection from $M$ to
+        $\QuotientModule{R}{M}{N}$ over $R$.
+\end{corollary}
+\begin{proof}
+    Follows by
+        \auto{module_surjection,quotient_module_projection_linear,
+            quotient_module_projection_surjective}.
+\end{proof}
+
+\begin{theorem}\label{quotient_module_projection_kernel}
+    Let $R$ be a ring.
+    Let $M$ be a left module over $R$.
+    Suppose $N$ is a submodule of $M$ over $R$.
+    Let $G=\ModuleAdditiveGroup{M}$ and
+        $q=\groupQuotientProjection{G}{N}$.
+    Then
+        $\moduleKernel{q}{M}=N$.
+\end{theorem}
+\begin{proof}
+    Let $P=\QuotientModule{R}{M}{N}$ and
+        $Q=\quotientGroup{G}{N}$.
+    $G$ is a commutative group by
+        \obv{module_additive_group_is_exact_commutative_group}.
+    $\subgroup{N}{G}$ by \auto{submodule_additive_subgroup}.
+    Hence $\normalSubgroup{N}{G}$ by
+        \obv{commutative_group_subgroup_is_normal}.
+    $\ModuleAdditiveGroup{P}=Q$ by
+        \auto{quotient_module_additive_group_exact}.
+    $\groupKernel{q}{G}=N$ by
+        \auto{group_quotient_projection_kernel}.
+    Follows by \auto{module_kernel}.
+\end{proof}

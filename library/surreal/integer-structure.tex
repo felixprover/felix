@@ -1,0 +1,421 @@
+\section{The ordered integral domain of surreal integers}
+
+\import{surreal/integer.tex}
+\import{algebra/ordered.tex}
+\import{set/logical-graph.tex}
+
+The surreal integers are values in the ambient surreal field.  To package
+them as a native algebra structure, the logical surreal operations are
+restricted to the integer carrier and collected into set-coded graphs.  The
+pointwise theorems below are the public boundary: ordinary algebraic notation
+need not expose this graphification step.
+
+\begin{definition}\label{surreal_integer_negation_op}
+    $\surrealIntegerNegationOp:\Set\to\Set
+        =\fun{x:\Set}{\surrealNeg{x}}$.
+\end{definition}
+
+\begin{definition}\label{surreal_integer_nonstrict_order_op}
+    $\surrealIntegerNonstrictOrderOp:\Set\to\Set\to\Prop
+        =\fun{x,y:\Set}{\surrealLe{x}{y}}$.
+\end{definition}
+
+\begin{definition}\label{surreal_integer_addition_graph}
+    $\surrealIntegerAdditionGraph=
+        \Apply{\binaryGraphOnOp}
+            {\surrealIntegers,\surrealIntegers,\surrealAddOp}$.
+\end{definition}
+
+\begin{definition}\label{surreal_integer_negation_graph}
+    $\surrealIntegerNegationGraph=
+        \Apply{\graphOnOp}
+            {\surrealIntegers,\surrealIntegers,\surrealIntegerNegationOp}$.
+\end{definition}
+
+\begin{definition}\label{surreal_integer_multiplication_graph}
+    $\surrealIntegerMultiplicationGraph=
+        \Apply{\binaryGraphOnOp}
+            {\surrealIntegers,\surrealIntegers,\surrealMulOp}$.
+\end{definition}
+
+\begin{definition}\label{surreal_integer_nonstrict_order}
+    $\surrealIntegerNonstrictOrder=
+        \Apply{\relationOnOp}
+            {\surrealIntegers,\surrealIntegerNonstrictOrderOp}$.
+\end{definition}
+
+\begin{proposition}\label{surreal_integer_addition_graph_type}
+    $\surrealIntegerAdditionGraph
+        \in\funs
+            {\surrealIntegers\times\surrealIntegers}
+            {\surrealIntegers}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{surreal_integer_addition_graph,logical_binary_graph_on_function,surreal_add,surreal_integer_addition_closed}.
+\end{proof}
+
+\begin{proposition}\label{surreal_integer_negation_graph_type}
+    $\surrealIntegerNegationGraph
+        \in\funs{\surrealIntegers}{\surrealIntegers}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{surreal_integer_negation_graph,logical_graph_on_function,surreal_integer_negation_op,surreal_integer_negation_closed}.
+\end{proof}
+
+\begin{proposition}\label{surreal_integer_multiplication_graph_type}
+    $\surrealIntegerMultiplicationGraph
+        \in\funs
+            {\surrealIntegers\times\surrealIntegers}
+            {\surrealIntegers}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{surreal_integer_multiplication_graph,logical_binary_graph_on_function,surreal_mul,surreal_integer_multiplication_closed}.
+\end{proof}
+
+\begin{proposition}\label{surreal_integer_nonstrict_order_type}
+    $\surrealIntegerNonstrictOrder
+        \subseteq\surrealIntegers\times\surrealIntegers$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{surreal_integer_nonstrict_order,logical_relation_on_subseteq}.
+\end{proof}
+
+\begin{proposition}\label{surreal_integer_addition_graph_application}
+    Let $x,y\in\surrealIntegers$.
+    Then
+        $\apply{\surrealIntegerAdditionGraph}{(x,y)}=\surrealAdd{x}{y}$.
+\end{proposition}
+\begin{proof}
+    $((x,y),\surrealAdd{x}{y})\in\surrealIntegerAdditionGraph$
+        by
+        \auto{surreal_integer_addition_graph,logical_binary_graph_on_membership,surreal_add}.
+    Follows by
+        \obv{surreal_integer_addition_graph_type,funs_is_function,function_apply_intro}.
+\end{proof}
+
+\begin{proposition}\label{surreal_integer_negation_graph_application}
+    Let $x\in\surrealIntegers$.
+    Then $\apply{\surrealIntegerNegationGraph}{x}=\surrealNeg{x}$.
+\end{proposition}
+\begin{proof}
+    $(x,\surrealNeg{x})\in\surrealIntegerNegationGraph$
+        by
+        \auto{surreal_integer_negation_graph,logical_graph_on_membership,surreal_integer_negation_op}.
+    Follows by
+        \obv{surreal_integer_negation_graph_type,funs_is_function,function_apply_intro}.
+\end{proof}
+
+\begin{proposition}\label{surreal_integer_multiplication_graph_application}
+    Let $x,y\in\surrealIntegers$.
+    Then
+        $\apply{\surrealIntegerMultiplicationGraph}{(x,y)}=\surrealMul{x}{y}$.
+\end{proposition}
+\begin{proof}
+    $((x,y),\surrealMul{x}{y})
+        \in\surrealIntegerMultiplicationGraph$
+        by
+        \auto{surreal_integer_multiplication_graph,logical_binary_graph_on_membership,surreal_mul}.
+    Follows by
+        \obv{surreal_integer_multiplication_graph_type,funs_is_function,function_apply_intro}.
+\end{proof}
+
+\begin{proposition}\label{surreal_integer_nonstrict_order_iff}
+    Let $x,y\in\surrealIntegers$.
+    Then
+        $x\mathrel{\surrealIntegerNonstrictOrder}y$ iff
+        $\surrealLe{x}{y}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{surreal_integer_nonstrict_order,logical_relation_on_membership,surreal_integer_nonstrict_order_op}.
+\end{proof}
+
+\begin{theorem}\label{surreal_integer_nonstrict_order_is_order}
+    $\surrealIntegerNonstrictOrder$ is an order on
+        $\surrealIntegers$.
+\end{theorem}
+\begin{proof}
+    $\surrealIntegerNonstrictOrder$ is a binary relation on
+        $\surrealIntegers$ by
+        \obv{surreal_integer_nonstrict_order_type}.
+    $\surrealIntegerNonstrictOrder$ is reflexive on
+        $\surrealIntegers$ by
+        \auto{reflexive_on,surreal_integer_nonstrict_order_iff,surreal_integer_is_surreal,surreal_le_reflexive}.
+    $\surrealIntegerNonstrictOrder$ is transitive by
+        \auto{transitive,surreal_integer_nonstrict_order_iff,surreal_integer_nonstrict_order_type,subseteq,times_tuple_elim,surreal_integer_is_surreal,surreal_le_transitive}.
+    $\surrealIntegerNonstrictOrder$ is antisymmetric by
+        \auto{antisymmetric,surreal_integer_nonstrict_order_iff,surreal_integer_nonstrict_order_type,subseteq,times_tuple_elim,surreal_integer_is_surreal,surreal_le_antisymmetric}.
+\end{proof}
+
+\begin{proposition}\label{surreal_integer_nonstrict_order_total}
+    For all $x,y\in\surrealIntegers$ we have
+        $x\mathrel{\surrealIntegerNonstrictOrder}y$ or
+        $y\mathrel{\surrealIntegerNonstrictOrder}x$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{surreal_integer_nonstrict_order_iff,surreal_integer_order_trichotomy,surreal_le}.
+\end{proof}
+
+\begin{proposition}\label{surreal_integer_nonstrict_order_addition}
+    Let $x,y,z\in\surrealIntegers$.
+    Suppose $x\mathrel{\surrealIntegerNonstrictOrder}y$.
+    Then $\surrealAdd{x}{z}
+            \mathrel{\surrealIntegerNonstrictOrder}
+        \surrealAdd{y}{z}$.
+\end{proposition}
+\begin{proof}
+    $(\surrealAdd{x}{z}\in\surrealIntegers\land
+        \surrealAdd{y}{z}\in\surrealIntegers)$
+        by \obv{surreal_integer_addition_closed}.
+    Follows by
+        \auto{surreal_integer_nonstrict_order_iff,surreal_integer_is_surreal,surreal_add_le_left}.
+\end{proof}
+
+\begin{proposition}\label{surreal_integer_nonstrict_order_multiplication}
+    Let $x,y\in\surrealIntegers$.
+    Suppose $\surrealZero\mathrel{\surrealIntegerNonstrictOrder}x$ and
+        $\surrealZero\mathrel{\surrealIntegerNonstrictOrder}y$.
+    Then $\surrealZero\mathrel{\surrealIntegerNonstrictOrder}
+        \surrealMul{x}{y}$.
+\end{proposition}
+\begin{proof}
+    $\surrealZero\in\surrealIntegers$
+        by \obv{surreal_integer_zero}.
+    $\surrealMul{x}{y}\in\surrealIntegers$
+        by \obv{surreal_integer_multiplication_closed}.
+    Follows by
+        \obv{surreal_integer_nonstrict_order_iff,surreal_integer_is_surreal,surreal_mul_nonneg_nonneg}.
+\end{proof}
+
+\begin{instance}\label{surreal_integer_ordered_integral_domain}
+    The ordered integral domain
+    $\SurrealIntegerDomain=
+        \structure[ordered integral domain]{
+            \carrier=\surrealIntegers,
+            \ringAdd=\surrealIntegerAdditionGraph,
+            \ringZero=\surrealZero,
+            \ringNeg=\surrealIntegerNegationGraph,
+            \ringMul=\surrealIntegerMultiplicationGraph,
+            \ringOne=\surrealOne,
+            \leq=\surrealIntegerNonstrictOrder
+        }$.
+\end{instance}
+\begin{proof}
+    $\carrier[\SurrealIntegerDomain]=\surrealIntegers$
+        by \obv{ordered_ringaggregateprojection_carrier}.
+    $\ringAdd[\SurrealIntegerDomain]=\surrealIntegerAdditionGraph$
+        by \obv{ordered_ringaggregateprojection_ringAdd}.
+    $\ringZero[\SurrealIntegerDomain]=\surrealZero$
+        by \obv{ordered_ringaggregateprojection_ringZero}.
+    $\ringNeg[\SurrealIntegerDomain]=\surrealIntegerNegationGraph$
+        by \obv{ordered_ringaggregateprojection_ringNeg}.
+    $\ringMul[\SurrealIntegerDomain]=\surrealIntegerMultiplicationGraph$
+        by \obv{ordered_ringaggregateprojection_ringMul}.
+    $\ringOne[\SurrealIntegerDomain]=\surrealOne$
+        by \obv{ordered_ringaggregateprojection_ringOne}.
+    $\leq[\SurrealIntegerDomain]=\surrealIntegerNonstrictOrder$
+        by \obv{ordered_ringaggregateprojection_leq}.
+
+    $\ringAdd[\SurrealIntegerDomain]
+        \in\funs
+            {\carrier[\SurrealIntegerDomain]
+                \times\carrier[\SurrealIntegerDomain]}
+            {\carrier[\SurrealIntegerDomain]}$
+        by \obv{surreal_integer_addition_graph_type}.
+    $\ringZero[\SurrealIntegerDomain]
+        \in\carrier[\SurrealIntegerDomain]$
+        by \obv{surreal_integer_zero}.
+    $\ringNeg[\SurrealIntegerDomain]
+        \in\funs
+            {\carrier[\SurrealIntegerDomain]}
+            {\carrier[\SurrealIntegerDomain]}$
+        by \obv{surreal_integer_negation_graph_type}.
+    $\ringMul[\SurrealIntegerDomain]
+        \in\funs
+            {\carrier[\SurrealIntegerDomain]
+                \times\carrier[\SurrealIntegerDomain]}
+            {\carrier[\SurrealIntegerDomain]}$
+        by \obv{surreal_integer_multiplication_graph_type}.
+    $\ringOne[\SurrealIntegerDomain]
+        \in\carrier[\SurrealIntegerDomain]$
+        by \obv{surreal_integer_one}.
+    $\leq[\SurrealIntegerDomain]
+        \subseteq
+        \carrier[\SurrealIntegerDomain]
+            \times\carrier[\SurrealIntegerDomain]$
+        by \obv{surreal_integer_nonstrict_order_type}.
+
+    For all $x,y\in\carrier[\SurrealIntegerDomain]$ we have
+        $\ringAdd[\SurrealIntegerDomain](x,y)=\surrealAdd{x}{y}$
+        by \auto{surreal_integer_addition_graph_application}.
+    For all $x\in\carrier[\SurrealIntegerDomain]$ we have
+        $\ringNeg[\SurrealIntegerDomain](x)=\surrealNeg{x}$
+        by \auto{surreal_integer_negation_graph_application}.
+    For all $x,y\in\carrier[\SurrealIntegerDomain]$ we have
+        $\ringMul[\SurrealIntegerDomain](x,y)=\surrealMul{x}{y}$
+        by \auto{surreal_integer_multiplication_graph_application}.
+    For all $x,y\in\carrier[\SurrealIntegerDomain]$ we have
+        $x\mathrel{\leq[\SurrealIntegerDomain]}y$ iff
+        $\surrealLe{x}{y}$
+        by \obv{surreal_integer_nonstrict_order_iff}.
+
+    For all $x,y\in\carrier[\SurrealIntegerDomain]$ we have
+        $\ringAdd[\SurrealIntegerDomain](x,y)
+            \in\carrier[\SurrealIntegerDomain]$
+        by \auto{surreal_integer_addition_closed}.
+    For all $x\in\carrier[\SurrealIntegerDomain]$ we have
+        $\ringNeg[\SurrealIntegerDomain](x)
+            \in\carrier[\SurrealIntegerDomain]$
+        by \auto{surreal_integer_negation_closed}.
+    For all $x,y\in\carrier[\SurrealIntegerDomain]$ we have
+        $\ringMul[\SurrealIntegerDomain](x,y)
+            \in\carrier[\SurrealIntegerDomain]$
+        by \auto{surreal_integer_multiplication_closed}.
+
+    For all $x,y,z\in\carrier[\SurrealIntegerDomain]$ we have
+        $\ringAdd[\SurrealIntegerDomain]
+            (x,\ringAdd[\SurrealIntegerDomain](y,z))
+        =\ringAdd[\SurrealIntegerDomain]
+            (\ringAdd[\SurrealIntegerDomain](x,y),z)$
+        by \auto{surreal_integer_additive_laws}.
+    For all $x,y\in\carrier[\SurrealIntegerDomain]$ we have
+        $\ringAdd[\SurrealIntegerDomain](x,y)
+        =\ringAdd[\SurrealIntegerDomain](y,x)$
+        by \auto{surreal_integer_additive_laws}.
+    For all $x\in\carrier[\SurrealIntegerDomain]$ we have
+        $\ringAdd[\SurrealIntegerDomain]
+            (\ringZero[\SurrealIntegerDomain],x)=x$
+        by \auto{surreal_integer_additive_laws}.
+    For all $x\in\carrier[\SurrealIntegerDomain]$ we have
+        $\ringAdd[\SurrealIntegerDomain]
+            (\ringNeg[\SurrealIntegerDomain](x),x)
+        =\ringZero[\SurrealIntegerDomain]$
+        by \auto{surreal_integer_additive_laws}.
+    For all $x,y,z\in\carrier[\SurrealIntegerDomain]$ we have
+        $\ringMul[\SurrealIntegerDomain]
+            (x,\ringMul[\SurrealIntegerDomain](y,z))
+        =\ringMul[\SurrealIntegerDomain]
+            (\ringMul[\SurrealIntegerDomain](x,y),z)$
+        by \auto{surreal_integer_multiplicative_laws}.
+    For all $x\in\carrier[\SurrealIntegerDomain]$ we have
+        $\ringMul[\SurrealIntegerDomain]
+            (\ringOne[\SurrealIntegerDomain],x)=x$
+        by \auto{surreal_integer_multiplicative_laws}.
+    For all $x\in\carrier[\SurrealIntegerDomain]$ we have
+        $\ringMul[\SurrealIntegerDomain]
+            (x,\ringOne[\SurrealIntegerDomain])=x$
+        by \auto{surreal_integer_multiplicative_laws}.
+    For all $x,y,z\in\carrier[\SurrealIntegerDomain]$ we have
+        $\ringMul[\SurrealIntegerDomain]
+            (x,\ringAdd[\SurrealIntegerDomain](y,z))
+        =\ringAdd[\SurrealIntegerDomain]
+            (\ringMul[\SurrealIntegerDomain](x,y),
+             \ringMul[\SurrealIntegerDomain](x,z))$
+        by \auto{surreal_integer_multiplicative_laws}.
+    For all $x,y,z\in\carrier[\SurrealIntegerDomain]$ we have
+        $\ringMul[\SurrealIntegerDomain]
+            (\ringAdd[\SurrealIntegerDomain](x,y),z)
+        =\ringAdd[\SurrealIntegerDomain]
+            (\ringMul[\SurrealIntegerDomain](x,z),
+             \ringMul[\SurrealIntegerDomain](y,z))$
+        by \auto{surreal_integer_additive_laws,surreal_integer_multiplicative_laws}.
+    For all $x,y\in\carrier[\SurrealIntegerDomain]$ we have
+        $\ringMul[\SurrealIntegerDomain](x,y)
+        =\ringMul[\SurrealIntegerDomain](y,x)$
+        by \auto{surreal_integer_multiplicative_laws}.
+    $\ringZero[\SurrealIntegerDomain]
+        \neq\ringOne[\SurrealIntegerDomain]$
+        by \obv{surreal_integer_zero_neq_one}.
+    For all $x,y\in\carrier[\SurrealIntegerDomain]$ such that
+        $\ringMul[\SurrealIntegerDomain](x,y)
+            =\ringZero[\SurrealIntegerDomain]$ we have
+        $x=\ringZero[\SurrealIntegerDomain]$ or
+        $y=\ringZero[\SurrealIntegerDomain]$
+        by \auto{surreal_integer_no_zero_divisors}.
+
+    $\leq[\SurrealIntegerDomain]$ is an order on
+        $\carrier[\SurrealIntegerDomain]$
+        by \auto{surreal_integer_nonstrict_order_is_order}.
+    For all $x,y\in\carrier[\SurrealIntegerDomain]$ we have
+        $x\mathrel{\leq[\SurrealIntegerDomain]}y$ or
+        $y\mathrel{\leq[\SurrealIntegerDomain]}x$
+        by \auto{surreal_integer_nonstrict_order_total}.
+    For all $x,y,z\in\carrier[\SurrealIntegerDomain]$ such that
+        $x\mathrel{\leq[\SurrealIntegerDomain]}y$ we have
+        $\ringAdd[\SurrealIntegerDomain](x,z)
+            \mathrel{\leq[\SurrealIntegerDomain]}
+        \ringAdd[\SurrealIntegerDomain](y,z)$
+        by \auto{surreal_integer_nonstrict_order_addition}.
+    For all $x,y\in\carrier[\SurrealIntegerDomain]$ such that
+        $\ringZero[\SurrealIntegerDomain]
+            \mathrel{\leq[\SurrealIntegerDomain]}x$ and
+        $\ringZero[\SurrealIntegerDomain]
+            \mathrel{\leq[\SurrealIntegerDomain]}y$ we have
+        $\ringZero[\SurrealIntegerDomain]
+            \mathrel{\leq[\SurrealIntegerDomain]}
+        \ringMul[\SurrealIntegerDomain](x,y)$
+        by \auto{surreal_integer_nonstrict_order_multiplication}.
+
+    Follows by \obv{ordered_ringaggregateexact}.
+\end{proof}
+
+\begin{proposition}\label{surreal_integer_domain_carrier}
+    $\carrier[\SurrealIntegerDomain]=\surrealIntegers$.
+\end{proposition}
+\begin{proof}
+    Follows by
+    \obv{surreal_integer_ordered_integral_domainprojection_carrier}.
+\end{proof}
+
+\begin{proposition}\label{surreal_integer_domain_addition}
+    Let $x,y\in\surrealIntegers$.
+    Then
+        $\ringAdd[\SurrealIntegerDomain](x,y)=\surrealAdd{x}{y}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+    \auto{surreal_integer_ordered_integral_domainprojection_ringAdd,surreal_integer_addition_graph_application}.
+\end{proof}
+
+\begin{proposition}\label{surreal_integer_domain_negation}
+    Let $x\in\surrealIntegers$.
+    Then $\ringNeg[\SurrealIntegerDomain](x)=\surrealNeg{x}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+    \auto{surreal_integer_ordered_integral_domainprojection_ringNeg,surreal_integer_negation_graph_application}.
+\end{proof}
+
+\begin{proposition}\label{surreal_integer_domain_multiplication}
+    Let $x,y\in\surrealIntegers$.
+    Then
+        $\ringMul[\SurrealIntegerDomain](x,y)=\surrealMul{x}{y}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+    \auto{surreal_integer_ordered_integral_domainprojection_ringMul,surreal_integer_multiplication_graph_application}.
+\end{proof}
+
+\begin{proposition}\label{surreal_integer_domain_order}
+    Let $x,y\in\surrealIntegers$.
+    Then
+        $x\mathrel{\leq[\SurrealIntegerDomain]}y$ iff
+        $\surrealLe{x}{y}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+    \obv{surreal_integer_ordered_integral_domainprojection_leq,surreal_integer_nonstrict_order_iff}.
+\end{proof}
+
+\begin{proposition}\label{surreal_integer_domain_is_exact}
+    $\SurrealIntegerDomain$ is an exact ordered integral domain.
+\end{proposition}
+\begin{proof}
+    Follows by
+    \obv{surreal_integer_ordered_integral_domain,surreal_integer_ordered_integral_domainshape}.
+\end{proof}

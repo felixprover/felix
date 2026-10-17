@@ -1,0 +1,188 @@
+\section{Topological convergence of sequences}
+
+\import{topology/filter-convergence.tex}
+\import{set/sequence-filter.tex}
+
+\begin{definition}\label{topological_sequence_convergence}
+    $\topologicalSequenceConverges{X}{s}{x}$ iff
+        $X$ is a topological space and
+        $s\in\funs{\naturals}{\carrier[X]}$ and
+        $\filterConverges{\sequenceTailFilter{\carrier[X]}{s}}{x}{X}$.
+\end{definition}
+
+\begin{proposition}\label{topological_sequence_convergence_space}
+    Suppose $\topologicalSequenceConverges{X}{s}{x}$.
+    Then $X$ is a topological space.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{topological_sequence_convergence}.
+\end{proof}
+
+\begin{proposition}\label{topological_sequence_convergence_sequence}
+    Suppose $\topologicalSequenceConverges{X}{s}{x}$.
+    Then $s\in\funs{\naturals}{\carrier[X]}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{topological_sequence_convergence}.
+\end{proof}
+
+\begin{proposition}\label{topological_sequence_convergence_point}
+    Suppose $\topologicalSequenceConverges{X}{s}{x}$.
+    Then $x\in\carrier[X]$.
+\end{proposition}
+\begin{proof}
+    $\filterConverges{\sequenceTailFilter{\carrier[X]}{s}}{x}{X}$
+        by \obv{topological_sequence_convergence}.
+    Follows by \obv{filter_converges}.
+\end{proof}
+
+\begin{theorem}\label{topological_sequence_convergence_iff_tendsto}
+    Let $X$ be a topological space.
+    Let $s\in\funs{\naturals}{\carrier[X]}$ and $x\in\carrier[X]$.
+    Then $\topologicalSequenceConverges{X}{s}{x}$ iff
+        $s$ tends from $\atTop{\naturalIndexOrder}$ on $\naturals$ to
+            $\neighbourhoods{x}{X}$ on $\carrier[X]$.
+\end{theorem}
+\begin{proof}
+    $\naturalIndexOrder$ is a directed quasiordered set by
+        \obv{natural_index_order_is_directed}.
+    $\atTop{\naturalIndexOrder}$ is a filter on
+        $\carrier[\naturalIndexOrder]$ by \obv{at_top_is_filter}.
+    Hence $\atTop{\naturalIndexOrder}$ is a filter on $\naturals$ by
+        \obv{natural_index_order_carrier}.
+    $\neighbourhoods{x}{X}$ is a filter on $\carrier[X]$ by
+        \obv{neighbourhoods_is_filter}.
+    $\filterPushforward{\naturals}{\carrier[X]}{s}
+        {\atTop{\naturalIndexOrder}}$ is a filter on $\carrier[X]$ by
+        \obv{filter_pushforward_is_filter}.
+    $\sequenceTailFilter{\carrier[X]}{s}
+        =\filterPushforward{\naturals}{\carrier[X]}{s}
+            {\atTop{\naturalIndexOrder}}$ by
+        \obv{sequence_tail_filter_is_pushforward_at_top}.
+    Follows by
+        \auto{topological_sequence_convergence,filter_converges,
+            filter_tendsto,filter_refines}.
+\end{proof}
+
+\begin{theorem}\label{topological_sequence_converges_iff_eventually_in_neighbourhoods}
+    Let $X$ be a topological space.
+    Let $s\in\funs{\naturals}{\carrier[X]}$ and $x\in\carrier[X]$.
+    Then $\topologicalSequenceConverges{X}{s}{x}$ iff
+        for every $N\in\neighbourhoods{x}{X}$ there exists
+            $K\in\naturals$ such that for every $n\in\naturals$
+            such that $K\subseteq n$ we have $s(n)\in N$.
+\end{theorem}
+\begin{proof}
+    Show that if $\topologicalSequenceConverges{X}{s}{x}$, then
+        for every $N\in\neighbourhoods{x}{X}$ there exists
+            $K\in\naturals$ such that for every $n\in\naturals$
+            such that $K\subseteq n$ we have $s(n)\in N$.
+    \begin{subproof}
+        Assume $\topologicalSequenceConverges{X}{s}{x}$.
+        $\filterConverges{\sequenceTailFilter{\carrier[X]}{s}}{x}{X}$
+            by \obv{topological_sequence_convergence}.
+        Hence $\neighbourhoods{x}{X}
+            \subseteq\sequenceTailFilter{\carrier[X]}{s}$
+            by \obv{filter_converges}.
+        Fix $N\in\neighbourhoods{x}{X}$.
+        Hence $N\in\sequenceTailFilter{\carrier[X]}{s}$ by \obv{subseteq}.
+        Take $K\in\naturals$ such that $\sequenceTail{s}{K}\subseteq N$
+            by \auto{sequence_tail_filter_iff}.
+        Show that for every $n\in\naturals$ such that $K\subseteq n$
+            we have $s(n)\in N$.
+        \begin{subproof}
+            Fix $n\in\naturals$.
+            Assume $K\subseteq n$.
+            $s(n)\in\sequenceTail{s}{K}$
+                by \obv{sequence_tail_contains_term}.
+            Follows by \obv{subseteq}.
+        \end{subproof}
+        Follows by \auto.
+    \end{subproof}
+
+    Show that if for every $N\in\neighbourhoods{x}{X}$ there exists
+        $K\in\naturals$ such that for every $n\in\naturals$
+        such that $K\subseteq n$ we have $s(n)\in N$, then
+        $\topologicalSequenceConverges{X}{s}{x}$.
+    \begin{subproof}
+        Assume for every $N\in\neighbourhoods{x}{X}$ there exists
+            $K\in\naturals$ such that for every $n\in\naturals$
+            such that $K\subseteq n$ we have $s(n)\in N$.
+        $\neighbourhoods{x}{X}$ is a filter on $\carrier[X]$
+            by \obv{neighbourhoods_is_filter}.
+        Show that $\neighbourhoods{x}{X}
+            \subseteq\sequenceTailFilter{\carrier[X]}{s}$.
+        \begin{subproof}
+            It suffices to show that every element of
+                $\neighbourhoods{x}{X}$ is an element of
+                $\sequenceTailFilter{\carrier[X]}{s}$ by \obv{subseteq}.
+            Fix $N\in\neighbourhoods{x}{X}$.
+            Take $K\in\naturals$ such that for every $n\in\naturals$
+                such that $K\subseteq n$ we have $s(n)\in N$.
+            Show that $\sequenceTail{s}{K}\subseteq N$.
+            \begin{subproof}
+                It suffices to show that every element of
+                    $\sequenceTail{s}{K}$ is an element of $N$
+                    by \obv{subseteq}.
+                Fix $y\in\sequenceTail{s}{K}$.
+                Take $n\in\naturalTail{K}$ such that $(n,y)\in s$
+                    by \auto{sequence_tail,img_iff}.
+                $n\in\naturals$ and $K\subseteq n$
+                    by \obv{natural_tail}.
+                Hence $s(n)\in N$.
+                $s(n)=y$ by \auto{funs_is_function,function_apply_iff}.
+            \end{subproof}
+            $N\subseteq\carrier[X]$ by \obv{filter}.
+            Follows by \auto{sequence_tail_filter_iff}.
+        \end{subproof}
+        Hence $\filterConverges
+            {\sequenceTailFilter{\carrier[X]}{s}}{x}{X}$
+            by \obv{filter_converges}.
+        Follows by \obv{topological_sequence_convergence}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{topological_sequence_convergence_invariant}
+    Let $X,Y$ be topological spaces.
+    Suppose $\carrier[X]=\carrier[Y]$ and $\opens[X]=\opens[Y]$.
+    Let $s\in\funs{\naturals}{\carrier[X]}$ and $x\in\carrier[X]$.
+    Then $\topologicalSequenceConverges{X}{s}{x}$ iff
+        $\topologicalSequenceConverges{Y}{s}{x}$.
+\end{theorem}
+\begin{proof}
+    $s\in\funs{\naturals}{\carrier[Y]}$ and $x\in\carrier[Y]$.
+    For every $N$ we have $N\in\neighbourhoods{x}{X}$ iff
+        $N\in\neighbourhoods{x}{Y}$ by \auto{neighbourhoods}.
+    Hence $\neighbourhoods{x}{X}=\neighbourhoods{x}{Y}$ by
+        set extensionality.
+    Follows by
+        \auto{topological_sequence_converges_iff_eventually_in_neighbourhoods}.
+\end{proof}
+
+\begin{theorem}\label{finite_shift_topological_sequence_convergence_iff}
+    Let $X$ be a topological space and $N$ be a natural number.
+    Let $s,t\in\funs{\naturals}{\carrier[X]}$.
+    Suppose for every $n\in\naturals$ we have $t(n)=s(N+n)$.
+    Then for every $x\in\carrier[X]$ we have
+        $\topologicalSequenceConverges{X}{t}{x}$ iff
+        $\topologicalSequenceConverges{X}{s}{x}$.
+\end{theorem}
+\begin{proof}
+    $\sequenceTailFilter{\carrier[X]}{t}
+        =\sequenceTailFilter{\carrier[X]}{s}$
+        by \obv{finite_shift_sequence_tail_filter}.
+    Follows by \auto{topological_sequence_convergence}.
+\end{proof}
+
+\begin{corollary}\label{equal_sequences_topological_convergence_iff}
+    Let $X$ be a topological space.
+    Let $s,t\in\funs{\naturals}{\carrier[X]}$.
+    Suppose $s=t$.
+    Then for every $x\in\carrier[X]$ we have
+        $\topologicalSequenceConverges{X}{s}{x}$ iff
+        $\topologicalSequenceConverges{X}{t}{x}$.
+\end{corollary}
+\begin{proof}
+    Follows.
+\end{proof}

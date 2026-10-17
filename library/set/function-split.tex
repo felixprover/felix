@@ -1,0 +1,229 @@
+\section{Splitting and joining coordinate blocks}
+
+\import{set/function-coordinate.tex}
+\import{set/function-gluing.tex}
+\import{set/product-map.tex}
+
+A function on the union of two index sets determines its two restrictions.
+Joining takes the union of the two graphs. This always recovers a function
+from its restrictions; arbitrary pairs can be joined to functions when the
+index sets are disjoint.
+
+\subsection{The two maps}
+
+\begin{definition}\label{function_split}
+    $\functionSplit{I}{J}{A}=\productPairing{\funs{I\union J}{A}}{
+        \functionRestriction{I\union J}{I}{A}}{\functionRestriction{I\union J}{J}{A}}$.
+\end{definition}
+
+\begin{definition}\label{function_join}
+    $\functionJoin{I}{J}{A}=\Apply{\graphOnDomainOp}{
+        \funs{I}{A}\times\funs{J}{A},\fun{p:\Set}{\fst{p}\union\snd{p}}}$.
+\end{definition}
+
+\begin{proposition}\label{function_split_type}
+    $\functionSplit{I}{J}{A}\in
+        \funs{\funs{I\union J}{A}}{\funs{I}{A}\times\funs{J}{A}}$.
+\end{proposition}
+\begin{proof}
+    $I\subseteq I\union J$ and $J\subseteq I\union J$ by \auto{subseteq,union_iff}.
+    $\functionRestriction{I\union J}{I}{A}\in\funs{\funs{I\union J}{A}}{\funs{I}{A}}$ and
+        $\functionRestriction{I\union J}{J}{A}\in\funs{\funs{I\union J}{A}}{\funs{J}{A}}$ by
+        \obv{function_restriction_type}.
+    Follows by \auto{function_split,product_pairing_type}.
+\end{proof}
+
+\begin{proposition}\label{function_split_apply}
+    Let $x\in\funs{I\union J}{A}$.
+    Then $(\functionSplit{I}{J}{A})(x)=(\restrl{x}{I},\restrl{x}{J})$.
+\end{proposition}
+\begin{proof}
+    $I\subseteq I\union J$ and $J\subseteq I\union J$ by \auto{subseteq,union_iff}.
+    Follows by \auto{function_split,product_pairing_apply,function_restriction_apply}.
+\end{proof}
+
+\begin{proposition}\label{function_join_apply}
+    Let $p\in\funs{I}{A}\times\funs{J}{A}$.
+    Then $(\functionJoin{I}{J}{A})(p)=\fst{p}\union\snd{p}$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{function_join,logical_graph_on_domain_apply}.
+\end{proof}
+
+\begin{proposition}\label{function_join_type}
+    Suppose $I$ is disjoint from $J$.
+    Then $\functionJoin{I}{J}{A}\in
+        \funs{\funs{I}{A}\times\funs{J}{A}}{\funs{I\union J}{A}}$.
+\end{proposition}
+\begin{proof}
+    For every $p\in\funs{I}{A}\times\funs{J}{A}$ we have
+        $\fst{p}\union\snd{p}\in\funs{I\union J}{A}$ by
+        \auto{fst_type,snd_type,disjoint_function_union_type}.
+    Follows by \auto{function_join,logical_graph_on_domain_type}.
+\end{proof}
+
+\subsection{Inverse laws}
+
+\begin{theorem}\label{function_join_split_apply}
+    Let $x\in\funs{I\union J}{A}$.
+    Then $(\functionJoin{I}{J}{A})((\functionSplit{I}{J}{A})(x))=x$.
+\end{theorem}
+\begin{proof}
+    $(\functionSplit{I}{J}{A})(x)\in\funs{I}{A}\times\funs{J}{A}$ by
+        \auto{function_split_type,funs_type_apply}.
+    $(\functionSplit{I}{J}{A})(x)=(\restrl{x}{I},\restrl{x}{J})$ by
+        \obv{function_split_apply}.
+    Follows by \auto{function_join_apply,fst_eq,snd_eq,function_union_restrictions}.
+\end{proof}
+
+\begin{theorem}\label{function_split_join_apply}
+    Suppose $I$ is disjoint from $J$.
+    Let $p\in\funs{I}{A}\times\funs{J}{A}$.
+    Then $(\functionSplit{I}{J}{A})((\functionJoin{I}{J}{A})(p))=p$.
+\end{theorem}
+\begin{proof}
+    Let $f=\fst{p}$ and $g=\snd{p}$.
+    $f\in\funs{I}{A}$ and $g\in\funs{J}{A}$ by \auto{fst_type,snd_type}.
+    $f\union g\in\funs{I\union J}{A}$ by \obv{disjoint_function_union_type}.
+    $f$ and $g$ are functions by \obv{funs_is_function}.
+    $f\union g$ is a function by \obv{funs_is_function}.
+    $f\subseteq f\union g$ and $g\subseteq f\union g$ by \auto{subseteq,union_iff}.
+    Hence $\restrl{f\union g}{I}=f$ and $\restrl{f\union g}{J}=g$ by
+        \auto{subfunction_eq_restrl,funs}.
+    $(\functionJoin{I}{J}{A})(p)=f\union g$ by \auto{function_join_apply}.
+    $(\functionSplit{I}{J}{A})(f\union g)=(f,g)$ by \auto{function_split_apply}.
+    $(f,g)=p$ by \auto{times_elem_is_tuple,pair_eq_pair_of_proj}.
+\end{proof}
+
+\begin{theorem}\label{function_split_bijection}
+    Suppose $I$ is disjoint from $J$.
+    Then $\functionSplit{I}{J}{A}\in
+        \bijections{\funs{I\union J}{A}}{\funs{I}{A}\times\funs{J}{A}}$.
+\end{theorem}
+\begin{proof}
+    Let $s=\functionSplit{I}{J}{A}$ and $j=\functionJoin{I}{J}{A}$.
+    $s\in\funs{\funs{I\union J}{A}}{\funs{I}{A}\times\funs{J}{A}}$ by
+        \auto{function_split_type}.
+    $j\in\funs{\funs{I}{A}\times\funs{J}{A}}{\funs{I\union J}{A}}$ by
+        \auto{function_join_type}.
+    For every $x\in\funs{I\union J}{A}$ we have $j(s(x))=x$ by
+        \auto{function_join_split_apply}.
+    Hence $j$ is a left inverse of $s$ by \obv{leftinverse_from_to_iff}.
+    Hence $s$ is an injection by \obv{leftinverse_implies_injection}.
+    For every $p\in\funs{I}{A}\times\funs{J}{A}$ we have $s(j(p))=p$ by
+        \auto{function_split_join_apply}.
+    Hence $j$ is a right inverse of $s$ by \obv{rightinverse_from_to_iff}.
+    Hence $s\in\surj{\funs{I\union J}{A}}{\funs{I}{A}\times\funs{J}{A}}$ by
+        \obv{rightinverse_implies_surjection}.
+    Follows by \auto{bijections}.
+\end{proof}
+
+\begin{theorem}\label{function_split_converse}
+    Suppose $I$ is disjoint from $J$.
+    Then $\converse{\functionSplit{I}{J}{A}}=\functionJoin{I}{J}{A}$.
+\end{theorem}
+\begin{proof}
+    Let $s=\functionSplit{I}{J}{A}$ and $j=\functionJoin{I}{J}{A}$.
+    $s\in\bijections{\funs{I\union J}{A}}{\funs{I}{A}\times\funs{J}{A}}$ by
+        \auto{function_split_bijection}.
+    Hence $s$ is an injection by \auto{bijections,surj,funs_is_function}.
+    Hence $\converse{s}$ is a left inverse of $s$ by
+        \obv{injective_converse_is_leftinverse}.
+    $\converse{s}\in\funs{\funs{I}{A}\times\funs{J}{A}}{\funs{I\union J}{A}}$ by
+        \obv{bijection_converse_is_bijection,bijections_to_funs}.
+    $j\in\funs{\funs{I}{A}\times\funs{J}{A}}{\funs{I\union J}{A}}$ by
+        \auto{function_join_type}.
+    Show that for every $p\in\funs{I}{A}\times\funs{J}{A}$ we have
+        $(\converse{s})(p)=j(p)$.
+    \begin{subproof}
+        Fix $p\in\funs{I}{A}\times\funs{J}{A}$.
+        $j(p)\in\funs{I\union J}{A}$ by \obv{funs_type_apply}.
+        $s(j(p))=p$ by \auto{function_split_join_apply}.
+        Follows by \auto{leftinverse,bijections_dom}.
+    \end{subproof}
+    Follows by \auto{typed_functions_equal_from_agreement}.
+\end{proof}
+
+\begin{corollary}\label{function_join_split}
+    Suppose $I$ is disjoint from $J$.
+    Then $\functionJoin{I}{J}{A}\circ\functionSplit{I}{J}{A}
+        =\identity{\funs{I\union J}{A}}$.
+\end{corollary}
+\begin{proof}
+    Follows by \auto{function_split_bijection,function_split_converse,bijection_converse_circ}.
+\end{proof}
+
+\begin{corollary}\label{function_split_join}
+    Suppose $I$ is disjoint from $J$.
+    Then $\functionSplit{I}{J}{A}\circ\functionJoin{I}{J}{A}
+        =\identity{\funs{I}{A}\times\funs{J}{A}}$.
+\end{corollary}
+\begin{proof}
+    Follows by \auto{function_split_bijection,function_split_converse,bijection_circ_converse}.
+\end{proof}
+
+\subsection{Coordinates of the joined function}
+
+\begin{proposition}\label{function_join_left_apply}
+    Suppose $I$ is disjoint from $J$.
+    Let $p\in\funs{I}{A}\times\funs{J}{A}$ and $i\in I$.
+    Then $\apply{\apply{\functionJoin{I}{J}{A}}{p}}{i}=\apply{\fst{p}}{i}$.
+\end{proposition}
+\begin{proof}
+    Let $f=\fst{p}$ and $h=(\functionJoin{I}{J}{A})(p)$.
+    $f\in\funs{I}{A}$ by \auto{fst_type}.
+    $h\in\funs{I\union J}{A}$ by \auto{function_join_type,funs_type_apply}.
+    $f\subseteq h$ by \auto{function_join_apply,subseteq,union_iff}.
+    Follows by \auto{subfunction_apply,funs_is_function,funs}.
+\end{proof}
+
+\begin{proposition}\label{function_join_right_apply}
+    Suppose $I$ is disjoint from $J$.
+    Let $p\in\funs{I}{A}\times\funs{J}{A}$ and $j\in J$.
+    Then $\apply{\apply{\functionJoin{I}{J}{A}}{p}}{j}=\apply{\snd{p}}{j}$.
+\end{proposition}
+\begin{proof}
+    Let $g=\snd{p}$ and $h=(\functionJoin{I}{J}{A})(p)$.
+    $g\in\funs{J}{A}$ by \auto{snd_type}.
+    $h\in\funs{I\union J}{A}$ by \auto{function_join_type,funs_type_apply}.
+    $g\subseteq h$ by \auto{function_join_apply,subseteq,union_iff}.
+    Follows by \auto{subfunction_apply,funs_is_function,funs}.
+\end{proof}
+
+\begin{theorem}\label{function_join_left_coordinate}
+    Suppose $I$ is disjoint from $J$.
+    Let $i\in I$.
+    Then $\functionEvaluation{I\union J}{A}{i}\circ\functionJoin{I}{J}{A}
+        =\functionEvaluation{I}{A}{i}\circ\firstProductProjection{\funs{I}{A}}{\funs{J}{A}}$.
+\end{theorem}
+\begin{proof}
+    Let $L=\functionEvaluation{I\union J}{A}{i}\circ\functionJoin{I}{J}{A}$ and
+        $R=\functionEvaluation{I}{A}{i}\circ\firstProductProjection{\funs{I}{A}}{\funs{J}{A}}$.
+    $i\in I\union J$ by \obv{union_intro_left}.
+    $L,R\in\funs{\funs{I}{A}\times\funs{J}{A}}{A}$ by
+        \auto{function_evaluation_type,function_join_type,first_product_projection_type,funs_circ}.
+    For every $p\in\funs{I}{A}\times\funs{J}{A}$ we have $L(p)=R(p)$ by
+        \auto{circ_apply,function_evaluation_apply,function_join_left_apply,
+            first_product_projection_apply,function_evaluation_type,function_join_type,
+            first_product_projection_type,funs_type_apply,funs_is_function,funs,funs_ran}.
+    Follows by \auto{typed_functions_equal_from_agreement}.
+\end{proof}
+
+\begin{theorem}\label{function_join_right_coordinate}
+    Suppose $I$ is disjoint from $J$.
+    Let $j\in J$.
+    Then $\functionEvaluation{I\union J}{A}{j}\circ\functionJoin{I}{J}{A}
+        =\functionEvaluation{J}{A}{j}\circ\secondProductProjection{\funs{I}{A}}{\funs{J}{A}}$.
+\end{theorem}
+\begin{proof}
+    Let $L=\functionEvaluation{I\union J}{A}{j}\circ\functionJoin{I}{J}{A}$ and
+        $R=\functionEvaluation{J}{A}{j}\circ\secondProductProjection{\funs{I}{A}}{\funs{J}{A}}$.
+    $j\in I\union J$ by \obv{union_intro_right}.
+    $L,R\in\funs{\funs{I}{A}\times\funs{J}{A}}{A}$ by
+        \auto{function_evaluation_type,function_join_type,second_product_projection_type,funs_circ}.
+    For every $p\in\funs{I}{A}\times\funs{J}{A}$ we have $L(p)=R(p)$ by
+        \auto{circ_apply,function_evaluation_apply,function_join_right_apply,
+            second_product_projection_apply,function_evaluation_type,function_join_type,
+            second_product_projection_type,funs_type_apply,funs_is_function,funs,funs_ran}.
+    Follows by \auto{typed_functions_equal_from_agreement}.
+\end{proof}

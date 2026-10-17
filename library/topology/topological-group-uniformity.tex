@@ -1,0 +1,1634 @@
+\import{topology/topological-group.tex}
+\import{topology/uniform-topology.tex}
+\import{topology/neighbourhood-filter.tex}
+\import{set/filter-basis.tex}
+
+\section{Canonical uniformities of a topological group}
+
+\subsection{Left and right entourage bases}
+
+\begin{definition}\label{left_group_entourage}
+    $\leftGroupEntourage{G}{U}=
+        \{p\in\carrier[G]\times\carrier[G]\mid
+            \mul[G](\groupInv[G](\fst{p}),\snd{p})\in U\}$.
+\end{definition}
+
+\begin{definition}\label{right_group_entourage}
+    $\rightGroupEntourage{G}{U}=
+        \{p\in\carrier[G]\times\carrier[G]\mid
+            \mul[G](\fst{p},\groupInv[G](\snd{p}))\in U\}$.
+\end{definition}
+
+\begin{proposition}\label{left_group_entourage_iff}
+    $(x,y)\in\leftGroupEntourage{G}{U}$ iff
+        $x,y\in\carrier[G]$ and
+        $\mul[G](\groupInv[G](x),y)\in U$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{left_group_entourage,times_tuple_intro,times_tuple_elim,
+            fst_eq,snd_eq}.
+\end{proof}
+
+\begin{proposition}\label{right_group_entourage_iff}
+    $(x,y)\in\rightGroupEntourage{G}{U}$ iff
+        $x,y\in\carrier[G]$ and
+        $\mul[G](x,\groupInv[G](y))\in U$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{right_group_entourage,times_tuple_intro,times_tuple_elim,
+            fst_eq,snd_eq}.
+\end{proof}
+
+\begin{proposition}\label{left_group_entourage_type}
+    $\leftGroupEntourage{G}{U}
+        \subseteq\carrier[G]\times\carrier[G]$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{left_group_entourage,subseteq}.
+\end{proof}
+
+\begin{proposition}\label{right_group_entourage_type}
+    $\rightGroupEntourage{G}{U}
+        \subseteq\carrier[G]\times\carrier[G]$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{right_group_entourage,subseteq}.
+\end{proof}
+
+\subsection{Neighbourhood refinements}
+
+\begin{proposition}\label{topological_group_inverse_identity_neighbourhood}
+    Let $G$ be a topological group and
+        $U\in\neighbourhoods{\neutral[G]}{G}$.
+    Then $\InversePreimage{G}{U}
+        \in\neighbourhoods{\neutral[G]}{G}$.
+\end{proposition}
+\begin{proof}
+    $\neutral[G]\in\carrier[G]$ by \obv{unitalmagma_type}.
+    Take $V\in\opens[G]$ such that
+        $\neutral[G]\in V\subseteq U$ by \obv{neighbourhoods}.
+    $\InversePreimage{G}{V}\in\opens[G]$
+        by \obv{inverse_preimage_open}.
+    $\groupInv[G](\neutral[G])=\neutral[G]$
+        by \obv{group_inverse_neutral}.
+    Hence $\neutral[G]\in\InversePreimage{G}{V}$
+        by \obv{inverse_preimage}.
+    $\InversePreimage{G}{V}\subseteq\InversePreimage{G}{U}$
+        by \obv{inverse_preimage,subseteq}.
+    $\InversePreimage{G}{U}\subseteq\carrier[G]$
+        by \obv{inverse_preimage_type}.
+    Hence $\InversePreimage{G}{U}\in\pow{\carrier[G]}$
+        by \obv{powerset_intro}.
+    Follows by \obv{neighbourhoods}.
+\end{proof}
+
+\begin{theorem}\label{topological_group_identity_neighbourhood_product_refinement}
+    Let $G$ be a topological group and
+        $U\in\neighbourhoods{\neutral[G]}{G}$.
+    Then there exists $V\in\neighbourhoods{\neutral[G]}{G}$ such that
+        for all $v,w\in V$ we have $\mul[G](v,w)\in U$.
+\end{theorem}
+\begin{proof}
+    $\neutral[G]\in\carrier[G]$ by \obv{unitalmagma_type}.
+    Take $O\in\opens[G]$ such that
+        $\neutral[G]\in O\subseteq U$ by \obv{neighbourhoods}.
+    $\mul[G](\neutral[G],\neutral[G])=\neutral[G]$
+        by \obv{unitalmagma_left}.
+    Hence $\mul[G](\neutral[G],\neutral[G])\in O$.
+    Take $V,W\in\opens[G]$ such that
+        $\neutral[G]\in V$ and $\neutral[G]\in W$ and
+        for all $v,w$ such that $v\in V$ and $w\in W$ we have
+            $\mul[G](v,w)\in O$
+        by \obv{topological_group_multiplication}.
+    Let $H=V\inter W$.
+    $V\inter W\in\opens[G]$ by \obv{opens_inter}.
+    Hence $H\in\opens[G]$.
+    $\neutral[G]\in H$ by \obv{inter}.
+    $H\subseteq\carrier[G]$ by \obv{opens_type,pow_iff,subseteq}.
+    Hence $H\in\pow{\carrier[G]}$ by \obv{powerset_intro}.
+    Hence $H\in\neighbourhoods{\neutral[G]}{G}$
+        by \obv{neighbourhoods,subseteq_refl}.
+    Show that for all $v,w\in H$ we have $\mul[G](v,w)\in U$.
+    \begin{subproof}
+        Fix $v,w\in H$.
+        Hence $v,w\in V\inter W$.
+        $v\in V$ and $w\in W$ by \obv{inter}.
+        Hence $\mul[G](v,w)\in O$.
+        Follows by \obv{subseteq}.
+    \end{subproof}
+\end{proof}
+
+\subsection{Converse and composition of basic entourages}
+
+\begin{proposition}\label{left_group_entourage_converse}
+    Let $G$ be a group.
+    Then $\converse{\leftGroupEntourage{G}{U}}
+        =\leftGroupEntourage{G}{\InversePreimage{G}{U}}$.
+\end{proposition}
+\begin{proof}
+    Show that for every
+        $p\in\converse{\leftGroupEntourage{G}{U}}$ we have
+        $p\in\leftGroupEntourage{G}{\InversePreimage{G}{U}}$.
+    \begin{subproof}
+        Fix $p\in\converse{\leftGroupEntourage{G}{U}}$.
+        Take $x,y$ such that $p=(x,y)$
+            by \auto{converse_is_relation,relation}.
+        $(y,x)\in\leftGroupEntourage{G}{U}$
+            by \auto{converse_iff}.
+        Hence $x,y\in\carrier[G]$ and
+            $\mul[G](\groupInv[G](y),x)\in U$
+            by \auto{left_group_entourage_iff}.
+        $\groupInv[G](x),\groupInv[G](y)\in\carrier[G]$
+            by \obv{group_inverse_type}.
+        $\mul[G](\groupInv[G](x),y)\in\carrier[G]$
+            by \obv{group_is_monoid,monoid_is_magma,magma_welldef}.
+        $\groupInv[G](\mul[G](\groupInv[G](x),y))
+            =\mul[G](\groupInv[G](y),x)$
+            by \auto{group_inverse_product,group_inverse_involutive}.
+        Hence $\mul[G](\groupInv[G](x),y)
+            \in\InversePreimage{G}{U}$ by \obv{inverse_preimage}.
+        Follows by \auto{left_group_entourage_iff}.
+    \end{subproof}
+    Show that for every
+        $p\in\leftGroupEntourage{G}{\InversePreimage{G}{U}}$ we have
+        $p\in\converse{\leftGroupEntourage{G}{U}}$.
+    \begin{subproof}
+        Fix $p\in\leftGroupEntourage{G}{\InversePreimage{G}{U}}$.
+        Take $x,y\in\carrier[G]$ such that $p=(x,y)$
+            by \obv{left_group_entourage_type,times_elem_is_tuple,subseteq}.
+        $\mul[G](\groupInv[G](x),y)
+            \in\InversePreimage{G}{U}$
+            by \auto{left_group_entourage_iff}.
+        Hence
+            $\groupInv[G](\mul[G](\groupInv[G](x),y))\in U$
+            by \obv{inverse_preimage}.
+        $\groupInv[G](x),\groupInv[G](y)\in\carrier[G]$
+            by \obv{group_inverse_type}.
+        $\groupInv[G](\mul[G](\groupInv[G](x),y))
+            =\mul[G](\groupInv[G](y),x)$
+            by \auto{group_inverse_product,group_inverse_involutive}.
+        Hence $(y,x)\in\leftGroupEntourage{G}{U}$
+            by \auto{left_group_entourage_iff}.
+        Follows by \auto{converse_iff}.
+    \end{subproof}
+    Follows by set extensionality.
+\end{proof}
+
+\begin{proposition}\label{right_group_entourage_converse}
+    Let $G$ be a group.
+    Then $\converse{\rightGroupEntourage{G}{U}}
+        =\rightGroupEntourage{G}{\InversePreimage{G}{U}}$.
+\end{proposition}
+\begin{proof}
+    Show that for every
+        $p\in\converse{\rightGroupEntourage{G}{U}}$ we have
+        $p\in\rightGroupEntourage{G}{\InversePreimage{G}{U}}$.
+    \begin{subproof}
+        Fix $p\in\converse{\rightGroupEntourage{G}{U}}$.
+        Take $x,y$ such that $p=(x,y)$
+            by \auto{converse_is_relation,relation}.
+        $(y,x)\in\rightGroupEntourage{G}{U}$
+            by \auto{converse_iff}.
+        Hence $x,y\in\carrier[G]$ and
+            $\mul[G](y,\groupInv[G](x))\in U$
+            by \auto{right_group_entourage_iff}.
+        $\groupInv[G](x),\groupInv[G](y)\in\carrier[G]$
+            by \obv{group_inverse_type}.
+        $\mul[G](x,\groupInv[G](y))\in\carrier[G]$
+            by \obv{group_is_monoid,monoid_is_magma,magma_welldef}.
+        $\groupInv[G](\mul[G](x,\groupInv[G](y)))
+            =\mul[G](y,\groupInv[G](x))$
+            by \auto{group_inverse_product,group_inverse_involutive}.
+        Hence $\mul[G](x,\groupInv[G](y))
+            \in\InversePreimage{G}{U}$ by \obv{inverse_preimage}.
+        Follows by \auto{right_group_entourage_iff}.
+    \end{subproof}
+    Show that for every
+        $p\in\rightGroupEntourage{G}{\InversePreimage{G}{U}}$ we have
+        $p\in\converse{\rightGroupEntourage{G}{U}}$.
+    \begin{subproof}
+        Fix $p\in\rightGroupEntourage{G}{\InversePreimage{G}{U}}$.
+        Take $x,y\in\carrier[G]$ such that $p=(x,y)$
+            by \obv{right_group_entourage_type,times_elem_is_tuple,subseteq}.
+        $\mul[G](x,\groupInv[G](y))
+            \in\InversePreimage{G}{U}$
+            by \auto{right_group_entourage_iff}.
+        Hence
+            $\groupInv[G](\mul[G](x,\groupInv[G](y)))\in U$
+            by \obv{inverse_preimage}.
+        $\groupInv[G](x),\groupInv[G](y)\in\carrier[G]$
+            by \obv{group_inverse_type}.
+        $\groupInv[G](\mul[G](x,\groupInv[G](y)))
+            =\mul[G](y,\groupInv[G](x))$
+            by \auto{group_inverse_product,group_inverse_involutive}.
+        Hence $(y,x)\in\rightGroupEntourage{G}{U}$
+            by \auto{right_group_entourage_iff}.
+        Follows by \auto{converse_iff}.
+    \end{subproof}
+    Follows by set extensionality.
+\end{proof}
+
+\begin{proposition}\label{left_group_entourage_square}
+    Let $G$ be a group.
+    Suppose for all $v,w\in V$ we have $\mul[G](v,w)\in U$.
+    Then $\leftGroupEntourage{G}{V}
+        \circ\leftGroupEntourage{G}{V}
+        \subseteq\leftGroupEntourage{G}{U}$.
+\end{proposition}
+\begin{proof}
+    It suffices to show that every element of
+        $\leftGroupEntourage{G}{V}\circ\leftGroupEntourage{G}{V}$
+        is an element of $\leftGroupEntourage{G}{U}$ by \obv{subseteq}.
+    Fix $p\in
+        \leftGroupEntourage{G}{V}\circ\leftGroupEntourage{G}{V}$.
+    Take $x,z$ such that $p=(x,z)$ by \auto{circ_is_relation,relation}.
+    Take $y$ such that
+        $(x,y)\in\leftGroupEntourage{G}{V}$ and
+        $(y,z)\in\leftGroupEntourage{G}{V}$ by \auto{circ_iff}.
+    Hence $x,y,z\in\carrier[G]$ and
+        $\mul[G](\groupInv[G](x),y)\in V$ and
+        $\mul[G](\groupInv[G](y),z)\in V$
+        by \auto{left_group_entourage_iff}.
+    $\groupInv[G](x),\groupInv[G](y)\in\carrier[G]$
+        by \obv{group_inverse_type}.
+    $\mul[G](\groupInv[G](x),y)$ and
+        $\mul[G](\groupInv[G](y),z)$ are elements of $\carrier[G]$
+        by \obv{group_is_monoid,monoid_is_magma,magma_welldef}.
+    Hence
+        $\mul[G](\mul[G](\groupInv[G](x),y),
+            \mul[G](\groupInv[G](y),z))\in U$.
+    $\mul[G](y,\mul[G](\groupInv[G](y),z))
+        =\mul[G](\mul[G](y,\groupInv[G](y)),z)$
+        by \obv{monoid_assoc}.
+    $\mul[G](y,\groupInv[G](y))=\neutral[G]$
+        by \obv{group_inverse_right}.
+    $\mul[G](\neutral[G],z)=z$ by \obv{unitalmagma_left}.
+    Hence $\mul[G](y,\mul[G](\groupInv[G](y),z))=z$.
+    $\mul[G](\mul[G](\groupInv[G](x),y),
+            \mul[G](\groupInv[G](y),z))
+        =\mul[G](\groupInv[G](x),
+            \mul[G](y,\mul[G](\groupInv[G](y),z)))$
+        by \obv{monoid_assoc}.
+    Hence $\mul[G](\mul[G](\groupInv[G](x),y),
+            \mul[G](\groupInv[G](y),z))
+        =\mul[G](\groupInv[G](x),z)$.
+    Hence $(x,z)\in\leftGroupEntourage{G}{U}$
+        by \auto{left_group_entourage_iff}.
+\end{proof}
+
+\begin{proposition}\label{right_group_entourage_square}
+    Let $G$ be a group.
+    Suppose for all $v,w\in V$ we have $\mul[G](v,w)\in U$.
+    Then $\rightGroupEntourage{G}{V}
+        \circ\rightGroupEntourage{G}{V}
+        \subseteq\rightGroupEntourage{G}{U}$.
+\end{proposition}
+\begin{proof}
+    It suffices to show that every element of
+        $\rightGroupEntourage{G}{V}\circ\rightGroupEntourage{G}{V}$
+        is an element of $\rightGroupEntourage{G}{U}$ by \obv{subseteq}.
+    Fix $p\in
+        \rightGroupEntourage{G}{V}\circ\rightGroupEntourage{G}{V}$.
+    Take $x,z$ such that $p=(x,z)$ by \auto{circ_is_relation,relation}.
+    Take $y$ such that
+        $(x,y)\in\rightGroupEntourage{G}{V}$ and
+        $(y,z)\in\rightGroupEntourage{G}{V}$ by \auto{circ_iff}.
+    Hence $x,y,z\in\carrier[G]$ and
+        $\mul[G](x,\groupInv[G](y))\in V$ and
+        $\mul[G](y,\groupInv[G](z))\in V$
+        by \auto{right_group_entourage_iff}.
+    $\groupInv[G](y),\groupInv[G](z)\in\carrier[G]$
+        by \obv{group_inverse_type}.
+    $\mul[G](x,\groupInv[G](y))$ and
+        $\mul[G](y,\groupInv[G](z))$ are elements of $\carrier[G]$
+        by \obv{group_is_monoid,monoid_is_magma,magma_welldef}.
+    Hence
+        $\mul[G](\mul[G](x,\groupInv[G](y)),
+            \mul[G](y,\groupInv[G](z)))\in U$.
+    $\mul[G](\groupInv[G](y),\mul[G](y,\groupInv[G](z)))
+        =\mul[G](\mul[G](\groupInv[G](y),y),\groupInv[G](z))$
+        by \obv{monoid_assoc}.
+    $\mul[G](\groupInv[G](y),y)=\neutral[G]$
+        by \obv{group_inverse_left}.
+    $\mul[G](\neutral[G],\groupInv[G](z))=\groupInv[G](z)$
+        by \obv{unitalmagma_left}.
+    Hence
+        $\mul[G](\groupInv[G](y),\mul[G](y,\groupInv[G](z)))
+            =\groupInv[G](z)$.
+    $\mul[G](\mul[G](x,\groupInv[G](y)),
+            \mul[G](y,\groupInv[G](z)))
+        =\mul[G](x,
+            \mul[G](\groupInv[G](y),
+                \mul[G](y,\groupInv[G](z))))$
+        by \obv{monoid_assoc}.
+    Hence $\mul[G](\mul[G](x,\groupInv[G](y)),
+            \mul[G](y,\groupInv[G](z)))
+        =\mul[G](x,\groupInv[G](z))$.
+    Hence $(x,z)\in\rightGroupEntourage{G}{U}$
+        by \auto{right_group_entourage_iff}.
+\end{proof}
+
+\subsection{The uniformity bases}
+
+\begin{definition}\label{left_uniformity_basis}
+    $\leftUniformityBasis{G}=
+        \{\leftGroupEntourage{G}{U}\mid
+            U\in\neighbourhoods{\neutral[G]}{G}\}$.
+\end{definition}
+
+\begin{definition}\label{right_uniformity_basis}
+    $\rightUniformityBasis{G}=
+        \{\rightGroupEntourage{G}{U}\mid
+            U\in\neighbourhoods{\neutral[G]}{G}\}$.
+\end{definition}
+
+\begin{proposition}\label{left_uniformity_basis_iff}
+    $E\in\leftUniformityBasis{G}$ iff there exists
+        $U\in\neighbourhoods{\neutral[G]}{G}$ such that
+        $E=\leftGroupEntourage{G}{U}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{left_uniformity_basis}.
+\end{proof}
+
+\begin{proposition}\label{right_uniformity_basis_iff}
+    $E\in\rightUniformityBasis{G}$ iff there exists
+        $U\in\neighbourhoods{\neutral[G]}{G}$ such that
+        $E=\rightGroupEntourage{G}{U}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{right_uniformity_basis}.
+\end{proof}
+
+\begin{proposition}\label{left_group_entourage_monotone}
+    Suppose $U\subseteq V$.
+    Then $\leftGroupEntourage{G}{U}
+        \subseteq\leftGroupEntourage{G}{V}$.
+\end{proposition}
+\begin{proof}
+    It suffices to show that every element of $\leftGroupEntourage{G}{U}$
+        is an element of $\leftGroupEntourage{G}{V}$ by \obv{subseteq}.
+    Fix $p\in\leftGroupEntourage{G}{U}$.
+    $p\in\carrier[G]\times\carrier[G]$ and
+        $\mul[G](\groupInv[G](\fst{p}),\snd{p})\in U$
+        by \obv{left_group_entourage}.
+    Hence $\mul[G](\groupInv[G](\fst{p}),\snd{p})\in V$
+        by \obv{subseteq}.
+    Follows by \obv{left_group_entourage}.
+\end{proof}
+
+\begin{proposition}\label{right_group_entourage_monotone}
+    Suppose $U\subseteq V$.
+    Then $\rightGroupEntourage{G}{U}
+        \subseteq\rightGroupEntourage{G}{V}$.
+\end{proposition}
+\begin{proof}
+    It suffices to show that every element of $\rightGroupEntourage{G}{U}$
+        is an element of $\rightGroupEntourage{G}{V}$ by \obv{subseteq}.
+    Fix $p\in\rightGroupEntourage{G}{U}$.
+    $p\in\carrier[G]\times\carrier[G]$ and
+        $\mul[G](\fst{p},\groupInv[G](\snd{p}))\in U$
+        by \obv{right_group_entourage}.
+    Hence $\mul[G](\fst{p},\groupInv[G](\snd{p}))\in V$
+        by \obv{subseteq}.
+    Follows by \obv{right_group_entourage}.
+\end{proof}
+
+\begin{proposition}\label{topological_group_identity_neighbourhood_contains_identity}
+    Let $G$ be a topological group and
+        $U\in\neighbourhoods{\neutral[G]}{G}$.
+    Then $\neutral[G]\in U$.
+\end{proposition}
+\begin{proof}
+    $\neutral[G]\in\carrier[G]$ by \obv{unitalmagma_type}.
+    Take $V\in\opens[G]$ such that
+        $\neutral[G]\in V\subseteq U$ by \obv{neighbourhoods}.
+    Follows by \obv{subseteq}.
+\end{proof}
+
+\begin{proposition}\label{left_group_entourage_diagonal}
+    Let $G$ be a topological group and
+        $U\in\neighbourhoods{\neutral[G]}{G}$.
+    Then $\identity{\carrier[G]}
+        \subseteq\leftGroupEntourage{G}{U}$.
+\end{proposition}
+\begin{proof}
+    $\neutral[G]\in U$
+        by \obv{topological_group_identity_neighbourhood_contains_identity}.
+    Show that for every $p\in\identity{\carrier[G]}$ we have
+        $p\in\leftGroupEntourage{G}{U}$.
+    \begin{subproof}
+        Fix $p\in\identity{\carrier[G]}$.
+        Take $x\in\carrier[G]$ such that $p=(x,x)$
+            by \obv{id_elem_inspect}.
+        $\groupInv[G](x)\in\carrier[G]$
+            by \obv{group_inverse_type}.
+        $\mul[G](\groupInv[G](x),x)=\neutral[G]$
+            by \obv{group_inverse_left}.
+        Follows by \auto{left_group_entourage_iff}.
+    \end{subproof}
+    Follows by \obv{subseteq}.
+\end{proof}
+
+\begin{proposition}\label{right_group_entourage_diagonal}
+    Let $G$ be a topological group and
+        $U\in\neighbourhoods{\neutral[G]}{G}$.
+    Then $\identity{\carrier[G]}
+        \subseteq\rightGroupEntourage{G}{U}$.
+\end{proposition}
+\begin{proof}
+    $\neutral[G]\in U$
+        by \obv{topological_group_identity_neighbourhood_contains_identity}.
+    Show that for every $p\in\identity{\carrier[G]}$ we have
+        $p\in\rightGroupEntourage{G}{U}$.
+    \begin{subproof}
+        Fix $p\in\identity{\carrier[G]}$.
+        Take $x\in\carrier[G]$ such that $p=(x,x)$
+            by \obv{id_elem_inspect}.
+        $\groupInv[G](x)\in\carrier[G]$
+            by \obv{group_inverse_type}.
+        $\mul[G](x,\groupInv[G](x))=\neutral[G]$
+            by \obv{group_inverse_right}.
+        Follows by \auto{right_group_entourage_iff}.
+    \end{subproof}
+    Follows by \obv{subseteq}.
+\end{proof}
+
+\begin{theorem}\label{left_uniformity_basis_is_proper_filter_basis}
+    Let $G$ be a topological group.
+    Then $\leftUniformityBasis{G}$ is a proper filter basis on
+        $\carrier[G]\times\carrier[G]$.
+\end{theorem}
+\begin{proof}
+    $\neutral[G]\in\carrier[G]$ by \obv{unitalmagma_type}.
+    Hence $\neighbourhoods{\neutral[G]}{G}$ is a filter on
+        $\carrier[G]$ by \obv{neighbourhoods_is_filter}.
+
+    Show that $\leftUniformityBasis{G}$ is a family of subsets of
+        $\carrier[G]\times\carrier[G]$.
+    \begin{subproof}
+        Show that every element of $\leftUniformityBasis{G}$ is a subset of
+            $\carrier[G]\times\carrier[G]$.
+        \begin{subproof}
+        Fix $E\in\leftUniformityBasis{G}$.
+        Take $U\in\neighbourhoods{\neutral[G]}{G}$ such that
+            $E=\leftGroupEntourage{G}{U}$
+            by \obv{left_uniformity_basis_iff}.
+        $\leftGroupEntourage{G}{U}
+            \subseteq\carrier[G]\times\carrier[G]$
+            by \obv{left_group_entourage_type}.
+        Hence $E\subseteq\carrier[G]\times\carrier[G]$.
+        \end{subproof}
+    \end{subproof}
+
+    $\carrier[G]\in\neighbourhoods{\neutral[G]}{G}$
+        by \obv{filter}.
+    Hence $\leftGroupEntourage{G}{\carrier[G]}
+        \in\leftUniformityBasis{G}$
+        by \obv{left_uniformity_basis_iff}.
+    Hence $\leftUniformityBasis{G}$ is inhabited.
+
+    Show that for every $E\in\leftUniformityBasis{G}$ we have
+        $E$ is inhabited.
+    \begin{subproof}
+        Fix $E\in\leftUniformityBasis{G}$.
+        Take $U\in\neighbourhoods{\neutral[G]}{G}$ such that
+            $E=\leftGroupEntourage{G}{U}$ by
+            \obv{left_uniformity_basis_iff}.
+        $\identity{\carrier[G]}
+            \subseteq\leftGroupEntourage{G}{U}$
+            by \obv{left_group_entourage_diagonal}.
+        $(\neutral[G],\neutral[G])
+            \in\identity{\carrier[G]}$ by \obv{id_iff}.
+        Hence $(\neutral[G],\neutral[G])
+            \in\leftGroupEntourage{G}{U}$ by \obv{subseteq}.
+        Hence $(\neutral[G],\neutral[G])\in E$.
+    \end{subproof}
+
+    Show that for all $E,H$ such that
+        $E\in\leftUniformityBasis{G}$ and
+        $H\in\leftUniformityBasis{G}$ there exists
+        $D\in\leftUniformityBasis{G}$ such that
+        $D\subseteq E\inter H$.
+    \begin{subproof}
+        Fix $E,H$.
+        Assume $E\in\leftUniformityBasis{G}$ and
+            $H\in\leftUniformityBasis{G}$.
+        Take $U\in\neighbourhoods{\neutral[G]}{G}$ such that
+            $E=\leftGroupEntourage{G}{U}$
+            by \obv{left_uniformity_basis_iff}.
+        Take $V\in\neighbourhoods{\neutral[G]}{G}$ such that
+            $H=\leftGroupEntourage{G}{V}$
+            by \obv{left_uniformity_basis_iff}.
+        $U\inter V\in\neighbourhoods{\neutral[G]}{G}$
+            by \obv{filter}.
+        Hence $\leftGroupEntourage{G}{U\inter V}
+            \in\leftUniformityBasis{G}$
+            by \obv{left_uniformity_basis_iff}.
+        $U\inter V\subseteq U$ and $U\inter V\subseteq V$
+            by \obv{inter_subseteq}.
+        Hence $\leftGroupEntourage{G}{U\inter V}
+                \subseteq\leftGroupEntourage{G}{U}$ and
+            $\leftGroupEntourage{G}{U\inter V}
+                \subseteq\leftGroupEntourage{G}{V}$
+            by \obv{left_group_entourage_monotone}.
+        Hence $\leftGroupEntourage{G}{U\inter V}\subseteq E\inter H$
+            by \auto{subseteq_inter_iff}.
+    \end{subproof}
+    Hence $\leftUniformityBasis{G}$ is a filter basis on
+        $\carrier[G]\times\carrier[G]$ by \obv{filter_basis}.
+    Follows by \obv{proper_filter_basis}.
+\end{proof}
+
+\begin{theorem}\label{right_uniformity_basis_is_proper_filter_basis}
+    Let $G$ be a topological group.
+    Then $\rightUniformityBasis{G}$ is a proper filter basis on
+        $\carrier[G]\times\carrier[G]$.
+\end{theorem}
+\begin{proof}
+    $\neutral[G]\in\carrier[G]$ by \obv{unitalmagma_type}.
+    Hence $\neighbourhoods{\neutral[G]}{G}$ is a filter on
+        $\carrier[G]$ by \obv{neighbourhoods_is_filter}.
+
+    Show that $\rightUniformityBasis{G}$ is a family of subsets of
+        $\carrier[G]\times\carrier[G]$.
+    \begin{subproof}
+        Show that every element of $\rightUniformityBasis{G}$ is a subset of
+            $\carrier[G]\times\carrier[G]$.
+        \begin{subproof}
+        Fix $E\in\rightUniformityBasis{G}$.
+        Take $U\in\neighbourhoods{\neutral[G]}{G}$ such that
+            $E=\rightGroupEntourage{G}{U}$
+            by \obv{right_uniformity_basis_iff}.
+        $\rightGroupEntourage{G}{U}
+            \subseteq\carrier[G]\times\carrier[G]$
+            by \obv{right_group_entourage_type}.
+        Hence $E\subseteq\carrier[G]\times\carrier[G]$.
+        \end{subproof}
+    \end{subproof}
+
+    $\carrier[G]\in\neighbourhoods{\neutral[G]}{G}$
+        by \obv{filter}.
+    Hence $\rightGroupEntourage{G}{\carrier[G]}
+        \in\rightUniformityBasis{G}$
+        by \obv{right_uniformity_basis_iff}.
+    Hence $\rightUniformityBasis{G}$ is inhabited.
+
+    Show that for every $E\in\rightUniformityBasis{G}$ we have
+        $E$ is inhabited.
+    \begin{subproof}
+        Fix $E\in\rightUniformityBasis{G}$.
+        Take $U\in\neighbourhoods{\neutral[G]}{G}$ such that
+            $E=\rightGroupEntourage{G}{U}$ by
+            \obv{right_uniformity_basis_iff}.
+        $\identity{\carrier[G]}
+            \subseteq\rightGroupEntourage{G}{U}$
+            by \obv{right_group_entourage_diagonal}.
+        $(\neutral[G],\neutral[G])
+            \in\identity{\carrier[G]}$ by \obv{id_iff}.
+        Hence $(\neutral[G],\neutral[G])
+            \in\rightGroupEntourage{G}{U}$ by \obv{subseteq}.
+        Hence $(\neutral[G],\neutral[G])\in E$.
+    \end{subproof}
+
+    Show that for all $E,H$ such that
+        $E\in\rightUniformityBasis{G}$ and
+        $H\in\rightUniformityBasis{G}$ there exists
+        $D\in\rightUniformityBasis{G}$ such that
+        $D\subseteq E\inter H$.
+    \begin{subproof}
+        Fix $E,H$.
+        Assume $E\in\rightUniformityBasis{G}$ and
+            $H\in\rightUniformityBasis{G}$.
+        Take $U\in\neighbourhoods{\neutral[G]}{G}$ such that
+            $E=\rightGroupEntourage{G}{U}$
+            by \obv{right_uniformity_basis_iff}.
+        Take $V\in\neighbourhoods{\neutral[G]}{G}$ such that
+            $H=\rightGroupEntourage{G}{V}$
+            by \obv{right_uniformity_basis_iff}.
+        $U\inter V\in\neighbourhoods{\neutral[G]}{G}$
+            by \obv{filter}.
+        Hence $\rightGroupEntourage{G}{U\inter V}
+            \in\rightUniformityBasis{G}$
+            by \obv{right_uniformity_basis_iff}.
+        $U\inter V\subseteq U$ and $U\inter V\subseteq V$
+            by \obv{inter_subseteq}.
+        Hence $\rightGroupEntourage{G}{U\inter V}
+                \subseteq\rightGroupEntourage{G}{U}$ and
+            $\rightGroupEntourage{G}{U\inter V}
+                \subseteq\rightGroupEntourage{G}{V}$
+            by \obv{right_group_entourage_monotone}.
+        Hence $\rightGroupEntourage{G}{U\inter V}\subseteq E\inter H$
+            by \auto{subseteq_inter_iff}.
+    \end{subproof}
+    Hence $\rightUniformityBasis{G}$ is a filter basis on
+        $\carrier[G]\times\carrier[G]$ by \obv{filter_basis}.
+    Follows by \obv{proper_filter_basis}.
+\end{proof}
+
+\subsection{Generated left and right uniformities}
+
+\begin{proposition}\label{left_generated_uniformity_iff}
+    Let $G$ be a topological group.
+    $E\in\generatedFilter
+        {\carrier[G]\times\carrier[G]}{\leftUniformityBasis{G}}$ iff
+        $E\subseteq\carrier[G]\times\carrier[G]$ and there exists
+        $U\in\neighbourhoods{\neutral[G]}{G}$ such that
+            $\leftGroupEntourage{G}{U}\subseteq E$.
+\end{proposition}
+\begin{proof}
+    $\leftUniformityBasis{G}$ is a proper filter basis on
+        $\carrier[G]\times\carrier[G]$ by
+        \obv{left_uniformity_basis_is_proper_filter_basis}.
+    Hence $\leftUniformityBasis{G}$ is a filter basis on
+        $\carrier[G]\times\carrier[G]$ by
+        \obv{proper_filter_basis_is_filter_basis}.
+    Follows by
+        \auto{generated_filter_iff,left_uniformity_basis_iff}.
+\end{proof}
+
+\begin{proposition}\label{right_generated_uniformity_iff}
+    Let $G$ be a topological group.
+    $E\in\generatedFilter
+        {\carrier[G]\times\carrier[G]}{\rightUniformityBasis{G}}$ iff
+        $E\subseteq\carrier[G]\times\carrier[G]$ and there exists
+        $U\in\neighbourhoods{\neutral[G]}{G}$ such that
+            $\rightGroupEntourage{G}{U}\subseteq E$.
+\end{proposition}
+\begin{proof}
+    $\rightUniformityBasis{G}$ is a proper filter basis on
+        $\carrier[G]\times\carrier[G]$ by
+        \obv{right_uniformity_basis_is_proper_filter_basis}.
+    Hence $\rightUniformityBasis{G}$ is a filter basis on
+        $\carrier[G]\times\carrier[G]$ by
+        \obv{proper_filter_basis_is_filter_basis}.
+    Follows by
+        \auto{generated_filter_iff,right_uniformity_basis_iff}.
+\end{proof}
+
+\begin{theorem}\label{left_generated_uniformity_is_filter}
+    Let $G$ be a topological group.
+    Then $\generatedFilter
+        {\carrier[G]\times\carrier[G]}{\leftUniformityBasis{G}}$
+        is a filter on $\carrier[G]\times\carrier[G]$.
+\end{theorem}
+\begin{proof}
+    $\leftUniformityBasis{G}$ is a proper filter basis on
+        $\carrier[G]\times\carrier[G]$
+        by \obv{left_uniformity_basis_is_proper_filter_basis}.
+    $\generatedFilter
+        {\carrier[G]\times\carrier[G]}{\leftUniformityBasis{G}}$
+        is a proper filter on $\carrier[G]\times\carrier[G]$ by
+        \obv{generated_filter_is_proper_filter}.
+    Follows by \obv{proper_filter}.
+\end{proof}
+
+\begin{theorem}\label{right_generated_uniformity_is_filter}
+    Let $G$ be a topological group.
+    Then $\generatedFilter
+        {\carrier[G]\times\carrier[G]}{\rightUniformityBasis{G}}$
+        is a filter on $\carrier[G]\times\carrier[G]$.
+\end{theorem}
+\begin{proof}
+    $\rightUniformityBasis{G}$ is a proper filter basis on
+        $\carrier[G]\times\carrier[G]$
+        by \obv{right_uniformity_basis_is_proper_filter_basis}.
+    $\generatedFilter
+        {\carrier[G]\times\carrier[G]}{\rightUniformityBasis{G}}$
+        is a proper filter on $\carrier[G]\times\carrier[G]$ by
+        \obv{generated_filter_is_proper_filter}.
+    Follows by \obv{proper_filter}.
+\end{proof}
+
+\begin{proposition}\label{left_generated_uniformity_diagonal}
+    Let $G$ be a topological group and
+        $E\in\generatedFilter
+            {\carrier[G]\times\carrier[G]}{\leftUniformityBasis{G}}$.
+    Then $\identity{\carrier[G]}\subseteq E$.
+\end{proposition}
+\begin{proof}
+    Take $U\in\neighbourhoods{\neutral[G]}{G}$ such that
+        $\leftGroupEntourage{G}{U}\subseteq E$
+        by \auto{left_generated_uniformity_iff}.
+    $\identity{\carrier[G]}\subseteq\leftGroupEntourage{G}{U}$
+        by \obv{left_group_entourage_diagonal}.
+    Follows by \obv{subseteq_transitive}.
+\end{proof}
+
+\begin{proposition}\label{right_generated_uniformity_diagonal}
+    Let $G$ be a topological group and
+        $E\in\generatedFilter
+            {\carrier[G]\times\carrier[G]}{\rightUniformityBasis{G}}$.
+    Then $\identity{\carrier[G]}\subseteq E$.
+\end{proposition}
+\begin{proof}
+    Take $U\in\neighbourhoods{\neutral[G]}{G}$ such that
+        $\rightGroupEntourage{G}{U}\subseteq E$
+        by \auto{right_generated_uniformity_iff}.
+    $\identity{\carrier[G]}\subseteq\rightGroupEntourage{G}{U}$
+        by \obv{right_group_entourage_diagonal}.
+    Follows by \obv{subseteq_transitive}.
+\end{proof}
+
+\begin{proposition}\label{left_generated_uniformity_converse}
+    Let $G$ be a topological group and
+        $E\in\generatedFilter
+            {\carrier[G]\times\carrier[G]}{\leftUniformityBasis{G}}$.
+    Then $\converse{E}\in\generatedFilter
+        {\carrier[G]\times\carrier[G]}{\leftUniformityBasis{G}}$.
+\end{proposition}
+\begin{proof}
+    $E\subseteq\carrier[G]\times\carrier[G]$
+        by \auto{left_generated_uniformity_iff}.
+    Hence $\converse{E}\subseteq\carrier[G]\times\carrier[G]$
+        by \obv{converse_type}.
+    Take $U\in\neighbourhoods{\neutral[G]}{G}$ such that
+        $\leftGroupEntourage{G}{U}\subseteq E$
+        by \auto{left_generated_uniformity_iff}.
+    $\leftGroupEntourage{G}{U}$ is a relation
+        by \auto{left_group_entourage_type,relation,subseteq,
+            times_elem_is_tuple}.
+    Hence $\converse{\leftGroupEntourage{G}{U}}
+        \subseteq\converse{E}$ by \obv{converse_subseteq_intro}.
+    $\converse{\leftGroupEntourage{G}{U}}
+        =\leftGroupEntourage{G}{\InversePreimage{G}{U}}$
+        by \obv{left_group_entourage_converse}.
+    Hence $\leftGroupEntourage{G}{\InversePreimage{G}{U}}
+        \subseteq\converse{E}$.
+    $\InversePreimage{G}{U}
+        \in\neighbourhoods{\neutral[G]}{G}$
+        by \obv{topological_group_inverse_identity_neighbourhood}.
+    Follows by \auto{left_generated_uniformity_iff}.
+\end{proof}
+
+\begin{proposition}\label{right_generated_uniformity_converse}
+    Let $G$ be a topological group and
+        $E\in\generatedFilter
+            {\carrier[G]\times\carrier[G]}{\rightUniformityBasis{G}}$.
+    Then $\converse{E}\in\generatedFilter
+        {\carrier[G]\times\carrier[G]}{\rightUniformityBasis{G}}$.
+\end{proposition}
+\begin{proof}
+    $E\subseteq\carrier[G]\times\carrier[G]$
+        by \auto{right_generated_uniformity_iff}.
+    Hence $\converse{E}\subseteq\carrier[G]\times\carrier[G]$
+        by \obv{converse_type}.
+    Take $U\in\neighbourhoods{\neutral[G]}{G}$ such that
+        $\rightGroupEntourage{G}{U}\subseteq E$
+        by \auto{right_generated_uniformity_iff}.
+    $\rightGroupEntourage{G}{U}$ is a relation
+        by \auto{right_group_entourage_type,relation,subseteq,
+            times_elem_is_tuple}.
+    Hence $\converse{\rightGroupEntourage{G}{U}}
+        \subseteq\converse{E}$ by \obv{converse_subseteq_intro}.
+    $\converse{\rightGroupEntourage{G}{U}}
+        =\rightGroupEntourage{G}{\InversePreimage{G}{U}}$
+        by \obv{right_group_entourage_converse}.
+    Hence $\rightGroupEntourage{G}{\InversePreimage{G}{U}}
+        \subseteq\converse{E}$.
+    $\InversePreimage{G}{U}
+        \in\neighbourhoods{\neutral[G]}{G}$
+        by \obv{topological_group_inverse_identity_neighbourhood}.
+    Follows by \auto{right_generated_uniformity_iff}.
+\end{proof}
+
+\begin{proposition}\label{left_generated_uniformity_square}
+    Let $G$ be a topological group and
+        $E\in\generatedFilter
+            {\carrier[G]\times\carrier[G]}{\leftUniformityBasis{G}}$.
+    Then there exists $D\in\generatedFilter
+        {\carrier[G]\times\carrier[G]}{\leftUniformityBasis{G}}$ such that
+        $D\circ D\subseteq E$.
+\end{proposition}
+\begin{proof}
+    Take $U\in\neighbourhoods{\neutral[G]}{G}$ such that
+        $\leftGroupEntourage{G}{U}\subseteq E$
+        by \auto{left_generated_uniformity_iff}.
+    Take $V\in\neighbourhoods{\neutral[G]}{G}$ such that
+        for all $v,w\in V$ we have $\mul[G](v,w)\in U$
+        by
+        \obv{topological_group_identity_neighbourhood_product_refinement}.
+    $\leftGroupEntourage{G}{V}\subseteq\carrier[G]\times\carrier[G]$
+        by \obv{left_group_entourage_type}.
+    Hence $\leftGroupEntourage{G}{V}\in\generatedFilter
+        {\carrier[G]\times\carrier[G]}{\leftUniformityBasis{G}}$
+        by \auto{left_generated_uniformity_iff,subseteq_refl}.
+    $\leftGroupEntourage{G}{V}\circ\leftGroupEntourage{G}{V}
+        \subseteq\leftGroupEntourage{G}{U}$
+        by \obv{left_group_entourage_square}.
+    Hence $\leftGroupEntourage{G}{V}\circ\leftGroupEntourage{G}{V}
+        \subseteq E$ by \obv{subseteq_transitive}.
+\end{proof}
+
+\begin{proposition}\label{right_generated_uniformity_square}
+    Let $G$ be a topological group and
+        $E\in\generatedFilter
+            {\carrier[G]\times\carrier[G]}{\rightUniformityBasis{G}}$.
+    Then there exists $D\in\generatedFilter
+        {\carrier[G]\times\carrier[G]}{\rightUniformityBasis{G}}$ such that
+        $D\circ D\subseteq E$.
+\end{proposition}
+\begin{proof}
+    Take $U\in\neighbourhoods{\neutral[G]}{G}$ such that
+        $\rightGroupEntourage{G}{U}\subseteq E$
+        by \auto{right_generated_uniformity_iff}.
+    Take $V\in\neighbourhoods{\neutral[G]}{G}$ such that
+        for all $v,w\in V$ we have $\mul[G](v,w)\in U$
+        by
+        \obv{topological_group_identity_neighbourhood_product_refinement}.
+    $\rightGroupEntourage{G}{V}\subseteq\carrier[G]\times\carrier[G]$
+        by \obv{right_group_entourage_type}.
+    Hence $\rightGroupEntourage{G}{V}\in\generatedFilter
+        {\carrier[G]\times\carrier[G]}{\rightUniformityBasis{G}}$
+        by \auto{right_generated_uniformity_iff,subseteq_refl}.
+    $\rightGroupEntourage{G}{V}\circ\rightGroupEntourage{G}{V}
+        \subseteq\rightGroupEntourage{G}{U}$
+        by \obv{right_group_entourage_square}.
+    Hence $\rightGroupEntourage{G}{V}\circ\rightGroupEntourage{G}{V}
+        \subseteq E$ by \obv{subseteq_transitive}.
+\end{proof}
+
+\subsection{The canonical uniform-space records}
+
+\begin{definition}\label{left_uniform_space}
+    $\leftUniformSpace{G}=
+        \structure[uniform space]{
+            \carrier=\carrier[G],
+            \uniformity=\generatedFilter
+                {\carrier[G]\times\carrier[G]}{\leftUniformityBasis{G}}
+        }$.
+\end{definition}
+
+\begin{definition}\label{right_uniform_space}
+    $\rightUniformSpace{G}=
+        \structure[uniform space]{
+            \carrier=\carrier[G],
+            \uniformity=\generatedFilter
+                {\carrier[G]\times\carrier[G]}{\rightUniformityBasis{G}}
+        }$.
+\end{definition}
+
+\begin{theorem}\label{left_uniform_space_is_uniform_space}
+    Let $G$ be a topological group.
+    Then $\leftUniformSpace{G}$ is a uniform space.
+\end{theorem}
+\begin{proof}
+    $\generatedFilter
+        {\carrier[G]\times\carrier[G]}{\leftUniformityBasis{G}}$
+        is a filter on $\carrier[G]\times\carrier[G]$
+        by \obv{left_generated_uniformity_is_filter}.
+    For every $E\in\generatedFilter
+        {\carrier[G]\times\carrier[G]}{\leftUniformityBasis{G}}$ we have
+        $\identity{\carrier[G]}\subseteq E$
+        by \obv{left_generated_uniformity_diagonal}.
+    For every $E\in\generatedFilter
+        {\carrier[G]\times\carrier[G]}{\leftUniformityBasis{G}}$ we have
+        $\converse{E}\in\generatedFilter
+            {\carrier[G]\times\carrier[G]}{\leftUniformityBasis{G}}$
+        by \obv{left_generated_uniformity_converse}.
+    For every $E\in\generatedFilter
+        {\carrier[G]\times\carrier[G]}{\leftUniformityBasis{G}}$ there
+        exists $D\in\generatedFilter
+            {\carrier[G]\times\carrier[G]}{\leftUniformityBasis{G}}$
+        such that $D\circ D\subseteq E$
+        by \obv{left_generated_uniformity_square}.
+    Follows by \auto{left_uniform_space,uniform_space_from_filter}.
+\end{proof}
+
+\begin{theorem}\label{right_uniform_space_is_uniform_space}
+    Let $G$ be a topological group.
+    Then $\rightUniformSpace{G}$ is a uniform space.
+\end{theorem}
+\begin{proof}
+    $\generatedFilter
+        {\carrier[G]\times\carrier[G]}{\rightUniformityBasis{G}}$
+        is a filter on $\carrier[G]\times\carrier[G]$
+        by \obv{right_generated_uniformity_is_filter}.
+    For every $E\in\generatedFilter
+        {\carrier[G]\times\carrier[G]}{\rightUniformityBasis{G}}$ we have
+        $\identity{\carrier[G]}\subseteq E$
+        by \obv{right_generated_uniformity_diagonal}.
+    For every $E\in\generatedFilter
+        {\carrier[G]\times\carrier[G]}{\rightUniformityBasis{G}}$ we have
+        $\converse{E}\in\generatedFilter
+            {\carrier[G]\times\carrier[G]}{\rightUniformityBasis{G}}$
+        by \obv{right_generated_uniformity_converse}.
+    For every $E\in\generatedFilter
+        {\carrier[G]\times\carrier[G]}{\rightUniformityBasis{G}}$ there
+        exists $D\in\generatedFilter
+            {\carrier[G]\times\carrier[G]}{\rightUniformityBasis{G}}$
+        such that $D\circ D\subseteq E$
+        by \obv{right_generated_uniformity_square}.
+    Follows by \auto{right_uniform_space,uniform_space_from_filter}.
+\end{proof}
+
+\begin{proposition}\label{left_uniform_space_carrier}
+    $\carrier[\leftUniformSpace{G}]=\carrier[G]$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{left_uniform_space,uniform_spaceaggregateprojection_carrier}.
+\end{proof}
+
+\begin{proposition}\label{left_uniform_space_uniformity}
+    $\uniformity[\leftUniformSpace{G}]
+        =\generatedFilter
+            {\carrier[G]\times\carrier[G]}{\leftUniformityBasis{G}}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{left_uniform_space,uniform_spaceaggregateprojection_uniformity}.
+\end{proof}
+
+\begin{proposition}\label{right_uniform_space_carrier}
+    $\carrier[\rightUniformSpace{G}]=\carrier[G]$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{right_uniform_space,uniform_spaceaggregateprojection_carrier}.
+\end{proof}
+
+\begin{proposition}\label{right_uniform_space_uniformity}
+    $\uniformity[\rightUniformSpace{G}]
+        =\generatedFilter
+            {\carrier[G]\times\carrier[G]}{\rightUniformityBasis{G}}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{right_uniform_space,uniform_spaceaggregateprojection_uniformity}.
+\end{proof}
+
+\subsection{Basic balls}
+
+\begin{proposition}\label{left_group_entourage_ball}
+    Let $G$ be a group and $x\in\carrier[G]$.
+    Then $\uniformBall{\leftUniformSpace{G}}
+        {\leftGroupEntourage{G}{U}}{x}
+        =\LeftTranslationPreimage{G}{\groupInv[G](x)}{U}$.
+\end{proposition}
+\begin{proof}
+    $\groupInv[G](x)\in\carrier[G]$ by \obv{group_inverse_type}.
+    Follows by
+        \auto{setext,uniform_ball_iff,left_group_entourage_iff,
+            left_translation_preimage}.
+\end{proof}
+
+\begin{proposition}\label{right_group_entourage_ball}
+    Let $G$ be a group and $x\in\carrier[G]$.
+    Then $\uniformBall{\rightUniformSpace{G}}
+        {\rightGroupEntourage{G}{U}}{x}
+        =\InversePreimage{G}{\LeftTranslationPreimage{G}{x}{U}}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{setext,uniform_ball_iff,right_group_entourage_iff,
+            inverse_preimage,left_translation_preimage,group_inverse_type}.
+\end{proof}
+
+\begin{proposition}\label{left_group_basic_ball_open}
+    Let $G$ be a topological group, $U\in\opens[G]$, and
+        $x\in\carrier[G]$.
+    Then $\uniformBall{\leftUniformSpace{G}}
+        {\leftGroupEntourage{G}{U}}{x}\in\opens[G]$.
+\end{proposition}
+\begin{proof}
+    $\groupInv[G](x)\in\carrier[G]$ by \obv{group_inverse_type}.
+    $\uniformBall{\leftUniformSpace{G}}
+        {\leftGroupEntourage{G}{U}}{x}
+        =\LeftTranslationPreimage{G}{\groupInv[G](x)}{U}$
+        by \obv{left_group_entourage_ball}.
+    Follows by \auto{left_translation_preimage_open}.
+\end{proof}
+
+\begin{proposition}\label{right_group_basic_ball_open}
+    Let $G$ be a topological group, $U\in\opens[G]$, and
+        $x\in\carrier[G]$.
+    Then $\uniformBall{\rightUniformSpace{G}}
+        {\rightGroupEntourage{G}{U}}{x}\in\opens[G]$.
+\end{proposition}
+\begin{proof}
+    $\LeftTranslationPreimage{G}{x}{U}\in\opens[G]$
+        by \obv{left_translation_preimage_open}.
+    Hence $\InversePreimage{G}{\LeftTranslationPreimage{G}{x}{U}}
+        \in\opens[G]$ by \obv{inverse_preimage_open}.
+    $\uniformBall{\rightUniformSpace{G}}
+        {\rightGroupEntourage{G}{U}}{x}
+        =\InversePreimage{G}{\LeftTranslationPreimage{G}{x}{U}}$
+        by \obv{right_group_entourage_ball}.
+\end{proof}
+
+\begin{proposition}\label{left_group_basic_entourage_is_entourage}
+    Let $G$ be a topological group and
+        $U\in\neighbourhoods{\neutral[G]}{G}$.
+    Then $\leftGroupEntourage{G}{U}
+        \in\uniformity[\leftUniformSpace{G}]$.
+\end{proposition}
+\begin{proof}
+    $\leftGroupEntourage{G}{U}
+        \subseteq\carrier[G]\times\carrier[G]$
+        by \obv{left_group_entourage_type}.
+    Hence $\leftGroupEntourage{G}{U}\in\generatedFilter
+        {\carrier[G]\times\carrier[G]}{\leftUniformityBasis{G}}$
+        by \auto{left_generated_uniformity_iff,subseteq_refl}.
+    Follows by \obv{left_uniform_space_uniformity}.
+\end{proof}
+
+\begin{proposition}\label{right_group_basic_entourage_is_entourage}
+    Let $G$ be a topological group and
+        $U\in\neighbourhoods{\neutral[G]}{G}$.
+    Then $\rightGroupEntourage{G}{U}
+        \in\uniformity[\rightUniformSpace{G}]$.
+\end{proposition}
+\begin{proof}
+    $\rightGroupEntourage{G}{U}
+        \subseteq\carrier[G]\times\carrier[G]$
+        by \obv{right_group_entourage_type}.
+    Hence $\rightGroupEntourage{G}{U}\in\generatedFilter
+        {\carrier[G]\times\carrier[G]}{\rightUniformityBasis{G}}$
+        by \auto{right_generated_uniformity_iff,subseteq_refl}.
+    Follows by \obv{right_uniform_space_uniformity}.
+\end{proof}
+
+\subsection{Recovery of the group topology}
+
+\begin{theorem}\label{left_uniform_open_iff_topological_group_open}
+    Let $G$ be a topological group.
+    Then $\uniformOpen{\leftUniformSpace{G}}{A}$ iff $A\in\opens[G]$.
+\end{theorem}
+\begin{proof}
+    $G$ is a topological space
+        by \obv{topological_group_is_topological_space}.
+    $\leftUniformSpace{G}$ is a uniform space
+        by \obv{left_uniform_space_is_uniform_space}.
+    $\carrier[\leftUniformSpace{G}]=\carrier[G]$
+        by \obv{left_uniform_space_carrier}.
+
+    Show that if $A\in\opens[G]$, then
+        $\uniformOpen{\leftUniformSpace{G}}{A}$.
+    \begin{subproof}
+        Assume $A\in\opens[G]$.
+        $A\subseteq\carrier[G]$ by \obv{opens_type,pow_iff,subseteq}.
+        Hence $A\subseteq\carrier[\leftUniformSpace{G}]$.
+        Show that for every $x\in A$ there exists
+            $E\in\uniformity[\leftUniformSpace{G}]$ such that
+            $\uniformBall{\leftUniformSpace{G}}{E}{x}\subseteq A$.
+        \begin{subproof}
+            Fix $x\in A$.
+            Hence $x\in\carrier[G]$ by \obv{subseteq}.
+            Let $U=\LeftTranslationPreimage{G}{x}{A}$.
+            $\LeftTranslationPreimage{G}{x}{A}\in\opens[G]$
+                by \obv{left_translation_preimage_open}.
+            Hence $U\in\opens[G]$.
+            $\neutral[G]\in\carrier[G]$ by \obv{unitalmagma_type}.
+            $\mul[G](x,\neutral[G])=x$ by \obv{unitalmagma_right}.
+            Hence $\neutral[G]\in U$
+                by \obv{left_translation_preimage}.
+            $\LeftTranslationPreimage{G}{x}{A}\subseteq\carrier[G]$
+                by \obv{left_translation_preimage_type}.
+            Hence $U\subseteq\carrier[G]$.
+            Hence $U\in\pow{\carrier[G]}$ by \obv{powerset_intro}.
+            Hence $U\in\neighbourhoods{\neutral[G]}{G}$
+                by \obv{neighbourhoods,subseteq_refl}.
+            $\leftGroupEntourage{G}{U}
+                \in\uniformity[\leftUniformSpace{G}]$
+                by \obv{left_group_basic_entourage_is_entourage}.
+            Show that $\uniformBall{\leftUniformSpace{G}}
+                {\leftGroupEntourage{G}{U}}{x}\subseteq A$.
+            \begin{subproof}
+                It suffices to show that every element of
+                    $\uniformBall{\leftUniformSpace{G}}
+                        {\leftGroupEntourage{G}{U}}{x}$
+                    is an element of $A$ by \obv{subseteq}.
+                Fix $y\in\uniformBall{\leftUniformSpace{G}}
+                    {\leftGroupEntourage{G}{U}}{x}$.
+                $(x,y)\in\leftGroupEntourage{G}{U}$
+                    by \obv{uniform_ball_iff}.
+                Hence $y\in\carrier[G]$ and
+                    $\mul[G](\groupInv[G](x),y)\in U$
+                    by \auto{left_group_entourage_iff}.
+                Hence $\mul[G](\groupInv[G](x),y)
+                    \in\LeftTranslationPreimage{G}{x}{A}$.
+                Hence
+                    $\mul[G](x,\mul[G](\groupInv[G](x),y))\in A$
+                    by \obv{left_translation_preimage}.
+                $\groupInv[G](x)\in\carrier[G]$
+                    by \obv{group_inverse_type}.
+                $\mul[G](x,\mul[G](\groupInv[G](x),y))
+                    =\mul[G](\mul[G](x,\groupInv[G](x)),y)$
+                    by \obv{monoid_assoc}.
+                $\mul[G](x,\groupInv[G](x))=\neutral[G]$
+                    by \obv{group_inverse_right}.
+                $\mul[G](\neutral[G],y)=y$ by \obv{unitalmagma_left}.
+                Hence $\mul[G](x,\mul[G](\groupInv[G](x),y))=y$.
+            \end{subproof}
+        \end{subproof}
+        Follows by \obv{uniform_open}.
+    \end{subproof}
+
+    Show that if $\uniformOpen{\leftUniformSpace{G}}{A}$, then
+        $A\in\opens[G]$.
+    \begin{subproof}
+        Assume $\uniformOpen{\leftUniformSpace{G}}{A}$.
+        $A\subseteq\carrier[\leftUniformSpace{G}]$
+            by \obv{uniform_open}.
+        Hence $A\subseteq\carrier[G]$.
+        Show that $A\subseteq\interior{A}{G}$.
+        \begin{subproof}
+            It suffices to show that every element of $A$ is an element of
+                $\interior{A}{G}$ by \obv{subseteq}.
+            Fix $x\in A$.
+            Hence $x\in\carrier[G]$ by \obv{subseteq}.
+            Take $E\in\uniformity[\leftUniformSpace{G}]$ such that
+                $\uniformBall{\leftUniformSpace{G}}{E}{x}\subseteq A$
+                by \obv{uniform_open}.
+            $E\in\generatedFilter
+                {\carrier[G]\times\carrier[G]}{\leftUniformityBasis{G}}$
+                by \obv{left_uniform_space_uniformity}.
+            Take $U\in\neighbourhoods{\neutral[G]}{G}$ such that
+                $\leftGroupEntourage{G}{U}\subseteq E$
+                by \auto{left_generated_uniformity_iff}.
+            Take $V\in\opens[G]$ such that
+                $\neutral[G]\in V\subseteq U$ by \obv{neighbourhoods}.
+            $V\subseteq\carrier[G]$ by \obv{opens_type,pow_iff,subseteq}.
+            Hence $V\in\pow{\carrier[G]}$ by \obv{powerset_intro}.
+            Hence $V\in\neighbourhoods{\neutral[G]}{G}$
+                by \obv{neighbourhoods,subseteq_refl}.
+            $\uniformBall{\leftUniformSpace{G}}
+                {\leftGroupEntourage{G}{V}}{x}\in\opens[G]$
+                by \obv{left_group_basic_ball_open}.
+            $\leftGroupEntourage{G}{V}
+                \in\uniformity[\leftUniformSpace{G}]$
+                by \obv{left_group_basic_entourage_is_entourage}.
+            Hence $x\in\uniformBall{\leftUniformSpace{G}}
+                {\leftGroupEntourage{G}{V}}{x}$
+                by \obv{uniform_ball_contains_centre}.
+            $\leftGroupEntourage{G}{V}
+                \subseteq\leftGroupEntourage{G}{U}$
+                by \obv{left_group_entourage_monotone}.
+            Hence $\leftGroupEntourage{G}{V}\subseteq E$
+                by \obv{subseteq_transitive}.
+            $\uniformBall{\leftUniformSpace{G}}
+                    {\leftGroupEntourage{G}{V}}{x}
+                \subseteq\uniformBall{\leftUniformSpace{G}}{E}{x}$
+                by \obv{uniform_ball_monotone}.
+            Hence $\uniformBall{\leftUniformSpace{G}}
+                {\leftGroupEntourage{G}{V}}{x}\subseteq A$
+                by \obv{subseteq_transitive}.
+            Follows by \obv{interior_elem_intro}.
+        \end{subproof}
+        $\interior{A}{G}\subseteq A$ by \obv{interior_subseteq}.
+        Hence $\interior{A}{G}=A$ by \obv{subseteq_antisymmetric}.
+        Follows by \obv{interior_eq_self_implies_open}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{right_uniform_open_iff_topological_group_open}
+    Let $G$ be a topological group.
+    Then $\uniformOpen{\rightUniformSpace{G}}{A}$ iff $A\in\opens[G]$.
+\end{theorem}
+\begin{proof}
+    $G$ is a group by \obv{topological_group_is_group}.
+    Hence $G$ is a monoid by \obv{group_is_monoid}.
+    Hence $G$ is a unital magma by \obv{monoid_is_unital_magma}.
+    $G$ is a magma by \obv{monoid_is_magma}.
+    $G$ is a topological space
+        by \obv{topological_group_is_topological_space}.
+    $\rightUniformSpace{G}$ is a uniform space
+        by \obv{right_uniform_space_is_uniform_space}.
+    $\carrier[\rightUniformSpace{G}]=\carrier[G]$
+        by \obv{right_uniform_space_carrier}.
+
+    Show that if $A\in\opens[G]$, then
+        $\uniformOpen{\rightUniformSpace{G}}{A}$.
+    \begin{subproof}
+        Assume $A\in\opens[G]$.
+        $A\subseteq\carrier[G]$ by \obv{opens_type,pow_iff,subseteq}.
+        Hence $A\subseteq\carrier[\rightUniformSpace{G}]$.
+        Show that for every $x\in A$ there exists
+            $E\in\uniformity[\rightUniformSpace{G}]$ such that
+            $\uniformBall{\rightUniformSpace{G}}{E}{x}\subseteq A$.
+        \begin{subproof}
+            Fix $x\in A$.
+            Hence $x\in\carrier[G]$ by \obv{subseteq}.
+            Let $W=\RightTranslationPreimage{G}{x}{A}$.
+            $\RightTranslationPreimage{G}{x}{A}\in\opens[G]$
+                by \obv{right_translation_preimage_open}.
+            Hence $W\in\opens[G]$.
+            $\neutral[G]\in\carrier[G]$ by \obv{unitalmagma_type}.
+            $\mul[G](\neutral[G],x)=x$ by \obv{unitalmagma_left}.
+            Hence $\neutral[G]\in W$
+                by \obv{right_translation_preimage}.
+            Let $U=\InversePreimage{G}{W}$.
+            $\InversePreimage{G}{W}\in\opens[G]$
+                by \obv{inverse_preimage_open}.
+            Hence $U\in\opens[G]$.
+            $\groupInv[G](\neutral[G])=\neutral[G]$
+                by \obv{group_inverse_neutral}.
+            Hence $\neutral[G]\in U$ by \obv{inverse_preimage}.
+            $\InversePreimage{G}{W}\subseteq\carrier[G]$
+                by \obv{inverse_preimage_type}.
+            Hence $U\subseteq\carrier[G]$.
+            Hence $U\in\pow{\carrier[G]}$ by \obv{powerset_intro}.
+            Hence $U\in\neighbourhoods{\neutral[G]}{G}$
+                by \obv{neighbourhoods,subseteq_refl}.
+            $\rightGroupEntourage{G}{U}
+                \in\uniformity[\rightUniformSpace{G}]$
+                by \obv{right_group_basic_entourage_is_entourage}.
+            Show that $\uniformBall{\rightUniformSpace{G}}
+                {\rightGroupEntourage{G}{U}}{x}\subseteq A$.
+            \begin{subproof}
+                It suffices to show that every element of
+                    $\uniformBall{\rightUniformSpace{G}}
+                        {\rightGroupEntourage{G}{U}}{x}$
+                    is an element of $A$ by \obv{subseteq}.
+                Fix $y\in\uniformBall{\rightUniformSpace{G}}
+                    {\rightGroupEntourage{G}{U}}{x}$.
+                $(x,y)\in\rightGroupEntourage{G}{U}$
+                    by \obv{uniform_ball_iff}.
+                Hence $y\in\carrier[G]$ and
+                    $\mul[G](x,\groupInv[G](y))\in U$
+                    by \auto{right_group_entourage_iff}.
+                Hence $\mul[G](x,\groupInv[G](y))
+                    \in\InversePreimage{G}{W}$.
+                Hence $\groupInv[G](\mul[G](x,\groupInv[G](y)))
+                    \in W$ by \obv{inverse_preimage}.
+                Hence $\groupInv[G](\mul[G](x,\groupInv[G](y)))
+                    \in\RightTranslationPreimage{G}{x}{A}$.
+                $\groupInv[G](x),\groupInv[G](y)\in\carrier[G]$
+                    by \obv{group_inverse_type}.
+                $\groupInv[G](\mul[G](x,\groupInv[G](y)))
+                    =\mul[G](y,\groupInv[G](x))$
+                    by \auto{group_inverse_product,group_inverse_involutive}.
+                $\mul[G](y,\groupInv[G](x))
+                    \in\RightTranslationPreimage{G}{x}{A}$.
+                Hence
+                    $\mul[G](\mul[G](y,\groupInv[G](x)),x)\in A$
+                    by \obv{right_translation_preimage}.
+                $\mul[G](\mul[G](y,\groupInv[G](x)),x)
+                    =\mul[G](y,\mul[G](\groupInv[G](x),x))$
+                    by \obv{monoid_assoc}.
+                $\mul[G](\groupInv[G](x),x)=\neutral[G]$
+                    by \obv{group_inverse_left}.
+                $\mul[G](y,\neutral[G])=y$ by \obv{unitalmagma_right}.
+                Hence $\mul[G](\mul[G](y,\groupInv[G](x)),x)=y$.
+            \end{subproof}
+        \end{subproof}
+        Follows by \obv{uniform_open}.
+    \end{subproof}
+
+    Show that if $\uniformOpen{\rightUniformSpace{G}}{A}$, then
+        $A\in\opens[G]$.
+    \begin{subproof}
+        Assume $\uniformOpen{\rightUniformSpace{G}}{A}$.
+        $A\subseteq\carrier[\rightUniformSpace{G}]$
+            by \obv{uniform_open}.
+        Hence $A\subseteq\carrier[G]$.
+        Show that $A\subseteq\interior{A}{G}$.
+        \begin{subproof}
+            It suffices to show that every element of $A$ is an element of
+                $\interior{A}{G}$ by \obv{subseteq}.
+            Fix $x\in A$.
+            Hence $x\in\carrier[G]$ by \obv{subseteq}.
+            Take $E\in\uniformity[\rightUniformSpace{G}]$ such that
+                $\uniformBall{\rightUniformSpace{G}}{E}{x}\subseteq A$
+                by \obv{uniform_open}.
+            $E\in\generatedFilter
+                {\carrier[G]\times\carrier[G]}{\rightUniformityBasis{G}}$
+                by \obv{right_uniform_space_uniformity}.
+            Take $U\in\neighbourhoods{\neutral[G]}{G}$ such that
+                $\rightGroupEntourage{G}{U}\subseteq E$
+                by \auto{right_generated_uniformity_iff}.
+            Take $V\in\opens[G]$ such that
+                $\neutral[G]\in V\subseteq U$ by \obv{neighbourhoods}.
+            $V\subseteq\carrier[G]$ by \obv{opens_type,pow_iff,subseteq}.
+            Hence $V\in\pow{\carrier[G]}$ by \obv{powerset_intro}.
+            Hence $V\in\neighbourhoods{\neutral[G]}{G}$
+                by \obv{neighbourhoods,subseteq_refl}.
+            $\uniformBall{\rightUniformSpace{G}}
+                {\rightGroupEntourage{G}{V}}{x}\in\opens[G]$
+                by \obv{right_group_basic_ball_open}.
+            $\rightGroupEntourage{G}{V}
+                \in\uniformity[\rightUniformSpace{G}]$
+                by \obv{right_group_basic_entourage_is_entourage}.
+            Hence $x\in\uniformBall{\rightUniformSpace{G}}
+                {\rightGroupEntourage{G}{V}}{x}$
+                by \obv{uniform_ball_contains_centre}.
+            $\rightGroupEntourage{G}{V}
+                \subseteq\rightGroupEntourage{G}{U}$
+                by \obv{right_group_entourage_monotone}.
+            Hence $\rightGroupEntourage{G}{V}\subseteq E$
+                by \obv{subseteq_transitive}.
+            $\uniformBall{\rightUniformSpace{G}}
+                    {\rightGroupEntourage{G}{V}}{x}
+                \subseteq\uniformBall{\rightUniformSpace{G}}{E}{x}$
+                by \obv{uniform_ball_monotone}.
+            Hence $\uniformBall{\rightUniformSpace{G}}
+                {\rightGroupEntourage{G}{V}}{x}\subseteq A$
+                by \obv{subseteq_transitive}.
+            Follows by \obv{interior_elem_intro}.
+        \end{subproof}
+        $\interior{A}{G}\subseteq A$ by \obv{interior_subseteq}.
+        Hence $\interior{A}{G}=A$ by \obv{subseteq_antisymmetric}.
+        Follows by \obv{interior_eq_self_implies_open}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{left_uniform_space_opens}
+    Let $G$ be a topological group.
+    Then $\uniformOpens{\leftUniformSpace{G}}=\opens[G]$.
+\end{theorem}
+\begin{proof}
+    Follows by
+        \auto{setext,uniform_opens_iff,
+            left_uniform_open_iff_topological_group_open}.
+\end{proof}
+
+\begin{theorem}\label{right_uniform_space_opens}
+    Let $G$ be a topological group.
+    Then $\uniformOpens{\rightUniformSpace{G}}=\opens[G]$.
+\end{theorem}
+\begin{proof}
+    Follows by
+        \auto{setext,uniform_opens_iff,
+            right_uniform_open_iff_topological_group_open}.
+\end{proof}
+
+\begin{proposition}\label{left_uniform_topology_carrier}
+    $\carrier[\uniformTopology{\leftUniformSpace{G}}]=\carrier[G]$.
+\end{proposition}
+\begin{proof}
+    $\carrier[\uniformTopology{\leftUniformSpace{G}}]
+        =\carrier[\leftUniformSpace{G}]$
+        by \obv{uniform_topology_carrier}.
+    $\carrier[\leftUniformSpace{G}]=\carrier[G]$
+        by \obv{left_uniform_space_carrier}.
+\end{proof}
+
+\begin{proposition}\label{right_uniform_topology_carrier}
+    $\carrier[\uniformTopology{\rightUniformSpace{G}}]=\carrier[G]$.
+\end{proposition}
+\begin{proof}
+    $\carrier[\uniformTopology{\rightUniformSpace{G}}]
+        =\carrier[\rightUniformSpace{G}]$
+        by \obv{uniform_topology_carrier}.
+    $\carrier[\rightUniformSpace{G}]=\carrier[G]$
+        by \obv{right_uniform_space_carrier}.
+\end{proof}
+
+\begin{theorem}\label{left_uniform_topology_opens}
+    Let $G$ be a topological group.
+    Then $\opens[\uniformTopology{\leftUniformSpace{G}}]=\opens[G]$.
+\end{theorem}
+\begin{proof}
+    $\opens[\uniformTopology{\leftUniformSpace{G}}]
+        =\uniformOpens{\leftUniformSpace{G}}$
+        by \obv{uniform_topology_opens}.
+    $\uniformOpens{\leftUniformSpace{G}}=\opens[G]$
+        by \obv{left_uniform_space_opens}.
+\end{proof}
+
+\begin{theorem}\label{right_uniform_topology_opens}
+    Let $G$ be a topological group.
+    Then $\opens[\uniformTopology{\rightUniformSpace{G}}]=\opens[G]$.
+\end{theorem}
+\begin{proof}
+    $\opens[\uniformTopology{\rightUniformSpace{G}}]
+        =\uniformOpens{\rightUniformSpace{G}}$
+        by \obv{uniform_topology_opens}.
+    $\uniformOpens{\rightUniformSpace{G}}=\opens[G]$
+        by \obv{right_uniform_space_opens}.
+\end{proof}
+
+\begin{theorem}\label{left_uniform_space_separated_iff_hausdorff}
+    Let $G$ be a topological group.
+    Then $\leftUniformSpace{G}$ is separated uniform iff $G$ is Hausdorff.
+\end{theorem}
+\begin{proof}
+    $\leftUniformSpace{G}$ is a uniform space
+        by \obv{left_uniform_space_is_uniform_space}.
+    $\uniformTopology{\leftUniformSpace{G}}$ is a topological space
+        by \obv{uniform_topology_is_topological_space}.
+    $G$ is a topological space
+        by \obv{topological_group_is_topological_space}.
+    $\carrier[\uniformTopology{\leftUniformSpace{G}}]=\carrier[G]$
+        by \obv{left_uniform_topology_carrier}.
+    $\opens[\uniformTopology{\leftUniformSpace{G}}]=\opens[G]$
+        by \obv{left_uniform_topology_opens}.
+    $\leftUniformSpace{G}$ is separated uniform iff
+        $\uniformTopology{\leftUniformSpace{G}}$ is Hausdorff
+        by \obv{separated_uniform_iff_uniform_topology_hausdorff}.
+    Follows by \auto{is_hausdorff}.
+\end{proof}
+
+\begin{theorem}\label{right_uniform_space_separated_iff_hausdorff}
+    Let $G$ be a topological group.
+    Then $\rightUniformSpace{G}$ is separated uniform iff $G$ is Hausdorff.
+\end{theorem}
+\begin{proof}
+    $\rightUniformSpace{G}$ is a uniform space
+        by \obv{right_uniform_space_is_uniform_space}.
+    $\uniformTopology{\rightUniformSpace{G}}$ is a topological space
+        by \obv{uniform_topology_is_topological_space}.
+    $G$ is a topological space
+        by \obv{topological_group_is_topological_space}.
+    $\carrier[\uniformTopology{\rightUniformSpace{G}}]=\carrier[G]$
+        by \obv{right_uniform_topology_carrier}.
+    $\opens[\uniformTopology{\rightUniformSpace{G}}]=\opens[G]$
+        by \obv{right_uniform_topology_opens}.
+    $\rightUniformSpace{G}$ is separated uniform iff
+        $\uniformTopology{\rightUniformSpace{G}}$ is Hausdorff
+        by \obv{separated_uniform_iff_uniform_topology_hausdorff}.
+    Follows by \auto{is_hausdorff}.
+\end{proof}
+
+\subsection{The commutative case}
+
+\begin{proposition}\label{commutative_left_group_entourage_as_right}
+    Let $G$ be a commutative group.
+    Then $\leftGroupEntourage{G}{U}
+        =\rightGroupEntourage{G}{\InversePreimage{G}{U}}$.
+\end{proposition}
+\begin{proof}
+    $G$ is a group by \obv{commutative_group_is_group}.
+    Show that for every $p\in\leftGroupEntourage{G}{U}$ we have
+        $p\in\rightGroupEntourage{G}{\InversePreimage{G}{U}}$.
+    \begin{subproof}
+        Fix $p\in\leftGroupEntourage{G}{U}$.
+        Take $x,y\in\carrier[G]$ such that $p=(x,y)$
+            by \obv{left_group_entourage_type,times_elem_is_tuple,subseteq}.
+        $\mul[G](\groupInv[G](x),y)\in U$
+            by \auto{left_group_entourage_iff}.
+        $\groupInv[G](x),\groupInv[G](y)\in\carrier[G]$
+            by \obv{group_inverse_type}.
+        $\mul[G](x,\groupInv[G](y))\in\carrier[G]$
+            by \obv{group_is_monoid,monoid_is_magma,magma_welldef}.
+        $\groupInv[G](\mul[G](x,\groupInv[G](y)))
+            =\mul[G](y,\groupInv[G](x))$
+            by \auto{group_inverse_product,group_inverse_involutive}.
+        $\mul[G](y,\groupInv[G](x))
+            =\mul[G](\groupInv[G](x),y)$
+            by \obv{commutative_group_commutative}.
+        Hence $\groupInv[G](\mul[G](x,\groupInv[G](y)))\in U$.
+        Hence $\mul[G](x,\groupInv[G](y))
+            \in\InversePreimage{G}{U}$ by \obv{inverse_preimage}.
+        Follows by \auto{right_group_entourage_iff}.
+    \end{subproof}
+    Show that for every
+        $p\in\rightGroupEntourage{G}{\InversePreimage{G}{U}}$ we have
+        $p\in\leftGroupEntourage{G}{U}$.
+    \begin{subproof}
+        Fix $p\in\rightGroupEntourage{G}{\InversePreimage{G}{U}}$.
+        Take $x,y\in\carrier[G]$ such that $p=(x,y)$
+            by \obv{right_group_entourage_type,times_elem_is_tuple,subseteq}.
+        $\mul[G](x,\groupInv[G](y))
+            \in\InversePreimage{G}{U}$
+            by \auto{right_group_entourage_iff}.
+        Hence $\groupInv[G](\mul[G](x,\groupInv[G](y)))\in U$
+            by \auto{inverse_preimage}.
+        $\groupInv[G](x),\groupInv[G](y)\in\carrier[G]$
+            by \obv{group_inverse_type}.
+        $\groupInv[G](\mul[G](x,\groupInv[G](y)))
+            =\mul[G](y,\groupInv[G](x))$
+            by \auto{group_inverse_product,group_inverse_involutive}.
+        $\mul[G](y,\groupInv[G](x))
+            =\mul[G](\groupInv[G](x),y)$
+            by \obv{commutative_group_commutative}.
+        Hence $\mul[G](\groupInv[G](x),y)\in U$.
+        Follows by \auto{left_group_entourage_iff}.
+    \end{subproof}
+    Follows by set extensionality.
+\end{proof}
+
+\begin{proposition}\label{commutative_right_group_entourage_as_left}
+    Let $G$ be a commutative group.
+    Then $\rightGroupEntourage{G}{U}
+        =\leftGroupEntourage{G}{\InversePreimage{G}{U}}$.
+\end{proposition}
+\begin{proof}
+    $G$ is a group by \obv{commutative_group_is_group}.
+    Show that for every $p\in\rightGroupEntourage{G}{U}$ we have
+        $p\in\leftGroupEntourage{G}{\InversePreimage{G}{U}}$.
+    \begin{subproof}
+        Fix $p\in\rightGroupEntourage{G}{U}$.
+        Take $x,y\in\carrier[G]$ such that $p=(x,y)$
+            by \auto{right_group_entourage_type,times_elem_is_tuple,subseteq}.
+        $\mul[G](x,\groupInv[G](y))\in U$
+            by \auto{right_group_entourage_iff}.
+        $\groupInv[G](x),\groupInv[G](y)\in\carrier[G]$
+            by \obv{group_inverse_type}.
+        $\mul[G](\groupInv[G](x),y)\in\carrier[G]$
+            by \obv{group_is_monoid,monoid_is_magma,magma_welldef}.
+        $\groupInv[G](\mul[G](\groupInv[G](x),y))
+            =\mul[G](\groupInv[G](y),x)$
+            by \auto{group_inverse_product,group_inverse_involutive}.
+        $\mul[G](\groupInv[G](y),x)
+            =\mul[G](x,\groupInv[G](y))$
+            by \obv{commutative_group_commutative}.
+        Hence $\groupInv[G](\mul[G](\groupInv[G](x),y))\in U$.
+        Hence $\mul[G](\groupInv[G](x),y)
+            \in\InversePreimage{G}{U}$ by \auto{inverse_preimage}.
+        Follows by \auto{left_group_entourage_iff}.
+    \end{subproof}
+    Show that for every
+        $p\in\leftGroupEntourage{G}{\InversePreimage{G}{U}}$ we have
+        $p\in\rightGroupEntourage{G}{U}$.
+    \begin{subproof}
+        Fix $p\in\leftGroupEntourage{G}{\InversePreimage{G}{U}}$.
+        Take $x,y\in\carrier[G]$ such that $p=(x,y)$
+            by \auto{left_group_entourage_type,times_elem_is_tuple,subseteq}.
+        $\mul[G](\groupInv[G](x),y)
+            \in\InversePreimage{G}{U}$
+            by \auto{left_group_entourage_iff}.
+        Hence $\groupInv[G](\mul[G](\groupInv[G](x),y))\in U$
+            by \auto{inverse_preimage}.
+        $\groupInv[G](x),\groupInv[G](y)\in\carrier[G]$
+            by \obv{group_inverse_type}.
+        $\groupInv[G](\mul[G](\groupInv[G](x),y))
+            =\mul[G](\groupInv[G](y),x)$
+            by \auto{group_inverse_product,group_inverse_involutive}.
+        $\mul[G](\groupInv[G](y),x)
+            =\mul[G](x,\groupInv[G](y))$
+            by \obv{commutative_group_commutative}.
+        Hence $\mul[G](x,\groupInv[G](y))\in U$.
+        Follows by \auto{right_group_entourage_iff}.
+    \end{subproof}
+    Follows by set extensionality.
+\end{proof}
+
+\begin{theorem}\label{commutative_group_uniformity_bases_equal}
+    Let $G$ be a topological group.
+    Suppose $G$ is a commutative group.
+    Then $\leftUniformityBasis{G}=\rightUniformityBasis{G}$.
+\end{theorem}
+\begin{proof}
+    Show that every element of $\leftUniformityBasis{G}$ is an element of
+        $\rightUniformityBasis{G}$.
+    \begin{subproof}
+        Fix $E\in\leftUniformityBasis{G}$.
+        Take $U\in\neighbourhoods{\neutral[G]}{G}$ such that
+            $E=\leftGroupEntourage{G}{U}$
+            by \obv{left_uniformity_basis_iff}.
+        $\InversePreimage{G}{U}
+            \in\neighbourhoods{\neutral[G]}{G}$
+            by \obv{topological_group_inverse_identity_neighbourhood}.
+        Hence $\rightGroupEntourage{G}{\InversePreimage{G}{U}}
+            \in\rightUniformityBasis{G}$
+            by \auto{right_uniformity_basis_iff}.
+        $\leftGroupEntourage{G}{U}
+            =\rightGroupEntourage{G}{\InversePreimage{G}{U}}$
+            by \obv{commutative_left_group_entourage_as_right}.
+    \end{subproof}
+    Hence $\leftUniformityBasis{G}\subseteq\rightUniformityBasis{G}$
+        by \obv{subseteq}.
+    Show that every element of $\rightUniformityBasis{G}$ is an element of
+        $\leftUniformityBasis{G}$.
+    \begin{subproof}
+        Fix $E\in\rightUniformityBasis{G}$.
+        Take $U\in\neighbourhoods{\neutral[G]}{G}$ such that
+            $E=\rightGroupEntourage{G}{U}$
+            by \obv{right_uniformity_basis_iff}.
+        $\InversePreimage{G}{U}
+            \in\neighbourhoods{\neutral[G]}{G}$
+            by \obv{topological_group_inverse_identity_neighbourhood}.
+        Hence $\leftGroupEntourage{G}{\InversePreimage{G}{U}}
+            \in\leftUniformityBasis{G}$
+            by \auto{left_uniformity_basis_iff}.
+        $\rightGroupEntourage{G}{U}
+            =\leftGroupEntourage{G}{\InversePreimage{G}{U}}$
+            by \obv{commutative_right_group_entourage_as_left}.
+    \end{subproof}
+    Hence $\rightUniformityBasis{G}\subseteq\leftUniformityBasis{G}$
+        by \obv{subseteq}.
+    Follows by \obv{subseteq_antisymmetric}.
+\end{proof}
+
+\begin{corollary}\label{commutative_group_generated_uniformities_equal}
+    Let $G$ be a topological group.
+    Suppose $G$ is a commutative group.
+    Then $\generatedFilter
+        {\carrier[G]\times\carrier[G]}{\leftUniformityBasis{G}}
+        =\generatedFilter
+        {\carrier[G]\times\carrier[G]}{\rightUniformityBasis{G}}$.
+\end{corollary}
+\begin{proof}
+    $\leftUniformityBasis{G}=\rightUniformityBasis{G}$
+        by \obv{commutative_group_uniformity_bases_equal}.
+\end{proof}
+
+\begin{corollary}\label{commutative_group_uniform_spaces_equal}
+    Let $G$ be a topological group.
+    Suppose $G$ is a commutative group.
+    Then $\leftUniformSpace{G}=\rightUniformSpace{G}$.
+\end{corollary}
+\begin{proof}
+    $\generatedFilter
+        {\carrier[G]\times\carrier[G]}{\leftUniformityBasis{G}}
+        =\generatedFilter
+        {\carrier[G]\times\carrier[G]}{\rightUniformityBasis{G}}$
+        by \obv{commutative_group_generated_uniformities_equal}.
+    Follows by \auto{left_uniform_space,right_uniform_space}.
+\end{proof}

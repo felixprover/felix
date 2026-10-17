@@ -1,0 +1,204 @@
+\section{Shifting natural-number indices}
+
+\import{set/finite-ordinal.tex}
+\import{function.tex}
+
+Translation of natural indices also identifies a finite block with the tail
+of a larger finite ordinal. The same translation graph is used for sequences.
+
+\begin{definition}\label{natural_shift}
+    $\naturalShift{N}=\{(n,N+n)\mid n\in\naturals\}$.
+\end{definition}
+
+\begin{theorem}\label{natural_shift_is_function}
+    Let $N$ be a natural number.
+    Then $\naturalShift{N}\in\funs{\naturals}{\naturals}$.
+\end{theorem}
+\begin{proof}
+    $\naturalShift{N}$ is a relation by
+        \auto{natural_shift,relation}.
+    $\naturalShift{N}$ is right-unique by
+        \auto{natural_shift,rightunique,pair_eq_iff}.
+    $\dom{\naturalShift{N}}=\naturals$ by
+        \auto{natural_shift,setext,dom_iff,pair_eq_iff}.
+    For every $n\in\naturals$ we have
+        $(\naturalShift{N})(n)=N+n$ by
+        \obv{natural_shift,function_apply_intro}.
+    For every $n\in\naturals$ we have $N+n\in\naturals$ by
+        \obv{num_addition_on_naturals}.
+    For every $n\in\dom{\naturalShift{N}}$ we have
+        $(\naturalShift{N})(n)\in\naturals$ by \auto.
+    Follows by \obv{funs_intro}.
+\end{proof}
+
+\begin{proposition}\label{natural_shift_apply}
+    Let $N,n$ be natural numbers.
+    Then $(\naturalShift{N})(n)=N+n$.
+\end{proposition}
+\begin{proof}
+    $\naturalShift{N}$ is a function by
+        \auto{natural_shift_is_function,funs_is_function}.
+    Follows by \obv{natural_shift,function_apply_intro}.
+\end{proof}
+
+\subsection{Translation preserves order}
+
+\begin{theorem}\label{natural_addition_subseteq_iff}
+    Let $m,n,k$ be natural numbers.
+    Then $m+n\subseteq m+k$ iff $n\subseteq k$.
+\end{theorem}
+\begin{proof}
+    $m+n$ and $m+k$ are natural numbers by \obv{num_addition_on_naturals}.
+    Show that if $m+n\subseteq m+k$, then $n\subseteq k$.
+    \begin{subproof}
+        Assume $m+n\subseteq m+k$.
+        Take a natural number $d$ such that $m+k=(m+n)+d$ by
+            \obv{natural_additive_difference}.
+        $(m+n)+d=m+(n+d)$ by \obv{natural_addition_associative}.
+        $n+d$ is a natural number by \obv{num_addition_on_naturals}.
+        Hence $k=n+d$ by \auto{natural_addition_cancel_left}.
+        Follows by \auto{natural_addition_left_subseteq_sum}.
+    \end{subproof}
+    Show that if $n\subseteq k$, then $m+n\subseteq m+k$.
+    \begin{subproof}
+        Assume $n\subseteq k$.
+        Take a natural number $d$ such that $k=n+d$ by \obv{natural_additive_difference}.
+        $m+k=(m+n)+d$ by \auto{natural_addition_associative}.
+        Follows by \auto{natural_addition_left_subseteq_sum}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{natural_addition_membership_iff}
+    Let $m,n,k$ be natural numbers.
+    Then $m+n\in m+k$ iff $n\in k$.
+\end{theorem}
+\begin{proof}
+    $m+n$ and $m+k$ are natural numbers by \obv{num_addition_on_naturals}.
+    $m+n$ and $m+k$ are ordinals by \obv{natural_number_is_ordinal}.
+    $n$ and $k$ are ordinals by \obv{natural_number_is_ordinal}.
+    $m+n\subseteq m+k$ iff $n\subseteq k$ by \obv{natural_addition_subseteq_iff}.
+    $m+n=m+k$ iff $n=k$ by \auto{natural_addition_cancel_left}.
+    Follows by \auto{ordinal_proper_subset_implies_elem,ordinal_elem_implies_proper_subset,subset}.
+\end{proof}
+
+\subsection{Finite blocks}
+
+\begin{definition}\label{finite_index_shift}
+    $\finiteIndexShift{m}{n}=\restrl{\naturalShift{m}}{n}$.
+\end{definition}
+
+\begin{proposition}\label{finite_index_shift_apply}
+    Let $m,n$ be natural numbers and $k\in n$.
+    Then $(\finiteIndexShift{m}{n})(k)=m+k$.
+\end{proposition}
+\begin{proof}
+    $n\subseteq\naturals$ by \auto{naturals_is_transitive_set,transitiveset_iff_subseteq}.
+    Hence $k\in\naturals$ by \obv{subseteq}.
+    $\naturalShift{m}\in\funs{\naturals}{\naturals}$ by \obv{natural_shift_is_function}.
+    Follows by \auto{finite_index_shift,restrl_of_function_apply,natural_shift_apply,funs_is_function,funs}.
+\end{proof}
+
+\begin{theorem}\label{finite_index_shift_type}
+    Let $m,n$ be natural numbers.
+    Then $\finiteIndexShift{m}{n}\in\funs{n}{(m+n)\setminus m}$.
+\end{theorem}
+\begin{proof}
+    Let $e=\finiteIndexShift{m}{n}$.
+    $n\subseteq\naturals$ by \auto{naturals_is_transitive_set,transitiveset_iff_subseteq}.
+    $e\in\funs{n}{\naturals}$ by \auto{finite_index_shift,natural_shift_is_function,funs_restrl}.
+    Hence $e$ is a function and $\dom{e}=n$ by \obv{funs_is_function,funs}.
+    Show that for every $k\in n$ we have $e(k)\in(m+n)\setminus m$.
+    \begin{subproof}
+        Fix $k\in n$.
+        $e(k)=m+k$ by \auto{finite_index_shift_apply}.
+        $m+k\in m+n$ by \obv{natural_addition_membership_iff}.
+        $m\subseteq m+k$ by \obv{natural_addition_left_subseteq_sum}.
+        Hence $m+k\notin m$ by \auto{subseteq,in_irrefl}.
+        Follows by \obv{setminus}.
+    \end{subproof}
+    Hence $e$ is a function to $(m+n)\setminus m$.
+    Follows by \auto{funs_intro}.
+\end{proof}
+
+\begin{theorem}\label{finite_index_shift_bijection}
+    Let $m,n$ be natural numbers.
+    Then $\finiteIndexShift{m}{n}\in\bijections{n}{(m+n)\setminus m}$.
+\end{theorem}
+\begin{proof}
+    Let $e=\finiteIndexShift{m}{n}$.
+    $n\subseteq\naturals$ by \auto{naturals_is_transitive_set,transitiveset_iff_subseteq}.
+    $e\in\funs{n}{(m+n)\setminus m}$ by \auto{finite_index_shift_type}.
+    Hence $e$ is a function and $\dom{e}=n$ by \obv{funs_is_function,funs}.
+    For all $k,l\in n$ such that $e(k)=e(l)$ we have $k=l$ by
+        \auto{finite_index_shift_apply,natural_addition_cancel_left,subseteq}.
+    Hence $e$ is injective by \auto{injective_function}.
+    Show that for every $v\in(m+n)\setminus m$ there exists $k\in n$ such that $e(k)=v$.
+    \begin{subproof}
+        Fix $v\in(m+n)\setminus m$.
+        $v\in m+n$ and $v\notin m$ by \obv{setminus}.
+        $m+n$ is a natural number by \obv{num_addition_on_naturals}.
+        $m+n\subseteq\naturals$ by \auto{naturals_is_transitive_set,transitiveset_iff_subseteq}.
+        Hence $v$ is a natural number by \obv{subseteq}.
+        $m$ and $v$ are ordinals by \obv{natural_number_is_ordinal}.
+        Hence $m\subseteq v$ by \obv{ordinal_elem_or_subseteq}.
+        Take a natural number $k$ such that $v=m+k$ by \obv{natural_additive_difference}.
+        Hence $k\in n$ by \auto{natural_addition_membership_iff}.
+        $e(k)=v$ by \auto{finite_index_shift_apply}.
+    \end{subproof}
+    Hence $e\in\surj{n}{(m+n)\setminus m}$ by \obv{surj}.
+    Follows by \auto{bijections}.
+\end{proof}
+
+\begin{proposition}\label{finite_index_shift_zero}
+    Let $n$ be a natural number.
+    Then $\finiteIndexShift{\emptyset}{n}=\identity{n}$.
+\end{proposition}
+\begin{proof}
+    $\emptyset$ is a natural number by \obv{omega_empty}.
+    $\emptyset+n=n$ by \obv{num_addition_zero_left}.
+    $\finiteIndexShift{\emptyset}{n}\in\funs{n}{n}$ by
+        \auto{finite_index_shift_type,setminus_emptyset}.
+    $\identity{n}\in\funs{n}{n}$ by \obv{id_elem_funs}.
+    $n\subseteq\naturals$ by \auto{naturals_is_transitive_set,transitiveset_iff_subseteq}.
+    For every $k\in n$ we have $(\finiteIndexShift{\emptyset}{n})(k)=(\identity{n})(k)$ by
+        \auto{finite_index_shift_apply,num_addition_zero_left,id_apply,subseteq}.
+    Follows by \obv{typed_functions_equal_from_agreement}.
+\end{proof}
+
+\begin{proposition}\label{natural_sum_member_iff}
+    Let $m,n$ be natural numbers.
+    Then $i\in m+n$ iff $i\in m$ or there exists $k\in n$ such that $i=m+k$.
+\end{proposition}
+\begin{proof}
+    Let $e=\finiteIndexShift{m}{n}$ and $D=(m+n)\setminus m$.
+    $e\in\bijections{n}{D}$ by \auto{finite_index_shift_bijection}.
+    Hence $e\in\funs{n}{D}$ and $e\in\surj{n}{D}$ by \obv{bijections_to_funs,bijections}.
+    $m\subseteq m+n$ by \obv{natural_addition_left_subseteq_sum}.
+    Show that if $i\in m+n$, then $i\in m$ or there exists $k\in n$ such that $i=m+k$.
+    \begin{subproof}
+        Assume $i\in m+n$.
+        \begin{byCase}
+            \caseOf{$i\in m$.}
+                Follows.
+            \caseOf{$i\notin m$.}
+                $i\in D$ by \auto{setminus}.
+                Take $k\in n$ such that $e(k)=i$ by \obv{surj}.
+                $i=m+k$ by \auto{finite_index_shift_apply}.
+        \end{byCase}
+    \end{subproof}
+    Show that if $i\in m$ or there exists $k\in n$ such that $i=m+k$, then $i\in m+n$.
+    \begin{subproof}
+        Assume $i\in m$ or there exists $k\in n$ such that $i=m+k$.
+        \begin{byCase}
+            \caseOf{$i\in m$.}
+                Follows by \obv{subseteq}.
+            \caseOf{There exists $k\in n$ such that $i=m+k$.}
+                Take $k\in n$ such that $i=m+k$.
+                $e(k)=i$ by \auto{finite_index_shift_apply}.
+                $e(k)\in D$ by \obv{funs_type_apply}.
+                Follows by \auto{setminus}.
+        \end{byCase}
+    \end{subproof}
+    Follows by \auto.
+\end{proof}

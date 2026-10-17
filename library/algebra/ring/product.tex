@@ -1,0 +1,891 @@
+\import{algebra/ring/reducts.tex}
+\import{algebra/ring/homomorphism.tex}
+\import{algebra/monoid/product.tex}
+\import{algebra/group/product.tex}
+\import{set/dependent-operation.tex}
+
+\section{Products of rings}
+
+For a family of rings, the additive and multiplicative reduct families are
+ordinary set-coded graphs.  They remain local to this construction: the
+public product reuses the existing group and monoid products without adding
+parallel coordinate operations.
+
+\begin{definition}\label{product_ring}
+    $\ProductRing{I}{R}=\structure[ring]{
+        \carrier=\carrier[\ProductGroup{I}{
+            \Apply{\graphOnDomainOp}{
+                I,\fun{i:\Set}{\AdditiveGroup{R(i)}}}}],
+        \ringAdd=\mul[\ProductGroup{I}{
+            \Apply{\graphOnDomainOp}{
+                I,\fun{i:\Set}{\AdditiveGroup{R(i)}}}}],
+        \ringZero=\neutral[\ProductGroup{I}{
+            \Apply{\graphOnDomainOp}{
+                I,\fun{i:\Set}{\AdditiveGroup{R(i)}}}}],
+        \ringNeg=\groupInv[\ProductGroup{I}{
+            \Apply{\graphOnDomainOp}{
+                I,\fun{i:\Set}{\AdditiveGroup{R(i)}}}}],
+        \ringMul=\mul[\ProductMonoid{I}{
+            \Apply{\graphOnDomainOp}{
+                I,\fun{i:\Set}{\MultiplicativeMonoid{R(i)}}}}],
+        \ringOne=\neutral[\ProductMonoid{I}{
+            \Apply{\graphOnDomainOp}{
+                I,\fun{i:\Set}{\MultiplicativeMonoid{R(i)}}}}]
+    }$.
+\end{definition}
+
+\begin{proposition}\label{product_ring_reduct_families}
+    Let
+        $A=\Apply{\graphOnDomainOp}{
+            I,\fun{i:\Set}{\AdditiveGroup{R(i)}}}$ and
+        $M=\Apply{\graphOnDomainOp}{
+            I,\fun{i:\Set}{\MultiplicativeMonoid{R(i)}}}$.
+    Then $A$ and $M$ are functions on $I$ and
+        for every $i\in I$ we have
+            $A(i)=\AdditiveGroup{R(i)}$ and
+            $M(i)=\MultiplicativeMonoid{R(i)}$.
+\end{proposition}
+\begin{proof}
+    $A\in\funs{I}{\ran{A}}$ and
+        $M\in\funs{I}{\ran{M}}$ by
+        \auto{logical_graph_on_domain_function}.
+    Hence $A$ and $M$ are functions on $I$ by
+        \obv{funs_is_function,funs}.
+    For every $i\in I$ we have
+        $A(i)=\AdditiveGroup{R(i)}$ and
+        $M(i)=\MultiplicativeMonoid{R(i)}$ by
+        \auto{logical_graph_on_domain_apply}.
+\end{proof}
+
+\begin{proposition}\label{product_ring_fields}
+    Let
+        $A=\Apply{\graphOnDomainOp}{
+            I,\fun{i:\Set}{\AdditiveGroup{R(i)}}}$ and
+        $M=\Apply{\graphOnDomainOp}{
+            I,\fun{i:\Set}{\MultiplicativeMonoid{R(i)}}}$.
+    Then
+        $\carrier[\ProductRing{I}{R}]=\carrier[\ProductGroup{I}{A}]$ and
+        $\ringAdd[\ProductRing{I}{R}]=\mul[\ProductGroup{I}{A}]$ and
+        $\ringZero[\ProductRing{I}{R}]=\neutral[\ProductGroup{I}{A}]$ and
+        $\ringNeg[\ProductRing{I}{R}]=\groupInv[\ProductGroup{I}{A}]$ and
+        $\ringMul[\ProductRing{I}{R}]=\mul[\ProductMonoid{I}{M}]$ and
+        $\ringOne[\ProductRing{I}{R}]=\neutral[\ProductMonoid{I}{M}]$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{product_ring,
+            ringaggregateprojection_carrier,ringaggregateprojection_ringAdd,
+            ringaggregateprojection_ringZero,ringaggregateprojection_ringNeg,
+            ringaggregateprojection_ringMul,ringaggregateprojection_ringOne}.
+\end{proof}
+
+\begin{proposition}\label{product_ring_carrier_families_equal}
+    Suppose $R$ is a function on $I$.
+    Suppose for every $i\in I$ we have $R(i)$ is a ring.
+    Let
+        $A=\Apply{\graphOnDomainOp}{
+            I,\fun{i:\Set}{\AdditiveGroup{R(i)}}}$ and
+        $M=\Apply{\graphOnDomainOp}{
+            I,\fun{i:\Set}{\MultiplicativeMonoid{R(i)}}}$.
+    Then
+        $\productMonoidCarrierFamily{I}{A}
+            =\productMonoidCarrierFamily{I}{M}$.
+\end{proposition}
+\begin{proof}
+    Let $C=\productMonoidCarrierFamily{I}{A}$ and
+        $D=\productMonoidCarrierFamily{I}{M}$.
+    $A$ and $M$ are functions on $I$ and
+        for every $i\in I$ we have
+            $A(i)=\AdditiveGroup{R(i)}$ and
+            $M(i)=\MultiplicativeMonoid{R(i)}$ by
+        \obv{product_ring_reduct_families}.
+    $C$ and $D$ are functions on $I$ by
+        \auto{product_monoid_carrier_family_type}.
+    Show that for every $i\in I$ we have $C(i)=D(i)$.
+    \begin{subproof}
+        Fix $i\in I$.
+        $C(i)=\carrier[A(i)]$ and $D(i)=\carrier[M(i)]$ by
+            \auto{product_monoid_carrier_family_apply}.
+        $\carrier[A(i)]=\carrier[R(i)]$ and
+            $\carrier[M(i)]=\carrier[R(i)]$ by
+            \auto{additive_group_fields,multiplicative_monoid_fields}.
+    \end{subproof}
+    Follows by \auto{funext_on_domain}.
+\end{proof}
+
+\subsection{Coordinate laws}
+
+\begin{proposition}\label{product_ring_add_coordinate}
+    Suppose $R$ is a function on $I$.
+    Suppose for every $j\in I$ we have $R(j)$ is a ring.
+    Let $P=\ProductRing{I}{R}$.
+    Let $x,y\in\carrier[P]$ and $i\in I$.
+    Then
+        $\apply{\ringAdd[P](x,y)}{i}
+            =\ringAdd[R(i)](x(i),y(i))$.
+\end{proposition}
+\begin{proof}
+    Let $A=\Apply{\graphOnDomainOp}{
+        I,\fun{j:\Set}{\AdditiveGroup{R(j)}}}$.
+    $A$ is a function on $I$ and for every $j\in I$ we have
+        $A(j)=\AdditiveGroup{R(j)}$ by
+        \auto{product_ring_reduct_families}.
+    For every $j\in I$ we have $A(j)$ is a group by
+        \auto{additive_group_is_exact_commutative_group,
+            commutative_group_is_group}.
+    $\carrier[P]=\carrier[\ProductGroup{I}{A}]$ and
+        $\ringAdd[P]=\mul[\ProductGroup{I}{A}]$ by
+        \auto{product_ring_fields}.
+    Follows by
+        \auto{product_group_mul_coordinate,additive_group_fields}.
+\end{proof}
+
+\begin{proposition}\label{product_ring_zero_coordinate}
+    Let $P=\ProductRing{I}{R}$.
+    Let $i\in I$.
+    Then $\apply{\ringZero[P]}{i}=\ringZero[R(i)]$.
+\end{proposition}
+\begin{proof}
+    Let $A=\Apply{\graphOnDomainOp}{
+        I,\fun{j:\Set}{\AdditiveGroup{R(j)}}}$.
+    $A(i)=\AdditiveGroup{R(i)}$ by
+        \auto{product_ring_reduct_families}.
+    $\ringZero[P]=\neutral[\ProductGroup{I}{A}]$ by
+        \auto{product_ring_fields}.
+    Follows by
+        \auto{product_group_neutral_coordinate,additive_group_fields}.
+\end{proof}
+
+\begin{proposition}\label{product_ring_neg_coordinate}
+    Suppose $R$ is a function on $I$.
+    Suppose for every $j\in I$ we have $R(j)$ is a ring.
+    Let $P=\ProductRing{I}{R}$.
+    Let $x\in\carrier[P]$ and $i\in I$.
+    Then
+        $\apply{\ringNeg[P](x)}{i}=\ringNeg[R(i)](x(i))$.
+\end{proposition}
+\begin{proof}
+    Let $A=\Apply{\graphOnDomainOp}{
+        I,\fun{j:\Set}{\AdditiveGroup{R(j)}}}$.
+    $A$ is a function on $I$ and for every $j\in I$ we have
+        $A(j)=\AdditiveGroup{R(j)}$ by
+        \auto{product_ring_reduct_families}.
+    For every $j\in I$ we have $A(j)$ is a group by
+        \auto{additive_group_is_exact_commutative_group,
+            commutative_group_is_group}.
+    $\carrier[P]=\carrier[\ProductGroup{I}{A}]$ and
+        $\ringNeg[P]=\groupInv[\ProductGroup{I}{A}]$ by
+        \auto{product_ring_fields}.
+    Follows by
+        \auto{product_group_inverse_coordinate,additive_group_fields}.
+\end{proof}
+
+\begin{proposition}\label{product_ring_mul_coordinate}
+    Suppose $R$ is a function on $I$.
+    Suppose for every $j\in I$ we have $R(j)$ is a ring.
+    Let $P=\ProductRing{I}{R}$.
+    Let $x,y\in\carrier[P]$ and $i\in I$.
+    Then
+        $\apply{\ringMul[P](x,y)}{i}
+            =\ringMul[R(i)](x(i),y(i))$.
+\end{proposition}
+\begin{proof}
+    Let $M=\Apply{\graphOnDomainOp}{
+        I,\fun{j:\Set}{\MultiplicativeMonoid{R(j)}}}$.
+    $M$ is a function on $I$ and for every $j\in I$ we have
+        $M(j)=\MultiplicativeMonoid{R(j)}$ by
+        \auto{product_ring_reduct_families}.
+    For every $j\in I$ we have $M(j)$ is a monoid by
+        \auto{multiplicative_monoid_is_exact_monoid}.
+    $\carrier[P]=\carrier[\ProductGroup{I}{
+        \Apply{\graphOnDomainOp}{
+            I,\fun{j:\Set}{\AdditiveGroup{R(j)}}}}]$ and
+        $\ringMul[P]=\mul[\ProductMonoid{I}{M}]$ by
+        \auto{product_ring_fields}.
+    $\carrier[P]=\carrier[\ProductMonoid{I}{M}]$ by
+        \auto{product_group_fields,product_monoid_fields,
+            product_ring_carrier_families_equal}.
+    Hence $x,y\in\carrier[\ProductMonoid{I}{M}]$.
+    $M(i)=\MultiplicativeMonoid{R(i)}$.
+    Hence $\mul[M(i)]=\ringMul[R(i)]$ by
+        \auto{multiplicative_monoid_fields}.
+    $\apply{\mul[\ProductMonoid{I}{M}](x,y)}{i}
+        =\mul[M(i)](x(i),y(i))$ by
+        \obv{product_monoid_mul_coordinate}.
+\end{proof}
+
+\begin{proposition}\label{product_ring_one_coordinate}
+    Let $P=\ProductRing{I}{R}$.
+    Let $i\in I$.
+    Then $\apply{\ringOne[P]}{i}=\ringOne[R(i)]$.
+\end{proposition}
+\begin{proof}
+    Let $M=\Apply{\graphOnDomainOp}{
+        I,\fun{j:\Set}{\MultiplicativeMonoid{R(j)}}}$.
+    $M(i)=\MultiplicativeMonoid{R(i)}$ by
+        \auto{product_ring_reduct_families}.
+    $\ringOne[P]=\neutral[\ProductMonoid{I}{M}]$ by
+        \auto{product_ring_fields}.
+    Follows by
+        \auto{product_monoid_neutral_coordinate_exact,
+            multiplicative_monoid_fields}.
+\end{proof}
+
+\begin{theorem}\label{product_ring_is_exact}
+    Suppose $R$ is a function on $I$.
+    Suppose for every $i\in I$ we have $R(i)$ is a ring.
+    Then $\ProductRing{I}{R}$ is an exact ring.
+\end{theorem}
+\begin{proof}
+    Let $P=\ProductRing{I}{R}$.
+    Let
+        $A=\Apply{\graphOnDomainOp}{
+            I,\fun{i:\Set}{\AdditiveGroup{R(i)}}}$ and
+        $M=\Apply{\graphOnDomainOp}{
+            I,\fun{i:\Set}{\MultiplicativeMonoid{R(i)}}}$.
+    Let $G=\ProductGroup{I}{A}$ and $N=\ProductMonoid{I}{M}$.
+    Let $C=\productMonoidCarrierFamily{I}{M}$.
+    $A$ and $M$ are functions on $I$ and for every $i\in I$ we have
+        $A(i)=\AdditiveGroup{R(i)}$ and
+        $M(i)=\MultiplicativeMonoid{R(i)}$ by
+        \obv{product_ring_reduct_families}.
+    For every $i\in I$ we have $A(i)$ is a commutative group by
+        \auto{additive_group_is_exact_commutative_group}.
+    Hence for every $i\in I$ we have $A(i)$ is a group by
+        \obv{commutative_group_is_group}.
+    For every $i\in I$ we have $M(i)$ is a monoid by
+        \auto{multiplicative_monoid_is_exact_monoid}.
+    Hence $G$ is an exact group and $G$ is a commutative group and
+        $N$ is an exact monoid by
+        \auto{product_group_is_exact,product_group_is_commutative,
+            product_monoid_is_exact}.
+    $\carrier[P]=\carrier[G]$ and
+        $\ringAdd[P]=\mul[G]$ and
+        $\ringZero[P]=\neutral[G]$ and
+        $\ringNeg[P]=\groupInv[G]$ and
+        $\ringMul[P]=\mul[N]$ and
+        $\ringOne[P]=\neutral[N]$ by
+        \auto{product_ring_fields}.
+    $\productMonoidCarrierFamily{I}{A}=C$ by
+        \obv{product_ring_carrier_families_equal}.
+    $\carrier[G]=\carrier[N]=\dependentProduct{I}{C}$ by
+        \auto{product_group_fields,product_monoid_fields}.
+    Hence $\carrier[P]=\carrier[N]=\dependentProduct{I}{C}$.
+    $C$ is a function on $I$ by
+        \auto{product_monoid_carrier_family_type}.
+
+    $\ringAdd[P]\in
+        \funs{\carrier[P]\times\carrier[P]}{\carrier[P]}$ by
+        \auto{group_is_monoid,monoid_is_magma,magma_mul_graph}.
+    $\ringZero[P]\in\carrier[P]$ by
+        \auto{group_is_monoid,monoid_is_unital_magma,
+            unitalmagma_type}.
+    $\ringNeg[P]\in\funs{\carrier[P]}{\carrier[P]}$ by
+        \auto{group_inverse_graph}.
+    $\ringMul[P]\in
+        \funs{\carrier[P]\times\carrier[P]}{\carrier[P]}$ by
+        \auto{monoid_is_magma,magma_mul_graph}.
+    $\ringOne[P]\in\carrier[P]$ by
+        \auto{monoid_is_unital_magma,unitalmagma_type}.
+    For all $x,y,z\in\carrier[P]$ we have
+        $\ringAdd[P](x,\ringAdd[P](y,z))
+            =\ringAdd[P](\ringAdd[P](x,y),z)$ by
+        \auto{group_is_monoid,monoid_assoc}.
+    For all $x,y\in\carrier[P]$ we have
+        $\ringAdd[P](x,y)=\ringAdd[P](y,x)$ by
+        \auto{commutative_group_commutative}.
+    For every $x\in\carrier[P]$ we have
+        $\ringAdd[P](\ringZero[P],x)=x$ by
+        \auto{group_is_monoid,monoid_is_unital_magma,
+            unitalmagma_left}.
+    For every $x\in\carrier[P]$ we have
+        $\ringAdd[P](\ringNeg[P](x),x)=\ringZero[P]$ by
+        \auto{group_inverse_left}.
+    For all $x,y,z\in\carrier[P]$ we have
+        $\ringMul[P](x,\ringMul[P](y,z))
+            =\ringMul[P](\ringMul[P](x,y),z)$ by
+        \auto{monoid_assoc}.
+    For every $x\in\carrier[P]$ we have
+        $\ringMul[P](\ringOne[P],x)=x$ and
+        $\ringMul[P](x,\ringOne[P])=x$ by
+        \auto{monoid_is_unital_magma,
+            unitalmagma_left,unitalmagma_right}.
+
+    Show that for all $x,y,z\in\carrier[P]$ we have
+        $\ringMul[P](x,\ringAdd[P](y,z))
+            =\ringAdd[P](\ringMul[P](x,y),\ringMul[P](x,z))$.
+    \begin{subproof}
+        Fix $x,y,z\in\carrier[P]$.
+        $\ringAdd[P](y,z),\ringMul[P](x,y),\ringMul[P](x,z)
+            \in\carrier[P]$ by
+            \obv{funs_type_apply,times_tuple_intro}.
+        Hence
+            $\ringMul[P](x,\ringAdd[P](y,z))$ and
+            $\ringAdd[P](\ringMul[P](x,y),\ringMul[P](x,z))$
+                are elements of $\carrier[P]$ by
+            \obv{funs_type_apply,times_tuple_intro}.
+        Hence
+            $\ringMul[P](x,\ringAdd[P](y,z))$ and
+            $\ringAdd[P](\ringMul[P](x,y),\ringMul[P](x,z))$
+                are elements of $\dependentProduct{I}{C}$ by
+            \auto.
+        Show that for every $i\in I$ we have
+            $\apply{\ringMul[P](x,\ringAdd[P](y,z))}{i}
+                =\apply{\ringAdd[P](
+                    \ringMul[P](x,y),\ringMul[P](x,z))}{i}$.
+        \begin{subproof}
+            Fix $i\in I$.
+            $M(i)=\MultiplicativeMonoid{R(i)}$ by \auto.
+            Hence $C(i)=\carrier[R(i)]$ by
+                \auto{product_monoid_carrier_family_apply,
+                    multiplicative_monoid_fields}.
+            Hence $x(i),y(i),z(i)\in\carrier[R(i)]$ by
+                \auto{dependent_product_coordinate}.
+            Follows by
+                \auto{product_ring_add_coordinate,
+                    product_ring_mul_coordinate,
+                    ring_distributive_left}.
+        \end{subproof}
+        Follows by \obv{dependent_product_extensionality}.
+    \end{subproof}
+    Show that for all $x,y,z\in\carrier[P]$ we have
+        $\ringMul[P](\ringAdd[P](x,y),z)
+            =\ringAdd[P](\ringMul[P](x,z),\ringMul[P](y,z))$.
+    \begin{subproof}
+        Fix $x,y,z\in\carrier[P]$.
+        $\ringAdd[P](x,y),\ringMul[P](x,z),\ringMul[P](y,z)
+            \in\carrier[P]$ by
+            \obv{funs_type_apply,times_tuple_intro}.
+        Hence
+            $\ringMul[P](\ringAdd[P](x,y),z)$ and
+            $\ringAdd[P](\ringMul[P](x,z),\ringMul[P](y,z))$
+                are elements of $\carrier[P]$ by
+            \obv{funs_type_apply,times_tuple_intro}.
+        Hence
+            $\ringMul[P](\ringAdd[P](x,y),z)$ and
+            $\ringAdd[P](\ringMul[P](x,z),\ringMul[P](y,z))$
+                are elements of $\dependentProduct{I}{C}$ by
+            \auto.
+        Show that for every $i\in I$ we have
+            $\apply{\ringMul[P](\ringAdd[P](x,y),z)}{i}
+                =\apply{\ringAdd[P](
+                    \ringMul[P](x,z),\ringMul[P](y,z))}{i}$.
+        \begin{subproof}
+            Fix $i\in I$.
+            $M(i)=\MultiplicativeMonoid{R(i)}$ by \auto.
+            Hence $C(i)=\carrier[R(i)]$ by
+                \auto{product_monoid_carrier_family_apply,
+                    multiplicative_monoid_fields}.
+            Hence $x(i),y(i),z(i)\in\carrier[R(i)]$ by
+                \auto{dependent_product_coordinate}.
+            Follows by
+                \auto{product_ring_add_coordinate,
+                    product_ring_mul_coordinate,
+                    ring_distributive_right}.
+        \end{subproof}
+        Follows by \obv{dependent_product_extensionality}.
+    \end{subproof}
+    Hence $P$ is a ring by
+        \auto{product_ring,ringaggregateexact,ring}.
+    Follows by \auto{product_ring,ringaggregateexact}.
+\end{proof}
+
+\subsection{Canonical reducts}
+
+\begin{theorem}\label{product_ring_additive_group}
+    Suppose $R$ is a function on $I$.
+    Suppose for every $i\in I$ we have $R(i)$ is a ring.
+    Let
+        $A=\Apply{\graphOnDomainOp}{
+            I,\fun{i:\Set}{\AdditiveGroup{R(i)}}}$.
+    Then
+        $\AdditiveGroup{\ProductRing{I}{R}}=\ProductGroup{I}{A}$.
+\end{theorem}
+\begin{proof}
+    Let $P=\ProductRing{I}{R}$ and $G=\ProductGroup{I}{A}$.
+    $P$ is an exact ring by \auto{product_ring_is_exact}.
+    $A$ is a function on $I$ and for every $i\in I$ we have
+        $A(i)=\AdditiveGroup{R(i)}$ by
+        \auto{product_ring_reduct_families}.
+    For every $i\in I$ we have $A(i)$ is a group by
+        \auto{additive_group_is_exact_commutative_group,
+            commutative_group_is_group}.
+    Hence $G$ is an exact group by \auto{product_group_is_exact}.
+    $\AdditiveGroup{P}$ is an exact commutative group by
+        \obv{additive_group_is_exact_commutative_group}.
+    Hence $\AdditiveGroup{P}$ is an exact group by
+        \obv{commutative_group_is_group}.
+    $\carrier[\AdditiveGroup{P}]=\carrier[G]$ and
+        $\mul[\AdditiveGroup{P}]=\mul[G]$ and
+        $\neutral[\AdditiveGroup{P}]=\neutral[G]$ and
+        $\groupInv[\AdditiveGroup{P}]=\groupInv[G]$ by
+        \auto{additive_group_fields,product_ring_fields}.
+    Follows by \auto{exact_group_extensionality}.
+\end{proof}
+
+\begin{theorem}\label{product_ring_multiplicative_monoid}
+    Suppose $R$ is a function on $I$.
+    Suppose for every $i\in I$ we have $R(i)$ is a ring.
+    Let
+        $M=\Apply{\graphOnDomainOp}{
+            I,\fun{i:\Set}{\MultiplicativeMonoid{R(i)}}}$.
+    Then
+        $\MultiplicativeMonoid{\ProductRing{I}{R}}
+            =\ProductMonoid{I}{M}$.
+\end{theorem}
+\begin{proof}
+    Let $P=\ProductRing{I}{R}$ and $N=\ProductMonoid{I}{M}$.
+    Let $U=\MultiplicativeMonoid{P}$.
+    Let $A=\Apply{\graphOnDomainOp}{
+        I,\fun{i:\Set}{\AdditiveGroup{R(i)}}}$.
+    $P$ is an exact ring by \auto{product_ring_is_exact}.
+    $M$ is a function on $I$ and for every $i\in I$ we have
+        $M(i)=\MultiplicativeMonoid{R(i)}$ by
+        \auto{product_ring_reduct_families}.
+    For every $i\in I$ we have $M(i)$ is a monoid by
+        \auto{multiplicative_monoid_is_exact_monoid}.
+    Hence $N$ is an exact monoid by \auto{product_monoid_is_exact}.
+    $U$ is an exact monoid by
+        \auto{multiplicative_monoid_is_exact_monoid}.
+    $\productMonoidCarrierFamily{I}{A}
+        =\productMonoidCarrierFamily{I}{M}$ by
+        \obv{product_ring_carrier_families_equal}.
+    $\carrier[P]=\carrier[\ProductGroup{I}{A}]$ by
+        \auto{product_ring_fields}.
+    $\carrier[\ProductGroup{I}{A}]
+        =\carrier[\ProductMonoid{I}{A}]$ by
+        \auto{product_group_fields}.
+    $\carrier[\ProductMonoid{I}{A}]
+        =\carrier[N]$ by
+        \auto{product_monoid_fields}.
+    Hence $\carrier[P]=\carrier[N]$.
+    $\carrier[U]=\carrier[P]$ by
+        \auto{multiplicative_monoid_fields}.
+    Hence $\carrier[U]=\carrier[N]$.
+    $\mul[U]=\ringMul[P]=\mul[N]$ by
+        \auto{multiplicative_monoid_fields,product_ring_fields}.
+    Hence $\mul[U]=\mul[N]$.
+    $\neutral[U]=\ringOne[P]=\neutral[N]$ by
+        \auto{multiplicative_monoid_fields,product_ring_fields}.
+    Hence $\neutral[U]=\neutral[N]$.
+    Hence $U=N$ by structure extensionality.
+\end{proof}
+
+\begin{theorem}\label{product_ring_is_commutative}
+    Suppose $R$ is a function on $I$.
+    Suppose for every $i\in I$ we have $R(i)$ is a commutative ring.
+    Then $\ProductRing{I}{R}$ is a commutative ring.
+\end{theorem}
+\begin{proof}
+    Let $P=\ProductRing{I}{R}$.
+    For every $i\in I$ we have $R(i)$ is a ring by
+        \obv{commutative_ring_is_ring}.
+    Hence $P$ is an exact ring by \auto{product_ring_is_exact}.
+    Let $M=\Apply{\graphOnDomainOp}{
+        I,\fun{i:\Set}{\MultiplicativeMonoid{R(i)}}}$.
+    Let $C=\productMonoidCarrierFamily{I}{M}$.
+    $M$ is a function on $I$ and for every $i\in I$ we have
+        $M(i)=\MultiplicativeMonoid{R(i)}$ by
+        \auto{product_ring_reduct_families}.
+    $C$ is a function on $I$ by
+        \auto{product_monoid_carrier_family_type}.
+    $\carrier[P]=\carrier[\ProductMonoid{I}{M}]
+        =\dependentProduct{I}{C}$ by
+        \auto{product_ring_multiplicative_monoid,
+            multiplicative_monoid_fields,product_monoid_fields}.
+    Show that for all $x,y\in\carrier[P]$ we have
+        $\ringMul[P](x,y)=\ringMul[P](y,x)$.
+    \begin{subproof}
+        Fix $x,y\in\carrier[P]$.
+        $\ringMul[P](x,y),\ringMul[P](y,x)\in\carrier[P]$ by
+            \obv{ring_mul_type}.
+        Hence $\ringMul[P](x,y),\ringMul[P](y,x)
+            \in\dependentProduct{I}{C}$.
+        Show that for every $i\in I$ we have
+            $\apply{\ringMul[P](x,y)}{i}
+                =\apply{\ringMul[P](y,x)}{i}$.
+        \begin{subproof}
+            Fix $i\in I$.
+            $M(i)=\MultiplicativeMonoid{R(i)}$.
+            Hence $C(i)=\carrier[R(i)]$ by
+                \auto{product_monoid_carrier_family_apply,
+                    multiplicative_monoid_fields}.
+            Hence $x(i),y(i)\in\carrier[R(i)]$ by
+                \auto{dependent_product_coordinate}.
+            Follows by
+                \auto{product_ring_mul_coordinate,
+                    commutative_ring_mul_commutative}.
+        \end{subproof}
+        Follows by \auto{dependent_product_extensionality}.
+    \end{subproof}
+    Hence $P$ is a commutative ring by
+        \obv{commutative_ring_intro}.
+\end{proof}
+
+\subsection{Projections and the universal mediator}
+
+\begin{theorem}\label{product_ring_projection_hom}
+    Suppose $R$ is a function on $I$.
+    Suppose for every $j\in I$ we have $R(j)$ is a ring.
+    Let
+        $A=\Apply{\graphOnDomainOp}{
+            I,\fun{j:\Set}{\AdditiveGroup{R(j)}}}$ and
+        $C=\productMonoidCarrierFamily{I}{A}$.
+    Let $i\in I$.
+    Then $\dependentProjection{I}{C}{i}$ is a ring homomorphism from
+        $\ProductRing{I}{R}$ to $R(i)$.
+\end{theorem}
+\begin{proof}
+    Let $P=\ProductRing{I}{R}$ and
+        $p=\dependentProjection{I}{C}{i}$.
+    Let $M=\Apply{\graphOnDomainOp}{
+        I,\fun{j:\Set}{\MultiplicativeMonoid{R(j)}}}$ and
+        $D=\productMonoidCarrierFamily{I}{M}$.
+    $P$ is an exact ring by \auto{product_ring_is_exact}.
+    $A$ and $M$ are functions on $I$ and
+        $A(i)=\AdditiveGroup{R(i)}$ and
+        $M(i)=\MultiplicativeMonoid{R(i)}$ by
+        \auto{product_ring_reduct_families}.
+    For every $j\in I$ we have $A(j)$ is a group by
+        \auto{product_ring_reduct_families,
+            additive_group_is_exact_commutative_group,
+            commutative_group_is_group}.
+    Hence $\groupHom{p}{\ProductGroup{I}{A}}{A(i)}$ by
+        \auto{product_group_projection_hom}.
+    $\AdditiveGroup{P}=\ProductGroup{I}{A}$ by
+        \auto{product_ring_additive_group}.
+    Hence $\groupHom{p}{\AdditiveGroup{P}}{\AdditiveGroup{R(i)}}$.
+    For every $j\in I$ we have $M(j)$ is a monoid by
+        \auto{product_ring_reduct_families,
+            multiplicative_monoid_is_exact_monoid}.
+    $C=D$ by \auto{product_ring_carrier_families_equal}.
+    Hence $p=\dependentProjection{I}{D}{i}$.
+    $\MultiplicativeMonoid{P}=\ProductMonoid{I}{M}$ by
+        \auto{product_ring_multiplicative_monoid}.
+    Hence $p$ is a monoid homomorphism from
+        $\MultiplicativeMonoid{P}$ to
+        $\MultiplicativeMonoid{R(i)}$ by
+        \auto{product_monoid_projection_hom}.
+    Follows by \auto{ring_hom}.
+\end{proof}
+
+\begin{theorem}\label{product_ring_mediator_hom}
+    Let $X$ be a ring.
+    Suppose $R$ is a function on $I$.
+    Suppose for every $j\in I$ we have $R(j)$ is a ring.
+    Suppose $f$ is a function on $I$ and for every $k\in I$ we have
+        $f(k)$ is a ring homomorphism from $X$ to $R(k)$.
+    Let
+        $A=\Apply{\graphOnDomainOp}{
+            I,\fun{j:\Set}{\AdditiveGroup{R(j)}}}$ and
+        $C=\productMonoidCarrierFamily{I}{A}$.
+    Then $\dependentMediator{\carrier[X]}{I}{C}{f}$ is a ring
+        homomorphism from $X$ to $\ProductRing{I}{R}$.
+\end{theorem}
+\begin{proof}
+    Let $P=\ProductRing{I}{R}$ and
+        $h=\dependentMediator{\carrier[X]}{I}{C}{f}$.
+    Let $M=\Apply{\graphOnDomainOp}{
+        I,\fun{j:\Set}{\MultiplicativeMonoid{R(j)}}}$ and
+        $D=\productMonoidCarrierFamily{I}{M}$.
+    $P$ is an exact ring by \auto{product_ring_is_exact}.
+    $A$ and $M$ are functions on $I$ and for every $j\in I$ we have
+        $A(j)=\AdditiveGroup{R(j)}$ and
+        $M(j)=\MultiplicativeMonoid{R(j)}$ by
+        \obv{product_ring_reduct_families}.
+    For every $j\in I$ we have $A(j)$ is a group by
+        \auto{additive_group_is_exact_commutative_group,
+            commutative_group_is_group}.
+    For every $j\in I$ we have
+        $\groupHom{f(j)}{\AdditiveGroup{X}}{A(j)}$ by
+        \auto{ring_hom_is_additive_group_hom}.
+    $\AdditiveGroup{X}$ is a group by
+        \obv{additive_group_is_exact_commutative_group,
+            commutative_group_is_group}.
+    $\carrier[\AdditiveGroup{X}]=\carrier[X]$ by
+        \auto{additive_group_fields}.
+    Hence $h=\dependentMediator{\carrier[\AdditiveGroup{X}]}{
+        I}{C}{f}$.
+    Hence $\groupHom{h}{\AdditiveGroup{X}}{\ProductGroup{I}{A}}$ by
+        \auto{product_group_mediator_hom,additive_group_fields}.
+    $\AdditiveGroup{P}=\ProductGroup{I}{A}$ by
+        \auto{product_ring_additive_group}.
+    Hence $\groupHom{h}{\AdditiveGroup{X}}{\AdditiveGroup{P}}$.
+    For every $j\in I$ we have $M(j)$ is a monoid by
+        \auto{multiplicative_monoid_is_exact_monoid}.
+    For every $j\in I$ we have $f(j)$ is a monoid homomorphism from
+        $\MultiplicativeMonoid{X}$ to $M(j)$ by
+        \auto{ring_hom_is_multiplicative_monoid_hom}.
+    $\MultiplicativeMonoid{X}$ is a monoid by
+        \auto{multiplicative_monoid_is_exact_monoid}.
+    $C=D$ by \auto{product_ring_carrier_families_equal}.
+    Hence $h=\dependentMediator{\carrier[\MultiplicativeMonoid{X}]}{
+        I}{D}{f}$ by
+        \auto{multiplicative_monoid_fields}.
+    $\MultiplicativeMonoid{P}=\ProductMonoid{I}{M}$ by
+        \auto{product_ring_multiplicative_monoid}.
+    Hence $h$ is a monoid homomorphism from
+        $\MultiplicativeMonoid{X}$ to $\MultiplicativeMonoid{P}$ by
+        \auto{product_monoid_mediator_hom}.
+    Follows by \auto{ring_hom}.
+\end{proof}
+
+\begin{theorem}\label{product_ring_mediator_factorization}
+    Let $X$ be a ring.
+    Suppose $R$ is a function on $I$.
+    Suppose for every $j\in I$ we have $R(j)$ is a ring.
+    Suppose $f$ is a function on $I$ and for every $k\in I$ we have
+        $f(k)$ is a ring homomorphism from $X$ to $R(k)$.
+    Let
+        $A=\Apply{\graphOnDomainOp}{
+            I,\fun{j:\Set}{\AdditiveGroup{R(j)}}}$ and
+        $C=\productMonoidCarrierFamily{I}{A}$.
+    Let $i\in I$.
+    Then
+        $\dependentProjection{I}{C}{i}\circ
+            \dependentMediator{\carrier[X]}{I}{C}{f}=f(i)$.
+\end{theorem}
+\begin{proof}
+    $A$ is a function on $I$ and for every $j\in I$ we have
+        $A(j)=\AdditiveGroup{R(j)}$ by
+        \auto{product_ring_reduct_families}.
+    For every $j\in I$ we have $A(j)$ is a group by
+        \auto{additive_group_is_exact_commutative_group,
+            commutative_group_is_group}.
+    For every $j\in I$ we have
+        $\groupHom{f(j)}{\AdditiveGroup{X}}{A(j)}$ by
+        \auto{ring_hom_is_additive_group_hom}.
+    $\AdditiveGroup{X}$ is a group and
+        $\carrier[\AdditiveGroup{X}]=\carrier[X]$ by
+        \auto{additive_group_is_exact_commutative_group,
+            commutative_group_is_group,additive_group_fields}.
+    $\dependentProjection{I}{C}{i}\circ
+        \dependentMediator{\carrier[\AdditiveGroup{X}]}{I}{C}{f}
+            =f(i)$ by
+        \obv{product_group_mediator_factorization}.
+\end{proof}
+
+\begin{theorem}\label{product_ring_mediator_unique}
+    Let $X$ be a ring.
+    Suppose $R$ is a function on $I$.
+    Suppose for every $j\in I$ we have $R(j)$ is a ring.
+    Suppose $f$ is a function on $I$ and for every $k\in I$ we have
+        $f(k)$ is a ring homomorphism from $X$ to $R(k)$.
+    Let
+        $A=\Apply{\graphOnDomainOp}{
+            I,\fun{j:\Set}{\AdditiveGroup{R(j)}}}$ and
+        $C=\productMonoidCarrierFamily{I}{A}$.
+    Suppose $h$ is a ring homomorphism from $X$ to
+        $\ProductRing{I}{R}$.
+    Suppose for every $l\in I$ we have
+        $\dependentProjection{I}{C}{l}\circ h=f(l)$.
+    Then $h=\dependentMediator{\carrier[X]}{I}{C}{f}$.
+\end{theorem}
+\begin{proof}
+    Let $P=\ProductRing{I}{R}$.
+    $A$ is a function on $I$ and for every $j\in I$ we have
+        $A(j)=\AdditiveGroup{R(j)}$ by
+        \auto{product_ring_reduct_families}.
+    For every $j\in I$ we have $A(j)$ is a group by
+        \auto{additive_group_is_exact_commutative_group,
+            commutative_group_is_group}.
+    For every $j\in I$ we have
+        $\groupHom{f(j)}{\AdditiveGroup{X}}{A(j)}$ by
+        \auto{ring_hom_is_additive_group_hom}.
+    $\AdditiveGroup{P}=\ProductGroup{I}{A}$ by
+        \auto{product_ring_additive_group}.
+    Hence $\groupHom{h}{\AdditiveGroup{X}}{\ProductGroup{I}{A}}$ by
+        \auto{ring_hom_is_additive_group_hom}.
+    $\carrier[\AdditiveGroup{X}]=\carrier[X]$ by
+        \auto{additive_group_fields}.
+    $\AdditiveGroup{X}$ is a group by
+        \auto{additive_group_is_exact_commutative_group,
+            commutative_group_is_group}.
+    $h=\dependentMediator{\carrier[\AdditiveGroup{X}]}{I}{C}{f}$ by
+        \auto{product_group_mediator_unique}.
+\end{proof}
+
+\subsection{Reindexing products}
+
+\begin{proposition}\label{product_ring_reduct_families_reindex}
+    Suppose $R$ is a function on $I$.
+    Let $e\in\funs{J}{I}$.
+    Let
+        $A=\Apply{\graphOnDomainOp}{
+            I,\fun{i:\Set}{\AdditiveGroup{R(i)}}}$ and
+        $B=\Apply{\graphOnDomainOp}{
+            J,\fun{j:\Set}{\AdditiveGroup{(R\circ e)(j)}}}$.
+    Let
+        $M=\Apply{\graphOnDomainOp}{
+            I,\fun{i:\Set}{\MultiplicativeMonoid{R(i)}}}$ and
+        $N=\Apply{\graphOnDomainOp}{
+            J,\fun{j:\Set}{\MultiplicativeMonoid{(R\circ e)(j)}}}$.
+    Then $A\circ e=B$ and $M\circ e=N$.
+\end{proposition}
+\begin{proof}
+    $A$ and $M$ are functions on $I$ and
+        $B$ and $N$ are functions on $J$ by
+        \auto{product_ring_reduct_families}.
+    $R\in\funs{I}{\ran{R}}$ by
+        \auto{function_exact_type_to_range}.
+    Hence $R$ is composable with $e$ by \obv{funs_ran,funs}.
+    Hence $R\circ e$ is a function on $J$ by
+        \auto{funs_circ,funs_is_function,funs}.
+    $A\in\funs{I}{\ran{A}}$ and $M\in\funs{I}{\ran{M}}$ by
+        \auto{function_exact_type_to_range}.
+    Hence $A$ and $M$ are composable with $e$ by
+        \obv{funs_ran,funs}.
+    Hence $A\circ e$ and $M\circ e$ are functions on $J$ by
+        \auto{funs_circ,funs_is_function,funs}.
+    Show that for every $j\in J$ we have $(A\circ e)(j)=B(j)$.
+    \begin{subproof}
+        Fix $j\in J$.
+        Hence $j\in\dom{e}$ and $e(j)\in I$ by
+            \auto{funs,funs_type_apply}.
+        $(A\circ e)(j)=A(e(j))$ and
+            $(R\circ e)(j)=R(e(j))$ by
+            \auto{circ_apply,funs_is_function}.
+        $A(e(j))=\AdditiveGroup{R(e(j))}$ and
+            $B(j)=\AdditiveGroup{(R\circ e)(j)}$ by
+            \auto{product_ring_reduct_families}.
+    \end{subproof}
+    Hence $A\circ e=B$ by \auto{funext_on_domain}.
+    Show that for every $j\in J$ we have $(M\circ e)(j)=N(j)$.
+    \begin{subproof}
+        Fix $j\in J$.
+        Hence $j\in\dom{e}$ and $e(j)\in I$ by
+            \auto{funs,funs_type_apply}.
+        $(M\circ e)(j)=M(e(j))$ and
+            $(R\circ e)(j)=R(e(j))$ by
+            \auto{circ_apply,funs_is_function}.
+        $M(e(j))=\MultiplicativeMonoid{R(e(j))}$ and
+            $N(j)=\MultiplicativeMonoid{(R\circ e)(j)}$ by
+            \auto{product_ring_reduct_families}.
+    \end{subproof}
+    Hence $M\circ e=N$ by \auto{funext_on_domain}.
+\end{proof}
+
+\begin{theorem}\label{product_ring_reindex_hom}
+    Suppose $R$ is a function on $I$.
+    Suppose for every $i\in I$ we have $R(i)$ is a ring.
+    Let $e\in\funs{J}{I}$.
+    Let
+        $A=\Apply{\graphOnDomainOp}{
+            I,\fun{i:\Set}{\AdditiveGroup{R(i)}}}$ and
+        $C=\productMonoidCarrierFamily{I}{A}$.
+    Then $\dependentReindex{I}{J}{C}{e}$ is a ring homomorphism from
+        $\ProductRing{I}{R}$ to $\ProductRing{J}{R\circ e}$.
+\end{theorem}
+\begin{proof}
+    Let $P=\ProductRing{I}{R}$ and $Q=\ProductRing{J}{R\circ e}$.
+    Let $r=\dependentReindex{I}{J}{C}{e}$.
+    Let
+        $B=\Apply{\graphOnDomainOp}{
+            J,\fun{j:\Set}{\AdditiveGroup{(R\circ e)(j)}}}$.
+    Let
+        $M=\Apply{\graphOnDomainOp}{
+            I,\fun{i:\Set}{\MultiplicativeMonoid{R(i)}}}$ and
+        $N=\Apply{\graphOnDomainOp}{
+            J,\fun{j:\Set}{\MultiplicativeMonoid{(R\circ e)(j)}}}$.
+    Let $D=\productMonoidCarrierFamily{I}{M}$.
+    $R\in\funs{I}{\ran{R}}$ by
+        \auto{function_exact_type_to_range}.
+    Hence $R$ is composable with $e$ by \obv{funs_ran,funs}.
+    Hence $R\circ e$ is a function on $J$ by
+        \auto{funs_circ,funs_is_function,funs}.
+    Show that for every $j\in J$ we have $(R\circ e)(j)$ is a ring.
+    \begin{subproof}
+        Fix $j\in J$.
+        Hence $j\in\dom{e}$ and $e(j)\in I$ by
+            \auto{funs,funs_type_apply}.
+        $(R\circ e)(j)=R(e(j))$ by
+            \auto{circ_apply,funs_is_function}.
+        Follows by \auto.
+    \end{subproof}
+    Hence $P$ is an exact ring and $Q$ is an exact ring by
+        \auto{product_ring_is_exact}.
+    $A\circ e=B$ and $M\circ e=N$ by
+        \obv{product_ring_reduct_families_reindex}.
+    $A$ is a function on $I$ and for every $i\in I$ we have
+        $A(i)=\AdditiveGroup{R(i)}$ by
+        \auto{product_ring_reduct_families}.
+    For every $i\in I$ we have $A(i)$ is a group by
+        \auto{additive_group_is_exact_commutative_group,
+            commutative_group_is_group}.
+    Hence $\groupHom{r}{\ProductGroup{I}{A}}{
+        \ProductGroup{J}{A\circ e}}$ by
+        \auto{product_group_reindex_hom}.
+    $\AdditiveGroup{P}=\ProductGroup{I}{A}$ and
+        $\AdditiveGroup{Q}=\ProductGroup{J}{B}$ by
+        \auto{product_ring_additive_group}.
+    Hence $\groupHom{r}{\AdditiveGroup{P}}{\AdditiveGroup{Q}}$.
+    $M$ is a function on $I$ and for every $i\in I$ we have
+        $M(i)=\MultiplicativeMonoid{R(i)}$ by
+        \auto{product_ring_reduct_families}.
+    For every $i\in I$ we have $M(i)$ is a monoid by
+        \auto{multiplicative_monoid_is_exact_monoid}.
+    $C=D$ by \auto{product_ring_carrier_families_equal}.
+    Hence $r=\dependentReindex{I}{J}{D}{e}$.
+    Hence $r$ is a monoid homomorphism from
+        $\ProductMonoid{I}{M}$ to $\ProductMonoid{J}{M\circ e}$ by
+        \auto{product_monoid_reindex_hom}.
+    $\MultiplicativeMonoid{P}=\ProductMonoid{I}{M}$ and
+        $\MultiplicativeMonoid{Q}=\ProductMonoid{J}{N}$ by
+        \auto{product_ring_multiplicative_monoid}.
+    Hence $r$ is a monoid homomorphism from
+        $\MultiplicativeMonoid{P}$ to $\MultiplicativeMonoid{Q}$ by
+        \auto.
+    Follows by \auto{ring_hom}.
+\end{proof}
+
+\subsection{Empty, singleton, and binary products}
+
+\begin{proposition}\label{empty_product_ring_is_exact}
+    $\ProductRing{\emptyset}{\emptyset}$ is an exact ring.
+\end{proposition}
+\begin{proof}
+    $\emptyset$ is a function on $\emptyset$ by
+        \obv{emptyset_is_function_on_emptyset}.
+    For every $i\in\emptyset$ we have $\apply{\emptyset}{i}$ is a ring by
+        \auto{emptyset}.
+    Follows by \obv{product_ring_is_exact}.
+\end{proof}
+
+\begin{proposition}\label{singleton_product_ring_is_exact}
+    Let $S$ be a ring.
+    Then $\ProductRing{\{i\}}{\{i\}\times\{S\}}$ is an exact ring.
+\end{proposition}
+\begin{proof}
+    Let $R=\{i\}\times\{S\}$.
+    $R\in\funs{\{i\}}{\{S\}}$ by \auto{constant_graph_type}.
+    Hence $R$ is a function on $\{i\}$ by
+        \obv{funs_is_function,funs}.
+    For every $j\in\{i\}$ we have $R(j)=S$ by
+        \auto{constant_graph_application}.
+    Hence for every $j\in\{i\}$ we have $R(j)$ is a ring by
+        \auto.
+    Follows by \auto{product_ring_is_exact}.
+\end{proof}
+
+\begin{definition}\label{binary_product_ring}
+    $\BinaryProductRing{R}{S}
+        =\ProductRing{\suc{\suc{\emptyset}}}{\binaryFamily{R}{S}}$.
+\end{definition}
+
+\begin{proposition}\label{binary_product_ring_is_exact}
+    Let $R,S$ be rings.
+    Then $\BinaryProductRing{R}{S}$ is an exact ring.
+\end{proposition}
+\begin{proof}
+    Let $I=\suc{\suc{\emptyset}}$ and $A=\binaryFamily{R}{S}$.
+    $A$ is a function on $I$ by
+        \auto{binary_family_type,funs_is_function,funs}.
+    Show that for every $i\in I$ we have $A(i)$ is a ring.
+    \begin{subproof}
+        Fix $i\in I$.
+        $i=\emptyset$ or $i=\suc{\emptyset}$ by
+            \auto{suc_elim,emptyset}.
+        Follows by \auto{binary_family_left,binary_family_right}.
+    \end{subproof}
+    Follows by \auto{binary_product_ring,product_ring_is_exact}.
+\end{proof}

@@ -1,0 +1,1072 @@
+\import{algebra/module/product.tex}
+\import{set/dependent-operation.tex}
+
+\section{Direct sums of modules}
+
+The direct sum is the finite-support submodule of the full product.  This
+definition makes the inclusion into the product literal, while the theorem
+below identifies its additive reduct with the existing direct sum of groups.
+
+\begin{proposition}\label{pointwise_module_scalar_support}
+    Let $R$ be a ring.
+    Suppose $M$ is a function on $I$.
+    Suppose for every $j\in I$ we have $M(j)$ is a left module over $R$.
+    Let $A=\moduleAdditiveGroupFamily{I}{M}$.
+    Let $C=\productMonoidCarrierFamily{I}{A}$.
+    Let $z=\productMonoidNeutral{I}{A}$.
+    Let $a\in\carrier[R]$ and $x\in\dependentProduct{I}{C}$.
+    Then
+        $\dependentSupport{I}{
+            \Apply{\pointwiseModuleScalarOp}{I,M,a,x}}{z}
+        \subseteq\dependentSupport{I}{x}{z}$.
+\end{proposition}
+\begin{proof}
+    Let $u=\Apply{\pointwiseModuleScalarOp}{I,M,a,x}$.
+    Show that every element of $\dependentSupport{I}{u}{z}$
+        is an element of $\dependentSupport{I}{x}{z}$.
+    \begin{subproof}
+        Fix $i\in\dependentSupport{I}{u}{z}$.
+        Hence $i\in I$ and $u(i)\neq z(i)$ by
+            \obv{dependent_support_iff}.
+        Show that $i\in\dependentSupport{I}{x}{z}$.
+        \begin{subproof}
+            Suppose not.
+            Hence $x(i)=z(i)$ by \auto{dependent_support_iff}.
+            $A$ is a function on $I$ by
+                \auto{module_additive_group_family_type}.
+            $A(i)=\ModuleAdditiveGroup{M(i)}$ by
+                \auto{module_additive_group_family_apply}.
+            $z(i)=\neutral[A(i)]$ by
+                \auto{product_monoid_neutral_coordinate}.
+            Hence $z(i)=\neutral[M(i)]$ by
+                \auto{module_additive_group_fields}.
+            $u(i)=\scalarMul[M(i)](a,x(i))$ by
+                \auto{pointwise_module_scalar_coordinate}.
+            Hence $u(i)=\neutral[M(i)]$ by
+                \auto{module_scalar_vector_zero}.
+            Hence $u(i)=z(i)$.
+            Contradiction.
+        \end{subproof}
+    \end{subproof}
+    Follows by \obv{subseteq}.
+\end{proof}
+
+\begin{theorem}\label{direct_sum_module_carrier_is_submodule}
+    Let $R$ be a ring.
+    Suppose $M$ is a function on $I$.
+    Suppose for every $i\in I$ we have $M(i)$ is a left module over $R$.
+    Let $A=\moduleAdditiveGroupFamily{I}{M}$.
+    Let $P=\ProductModule{R}{I}{M}$.
+    Let $D=\carrier[\DirectSumGroup{I}{A}]$.
+    Then $D$ is a submodule of $P$ over $R$.
+\end{theorem}
+\begin{proof}
+    Let $C=\productMonoidCarrierFamily{I}{A}$ and
+        $z=\productMonoidNeutral{I}{A}$.
+    $P$ is an exact left module over $R$ by
+        \auto{product_module_is_exact}.
+    Hence $P$ is a left module over $R$.
+    $A$ is a function on $I$ by
+        \auto{module_additive_group_family_type}.
+    For every $i\in I$ we have $A(i)$ is a commutative group by
+        \auto{module_additive_group_family_apply,
+            module_additive_group_is_exact_commutative_group}.
+    Hence $\subgroup{D}{\ProductGroup{I}{A}}$ by
+        \auto{direct_sum_group_carrier,direct_sum_group_subgroup}.
+    $\ModuleAdditiveGroup{P}=\ProductGroup{I}{A}$ by
+        \auto{product_module_additive_group_exact}.
+    Hence $\subgroup{D}{\ModuleAdditiveGroup{P}}$.
+    Hence $D\subseteq\carrier[\ModuleAdditiveGroup{P}]$ by
+        \obv{subgroup_subseteq}.
+    Hence $D\subseteq\carrier[P]$ by
+        \auto{module_additive_group_fields}.
+    Show that for all $a,x$ such that $a\in\carrier[R]$ and $x\in D$
+        we have $\scalarMul[P](a,x)\in D$.
+    \begin{subproof}
+        Fix $a,x$.
+        Assume $a\in\carrier[R]$ and $x\in D$.
+        $D=\dependentFinitelySupportedFunctions{I}{C}{z}$ by
+            \auto{direct_sum_group_carrier}.
+        Hence $x\in\dependentProduct{I}{C}$ and
+            $\dependentSupport{I}{x}{z}$ is finite by
+            \auto{dependent_finitely_supported_functions_iff}.
+        Hence $x\in\carrier[P]$ by \obv{subseteq}.
+        $\scalarMul[P](a,x)
+            =\Apply{\pointwiseModuleScalarOp}{I,M,a,x}$ by
+            \auto{product_module_fields,
+                logical_heterogeneous_binary_graph_on_apply}.
+        $\Apply{\pointwiseModuleScalarOp}{I,M,a,x}
+            \in\dependentProduct{I}{C}$ by
+            \obv{pointwise_module_scalar_type}.
+        $\dependentSupport{I}{
+            \Apply{\pointwiseModuleScalarOp}{I,M,a,x}}{z}
+            \subseteq\dependentSupport{I}{x}{z}$ by
+            \obv{pointwise_module_scalar_support}.
+        Hence $\dependentSupport{I}{
+            \Apply{\pointwiseModuleScalarOp}{I,M,a,x}}{z}$ is finite by
+            \obv{subseteq_finite_is_finite}.
+        Follows by
+            \auto{dependent_finitely_supported_functions_iff}.
+    \end{subproof}
+    Follows by \obv{submodule}.
+\end{proof}
+
+\begin{definition}\label{direct_sum_module}
+    $\DirectSumModule{R}{I}{M}
+        =\InducedSubmodule{R}{\ProductModule{R}{I}{M}}{
+            \carrier[\DirectSumGroup{I}{
+                \moduleAdditiveGroupFamily{I}{M}}]}$.
+\end{definition}
+
+\begin{theorem}\label{direct_sum_module_is_exact}
+    Let $R$ be a ring.
+    Suppose $M$ is a function on $I$.
+    Suppose for every $i\in I$ we have $M(i)$ is a left module over $R$.
+    Then $\DirectSumModule{R}{I}{M}$
+        is an exact left module over $R$.
+\end{theorem}
+\begin{proof}
+    Let $A=\moduleAdditiveGroupFamily{I}{M}$.
+    Let $P=\ProductModule{R}{I}{M}$.
+    Let $D=\carrier[\DirectSumGroup{I}{A}]$.
+    $D$ is a submodule of $P$ over $R$ by
+        \obv{direct_sum_module_carrier_is_submodule}.
+    Follows by
+        \auto{direct_sum_module,induced_submodule_is_exact}.
+\end{proof}
+
+\begin{proposition}\label{direct_sum_module_carrier}
+    Let $R$ be a ring.
+    Suppose $M$ is a function on $I$.
+    Suppose for every $i\in I$ we have $M(i)$ is a left module over $R$.
+    Then
+        $\carrier[\DirectSumModule{R}{I}{M}]
+            =\carrier[\DirectSumGroup{I}{
+                \moduleAdditiveGroupFamily{I}{M}}]$.
+\end{proposition}
+\begin{proof}
+    Let $A=\moduleAdditiveGroupFamily{I}{M}$.
+    Let $P=\ProductModule{R}{I}{M}$.
+    Let $D=\carrier[\DirectSumGroup{I}{A}]$.
+    $D$ is a submodule of $P$ over $R$ by
+        \obv{direct_sum_module_carrier_is_submodule}.
+    Follows by
+        \auto{direct_sum_module,induced_submodule_carrier}.
+\end{proof}
+
+\begin{theorem}\label{direct_sum_module_additive_group_exact}
+    Let $R$ be a ring.
+    Suppose $M$ is a function on $I$.
+    Suppose for every $i\in I$ we have $M(i)$ is a left module over $R$.
+    Then
+        $\ModuleAdditiveGroup{\DirectSumModule{R}{I}{M}}
+            =\DirectSumGroup{I}{\moduleAdditiveGroupFamily{I}{M}}$.
+\end{theorem}
+\begin{proof}
+    Let $A=\moduleAdditiveGroupFamily{I}{M}$.
+    Let $P=\ProductModule{R}{I}{M}$.
+    Let $D=\carrier[\DirectSumGroup{I}{A}]$.
+    Let $S=\DirectSumModule{R}{I}{M}$.
+    $D$ is a submodule of $P$ over $R$ by
+        \obv{direct_sum_module_carrier_is_submodule}.
+    $\ModuleAdditiveGroup{S}
+        =\subgroupStructure{\ModuleAdditiveGroup{P}}{D}$ by
+        \auto{direct_sum_module,induced_submodule_additive_group}.
+    $\ModuleAdditiveGroup{P}=\ProductGroup{I}{A}$ by
+        \auto{product_module_additive_group_exact}.
+    Hence $\ModuleAdditiveGroup{S}
+        =\subgroupStructure{\ProductGroup{I}{A}}{D}$.
+    $D=\dependentFinitelySupportedFunctions{I}{
+        \productMonoidCarrierFamily{I}{A}}{
+        \productMonoidNeutral{I}{A}}$ by
+        \obv{direct_sum_group_carrier}.
+    Follows by \obv{direct_sum_group}.
+\end{proof}
+
+\begin{proposition}\label{direct_sum_module_scalar_apply}
+    Let $R$ be a ring.
+    Suppose $M$ is a function on $I$.
+    Suppose for every $j\in I$ we have $M(j)$ is a left module over $R$.
+    Let $S=\DirectSumModule{R}{I}{M}$.
+    Let $a\in\carrier[R]$ and $x\in\carrier[S]$.
+    Then
+        $\scalarMul[S](a,x)
+            =\scalarMul[\ProductModule{R}{I}{M}](a,x)$.
+\end{proposition}
+\begin{proof}
+    Let $A=\moduleAdditiveGroupFamily{I}{M}$.
+    Let $P=\ProductModule{R}{I}{M}$.
+    Let $D=\carrier[\DirectSumGroup{I}{A}]$.
+    $D$ is a submodule of $P$ over $R$ by
+        \obv{direct_sum_module_carrier_is_submodule}.
+    $\carrier[S]=D$ by \auto{direct_sum_module_carrier}.
+    Follows by
+        \auto{direct_sum_module,induced_submodule_scalar_apply}.
+\end{proof}
+
+\begin{proposition}\label{direct_sum_module_scalar_coordinate}
+    Let $R$ be a ring.
+    Suppose $M$ is a function on $I$.
+    Suppose for every $j\in I$ we have $M(j)$ is a left module over $R$.
+    Let $S=\DirectSumModule{R}{I}{M}$.
+    Let $a\in\carrier[R]$ and $x\in\carrier[S]$.
+    Let $i\in I$.
+    Then
+        $\apply{\scalarMul[S](a,x)}{i}
+            =\scalarMul[M(i)](a,x(i))$.
+\end{proposition}
+\begin{proof}
+    Let $P=\ProductModule{R}{I}{M}$.
+    $\carrier[S]\subseteq\carrier[P]$ by
+        \auto{direct_sum_module,direct_sum_module_carrier_is_submodule,
+            submodule_subseteq,induced_submodule_carrier}.
+    Hence $x\in\carrier[P]$ by \obv{subseteq}.
+    $\scalarMul[S](a,x)=\scalarMul[P](a,x)$ by
+        \auto{direct_sum_module_scalar_apply}.
+    Follows by \auto{product_module_scalar_coordinate}.
+\end{proof}
+
+\begin{proposition}\label{direct_sum_module_add_coordinate}
+    Let $R$ be a ring.
+    Suppose $M$ is a function on $I$.
+    Suppose for every $j\in I$ we have $M(j)$ is a left module over $R$.
+    Let $S=\DirectSumModule{R}{I}{M}$.
+    Let $x,y\in\carrier[S]$ and $i\in I$.
+    Then $\apply{\mul[S](x,y)}{i}=\mul[M(i)](x(i),y(i))$.
+\end{proposition}
+\begin{proof}
+    Let $A=\moduleAdditiveGroupFamily{I}{M}$.
+    $\ModuleAdditiveGroup{S}=\DirectSumGroup{I}{A}$ by
+        \auto{direct_sum_module_additive_group_exact}.
+    Hence $\mul[S]=\mul[\DirectSumGroup{I}{A}]$ and
+        $\carrier[S]=\carrier[\DirectSumGroup{I}{A}]$ by
+        \auto{module_additive_group_fields}.
+    $A$ is a function on $I$ by
+        \auto{module_additive_group_family_type}.
+    For every $j\in I$ we have $A(j)$ is a commutative group by
+        \auto{module_additive_group_family_apply,
+            module_additive_group_is_exact_commutative_group}.
+    $\apply{\mul[S](x,y)}{i}=\mul[A(i)](x(i),y(i))$ by
+        \auto{direct_sum_group_mul_coordinate}.
+    $A(i)=\ModuleAdditiveGroup{M(i)}$ by
+        \auto{module_additive_group_family_apply}.
+    Follows by \auto{module_additive_group_fields}.
+\end{proof}
+
+\begin{theorem}\label{finite_direct_sum_module_eq_product_module}
+    Let $R$ be a ring.
+    Suppose $I$ is finite.
+    Suppose $M$ is a function on $I$.
+    Suppose for every $i\in I$ we have $M(i)$ is a left module over $R$.
+    Then $\DirectSumModule{R}{I}{M}=\ProductModule{R}{I}{M}$.
+\end{theorem}
+\begin{proof}
+    Let $A=\moduleAdditiveGroupFamily{I}{M}$.
+    Let $P=\ProductModule{R}{I}{M}$.
+    $A$ is a function on $I$ by
+        \auto{module_additive_group_family_type}.
+    For every $i\in I$ we have $A(i)$ is a commutative group by
+        \auto{module_additive_group_family_apply,
+            module_additive_group_is_exact_commutative_group}.
+    $\DirectSumGroup{I}{A}=\ProductGroup{I}{A}$ by
+        \obv{finite_direct_sum_group_eq_product_group}.
+    $\carrier[P]=\carrier[\ProductGroup{I}{A}]$ by
+        \auto{product_module_fields}.
+    Hence $\carrier[\DirectSumGroup{I}{A}]=\carrier[P]$.
+    $P$ is an exact left module over $R$ by
+        \auto{product_module_is_exact}.
+    $\InducedSubmodule{R}{P}{\carrier[P]}=P$ by
+        \obv{full_induced_submodule_eq}.
+    Follows by \obv{direct_sum_module}.
+\end{proof}
+
+\subsection{Summand inclusions}
+
+\begin{definition}\label{direct_sum_module_inclusion}
+    $\directSumModuleInclusion{R}{I}{M}{i}
+        =\directSumGroupInclusion{I}{
+            \moduleAdditiveGroupFamily{I}{M}}{i}$.
+\end{definition}
+
+\begin{proposition}\label{direct_sum_module_inclusion_type}
+    Let $R$ be a ring.
+    Suppose $M$ is a function on $I$.
+    Suppose for every $j\in I$ we have $M(j)$ is a left module over $R$.
+    Let $i\in I$.
+    Then $\directSumModuleInclusion{R}{I}{M}{i}\in
+        \funs{\carrier[M(i)]}{
+            \carrier[\DirectSumModule{R}{I}{M}]}$.
+\end{proposition}
+\begin{proof}
+    Let $A=\moduleAdditiveGroupFamily{I}{M}$.
+    $A$ is a function on $I$ by
+        \auto{module_additive_group_family_type}.
+    For every $j\in I$ we have $A(j)$ is a commutative group by
+        \auto{module_additive_group_family_apply,
+            module_additive_group_is_exact_commutative_group}.
+    $\directSumGroupInclusion{I}{A}{i}\in
+        \funs{\carrier[A(i)]}{\carrier[\DirectSumGroup{I}{A}]}$ by
+        \obv{direct_sum_group_inclusion_type}.
+    $\carrier[A(i)]=\carrier[M(i)]$ by
+        \auto{module_additive_group_family_apply,
+            module_additive_group_fields}.
+    $\carrier[\DirectSumModule{R}{I}{M}]
+        =\carrier[\DirectSumGroup{I}{A}]$ by
+        \auto{direct_sum_module_carrier}.
+    Follows by \auto{direct_sum_module_inclusion}.
+\end{proof}
+
+\begin{proposition}\label{direct_sum_module_inclusion_apply}
+    Let $R$ be a ring.
+    Suppose $M$ is a function on $I$.
+    Suppose for every $j\in I$ we have $M(j)$ is a left module over $R$.
+    Let $A=\moduleAdditiveGroupFamily{I}{M}$.
+    Let $C=\productMonoidCarrierFamily{I}{A}$ and
+        $z=\productMonoidNeutral{I}{A}$.
+    Let $i\in I$ and $x\in\carrier[M(i)]$.
+    Then
+        $\apply{\directSumModuleInclusion{R}{I}{M}{i}}{x}
+            =\dependentPointMass{I}{C}{z}{i}{x}$.
+\end{proposition}
+\begin{proof}
+    $A$ is a function on $I$ by
+        \auto{module_additive_group_family_type}.
+    For every $j\in I$ we have $A(j)$ is a commutative group by
+        \auto{module_additive_group_family_apply,
+            module_additive_group_is_exact_commutative_group}.
+    $\carrier[A(i)]=\carrier[M(i)]$ by
+        \auto{module_additive_group_family_apply,
+            module_additive_group_fields}.
+    Follows by
+        \auto{direct_sum_module_inclusion,
+            direct_sum_group_inclusion_apply}.
+\end{proof}
+
+\begin{theorem}\label{direct_sum_module_inclusion_linear}
+    Let $R$ be a ring.
+    Suppose $M$ is a function on $I$.
+    Suppose for every $j\in I$ we have $M(j)$ is a left module over $R$.
+    Let $i\in I$.
+    Then $\directSumModuleInclusion{R}{I}{M}{i}$ is a linear map from
+        $M(i)$ to $\DirectSumModule{R}{I}{M}$ over $R$.
+\end{theorem}
+\begin{proof}
+    Let $A=\moduleAdditiveGroupFamily{I}{M}$.
+    Let $S=\DirectSumModule{R}{I}{M}$.
+    Let $C=\productMonoidCarrierFamily{I}{A}$ and
+        $z=\productMonoidNeutral{I}{A}$.
+    Let $m=\directSumModuleInclusion{R}{I}{M}{i}$.
+    $S$ is an exact left module over $R$ by
+        \auto{direct_sum_module_is_exact}.
+    $A$ is a function on $I$ by
+        \auto{module_additive_group_family_type}.
+    For every $j\in I$ we have $A(j)$ is a commutative group by
+        \auto{module_additive_group_family_apply,
+            module_additive_group_is_exact_commutative_group}.
+    $m=\directSumGroupInclusion{I}{A}{i}$ by
+        \obv{direct_sum_module_inclusion}.
+    $\groupHom{m}{A(i)}{\DirectSumGroup{I}{A}}$ by
+        \auto{direct_sum_group_inclusion_hom}.
+    $A(i)=\ModuleAdditiveGroup{M(i)}$ and
+        $\DirectSumGroup{I}{A}=\ModuleAdditiveGroup{S}$ by
+        \auto{module_additive_group_family_apply,
+            direct_sum_module_additive_group_exact}.
+    Hence $\groupHom{m}{\ModuleAdditiveGroup{M(i)}}{
+        \ModuleAdditiveGroup{S}}$.
+    $C$ is a function on $I$ by
+        \auto{product_monoid_carrier_family_type}.
+    For every $j\in I$ we have $A(j)$ is a group by
+        \obv{commutative_group_is_group}.
+    Hence for every $j\in I$ we have $A(j)$ is a monoid by
+        \obv{group_is_monoid}.
+    $z\in\dependentProduct{I}{C}$ by
+        \auto{product_monoid_neutral_type}.
+    Show that for all $a,x$ such that $a\in\carrier[R]$ and
+        $x\in\carrier[M(i)]$ we have
+        $m(\scalarMul[M(i)](a,x))=\scalarMul[S](a,m(x))$.
+    \begin{subproof}
+        Fix $a,x$.
+        Assume $a\in\carrier[R]$ and $x\in\carrier[M(i)]$.
+        $\scalarMul[M(i)](a,x)\in\carrier[M(i)]$ by
+            \obv{module_scalar_type}.
+        $m(x)\in\carrier[S]$ by
+            \auto{direct_sum_module_inclusion_type,funs_type_apply}.
+        Hence $m(\scalarMul[M(i)](a,x)),\scalarMul[S](a,m(x))
+            \in\carrier[S]$ by
+            \auto{direct_sum_module_inclusion_type,funs_type_apply,
+                module_scalar_type}.
+        Hence $m(\scalarMul[M(i)](a,x)),\scalarMul[S](a,m(x))
+            \in\dependentProduct{I}{C}$ by
+            \auto{direct_sum_module_carrier,direct_sum_group_carrier,
+                dependent_finitely_supported_functions_iff}.
+        Show that for every $j\in I$ we have
+            $\apply{m(\scalarMul[M(i)](a,x))}{j}
+                =\apply{\scalarMul[S](a,m(x))}{j}$.
+        \begin{subproof}
+            Fix $j\in I$.
+            \begin{byCase}
+            \caseOf{$j=i$.}
+                $C(i)=\carrier[M(i)]$ by
+                    \auto{module_product_carrier_coordinate}.
+                $\apply{m(\scalarMul[M(i)](a,x))}{i}
+                    =\scalarMul[M(i)](a,x)$ and
+                    $\apply{m(x)}{i}=x$ by
+                    \auto{direct_sum_module_inclusion_apply,
+                        dependent_point_mass_selected}.
+                Follows by
+                    \auto{direct_sum_module_scalar_coordinate}.
+            \caseOf{$j\neq i$.}
+                $C(i)=\carrier[M(i)]$ by
+                    \auto{module_product_carrier_coordinate}.
+                $\apply{m(\scalarMul[M(i)](a,x))}{j}=z(j)$ and
+                    $\apply{m(x)}{j}=z(j)$ by
+                    \auto{direct_sum_module_inclusion_apply,
+                        dependent_point_mass_other}.
+                $z(j)=\neutral[A(j)]$ by
+                    \auto{product_monoid_neutral_coordinate}.
+                $A(j)=\ModuleAdditiveGroup{M(j)}$ by
+                    \auto{module_additive_group_family_apply}.
+                Hence $z(j)=\neutral[M(j)]$ by
+                    \auto{module_additive_group_fields}.
+                $\apply{\scalarMul[S](a,m(x))}{j}
+                    =\scalarMul[M(j)](a,\apply{m(x)}{j})$ by
+                    \obv{direct_sum_module_scalar_coordinate}.
+                Follows by \auto{module_scalar_vector_zero}.
+            \end{byCase}
+        \end{subproof}
+        Follows by \obv{dependent_product_extensionality}.
+    \end{subproof}
+    Follows by \auto{linear_map}.
+\end{proof}
+
+\subsection{Reindexing direct sums}
+
+\begin{theorem}\label{direct_sum_module_reindex_linear}
+    Let $R$ be a ring.
+    Suppose $M$ is a function on $I$.
+    Suppose for every $i\in I$ we have $M(i)$ is a left module over $R$.
+    Let $e\in\funs{J}{I}$.
+    Suppose for every $i\in I$ we have $\preimg{e}{\{i\}}$ is finite.
+    Let $A=\moduleAdditiveGroupFamily{I}{M}$.
+    Then $\directSumGroupReindex{I}{J}{A}{e}$ is a linear map from
+        $\DirectSumModule{R}{I}{M}$ to
+        $\DirectSumModule{R}{J}{M\circ e}$ over $R$.
+\end{theorem}
+\begin{proof}
+    Let $S=\DirectSumModule{R}{I}{M}$ and
+        $T=\DirectSumModule{R}{J}{M\circ e}$.
+    Let $r=\directSumGroupReindex{I}{J}{A}{e}$.
+    $M\in\funs{I}{\ran{M}}$ by
+        \auto{function_exact_type_to_range}.
+    $M$ is composable with $e$ by \obv{funs_ran,funs}.
+    Hence $M\circ e$ is a function on $J$ by
+        \auto{funs_circ,funs_is_function,funs}.
+    Show that for every $j\in J$ we have
+        $(M\circ e)(j)$ is a left module over $R$.
+    \begin{subproof}
+        Fix $j\in J$.
+        $e$ is a function and $j\in\dom{e}$ by
+            \auto{funs_is_function,funs}.
+        $e(j)\in I$ by \obv{funs_type_apply}.
+        $(M\circ e)(j)=M(e(j))$ by
+            \obv{circ_apply,funs_is_function}.
+        Follows by \auto.
+    \end{subproof}
+    $S$ is a left module over $R$ and
+        $T$ is a left module over $R$ by
+        \auto{direct_sum_module_is_exact}.
+    $A$ is a function on $I$ by
+        \auto{module_additive_group_family_type}.
+    For every $i\in I$ we have $A(i)$ is a commutative group by
+        \auto{module_additive_group_family_apply,
+            module_additive_group_is_exact_commutative_group}.
+    $\groupHom{r}{\DirectSumGroup{I}{A}}{
+        \DirectSumGroup{J}{A\circ e}}$ by
+        \auto{direct_sum_group_reindex_hom}.
+    $A\circ e=\moduleAdditiveGroupFamily{J}{M\circ e}$ by
+        \auto{module_additive_group_family_reindex}.
+    $\ModuleAdditiveGroup{S}=\DirectSumGroup{I}{A}$ and
+        $\ModuleAdditiveGroup{T}
+            =\DirectSumGroup{J}{\moduleAdditiveGroupFamily{J}{M\circ e}}$
+        by \auto{direct_sum_module_additive_group_exact}.
+    Hence $\groupHom{r}{\ModuleAdditiveGroup{S}}{
+        \ModuleAdditiveGroup{T}}$.
+    $\carrier[S]=\carrier[\DirectSumGroup{I}{A}]$ by
+        \auto{module_additive_group_fields}.
+    Show that for all $a,x$ such that $a\in\carrier[R]$ and
+        $x\in\carrier[S]$ we have
+        $r(\scalarMul[S](a,x))=\scalarMul[T](a,r(x))$.
+    \begin{subproof}
+        Fix $a,x$.
+        Assume $a\in\carrier[R]$ and $x\in\carrier[S]$.
+        $\scalarMul[S](a,x)\in\carrier[S]$ by
+            \obv{module_scalar_type}.
+        Hence $r(\scalarMul[S](a,x)),r(x)\in\carrier[T]$ by
+            \auto{group_hom_apply_type,module_additive_group_fields}.
+        Hence $\scalarMul[T](a,r(x))\in\carrier[T]$ by
+            \obv{module_scalar_type}.
+        Hence $x,\scalarMul[S](a,x)
+            \in\carrier[\DirectSumGroup{I}{A}]$.
+        Let $B=\moduleAdditiveGroupFamily{J}{M\circ e}$ and
+            $D=\productMonoidCarrierFamily{J}{B}$.
+        $D$ is a function on $J$ by
+            \auto{product_monoid_carrier_family_type}.
+        $\carrier[T]\subseteq\dependentProduct{J}{D}$ by
+            \auto{direct_sum_module_carrier,direct_sum_group_carrier,
+                dependent_finitely_supported_functions_iff,subseteq}.
+        Hence $r(\scalarMul[S](a,x)),\scalarMul[T](a,r(x))
+            \in\dependentProduct{J}{D}$ by \obv{subseteq}.
+        Show that for every $j\in J$ we have
+            $\apply{r(\scalarMul[S](a,x))}{j}
+                =\apply{\scalarMul[T](a,r(x))}{j}$.
+        \begin{subproof}
+            Fix $j\in J$.
+            $e$ is a function and $j\in\dom{e}$ by
+                \auto{funs_is_function,funs}.
+            $e(j)\in I$ by \obv{funs_type_apply}.
+            $r(\scalarMul[S](a,x))=\scalarMul[S](a,x)\circ e$ and
+                $r(x)=x\circ e$ by
+                \auto{direct_sum_group_reindex_apply}.
+            Let $C_0=\productMonoidCarrierFamily{I}{A}$.
+            $x,\scalarMul[S](a,x)\in\dependentProduct{I}{C_0}$ by
+                \auto{direct_sum_group_carrier,
+                    dependent_finitely_supported_functions_iff}.
+            Hence $x,\scalarMul[S](a,x)\in
+                \funs{I}{\unions{\ran{C_0}}}$ by
+                \auto{dependent_product_iff}.
+            $x$ is a function and $\scalarMul[S](a,x)$ is a function by
+                \obv{funs_is_function}.
+            $x$ is composable with $e$ and
+                $\scalarMul[S](a,x)$ is composable with $e$ by
+                \auto{funs_is_function,funs_ran,funs}.
+            $\apply{r(\scalarMul[S](a,x))}{j}
+                =\apply{\scalarMul[S](a,x)\circ e}{j}$.
+            $\apply{\scalarMul[S](a,x)\circ e}{j}
+                =\apply{\scalarMul[S](a,x)}{e(j)}$ by
+                \obv{circ_apply}.
+            Hence $\apply{r(\scalarMul[S](a,x))}{j}
+                =\apply{\scalarMul[S](a,x)}{e(j)}$.
+            $\apply{r(x)}{j}=\apply{x\circ e}{j}$.
+            $\apply{x\circ e}{j}=x(e(j))$ by \obv{circ_apply}.
+            Hence $\apply{r(x)}{j}=x(e(j))$.
+            $(M\circ e)(j)=M(e(j))$ by
+                \obv{circ_apply,funs_is_function}.
+            Follows by \auto{direct_sum_module_scalar_coordinate}.
+        \end{subproof}
+        Follows by \obv{dependent_product_extensionality}.
+    \end{subproof}
+    Follows by \auto{linear_map}.
+\end{proof}
+
+\begin{theorem}\label{bijective_direct_sum_module_reindex_isomorphism}
+    Let $R$ be a ring.
+    Suppose $M$ is a function on $I$.
+    Suppose for every $i\in I$ we have $M(i)$ is a left module over $R$.
+    Let $e\in\bijections{J}{I}$.
+    Let $A=\moduleAdditiveGroupFamily{I}{M}$.
+    Then $\directSumGroupReindex{I}{J}{A}{e}$ is a module isomorphism
+        from $\DirectSumModule{R}{I}{M}$ to
+        $\DirectSumModule{R}{J}{M\circ e}$ over $R$.
+\end{theorem}
+\begin{proof}
+    Let $r=\directSumGroupReindex{I}{J}{A}{e}$.
+    $e\in\funs{J}{I}$ by \obv{bijections_to_funs}.
+    $M\in\funs{I}{\ran{M}}$ by
+        \auto{function_exact_type_to_range}.
+    $M$ is composable with $e$ by \obv{funs_ran,funs}.
+    Hence $M\circ e$ is a function on $J$ by
+        \auto{funs_circ,funs_is_function,funs}.
+    Show that for every $j\in J$ we have
+        $(M\circ e)(j)$ is a left module over $R$.
+    \begin{subproof}
+        Fix $j\in J$.
+        $e$ is a function and $j\in\dom{e}$ by
+            \auto{funs_is_function,funs}.
+        $e(j)\in I$ by \obv{funs_type_apply}.
+        $(M\circ e)(j)=M(e(j))$ by
+            \obv{circ_apply,funs_is_function}.
+        Follows by \auto.
+    \end{subproof}
+    For every $i\in I$ we have $\preimg{e}{\{i\}}$ is finite by
+        \obv{bijection_has_finite_fibers}.
+    Hence $r$ is a linear map from $\DirectSumModule{R}{I}{M}$ to
+        $\DirectSumModule{R}{J}{M\circ e}$ over $R$ by
+        \auto{direct_sum_module_reindex_linear}.
+    $A$ is a function on $I$ by
+        \auto{module_additive_group_family_type}.
+    For every $i\in I$ we have $A(i)$ is a commutative group by
+        \auto{module_additive_group_family_apply,
+            module_additive_group_is_exact_commutative_group}.
+    $\groupIsomorphism{r}{\DirectSumGroup{I}{A}}{
+        \DirectSumGroup{J}{A\circ e}}$ by
+        \auto{bijective_direct_sum_group_reindex_isomorphism}.
+    $A\circ e=\moduleAdditiveGroupFamily{J}{M\circ e}$ by
+        \auto{module_additive_group_family_reindex}.
+    $\carrier[\DirectSumModule{R}{I}{M}]
+        =\carrier[\DirectSumGroup{I}{A}]$ by
+        \auto{direct_sum_module_carrier}.
+    $\carrier[\DirectSumModule{R}{J}{M\circ e}]
+        =\carrier[\DirectSumGroup{J}{
+            \moduleAdditiveGroupFamily{J}{M\circ e}}]$ by
+        \obv{direct_sum_module_carrier}.
+    Hence $r\in\bijections{\carrier[\DirectSumModule{R}{I}{M}]}{
+        \carrier[\DirectSumModule{R}{J}{M\circ e}]}$ by
+        \auto{group_isomorphism_is_bijection}.
+    Follows by \obv{module_isomorphism}.
+\end{proof}
+
+\begin{theorem}\label{bijective_direct_sum_module_reindex_inverse}
+    Let $R$ be a ring.
+    Suppose $M$ is a function on $I$.
+    Suppose for every $i\in I$ we have $M(i)$ is a left module over $R$.
+    Let $e\in\bijections{J}{I}$.
+    Let $A=\moduleAdditiveGroupFamily{I}{M}$.
+    Let $P=\directSumGroupReindex{I}{J}{A}{e}$.
+    Let $Q=\directSumGroupReindex{J}{I}{A\circ e}{\converse{e}}$.
+    Let $S=\carrier[\DirectSumModule{R}{I}{M}]$.
+    Let $T=\carrier[\DirectSumModule{R}{J}{M\circ e}]$.
+    Then $Q\circ P=\identity{S}$ and $P\circ Q=\identity{T}$.
+\end{theorem}
+\begin{proof}
+    $A$ is a function on $I$ by
+        \auto{module_additive_group_family_type}.
+    $e\in\funs{J}{I}$ by \obv{bijections_to_funs}.
+    $M\in\funs{I}{\ran{M}}$ by
+        \auto{function_exact_type_to_range}.
+    $M$ is composable with $e$ by \obv{funs_ran,funs}.
+    Hence $M\circ e$ is a function on $J$ by
+        \auto{funs_circ,funs_is_function,funs}.
+    Show that for every $j\in J$ we have
+        $(M\circ e)(j)$ is a left module over $R$.
+    \begin{subproof}
+        Fix $j\in J$.
+        $e$ is a function and $j\in\dom{e}$ by
+            \auto{funs_is_function,funs}.
+        $e(j)\in I$ by \obv{funs_type_apply}.
+        $(M\circ e)(j)=M(e(j))$ by
+            \obv{circ_apply,funs_is_function}.
+        Follows by \auto.
+    \end{subproof}
+    For every $i\in I$ we have $A(i)$ is a commutative group by
+        \auto{module_additive_group_family_apply,
+            module_additive_group_is_exact_commutative_group}.
+    Let $S_0=\carrier[\DirectSumGroup{I}{A}]$ and
+        $T_0=\carrier[\DirectSumGroup{J}{A\circ e}]$.
+    $Q\circ P=\identity{S_0}$ and $P\circ Q=\identity{T_0}$ by
+        \obv{bijective_direct_sum_group_reindex_inverse}.
+    $S=S_0$ by \auto{direct_sum_module_carrier}.
+    $A\circ e=\moduleAdditiveGroupFamily{J}{M\circ e}$ by
+        \auto{module_additive_group_family_reindex,
+            bijections_to_funs}.
+    Hence $T=T_0$ by \auto{direct_sum_module_carrier}.
+\end{proof}
+
+\subsection{Empty and singleton direct sums}
+
+\begin{proposition}\label{empty_direct_sum_module_is_exact}
+    Let $R$ be a ring.
+    Then $\DirectSumModule{R}{\emptyset}{\emptyset}$
+        is an exact left module over $R$.
+\end{proposition}
+\begin{proof}
+    $\emptyset$ is finite by \obv{emptyset_is_finite}.
+    $\DirectSumModule{R}{\emptyset}{\emptyset}
+        =\ProductModule{R}{\emptyset}{\emptyset}$ by
+        \auto{emptyset_is_function_on_emptyset,
+            finite_direct_sum_module_eq_product_module,emptyset}.
+    Follows by \auto{empty_product_module_is_exact}.
+\end{proof}
+
+\begin{proposition}\label{singleton_direct_sum_module_eq_product_module}
+    Let $N$ be a left module over $R$.
+    Then $\DirectSumModule{R}{\{i\}}{\{i\}\times\{N\}}
+        =\ProductModule{R}{\{i\}}{\{i\}\times\{N\}}$.
+\end{proposition}
+\begin{proof}
+    $R$ is a ring by \obv{module_scalar_ring}.
+    Let $M=\{i\}\times\{N\}$.
+    $\{i\}$ is finite by \obv{singleton_is_finite}.
+    $M\in\funs{\{i\}}{\{N\}}$ by \auto{constant_graph_type}.
+    Hence $M$ is a function on $\{i\}$ by
+        \obv{funs_is_function,funs}.
+    For every $j\in\{i\}$ we have $M(j)=N$ by
+        \auto{constant_graph_application}.
+    Hence for every $j\in\{i\}$ we have
+        $M(j)$ is a left module over $R$.
+    Follows by \auto{finite_direct_sum_module_eq_product_module}.
+\end{proof}
+
+\subsection{Assembly maps and the direct-sum universal property}
+
+\begin{theorem}\label{direct_sum_module_additive_map_extensionality}
+    Let $R$ be a ring.
+    Suppose $M$ is a function on $I$.
+    Suppose for every $i\in I$ we have $M(i)$ is a left module over $R$.
+    Let $N$ be a left module over $R$.
+    Let $A=\moduleAdditiveGroupFamily{I}{M}$ and
+        $H=\ModuleAdditiveGroup{N}$.
+    Suppose $\groupHom{h}{\DirectSumGroup{I}{A}}{H}$ and
+        $\groupHom{k}{\DirectSumGroup{I}{A}}{H}$.
+    Suppose for every $i\in I$ we have
+        $h\circ\directSumGroupInclusion{I}{A}{i}
+            =k\circ\directSumGroupInclusion{I}{A}{i}$.
+    Then $h=k$.
+\end{theorem}
+\begin{proof}
+    Let $f=\Apply{\graphOnDomainOp}{I,
+        \fun{i:\Set}{h\circ\directSumGroupInclusion{I}{A}{i}}}$.
+    $A$ is a function on $I$ by
+        \auto{module_additive_group_family_type}.
+    For every $i\in I$ we have $A(i)$ is a commutative group by
+        \auto{module_additive_group_family_apply,
+            module_additive_group_is_exact_commutative_group}.
+    $H$ is a commutative group by
+        \obv{module_additive_group_is_exact_commutative_group}.
+    $f$ is a function on $I$ by
+        \auto{logical_graph_on_domain_function,
+            funs_is_function,funs}.
+    Show that for every $i\in I$ we have
+        $f(i)=h\circ\directSumGroupInclusion{I}{A}{i}$.
+    \begin{subproof}
+        Follows by \auto{logical_graph_on_domain_apply}.
+    \end{subproof}
+    Show that for every $i\in I$ we have $\groupHom{f(i)}{A(i)}{H}$.
+    \begin{subproof}
+        Fix $i\in I$.
+        $\groupHom{\directSumGroupInclusion{I}{A}{i}}{A(i)}{
+            \DirectSumGroup{I}{A}}$ by
+            \obv{direct_sum_group_inclusion_hom}.
+        Hence $\groupHom{
+            h\circ\directSumGroupInclusion{I}{A}{i}}{A(i)}{H}$ by
+            \obv{group_hom_composition}.
+    \end{subproof}
+    For every $i\in I$ we have
+        $k\circ\directSumGroupInclusion{I}{A}{i}=f(i)$ by
+        \auto.
+    $h=\directSumGroupMediator{I}{A}{H}{f}$ and
+        $k=\directSumGroupMediator{I}{A}{H}{f}$ by
+        \obv{direct_sum_group_mediator_unique}.
+\end{proof}
+
+\begin{definition}\label{direct_sum_module_mediator}
+    $\directSumModuleMediator{R}{I}{M}{N}{f}
+        =\directSumGroupMediator{I}{
+            \moduleAdditiveGroupFamily{I}{M}}{
+            \ModuleAdditiveGroup{N}}{f}$.
+\end{definition}
+
+\begin{proposition}\label{direct_sum_module_mediator_type}
+    Let $R$ be a ring.
+    Suppose $M$ is a function on $I$.
+    Suppose for every $i\in I$ we have $M(i)$ is a left module over $R$.
+    Let $N$ be a left module over $R$.
+    Suppose $f$ is a function on $I$ and for every $j\in I$ we have
+        $f(j)$ is a linear map from $M(j)$ to $N$ over $R$.
+    Then $\directSumModuleMediator{R}{I}{M}{N}{f}\in
+        \funs{\carrier[\DirectSumModule{R}{I}{M}]}{\carrier[N]}$.
+\end{proposition}
+\begin{proof}
+    Let $A=\moduleAdditiveGroupFamily{I}{M}$ and
+        $H=\ModuleAdditiveGroup{N}$.
+    $A$ is a function on $I$ by
+        \auto{module_additive_group_family_type}.
+    For every $i\in I$ we have $A(i)$ is a commutative group by
+        \auto{module_additive_group_family_apply,
+            module_additive_group_is_exact_commutative_group}.
+    $H$ is a commutative group by
+        \obv{module_additive_group_is_exact_commutative_group}.
+    Show that for every $i\in I$ we have $\groupHom{f(i)}{A(i)}{H}$.
+    \begin{subproof}
+        Fix $i\in I$.
+        $A(i)=\ModuleAdditiveGroup{M(i)}$ by
+            \auto{module_additive_group_family_apply}.
+        Follows by \auto{linear_map_is_additive_group_hom}.
+    \end{subproof}
+    $\directSumGroupMediator{I}{A}{H}{f}\in
+        \funs{\carrier[\DirectSumGroup{I}{A}]}{\carrier[H]}$ by
+        \obv{direct_sum_group_mediator_type}.
+    $\carrier[\DirectSumModule{R}{I}{M}]
+        =\carrier[\DirectSumGroup{I}{A}]$ by
+        \auto{direct_sum_module_carrier}.
+    $\carrier[H]=\carrier[N]$ by
+        \auto{module_additive_group_fields}.
+    Follows by \auto{direct_sum_module_mediator}.
+\end{proof}
+
+\begin{proposition}\label{direct_sum_module_mediator_apply}
+    Let $R$ be a ring.
+    Suppose $M$ is a function on $I$.
+    Suppose for every $i\in I$ we have $M(i)$ is a left module over $R$.
+    Let $N$ be a left module over $R$.
+    Suppose $f$ is a function on $I$ and for every $i\in I$ we have
+        $f(i)$ is a linear map from $M(i)$ to $N$ over $R$.
+    Let $x\in\carrier[\DirectSumModule{R}{I}{M}]$.
+    Let $A=\moduleAdditiveGroupFamily{I}{M}$ and
+        $H=\ModuleAdditiveGroup{N}$.
+    Then
+        $\apply{\directSumModuleMediator{R}{I}{M}{N}{f}}{x}
+            =\finiteFold{H}{
+                \dependentSupport{I}{x}{
+                    \productMonoidNeutral{I}{A}}}{
+                \directSumGroupContribution{I}{A}{H}{f}{x}}$.
+\end{proposition}
+\begin{proof}
+    $A$ is a function on $I$ by
+        \auto{module_additive_group_family_type}.
+    For every $i\in I$ we have $A(i)$ is a commutative group by
+        \auto{module_additive_group_family_apply,
+            module_additive_group_is_exact_commutative_group}.
+    $H$ is a commutative group by
+        \obv{module_additive_group_is_exact_commutative_group}.
+    Show that for every $i\in I$ we have $\groupHom{f(i)}{A(i)}{H}$.
+    \begin{subproof}
+        Fix $i\in I$.
+        $A(i)=\ModuleAdditiveGroup{M(i)}$ by
+            \auto{module_additive_group_family_apply}.
+        Follows by \auto{linear_map_is_additive_group_hom}.
+    \end{subproof}
+    $x\in\carrier[\DirectSumGroup{I}{A}]$ by
+        \auto{direct_sum_module_carrier}.
+    Follows by
+        \auto{direct_sum_module_mediator,
+            direct_sum_group_mediator_apply}.
+\end{proof}
+
+\begin{theorem}\label{direct_sum_module_mediator_factorization}
+    Let $R$ be a ring.
+    Suppose $M$ is a function on $I$.
+    Suppose for every $j\in I$ we have $M(j)$ is a left module over $R$.
+    Let $N$ be a left module over $R$.
+    Suppose $f$ is a function on $I$ and for every $j\in I$ we have
+        $f(j)$ is a linear map from $M(j)$ to $N$ over $R$.
+    Let $i\in I$.
+    Then
+        $\directSumModuleMediator{R}{I}{M}{N}{f}\circ
+            \directSumModuleInclusion{R}{I}{M}{i}=f(i)$.
+\end{theorem}
+\begin{proof}
+    Let $A=\moduleAdditiveGroupFamily{I}{M}$ and
+        $H=\ModuleAdditiveGroup{N}$.
+    $A$ is a function on $I$ by
+        \auto{module_additive_group_family_type}.
+    For every $j\in I$ we have $A(j)$ is a commutative group by
+        \auto{module_additive_group_family_apply,
+            module_additive_group_is_exact_commutative_group}.
+    $H$ is a commutative group by
+        \obv{module_additive_group_is_exact_commutative_group}.
+    Show that for every $j\in I$ we have $\groupHom{f(j)}{A(j)}{H}$.
+    \begin{subproof}
+        Fix $j\in I$.
+        $A(j)=\ModuleAdditiveGroup{M(j)}$ by
+            \auto{module_additive_group_family_apply}.
+        Follows by \auto{linear_map_is_additive_group_hom}.
+    \end{subproof}
+    Follows by
+        \auto{direct_sum_module_mediator,direct_sum_module_inclusion,
+            direct_sum_group_mediator_factorization}.
+\end{proof}
+
+\begin{theorem}\label{direct_sum_module_mediator_linear}
+    Let $R$ be a ring.
+    Suppose $M$ is a function on $I$.
+    Suppose for every $i\in I$ we have $M(i)$ is a left module over $R$.
+    Let $N$ be a left module over $R$.
+    Suppose $f$ is a function on $I$ and for every $i\in I$ we have
+        $f(i)$ is a linear map from $M(i)$ to $N$ over $R$.
+    Then $\directSumModuleMediator{R}{I}{M}{N}{f}$ is a linear map from
+        $\DirectSumModule{R}{I}{M}$ to $N$ over $R$.
+\end{theorem}
+\begin{proof}
+    Let $A=\moduleAdditiveGroupFamily{I}{M}$.
+    Let $S=\DirectSumModule{R}{I}{M}$ and
+        $H=\ModuleAdditiveGroup{N}$.
+    Let $h=\directSumModuleMediator{R}{I}{M}{N}{f}$.
+    $S$ is an exact left module over $R$ by
+        \auto{direct_sum_module_is_exact}.
+    $A$ is a function on $I$ by
+        \auto{module_additive_group_family_type}.
+    For every $i\in I$ we have $A(i)$ is a commutative group by
+        \auto{module_additive_group_family_apply,
+            module_additive_group_is_exact_commutative_group}.
+    $H$ is a commutative group by
+        \obv{module_additive_group_is_exact_commutative_group}.
+    Show that for every $i\in I$ we have $\groupHom{f(i)}{A(i)}{H}$.
+    \begin{subproof}
+        Fix $i\in I$.
+        $A(i)=\ModuleAdditiveGroup{M(i)}$ by
+            \auto{module_additive_group_family_apply}.
+        Follows by \auto{linear_map_is_additive_group_hom}.
+    \end{subproof}
+    Hence $\groupHom{h}{\DirectSumGroup{I}{A}}{H}$ by
+        \auto{direct_sum_module_mediator,
+            direct_sum_group_mediator_hom}.
+    $\ModuleAdditiveGroup{S}=\DirectSumGroup{I}{A}$ by
+        \auto{direct_sum_module_additive_group_exact}.
+    Hence $\groupHom{h}{\ModuleAdditiveGroup{S}}{H}$.
+
+    Show that for all $a,x$ such that $a\in\carrier[R]$ and
+        $x\in\carrier[S]$ we have
+        $h(\scalarMul[S](a,x))=\scalarMul[N](a,h(x))$.
+    \begin{subproof}
+        Fix $a,x$.
+        Assume $a\in\carrier[R]$ and $x\in\carrier[S]$.
+        Let $s=\moduleScalarMap{S}{a}$ and
+            $t=\moduleScalarMap{N}{a}$.
+        Let $p=h\circ s$ and $q=t\circ h$.
+        $\groupHom{s}{\ModuleAdditiveGroup{S}}{
+            \ModuleAdditiveGroup{S}}$ and
+            $\groupHom{t}{H}{H}$ by
+            \auto{module_scalar_map_group_hom}.
+        Hence $\groupHom{p}{\ModuleAdditiveGroup{S}}{H}$ and
+            $\groupHom{q}{\ModuleAdditiveGroup{S}}{H}$ by
+            \auto{group_hom_composition}.
+        Hence $\groupHom{p}{\DirectSumGroup{I}{A}}{H}$ and
+            $\groupHom{q}{\DirectSumGroup{I}{A}}{H}$.
+        Show that for every $i\in I$ we have
+            $p\circ\directSumGroupInclusion{I}{A}{i}
+                =q\circ\directSumGroupInclusion{I}{A}{i}$.
+        \begin{subproof}
+            Fix $i\in I$.
+            Let $u=\directSumModuleInclusion{R}{I}{M}{i}$.
+            $u=\directSumGroupInclusion{I}{A}{i}$ by
+                \obv{direct_sum_module_inclusion}.
+            $\groupHom{u}{A(i)}{\DirectSumGroup{I}{A}}$ by
+                \auto{direct_sum_group_inclusion_hom}.
+            Hence $\groupHom{p\circ u}{A(i)}{H}$ and
+                $\groupHom{q\circ u}{A(i)}{H}$ by
+                \obv{group_hom_composition}.
+            $p\circ u,q\circ u\in
+                \funs{\carrier[M(i)]}{\carrier[N]}$ by
+                \auto{group_hom_type,module_additive_group_fields,
+                    module_additive_group_family_apply}.
+            Show that for every $y\in\carrier[M(i)]$ we have
+                $(p\circ u)(y)=(q\circ u)(y)$.
+            \begin{subproof}
+                Fix $y\in\carrier[M(i)]$.
+                $u(y)\in\carrier[S]$ by
+                    \auto{direct_sum_module_inclusion_type,
+                        funs_type_apply}.
+                $\scalarMul[M(i)](a,y)\in\carrier[M(i)]$ by
+                    \obv{module_scalar_type}.
+                $s(u(y))=\scalarMul[S](a,u(y))$ and
+                    $t(h(u(y)))=\scalarMul[N](a,h(u(y)))$ by
+                    \auto{module_scalar_map_apply,
+                        direct_sum_module_mediator_type,funs_type_apply}.
+                $u(\scalarMul[M(i)](a,y))
+                    =\scalarMul[S](a,u(y))$ by
+                    \auto{direct_sum_module_inclusion_linear,
+                        linear_map_scalar}.
+                $(h\circ u)(\scalarMul[M(i)](a,y))
+                    =\apply{f(i)}{\scalarMul[M(i)](a,y)}$ and
+                    $(h\circ u)(y)=\apply{f(i)}{y}$ by
+                    \auto{direct_sum_module_mediator_factorization}.
+                $\apply{f(i)}{\scalarMul[M(i)](a,y)}
+                    =\scalarMul[N](a,\apply{f(i)}{y})$ by
+                    \auto{linear_map_scalar}.
+                $h$ and $s$ are functions by
+                    \auto{group_hom_type,funs_is_function,
+                        module_scalar_map_type}.
+                $t$ and $u$ are functions by
+                    \auto{direct_sum_module_inclusion_type,
+                        module_scalar_map_type,funs_is_function}.
+                $p$ and $q$ are functions by
+                    \auto{group_hom_type,funs_is_function}.
+                $y\in\dom{u}$ by
+                    \auto{direct_sum_module_inclusion_type,funs}.
+                $u(y)\in\dom{s}$ and $u(y)\in\dom{h}$ by
+                    \auto{module_scalar_map_type,group_hom_type,
+                        module_additive_group_fields,funs}.
+                $h(u(y))\in\dom{t}$ by
+                    \auto{group_hom_type,module_additive_group_fields,
+                        funs_type_apply,module_scalar_map_type,funs}.
+                $\scalarMul[M(i)](a,y)\in\dom{u}$ by
+                    \auto{direct_sum_module_inclusion_type,funs}.
+                $h$ is composable with $s$ and $t$ is composable with $h$
+                    and $p$ is composable with $u$ and
+                    $q$ is composable with $u$ and
+                    $h$ is composable with $u$ by
+                    \auto{group_hom_type,module_additive_group_fields,
+                        direct_sum_module_inclusion_type,
+                        module_scalar_map_type,funs_ran,funs}.
+                $(p\circ u)(y)=p(u(y))$ by \obv{circ_apply}.
+                $(q\circ u)(y)=q(u(y))$ by \obv{circ_apply}.
+                $p(u(y))=h(s(u(y)))$ by \auto{circ_apply}.
+                $q(u(y))=t(h(u(y)))$ by \auto{circ_apply}.
+                $(h\circ u)(y)=h(u(y))$ by \obv{circ_apply}.
+                $(h\circ u)(\scalarMul[M(i)](a,y))
+                    =h(u(\scalarMul[M(i)](a,y)))$ by
+                    \obv{circ_apply}.
+            \end{subproof}
+            Follows by \auto{typed_functions_equal_from_agreement}.
+        \end{subproof}
+        Hence $p=q$ by
+            \obv{direct_sum_module_additive_map_extensionality}.
+        $s(x)=\scalarMul[S](a,x)$ by
+            \auto{module_scalar_map_apply}.
+        $h(x)\in\carrier[N]$ by
+            \auto{direct_sum_module_mediator_type,funs_type_apply}.
+        Hence $t(h(x))=\scalarMul[N](a,h(x))$ by
+            \auto{module_scalar_map_apply}.
+        $h$ and $s$ are functions by
+            \auto{group_hom_type,funs_is_function,
+                module_scalar_map_type}.
+        $t$ is a function by
+            \auto{module_scalar_map_type,funs_is_function}.
+        $h$ is composable with $s$ and $t$ is composable with $h$ by
+            \auto{group_hom_type,module_additive_group_fields,
+                module_scalar_map_type,funs_ran,funs}.
+        $x\in\dom{s}$ and $x\in\dom{h}$ by
+            \auto{module_scalar_map_type,group_hom_type,
+                module_additive_group_fields,funs}.
+        $h(x)\in\dom{t}$ by
+            \auto{module_scalar_map_type,funs,group_hom_type,
+                funs_type_apply,module_additive_group_fields}.
+        $p(x)=h(s(x))$ by \auto{circ_apply}.
+        $q(x)=t(h(x))$ by \auto{circ_apply}.
+    \end{subproof}
+    Follows by \auto{linear_map}.
+\end{proof}
+
+\begin{theorem}\label{direct_sum_module_mediator_unique}
+    Let $R$ be a ring.
+    Suppose $M$ is a function on $I$.
+    Suppose for every $i\in I$ we have $M(i)$ is a left module over $R$.
+    Let $N$ be a left module over $R$.
+    Suppose $f$ is a function on $I$ and for every $i\in I$ we have
+        $f(i)$ is a linear map from $M(i)$ to $N$ over $R$.
+    Suppose $h$ is a linear map from $\DirectSumModule{R}{I}{M}$ to
+        $N$ over $R$.
+    Suppose for every $i\in I$ we have
+        $h\circ\directSumModuleInclusion{R}{I}{M}{i}=f(i)$.
+    Then $h=\directSumModuleMediator{R}{I}{M}{N}{f}$.
+\end{theorem}
+\begin{proof}
+    Let $A=\moduleAdditiveGroupFamily{I}{M}$ and
+        $H=\ModuleAdditiveGroup{N}$.
+    $A$ is a function on $I$ by
+        \auto{module_additive_group_family_type}.
+    For every $i\in I$ we have $A(i)$ is a commutative group by
+        \auto{module_additive_group_family_apply,
+            module_additive_group_is_exact_commutative_group}.
+    $H$ is a commutative group by
+        \obv{module_additive_group_is_exact_commutative_group}.
+    Show that for every $i\in I$ we have $\groupHom{f(i)}{A(i)}{H}$.
+    \begin{subproof}
+        Fix $i\in I$.
+        $A(i)=\ModuleAdditiveGroup{M(i)}$ by
+            \auto{module_additive_group_family_apply}.
+        Follows by \auto{linear_map_is_additive_group_hom}.
+    \end{subproof}
+    $\groupHom{h}{\ModuleAdditiveGroup{\DirectSumModule{R}{I}{M}}}{H}$
+        by \obv{linear_map_is_additive_group_hom}.
+    $\ModuleAdditiveGroup{\DirectSumModule{R}{I}{M}}
+        =\DirectSumGroup{I}{A}$ by
+        \auto{direct_sum_module_additive_group_exact}.
+    Hence $\groupHom{h}{\DirectSumGroup{I}{A}}{H}$.
+    For every $i\in I$ we have
+        $h\circ\directSumGroupInclusion{I}{A}{i}=f(i)$ by
+        \auto{direct_sum_module_inclusion}.
+    $h=\directSumGroupMediator{I}{A}{H}{f}$ by
+        \obv{direct_sum_group_mediator_unique}.
+    Follows by \obv{direct_sum_module_mediator}.
+\end{proof}

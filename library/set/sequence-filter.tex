@@ -1,0 +1,685 @@
+\section{Sequence-tail filters}
+
+\import{order/order-filter.tex}
+\import{set/natural-shift.tex}
+
+\begin{definition}\label{natural_index_order}
+    $\naturalIndexOrder=\ordinalDirectedQuasiorder{\naturals}$.
+\end{definition}
+
+\begin{classification}\label{natural_index_order_is_exact}
+    $\naturalIndexOrder$ is an exact directed quasiordered set.
+\end{classification}
+\begin{proof}
+    $\naturals$ is an ordinal by \obv{omega_is_ordinal}.
+    $\naturals\neq\emptyset$ by \auto{omega_empty}.
+    $\ordinalDirectedQuasiorder{\naturals}$ is an exact directed
+        quasiordered set by
+        \obv{ordinal_directed_quasiorder_is_exact}.
+    Follows by \auto{natural_index_order}.
+\end{proof}
+
+\begin{proposition}\label{natural_index_order_is_directed}
+    $\naturalIndexOrder$ is a directed quasiordered set.
+\end{proposition}
+\begin{proof}
+    Follows by notion.
+\end{proof}
+
+\begin{proposition}\label{natural_index_order_carrier}
+    $\carrier[\naturalIndexOrder]=\naturals$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{natural_index_order,ordinal_directed_quasiorder_carrier}.
+\end{proof}
+
+\begin{proposition}\label{natural_index_order_relation}
+    $\leq[\naturalIndexOrder]=\subseteqrel{\naturals}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{natural_index_order,ordinal_directed_quasiorder_relation}.
+\end{proof}
+
+\subsection{Natural tails and antitone families}
+
+\begin{definition}\label{natural_tail}
+    $\naturalTail{N}=\{n\in\naturals\mid N\subseteq n\}$.
+\end{definition}
+
+\begin{proposition}\label{natural_tail_iff}
+    $n\in\naturalTail{N}$ iff
+        $n\in\naturals$ and $N\subseteq n$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{natural_tail}.
+\end{proof}
+
+\begin{proposition}\label{natural_tail_inhabited}
+    Let $N$ be a natural number.
+    Then $\naturalTail{N}$ is inhabited.
+\end{proposition}
+\begin{proof}
+    $N\subseteq N$ by \obv{subseteq_refl}.
+    Hence $N\in\naturalTail{N}$ by \obv{natural_tail}.
+\end{proof}
+
+\begin{proposition}\label{natural_tail_antitone}
+    Let $N,K$ be natural numbers.
+    Suppose $N\subseteq K$.
+    Then $\naturalTail{K}\subseteq\naturalTail{N}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{subseteq,natural_tail_iff,subseteq_transitive}.
+\end{proof}
+
+\begin{proposition}\label{natural_tail_is_order_final_segment}
+    Let $N$ be a natural number.
+    Then $\naturalTail{N}=\orderFinalSegment{\naturalIndexOrder}{N}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{setext,natural_tail_iff,order_final_segment_iff,
+            natural_index_order_carrier,natural_index_order_relation,
+            subseteqrel}.
+\end{proof}
+
+\begin{theorem}\label{antitone_natural_tail_range_mutual_refinement}
+    Let $b\in\funs{\naturals}{\pow{S}}$.
+    Suppose for all $K,L$ such that $K,L\in\naturals$ and $K\subseteq L$
+        we have $b(L)\subseteq b(K)$.
+    Let $N$ be a natural number.
+    Then $\img{b}{\naturalTail{N}}$ refines $\ran{b}$
+        as filter families on $S$ and
+        $\ran{b}$ refines $\img{b}{\naturalTail{N}}$
+        as filter families on $S$.
+\end{theorem}
+\begin{proof}
+    $\ran{b}\subseteq\pow{S}$ by \obv{funs_ran}.
+    Hence $\ran{b}$ is a family of subsets of $S$
+        by \auto{pow_iff,subseteq}.
+    $\img{b}{\naturalTail{N}}\subseteq\ran{b}$
+        by \obv{img_subseteq_ran}.
+    Hence $\img{b}{\naturalTail{N}}$ is a family of subsets of $S$
+        by \obv{subseteq}.
+
+    Show that $\img{b}{\naturalTail{N}}$ refines $\ran{b}$
+        as filter families on $S$.
+    \begin{subproof}
+        Show that for every $A\in\ran{b}$ there exists
+            $D\in\img{b}{\naturalTail{N}}$ such that $D\subseteq A$.
+        \begin{subproof}
+            Fix $A\in\ran{b}$.
+            Take $K$ such that $(K,A)\in b$ by \obv{ran_iff}.
+            Hence $K\in\dom{b}$ by \obv{dom_intro}.
+            Hence $K\in\naturals$ by \obv{funs}.
+            $b(K)=A$ by \auto{funs_is_function,function_apply_iff}.
+            $N$ and $K$ are ordinals
+                by \obv{natural_number_is_ordinal}.
+            Hence $N\subseteq K$ or $K\subseteq N$
+                by \obv{ordinal_subseteq_or_subseteq}.
+            \begin{byCase}
+            \caseOf{$N\subseteq K$.}
+                $K\in\naturalTail{N}$ by \obv{natural_tail}.
+                Hence $b(K)\in\img{b}{\naturalTail{N}}$
+                    by \obv{img_of_function_intro,inter_intro,funs_is_function}.
+                $b(K)\subseteq A$ by \obv{subseteq_refl}.
+            \caseOf{not $N\subseteq K$.}
+                Hence $K\subseteq N$.
+                $N\in\naturalTail{N}$
+                    by \obv{natural_tail_iff,subseteq_refl}.
+                Hence $b(N)\in\img{b}{\naturalTail{N}}$
+                    by \obv{img_of_function_intro,inter_intro,funs_is_function,funs}.
+                $b(N)\subseteq b(K)$.
+                Hence $b(N)\subseteq A$.
+            \end{byCase}
+        \end{subproof}
+        Follows by \obv{filter_family_refinement}.
+    \end{subproof}
+
+    Show that $\ran{b}$ refines $\img{b}{\naturalTail{N}}$
+        as filter families on $S$.
+    \begin{subproof}
+        Show that for every $A\in\img{b}{\naturalTail{N}}$
+            there exists $D\in\ran{b}$ such that $D\subseteq A$.
+        \begin{subproof}
+            Fix $A\in\img{b}{\naturalTail{N}}$.
+            $A\in\ran{b}$ by \obv{img_subseteq_ran,subseteq}.
+            $A\subseteq A$ by \obv{subseteq_refl}.
+        \end{subproof}
+        Follows by \obv{filter_family_refinement}.
+    \end{subproof}
+\end{proof}
+
+\begin{corollary}\label{antitone_natural_tail_generated_filters_equal}
+    Let $b\in\funs{\naturals}{\pow{S}}$.
+    Suppose for all $K,L$ such that $K,L\in\naturals$ and $K\subseteq L$
+        we have $b(L)\subseteq b(K)$.
+    Let $N$ be a natural number.
+    Then
+        $\generatedFilter{S}{\img{b}{\naturalTail{N}}}
+        =\generatedFilter{S}{\ran{b}}$.
+\end{corollary}
+\begin{proof}
+    $\img{b}{\naturalTail{N}}$ refines $\ran{b}$
+        as filter families on $S$ and
+        $\ran{b}$ refines $\img{b}{\naturalTail{N}}$
+        as filter families on $S$
+        by \obv{antitone_natural_tail_range_mutual_refinement}.
+    Follows by
+        \obv{mutual_filter_family_refinement_generated_filters_equal}.
+\end{proof}
+
+\begin{theorem}\label{antitone_natural_tail_range_is_filter_basis}
+    Let $b\in\funs{\naturals}{\pow{S}}$.
+    Suppose for all $K,L$ such that $K,L\in\naturals$ and $K\subseteq L$
+        we have $b(L)\subseteq b(K)$.
+    Suppose $\ran{b}$ is a proper filter basis on $S$.
+    Let $N$ be a natural number.
+    Then $\img{b}{\naturalTail{N}}$ is a proper filter basis on $S$ and
+        $\generatedFilter{S}{\img{b}{\naturalTail{N}}}
+            =\generatedFilter{S}{\ran{b}}$ and
+        $\generatedFilter{S}{\img{b}{\naturalTail{N}}}$
+            is a filter on $S$ and
+        $\generatedFilter{S}{\ran{b}}$ is a filter on $S$.
+\end{theorem}
+\begin{proof}
+    $\ran{b}$ is a filter basis on $S$ by
+        \obv{proper_filter_basis_is_filter_basis}.
+    $\img{b}{\naturalTail{N}}$ refines $\ran{b}$
+        as filter families on $S$ and
+        $\ran{b}$ refines $\img{b}{\naturalTail{N}}$
+        as filter families on $S$ by
+        \obv{antitone_natural_tail_range_mutual_refinement}.
+    Hence $\img{b}{\naturalTail{N}}$ is a filter basis on $S$ by
+        \obv{mutual_refinement_preserves_filter_basis}.
+    $\img{b}{\naturalTail{N}}\subseteq\ran{b}$ by
+        \obv{img_subseteq_ran}.
+    Show that for every $A\in\img{b}{\naturalTail{N}}$ we have
+        $A$ is inhabited.
+    \begin{subproof}
+        Fix $A\in\img{b}{\naturalTail{N}}$.
+        Hence $A\in\ran{b}$ by \obv{subseteq}.
+        Follows by \obv{proper_filter_basis}.
+    \end{subproof}
+    Hence $\img{b}{\naturalTail{N}}$ is a proper filter basis on $S$ by
+        \obv{proper_filter_basis}.
+
+    $\generatedFilter{S}{\img{b}{\naturalTail{N}}}
+        =\generatedFilter{S}{\ran{b}}$ by
+        \obv{mutual_filter_family_refinement_generated_filters_equal}.
+    $\generatedFilter{S}{\ran{b}}$ is a proper filter on $S$
+        by \obv{generated_filter_is_proper_filter}.
+    $\generatedFilter{S}{\img{b}{\naturalTail{N}}}$ is a filter on $S$
+        by \obv{generated_filter_is_filter}.
+\end{proof}
+
+\subsection{Tails of a sequence}
+
+\begin{definition}\label{sequence_tail}
+    $\sequenceTail{s}{N}=\img{s}{\naturalTail{N}}$.
+\end{definition}
+
+\begin{proposition}\label{sequence_tail_contains_term}
+    Let $s\in\funs{\naturals}{S}$ and $N,n\in\naturals$.
+    Suppose $N\subseteq n$.
+    Then $s(n)\in\sequenceTail{s}{N}$.
+\end{proposition}
+\begin{proof}
+    $n\in\naturalTail{N}$ by \obv{natural_tail}.
+    $(n,s(n))\in s$ by \auto{funs_elim,function_apply_iff}.
+    Follows by \auto{sequence_tail,img_iff}.
+\end{proof}
+
+\begin{proposition}\label{sequence_tail_type}
+    Let $s\in\funs{\naturals}{S}$.
+    Then $\sequenceTail{s}{N}\subseteq S$.
+\end{proposition}
+\begin{proof}
+    $\sequenceTail{s}{N}\subseteq\ran{s}$
+        by \auto{sequence_tail,img_subseteq_ran}.
+    $\ran{s}\subseteq S$ by \obv{funs_ran}.
+    Follows by \obv{subseteq_transitive}.
+\end{proof}
+
+\begin{proposition}\label{sequence_tail_inhabited}
+    Let $s\in\funs{\naturals}{S}$ and $N$ be a natural number.
+    Then $\sequenceTail{s}{N}$ is inhabited.
+\end{proposition}
+\begin{proof}
+    $s(N)\in\sequenceTail{s}{N}$
+        by \obv{sequence_tail_contains_term,subseteq_refl}.
+\end{proof}
+
+\begin{proposition}\label{sequence_tail_antitone}
+    Let $s\in\funs{\naturals}{S}$.
+    Let $N,K$ be natural numbers.
+    Suppose $N\subseteq K$.
+    Then $\sequenceTail{s}{K}\subseteq\sequenceTail{s}{N}$.
+\end{proposition}
+\begin{proof}
+    $\naturalTail{K}\subseteq\naturalTail{N}$
+        by \obv{natural_tail_antitone}.
+    Follows by \auto{sequence_tail,img_subseteq}.
+\end{proof}
+
+\begin{theorem}\label{sequence_tail_family_is_proper_filter_basis}
+    Let $s\in\funs{\naturals}{S}$.
+    Then $\{\sequenceTail{s}{N}\mid N\in\naturals\}$
+        is a proper filter basis on $S$.
+\end{theorem}
+\begin{proof}
+    Show that $\{\sequenceTail{s}{N}\mid N\in\naturals\}$
+        is a family of subsets of $S$.
+    \begin{subproof}
+        Fix $A\in\{\sequenceTail{s}{N}\mid N\in\naturals\}$.
+        Take $N\in\naturals$ such that $A=\sequenceTail{s}{N}$
+            by \auto{logical_replacement_iff}.
+        $\sequenceTail{s}{N}\subseteq S$ by \obv{sequence_tail_type}.
+    \end{subproof}
+    $\emptyset\in\naturals$ by \obv{omega_empty}.
+    Hence $\sequenceTail{s}{\emptyset}\in
+        \{\sequenceTail{s}{N}\mid N\in\naturals\}$ by
+        \auto{logical_replacement_iff}.
+    Hence $\{\sequenceTail{s}{N}\mid N\in\naturals\}$ is inhabited.
+
+    Show that for every
+        $A\in\{\sequenceTail{s}{N}\mid N\in\naturals\}$
+        we have $A$ is inhabited.
+    \begin{subproof}
+        Fix $A\in\{\sequenceTail{s}{N}\mid N\in\naturals\}$.
+        Take $N\in\naturals$ such that
+            $A=\sequenceTail{s}{N}$ by \auto{logical_replacement_iff}.
+        Take $x$ such that $x\in\sequenceTail{s}{N}$ by
+            \obv{sequence_tail_inhabited}.
+        Hence $x\in A$.
+    \end{subproof}
+
+    Show that for all $A,C$ such that
+        $A\in\{\sequenceTail{s}{N}\mid N\in\naturals\}$ and
+        $C\in\{\sequenceTail{s}{N}\mid N\in\naturals\}$
+        there exists
+        $D\in\{\sequenceTail{s}{N}\mid N\in\naturals\}$ such that
+        $D\subseteq A\inter C$.
+    \begin{subproof}
+        Fix $A,C$.
+        Assume $A\in\{\sequenceTail{s}{M}\mid M\in\naturals\}$ and
+            $C\in\{\sequenceTail{s}{M}\mid M\in\naturals\}$.
+        Take $N\in\naturals$ such that $A=\sequenceTail{s}{N}$
+            by \auto{logical_replacement_iff}.
+        Take $K\in\naturals$ such that $C=\sequenceTail{s}{K}$
+            by \auto{logical_replacement_iff}.
+        $N$ and $K$ are ordinals by \obv{natural_number_is_ordinal}.
+        Hence $N\subseteq K$ or $K\subseteq N$
+            by \obv{ordinal_subseteq_or_subseteq}.
+        \begin{byCase}
+        \caseOf{$N\subseteq K$.}
+            $\sequenceTail{s}{K}\in
+                \{\sequenceTail{s}{M}\mid M\in\naturals\}$ by
+                \obv{logical_replacement_iff}.
+            $\sequenceTail{s}{K}\subseteq\sequenceTail{s}{N}$
+                by \obv{sequence_tail_antitone}.
+            $\sequenceTail{s}{K}\subseteq\sequenceTail{s}{K}$
+                by \obv{subseteq_refl}.
+            Hence $\sequenceTail{s}{K}\subseteq A\inter C$
+                by \auto{subseteq_inter_iff}.
+        \caseOf{not $N\subseteq K$.}
+            Hence $K\subseteq N$.
+            $\sequenceTail{s}{N}\in
+                \{\sequenceTail{s}{M}\mid M\in\naturals\}$ by
+                \obv{logical_replacement_iff}.
+            $\sequenceTail{s}{N}\subseteq\sequenceTail{s}{K}$
+                by \obv{sequence_tail_antitone}.
+            $\sequenceTail{s}{N}\subseteq\sequenceTail{s}{N}$
+                by \obv{subseteq_refl}.
+            Hence $\sequenceTail{s}{N}\subseteq A\inter C$
+                by \auto{subseteq_inter_iff}.
+        \end{byCase}
+    \end{subproof}
+    Hence $\{\sequenceTail{s}{N}\mid N\in\naturals\}$
+        is a filter basis on $S$ by \obv{filter_basis}.
+    Follows by \obv{proper_filter_basis}.
+\end{proof}
+
+\begin{definition}\label{sequence_tail_filter}
+    $\sequenceTailFilter{S}{s}=
+        \generatedFilter{S}
+            {\{\sequenceTail{s}{N}\mid N\in\naturals\}}$.
+\end{definition}
+
+\begin{proposition}\label{sequence_tail_filter_iff}
+    Let $s\in\funs{\naturals}{S}$.
+    $A\in\sequenceTailFilter{S}{s}$ iff
+        $A\subseteq S$ and there exists $N\in\naturals$ such that
+            $\sequenceTail{s}{N}\subseteq A$.
+\end{proposition}
+\begin{proof}
+    $\{\sequenceTail{s}{N}\mid N\in\naturals\}$
+        is a proper filter basis on $S$ by
+        \obv{sequence_tail_family_is_proper_filter_basis}.
+    Hence $\{\sequenceTail{s}{N}\mid N\in\naturals\}$
+        is a filter basis on $S$ by
+        \obv{proper_filter_basis_is_filter_basis}.
+    Follows by
+        \auto{sequence_tail_filter,generated_filter_iff}.
+\end{proof}
+
+\begin{theorem}\label{sequence_tail_filter_is_proper_filter}
+    Let $s\in\funs{\naturals}{S}$.
+    Then $\sequenceTailFilter{S}{s}$ is a proper filter on $S$.
+\end{theorem}
+\begin{proof}
+    $\{\sequenceTail{s}{N}\mid N\in\naturals\}$
+        is a proper filter basis on $S$
+        by \obv{sequence_tail_family_is_proper_filter_basis}.
+    Follows by
+        \auto{sequence_tail_filter,generated_filter_is_proper_filter}.
+\end{proof}
+
+\begin{classification}\label{sequence_tail_filter_is_filter}
+    Let $s\in\funs{\naturals}{S}$.
+    Then $\sequenceTailFilter{S}{s}$ is a filter on $S$.
+\end{classification}
+\begin{proof}
+    $\sequenceTailFilter{S}{s}$ is a proper filter on $S$
+        by \obv{sequence_tail_filter_is_proper_filter}.
+    Follows by \obv{proper_filter_is_filter}.
+\end{proof}
+
+\begin{theorem}\label{sequence_tail_filter_is_pushforward_at_top}
+    Let $s\in\funs{\naturals}{S}$.
+    Then $\sequenceTailFilter{S}{s}
+        =\filterPushforward{\naturals}{S}{s}{\atTop{\naturalIndexOrder}}$.
+\end{theorem}
+\begin{proof}
+    $\naturalIndexOrder$ is a directed quasiordered set by
+        \obv{natural_index_order_is_directed}.
+    Hence $\naturalIndexOrder$ is a quasiordered set by
+        \obv{directed_quasiordered_set_is_quasiordered}.
+    $\atTop{\naturalIndexOrder}$ is a filter on
+        $\carrier[\naturalIndexOrder]$ by \obv{at_top_is_filter}.
+    Hence $\atTop{\naturalIndexOrder}$ is a filter on $\naturals$ by
+        \obv{natural_index_order_carrier}.
+    Show that for every $A$ we have
+        $A\in\sequenceTailFilter{S}{s}$ iff
+        $A\in\filterPushforward{\naturals}{S}{s}
+            {\atTop{\naturalIndexOrder}}$.
+    \begin{subproof}
+        Fix $A$.
+        Show that if $A\in\sequenceTailFilter{S}{s}$, then
+            $A\in\filterPushforward{\naturals}{S}{s}
+                {\atTop{\naturalIndexOrder}}$.
+        \begin{subproof}
+            Assume $A\in\sequenceTailFilter{S}{s}$.
+            $A\subseteq S$ and there exists $N\in\naturals$ such that
+                $\sequenceTail{s}{N}\subseteq A$ by
+                \obv{sequence_tail_filter_iff}.
+            Take $N\in\naturals$ such that
+                $\sequenceTail{s}{N}\subseteq A$.
+            $\sequenceTail{s}{N}=\img{s}{\naturalTail{N}}$ by
+                \obv{sequence_tail}.
+            $\naturalTail{N}\subseteq\preimg{s}{A}$ by
+                \auto{image_subseteq_iff_subseteq_preimage,
+                    natural_tail_iff,subseteq}.
+            $\naturalTail{N}
+                =\orderFinalSegment{\naturalIndexOrder}{N}$ by
+                \obv{natural_tail_is_order_final_segment}.
+            Hence $\orderFinalSegment{\naturalIndexOrder}{N}
+                \subseteq\preimg{s}{A}$.
+            $N\in\carrier[\naturalIndexOrder]$ by
+                \obv{natural_index_order_carrier}.
+            $\preimg{s}{A}\subseteq\naturals$ by
+                \obv{preimg_subseteq_dom,funs}.
+            Hence $\preimg{s}{A}\in\atTop{\naturalIndexOrder}$ by
+                \auto{at_top_iff_contains_final_segment,
+                    natural_index_order_carrier}.
+            Follows by \auto{filter_pushforward_iff}.
+        \end{subproof}
+
+        Show that if $A\in\filterPushforward{\naturals}{S}{s}
+            {\atTop{\naturalIndexOrder}}$, then
+            $A\in\sequenceTailFilter{S}{s}$.
+        \begin{subproof}
+            Assume $A\in\filterPushforward{\naturals}{S}{s}
+                {\atTop{\naturalIndexOrder}}$.
+            $A\subseteq S$ and
+                $\preimg{s}{A}\in\atTop{\naturalIndexOrder}$ by
+                \obv{filter_pushforward_iff}.
+            Take $N\in\carrier[\naturalIndexOrder]$ such that
+                $\orderFinalSegment{\naturalIndexOrder}{N}
+                    \subseteq\preimg{s}{A}$ by
+                \auto{at_top_iff_contains_final_segment}.
+            Hence $N\in\naturals$ by
+                \obv{natural_index_order_carrier}.
+            $\naturalTail{N}
+                =\orderFinalSegment{\naturalIndexOrder}{N}$ by
+                \obv{natural_tail_is_order_final_segment}.
+            Hence $\naturalTail{N}\subseteq\preimg{s}{A}$.
+            $\img{s}{\naturalTail{N}}\subseteq A$ by
+                \auto{image_subseteq_iff_subseteq_preimage,
+                    natural_tail_iff,subseteq}.
+            Hence $\sequenceTail{s}{N}\subseteq A$ by
+                \obv{sequence_tail}.
+            Follows by \auto{sequence_tail_filter_iff}.
+        \end{subproof}
+        Follows by \auto.
+    \end{subproof}
+    Follows by set extensionality.
+\end{proof}
+
+\subsection{Finite shifts}
+
+
+\begin{theorem}\label{finite_shift_sequence_tail}
+    Let $N,K$ be natural numbers.
+    Let $s,t\in\funs{\naturals}{S}$.
+    Suppose for every $n\in\naturals$ we have $t(n)=s(N+n)$.
+    Then $\sequenceTail{t}{K}=\sequenceTail{s}{N+K}$.
+\end{theorem}
+\begin{proof}
+    $N+K$ is a natural number by \obv{num_addition_on_naturals}.
+    Show that $\sequenceTail{t}{K}\subseteq\sequenceTail{s}{N+K}$.
+    \begin{subproof}
+        It suffices to show that every element of $\sequenceTail{t}{K}$
+            is an element of $\sequenceTail{s}{N+K}$ by \obv{subseteq}.
+        Fix $y\in\sequenceTail{t}{K}$.
+        Take $n\in\naturalTail{K}$ such that $(n,y)\in t$
+            by \auto{sequence_tail,img_iff}.
+        $n\in\naturals$ and $K\subseteq n$ by \obv{natural_tail}.
+        Take $d\in\naturals$ such that $n=K+d$
+            by \obv{natural_additive_difference}.
+        $N+n=(N+K)+d$ by \auto{natural_addition_associative}.
+        $N+K\subseteq(N+K)+d$
+            by \obv{natural_addition_left_subseteq_sum}.
+        Hence $N+K\subseteq N+n$.
+        $N+n$ is a natural number by \obv{num_addition_on_naturals}.
+        $y=t(n)$ by \auto{funs_is_function,function_apply_iff}.
+        $t(n)=s(N+n)$.
+        Hence $y=s(N+n)$.
+        $s(N+n)\in\sequenceTail{s}{N+K}$
+            by \obv{sequence_tail_contains_term}.
+    \end{subproof}
+
+    Show that $\sequenceTail{s}{N+K}\subseteq\sequenceTail{t}{K}$.
+    \begin{subproof}
+        It suffices to show that every element of $\sequenceTail{s}{N+K}$
+            is an element of $\sequenceTail{t}{K}$ by \obv{subseteq}.
+        Fix $y\in\sequenceTail{s}{N+K}$.
+        Take $m\in\naturalTail{N+K}$ such that $(m,y)\in s$
+            by \auto{sequence_tail,img_iff}.
+        $m\in\naturals$ and $N+K\subseteq m$
+            by \obv{natural_tail}.
+        Take $d\in\naturals$ such that $m=(N+K)+d$
+            by \obv{natural_additive_difference}.
+        $K+d$ is a natural number by \obv{num_addition_on_naturals}.
+        $K\subseteq K+d$ by \obv{natural_addition_left_subseteq_sum}.
+        $N+(K+d)=(N+K)+d$ by \obv{natural_addition_associative}.
+        Hence $N+(K+d)=m$.
+        $y=s(m)$ by \auto{funs_is_function,function_apply_iff}.
+        $t(K+d)=s(N+(K+d))$.
+        Hence $y=t(K+d)$.
+        $t(K+d)\in\sequenceTail{t}{K}$
+            by \obv{sequence_tail_contains_term}.
+    \end{subproof}
+    Follows by \obv{subseteq_antisymmetric}.
+\end{proof}
+
+\begin{theorem}\label{finite_shift_sequence_tail_filter}
+    Let $N$ be a natural number.
+    Let $s,t\in\funs{\naturals}{S}$.
+    Suppose for every $n\in\naturals$ we have $t(n)=s(N+n)$.
+    Then $\sequenceTailFilter{S}{t}=\sequenceTailFilter{S}{s}$.
+\end{theorem}
+\begin{proof}
+    Let $b=\{(K,\sequenceTail{s}{K})\mid K\in\naturals\}$.
+    $b$ is a relation by \auto{relation}.
+    $b$ is right-unique by \auto{rightunique,pair_eq_iff}.
+    $\dom{b}=\naturals$ by \auto{setext,dom_iff,pair_eq_iff}.
+    For every $K\in\naturals$ we have
+        $b(K)=\sequenceTail{s}{K}$
+        by \obv{function_apply_intro}.
+    For every $K\in\naturals$ we have $b(K)\in\pow{S}$
+        by \auto{sequence_tail_type,pow_iff,subseteq}.
+    Hence $b\in\funs{\naturals}{\pow{S}}$ by \obv{funs_intro}.
+
+    Show that for all $K,L$ such that $K,L\in\naturals$ and
+        $K\subseteq L$ we have $b(L)\subseteq b(K)$.
+    \begin{subproof}
+        Fix $K,L$.
+        Assume $K,L\in\naturals$ and $K\subseteq L$.
+        $b(K)=\sequenceTail{s}{K}$ and
+            $b(L)=\sequenceTail{s}{L}$
+            by \obv{function_apply_intro}.
+        $\sequenceTail{s}{L}\subseteq\sequenceTail{s}{K}$
+            by \obv{sequence_tail_antitone}.
+    \end{subproof}
+
+    Let $B=\{\sequenceTail{s}{K}\mid K\in\naturals\}$.
+    Show that $\ran{b}=B$.
+    \begin{subproof}
+        Show that $\ran{b}\subseteq B$.
+        \begin{subproof}
+            It suffices to show that every element of $\ran{b}$ is an
+                element of $B$ by \obv{subseteq}.
+            Fix $A\in\ran{b}$.
+            Take $K\in\dom{b}$ such that $b(K)=A$
+                by \obv{fun_ran_iff}.
+            Hence $K\in\naturals$.
+            $b(K)=\sequenceTail{s}{K}$
+                by \obv{function_apply_intro}.
+        \end{subproof}
+        Show that $B\subseteq\ran{b}$.
+        \begin{subproof}
+            It suffices to show that every element of $B$ is an element of
+                $\ran{b}$ by \obv{subseteq}.
+            Fix $A\in B$.
+            Take $K\in\naturals$ such that $A=\sequenceTail{s}{K}$.
+            $b(K)=\sequenceTail{s}{K}$
+                by \obv{function_apply_intro}.
+            Follows by \auto{fun_ran_iff,funs}.
+        \end{subproof}
+        Follows by \obv{subseteq_antisymmetric}.
+    \end{subproof}
+    $B$ is a proper filter basis on $S$
+        by \auto{sequence_tail_family_is_proper_filter_basis}.
+    Hence $\ran{b}$ is a proper filter basis on $S$.
+    $\generatedFilter{S}{\img{b}{\naturalTail{N}}}
+        =\generatedFilter{S}{\ran{b}}$
+        by \auto{antitone_natural_tail_range_is_filter_basis}.
+
+    Let $C=\{\sequenceTail{t}{K}\mid K\in\naturals\}$.
+    Show that $C=\img{b}{\naturalTail{N}}$.
+    \begin{subproof}
+        Show that $C\subseteq\img{b}{\naturalTail{N}}$.
+        \begin{subproof}
+            It suffices to show that every element of $C$ is an element of
+                $\img{b}{\naturalTail{N}}$ by \obv{subseteq}.
+            Fix $A\in C$.
+            Take $K\in\naturals$ such that $A=\sequenceTail{t}{K}$.
+            $N+K$ is a natural number
+                by \obv{num_addition_on_naturals}.
+            $N\subseteq N+K$
+                by \obv{natural_addition_left_subseteq_sum}.
+            Hence $N+K\in\naturalTail{N}$ by \obv{natural_tail}.
+            $b(N+K)=\sequenceTail{s}{N+K}$
+                by \obv{function_apply_intro}.
+            $\sequenceTail{t}{K}=\sequenceTail{s}{N+K}$
+                by \obv{finite_shift_sequence_tail}.
+            Hence $A=b(N+K)$.
+            Follows by \auto{img_of_function_intro,inter_intro,funs_is_function,funs}.
+        \end{subproof}
+        Show that $\img{b}{\naturalTail{N}}\subseteq C$.
+        \begin{subproof}
+            It suffices to show that every element of
+                $\img{b}{\naturalTail{N}}$ is an element of $C$
+                by \obv{subseteq}.
+            Fix $A\in\img{b}{\naturalTail{N}}$.
+            Take $M\in\dom{b}\inter\naturalTail{N}$ such that
+                $A=b(M)$ by \obv{img_of_function_elim}.
+            $M\in\naturalTail{N}$ by \obv{inter}.
+            Hence $M\in\naturals$ and $N\subseteq M$
+                by \obv{natural_tail}.
+            Take $K\in\naturals$ such that $M=N+K$
+                by \obv{natural_additive_difference}.
+            $b(M)=\sequenceTail{s}{M}$
+                by \obv{function_apply_intro}.
+            $\sequenceTail{t}{K}=\sequenceTail{s}{N+K}$
+                by \obv{finite_shift_sequence_tail}.
+            Hence $A=\sequenceTail{t}{K}$.
+            Follows by \auto.
+        \end{subproof}
+        Follows by \obv{subseteq_antisymmetric}.
+    \end{subproof}
+
+    $\sequenceTailFilter{S}{t}=\generatedFilter{S}{C}$
+        by \obv{sequence_tail_filter}.
+    $\generatedFilter{S}{C}
+        =\generatedFilter{S}{\img{b}{\naturalTail{N}}}$.
+    $\generatedFilter{S}{\ran{b}}=\generatedFilter{S}{B}$.
+    $\sequenceTailFilter{S}{s}=\generatedFilter{S}{B}$ by
+        \obv{sequence_tail_filter}.
+\end{proof}
+
+\begin{theorem}\label{natural_shift_pushforward_at_top}
+    Let $N$ be a natural number.
+    Then
+        $\filterPushforward{\naturals}{\naturals}{\naturalShift{N}}
+            {\atTop{\naturalIndexOrder}}
+        =\atTop{\naturalIndexOrder}$.
+\end{theorem}
+\begin{proof}
+    $\naturalShift{N}\in\funs{\naturals}{\naturals}$ by
+        \obv{natural_shift_is_function}.
+    $\identity{\naturals}\in\funs{\naturals}{\naturals}$ by
+        \obv{id_elem_funs}.
+    Show that for every $n\in\naturals$ we have
+        $(\naturalShift{N})(n)=(\identity{\naturals})(N+n)$.
+    \begin{subproof}
+        Fix $n\in\naturals$.
+        $N+n\in\naturals$ by \obv{num_addition_on_naturals}.
+        $(\naturalShift{N})(n)=N+n$ by \obv{natural_shift_apply}.
+        $(\identity{\naturals})(N+n)=N+n$ by \obv{id_apply}.
+    \end{subproof}
+    Hence $\sequenceTailFilter{\naturals}{\naturalShift{N}}
+        =\sequenceTailFilter{\naturals}{\identity{\naturals}}$ by
+        \obv{finite_shift_sequence_tail_filter}.
+    $\sequenceTailFilter{\naturals}{\naturalShift{N}}
+        =\filterPushforward{\naturals}{\naturals}{\naturalShift{N}}
+            {\atTop{\naturalIndexOrder}}$ by
+        \obv{sequence_tail_filter_is_pushforward_at_top}.
+    $\sequenceTailFilter{\naturals}{\identity{\naturals}}
+        =\filterPushforward{\naturals}{\naturals}{\identity{\naturals}}
+            {\atTop{\naturalIndexOrder}}$ by
+        \obv{sequence_tail_filter_is_pushforward_at_top}.
+    $\naturalIndexOrder$ is a directed quasiordered set by
+        \obv{natural_index_order_is_directed}.
+    $\atTop{\naturalIndexOrder}$ is a filter on
+        $\carrier[\naturalIndexOrder]$ by \obv{at_top_is_filter}.
+    Hence $\atTop{\naturalIndexOrder}$ is a filter on $\naturals$ by
+        \obv{natural_index_order_carrier}.
+    $\filterPushforward{\naturals}{\naturals}{\identity{\naturals}}
+        {\atTop{\naturalIndexOrder}}=\atTop{\naturalIndexOrder}$ by
+        \obv{identity_filter_pushforward}.
+\end{proof}

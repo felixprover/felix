@@ -1,0 +1,908 @@
+\import{algebra/module/kernel-image.tex}
+\import{set/closure-system.tex}
+
+\section{Spans of subsets of modules}
+
+The span of a subset is the bounded closure hull among all submodule carriers
+of a fixed ambient module.  This gives the usual least-submodule
+characterization without introducing a separate finite-linear-combination
+construction.
+
+\begin{proposition}\label{submodule_carriers_form_closure_system}
+    Let $R$ be a ring.
+    Let $M$ be a left module over $R$.
+    Let
+        $C=\{B\in\pow{\carrier[M]}\mid
+            \text{$B$ is a submodule of $M$ over $R$}\}$.
+    Then $C$ is a closure system on $\carrier[M]$.
+\end{proposition}
+\begin{proof}
+    Let $G=\ModuleAdditiveGroup{M}$.
+    $G$ is a group by \obv{module_additive_group_is_group}.
+    Show that $C\subseteq\pow{\carrier[M]}$.
+    \begin{subproof}
+        Show that for every $B\in C$ we have
+            $B\in\pow{\carrier[M]}$.
+        \begin{subproof}
+            Follows by \auto.
+        \end{subproof}
+        Follows by \obv{subseteq}.
+    \end{subproof}
+    Show that for every $D\subseteq C$ we have
+        $\boundedIntersection{\carrier[M]}{D}\in C$.
+    \begin{subproof}
+        Fix $D\subseteq C$.
+        Let $P=\boundedIntersection{\carrier[M]}{D}$.
+        $P\subseteq\carrier[M]$ by
+            \auto{bounded_intersection_subseteq}.
+        Hence $P\subseteq\carrier[G]$ by
+            \auto{module_additive_group_fields}.
+        Show that $\neutral[G]\in P$.
+        \begin{subproof}
+            $\neutral[G]\in\carrier[G]$ by
+                \obv{group_is_monoid,monoid_is_unital_magma,
+                    unitalmagma_type}.
+            Hence $\neutral[G]\in\carrier[M]$ by
+                \auto{module_additive_group_fields}.
+            Show that for every $B\in D$ we have $\neutral[G]\in B$.
+            \begin{subproof}
+                Fix $B\in D$.
+                Hence $B\in C$ by \obv{subseteq}.
+                Hence $B$ is a submodule of $M$ over $R$ by
+                    \auto.
+                Follows by
+                    \auto{submodule_zero,module_additive_group_fields}.
+            \end{subproof}
+            Follows by \obv{bounded_intersection_iff}.
+        \end{subproof}
+        Show that for all $x,y\in P$ we have $\mul[G](x,y)\in P$.
+        \begin{subproof}
+            Fix $x,y\in P$.
+            Hence $x,y\in\carrier[G]$ by \obv{subseteq}.
+            $\mul[G](x,y)\in\carrier[G]$ by
+                \obv{group_is_monoid,monoid_is_magma,magma_welldef}.
+            Hence $\mul[G](x,y)\in\carrier[M]$ by
+                \auto{module_additive_group_fields}.
+            Show that for every $B\in D$ we have $\mul[G](x,y)\in B$.
+            \begin{subproof}
+                Fix $B\in D$.
+                Hence $B\in C$ by \obv{subseteq}.
+                Hence $B$ is a submodule of $M$ over $R$ by
+                    \auto.
+                $x,y\in B$ by \auto{bounded_intersection_iff}.
+                Follows by
+                    \auto{submodule_addition,
+                        module_additive_group_fields}.
+            \end{subproof}
+            Follows by \obv{bounded_intersection_iff}.
+        \end{subproof}
+        Show that for every $x\in P$ we have $\groupInv[G](x)\in P$.
+        \begin{subproof}
+            Fix $x\in P$.
+            Hence $x\in\carrier[G]$ by \obv{subseteq}.
+            $\groupInv[G](x)\in\carrier[G]$ by
+                \obv{group_inverse_type}.
+            Hence $\groupInv[G](x)\in\carrier[M]$ by
+                \auto{module_additive_group_fields}.
+            Show that for every $B\in D$ we have $\groupInv[G](x)\in B$.
+            \begin{subproof}
+                Fix $B\in D$.
+                Hence $B\in C$ by \obv{subseteq}.
+                Hence $B$ is a submodule of $M$ over $R$ by
+                    \auto.
+                $x\in B$ by \auto{bounded_intersection_iff}.
+                Follows by
+                    \auto{submodule_negation,
+                        module_additive_group_fields}.
+            \end{subproof}
+            Follows by \obv{bounded_intersection_iff}.
+        \end{subproof}
+        Hence $\subgroup{P}{G}$ by \obv{subgroup}.
+        Show that for all $a,x$ such that $a\in\carrier[R]$ and $x\in P$
+            we have $\scalarMul[M](a,x)\in P$.
+        \begin{subproof}
+            Fix $a,x$.
+            Assume $a\in\carrier[R]$ and $x\in P$.
+            Hence $x\in\carrier[M]$ by \obv{subseteq}.
+            $\scalarMul[M](a,x)\in\carrier[M]$ by
+                \obv{module_scalar_type}.
+            Show that for every $B\in D$ we have
+                $\scalarMul[M](a,x)\in B$.
+            \begin{subproof}
+                Fix $B\in D$.
+                Hence $B\in C$ by \obv{subseteq}.
+                Hence $B$ is a submodule of $M$ over $R$ by
+                    \auto.
+                $x\in B$ by \auto{bounded_intersection_iff}.
+                Follows by \obv{submodule_scalar}.
+            \end{subproof}
+            Follows by \obv{bounded_intersection_iff}.
+        \end{subproof}
+        Hence $P$ is a submodule of $M$ over $R$ by
+            \obv{submodule}.
+        $P\in\pow{\carrier[M]}$ by \obv{powerset_intro}.
+        Hence $P\in C$ by \auto.
+    \end{subproof}
+    Follows by \obv{closure_system}.
+\end{proof}
+
+\begin{definition}\label{module_span}
+    Let $R$ be a ring.
+    Let $M$ be a left module over $R$.
+    $\moduleSpan{R}{M}{A}=
+        \closureHull{\carrier[M]}
+            {\{B\in\pow{\carrier[M]}\mid
+                \text{$B$ is a submodule of $M$ over $R$}\}}
+            {A}$.
+\end{definition}
+
+\begin{proposition}\label{module_span_subseteq_carrier}
+    Let $R$ be a ring.
+    Let $M$ be a left module over $R$.
+    Let $A$ be a subset of $\carrier[M]$.
+    Then $\moduleSpan{R}{M}{A}\subseteq\carrier[M]$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{module_span,closure_hull_subseteq}.
+\end{proof}
+
+\begin{proposition}\label{module_span_contains_generators}
+    Let $R$ be a ring.
+    Let $M$ be a left module over $R$.
+    Let $A$ be a subset of $\carrier[M]$.
+    Then $A\subseteq\moduleSpan{R}{M}{A}$.
+\end{proposition}
+\begin{proof}
+    Let
+        $C=\{B\in\pow{\carrier[M]}\mid
+            \text{$B$ is a submodule of $M$ over $R$}\}$.
+    $C$ is a closure system on $\carrier[M]$ by
+        \obv{submodule_carriers_form_closure_system}.
+    $A\subseteq\closureHull{\carrier[M]}{C}{A}$ by
+        \obv{closure_hull_extensive}.
+    Follows by \obv{module_span}.
+\end{proof}
+
+\begin{theorem}\label{module_span_is_submodule}
+    Let $R$ be a ring.
+    Let $M$ be a left module over $R$.
+    Let $A$ be a subset of $\carrier[M]$.
+    Then $\moduleSpan{R}{M}{A}$ is a submodule of $M$ over $R$.
+\end{theorem}
+\begin{proof}
+    Let
+        $C=\{B\in\pow{\carrier[M]}\mid
+            \text{$B$ is a submodule of $M$ over $R$}\}$.
+    $C$ is a closure system on $\carrier[M]$ by
+        \obv{submodule_carriers_form_closure_system}.
+    $\closureHull{\carrier[M]}{C}{A}\in C$ by
+        \obv{closure_hull_closed}.
+    Follows by \auto{module_span}.
+\end{proof}
+
+\begin{theorem}\label{module_span_least}
+    Let $R$ be a ring.
+    Let $M$ be a left module over $R$.
+    Let $A$ be a subset of $\carrier[M]$.
+    Suppose $B$ is a submodule of $M$ over $R$ and $A\subseteq B$.
+    Then $\moduleSpan{R}{M}{A}\subseteq B$.
+\end{theorem}
+\begin{proof}
+    Let
+        $C=\{K\in\pow{\carrier[M]}\mid
+            \text{$K$ is a submodule of $M$ over $R$}\}$.
+    $C$ is a closure system on $\carrier[M]$ by
+        \obv{submodule_carriers_form_closure_system}.
+    $B\subseteq\carrier[M]$ by \obv{submodule_subseteq}.
+    Hence $B\in\pow{\carrier[M]}$ by \obv{powerset_intro}.
+    Hence $B\in C$.
+    $\closureHull{\carrier[M]}{C}{A}\subseteq B$ by
+        \obv{closure_hull_least}.
+    Follows by \obv{module_span}.
+\end{proof}
+
+\begin{theorem}\label{module_span_universal_property}
+    Let $R$ be a ring.
+    Let $M$ be a left module over $R$.
+    Let $A$ be a subset of $\carrier[M]$.
+    Suppose $B$ is a submodule of $M$ over $R$.
+    Then $\moduleSpan{R}{M}{A}\subseteq B$ iff $A\subseteq B$.
+\end{theorem}
+\begin{proof}
+    $A\subseteq\moduleSpan{R}{M}{A}$ by
+        \obv{module_span_contains_generators}.
+    Follows by \auto{module_span_least,subseteq_transitive}.
+\end{proof}
+
+\begin{proposition}\label{module_span_monotone}
+    Let $R$ be a ring.
+    Let $M$ be a left module over $R$.
+    Let $A,B\subseteq\carrier[M]$.
+    Suppose $A\subseteq B$.
+    Then $\moduleSpan{R}{M}{A}\subseteq\moduleSpan{R}{M}{B}$.
+\end{proposition}
+\begin{proof}
+    $A\subseteq\carrier[M]$ by \obv{subseteq_transitive}.
+    $\moduleSpan{R}{M}{B}$ is a submodule of $M$ over $R$ by
+        \obv{module_span_is_submodule}.
+    $B\subseteq\moduleSpan{R}{M}{B}$ by
+        \obv{module_span_contains_generators}.
+    Hence $A\subseteq\moduleSpan{R}{M}{B}$ by
+        \obv{subseteq_transitive}.
+    Follows by \obv{module_span_least}.
+\end{proof}
+
+\begin{corollary}\label{module_span_of_submodule}
+    Let $R$ be a ring.
+    Let $M$ be a left module over $R$.
+    Let $A$ be a subset of $\carrier[M]$.
+    Suppose $A$ is a submodule of $M$ over $R$.
+    Then $\moduleSpan{R}{M}{A}=A$.
+\end{corollary}
+\begin{proof}
+    $A\subseteq\carrier[M]$ by \obv{submodule_subseteq}.
+    $A\subseteq\moduleSpan{R}{M}{A}$ by
+        \obv{module_span_contains_generators}.
+    $\moduleSpan{R}{M}{A}\subseteq A$ by
+        \obv{module_span_least,subseteq_refl}.
+    Follows by \obv{subseteq_antisymmetric}.
+\end{proof}
+
+\subsection{Elementary span laws}
+
+\begin{theorem}\label{module_span_empty}
+    Let $R$ be a ring.
+    Let $M$ be a left module over $R$.
+    Then $\moduleSpan{R}{M}{\emptyset}
+        =\trivialSubgroupCarrier{\ModuleAdditiveGroup{M}}$.
+\end{theorem}
+\begin{proof}
+    Let $S=\moduleSpan{R}{M}{\emptyset}$ and
+        $Z=\trivialSubgroupCarrier{\ModuleAdditiveGroup{M}}$.
+    $Z$ is a submodule of $M$ over $R$ by \auto{zero_submodule}.
+    $\emptyset\subseteq\carrier[M]$ and $\emptyset\subseteq Z$ by
+        \obv{emptyset_subseteq}.
+    Hence $S\subseteq Z$ by \auto{module_span_least}.
+    $S$ is a submodule of $M$ over $R$ by
+        \auto{module_span_is_submodule}.
+    Hence $\neutral[M]\in S$ by \obv{submodule_zero}.
+    $Z=\{\neutral[\ModuleAdditiveGroup{M}]\}$ by
+        \obv{trivial_subgroup_carrier}.
+    Hence $Z=\{\neutral[M]\}$ by
+        \auto{module_additive_group_fields}.
+    Hence $Z\subseteq S$ by \auto{singleton_subset_intro}.
+    Follows by \obv{subseteq_antisymmetric}.
+\end{proof}
+
+\begin{proposition}\label{module_span_singleton_contains}
+    Let $R$ be a ring.
+    Let $M$ be a left module over $R$.
+    Let $x\in\carrier[M]$.
+    Then $x\in\moduleSpan{R}{M}{\{x\}}$.
+\end{proposition}
+\begin{proof}
+    $\{x\}\subseteq\carrier[M]$ by
+        \obv{singleton_subset_intro}.
+    $\{x\}\subseteq\moduleSpan{R}{M}{\{x\}}$ by
+        \obv{module_span_contains_generators}.
+    Follows by \auto{subseteq,singleton_iff}.
+\end{proof}
+
+\begin{theorem}\label{module_span_singleton_least_iff}
+    Let $R$ be a ring.
+    Let $M$ be a left module over $R$.
+    Let $x\in\carrier[M]$.
+    Suppose $B$ is a submodule of $M$ over $R$.
+    Then $\moduleSpan{R}{M}{\{x\}}\subseteq B$ iff $x\in B$.
+\end{theorem}
+\begin{proof}
+    $\{x\}\subseteq\carrier[M]$ by
+        \obv{singleton_subset_intro}.
+    $\{x\}\subseteq B$ iff $x\in B$ by
+        \auto{singleton_subset_intro,singleton_subset_elim}.
+    Follows by \obv{module_span_universal_property}.
+\end{proof}
+
+\begin{theorem}\label{module_span_carrier}
+    Let $R$ be a ring.
+    Let $M$ be a left module over $R$.
+    Then $\moduleSpan{R}{M}{\carrier[M]}=\carrier[M]$.
+\end{theorem}
+\begin{proof}
+    $\carrier[M]$ is a submodule of $M$ over $R$ by
+        \obv{module_carrier_submodule}.
+    Follows by
+        \obv{module_span_of_submodule,subseteq_refl}.
+\end{proof}
+
+\begin{theorem}\label{module_span_union}
+    Let $R$ be a ring.
+    Let $M$ be a left module over $R$.
+    Let $A$ be a subset of $\carrier[M]$.
+    Let $B$ be a subset of $\carrier[M]$.
+    Then
+        $\moduleSpan{R}{M}{A\union B}
+            =\moduleSpan{R}{M}{
+                \moduleSpan{R}{M}{A}\union
+                \moduleSpan{R}{M}{B}}$.
+\end{theorem}
+\begin{proof}
+    Let $P=\moduleSpan{R}{M}{A}$ and
+        $Q=\moduleSpan{R}{M}{B}$.
+    Let $S=\moduleSpan{R}{M}{A\union B}$ and
+        $T=\moduleSpan{R}{M}{P\union Q}$.
+    $P\subseteq\carrier[M]$ and $Q\subseteq\carrier[M]$ by
+        \auto{module_span_subseteq_carrier}.
+    $A\union B\subseteq\carrier[M]$ and
+        $P\union Q\subseteq\carrier[M]$ by
+        \obv{union_subsets_is_subset}.
+    $A\subseteq P$ and $B\subseteq Q$ by
+        \obv{module_span_contains_generators}.
+    Hence $A\union B\subseteq P\union Q$ by
+        \obv{union_subseteq_union}.
+    Hence $S\subseteq T$ by \auto{module_span_monotone}.
+    $A\subseteq A\union B$ and $B\subseteq A\union B$ by
+        \obv{union_upper_left,union_upper_right}.
+    Hence $P\subseteq S$ and $Q\subseteq S$ by
+        \auto{module_span_monotone}.
+    Hence $P\union Q\subseteq S$ by \obv{subseteq_union_iff}.
+    $S$ is a submodule of $M$ over $R$ by
+        \auto{module_span_is_submodule}.
+    Hence $T\subseteq S$ by \auto{module_span_least}.
+    Follows by \obv{subseteq_antisymmetric}.
+\end{proof}
+
+\begin{theorem}\label{module_span_union_least_iff}
+    Let $R$ be a ring.
+    Let $M$ be a left module over $R$.
+    Let $A$ be a subset of $\carrier[M]$.
+    Let $B$ be a subset of $\carrier[M]$.
+    Suppose $Q$ is a submodule of $M$ over $R$.
+    Then $\moduleSpan{R}{M}{A\union B}\subseteq Q$ iff
+        $A\subseteq Q$ and $B\subseteq Q$.
+\end{theorem}
+\begin{proof}
+    $A\union B\subseteq\carrier[M]$ by
+        \obv{union_subsets_is_subset}.
+    $A\union B\subseteq Q$ iff $A\subseteq Q$ and $B\subseteq Q$ by
+        \obv{subseteq_union_iff}.
+    Follows by \obv{module_span_universal_property}.
+\end{proof}
+
+\subsection{Sums of submodules}
+
+\begin{definition}\label{submodule_sum}
+    Let $R$ be a ring.
+    Let $M$ be a left module over $R$.
+    $\submoduleSum{R}{M}{N}{P}=\moduleSpan{R}{M}{N\union P}$.
+\end{definition}
+
+\begin{theorem}\label{submodule_sum_is_submodule}
+    Let $R$ be a ring.
+    Let $M$ be a left module over $R$.
+    Suppose $N$ is a submodule of $M$ over $R$ and
+        $P$ is a submodule of $M$ over $R$.
+    Then $\submoduleSum{R}{M}{N}{P}$ is a submodule of $M$ over $R$.
+\end{theorem}
+\begin{proof}
+    $N\subseteq\carrier[M]$ and $P\subseteq\carrier[M]$ by
+        \obv{submodule_subseteq}.
+    Hence $N\union P\subseteq\carrier[M]$ by
+        \obv{union_subsets_is_subset}.
+    Follows by \auto{submodule_sum,module_span_is_submodule}.
+\end{proof}
+
+\begin{proposition}\label{submodule_sum_left}
+    Let $R$ be a ring.
+    Let $M$ be a left module over $R$.
+    Suppose $N$ is a submodule of $M$ over $R$ and
+        $P$ is a submodule of $M$ over $R$.
+    Then $N\subseteq\submoduleSum{R}{M}{N}{P}$.
+\end{proposition}
+\begin{proof}
+    $N\subseteq\carrier[M]$ and $P\subseteq\carrier[M]$ by
+        \obv{submodule_subseteq}.
+    $N\union P\subseteq\carrier[M]$ by
+        \obv{union_subsets_is_subset}.
+    $N\subseteq N\union P$ by \obv{union_upper_left}.
+    $N\union P\subseteq\moduleSpan{R}{M}{N\union P}$ by
+        \obv{module_span_contains_generators}.
+    Follows by \obv{submodule_sum,subseteq_transitive}.
+\end{proof}
+
+\begin{proposition}\label{submodule_sum_right}
+    Let $R$ be a ring.
+    Let $M$ be a left module over $R$.
+    Suppose $N$ is a submodule of $M$ over $R$ and
+        $P$ is a submodule of $M$ over $R$.
+    Then $P\subseteq\submoduleSum{R}{M}{N}{P}$.
+\end{proposition}
+\begin{proof}
+    $N\subseteq\carrier[M]$ and $P\subseteq\carrier[M]$ by
+        \obv{submodule_subseteq}.
+    $N\union P\subseteq\carrier[M]$ by
+        \obv{union_subsets_is_subset}.
+    $P\subseteq N\union P$ by \obv{union_upper_right}.
+    $N\union P\subseteq\moduleSpan{R}{M}{N\union P}$ by
+        \obv{module_span_contains_generators}.
+    Follows by \obv{submodule_sum,subseteq_transitive}.
+\end{proof}
+
+\begin{theorem}\label{submodule_sum_iff}
+    Let $R$ be a ring.
+    Let $M$ be a left module over $R$.
+    Suppose $N$ is a submodule of $M$ over $R$ and
+        $P$ is a submodule of $M$ over $R$.
+    Then $x\in\submoduleSum{R}{M}{N}{P}$ iff
+        there exists $n\in N$ such that there exists $p\in P$ such that
+            $x=\mul[M](n,p)$.
+\end{theorem}
+\begin{proof}
+    Let $T=\{\mul[M](n,p)\mid n\in N,p\in P\}$.
+    $M$ is a commutative group by
+        \obv{module_is_commutative_group}.
+    Hence $M$ is a monoid by \obv{group_is_monoid}.
+    $N,P\subseteq\carrier[M]$ by \obv{submodule_subseteq}.
+    Show that $T$ is a submodule of $M$ over $R$.
+    \begin{subproof}
+        Show that $T\subseteq\carrier[M]$.
+        \begin{subproof}
+            Show that every element of $T$ is an element of $\carrier[M]$.
+            \begin{subproof}
+                Fix $z\in T$.
+                Take $n\in N$ such that there exists $p\in P$ such that
+                    $z=\mul[M](n,p)$.
+                Take $p\in P$ such that $z=\mul[M](n,p)$.
+                $n,p\in\carrier[M]$ by \obv{subseteq}.
+                Follows by
+                    \auto{monoid_is_magma,magma_welldef}.
+            \end{subproof}
+            Follows by \obv{subseteq}.
+        \end{subproof}
+        $\neutral[M]\in N$ and $\neutral[M]\in P$ by
+            \obv{submodule_zero}.
+        $\neutral[M]\in\carrier[M]$ by \obv{unitalmagma_type}.
+        $\mul[M](\neutral[M],\neutral[M])=\neutral[M]$ by
+            \obv{unitalmagma_left}.
+        Hence $\neutral[M]\in T$.
+        Show that for all $u,v\in T$ we have $\mul[M](u,v)\in T$.
+        \begin{subproof}
+            Fix $u,v\in T$.
+            Take $n\in N$ such that there exists $p\in P$ such that
+                $u=\mul[M](n,p)$.
+            Take $p\in P$ such that $u=\mul[M](n,p)$.
+            Take $m\in N$ such that there exists $q\in P$ such that
+                $v=\mul[M](m,q)$.
+            Take $q\in P$ such that $v=\mul[M](m,q)$.
+            $n,m,p,q\in\carrier[M]$ by \obv{subseteq}.
+            $\mul[M](n,p),\mul[M](m,q),
+                \mul[M](n,m),\mul[M](p,q)\in\carrier[M]$ by
+                \obv{monoid_is_magma,magma_welldef}.
+            $\mul[M](n,m)\in N$ and $\mul[M](p,q)\in P$ by
+                \obv{submodule_addition}.
+            $\mul[M](\mul[M](n,p),m)=
+                \mul[M](\mul[M](n,m),p)$ by
+                \obv{monoid_commutative_monoid_exchange,
+                    commutative_group_commutative}.
+            $\mul[M](\mul[M](n,p),\mul[M](m,q))=
+                \mul[M](\mul[M](\mul[M](n,p),m),q)$ by
+                \obv{monoid_assoc}.
+            Hence $\mul[M](\mul[M](n,p),\mul[M](m,q))=
+                \mul[M](\mul[M](\mul[M](n,m),p),q)$.
+            $\mul[M](\mul[M](\mul[M](n,m),p),q)=
+                \mul[M](\mul[M](n,m),\mul[M](p,q))$ by
+                \obv{monoid_assoc}.
+            Hence $\mul[M](\mul[M](n,p),\mul[M](m,q))=
+                \mul[M](\mul[M](n,m),\mul[M](p,q))$.
+            Follows by \auto.
+        \end{subproof}
+        Show that for every $u\in T$ we have $\groupInv[M](u)\in T$.
+        \begin{subproof}
+            Fix $u\in T$.
+            Take $n\in N$ such that there exists $p\in P$ such that
+                $u=\mul[M](n,p)$.
+            Take $p\in P$ such that $u=\mul[M](n,p)$.
+            $n,p\in\carrier[M]$ by \obv{subseteq}.
+            $\groupInv[M](n)\in N$ and $\groupInv[M](p)\in P$ by
+                \obv{submodule_negation}.
+            $\groupInv[M](u)=
+                \mul[M](\groupInv[M](n),\groupInv[M](p))$ by
+                \auto{commutative_group_inverse_product}.
+            Follows by \auto.
+        \end{subproof}
+        Show that for all $a,u$ such that $a\in\carrier[R]$ and $u\in T$
+            we have $\scalarMul[M](a,u)\in T$.
+        \begin{subproof}
+            Fix $a,u$.
+            Assume $a\in\carrier[R]$ and $u\in T$.
+            Take $n\in N$ such that there exists $p\in P$ such that
+                $u=\mul[M](n,p)$.
+            Take $p\in P$ such that $u=\mul[M](n,p)$.
+            $n,p\in\carrier[M]$ by \obv{subseteq}.
+            $\scalarMul[M](a,n)\in N$ and
+                $\scalarMul[M](a,p)\in P$ by
+                \obv{submodule_scalar}.
+            $\scalarMul[M](a,u)=
+                \mul[M](\scalarMul[M](a,n),
+                    \scalarMul[M](a,p))$ by
+                \auto{module_scalar_vector_distributive}.
+            Follows by \auto.
+        \end{subproof}
+        Follows by \auto{submodule_expanded_iff}.
+    \end{subproof}
+    Show that $N\subseteq T$.
+    \begin{subproof}
+        Show that every element of $N$ is an element of $T$.
+        \begin{subproof}
+            Fix $n\in N$.
+            $n\in\carrier[M]$ by \obv{subseteq}.
+            $\neutral[M]\in P$ by \obv{submodule_zero}.
+            $\mul[M](n,\neutral[M])=n$ by
+                \obv{monoid_is_unital_magma,unitalmagma_right}.
+        \end{subproof}
+        Follows by \obv{subseteq}.
+    \end{subproof}
+    Show that $P\subseteq T$.
+    \begin{subproof}
+        Show that every element of $P$ is an element of $T$.
+        \begin{subproof}
+            Fix $p\in P$.
+            $p\in\carrier[M]$ by \obv{subseteq}.
+            $\neutral[M]\in N$ by \obv{submodule_zero}.
+            $\mul[M](\neutral[M],p)=p$ by
+                \obv{monoid_is_unital_magma,unitalmagma_left}.
+        \end{subproof}
+        Follows by \obv{subseteq}.
+    \end{subproof}
+    $N\union P\subseteq T$ by
+        \obv{union_subsets_is_subset}.
+    $N\union P\subseteq\carrier[M]$ by
+        \obv{union_subsets_is_subset}.
+    Hence $\moduleSpan{R}{M}{N\union P}\subseteq T$ by
+        \obv{module_span_least}.
+    Hence $\submoduleSum{R}{M}{N}{P}\subseteq T$ by
+        \obv{submodule_sum}.
+    $N\subseteq\submoduleSum{R}{M}{N}{P}$ and
+        $P\subseteq\submoduleSum{R}{M}{N}{P}$ by
+        \obv{submodule_sum_left,submodule_sum_right}.
+    Show that if $x\in\submoduleSum{R}{M}{N}{P}$, then
+        there exists $n\in N$ such that there exists $p\in P$ such that
+            $x=\mul[M](n,p)$.
+    \begin{subproof}
+        Assume $x\in\submoduleSum{R}{M}{N}{P}$.
+        Hence $x\in T$ by \obv{subseteq}.
+    \end{subproof}
+    Show that if there exists $n\in N$ such that
+        there exists $p\in P$ such that $x=\mul[M](n,p)$, then
+        $x\in\submoduleSum{R}{M}{N}{P}$.
+    \begin{subproof}
+        Assume there exists $n\in N$ such that
+            there exists $p\in P$ such that $x=\mul[M](n,p)$.
+        Take $n\in N$ such that there exists $p\in P$ such that
+            $x=\mul[M](n,p)$.
+        Take $p\in P$ such that $x=\mul[M](n,p)$.
+        Hence $n,p\in\submoduleSum{R}{M}{N}{P}$ by \obv{subseteq}.
+        $\submoduleSum{R}{M}{N}{P}$ is a submodule of $M$ over $R$ by
+            \obv{submodule_sum_is_submodule}.
+        Hence $\mul[M](n,p)\in\submoduleSum{R}{M}{N}{P}$ by
+            \obv{submodule_addition}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{submodule_sum_least}
+    Let $R$ be a ring.
+    Let $M$ be a left module over $R$.
+    Suppose $N$ is a submodule of $M$ over $R$ and
+        $P$ is a submodule of $M$ over $R$ and
+        $Q$ is a submodule of $M$ over $R$.
+    Suppose $N\subseteq Q$ and $P\subseteq Q$.
+    Then $\submoduleSum{R}{M}{N}{P}\subseteq Q$.
+\end{theorem}
+\begin{proof}
+    $N\subseteq\carrier[M]$ and $P\subseteq\carrier[M]$ by
+        \obv{submodule_subseteq}.
+    $N\union P\subseteq\carrier[M]$ by
+        \obv{union_subsets_is_subset}.
+    $N\union P\subseteq Q$ by \auto{subseteq_union_iff}.
+    Follows by \auto{submodule_sum,module_span_least}.
+\end{proof}
+
+\begin{theorem}\label{submodule_sum_universal_property}
+    Let $R$ be a ring.
+    Let $M$ be a left module over $R$.
+    Suppose $N$ is a submodule of $M$ over $R$ and
+        $P$ is a submodule of $M$ over $R$ and
+        $Q$ is a submodule of $M$ over $R$.
+    Then $\submoduleSum{R}{M}{N}{P}\subseteq Q$ iff
+        $N\subseteq Q$ and $P\subseteq Q$.
+\end{theorem}
+\begin{proof}
+    $N\subseteq\submoduleSum{R}{M}{N}{P}$ and
+        $P\subseteq\submoduleSum{R}{M}{N}{P}$ by
+        \obv{submodule_sum_left,submodule_sum_right}.
+    Follows by \auto{submodule_sum_least,subseteq_transitive}.
+\end{proof}
+
+\begin{theorem}\label{submodule_sum_commutative}
+    Let $R$ be a ring.
+    Let $M$ be a left module over $R$.
+    Suppose $N$ is a submodule of $M$ over $R$ and
+        $P$ is a submodule of $M$ over $R$.
+    Then $\submoduleSum{R}{M}{N}{P}=\submoduleSum{R}{M}{P}{N}$.
+\end{theorem}
+\begin{proof}
+    $N\subseteq\carrier[M]$ and $P\subseteq\carrier[M]$ by
+        \obv{submodule_subseteq}.
+    Follows by \auto{submodule_sum,union_comm}.
+\end{proof}
+
+\begin{theorem}\label{submodule_sum_idempotent}
+    Let $R$ be a ring.
+    Let $M$ be a left module over $R$.
+    Suppose $N$ is a submodule of $M$ over $R$.
+    Then $\submoduleSum{R}{M}{N}{N}=N$.
+\end{theorem}
+\begin{proof}
+    $N\subseteq\carrier[M]$ by \obv{submodule_subseteq}.
+    $N\union N=N$ by \obv{union_idempotent}.
+    Follows by
+        \auto{submodule_sum,module_span_of_submodule}.
+\end{proof}
+
+\begin{theorem}\label{submodule_sum_zero}
+    Let $R$ be a ring.
+    Let $M$ be a left module over $R$.
+    Let $Z=\trivialSubgroupCarrier{\ModuleAdditiveGroup{M}}$.
+    Suppose $N$ is a submodule of $M$ over $R$.
+    Then $\submoduleSum{R}{M}{N}{Z}=N$.
+\end{theorem}
+\begin{proof}
+    $Z$ is a submodule of $M$ over $R$ by \auto{zero_submodule}.
+    $N\subseteq\submoduleSum{R}{M}{N}{Z}$ by
+        \obv{submodule_sum_left}.
+    $\neutral[M]\in N$ by \obv{submodule_zero}.
+    $Z=\{\neutral[\ModuleAdditiveGroup{M}]\}$ by
+        \obv{trivial_subgroup_carrier}.
+    Hence $Z=\{\neutral[M]\}$ by
+        \auto{module_additive_group_fields}.
+    Hence $Z\subseteq N$ by \auto{singleton_subset_intro}.
+    $\submoduleSum{R}{M}{N}{Z}\subseteq N$ by
+        \obv{submodule_sum_least,subseteq_refl}.
+    Follows by \obv{subseteq_antisymmetric}.
+\end{proof}
+
+\begin{theorem}\label{submodule_sum_associative}
+    Let $R$ be a ring.
+    Let $M$ be a left module over $R$.
+    Suppose $N$ is a submodule of $M$ over $R$ and
+        $P$ is a submodule of $M$ over $R$ and
+        $Q$ is a submodule of $M$ over $R$.
+    Then
+        $\submoduleSum{R}{M}{\submoduleSum{R}{M}{N}{P}}{Q}
+            =\submoduleSum{R}{M}{N}{\submoduleSum{R}{M}{P}{Q}}$.
+\end{theorem}
+\begin{proof}
+    Let $A=\submoduleSum{R}{M}{N}{P}$ and
+        $B=\submoduleSum{R}{M}{P}{Q}$.
+    Let $S=\submoduleSum{R}{M}{A}{Q}$ and
+        $T=\submoduleSum{R}{M}{N}{B}$.
+    $A$ and $B$ are submodules of $M$ over $R$ by
+        \auto{submodule_sum_is_submodule}.
+    Hence $S$ and $T$ are submodules of $M$ over $R$ by
+        \auto{submodule_sum_is_submodule}.
+    $N\subseteq T$ and $B\subseteq T$ by
+        \obv{submodule_sum_left,submodule_sum_right}.
+    $P\subseteq B$ and $Q\subseteq B$ by
+        \obv{submodule_sum_left,submodule_sum_right}.
+    Hence $P\subseteq T$ and $Q\subseteq T$ by
+        \auto{subseteq_transitive}.
+    Hence $A\subseteq T$ by \auto{submodule_sum_least}.
+    Hence $S\subseteq T$ by \auto{submodule_sum_least}.
+    $A\subseteq S$ and $Q\subseteq S$ by
+        \obv{submodule_sum_left,submodule_sum_right}.
+    $N\subseteq A$ and $P\subseteq A$ by
+        \auto{submodule_sum_left,submodule_sum_right}.
+    Hence $N\subseteq S$ and $P\subseteq S$ by
+        \auto{subseteq_transitive}.
+    Hence $B\subseteq S$ by \auto{submodule_sum_least}.
+    Hence $T\subseteq S$ by \auto{submodule_sum_least}.
+    Follows by \auto{subseteq_antisymmetric}.
+\end{proof}
+
+\begin{theorem}\label{submodule_sum_carrier}
+    Let $R$ be a ring.
+    Let $M$ be a left module over $R$.
+    Suppose $N$ is a submodule of $M$ over $R$.
+    Then $\submoduleSum{R}{M}{N}{\carrier[M]}=\carrier[M]$.
+\end{theorem}
+\begin{proof}
+    $\carrier[M]$ is a submodule of $M$ over $R$ by
+        \obv{module_carrier_submodule}.
+    Hence $\carrier[M]\subseteq
+        \submoduleSum{R}{M}{N}{\carrier[M]}$ by
+        \obv{submodule_sum_right}.
+    $\submoduleSum{R}{M}{N}{\carrier[M]}\subseteq\carrier[M]$ by
+        \auto{submodule_sum_is_submodule,submodule_subseteq}.
+    Follows by \obv{subseteq_antisymmetric}.
+\end{proof}
+
+\subsection{Linear maps and spans}
+
+\begin{theorem}\label{linear_map_image_of_span}
+    Let $R$ be a ring.
+    Let $M$ be a left module over $R$.
+    Let $N$ be a left module over $R$.
+    Suppose $f$ is a linear map from $M$ to $N$ over $R$.
+    Let $A$ be a subset of $\carrier[M]$.
+    Then
+        $\img{f}{\moduleSpan{R}{M}{A}}
+            =\moduleSpan{R}{N}{\img{f}{A}}$.
+\end{theorem}
+\begin{proof}
+    Let $S=\moduleSpan{R}{M}{A}$ and
+        $B=\img{f}{A}$.
+    Let $T=\moduleSpan{R}{N}{B}$ and $J=\img{f}{S}$.
+    $M$ is a left module over $R$ and
+        $N$ is a left module over $R$ by
+        \obv{linear_map_source_module,linear_map_target_module}.
+    $f\in\funs{\carrier[M]}{\carrier[N]}$ by
+        \obv{linear_map_type}.
+    Hence $B\subseteq\carrier[N]$ by
+        \auto{funs_image_subseteq}.
+    $S$ is a submodule of $M$ over $R$ by
+        \auto{module_span_is_submodule}.
+    Hence $J$ is a submodule of $N$ over $R$ by
+        \auto{linear_map_submodule_image}.
+    $A\subseteq S$ by \obv{module_span_contains_generators}.
+    Hence $B\subseteq J$ by \auto{img_subseteq}.
+    Hence $T\subseteq J$ by \auto{module_span_least}.
+    $T$ is a submodule of $N$ over $R$ by
+        \auto{module_span_is_submodule}.
+    Hence $\preimg{f}{T}$ is a submodule of $M$ over $R$ by
+        \obv{linear_map_submodule_preimage}.
+    $B\subseteq T$ by \obv{module_span_contains_generators}.
+    $f$ is a function and $\dom{f}=\carrier[M]$ by
+        \auto{linear_map_type,funs_elim}.
+    Show that $A\subseteq\preimg{f}{T}$.
+    \begin{subproof}
+        Show that for every $x\in A$ we have $x\in\preimg{f}{T}$.
+        \begin{subproof}
+            Fix $x\in A$.
+            $(x,f(x))\in f$ by \auto{function_apply_elim,subseteq}.
+            Hence $f(x)\in B$ by \auto{img_iff}.
+            Hence $f(x)\in T$ by \obv{subseteq}.
+            Follows by \auto{preimg_iff}.
+        \end{subproof}
+        Follows by \obv{subseteq}.
+    \end{subproof}
+    Hence $S\subseteq\preimg{f}{T}$ by \auto{module_span_least}.
+    Show that $J\subseteq T$.
+    \begin{subproof}
+        Show that for every $y\in J$ we have $y\in T$.
+        \begin{subproof}
+            Fix $y\in J$.
+            Take $x\in S$ such that $(x,y)\in f$ by \auto{img_iff}.
+            Hence $x\in\preimg{f}{T}$ by \obv{subseteq}.
+            Take $z\in T$ such that $(x,z)\in f$ by
+                \obv{preimg_iff}.
+            $f$ is right-unique by \obv{function_rightunique}.
+            Hence $y=z$ by \auto{rightunique}.
+            Follows by \auto.
+        \end{subproof}
+        Follows by \obv{subseteq}.
+    \end{subproof}
+    Follows by \auto{subseteq_antisymmetric}.
+\end{proof}
+
+\begin{theorem}\label{linear_maps_agree_on_span}
+    Let $R$ be a ring.
+    Let $M$ be a left module over $R$.
+    Let $N$ be a left module over $R$.
+    Suppose $f$ is a linear map from $M$ to $N$ over $R$ and
+        $g$ is a linear map from $M$ to $N$ over $R$.
+    Let $A$ be a subset of $\carrier[M]$.
+    Suppose for every $a\in A$ we have $f(a)=g(a)$.
+    Then for every $x\in\moduleSpan{R}{M}{A}$ we have $f(x)=g(x)$.
+\end{theorem}
+\begin{proof}
+    Let $E=\{x\in\carrier[M]\mid f(x)=g(x)\}$.
+    Let $G=\ModuleAdditiveGroup{M}$ and
+        $H=\ModuleAdditiveGroup{N}$.
+    $M$ is a left module over $R$ and
+        $N$ is a left module over $R$ by
+        \obv{linear_map_source_module,linear_map_target_module}.
+    $\groupHom{f}{G}{H}$ and $\groupHom{g}{G}{H}$ by
+        \auto{linear_map_is_additive_group_hom}.
+    Hence $G$ is a group and $H$ is a group by
+        \obv{group_hom_source_group,group_hom_target_group}.
+    $E\subseteq\carrier[G]$ by
+        \auto{subseteq,module_additive_group_fields}.
+    $f(\neutral[G])=\neutral[H]$ and
+        $g(\neutral[G])=\neutral[H]$ by \obv{group_hom_neutral}.
+    $\neutral[G]\in\carrier[G]$ by
+        \obv{group_hom_source_group,group_is_monoid,
+            monoid_is_unital_magma,unitalmagma_type}.
+    Hence $\neutral[G]\in\carrier[M]$ by
+        \auto{module_additive_group_fields}.
+    Hence $\neutral[G]\in E$.
+    Show that for all $x,y\in E$ we have $\mul[G](x,y)\in E$.
+    \begin{subproof}
+        Fix $x,y\in E$.
+        Hence $x,y\in\carrier[M]$ and
+            $f(x)=g(x)$ and $f(y)=g(y)$.
+        Hence $x,y\in\carrier[G]$ by \obv{subseteq}.
+        $\mul[G](x,y)\in\carrier[G]$ by
+            \obv{group_hom_source_group,group_is_monoid,
+                monoid_is_magma,magma_welldef}.
+        Hence $\mul[G](x,y)\in\carrier[M]$ by
+            \auto{module_additive_group_fields}.
+        $f(\mul[G](x,y))=\mul[H](f(x),f(y))$ and
+            $g(\mul[G](x,y))=\mul[H](g(x),g(y))$ by
+            \obv{group_hom_mul}.
+        Hence $f(\mul[G](x,y))=g(\mul[G](x,y))$ by \auto.
+    \end{subproof}
+    Show that for every $x\in E$ we have $\groupInv[G](x)\in E$.
+    \begin{subproof}
+        Fix $x\in E$.
+        Hence $x\in\carrier[M]$ and $f(x)=g(x)$.
+        Hence $x\in\carrier[G]$ by \obv{subseteq}.
+        $\groupInv[G](x)\in\carrier[G]$ by
+            \obv{group_inverse_type}.
+        Hence $\groupInv[G](x)\in\carrier[M]$ by
+            \auto{module_additive_group_fields}.
+        $f(\groupInv[G](x))=\groupInv[H](f(x))$ and
+            $g(\groupInv[G](x))=\groupInv[H](g(x))$ by
+            \obv{group_hom_inverse}.
+        Hence $f(\groupInv[G](x))=g(\groupInv[G](x))$ by
+            \auto.
+    \end{subproof}
+    Hence $\subgroup{E}{G}$ by \obv{subgroup}.
+    Show that for all $a,x$ such that $a\in\carrier[R]$ and $x\in E$
+        we have $\scalarMul[M](a,x)\in E$.
+    \begin{subproof}
+        Fix $a,x$.
+        Assume $a\in\carrier[R]$ and $x\in E$.
+        Hence $x\in\carrier[M]$ and $f(x)=g(x)$.
+        $\scalarMul[M](a,x)\in\carrier[M]$ by
+            \obv{linear_map_scalar_ring,module_scalar_type}.
+        $f(\scalarMul[M](a,x))=\scalarMul[N](a,f(x))$ and
+            $g(\scalarMul[M](a,x))=\scalarMul[N](a,g(x))$ by
+            \obv{linear_map_scalar}.
+        Hence $f(\scalarMul[M](a,x))=g(\scalarMul[M](a,x))$ by
+            \auto.
+    \end{subproof}
+    Hence $E$ is a submodule of $M$ over $R$ by \auto{submodule}.
+    Show that $A\subseteq E$.
+    \begin{subproof}
+        Show that for every $a\in A$ we have $a\in E$.
+        \begin{subproof}
+            Fix $a\in A$.
+            Hence $a\in\carrier[M]$ by \obv{subseteq}.
+            $f(a)=g(a)$.
+        \end{subproof}
+        Follows by \obv{subseteq}.
+    \end{subproof}
+    Hence $\moduleSpan{R}{M}{A}\subseteq E$ by
+        \obv{module_span_least}.
+    Follows by \auto{subseteq}.
+\end{proof}
+
+\begin{theorem}\label{linear_map_equality_from_spanning_set}
+    Let $R$ be a ring.
+    Let $M$ be a left module over $R$.
+    Let $N$ be a left module over $R$.
+    Suppose $f$ is a linear map from $M$ to $N$ over $R$ and
+        $g$ is a linear map from $M$ to $N$ over $R$.
+    Let $A$ be a subset of $\carrier[M]$.
+    Suppose $\moduleSpan{R}{M}{A}=\carrier[M]$.
+    Suppose for every $a\in A$ we have $f(a)=g(a)$.
+    Then $f=g$.
+\end{theorem}
+\begin{proof}
+    For every $x\in\moduleSpan{R}{M}{A}$ we have $f(x)=g(x)$ by
+        \obv{linear_maps_agree_on_span}.
+    Hence for every $x\in\carrier[M]$ we have $f(x)=g(x)$ by
+        \auto.
+    Follows by \obv{linear_map_extensionality}.
+\end{proof}

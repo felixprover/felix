@@ -1,0 +1,1155 @@
+\section{Diagonal club intersections and Fodor's lemma}
+
+\import{stationary/club.tex}
+\import{set/function-partition.tex}
+
+The indexed intersection theorem below exposes both bounds that keep the
+usual hand-over-hand construction inside its ambient ordinal: the family has
+length below the cofinality, and the final iteration is countable.
+
+\begin{definition}\label{club_family_choice}
+    $\clubFamilyChoice{F}{I}{\beta}{\alpha}
+        =\{(i,\choice{\clubUpper{F(i)}{\beta}{\alpha}})\mid i\in I\}$.
+\end{definition}
+
+\begin{definition}\label{club_family_advance}
+    $\clubFamilyAdvance{F}{I}{\alpha}
+        =\{(\beta,\suc{\unions{\ran{
+            \clubFamilyChoice{F}{I}{\beta}{\alpha}}}})
+            \mid \beta\in\alpha\}$.
+\end{definition}
+
+\begin{definition}\label{diagonal_club_advance}
+    $\diagonalClubAdvance{F}{\alpha}
+        =\{(\beta,
+            \choice{\clubUpper{
+                \indexedIntersection{\suc{\beta}}{F}{\alpha}}
+                {\beta}{\alpha}})
+            \mid \beta\in\alpha\}$.
+\end{definition}
+
+\begin{definition}\label{fodor_avoiding_clubs}
+    $\fodorAvoidingClubs{f}{\eta}{\kappa}
+        =\{C\in\pow{\kappa}\mid
+            \clubIn{C}{\kappa}\land
+            \fibre{f}{\eta}\notmeets C\}$.
+\end{definition}
+
+\begin{definition}\label{fodor_club_family}
+    $\fodorClubFamily{f}{\kappa}
+        =\{(\eta,\choice{\fodorAvoidingClubs{f}{\eta}{\kappa}})
+            \mid \eta\in\kappa\}$.
+\end{definition}
+
+\begin{definition}\label{fodor_values}
+    $\fodorValues{f}{\kappa}
+        =\{\eta\in\kappa\mid
+            \text{$\fibre{f}{\eta}$ is stationary in $\kappa$}\}$.
+\end{definition}
+
+\begin{definition}\label{fodor_value}
+    $\fodorValue{f}{\kappa}=\inters{\fodorValues{f}{\kappa}}$.
+\end{definition}
+
+\begin{definition}\label{fodor_fibre}
+    $\fodorFibre{f}{\kappa}=\fibre{f}{\fodorValue{f}{\kappa}}$.
+\end{definition}
+
+\begin{definition}\label{regressive_on}
+    $f$ is regressive on $S$ iff $f$ is a function on $S$ and
+        for every $\gamma\in S\setminus\{\emptyset\}$ we have
+            $f(\gamma)\in\gamma$.
+\end{definition}
+
+\begin{proposition}\label{ordinal_closed_indexed_intersection}
+    Let $\alpha$ be an ordinal.
+    Suppose for every $i\in I$ we have
+        $\ordinalClosed{F(i)}{\alpha}$.
+    Then $\ordinalClosed{\indexedIntersection{I}{F}{\alpha}}{\alpha}$.
+\end{proposition}
+\begin{proof}
+    Let $C=\indexedIntersection{I}{F}{\alpha}$.
+    $C\subseteq\alpha$ by \auto{indexed_intersection_subseteq}.
+    Show that for every limit ordinal $\gamma\in\alpha$ such that
+        $\ordinalUnbounded{C\inter\gamma}{\gamma}$
+        we have $\gamma\in C$.
+    \begin{subproof}
+        Fix $\gamma$.
+        Assume $\gamma\in\alpha$.
+        Assume $\gamma$ is a limit ordinal.
+        Assume $\ordinalUnbounded{C\inter\gamma}{\gamma}$.
+        Show that for every $i\in I$ we have $\gamma\in F(i)$.
+        \begin{subproof}
+            Fix $i\in I$.
+            $C\subseteq F(i)$
+                by \auto{indexed_intersection_member_subseteq}.
+            Hence $C\inter\gamma\subseteq F(i)\inter\gamma$
+                by \obv{subseteq,inter}.
+            $F(i)\inter\gamma\subseteq\gamma$
+                by \obv{subseteq,inter}.
+            Hence $\ordinalUnbounded{F(i)\inter\gamma}{\gamma}$
+                by \obv{ordinal_unbounded_superset}.
+            Follows by \auto{ordinal_closed}.
+        \end{subproof}
+        Follows by \obv{indexed_intersection}.
+    \end{subproof}
+    Follows by \auto{ordinal_closed}.
+\end{proof}
+
+\begin{proposition}\label{club_family_choice_type}
+    Let $\alpha$ be a limit ordinal.
+    Suppose $F$ is a function and $I\subseteq\dom{F}$.
+    Suppose for every $i\in I$ we have $\clubIn{F(i)}{\alpha}$.
+    Let $\beta\in\alpha$.
+    Let $q=\clubFamilyChoice{F}{I}{\beta}{\alpha}$.
+    Then $q\in\funs{I}{\alpha}$ and for every $i\in I$ we have
+        $q(i)\in F(i)$ and $\beta\in q(i)$.
+\end{proposition}
+\begin{proof}
+    $q$ is a relation by \auto{relation,club_family_choice}.
+    $q$ is right-unique
+        by \auto{rightunique,club_family_choice,pair_eq_iff}.
+    $\dom{q}=I$
+        by \auto{setext,dom_iff,club_family_choice,pair_eq_iff}.
+    Show that for every $i\in I$ we have
+        $q(i)\in F(i)$ and $\beta\in q(i)$ and $q(i)\in\alpha$.
+    \begin{subproof}
+        Fix $i\in I$.
+        Hence $i\in\dom{F}$ by \obv{subseteq}.
+        $\ordinalUnbounded{F(i)}{\alpha}$
+            by \auto{club_in_elim}.
+        Hence $\clubUpper{F(i)}{\beta}{\alpha}$ is inhabited
+            by \obv{club_upper_inhabited}.
+        Let $x=\choice{\clubUpper{F(i)}{\beta}{\alpha}}$.
+        $x\in\clubUpper{F(i)}{\beta}{\alpha}$ by \auto{choice_in}.
+        Hence $x\in F(i)$ and $\beta\in x$
+            by \obv{club_upper}.
+        $F(i)\subseteq\alpha$ by \obv{club_in_elim}.
+        Hence $x\in\alpha$ by \obv{subseteq}.
+        $(i,x)\in q$ by \obv{club_family_choice}.
+        Hence $q(i)=x$ by \obv{function_apply_intro}.
+    \end{subproof}
+    Hence $q$ is a function to $\alpha$ by \auto.
+    Hence $q\in\funs{I}{\alpha}$ by \obv{funs_intro}.
+\end{proof}
+
+\begin{theorem}\label{club_family_advance_type}
+    Let $\alpha$ be a limit ordinal.
+    Let $I\in\cofinality{\alpha}$.
+    Suppose $F$ is a function and $I\subseteq\dom{F}$.
+    Suppose for every $i\in I$ we have $\clubIn{F(i)}{\alpha}$.
+    Then $\clubFamilyAdvance{F}{I}{\alpha}
+        \in\funs{\alpha}{\alpha}$.
+\end{theorem}
+\begin{proof}
+    Let $h=\clubFamilyAdvance{F}{I}{\alpha}$.
+    $h$ is a relation by \auto{relation,club_family_advance}.
+    $h$ is right-unique
+        by \auto{rightunique,club_family_advance,pair_eq_iff}.
+    $\dom{h}=\alpha$
+        by \auto{setext,dom_iff,club_family_advance,pair_eq_iff}.
+    Show that for every $\beta\in\dom{h}$ we have $h(\beta)\in\alpha$.
+    \begin{subproof}
+        Fix $\beta\in\dom{h}$.
+        Hence $\beta\in\alpha$.
+        Let $q=\clubFamilyChoice{F}{I}{\beta}{\alpha}$.
+        $q\in\funs{I}{\alpha}$ by \auto{club_family_choice_type}.
+        Let $U=\unions{\ran{q}}$.
+        $U\in\alpha$ by \auto{small_domain_range_union_below}.
+        Hence $\suc{U}\in\alpha$ by \obv{suc_elem_limitordinal}.
+        $(\beta,\suc{U})\in h$ by \auto{club_family_advance}.
+        Hence $h(\beta)=\suc{U}$ by \obv{function_apply_intro}.
+    \end{subproof}
+    Hence $h$ is a function to $\alpha$.
+    Follows by \auto{funs_intro}.
+\end{proof}
+
+\begin{proposition}\label{club_family_advance_properties}
+    Let $\alpha$ be a limit ordinal.
+    Let $I\in\cofinality{\alpha}$.
+    Suppose $I$ is inhabited.
+    Suppose $F$ is a function and $I\subseteq\dom{F}$.
+    Suppose for every $i\in I$ we have $\clubIn{F(i)}{\alpha}$.
+    Let $\beta\in\alpha$.
+    Let $q=\clubFamilyChoice{F}{I}{\beta}{\alpha}$.
+    Let $U=\unions{\ran{q}}$.
+    Let $h=\clubFamilyAdvance{F}{I}{\alpha}$.
+    Then $h(\beta)=\suc{U}$ and $\beta\in h(\beta)$ and
+        for every $i\in I$ we have
+            $q(i)\in F(i)$ and $\beta\in q(i)$ and
+            $q(i)\in h(\beta)$.
+\end{proposition}
+\begin{proof}
+    $h\in\funs{\alpha}{\alpha}$
+        by \auto{club_family_advance_type}.
+    Hence $h$ is a function by \obv{funs_is_function}.
+    $(\beta,\suc{U})\in h$ by \auto{club_family_advance}.
+    Hence $h(\beta)=\suc{U}$ by \obv{function_apply_intro}.
+    $q\in\funs{I}{\alpha}$ and for every $i\in I$ we have
+        $q(i)\in F(i)$ and $\beta\in q(i)$
+        by \obv{club_family_choice_type}.
+    Hence $q$ is a function and $\dom{q}=I$
+        by \obv{funs_is_function,funs}.
+    $U\in\alpha$ by \auto{small_domain_range_union_below}.
+    Hence $U$ is an ordinal
+        by \obv{limit_ordinal,elem_of_ordinal_is_ordinal}.
+    Show that for every $i\in I$ we have $q(i)\in h(\beta)$.
+    \begin{subproof}
+        Fix $i\in I$.
+        $q(i)\in\ran{q}$ by \auto{fun_ran_iff}.
+        Hence $q(i)\subseteq U$ by \auto{subseteq,unions_iff}.
+        $q(i)\in\alpha$ by \obv{funs_type_apply}.
+        Hence $q(i)$ is an ordinal
+            by \obv{limit_ordinal,elem_of_ordinal_is_ordinal}.
+        Hence $q(i)\in U$ or $q(i)=U$
+            by \obv{ordinal_subseteq_implies_elem_or_eq}.
+        Hence $q(i)\in\suc{U}$ by \auto{suc_iff}.
+    \end{subproof}
+    Take $i_0$ such that $i_0\in I$.
+    $\beta\in q(i_0)$ by \auto{club_family_choice_type}.
+    $q(i_0)\in h(\beta)$.
+    $h(\beta)\in\alpha$ by \obv{funs_type_apply}.
+    Hence $h(\beta)$ is an ordinal
+        by \obv{limit_ordinal,elem_of_ordinal_is_ordinal}.
+    Hence $\beta\in h(\beta)$ by \obv{ordinal_transitivity}.
+\end{proof}
+
+\begin{proposition}\label{club_family_iteration_properties}
+    Let $\alpha$ be a limit ordinal.
+    Let $I\in\cofinality{\alpha}$.
+    Suppose $I$ is inhabited.
+    Suppose $F$ is a function and $I\subseteq\dom{F}$.
+    Suppose for every $i\in I$ we have $\clubIn{F(i)}{\alpha}$.
+    Let $\beta\in\alpha$.
+    Let $h=\clubFamilyAdvance{F}{I}{\alpha}$.
+    Let $a=h(\beta)$.
+    Let $s=\iterationSet{h}{a}$.
+    Then $s\in\funs{\naturals}{\alpha}$ and
+        for every natural number $n$ we have
+            $s(n)\in s(\suc{n})$ and for every $i\in I$ we have
+                $(\clubFamilyChoice{F}{I}{s(n)}{\alpha})(i)\in F(i)$ and
+                $s(n)\in(\clubFamilyChoice{F}{I}{s(n)}{\alpha})(i)$ and
+                $(\clubFamilyChoice{F}{I}{s(n)}{\alpha})(i)
+                    \in s(\suc{n})$.
+\end{proposition}
+\begin{proof}
+    $h\in\funs{\alpha}{\alpha}$
+        by \auto{club_family_advance_type}.
+    $a\in\alpha$ by \auto{funs_type_apply}.
+    $s\in\funs{\naturals}{\alpha}$
+        by \auto{iteration_set_type}.
+    Hence $s$ is a function and $\dom{s}=\naturals$
+        by \obv{funs_is_function,funs}.
+    Show that for every natural number $n$ we have
+        $s(n)\in s(\suc{n})$ and for every $i\in I$ we have
+            $(\clubFamilyChoice{F}{I}{s(n)}{\alpha})(i)\in F(i)$ and
+            $s(n)\in(\clubFamilyChoice{F}{I}{s(n)}{\alpha})(i)$ and
+            $(\clubFamilyChoice{F}{I}{s(n)}{\alpha})(i)
+                \in s(\suc{n})$.
+    \begin{subproof}
+        Fix $n$.
+        Assume $n$ is a natural number.
+        $s(n)\in\alpha$ by \obv{funs_type_apply}.
+        $s(\suc{n})=h(s(n))$
+            by \auto{iteration_set_successor}.
+        Let $q=\clubFamilyChoice{F}{I}{s(n)}{\alpha}$.
+        $s(n)\in h(s(n))$ and for every $i\in I$ we have
+            $q(i)\in F(i)$ and $s(n)\in q(i)$ and
+            $q(i)\in h(s(n))$
+            by \auto{club_family_advance_properties}.
+        Follows by \auto.
+    \end{subproof}
+\end{proof}
+
+\begin{theorem}\label{indexed_clubs_have_common_limit_above}
+    Let $\alpha$ be a limit ordinal.
+    Suppose $\naturals\in\cofinality{\alpha}$.
+    Let $I\in\cofinality{\alpha}$.
+    Suppose $I$ is inhabited.
+    Suppose $F$ is a function and $I\subseteq\dom{F}$.
+    Suppose for every $i\in I$ we have $\clubIn{F(i)}{\alpha}$.
+    Let $\beta\in\alpha$.
+    Then there exists
+        $x\in\indexedIntersection{I}{F}{\alpha}$ such that
+        $\beta\in x$ and $x$ is a limit ordinal.
+\end{theorem}
+\begin{proof}
+    $\alpha$ is an ordinal by \obv{limit_ordinal}.
+    Let $h=\clubFamilyAdvance{F}{I}{\alpha}$.
+    $h\in\funs{\alpha}{\alpha}$
+        by \auto{club_family_advance_type}.
+    Let $a=h(\beta)$.
+    $a\in\alpha$ by \auto{funs_type_apply}.
+    Let $s=\iterationSet{h}{a}$.
+    $s\in\funs{\naturals}{\alpha}$ and
+        for every natural number $n$ we have
+            $s(n)\in s(\suc{n})$ and for every $i\in I$ we have
+                $(\clubFamilyChoice{F}{I}{s(n)}{\alpha})(i)\in F(i)$ and
+                $s(n)\in(\clubFamilyChoice{F}{I}{s(n)}{\alpha})(i)$ and
+                $(\clubFamilyChoice{F}{I}{s(n)}{\alpha})(i)
+                    \in s(\suc{n})$
+        by \obv{club_family_iteration_properties}.
+    Hence $s$ is a function and $\dom{s}=\naturals$
+        by \obv{funs_is_function,funs}.
+    Let $x=\unions{\ran{s}}$.
+    $x\in\alpha$ by \auto{small_domain_range_union_below}.
+    $\ran{s}\subseteq\alpha$ by \obv{funs_ran}.
+    Hence every element of $\ran{s}$ is an ordinal
+        by \obv{subseteq,elem_of_ordinal_is_ordinal}.
+    Hence $x$ is an ordinal by \obv{union_of_ordinals_is_ordinal}.
+    $\emptyset$ is a natural number by \obv{omega_empty}.
+    Hence $s(\emptyset)\in s(\suc{\emptyset})$
+        by \auto{club_family_iteration_properties}.
+    $\suc{\emptyset}$ is a natural number by \obv{omega_successor}.
+    Hence $s(\suc{\emptyset})\in\ran{s}$ by \auto{fun_ran_iff}.
+    Hence $s(\emptyset)\in x$ by \auto{unions_iff}.
+    Hence $x\neq\emptyset$ by \auto{emptyset}.
+    Hence $\emptyset\in x$
+        by \obv{ordinal_empty_or_emptyset_elem}.
+    Show that for every $\rho\in x$ we have $\suc{\rho}\in x$.
+    \begin{subproof}
+        Fix $\rho\in x$.
+        Take $y\in\ran{s}$ such that $\rho\in y$
+            by \obv{unions_iff}.
+        Take $n\in\dom{s}$ such that $s(n)=y$
+            by \obv{fun_ran_iff}.
+        Hence $n$ is a natural number.
+        Hence $s(n)\in s(\suc{n})$
+            by \auto{club_family_iteration_properties}.
+        $s(n)$ is an ordinal
+            by \obv{funs_type_apply,elem_of_ordinal_is_ordinal}.
+        Hence $\rho$ is an ordinal by \obv{elem_of_ordinal_is_ordinal}.
+        Hence $\suc{\rho}\subseteq s(n)$
+            by \obv{ordinal_suc_subseteq}.
+        $\suc{\rho}$ is an ordinal by \obv{suc_ordinal}.
+        Hence $\suc{\rho}\in s(n)$ or $\suc{\rho}=s(n)$
+            by \obv{ordinal_subseteq_implies_elem_or_eq}.
+        $s(\suc{n})$ is an ordinal
+            by \obv{funs_type_apply,omega_successor,elem_of_ordinal_is_ordinal}.
+        Hence $\suc{\rho}\in s(\suc{n})$
+            by \auto{ordinal_transitivity}.
+        Hence $\suc{n}\in\dom{s}$ by \obv{funs,omega_successor}.
+        Hence $s(\suc{n})\in\ran{s}$ by \auto{fun_ran_iff}.
+        Follows by \auto{unions_iff}.
+    \end{subproof}
+    Hence $\emptyset\precedes x$.
+    Hence $x$ is a limit ordinal by \obv{limit_ordinal}.
+    Show that for every $i\in I$ we have $x\in F(i)$.
+    \begin{subproof}
+        Fix $i\in I$.
+        $\ordinalClosed{F(i)}{\alpha}$ and $F(i)\subseteq\alpha$
+            by \auto{club_in_elim}.
+        Show that $\ordinalUnbounded{F(i)\inter x}{x}$.
+        \begin{subproof}
+            $F(i)\inter x\subseteq x$ by \obv{subseteq,inter}.
+            Show that for every $\rho\in x$ there exists
+                $z\in F(i)\inter x$ such that $\rho\in z$.
+            \begin{subproof}
+                Fix $\rho\in x$.
+                Take $y\in\ran{s}$ such that $\rho\in y$
+                    by \obv{unions_iff}.
+                Take $n\in\dom{s}$ such that $s(n)=y$
+                    by \obv{fun_ran_iff}.
+                Hence $n$ is a natural number.
+                Let $q=\clubFamilyChoice{F}{I}{s(n)}{\alpha}$.
+                $q(i)\in F(i)$ and $s(n)\in q(i)$ and
+                    $q(i)\in s(\suc{n})$
+                    by \auto{club_family_iteration_properties}.
+                $\suc{n}$ is a natural number
+                    by \obv{omega_successor}.
+                Hence $s(\suc{n})\in\ran{s}$
+                    by \auto{fun_ran_iff}.
+                Hence $q(i)\in x$ by \auto{unions_iff}.
+                Hence $q(i)\in F(i)\inter x$ by \obv{inter_intro}.
+                $q(i)\in\alpha$ by \obv{subseteq}.
+                Hence $q(i)$ is an ordinal
+                    by \obv{elem_of_ordinal_is_ordinal}.
+                $\rho\in s(n)$.
+                Hence $\rho\in q(i)$ by \obv{ordinal_transitivity}.
+            \end{subproof}
+            Follows by \obv{ordinal_unbounded}.
+        \end{subproof}
+        Follows by \obv{ordinal_closed}.
+    \end{subproof}
+    Hence $x\in\indexedIntersection{I}{F}{\alpha}$
+        by \obv{indexed_intersection}.
+    $\beta\in a$ by \auto{club_family_advance_properties}.
+    $s(\emptyset)=a$ by \auto{iteration_set_zero}.
+    Hence $\beta\in s(\emptyset)$.
+    Hence $\beta\in x$ by \obv{ordinal_transitivity}.
+\end{proof}
+
+\begin{theorem}\label{indexed_club_intersection}
+    Let $\alpha$ be a limit ordinal.
+    Suppose $\naturals\in\cofinality{\alpha}$.
+    Let $I\in\cofinality{\alpha}$.
+    Suppose $I$ is inhabited.
+    Suppose $F$ is a function and $I\subseteq\dom{F}$.
+    Suppose for every $i\in I$ we have $\clubIn{F(i)}{\alpha}$.
+    Then $\clubIn{\indexedIntersection{I}{F}{\alpha}}{\alpha}$.
+\end{theorem}
+\begin{proof}
+    Let $C=\indexedIntersection{I}{F}{\alpha}$.
+    $C\subseteq\alpha$ by \auto{indexed_intersection_subseteq}.
+    Show that $\ordinalUnbounded{C}{\alpha}$.
+    \begin{subproof}
+        Show that for every $\beta\in\alpha$ there exists $x\in C$
+            such that $\beta\in x$.
+        \begin{subproof}
+            Fix $\beta\in\alpha$.
+            Take $x\in C$ such that $\beta\in x$ and
+                $x$ is a limit ordinal
+                by \auto{indexed_clubs_have_common_limit_above}.
+            Follows by \auto.
+        \end{subproof}
+        Follows by \obv{ordinal_unbounded}.
+    \end{subproof}
+    For every $i\in I$ we have $\ordinalClosed{F(i)}{\alpha}$
+        by \auto{club_in_elim}.
+    $\ordinalClosed{\indexedIntersection{I}{F}{\alpha}}{\alpha}$
+        by \obv{ordinal_closed_indexed_intersection}.
+    Hence $\ordinalClosed{C}{\alpha}$.
+    Follows by \auto{club_in}.
+\end{proof}
+
+\begin{proposition}\label{diagonal_intersection_closed}
+    Let $\alpha$ be an ordinal.
+    Suppose for every $i\in\alpha$ we have
+        $\ordinalClosed{F(i)}{\alpha}$.
+    Then $\ordinalClosed{\diagonalIntersection{F}{\alpha}}{\alpha}$.
+\end{proposition}
+\begin{proof}
+    Let $D=\diagonalIntersection{F}{\alpha}$.
+    $D\subseteq\alpha$ by \auto{diagonal_intersection,subseteq}.
+    Show that for every limit ordinal $\gamma\in\alpha$ such that
+        $\ordinalUnbounded{D\inter\gamma}{\gamma}$
+        we have $\gamma\in D$.
+    \begin{subproof}
+        Fix $\gamma$.
+        Assume $\gamma\in\alpha$.
+        Assume $\gamma$ is a limit ordinal.
+        Assume $\ordinalUnbounded{D\inter\gamma}{\gamma}$.
+        Show that for every $i\in\gamma$ we have $\gamma\in F(i)$.
+        \begin{subproof}
+            Fix $i\in\gamma$.
+            Hence $i\in\alpha$ by \auto{ordinal_transitivity}.
+            $\ordinalClosed{F(i)}{\alpha}$.
+            Show that $\ordinalUnbounded{F(i)\inter\gamma}{\gamma}$.
+            \begin{subproof}
+                $F(i)\inter\gamma\subseteq\gamma$
+                    by \obv{subseteq,inter}.
+                Show that for every $\rho\in\gamma$ there exists
+                    $\delta\in F(i)\inter\gamma$ such that
+                    $\rho\in\delta$.
+                \begin{subproof}
+                    Fix $\rho\in\gamma$.
+                    $i$ and $\rho$ are ordinals
+                        by \obv{limit_ordinal,elem_of_ordinal_is_ordinal}.
+                    $\rho\union i$ is an ordinal
+                        by \obv{union_of_two_ordinals_is_ordinal}.
+                    $\rho\union i\in\gamma$ by \obv{ordinal_union_below}.
+                    Take $\delta\in D\inter\gamma$ such that
+                        $\rho\union i\in\delta$ by \obv{ordinal_unbounded}.
+                    Hence $\delta\in D$ and $\delta\in\gamma$
+                        by \obv{inter_elim_left,inter_elim_right}.
+                    $\delta$ is an ordinal
+                        by \obv{limit_ordinal,elem_of_ordinal_is_ordinal}.
+                    $i\subseteq\rho\union i$ and $\rho\subseteq\rho\union i$
+                        by \auto{union_upper_left,union_upper_right}.
+                    Hence $i\in\rho\union i$ or $i=\rho\union i$
+                        by \auto{ordinal_subseteq_implies_elem_or_eq}.
+                    Hence $i\in\delta$ by \auto{ordinal_transitivity}.
+                    Hence $\delta\in F(i)$
+                        by \auto{diagonal_intersection}.
+                    Hence $\delta\in F(i)\inter\gamma$
+                        by \obv{inter_intro}.
+                    Hence $\rho\in\rho\union i$ or $\rho=\rho\union i$
+                        by \auto{ordinal_subseteq_implies_elem_or_eq}.
+                    Hence $\rho\in\delta$ by \auto{ordinal_transitivity}.
+                    Follows by \auto.
+                \end{subproof}
+                Follows by \obv{ordinal_unbounded}.
+            \end{subproof}
+            Follows by \obv{ordinal_closed}.
+        \end{subproof}
+        Follows by \obv{diagonal_intersection}.
+    \end{subproof}
+    Follows by \auto{ordinal_closed}.
+\end{proof}
+
+\begin{theorem}\label{diagonal_club_advance_type}
+    Let $\alpha$ be an ordinal.
+    Suppose for every $\beta\in\alpha$ we have
+        $\ordinalUnbounded{
+            \indexedIntersection{\suc{\beta}}{F}{\alpha}}{\alpha}$.
+    Then $\diagonalClubAdvance{F}{\alpha}\in\funs{\alpha}{\alpha}$.
+\end{theorem}
+\begin{proof}
+    Let $h=\diagonalClubAdvance{F}{\alpha}$.
+    $h$ is a relation by \auto{relation,diagonal_club_advance}.
+    $h$ is right-unique
+        by \auto{rightunique,diagonal_club_advance,pair_eq_iff}.
+    $\dom{h}=\alpha$
+        by \auto{setext,dom_iff,diagonal_club_advance,pair_eq_iff}.
+    Show that for every $\beta\in\dom{h}$ we have $h(\beta)\in\alpha$.
+    \begin{subproof}
+        Fix $\beta\in\dom{h}$.
+        Hence $\beta\in\alpha$.
+        Let $C=\indexedIntersection{\suc{\beta}}{F}{\alpha}$.
+        $\ordinalUnbounded{C}{\alpha}$ by \auto.
+        Hence $\clubUpper{C}{\beta}{\alpha}$ is inhabited
+            by \obv{club_upper_inhabited}.
+        Hence $\choice{\clubUpper{C}{\beta}{\alpha}}
+            \in\clubUpper{C}{\beta}{\alpha}$ by \obv{choice_in}.
+        Hence $\choice{\clubUpper{C}{\beta}{\alpha}}\in C$
+            by \obv{club_upper}.
+        $C\subseteq\alpha$ by \obv{ordinal_unbounded}.
+        Hence $\choice{\clubUpper{C}{\beta}{\alpha}}\in\alpha$
+            by \obv{subseteq}.
+        $(\beta,\choice{\clubUpper{C}{\beta}{\alpha}})\in h$
+            by \auto{diagonal_club_advance}.
+        Hence $h(\beta)=\choice{\clubUpper{C}{\beta}{\alpha}}$
+            by \obv{function_apply_intro}.
+    \end{subproof}
+    Hence $h$ is a function to $\alpha$.
+    Follows by \auto{funs_intro}.
+\end{proof}
+
+\begin{proposition}\label{diagonal_club_advance_properties}
+    Let $\alpha$ be an ordinal.
+    Suppose for every $\rho\in\alpha$ we have
+        $\ordinalUnbounded{
+            \indexedIntersection{\suc{\rho}}{F}{\alpha}}{\alpha}$.
+    Let $\beta\in\alpha$.
+    Let $h=\diagonalClubAdvance{F}{\alpha}$.
+    Then $\beta\in h(\beta)$ and for every $i\in\suc{\beta}$ we have
+        $h(\beta)\in F(i)$.
+\end{proposition}
+\begin{proof}
+    $h\in\funs{\alpha}{\alpha}$
+        by \auto{diagonal_club_advance_type}.
+    Hence $h$ is a function by \obv{funs_is_function}.
+    Let $C=\indexedIntersection{\suc{\beta}}{F}{\alpha}$.
+    $\ordinalUnbounded{C}{\alpha}$ by \auto.
+    Hence $\clubUpper{C}{\beta}{\alpha}$ is inhabited
+        by \obv{club_upper_inhabited}.
+    Let $x=\choice{\clubUpper{C}{\beta}{\alpha}}$.
+    $x\in\clubUpper{C}{\beta}{\alpha}$ by \auto{choice_in}.
+    Hence $x\in C$ and $\beta\in x$ by \obv{club_upper}.
+    $(\beta,x)\in h$ by \auto{diagonal_club_advance}.
+    Hence $h(\beta)=x$ by \obv{function_apply_intro}.
+    For every $i\in\suc{\beta}$ we have $x\in F(i)$
+        by \auto{indexed_intersection_iff}.
+    Follows by \auto.
+\end{proof}
+
+\begin{proposition}\label{diagonal_club_iteration_properties}
+    Let $\alpha$ be an ordinal.
+    Suppose for every $\rho\in\alpha$ we have
+        $\ordinalUnbounded{
+            \indexedIntersection{\suc{\rho}}{F}{\alpha}}{\alpha}$.
+    Let $\beta\in\alpha$.
+    Let $h=\diagonalClubAdvance{F}{\alpha}$.
+    Let $a=h(\beta)$.
+    Let $s=\iterationSet{h}{a}$.
+    Then $s\in\funs{\naturals}{\alpha}$ and
+        for every natural number $n$ we have
+            $s(n)\in s(\suc{n})$ and
+            for every $i\in\suc{s(n)}$ we have
+                $s(\suc{n})\in F(i)$.
+\end{proposition}
+\begin{proof}
+    $h\in\funs{\alpha}{\alpha}$
+        by \auto{diagonal_club_advance_type}.
+    $a\in\alpha$ by \auto{funs_type_apply}.
+    $s\in\funs{\naturals}{\alpha}$
+        by \auto{iteration_set_type}.
+    Show that for every natural number $n$ we have
+        $s(n)\in s(\suc{n})$ and
+        for every $i\in\suc{s(n)}$ we have
+            $s(\suc{n})\in F(i)$.
+    \begin{subproof}
+        Fix $n$.
+        Assume $n$ is a natural number.
+        $s(n)\in\alpha$ by \obv{funs_type_apply}.
+        $s(\suc{n})=h(s(n))$
+            by \auto{iteration_set_successor}.
+        $s(n)\in h(s(n))$ and for every $i\in\suc{s(n)}$ we have
+            $h(s(n))\in F(i)$
+            by \obv{diagonal_club_advance_properties}.
+        Follows by \auto.
+    \end{subproof}
+\end{proof}
+
+\begin{proposition}\label{strict_ordinal_iteration_increasing}
+    Let $\alpha$ be an ordinal.
+    Let $h\in\funs{\alpha}{\alpha}$.
+    Suppose for every $\rho\in\alpha$ we have $\rho\in h(\rho)$.
+    Let $a\in\alpha$.
+    Let $s=\iterationSet{h}{a}$.
+    Let $m,n$ be natural numbers.
+    Suppose $n\in m$.
+    Then $s(n)\in s(m)$.
+\end{proposition}
+\begin{proof}
+    $s\in\funs{\naturals}{\alpha}$
+        by \auto{iteration_set_type}.
+    Let $N=\{k\in\naturals\mid
+        \text{for every $j\in k$ we have $s(j)\in s(k)$}\}$.
+    $\emptyset\in N$ by \auto{omega_empty,emptyset}.
+    Show that for every $k\in N$ we have $\suc{k}\in N$.
+    \begin{subproof}
+        Fix $k\in N$.
+        Hence $k$ is a natural number and
+            for every $j\in k$ we have $s(j)\in s(k)$.
+        Hence $\suc{k}$ is a natural number by \obv{omega_successor}.
+        $s(k)\in\alpha$ by \obv{funs_type_apply}.
+        Hence $s(k)\in h(s(k))$.
+        $s(\suc{k})=h(s(k))$
+            by \auto{iteration_set_successor}.
+        Hence $s(k)\in s(\suc{k})$.
+        $s(\suc{k})\in\alpha$ by \obv{funs_type_apply}.
+        Hence $s(\suc{k})$ is an ordinal
+            by \obv{elem_of_ordinal_is_ordinal}.
+        Show that for every $j\in\suc{k}$ we have
+            $s(j)\in s(\suc{k})$.
+        \begin{subproof}
+            Fix $j\in\suc{k}$.
+            Hence $j\in k$ or $j=k$ by \auto{suc_iff}.
+            If $j=k$, then $s(j)\in s(\suc{k})$.
+            If $j\in k$, then $s(j)\in s(k)$.
+            Hence $s(j)\in s(\suc{k})$
+                by \auto{ordinal_transitivity}.
+        \end{subproof}
+    \end{subproof}
+    Hence $N$ is an inductive set by \obv{inductive_set}.
+    Hence every natural number is an element of $N$
+        by \obv{omega_minimal}.
+    Hence $m\in N$.
+\end{proof}
+
+\begin{proposition}\label{strict_ordinal_iteration_limit}
+    Let $\alpha$ be a limit ordinal.
+    Suppose $\naturals\in\cofinality{\alpha}$.
+    Let $h\in\funs{\alpha}{\alpha}$.
+    Suppose for every $\rho\in\alpha$ we have $\rho\in h(\rho)$.
+    Let $a\in\alpha$.
+    Let $s=\iterationSet{h}{a}$.
+    Let $x=\unions{\ran{s}}$.
+    Then $x\in\alpha$ and $x$ is a limit ordinal and $a\in x$.
+\end{proposition}
+\begin{proof}
+    $\alpha$ is an ordinal by \obv{limit_ordinal}.
+    $s\in\funs{\naturals}{\alpha}$
+        by \auto{iteration_set_type}.
+    Hence $s$ is a function and $\dom{s}=\naturals$
+        by \obv{funs_is_function,funs}.
+    $x\in\alpha$ by \auto{small_domain_range_union_below}.
+    $\ran{s}\subseteq\alpha$ by \obv{funs_ran}.
+    Hence every element of $\ran{s}$ is an ordinal
+        by \obv{subseteq,elem_of_ordinal_is_ordinal}.
+    Hence $x$ is an ordinal by \auto{union_of_ordinals_is_ordinal}.
+    $\emptyset$ is a natural number by \obv{omega_empty}.
+    $s(\emptyset)=a$ by \auto{iteration_set_zero}.
+    Hence $s(\emptyset)\in\alpha$.
+    Hence $s(\emptyset)\in h(s(\emptyset))$.
+    $s(\suc{\emptyset})=h(s(\emptyset))$
+        by \auto{iteration_set_successor}.
+    Hence $s(\emptyset)\in s(\suc{\emptyset})$.
+    $\suc{\emptyset}$ is a natural number by \obv{omega_successor}.
+    Hence $s(\suc{\emptyset})\in\ran{s}$ by \auto{fun_ran_iff}.
+    Hence $s(\emptyset)\in x$ by \auto{unions_iff}.
+    Hence $a\in x$.
+    Hence $x\neq\emptyset$ by \auto{emptyset}.
+    Hence $\emptyset\in x$
+        by \obv{ordinal_empty_or_emptyset_elem}.
+    Show that for every $\rho\in x$ we have $\suc{\rho}\in x$.
+    \begin{subproof}
+        Fix $\rho\in x$.
+        Take $y\in\ran{s}$ such that $\rho\in y$
+            by \auto{unions_iff}.
+        Take $n\in\dom{s}$ such that $s(n)=y$
+            by \auto{fun_ran_iff}.
+        Hence $s(n)\in\alpha$ by \obv{funs_type_apply}.
+        Hence $s(n)\in h(s(n))$.
+        $s(\suc{n})=h(s(n))$
+            by \auto{iteration_set_successor}.
+        Hence $s(n)\in s(\suc{n})$.
+        Hence $\rho$ is an ordinal by \obv{elem_of_ordinal_is_ordinal}.
+        Hence $\suc{\rho}\subseteq s(n)$
+            by \auto{ordinal_suc_subseteq}.
+        $\suc{\rho}$ is an ordinal by \obv{suc_ordinal}.
+        Hence $\suc{\rho}\in s(n)$ or $\suc{\rho}=s(n)$
+            by \obv{ordinal_subseteq_implies_elem_or_eq}.
+        $s(\suc{n})$ is an ordinal
+            by \obv{funs_type_apply,omega_successor,elem_of_ordinal_is_ordinal}.
+        Hence $\suc{\rho}\in s(\suc{n})$
+            by \auto{ordinal_transitivity}.
+        Hence $\suc{n}\in\dom{s}$ by \obv{funs,omega_successor}.
+        Hence $s(\suc{n})\in\ran{s}$ by \auto{fun_ran_iff}.
+        Follows by \auto{unions_iff}.
+    \end{subproof}
+    Hence $\emptyset\precedes x$.
+    Hence $x$ is a limit ordinal by \obv{limit_ordinal}.
+\end{proof}
+
+\begin{proposition}\label{strict_ordinal_iteration_common_stage}
+    Let $\alpha$ be an ordinal.
+    Let $h\in\funs{\alpha}{\alpha}$.
+    Suppose for every $\rho\in\alpha$ we have $\rho\in h(\rho)$.
+    Let $a\in\alpha$.
+    Let $s=\iterationSet{h}{a}$.
+    Let $m,n$ be natural numbers.
+    Then there exists a natural number $l$ such that
+        $s(m)\in s(l)$ and $s(n)\in s(l)$.
+\end{proposition}
+\begin{proof}
+    $m$ and $n$ are ordinals by \obv{natural_number_is_ordinal}.
+    Let $k=m\union n$.
+    $m\subseteq n$ or $n\subseteq m$
+        by \obv{ordinal_subseteq_or_subseteq}.
+    Hence $k=n$ or $k=m$
+        by \auto{union_absorb_subseteq_left,union_absorb_subseteq_right}.
+    Let $l=\suc{k}$.
+    Hence $l$ is a natural number by \auto{omega_successor}.
+    $m\subseteq k$ and $n\subseteq k$
+        by \auto{union_upper_left,union_upper_right}.
+    Hence $m\in k$ or $m=k$
+        by \auto{ordinal_subseteq_implies_elem_or_eq}.
+    Hence $m\in l$ by \auto{suc_iff}.
+    Hence $s(m)\in s(l)$
+        by \obv{strict_ordinal_iteration_increasing}.
+    Hence $n\in k$ or $n=k$
+        by \auto{ordinal_subseteq_implies_elem_or_eq}.
+    Hence $n\in l$ by \auto{suc_iff}.
+    Hence $s(n)\in s(l)$
+        by \obv{strict_ordinal_iteration_increasing}.
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{diagonal_clubs_have_common_limit_above}
+    Let $\alpha$ be a limit ordinal.
+    Suppose $\naturals\in\cofinality{\alpha}$.
+    Suppose for every $\rho\in\alpha$ we have
+        $\ordinalUnbounded{
+            \indexedIntersection{\suc{\rho}}{F}{\alpha}}{\alpha}$.
+    Suppose for every $i\in\alpha$ we have
+        $\ordinalClosed{F(i)}{\alpha}$.
+    Let $\beta\in\alpha$.
+    Then there exists $x\in\diagonalIntersection{F}{\alpha}$ such that
+        $\beta\in x$ and $x$ is a limit ordinal.
+\end{theorem}
+\begin{proof}
+    $\alpha$ is an ordinal by \obv{limit_ordinal}.
+    Let $h=\diagonalClubAdvance{F}{\alpha}$.
+    $h\in\funs{\alpha}{\alpha}$
+        by \auto{diagonal_club_advance_type}.
+    Show that for every $\rho\in\alpha$ we have $\rho\in h(\rho)$.
+    \begin{subproof}
+        Fix $\rho\in\alpha$.
+        Follows by \auto{diagonal_club_advance_properties}.
+    \end{subproof}
+    Let $a=h(\beta)$.
+    $a\in\alpha$ by \auto{funs_type_apply}.
+    Let $s=\iterationSet{h}{a}$.
+    $s\in\funs{\naturals}{\alpha}$
+        by \auto{diagonal_club_iteration_properties}.
+    Hence $s$ is a function and $\dom{s}=\naturals$
+        by \obv{funs_is_function,funs}.
+    Let $x=\unions{\ran{s}}$.
+    $x\in\alpha$ and $x$ is a limit ordinal and $a\in x$
+        by \obv{strict_ordinal_iteration_limit}.
+    $\beta\in a$ by \obv{diagonal_club_advance_properties}.
+    $x$ is an ordinal by \obv{limit_ordinal}.
+    Hence $\beta\in x$ by \auto{ordinal_transitivity}.
+    Show that for every $i\in x$ we have $x\in F(i)$.
+    \begin{subproof}
+        Fix $i\in x$.
+        Hence $i\in\alpha$ by \auto{ordinal_transitivity}.
+        $\ordinalClosed{F(i)}{\alpha}$.
+        Show that $\ordinalUnbounded{F(i)\inter x}{x}$.
+        \begin{subproof}
+            $F(i)\inter x\subseteq x$ by \obv{subseteq,inter}.
+            Show that for every $\theta\in x$ there exists
+                $z\in F(i)\inter x$ such that $\theta\in z$.
+            \begin{subproof}
+                Fix $\theta\in x$.
+                Take $y_m\in\ran{s}$ such that $\theta\in y_m$
+                    by \auto{unions_iff}.
+                Take $m\in\dom{s}$ such that $s(m)=y_m$
+                    by \auto{fun_ran_iff}.
+                Hence $m$ is a natural number.
+                Take $y_n\in\ran{s}$ such that $i\in y_n$
+                    by \auto{unions_iff}.
+                Take $n\in\dom{s}$ such that $s(n)=y_n$
+                    by \auto{fun_ran_iff}.
+                Hence $n$ is a natural number.
+                Take a natural number $l$ such that
+                    $s(m)\in s(l)$ and $s(n)\in s(l)$
+                    by \obv{strict_ordinal_iteration_common_stage}.
+                $s(l)\in\alpha$ by \obv{funs_type_apply}.
+                Hence $s(l)$ is an ordinal
+                    by \obv{elem_of_ordinal_is_ordinal}.
+                $\theta\in s(m)$ and $i\in s(n)$.
+                Hence $\theta\in s(l)$ and $i\in s(l)$
+                    by \auto{ordinal_transitivity}.
+                Hence $i\in\suc{s(l)}$ by \auto{suc_iff}.
+                Let $z=s(\suc{l})$.
+                $z\in F(i)$
+                    by \auto{diagonal_club_iteration_properties}.
+                $s(l)\in z$
+                    by \auto{diagonal_club_iteration_properties}.
+                $z\in s(\suc{\suc{l}})$
+                    by \auto{diagonal_club_iteration_properties,omega_successor}.
+                $\suc{\suc{l}}$ is a natural number
+                    by \obv{omega_successor}.
+                Hence $\suc{\suc{l}}\in\dom{s}$ by \auto{funs}.
+                Hence $s(\suc{\suc{l}})\in\ran{s}$
+                    by \auto{fun_ran_iff}.
+                Hence $z\in x$ by \auto{unions_iff}.
+                Hence $z\in F(i)\inter x$ by \obv{inter_intro}.
+                $z\in\alpha$ by \auto{funs_type_apply,omega_successor}.
+                Hence $z$ is an ordinal
+                    by \obv{elem_of_ordinal_is_ordinal}.
+                Hence $\theta\in z$ by \auto{ordinal_transitivity}.
+                Follows by \auto.
+            \end{subproof}
+            Follows by \obv{ordinal_unbounded}.
+        \end{subproof}
+        Follows by \obv{ordinal_closed}.
+    \end{subproof}
+    Hence $x\in\diagonalIntersection{F}{\alpha}$
+        by \obv{diagonal_intersection}.
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{diagonal_club_intersection_from_prefixes}
+    Let $\alpha$ be a limit ordinal.
+    Suppose $\naturals\in\cofinality{\alpha}$.
+    Suppose for every $\rho\in\alpha$ we have
+        $\ordinalUnbounded{
+            \indexedIntersection{\suc{\rho}}{F}{\alpha}}{\alpha}$.
+    Suppose for every $i\in\alpha$ we have $\clubIn{F(i)}{\alpha}$.
+    Then $\clubIn{\diagonalIntersection{F}{\alpha}}{\alpha}$.
+\end{theorem}
+\begin{proof}
+    Let $D=\diagonalIntersection{F}{\alpha}$.
+    $D\subseteq\alpha$ by \auto{diagonal_intersection,subseteq}.
+    Show that $\ordinalUnbounded{D}{\alpha}$.
+    \begin{subproof}
+        Show that for every $\beta\in\alpha$ there exists $x\in D$
+            such that $\beta\in x$.
+        \begin{subproof}
+            Fix $\beta\in\alpha$.
+            For every $i\in\alpha$ we have
+                $\ordinalClosed{F(i)}{\alpha}$
+                by \auto{club_in_elim}.
+            Take $x\in D$ such that $\beta\in x$ and
+                $x$ is a limit ordinal
+                by \auto{diagonal_clubs_have_common_limit_above}.
+            Follows by \auto.
+        \end{subproof}
+        Follows by \obv{ordinal_unbounded}.
+    \end{subproof}
+    For every $i\in\alpha$ we have $\ordinalClosed{F(i)}{\alpha}$
+        by \auto{club_in_elim}.
+    $\ordinalClosed{\diagonalIntersection{F}{\alpha}}{\alpha}$
+        by \obv{diagonal_intersection_closed}.
+    Hence $\ordinalClosed{D}{\alpha}$.
+    Follows by \auto{club_in}.
+\end{proof}
+
+\begin{theorem}\label{diagonal_club_intersection_regular}
+    Let $\kappa$ be a regular cardinal.
+    Suppose $\naturals\in\kappa$.
+    Let $F\in\funs{\kappa}{\pow{\kappa}}$.
+    Suppose for every $i\in\kappa$ we have $\clubIn{F(i)}{\kappa}$.
+    Then $\clubIn{\diagonalIntersection{F}{\kappa}}{\kappa}$.
+\end{theorem}
+\begin{proof}
+    $\kappa$ is an infinite cardinal and
+        $\cofinality{\kappa}=\kappa$ by \obv{regular_cardinal}.
+    Hence $\kappa$ is a limit ordinal
+        by \obv{infinite_cardinal_is_limit_ordinal}.
+    Hence $\kappa$ is an ordinal by \obv{limit_ordinal}.
+    $\naturals\in\cofinality{\kappa}$.
+    $F$ is a function and $\dom{F}=\kappa$
+        by \obv{funs_is_function,funs}.
+    Show that for every $\rho\in\kappa$ we have
+        $\ordinalUnbounded{
+            \indexedIntersection{\suc{\rho}}{F}{\kappa}}{\kappa}$.
+    \begin{subproof}
+        Fix $\rho\in\kappa$.
+        Let $I=\suc{\rho}$.
+        $I\in\kappa$ by \auto{suc_elem_limitordinal}.
+        Hence $I\in\cofinality{\kappa}$.
+        $\rho\in I$ by \obv{suc_intro_self}.
+        Hence $I$ is inhabited by \auto.
+        $\rho$ is an ordinal by \obv{elem_of_ordinal_is_ordinal}.
+        Hence $I$ is an ordinal by \obv{suc_ordinal}.
+        $I\subseteq\kappa$ by \obv{ordinal_elem_implies_subseteq}.
+        Hence $I\subseteq\dom{F}$.
+        For every $i\in I$ we have $\clubIn{F(i)}{\kappa}$
+            by \obv{subseteq}.
+        $\clubIn{\indexedIntersection{I}{F}{\kappa}}{\kappa}$
+            by \obv{indexed_club_intersection}.
+        Hence $\ordinalUnbounded{
+            \indexedIntersection{I}{F}{\kappa}}{\kappa}$
+            by \obv{club_in_elim}.
+    \end{subproof}
+    Follows by \obv{diagonal_club_intersection_from_prefixes}.
+\end{proof}
+
+\begin{proposition}\label{regressive_on_elim}
+    Suppose $f$ is regressive on $S$.
+    Then $f$ is a function and $\dom{f}=S$ and
+        for every $\gamma\in S\setminus\{\emptyset\}$ we have
+            $f(\gamma)\in\gamma$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{regressive_on}.
+\end{proof}
+
+\begin{proposition}\label{fodor_avoiding_clubs_inhabited}
+    Suppose $\nonstationaryIn{\fibre{f}{\eta}}{\kappa}$.
+    Then $\fodorAvoidingClubs{f}{\eta}{\kappa}$ is inhabited.
+\end{proposition}
+\begin{proof}
+    Take $C$ such that $\clubIn{C}{\kappa}$ and
+        $\fibre{f}{\eta}\notmeets C$ by \obv{nonstationary_in}.
+    $C\subseteq\kappa$ by \auto{club_in_elim}.
+    Hence $C\in\pow{\kappa}$ by \obv{powerset_intro}.
+    Hence $C\in\fodorAvoidingClubs{f}{\eta}{\kappa}$
+        by \obv{fodor_avoiding_clubs}.
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{fodor_club_family_type}
+    Suppose for every $\eta\in\kappa$ we have
+        $\nonstationaryIn{\fibre{f}{\eta}}{\kappa}$.
+    Let $D=\fodorClubFamily{f}{\kappa}$.
+    Then $D\in\funs{\kappa}{\pow{\kappa}}$ and
+        for every $\eta\in\kappa$ we have
+            $\clubIn{D(\eta)}{\kappa}$ and
+            $\fibre{f}{\eta}\notmeets D(\eta)$.
+\end{theorem}
+\begin{proof}
+    $D$ is a relation by \auto{relation,fodor_club_family}.
+    $D$ is right-unique
+        by \auto{rightunique,fodor_club_family,pair_eq_iff}.
+    $\dom{D}=\kappa$
+        by \auto{setext,dom_iff,fodor_club_family,pair_eq_iff}.
+    Show that for every $\eta\in\kappa$ we have
+        $D(\eta)\in\pow{\kappa}$ and
+        $\clubIn{D(\eta)}{\kappa}$ and
+        $\fibre{f}{\eta}\notmeets D(\eta)$.
+    \begin{subproof}
+        Fix $\eta\in\kappa$.
+        $\fodorAvoidingClubs{f}{\eta}{\kappa}$ is inhabited
+            by \obv{fodor_avoiding_clubs_inhabited}.
+        Let $C=\choice{\fodorAvoidingClubs{f}{\eta}{\kappa}}$.
+        $C\in\fodorAvoidingClubs{f}{\eta}{\kappa}$
+            by \auto{choice_in}.
+        Hence $C\in\pow{\kappa}$ and $\clubIn{C}{\kappa}$ and
+            $\fibre{f}{\eta}\notmeets C$
+            by \obv{fodor_avoiding_clubs}.
+        $(\eta,C)\in D$ by \auto{fodor_club_family}.
+        Hence $D(\eta)=C$ by \obv{function_apply_intro}.
+    \end{subproof}
+    Hence $D$ is a function to $\pow{\kappa}$ by \auto.
+    Hence $D\in\funs{\kappa}{\pow{\kappa}}$
+        by \obv{funs_intro}.
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{fodor}
+    Let $\kappa$ be a regular cardinal.
+    Suppose $\naturals\in\kappa$.
+    Suppose $S$ is stationary in $\kappa$.
+    Let $f\in\funs{S}{\kappa}$.
+    Suppose $f$ is regressive on $S$.
+    Then there exists $\eta\in\kappa$ such that
+        $\fibre{f}{\eta}$ is stationary in $\kappa$.
+\end{theorem}
+\begin{proof}
+    $\kappa$ is an infinite cardinal and
+        $\cofinality{\kappa}=\kappa$ by \obv{regular_cardinal}.
+    Hence $\kappa$ is a limit ordinal
+        by \obv{infinite_cardinal_is_limit_ordinal}.
+    Hence $\kappa$ is an ordinal by \obv{limit_ordinal}.
+    $\naturals\in\cofinality{\kappa}$.
+    $S\subseteq\kappa$ by \obv{stationary_in_elim}.
+    $f$ is a function and $\dom{f}=S$
+        by \obv{funs_is_function,funs}.
+    Suppose not.
+    Show that for every $\eta\in\kappa$ we have
+        $\nonstationaryIn{\fibre{f}{\eta}}{\kappa}$.
+    \begin{subproof}
+        Fix $\eta\in\kappa$.
+        $\fibre{f}{\eta}\subseteq\dom{f}$
+            by \obv{subseteq,function_fibre_iff}.
+        Hence $\fibre{f}{\eta}\subseteq S$.
+        Hence $\fibre{f}{\eta}\subseteq\kappa$
+            by \obv{subseteq_transitive}.
+        $\fibre{f}{\eta}$ is not stationary in $\kappa$ by \auto.
+        Follows by \obv{nonstationary_iff_not_stationary}.
+    \end{subproof}
+    Let $D=\fodorClubFamily{f}{\kappa}$.
+    $D\in\funs{\kappa}{\pow{\kappa}}$ and
+        for every $\eta\in\kappa$ we have
+            $\clubIn{D(\eta)}{\kappa}$ and
+            $\fibre{f}{\eta}\notmeets D(\eta)$
+        by \obv{fodor_club_family_type}.
+    Let $E=\diagonalIntersection{D}{\kappa}$.
+    $\clubIn{E}{\kappa}$
+        by \auto{diagonal_club_intersection_regular}.
+    Let $L=\limitOrdinalsBelow{\kappa}$.
+    $\clubIn{L}{\kappa}$ by \auto{limit_ordinals_below_is_club}.
+    $\clubIn{E\inter L}{\kappa}$
+        by \obv{two_club_intersection}.
+    Hence $S\meets(E\inter L)$ by \obv{stationary_in}.
+    Take $\gamma$ such that $\gamma\in S$ and
+        $\gamma\in E\inter L$ by \auto{disjoint}.
+    Hence $\gamma\in E$ and $\gamma\in L$
+        by \obv{inter_elim_left,inter_elim_right}.
+    Hence $\gamma\in\kappa$ and $\gamma$ is a limit ordinal
+        by \auto{limit_ordinals_below}.
+    Hence $\emptyset\in\gamma$ by \obv{limit_ordinal}.
+    Hence $\gamma\neq\emptyset$ by \auto{emptyset}.
+    Hence $\gamma\notin\{\emptyset\}$ by \auto{singleton_iff}.
+    Hence $\gamma\in S\setminus\{\emptyset\}$
+        by \obv{setminus_intro}.
+    Hence $f(\gamma)\in\gamma$ by \obv{regressive_on_elim}.
+    Let $\eta=f(\gamma)$.
+    Hence $\eta\in\kappa$ by \auto{ordinal_transitivity}.
+    $\gamma\in D(\eta)$ by \auto{diagonal_intersection}.
+    $\gamma\in\fibre{f}{\eta}$
+        by \auto{function_fibre_iff}.
+    $\fibre{f}{\eta}\notmeets D(\eta)$
+        by \auto{fodor_club_family_type}.
+    Contradiction by \auto{disjoint}.
+\end{proof}
+
+\begin{proposition}\label{fodor_values_inhabited}
+    Let $\kappa$ be a regular cardinal.
+    Suppose $\naturals\in\kappa$.
+    Suppose $S$ is stationary in $\kappa$.
+    Let $f\in\funs{S}{\kappa}$.
+    Suppose $f$ is regressive on $S$.
+    Then $\fodorValues{f}{\kappa}$ is inhabited.
+\end{proposition}
+\begin{proof}
+    Take $\eta\in\kappa$ such that
+        $\fibre{f}{\eta}$ is stationary in $\kappa$ by \obv{fodor}.
+    Hence $\eta\in\fodorValues{f}{\kappa}$ by \obv{fodor_values}.
+    Follows by \auto.
+\end{proof}
+
+\begin{proposition}\label{fodor_values_are_ordinals}
+    Let $\kappa$ be an ordinal.
+    For every $\eta\in\fodorValues{f}{\kappa}$ we have
+        $\eta$ is an ordinal.
+\end{proposition}
+\begin{proof}
+    Fix $\eta\in\fodorValues{f}{\kappa}$.
+    Hence $\eta\in\kappa$ by \obv{fodor_values}.
+    Follows by \obv{elem_of_ordinal_is_ordinal}.
+\end{proof}
+
+\begin{proposition}\label{fodor_value_mem}
+    Let $\kappa$ be a regular cardinal.
+    Suppose $\naturals\in\kappa$.
+    Suppose $S$ is stationary in $\kappa$.
+    Let $f\in\funs{S}{\kappa}$.
+    Suppose $f$ is regressive on $S$.
+    Then $\fodorValue{f}{\kappa}\in\fodorValues{f}{\kappa}$.
+\end{proposition}
+\begin{proof}
+    $\kappa$ is a limit ordinal by \obv{stationary_in_elim}.
+    Hence $\kappa$ is an ordinal by \obv{limit_ordinal}.
+    $\fodorValues{f}{\kappa}$ is inhabited
+        by \obv{fodor_values_inhabited}.
+    Every element of $\fodorValues{f}{\kappa}$ is an ordinal
+        by \obv{fodor_values_are_ordinals}.
+    Follows by \auto{fodor_value,inters_of_ordinals_elem}.
+\end{proof}
+
+\begin{proposition}\label{fodor_value_lt}
+    Let $\kappa$ be a regular cardinal.
+    Suppose $\naturals\in\kappa$.
+    Suppose $S$ is stationary in $\kappa$.
+    Let $f\in\funs{S}{\kappa}$.
+    Suppose $f$ is regressive on $S$.
+    Then $\fodorValue{f}{\kappa}\in\kappa$.
+\end{proposition}
+\begin{proof}
+    $\fodorValue{f}{\kappa}\in\fodorValues{f}{\kappa}$
+        by \obv{fodor_value_mem}.
+    Follows by \obv{fodor_values}.
+\end{proof}
+
+\begin{proposition}\label{fodor_fibre_eq}
+    $\fodorFibre{f}{\kappa}
+        =\fibre{f}{\fodorValue{f}{\kappa}}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{fodor_fibre}.
+\end{proof}
+
+\begin{proposition}\label{fodor_fibre_stationary}
+    Let $\kappa$ be a regular cardinal.
+    Suppose $\naturals\in\kappa$.
+    Suppose $S$ is stationary in $\kappa$.
+    Let $f\in\funs{S}{\kappa}$.
+    Suppose $f$ is regressive on $S$.
+    Then $\fodorFibre{f}{\kappa}$ is stationary in $\kappa$.
+\end{proposition}
+\begin{proof}
+    $\fodorValue{f}{\kappa}\in\fodorValues{f}{\kappa}$
+        by \obv{fodor_value_mem}.
+    Follows by \auto{fodor_values,fodor_fibre_eq}.
+\end{proof}
+
+\begin{proposition}\label{fodor_fibre_subset_domain}
+    Suppose $f$ is a function.
+    Then $\fodorFibre{f}{\kappa}\subseteq\dom{f}$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{fodor_fibre_eq,subseteq,function_fibre_iff}.
+\end{proof}
+
+\begin{proposition}\label{fodor_fibre_constant}
+    Suppose $f$ is a function.
+    For every $\beta\in\fodorFibre{f}{\kappa}$ we have
+        $f(\beta)=\fodorValue{f}{\kappa}$.
+\end{proposition}
+\begin{proof}
+    Fix $\beta\in\fodorFibre{f}{\kappa}$.
+    Follows by \auto{fodor_fibre_eq,function_fibre_iff}.
+\end{proof}
+
+\begin{theorem}\label{fodor_value_and_fibre_properties}
+    Let $\kappa$ be a regular cardinal.
+    Suppose $\naturals\in\kappa$.
+    Suppose $S$ is stationary in $\kappa$.
+    Let $f\in\funs{S}{\kappa}$.
+    Suppose $f$ is regressive on $S$.
+    Then $\fodorValue{f}{\kappa}\in\kappa$ and
+        $\fodorFibre{f}{\kappa}$ is stationary in $\kappa$ and
+        $\fodorFibre{f}{\kappa}\subseteq S$ and
+        for every $\beta\in\fodorFibre{f}{\kappa}$ we have
+            $f(\beta)=\fodorValue{f}{\kappa}$.
+\end{theorem}
+\begin{proof}
+    $f$ is a function and $\dom{f}=S$
+        by \obv{funs_is_function,funs}.
+    $\fodorValue{f}{\kappa}\in\kappa$ by \obv{fodor_value_lt}.
+    $\fodorFibre{f}{\kappa}$ is stationary in $\kappa$
+        by \obv{fodor_fibre_stationary}.
+    $\fodorFibre{f}{\kappa}\subseteq\dom{f}$
+        by \obv{fodor_fibre_subset_domain}.
+    Hence $\fodorFibre{f}{\kappa}\subseteq S$.
+    For every $\beta\in\fodorFibre{f}{\kappa}$ we have
+        $f(\beta)=\fodorValue{f}{\kappa}$
+        by \obv{fodor_fibre_constant}.
+\end{proof}

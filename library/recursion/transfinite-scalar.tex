@@ -1,0 +1,136 @@
+\import{recursion/transfinite-unbounded.tex}
+
+\section{Scalar transfinite recursion}
+
+The segment recursor returns a set-coded graph on a chosen ordinal.  The
+following logical operation exposes one value at a time by recursing on the
+successor of its index.  Segment compatibility makes these separately
+constructed values coherent.  In a first-order ZF-style foundation this
+interface is read schematically for each definable step, not as one
+first-order object quantifying over all higher-type operations.
+
+\begin{definition}\label{unbounded_transfinite_recursion_value_op}
+    $\unboundedTransfiniteRecursionValueOp:
+        (\Set\to\Set\to\Set)\to\Set\to\Set
+        =\fun{H:\Set\to\Set\to\Set}{
+            \fun{\alpha:\Set}{
+                \apply{
+                    \Apply{\unboundedOrdinalRecursionOp}
+                        {\suc{\alpha},H}}
+                    {\alpha}}}$.
+\end{definition}
+
+\begin{theorem}\label{unbounded_transfinite_recursion_value_on_segment}
+    Let $\theta$ be an ordinal.
+    Then $\forall H:\Set\to\Set\to\Set.\ \forall\beta:\Set.
+        \beta\in\theta\implies
+        \Apply{\unboundedTransfiniteRecursionValueOp}
+            {H,\beta}
+        =\apply{
+            \Apply{\unboundedOrdinalRecursionOp}{\theta,H}}
+            {\beta}$.
+\end{theorem}
+\begin{proof}
+    Fix $H$.
+    Fix $\beta\in\theta$.
+    $\beta$ is an ordinal by \obv{elem_of_ordinal_is_ordinal}.
+    Hence $\suc{\beta}$ is an ordinal by \obv{suc_ordinal}.
+    $\suc{\beta}\subseteq\theta$ by
+        \obv{ordinal_suc_subseteq}.
+    Hence $\Apply{\unboundedOrdinalRecursionOp}{\suc{\beta},H}
+        =\restrl{
+            \Apply{\unboundedOrdinalRecursionOp}{\theta,H}}
+            {\suc{\beta}}$ by
+        \obv{unbounded_ordinal_recursion_segment}.
+    Let $F=\Apply{\unboundedOrdinalRecursionOp}{\theta,H}$.
+    $\Apply{\recursiveSetFunctionOp}{F}$ by
+        \obv{unbounded_ordinal_recursion_function}.
+    Hence $\recursiveSetFunction{F}$ by
+        \obv{recursive_set_function_op}.
+    $\dom{F}=\theta$ by \auto{unbounded_ordinal_recursion_domain}.
+    $\suc{\beta}\subseteq\dom{F}$.
+    $\beta\in\suc{\beta}$ by \obv{suc_intro_self}.
+    Hence $\apply{\restrl{F}{\suc{\beta}}}{\beta}=F(\beta)$ by
+        \obv{restrl_of_function_apply}.
+    Follows by \auto{unbounded_transfinite_recursion_value_op}.
+\end{proof}
+
+\begin{theorem}\label{unbounded_transfinite_recursion_graph}
+    Let $\alpha$ be an ordinal.
+    Then $\forall H:\Set\to\Set\to\Set.
+        \Apply{\graphOnDomainOp}
+            {\alpha,\Apply{\unboundedTransfiniteRecursionValueOp}{H}}
+        =\Apply{\unboundedOrdinalRecursionOp}{\alpha,H}$.
+\end{theorem}
+\begin{proof}
+    Fix $H$.
+    Let $g=\Apply{\graphOnDomainOp}
+        {\alpha,\Apply{\unboundedTransfiniteRecursionValueOp}{H}}$.
+    Let $f=\Apply{\unboundedOrdinalRecursionOp}{\alpha,H}$.
+    $g$ is a function by
+        \auto{logical_graph_on_domain_function,funs_is_function}.
+    $\dom{g}=\alpha$ by \auto{logical_graph_on_domain_dom}.
+    $\Apply{\recursiveSetFunctionOp}{f}$ by
+        \obv{unbounded_ordinal_recursion_function}.
+    Hence $\recursiveSetFunction{f}$ by
+        \obv{recursive_set_function_op}.
+    $\dom{f}=\alpha$ by \auto{unbounded_ordinal_recursion_domain}.
+    Show that for every $x\in\alpha$ we have $g(x)=f(x)$.
+    \begin{subproof}
+        Fix $x\in\alpha$.
+        $g(x)=\Apply{\unboundedTransfiniteRecursionValueOp}{H,x}$ by
+            \auto{logical_graph_on_domain_apply}.
+        $\Apply{\unboundedTransfiniteRecursionValueOp}{H,x}
+            =f(x)$ by
+            \auto{unbounded_transfinite_recursion_value_on_segment}.
+    \end{subproof}
+    $\dom{g}=\dom{f}$.
+    Hence $\dom{g}\subseteq\dom{f}$ and
+        $\dom{f}\subseteq\dom{g}$ by \obv{subseteq}.
+    $g\subseteq f$ by \obv{fun_subseteq}.
+    Show that $f\subseteq g$.
+    \begin{subproof}
+        Show that for every $x\in\dom{f}$ we have $f(x)=g(x)$.
+        \begin{subproof}
+            Fix $x\in\dom{f}$.
+            Hence $x\in\alpha$.
+            $g(x)=f(x)$.
+        \end{subproof}
+        Follows by \obv{fun_subseteq}.
+    \end{subproof}
+    Follows by \obv{subseteq_antisymmetric}.
+\end{proof}
+
+\begin{theorem}\label{unbounded_transfinite_recursion_value_equation}
+    Let $\alpha$ be an ordinal.
+    Then $\forall H:\Set\to\Set\to\Set.
+        \Apply{\unboundedTransfiniteRecursionValueOp}{H,\alpha}
+        =\Apply{H}{\alpha,
+            \Apply{\graphOnDomainOp}
+                {\alpha,\Apply{\unboundedTransfiniteRecursionValueOp}{H}}}$.
+\end{theorem}
+\begin{proof}
+    Fix $H$.
+    $\suc{\alpha}$ is an ordinal by \obv{suc_ordinal}.
+    $\alpha\in\suc{\alpha}$ by \obv{suc_intro_self}.
+    Hence $\apply{
+        \Apply{\unboundedOrdinalRecursionOp}{\suc{\alpha},H}}
+        {\alpha}
+        =\Apply{H}{\alpha,
+            \restrl{
+                \Apply{\unboundedOrdinalRecursionOp}
+                    {\suc{\alpha},H}}
+                {\alpha}}$ by
+        \obv{unbounded_ordinal_recursion_equation}.
+    $\alpha\subseteq\suc{\alpha}$ by \obv{subseteq_self_suc_intro}.
+    Hence $\Apply{\unboundedOrdinalRecursionOp}{\alpha,H}
+        =\restrl{
+            \Apply{\unboundedOrdinalRecursionOp}{\suc{\alpha},H}}
+            {\alpha}$ by
+        \obv{unbounded_ordinal_recursion_segment}.
+    $\Apply{\graphOnDomainOp}
+        {\alpha,\Apply{\unboundedTransfiniteRecursionValueOp}{H}}
+        =\Apply{\unboundedOrdinalRecursionOp}{\alpha,H}$ by
+        \obv{unbounded_transfinite_recursion_graph}.
+    Follows by \obv{unbounded_transfinite_recursion_value_op}.
+\end{proof}

@@ -1,0 +1,263 @@
+\import{topology/topological-ring-power-bounded.tex}
+\import{topology/topological-ring-uniformity.tex}
+\import{topology/sequence-convergence.tex}
+
+\section{Topologically nilpotent elements}
+
+The power sequence is kept inline.  This avoids introducing a second public
+power operation beside the existing ring power.
+
+\begin{proposition}\label{topological_ring_power_sequence_type}
+    Let $R$ be a topological ring and $x\in\carrier[R]$.
+    Then
+        $\Apply{\graphOnOp}{
+            \naturals,\carrier[R],
+            \fun{n:\Set}{\ringPower{R}{x}{n}}}
+        \in\funs{\naturals}{\carrier[R]}$.
+\end{proposition}
+\begin{proof}
+    $R$ is a ring by \obv{topological_ring_is_ring}.
+    For every $n\in\naturals$ we have
+        $\ringPower{R}{x}{n}\in\carrier[R]$ by \obv{ring_power_type}.
+    Follows by \obv{logical_graph_on_function}.
+\end{proof}
+
+\begin{proposition}\label{topological_ring_power_sequence_apply}
+    Let $R$ be a topological ring and $x\in\carrier[R]$.
+    Let $n$ be a natural number.
+    Then
+        $(\Apply{\graphOnOp}{
+            \naturals,\carrier[R],
+            \fun{k:\Set}{\ringPower{R}{x}{k}}})(n)
+        =\ringPower{R}{x}{n}$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{logical_graph_on_apply}.
+\end{proof}
+
+\begin{definition}\label{topologically_nilpotent_element}
+    $x$ is topologically nilpotent in $R$ iff
+        $R$ is a topological ring and $x\in\carrier[R]$ and
+        $\topologicalSequenceConverges{R}{
+            \Apply{\graphOnOp}{
+                \naturals,\carrier[R],
+                \fun{n:\Set}{\ringPower{R}{x}{n}}}}{
+            \ringZero[R]}$.
+\end{definition}
+
+\begin{proposition}\label{topologically_nilpotent_element_iff}
+    Let $R$ be a topological ring and $x\in\carrier[R]$.
+    Then $x$ is topologically nilpotent in $R$ iff
+        $\topologicalSequenceConverges{R}{
+            \Apply{\graphOnOp}{
+                \naturals,\carrier[R],
+                \fun{n:\Set}{\ringPower{R}{x}{n}}}}{
+            \ringZero[R]}$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{topologically_nilpotent_element}.
+\end{proof}
+
+\begin{proposition}\label{topologically_nilpotent_element_ambient}
+    Suppose $x$ is topologically nilpotent in $R$.
+    Then $R$ is a topological ring and $x\in\carrier[R]$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{topologically_nilpotent_element}.
+\end{proof}
+
+\begin{theorem}\label{topologically_nilpotent_iff_additive_uniform_convergence}
+    Let $R$ be a topological ring and $x\in\carrier[R]$.
+    Then $x$ is topologically nilpotent in $R$ iff
+        $\uniformSequenceConverges{\AdditiveUniformSpace{R}}{
+            \Apply{\graphOnOp}{
+                \naturals,\carrier[R],
+                \fun{n:\Set}{\ringPower{R}{x}{n}}}}{
+            \ringZero[R]}$.
+\end{theorem}
+\begin{proof}
+    Let $U=\AdditiveUniformSpace{R}$.
+    Let $s=\Apply{\graphOnOp}{
+        \naturals,\carrier[R],
+        \fun{n:\Set}{\ringPower{R}{x}{n}}}$.
+    $U$ is a uniform space by
+        \obv{additive_uniform_space_is_uniform_space}.
+    Hence $\uniformTopology{U}$ is a topological space by
+        \obv{uniform_topology_is_topological_space}.
+    $\carrier[U]=\carrier[R]$ and
+        $\carrier[\uniformTopology{U}]=\carrier[R]$ by
+        \auto{additive_uniform_space_carrier,
+            additive_uniform_topology_carrier}.
+    $\opens[\uniformTopology{U}]=\opens[R]$ by
+        \auto{additive_uniform_topology_opens}.
+    $s\in\funs{\naturals}{\carrier[R]}$ by
+        \auto{topological_ring_power_sequence_type}.
+    $\ringZero[R]\in\carrier[R]$ by
+        \obv{topological_ring_is_ring,ring_zero_type}.
+    Hence $s\in\funs{\naturals}{\carrier[U]}$ and
+        $\ringZero[R]\in\carrier[U]$.
+    $\topologicalSequenceConverges{R}{s}{\ringZero[R]}$ iff
+        $\topologicalSequenceConverges{\uniformTopology{U}}{s}{
+            \ringZero[R]}$ by
+        \obv{topological_sequence_convergence_invariant}.
+    $\uniformSequenceConverges{U}{s}{\ringZero[R]}$ iff
+        $\topologicalSequenceConverges{\uniformTopology{U}}{s}{
+            \ringZero[R]}$ by
+        \obv{uniform_sequence_convergence_iff_topological}.
+    Follows by \auto{topologically_nilpotent_element}.
+\end{proof}
+
+\begin{theorem}\label{topologically_nilpotent_iff_eventually_in_neighbourhoods}
+    Let $R$ be a topological ring and $x\in\carrier[R]$.
+    Then $x$ is topologically nilpotent in $R$ iff
+        for every $U\in\neighbourhoods{\ringZero[R]}{R}$ there exists
+            $N\in\naturals$ such that for every $n\in\naturals$ such that
+            $N\subseteq n$ we have $\ringPower{R}{x}{n}\in U$.
+\end{theorem}
+\begin{proof}
+    Let $s=\Apply{\graphOnOp}{
+        \naturals,\carrier[R],
+        \fun{n:\Set}{\ringPower{R}{x}{n}}}$.
+    $R$ is a topological space by
+        \obv{topological_ring_is_topological_space}.
+    $s\in\funs{\naturals}{\carrier[R]}$ by
+        \auto{topological_ring_power_sequence_type}.
+    $\ringZero[R]\in\carrier[R]$ by
+        \obv{topological_ring_is_ring,ring_zero_type}.
+    For every $n\in\naturals$ we have
+        $s(n)=\ringPower{R}{x}{n}$ by
+        \auto{topological_ring_power_sequence_apply}.
+    Follows by
+        \auto{topologically_nilpotent_element,
+            topological_sequence_converges_iff_eventually_in_neighbourhoods}.
+\end{proof}
+
+\begin{theorem}\label{topologically_nilpotent_is_power_bounded}
+    Let $R$ be a commutative topological ring.
+    Suppose $x$ is topologically nilpotent in $R$.
+    Then $x$ is power bounded in $R$.
+\end{theorem}
+\begin{proof}
+    $R$ is a topological ring and $x\in\carrier[R]$ by
+        \obv{topologically_nilpotent_element_ambient}.
+    $R$ is a commutative ring by
+        \obv{commutative_topological_ring_is_commutative_ring}.
+    Hence $R$ is a ring by \obv{commutative_ring_is_ring}.
+    Let $M=\MultiplicativeMonoid{R}$.
+    Let $s=\Apply{\graphOnOp}{
+        \naturals,\carrier[R],
+        \fun{n:\Set}{\ringPower{R}{x}{n}}}$.
+    Let $B=\pointwiseSubsetPowers{M}{\{x\}}$.
+    $M$ is a monoid by \obv{multiplicative_monoid_is_exact_monoid}.
+    $\carrier[M]=\carrier[R]$ and $\mul[M]=\ringMul[R]$ by
+        \auto{multiplicative_monoid_fields}.
+    Hence $x\in\carrier[M]$.
+    $s\in\funs{\naturals}{\carrier[R]}$ by
+        \auto{topological_ring_power_sequence_type}.
+    Hence $s$ is a function and $\dom{s}=\naturals$ by
+        \auto{funs_elim}.
+    For every $n\in\naturals$ we have
+        $s(n)=\ringPower{R}{x}{n}$ by
+        \auto{topological_ring_power_sequence_apply}.
+    $\{x\}\subseteq\carrier[M]$ by \auto{subseteq,singleton_iff}.
+    Hence $B\subseteq\carrier[M]$ by
+        \auto{pointwise_subset_powers_type}.
+    Hence $B\subseteq\carrier[R]$.
+    Show that for every $U\in\neighbourhoods{\ringZero[R]}{R}$ there
+        exists $Q\in\neighbourhoods{\ringZero[R]}{R}$ such that
+        $\pointwiseProduct{M}{Q}{B}\subseteq U$.
+    \begin{subproof}
+        Fix $U\in\neighbourhoods{\ringZero[R]}{R}$.
+        Take $V,O\in\neighbourhoods{\ringZero[R]}{R}$ such that
+            $\pointwiseProduct{\MultiplicativeMonoid{R}}{V}{O}
+                \subseteq U$ by
+            \obv{topological_ring_zero_neighbourhood_product}.
+        Hence $\pointwiseProduct{M}{V}{O}\subseteq U$.
+        Take $N\in\naturals$ such that for every $n\in\naturals$ such
+            that $N\subseteq n$ we have $\ringPower{R}{x}{n}\in O$ by
+            \auto{topologically_nilpotent_iff_eventually_in_neighbourhoods}.
+        Let $F=\img{s}{N}$.
+        $N$ is finite by \obv{natural_number_is_finite}.
+        $N\subseteq\naturals$ by
+            \auto{naturals_is_transitive_set,transitiveset_iff_subseteq}.
+        Hence $N\subseteq\dom{s}$.
+        Hence $\img{s}{N}$ is finite by \obv{finite_function_image}.
+        Hence $F$ is finite.
+        Show that every element of $F$ is an element of $\carrier[R]$.
+        \begin{subproof}
+            Fix $a\in F$.
+            Hence $a\in\img{s}{N}$.
+            Take $n\in N$ such that $(n,a)\in s$ by \obv{img_iff}.
+            $n\in\dom{s}$ by \obv{subseteq}.
+            Hence $a=s(n)$ by \auto{function_apply_iff}.
+            $n\in\naturals$ by
+                \obv{naturals_is_transitive_set,
+                    transitiveset_iff_subseteq,subseteq}.
+            Hence $s(n)\in\carrier[R]$ by \obv{funs_type_apply}.
+        \end{subproof}
+        Hence $F\subseteq\carrier[R]$ by \obv{subseteq}.
+        Hence $F$ is left bounded in $R$ by
+            \obv{finite_subset_left_bounded}.
+        Take $W\in\neighbourhoods{\ringZero[R]}{R}$ such that
+            $\pointwiseProduct{\MultiplicativeMonoid{R}}{W}{F}
+                \subseteq U$ by
+            \obv{left_bounded_in_neighbourhood}.
+        Hence $\pointwiseProduct{M}{W}{F}\subseteq U$.
+        Let $Q=V\inter W$.
+        $V,W\subseteq\carrier[R]$ by
+            \auto{topological_ring_zero_neighbourhoods_is_filter,filter}.
+        Hence $Q\in\neighbourhoods{\ringZero[R]}{R}$ by
+            \auto{topological_ring_zero_neighbourhoods_is_filter,
+                filter_inter_in_iff}.
+        $V\inter W\subseteq V$ and $V\inter W\subseteq W$ by
+            \obv{inter,subseteq}.
+        Hence $Q\subseteq V$ and $Q\subseteq W$.
+        Show that every element of $\pointwiseProduct{M}{Q}{B}$ is an
+            element of $U$.
+        \begin{subproof}
+            Fix $z\in\pointwiseProduct{M}{Q}{B}$.
+            Take $q,b$ such that $q\in Q$ and $b\in B$ and
+                $z=\mul[M](q,b)$ by \obv{pointwise_product_iff}.
+            Hence $q\in V$ and $q\in W$ by \obv{subseteq}.
+            Take a natural number $n$ such that
+                $b\in\pointwiseSubsetPower{M}{\{x\}}{n}$ by
+                \obv{pointwise_subset_powers_iff}.
+            $\pointwiseSubsetPower{M}{\{x\}}{n}
+                =\{\monoidPower{M}{x}{n}\}$ by
+                \obv{pointwise_subset_power_singleton}.
+            Hence $b=\monoidPower{M}{x}{n}$ by \auto{singleton_iff}.
+            $\ringPower{R}{x}{n}=\monoidPower{M}{x}{n}$ by
+                \obv{ring_power}.
+            Hence $b=\ringPower{R}{x}{n}$.
+            $s(n)=\ringPower{R}{x}{n}$.
+            Hence $b=s(n)$.
+            \begin{byCase}
+                \caseOf{$N\subseteq n$.}
+                    $\ringPower{R}{x}{n}\in O$.
+                    Hence $b\in O$.
+                    $\mul[M](q,b)\in\pointwiseProduct{M}{V}{O}$ by
+                        \auto{pointwise_product_iff}.
+                    Hence $\mul[M](q,b)\in U$ by \obv{subseteq}.
+                \caseOf{$\lnot(N\subseteq n)$.}
+                    $N$ and $n$ are ordinals by
+                        \obv{natural_number_is_ordinal}.
+                    $N\in n$ or $n\in N$ or $N=n$ by
+                        \obv{ordinal_in_trichotomy}.
+                    Hence $n\in N$ by
+                        \obv{ordinal_elem_implies_subseteq,subseteq_refl}.
+                    Hence $s(n)\in\img{s}{N}$ by
+                        \auto{img_iff,function_apply_iff}.
+                    Hence $b\in F$.
+                    $\mul[M](q,b)\in\pointwiseProduct{M}{W}{F}$ by
+                        \auto{pointwise_product_iff}.
+                    Hence $\mul[M](q,b)\in U$ by \obv{subseteq}.
+            \end{byCase}
+        \end{subproof}
+        Hence $\pointwiseProduct{M}{Q}{B}\subseteq U$ by \obv{subseteq}.
+    \end{subproof}
+    Hence $B$ is left bounded in $R$ by \auto{left_bounded_in}.
+    Hence $\Bounded{R}{B}$ by
+        \obv{bounded_in_commutative_topological_ring}.
+    $\PowerBounded{R}{\{x\}}$ by \obv{power_bounded_set}.
+    Follows by \obv{power_bounded_element}.
+\end{proof}

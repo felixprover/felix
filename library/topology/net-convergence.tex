@@ -1,0 +1,154 @@
+\section{Topological convergence of nets}
+
+\import{topology/filter-convergence.tex}
+\import{topology/sequence-convergence.tex}
+\import{order/order-filter.tex}
+
+A net converges when it tends from the final-segment filter of its directed
+index.  This definition keeps the index order explicit, so the same graph can
+be considered with different notions of eventuality.
+
+\begin{definition}\label{topological_net_convergence}
+    $s$ converges topologically to $x$ in $X$ along $I$ iff
+        $I$ is a directed quasiordered set and
+        $X$ is a topological space and
+        $s\in\funs{\carrier[I]}{\carrier[X]}$ and
+        $x\in\carrier[X]$ and
+        $s$ tends from $\atTop{I}$ on $\carrier[I]$ to
+            $\neighbourhoods{x}{X}$ on $\carrier[X]$.
+\end{definition}
+
+\begin{theorem}\label{topological_net_convergence_iff_filter_convergence}
+    Let $I$ be a directed quasiordered set and $X$ be a topological space.
+    Let $s\in\funs{\carrier[I]}{\carrier[X]}$ and
+        $x\in\carrier[X]$.
+    Then $s$ converges topologically to $x$ in $X$ along $I$ iff
+        $\filterConverges{\netFilter{I}{\carrier[X]}{s}}{x}{X}$.
+\end{theorem}
+\begin{proof}
+    $\atTop{I}$ is a filter on $\carrier[I]$ by
+        \obv{at_top_is_filter}.
+    $\neighbourhoods{x}{X}$ is a filter on $\carrier[X]$ by
+        \obv{neighbourhoods_is_filter}.
+    $\filterPushforward{\carrier[I]}{\carrier[X]}{s}{\atTop{I}}$ is a
+        filter on $\carrier[X]$ by
+        \obv{filter_pushforward_is_filter}.
+    $\netFilter{I}{\carrier[X]}{s}
+        =\filterPushforward{\carrier[I]}{\carrier[X]}{s}{\atTop{I}}$ by
+        \obv{net_filter}.
+    $s$ tends from $\atTop{I}$ on $\carrier[I]$ to
+        $\neighbourhoods{x}{X}$ on $\carrier[X]$ iff
+        $\neighbourhoods{x}{X}\subseteq
+            \filterPushforward{\carrier[I]}{\carrier[X]}{s}{\atTop{I}}$ by
+        \auto{filter_tendsto,filter_refines}.
+    $\filterConverges{\netFilter{I}{\carrier[X]}{s}}{x}{X}$ iff
+        $\neighbourhoods{x}{X}\subseteq
+            \netFilter{I}{\carrier[X]}{s}$ by
+        \auto{filter_converges}.
+    Follows by \auto{topological_net_convergence}.
+\end{proof}
+
+\begin{theorem}\label{topological_net_converges_iff_eventually_in_neighbourhoods}
+    Let $I$ be a directed quasiordered set and $X$ be a topological space.
+    Let $s\in\funs{\carrier[I]}{\carrier[X]}$ and
+        $x\in\carrier[X]$.
+    Then $s$ converges topologically to $x$ in $X$ along $I$ iff
+        for every $N\in\neighbourhoods{x}{X}$ there exists
+        $i\in\carrier[I]$ such that for every $j\in\carrier[I]$
+        such that $i\mathrel{\leq[I]}j$ we have $s(j)\in N$.
+\end{theorem}
+\begin{proof}
+    $\atTop{I}$ is a filter on $\carrier[I]$ by
+        \obv{at_top_is_filter}.
+    $\neighbourhoods{x}{X}$ is a filter on $\carrier[X]$ by
+        \obv{neighbourhoods_is_filter}.
+
+    Show that if $s$ converges topologically to $x$ in $X$ along $I$, then
+        for every $N\in\neighbourhoods{x}{X}$ there exists
+        $i\in\carrier[I]$ such that for every $j\in\carrier[I]$
+        such that $i\mathrel{\leq[I]}j$ we have $s(j)\in N$.
+    \begin{subproof}
+        Assume $s$ converges topologically to $x$ in $X$ along $I$.
+        Hence $s$ tends from $\atTop{I}$ on $\carrier[I]$ to
+            $\neighbourhoods{x}{X}$ on $\carrier[X]$ by
+            \obv{topological_net_convergence}.
+        Hence for every $N\in\neighbourhoods{x}{X}$ we have
+            $\preimg{s}{N}\in\atTop{I}$ by
+            \obv{filter_tendsto_iff_preimage}.
+        Fix $N\in\neighbourhoods{x}{X}$.
+        Take $i\in\carrier[I]$ such that
+            $\orderFinalSegment{I}{i}\subseteq\preimg{s}{N}$ by
+            \auto{at_top_iff_contains_final_segment}.
+        Show that for every $j\in\carrier[I]$ such that
+            $i\mathrel{\leq[I]}j$ we have $s(j)\in N$.
+        \begin{subproof}
+            Fix $j\in\carrier[I]$.
+            Assume $i\mathrel{\leq[I]}j$.
+            Hence $j\in\orderFinalSegment{I}{i}$ by
+                \obv{order_final_segment_iff}.
+            Hence $j\in\preimg{s}{N}$ by \obv{subseteq}.
+            Take $y\in N$ such that $(j,y)\in s$ by \obv{preimg_iff}.
+            $s(j)=y$ by \obv{funs_is_function,function_apply_intro}.
+        \end{subproof}
+        Follows by \auto.
+    \end{subproof}
+
+    Show that if for every $N\in\neighbourhoods{x}{X}$ there exists
+        $i\in\carrier[I]$ such that for every $j\in\carrier[I]$
+        such that $i\mathrel{\leq[I]}j$ we have $s(j)\in N$, then
+        $s$ converges topologically to $x$ in $X$ along $I$.
+    \begin{subproof}
+        Assume for every $N\in\neighbourhoods{x}{X}$ there exists
+            $i\in\carrier[I]$ such that for every $j\in\carrier[I]$
+            such that $i\mathrel{\leq[I]}j$ we have $s(j)\in N$.
+        Show that for every $N\in\neighbourhoods{x}{X}$ we have
+            $\preimg{s}{N}\in\atTop{I}$.
+        \begin{subproof}
+            Fix $N\in\neighbourhoods{x}{X}$.
+            Take $i\in\carrier[I]$ such that for every
+                $j\in\carrier[I]$ such that $i\mathrel{\leq[I]}j$
+                we have $s(j)\in N$.
+            Show that $\orderFinalSegment{I}{i}\subseteq\preimg{s}{N}$.
+            \begin{subproof}
+                It suffices to show that every element of
+                    $\orderFinalSegment{I}{i}$ is an element of
+                    $\preimg{s}{N}$ by \obv{subseteq}.
+                Fix $j\in\orderFinalSegment{I}{i}$.
+                Hence $j\in\carrier[I]$ and
+                    $i\mathrel{\leq[I]}j$ by
+                    \obv{order_final_segment_iff}.
+                Hence $s(j)\in N$.
+                $(j,s(j))\in s$ by
+                    \obv{funs_is_function,funs,function_apply_elim}.
+                Follows by \obv{preimg_iff}.
+            \end{subproof}
+            $\preimg{s}{N}\subseteq\carrier[I]$ by
+                \auto{preimg_subseteq_dom,funs}.
+            Follows by \auto{at_top_iff_contains_final_segment}.
+        \end{subproof}
+        Hence $s$ tends from $\atTop{I}$ on $\carrier[I]$ to
+            $\neighbourhoods{x}{X}$ on $\carrier[X]$ by
+            \obv{filter_tendsto_iff_preimage}.
+        Follows by \obv{topological_net_convergence}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{sequence_convergence_is_net_convergence}
+    Let $X$ be a topological space.
+    Let $s\in\funs{\naturals}{\carrier[X]}$ and $x\in\carrier[X]$.
+    Then $\topologicalSequenceConverges{X}{s}{x}$ iff
+        $s$ converges topologically to $x$ in $X$ along
+            $\naturalIndexOrder$.
+\end{theorem}
+\begin{proof}
+    $\naturalIndexOrder$ is a directed quasiordered set by
+        \obv{natural_index_order_is_directed}.
+    $\carrier[\naturalIndexOrder]=\naturals$ by
+        \obv{natural_index_order_carrier}.
+    $\topologicalSequenceConverges{X}{s}{x}$ iff
+        $s$ tends from $\atTop{\naturalIndexOrder}$ on $\naturals$ to
+            $\neighbourhoods{x}{X}$ on $\carrier[X]$ by
+        \obv{topological_sequence_convergence_iff_tendsto}.
+    Follows by \auto{topological_net_convergence}.
+\end{proof}

@@ -1,0 +1,784 @@
+\section{Cofinality}
+
+\import{cardinal/infinite.tex}
+\import{order/order-filter.tex}
+
+For an ordinal, cofinality is defined by a set-bounded search over cardinal
+domains.  On arbitrary sets these formulas give a deliberate total extension:
+``cofinal in'' uses the subset relation literally, and no ordinal-theoretic
+meaning is claimed off the ordinal domain.
+
+\begin{definition}\label{cofinal_in}
+    $\cofinalIn{C}{\alpha}$ iff $C\subseteq\alpha$ and
+        for every $\beta\in\alpha$ there exists $\gamma\in C$ such that
+        $\beta\subseteq\gamma$.
+\end{definition}
+
+\begin{definition}\label{cofinal_map}
+    $\cofinalMap{f}{\delta}{\alpha}$ iff
+        $f\in\funs{\delta}{\alpha}$ and
+        $\cofinalIn{\ran{f}}{\alpha}$.
+\end{definition}
+
+\begin{theorem}\label{cofinal_map_iff_ordinal_cofinal_range}
+    Let $\delta,\alpha$ be inhabited ordinals.
+    Let $f\in\funs{\delta}{\alpha}$.
+    Then $\cofinalMap{f}{\delta}{\alpha}$ iff
+        $f$ has cofinal range from
+            $\ordinalDirectedQuasiorder{\delta}$ to
+            $\ordinalDirectedQuasiorder{\alpha}$.
+\end{theorem}
+\begin{proof}
+    Let $J=\ordinalDirectedQuasiorder{\delta}$.
+    Let $I=\ordinalDirectedQuasiorder{\alpha}$.
+    $J$ is an exact directed quasiordered set by
+        \auto{ordinal_directed_quasiorder_is_exact}.
+    $I$ is an exact directed quasiordered set by
+        \auto{ordinal_directed_quasiorder_is_exact}.
+    $J$ is a quasiordered set by
+        \obv{directed_quasiordered_set_is_quasiordered}.
+    $I$ is a quasiordered set by
+        \obv{directed_quasiordered_set_is_quasiordered}.
+    $\carrier[J]=\delta$ by
+        \auto{ordinal_directed_quasiorder_carrier}.
+    $\carrier[I]=\alpha$ by
+        \auto{ordinal_directed_quasiorder_carrier}.
+    $\leq[I]=\subseteqrel{\alpha}$ by
+        \auto{ordinal_directed_quasiorder_relation}.
+    $f$ is a function by \obv{funs_is_function}.
+
+    Show that if $\cofinalMap{f}{\delta}{\alpha}$, then
+        $f$ has cofinal range from $J$ to $I$.
+    \begin{subproof}
+        Assume $\cofinalMap{f}{\delta}{\alpha}$.
+        $\cofinalIn{\ran{f}}{\alpha}$ by \obv{cofinal_map}.
+        Show that for every $\beta\in\carrier[I]$ there exists
+            $j\in\carrier[J]$ such that
+            $\beta\mathrel{\leq[I]}f(j)$.
+        \begin{subproof}
+            Fix $\beta\in\carrier[I]$.
+            Hence $\beta\in\alpha$.
+            Take $\gamma\in\ran{f}$ such that
+                $\beta\subseteq\gamma$ by \obv{cofinal_in}.
+            Take $j\in\dom{f}$ such that $f(j)=\gamma$ by
+                \obv{fun_ran_iff}.
+            Hence $j\in\delta$ by \obv{funs}.
+            $f(j)\in\alpha$ by \obv{funs_type_apply}.
+            $\beta\mathrel{\subseteqrel{\alpha}}f(j)$ by
+                \obv{subseteqrel}.
+            Hence $\beta\mathrel{\leq[I]}f(j)$.
+        \end{subproof}
+        $f\in\funs{\carrier[J]}{\carrier[I]}$.
+        Follows by \obv{cofinal_range_between_quasiorders}.
+    \end{subproof}
+
+    Show that if $f$ has cofinal range from $J$ to $I$, then
+        $\cofinalMap{f}{\delta}{\alpha}$.
+    \begin{subproof}
+        Assume $f$ has cofinal range from $J$ to $I$.
+        $\ran{f}\subseteq\alpha$ by \obv{funs_ran}.
+        Show that for every $\beta\in\alpha$ there exists
+            $\gamma\in\ran{f}$ such that $\beta\subseteq\gamma$.
+        \begin{subproof}
+            Fix $\beta\in\alpha$.
+            Hence $\beta\in\carrier[I]$.
+            Take $j\in\carrier[J]$ such that
+                $\beta\mathrel{\leq[I]}f(j)$ by
+                \obv{cofinal_range_between_quasiorders}.
+            Hence $j\in\delta$.
+            $f(j)\in\ran{f}$ by \auto{fun_ran_iff,funs}.
+            $\beta\mathrel{\subseteqrel{\alpha}}f(j)$.
+            Hence $\beta\subseteq f(j)$ by \auto{subseteqrel}.
+        \end{subproof}
+        Hence $\cofinalIn{\ran{f}}{\alpha}$ by \obv{cofinal_in}.
+        Follows by \obv{cofinal_map}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{corollary}\label{ordinal_at_top_cofinal_implies_cofinal_map}
+    Let $\delta,\alpha$ be inhabited ordinals.
+    Suppose $f$ is cofinal at the top from
+        $\ordinalDirectedQuasiorder{\delta}$ to
+        $\ordinalDirectedQuasiorder{\alpha}$.
+    Then $\cofinalMap{f}{\delta}{\alpha}$.
+\end{corollary}
+\begin{proof}
+    $\ordinalDirectedQuasiorder{\delta}$ is an exact directed
+        quasiordered set by
+        \auto{ordinal_directed_quasiorder_is_exact}.
+    $\ordinalDirectedQuasiorder{\alpha}$ is an exact directed
+        quasiordered set by
+        \auto{ordinal_directed_quasiorder_is_exact}.
+    $f\in\funs{\delta}{\alpha}$ by
+        \auto{at_top_cofinal_type,
+            ordinal_directed_quasiorder_carrier}.
+    $f$ has cofinal range from
+        $\ordinalDirectedQuasiorder{\delta}$ to
+        $\ordinalDirectedQuasiorder{\alpha}$ by
+        \obv{at_top_cofinal_implies_cofinal_range}.
+    Follows by \obv{cofinal_map_iff_ordinal_cofinal_range}.
+\end{proof}
+
+\begin{theorem}\label{monotone_cofinal_map_is_ordinal_at_top_cofinal}
+    Let $\delta,\alpha$ be inhabited ordinals.
+    Let $f\in\funs{\delta}{\alpha}$.
+    Suppose $\orderPreserving{f}{\delta}{\subseteqrel{\delta}}
+        {\alpha}{\subseteqrel{\alpha}}$.
+    Suppose $\cofinalMap{f}{\delta}{\alpha}$.
+    Then $f$ is cofinal at the top from
+        $\ordinalDirectedQuasiorder{\delta}$ to
+        $\ordinalDirectedQuasiorder{\alpha}$.
+\end{theorem}
+\begin{proof}
+    Let $J=\ordinalDirectedQuasiorder{\delta}$.
+    Let $I=\ordinalDirectedQuasiorder{\alpha}$.
+    $J$ is an exact directed quasiordered set by
+        \auto{ordinal_directed_quasiorder_is_exact}.
+    $I$ is an exact directed quasiordered set by
+        \auto{ordinal_directed_quasiorder_is_exact}.
+    $\carrier[J]=\delta$ by
+        \auto{ordinal_directed_quasiorder_carrier}.
+    $\carrier[I]=\alpha$ by
+        \auto{ordinal_directed_quasiorder_carrier}.
+    $\leq[J]=\subseteqrel{\delta}$ by
+        \auto{ordinal_directed_quasiorder_relation}.
+    $\leq[I]=\subseteqrel{\alpha}$ by
+        \auto{ordinal_directed_quasiorder_relation}.
+    Hence $\orderPreserving{f}{\carrier[J]}{\leq[J]}
+        {\carrier[I]}{\leq[I]}$.
+    $f$ has cofinal range from
+        $\ordinalDirectedQuasiorder{\delta}$ to
+        $\ordinalDirectedQuasiorder{\alpha}$ by
+        \obv{cofinal_map_iff_ordinal_cofinal_range}.
+    Hence $f$ has cofinal range from $J$ to $I$.
+    Hence $f$ is cofinal at the top from $J$ to $I$ by
+        \obv{monotone_cofinal_range_implies_at_top_cofinal}.
+\end{proof}
+
+\begin{definition}\label{cofinality_candidates}
+    $\cofinalityCandidates{\alpha}
+        =\{\kappa\in\suc{\card{\alpha}}\mid
+            \text{$\kappa$ is a cardinal and there exists $f$ such that
+            $\cofinalMap{f}{\kappa}{\alpha}$}\}$.
+\end{definition}
+
+\begin{definition}\label{cofinality}
+    $\cofinality{\alpha}=\inters{\cofinalityCandidates{\alpha}}$.
+\end{definition}
+
+\begin{definition}\label{cofinal_upper_bounds}
+    $\cofinalUpperBounds{f}{\xi}{\alpha}
+        =\{\eta\in\alpha\mid
+            \text{for every $j\in\suc{\xi}$ we have $f(j)\in\eta$}\}$.
+\end{definition}
+
+\begin{definition}\label{cofinal_envelope}
+    $\cofinalEnvelope{f}{\lambda}{\alpha}
+        =\{(\xi,\choice{\cofinalUpperBounds{f}{\xi}{\alpha}})
+            \mid \xi\in\lambda\}$.
+\end{definition}
+
+\begin{proposition}\label{set_is_cofinal_in_itself}
+    $\cofinalIn{A}{A}$.
+\end{proposition}
+\begin{proof}
+    $A\subseteq A$ by \obv{subseteq_refl}.
+    For every $a\in A$ there exists $b\in A$ such that $a\subseteq b$
+        by \obv{subseteq_refl}.
+    Follows by \obv{cofinal_in}.
+\end{proof}
+
+\begin{proposition}\label{surjection_is_cofinal_map}
+    Let $f\in\surj{D}{A}$.
+    Then $\cofinalMap{f}{D}{A}$.
+\end{proposition}
+\begin{proof}
+    $f\in\funs{D}{A}$ by \obv{surj_to_fun}.
+    $\ran{f}=A$ by \obv{ran_of_surj}.
+    Hence $\cofinalIn{\ran{f}}{A}$
+        by \obv{set_is_cofinal_in_itself}.
+    Follows by \obv{cofinal_map}.
+\end{proof}
+
+\begin{proposition}\label{cofinality_candidates_inhabited}
+    $\cofinalityCandidates{\alpha}$ is inhabited.
+\end{proposition}
+\begin{proof}
+    Let $\kappa=\card{\alpha}$.
+    $\kappa\in\suc{\kappa}$ by \obv{suc_intro_self}.
+    $\kappa$ is a cardinal by \obv{card_is_cardinal}.
+    $\kappa\approx\alpha$ by \auto{card_equinumerous}.
+    Take $f$ such that $f\in\bijections{\kappa}{\alpha}$
+        by \obv{equinum}.
+    Hence $f\in\surj{\kappa}{\alpha}$ by \obv{bijections}.
+    Hence $\cofinalMap{f}{\kappa}{\alpha}$
+        by \obv{surjection_is_cofinal_map}.
+    Hence $\kappa\in\cofinalityCandidates{\alpha}$
+        by \obv{cofinality_candidates}.
+\end{proof}
+
+\begin{proposition}\label{cofinality_candidates_are_ordinals}
+    Every element of $\cofinalityCandidates{\alpha}$ is an ordinal.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{cofinality_candidates,cardinal,initial_ordinal}.
+\end{proof}
+
+\begin{proposition}\label{cofinality_belongs_to_candidates}
+    $\cofinality{\alpha}\in\cofinalityCandidates{\alpha}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{cofinality,inters_of_ordinals_elem,cofinality_candidates_inhabited,cofinality_candidates_are_ordinals}.
+\end{proof}
+
+\begin{theorem}\label{cofinality_is_cardinal}
+    $\cofinality{\alpha}$ is a cardinal.
+\end{theorem}
+\begin{proof}
+    Follows by
+        \auto{cofinality_belongs_to_candidates,cofinality_candidates}.
+\end{proof}
+
+\begin{theorem}\label{cofinality_map_exists}
+    There exists $f$ such that
+        $\cofinalMap{f}{\cofinality{\alpha}}{\alpha}$.
+\end{theorem}
+\begin{proof}
+    Follows by
+        \auto{cofinality_belongs_to_candidates,cofinality_candidates}.
+\end{proof}
+
+\begin{proposition}\label{cofinality_subseteq_card}
+    $\cofinality{\alpha}\subseteq\card{\alpha}$.
+\end{proposition}
+\begin{proof}
+    $\cofinality{\alpha}\in\suc{\card{\alpha}}$
+        by \auto{cofinality_belongs_to_candidates,cofinality_candidates}.
+    Hence $\cofinality{\alpha}=\card{\alpha}$ or
+        $\cofinality{\alpha}\in\card{\alpha}$ by \obv{suc_elim}.
+    $\cofinality{\alpha}$ and $\card{\alpha}$ are ordinals
+        by \auto{cofinality_is_cardinal,cardinal,initial_ordinal,card_is_ordinal}.
+    Follows by \obv{subseteq_refl,ordinal_elem_implies_subseteq}.
+\end{proof}
+
+\begin{proposition}\label{cofinality_emptyset}
+    $\cofinality{\emptyset}=\emptyset$.
+\end{proposition}
+\begin{proof}
+    $\cofinality{\emptyset}\subseteq\card{\emptyset}$
+        by \obv{cofinality_subseteq_card}.
+    $\card{\emptyset}=\cardZero$ by \obv{card_of_cardinal_zero}.
+    $\cardZero=\emptyset$ by \obv{cardinal_zero}.
+    Hence $\cofinality{\emptyset}\subseteq\emptyset$.
+    Follows by \obv{subseteq_emptyset_iff}.
+\end{proof}
+
+\begin{theorem}\label{cofinal_map_reindex}
+    Suppose $\cofinalMap{f}{D}{\alpha}$ and $K\approx D$.
+    Then there exists $g$ such that $\cofinalMap{g}{K}{\alpha}$.
+\end{theorem}
+\begin{proof}
+    Take $b$ such that $b\in\bijections{K}{D}$ by \obv{equinum}.
+    $b\in\funs{K}{D}$ by \obv{bijections_to_funs}.
+    Hence $b$ is a function and $\dom{b}=K$
+        by \obv{funs_is_function,funs}.
+    $b\in\surj{K}{D}$ by \obv{bijections}.
+    Hence $\ran{b}=D$ by \obv{ran_of_surj}.
+    $f\in\funs{D}{\alpha}$ by \obv{cofinal_map}.
+    Hence $f$ is a function and $\dom{f}=D$
+        by \obv{funs_is_function,funs}.
+    Let $g=f\circ b$.
+    $g\in\funs{K}{\alpha}$ by \auto{funs_circ}.
+    $\ran{g}=\ran{f}$ by \auto{ran_circ_exact}.
+    $\cofinalIn{\ran{f}}{\alpha}$ by \obv{cofinal_map}.
+    Hence $\cofinalIn{\ran{g}}{\alpha}$.
+    Hence $\cofinalMap{g}{K}{\alpha}$ by \obv{cofinal_map}.
+\end{proof}
+
+\begin{theorem}\label{cofinality_le_domain_card}
+    Suppose $\cofinalMap{f}{D}{\alpha}$.
+    Then $\cofinality{\alpha}\subseteq\card{D}$.
+\end{theorem}
+\begin{proof}
+    Let $c=\cofinality{\alpha}$.
+    Let $\kappa=\card{\alpha}$.
+    Let $\lambda=\card{D}$.
+    $c\subseteq\kappa$ by \auto{cofinality_subseteq_card}.
+    $\kappa$ and $\lambda$ are ordinals by \obv{card_is_ordinal}.
+    $\lambda$ is a cardinal by \obv{card_is_cardinal}.
+    $\lambda\approx D$ by \auto{card_equinumerous}.
+    Take $g$ such that $\cofinalMap{g}{\lambda}{\alpha}$
+        by \obv{cofinal_map_reindex}.
+    \begin{byCase}
+        \caseOf{$\kappa\subseteq\lambda$.}
+            Follows by \obv{subseteq_transitive}.
+        \caseOf{$\lnot(\kappa\subseteq\lambda)$.}
+            Hence $\lambda\subseteq\kappa$
+                by \obv{ordinal_subseteq_or_subseteq}.
+            Hence $\lambda\in\kappa$ or $\lambda=\kappa$
+                by \obv{ordinal_subseteq_implies_elem_or_eq}.
+            Hence $\lambda\in\suc{\kappa}$ by \auto{suc_iff}.
+            Hence $\lambda\in\cofinalityCandidates{\alpha}$
+                by \obv{cofinality_candidates}.
+            $c=\inters{\cofinalityCandidates{\alpha}}$
+                by \obv{cofinality}.
+            Follows by \auto{inters_subseteq_elem}.
+    \end{byCase}
+\end{proof}
+
+\begin{proposition}\label{cofinality_subseteq_ordinal}
+    Let $\alpha$ be an ordinal.
+    Then $\cofinality{\alpha}\subseteq\alpha$.
+\end{proposition}
+\begin{proof}
+    $\cofinality{\alpha}\subseteq\card{\alpha}$
+        by \obv{cofinality_subseteq_card}.
+    $\alpha\approx\alpha$ by \obv{equinum_refl}.
+    Hence $\card{\alpha}\subseteq\alpha$
+        by \obv{card_least_equinumerous_ordinal}.
+    Follows by \obv{subseteq_transitive}.
+\end{proof}
+
+\begin{theorem}\label{cofinal_in_limit_iff_union}
+    Let $\alpha$ be a limit ordinal.
+    Suppose $C\subseteq\alpha$.
+    Then $\cofinalIn{C}{\alpha}$ iff $\unions{C}=\alpha$.
+\end{theorem}
+\begin{proof}
+    Show that if $\cofinalIn{C}{\alpha}$, then
+        $\unions{C}=\alpha$.
+    \begin{subproof}
+        Assume $\cofinalIn{C}{\alpha}$.
+        Show that every element of $\unions{C}$ is an element of $\alpha$.
+        \begin{subproof}
+            Fix $x\in\unions{C}$.
+            Take $\gamma\in C$ such that $x\in\gamma$
+                by \obv{unions_iff}.
+            Hence $\gamma\in\alpha$ by \obv{subseteq}.
+            Follows by \obv{ordinal_transitivity,limit_ordinal}.
+        \end{subproof}
+        Show that every element of $\alpha$ is an element of $\unions{C}$.
+        \begin{subproof}
+            Fix $\beta\in\alpha$.
+            $\suc{\beta}\in\alpha$ by \obv{suc_elem_limitordinal}.
+            Take $\gamma\in C$ such that $\suc{\beta}\subseteq\gamma$
+                by \obv{cofinal_in}.
+            $\beta\in\suc{\beta}$ by \obv{suc_intro_self}.
+            Hence $\beta\in\gamma$ by \obv{subseteq}.
+            Follows by \auto{unions_iff}.
+        \end{subproof}
+        Follows by set extensionality.
+    \end{subproof}
+    Show that if $\unions{C}=\alpha$, then
+        $\cofinalIn{C}{\alpha}$.
+    \begin{subproof}
+        Assume $\unions{C}=\alpha$.
+        Show that for every $\beta\in\alpha$ there exists $\gamma\in C$
+            such that $\beta\subseteq\gamma$.
+        \begin{subproof}
+            Fix $\beta\in\alpha$.
+            Hence $\beta\in\unions{C}$.
+            Take $\gamma\in C$ such that $\beta\in\gamma$
+                by \obv{unions_iff}.
+            Hence $\gamma\in\alpha$ by \obv{subseteq}.
+            $\beta$ and $\gamma$ are ordinals
+                by \obv{limit_ordinal,elem_of_ordinal_is_ordinal}.
+            Hence $\beta\subseteq\gamma$
+                by \obv{ordinal_elem_implies_subseteq}.
+        \end{subproof}
+        Follows by \obv{cofinal_in}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{corollary}\label{cofinal_map_into_limit_iff_union_range}
+    Let $\alpha$ be a limit ordinal.
+    Let $f\in\funs{D}{\alpha}$.
+    Then $\cofinalMap{f}{D}{\alpha}$ iff
+        $\unions{\ran{f}}=\alpha$.
+\end{corollary}
+\begin{proof}
+    $\ran{f}\subseteq\alpha$ by \obv{funs_ran}.
+    Follows by \auto{cofinal_map,cofinal_in_limit_iff_union}.
+\end{proof}
+
+\begin{lemma}\label{small_domain_range_union_below}
+    Let $\kappa$ be a limit ordinal.
+    Let $\lambda=\cofinality{\kappa}$.
+    Let $\beta\in\lambda$.
+    Let $f\in\funs{\beta}{\kappa}$.
+    Then $\unions{\ran{f}}\in\kappa$.
+\end{lemma}
+\begin{proof}
+    Let $U=\unions{\ran{f}}$.
+    $\ran{f}\subseteq\kappa$ by \obv{funs_ran}.
+    $\kappa$ is an ordinal by \obv{limit_ordinal}.
+    Hence every element of $\ran{f}$ is an ordinal
+        by \obv{subseteq,elem_of_ordinal_is_ordinal}.
+    Hence $U$ is an ordinal
+        by \obv{union_of_ordinals_is_ordinal}.
+    Show that every element of $U$ is an element of $\kappa$.
+    \begin{subproof}
+        Fix $x\in U$.
+        Take $\gamma\in\ran{f}$ such that $x\in\gamma$
+            by \obv{unions_iff}.
+        Hence $\gamma\in\kappa$ by \obv{subseteq}.
+        Follows by \obv{ordinal_transitivity}.
+    \end{subproof}
+    Hence $U\subseteq\kappa$ by \obv{subseteq}.
+    Show that $U\neq\kappa$.
+    \begin{subproof}
+        Suppose not.
+        Hence $\cofinalMap{f}{\beta}{\kappa}$
+            by \auto{cofinal_map_into_limit_iff_union_range}.
+        Hence $\cofinality{\kappa}\subseteq\card{\beta}$
+            by \obv{cofinality_le_domain_card}.
+        Hence $\lambda\subseteq\card{\beta}$.
+        $\lambda$ is a cardinal by \obv{cofinality_is_cardinal}.
+        Hence $\lambda$ is an ordinal by \auto{cardinal,initial_ordinal}.
+        Hence $\beta$ is an ordinal
+            by \obv{elem_of_ordinal_is_ordinal}.
+        $\beta\approx\beta$ by \obv{equinum_refl}.
+        Hence $\card{\beta}\subseteq\beta$
+            by \obv{card_least_equinumerous_ordinal}.
+        Hence $\lambda\subseteq\beta$
+            by \obv{subseteq_transitive}.
+        Hence $\beta\in\beta$ by \obv{subseteq}.
+        Contradiction by \obv{in_irrefl}.
+    \end{subproof}
+    Follows by \auto{ordinal_subseteq_implies_elem_or_eq}.
+\end{proof}
+
+\begin{lemma}\label{finite_subset_of_limit_has_strict_upper_bound}
+    Let $\alpha$ be a limit ordinal.
+    Suppose $C$ is finite and $C\subseteq\alpha$.
+    Then there exists $\eta\in\alpha$ such that
+        for every $\gamma\in C$ we have $\gamma\in\eta$.
+\end{lemma}
+\begin{proof}
+    Let $B=\{Y\in\pow{C}\mid
+        \text{there exists $\beta\in\alpha$ such that
+        for every $\gamma\in Y$ we have $\gamma\subseteq\beta$}\}$.
+    $\emptyset\in\pow{C}$ by \obv{powerset_bottom}.
+    $\emptyset\in\alpha$ by \obv{limit_ordinal}.
+    Hence $\emptyset\in B$ by \auto{emptyset}.
+    Show that for all $Y,y$ such that $Y\in B$ and $y\in C$ we have
+        $\cons{y}{Y}\in B$.
+    \begin{subproof}
+        Fix $Y,y$.
+        Assume $Y\in B$ and $y\in C$.
+        Hence $Y\in\pow{C}$.
+        Hence $Y\subseteq C$ by \obv{powerset_elim}.
+        Hence $\cons{y}{Y}\subseteq C$
+            by \obv{cons_subseteq_intro}.
+        Hence $\cons{y}{Y}\in\pow{C}$ by \obv{powerset_intro}.
+        Take $\beta\in\alpha$ such that
+            for every $\gamma\in Y$ we have $\gamma\subseteq\beta$.
+        Hence $y\in\alpha$ by \obv{subseteq}.
+        Hence $\beta$ and $y$ are ordinals
+            by \obv{elem_of_ordinal_is_ordinal}.
+        Let $\delta=\beta\union y$.
+        $\beta\subseteq y$ or $y\subseteq\beta$
+            by \obv{ordinal_subseteq_or_subseteq}.
+        Hence $\delta=y$ or $\delta=\beta$
+            by \obv{union_absorb_subseteq_left,union_absorb_subseteq_right}.
+        Hence $\delta\in\alpha$.
+        For every $\gamma\in\cons{y}{Y}$ we have
+            $\gamma\subseteq\delta$
+            by \auto{cons_iff,union_upper_left,union_upper_right,subseteq_transitive}.
+        Hence $\cons{y}{Y}\in B$.
+    \end{subproof}
+    Hence $C\in B$ by \obv{finite_induction}.
+    Take $\beta\in\alpha$ such that
+        for every $\gamma\in C$ we have $\gamma\subseteq\beta$.
+    Let $\eta=\suc{\beta}$.
+    $\eta\in\alpha$ by \auto{suc_elem_limitordinal}.
+    $\beta$ is an ordinal
+        by \obv{limit_ordinal,elem_of_ordinal_is_ordinal}.
+    For every $\gamma\in C$ we have $\gamma$ is an ordinal
+        by \obv{subseteq,limit_ordinal,elem_of_ordinal_is_ordinal}.
+    Hence for every $\gamma\in C$ we have
+        $\gamma\in\eta$
+        by \auto{ordinal_subseteq_implies_elem_or_eq,suc_iff}.
+\end{proof}
+
+\begin{theorem}\label{cofinality_of_limit_is_infinite_cardinal}
+    Let $\alpha$ be a limit ordinal.
+    Then $\cofinality{\alpha}$ is an infinite cardinal.
+\end{theorem}
+\begin{proof}
+    Let $\lambda=\cofinality{\alpha}$.
+    $\lambda$ is a cardinal by \obv{cofinality_is_cardinal}.
+    Show that $\lambda$ is infinite.
+    \begin{subproof}
+        Suppose not.
+        Hence $\lambda$ is finite.
+        Take $f$ such that $\cofinalMap{f}{\lambda}{\alpha}$
+            by \auto{cofinality_map_exists}.
+        Hence $f\in\funs{\lambda}{\alpha}$ and
+            $\cofinalIn{\ran{f}}{\alpha}$ by \obv{cofinal_map}.
+        Hence $f$ is a function and $\dom{f}=\lambda$
+            by \obv{funs_is_function,funs}.
+        Hence $\img{f}{\lambda}$ is finite
+            by \obv{finite_function_image,subseteq_refl}.
+        $\img{f}{\lambda}=\ran{f}$ by \auto{img_dom}.
+        Hence $\ran{f}$ is finite.
+        $\ran{f}\subseteq\alpha$ by \obv{funs_ran}.
+        Take $\eta\in\alpha$ such that
+            for every $\gamma\in\ran{f}$ we have $\gamma\in\eta$
+            by \obv{finite_subset_of_limit_has_strict_upper_bound}.
+        Take $\gamma\in\ran{f}$ such that $\eta\subseteq\gamma$
+            by \obv{cofinal_in}.
+        Hence $\gamma\in\eta$.
+        Hence $\gamma\in\gamma$ by \obv{subseteq}.
+        Contradiction by \obv{in_irrefl}.
+    \end{subproof}
+\end{proof}
+
+\begin{corollary}\label{cofinality_of_limit_is_limit_ordinal}
+    Let $\alpha$ be a limit ordinal.
+    Then $\cofinality{\alpha}$ is a limit ordinal.
+\end{corollary}
+\begin{proof}
+    Follows by
+        \obv{cofinality_of_limit_is_infinite_cardinal,infinite_cardinal_is_limit_ordinal}.
+\end{proof}
+
+\begin{lemma}\label{cofinal_upper_bounds_inhabited}
+    Let $\alpha$ be a limit ordinal.
+    Let $\lambda=\cofinality{\alpha}$.
+    Suppose $\cofinalMap{f}{\lambda}{\alpha}$.
+    Let $\xi\in\lambda$.
+    Then $\cofinalUpperBounds{f}{\xi}{\alpha}$ is inhabited.
+\end{lemma}
+\begin{proof}
+    $\lambda$ is a limit ordinal
+        by \obv{cofinality_of_limit_is_limit_ordinal}.
+    Hence $\suc{\xi}\in\lambda$ by \obv{suc_elem_limitordinal}.
+    $\lambda$ and $\suc{\xi}$ are ordinals
+        by \obv{limit_ordinal,elem_of_ordinal_is_ordinal}.
+    Hence $\suc{\xi}\subseteq\lambda$
+        by \obv{ordinal_elem_implies_subseteq}.
+    $f\in\funs{\lambda}{\alpha}$ by \obv{cofinal_map}.
+    Hence $f$ is a function and $\dom{f}=\lambda$
+        by \obv{funs_is_function,funs}.
+    Let $r=\restrl{f}{\suc{\xi}}$.
+    $r\in\funs{\suc{\xi}}{\alpha}$ by \auto{funs_restrl}.
+    Show that not $\cofinalMap{r}{\suc{\xi}}{\alpha}$.
+    \begin{subproof}
+        Suppose $\cofinalMap{r}{\suc{\xi}}{\alpha}$.
+        Hence $\cofinality{\alpha}\subseteq\card{\suc{\xi}}$
+            by \obv{cofinality_le_domain_card}.
+        Hence $\lambda\subseteq\card{\suc{\xi}}$.
+        $\suc{\xi}\approx\suc{\xi}$ by \obv{equinum_refl}.
+        Hence $\card{\suc{\xi}}\subseteq\suc{\xi}$
+            by \obv{card_least_equinumerous_ordinal}.
+        Hence $\lambda\subseteq\suc{\xi}$
+            by \obv{subseteq_transitive}.
+        Hence $\suc{\xi}\in\suc{\xi}$ by \obv{subseteq}.
+        Contradiction by \obv{in_irrefl}.
+    \end{subproof}
+    Hence not $\cofinalIn{\ran{r}}{\alpha}$
+        by \auto{cofinal_map}.
+    $\ran{r}\subseteq\alpha$ by \obv{funs_ran}.
+    Take $\eta\in\alpha$ such that for every $\gamma\in\ran{r}$
+        we have $\lnot(\eta\subseteq\gamma)$ by \auto{cofinal_in}.
+    Show that for every $j\in\suc{\xi}$ we have $f(j)\in\eta$.
+    \begin{subproof}
+        Fix $j\in\suc{\xi}$.
+        $r(j)=f(j)$ by \auto{restrl_of_function_apply}.
+        $r$ is a function and $\dom{r}=\suc{\xi}$
+            by \obv{funs_is_function,funs}.
+        Hence $r(j)\in\ran{r}$ by \auto{fun_ran_iff}.
+        Hence $\lnot(\eta\subseteq f(j))$.
+        $f(j)\in\alpha$ by \obv{funs_type_apply}.
+        Hence $\eta$ and $f(j)$ are ordinals
+            by \obv{elem_of_ordinal_is_ordinal}.
+        $f(j)\subseteq\eta$ by \obv{ordinal_subseteq_or_subseteq}.
+        $f(j)\neq\eta$.
+        Follows by \obv{ordinal_subseteq_implies_elem_or_eq}.
+    \end{subproof}
+    Hence $\eta\in\cofinalUpperBounds{f}{\xi}{\alpha}$
+        by \obv{cofinal_upper_bounds}.
+\end{proof}
+
+\begin{proposition}\label{cofinal_envelope_type}
+    Let $\alpha$ be a limit ordinal.
+    Let $\lambda=\cofinality{\alpha}$.
+    Suppose $\cofinalMap{f}{\lambda}{\alpha}$.
+    Then $\cofinalEnvelope{f}{\lambda}{\alpha}
+        \in\funs{\lambda}{\alpha}$.
+\end{proposition}
+\begin{proof}
+    Let $h=\cofinalEnvelope{f}{\lambda}{\alpha}$.
+    $h$ is a relation by \auto{cofinal_envelope,relation}.
+    $h$ is right-unique
+        by \auto{cofinal_envelope,rightunique,pair_eq_iff}.
+    $\dom{h}=\lambda$
+        by \auto{cofinal_envelope,setext,dom_iff,pair_eq_iff}.
+    For every $\xi\in\lambda$ we have
+        $\cofinalUpperBounds{f}{\xi}{\alpha}$ is inhabited
+        by \obv{cofinal_upper_bounds_inhabited}.
+    Hence for every $\xi\in\lambda$ we have
+        $\choice{\cofinalUpperBounds{f}{\xi}{\alpha}}
+            \in\cofinalUpperBounds{f}{\xi}{\alpha}$
+        by \obv{choice_in}.
+    Hence for every $\xi\in\lambda$ we have
+        $\choice{\cofinalUpperBounds{f}{\xi}{\alpha}}\in\alpha$
+        by \auto{cofinal_upper_bounds}.
+    For every $\xi\in\lambda$ we have
+        $h(\xi)=\choice{\cofinalUpperBounds{f}{\xi}{\alpha}}$
+        by \obv{cofinal_envelope,function_apply_intro}.
+    Hence $h$ is a function to $\alpha$ by \auto.
+    Follows by \auto{funs_intro}.
+\end{proof}
+
+\begin{proposition}\label{cofinal_envelope_application}
+    Let $\alpha$ be a limit ordinal.
+    Let $\lambda=\cofinality{\alpha}$.
+    Suppose $\cofinalMap{f}{\lambda}{\alpha}$.
+    Let $\xi\in\lambda$.
+    Then $(\cofinalEnvelope{f}{\lambda}{\alpha})(\xi)
+        =\choice{\cofinalUpperBounds{f}{\xi}{\alpha}}$.
+\end{proposition}
+\begin{proof}
+    $(\xi,\choice{\cofinalUpperBounds{f}{\xi}{\alpha}})
+        \in\cofinalEnvelope{f}{\lambda}{\alpha}$
+        by \obv{cofinal_envelope}.
+    $\cofinalEnvelope{f}{\lambda}{\alpha}$ is a function
+        by \auto{cofinal_envelope_type,funs_is_function}.
+    Follows by \obv{function_apply_intro}.
+\end{proof}
+
+\begin{proposition}\label{cofinal_envelope_dominates_prefix}
+    Let $\alpha$ be a limit ordinal.
+    Let $\lambda=\cofinality{\alpha}$.
+    Suppose $\cofinalMap{f}{\lambda}{\alpha}$.
+    Let $\xi\in\lambda$.
+    Let $j\in\suc{\xi}$.
+    Then $f(j)\in(\cofinalEnvelope{f}{\lambda}{\alpha})(\xi)$.
+\end{proposition}
+\begin{proof}
+    $\cofinalUpperBounds{f}{\xi}{\alpha}$ is inhabited
+        by \obv{cofinal_upper_bounds_inhabited}.
+    Hence $\choice{\cofinalUpperBounds{f}{\xi}{\alpha}}
+        \in\cofinalUpperBounds{f}{\xi}{\alpha}$ by \obv{choice_in}.
+    Hence $f(j)\in\choice{\cofinalUpperBounds{f}{\xi}{\alpha}}$
+        by \obv{cofinal_upper_bounds}.
+    Follows by \obv{cofinal_envelope_application}.
+\end{proof}
+
+\begin{theorem}\label{cofinality_of_cofinality}
+    Let $\alpha$ be a limit ordinal.
+    Then $\cofinality{\cofinality{\alpha}}=\cofinality{\alpha}$.
+\end{theorem}
+\begin{proof}
+    Let $\lambda=\cofinality{\alpha}$.
+    Let $\mu=\cofinality{\lambda}$.
+    $\lambda$ is a limit ordinal
+        by \obv{cofinality_of_limit_is_limit_ordinal}.
+    Take $f$ such that $\cofinalMap{f}{\lambda}{\alpha}$
+        by \auto{cofinality_map_exists}.
+    Take $p$ such that $\cofinalMap{p}{\mu}{\lambda}$
+        by \auto{cofinality_map_exists}.
+    Hence $f\in\funs{\lambda}{\alpha}$ and
+        $\cofinalIn{\ran{f}}{\alpha}$ by \obv{cofinal_map}.
+    Hence $p\in\funs{\mu}{\lambda}$ and
+        $\cofinalIn{\ran{p}}{\lambda}$ by \obv{cofinal_map}.
+    Let $h=\cofinalEnvelope{f}{\lambda}{\alpha}$.
+    $h\in\funs{\lambda}{\alpha}$
+        by \auto{cofinal_envelope_type}.
+    Hence $h$ is a function and $\dom{h}=\lambda$
+        by \obv{funs_is_function,funs}.
+    $p$ is a function and $\dom{p}=\mu$
+        by \obv{funs_is_function,funs}.
+    $\ran{p}\subseteq\lambda$ by \obv{funs_ran}.
+    Hence $h$ is composable with $p$.
+    Let $g=h\circ p$.
+    $g\in\funs{\mu}{\alpha}$ by \auto{funs_circ}.
+    Show that $\cofinalIn{\ran{g}}{\alpha}$.
+    \begin{subproof}
+        $\ran{g}\subseteq\alpha$ by \obv{funs_ran}.
+        Show that for every $\beta\in\alpha$ there exists
+            $\rho\in\ran{g}$ such that $\beta\subseteq\rho$.
+        \begin{subproof}
+            Fix $\beta\in\alpha$.
+            Take $\gamma\in\ran{f}$ such that $\beta\subseteq\gamma$
+                by \obv{cofinal_in}.
+            $f$ is a function and $\dom{f}=\lambda$
+                by \obv{funs_is_function,funs}.
+            Take $j\in\lambda$ such that $f(j)=\gamma$
+                by \auto{fun_ran_iff}.
+            Take $\delta\in\ran{p}$ such that $j\subseteq\delta$
+                by \obv{cofinal_in}.
+            $p$ is a function and $\dom{p}=\mu$
+                by \obv{funs_is_function,funs}.
+            Take $i\in\mu$ such that $p(i)=\delta$
+                by \auto{fun_ran_iff}.
+            Hence $p(i)\in\lambda$ by \obv{funs_type_apply}.
+            $j$ and $p(i)$ are ordinals
+                by \obv{limit_ordinal,elem_of_ordinal_is_ordinal}.
+            Hence $j\in p(i)$ or $j=p(i)$
+                by \obv{ordinal_subseteq_implies_elem_or_eq}.
+            Hence $j\in\suc{p(i)}$ by \auto{suc_iff}.
+            Hence $f(j)\in h(p(i))$
+                by \auto{cofinal_envelope_dominates_prefix}.
+            $f(j)$ and $h(p(i))$ are ordinals
+                by \auto{funs_type_apply,limit_ordinal,elem_of_ordinal_is_ordinal}.
+            Hence $f(j)\subseteq h(p(i))$
+                by \obv{ordinal_elem_implies_subseteq}.
+            $g(i)=h(p(i))$ by \auto{circ_apply}.
+            Hence $\beta\subseteq g(i)$
+                by \obv{subseteq_transitive}.
+            $g$ is a function and $\dom{g}=\mu$
+                by \auto{funs_is_function,funs}.
+            Hence $g(i)\in\ran{g}$ by \auto{fun_ran_iff}.
+        \end{subproof}
+        Follows by \obv{cofinal_in}.
+    \end{subproof}
+    Hence $\cofinalMap{g}{\mu}{\alpha}$ by \obv{cofinal_map}.
+    Hence $\cofinality{\alpha}\subseteq\card{\mu}$
+        by \obv{cofinality_le_domain_card}.
+    $\mu$ is a cardinal by \auto{cofinality_is_cardinal}.
+    Hence $\card{\mu}=\mu$ by \obv{card_of_cardinal}.
+    Hence $\lambda\subseteq\mu$.
+    $\lambda$ is an ordinal by \auto{limit_ordinal}.
+    $\mu=\cofinality{\lambda}$.
+    $\mu\subseteq\lambda$ by \auto{cofinality_subseteq_ordinal}.
+    Hence $\mu=\lambda$ by \obv{subseteq_antisymmetric}.
+    Follows by \auto.
+\end{proof}
+
+\begin{definition}\label{regular_cardinal}
+    $\kappa$ is a regular cardinal iff $\kappa$ is an infinite cardinal and
+        $\cofinality{\kappa}=\kappa$.
+\end{definition}
+
+\begin{definition}\label{singular_cardinal}
+    $\kappa$ is singular iff $\kappa$ is an infinite cardinal and
+        $\kappa$ is not a regular cardinal.
+\end{definition}
+
+Here regular and singular cardinals are, by convention, infinite.  Thus the
+adjective ``singular'' itself entails that its subject is an infinite cardinal;
+finite cardinals lie outside this regular--singular terminology.
+
+\begin{abbreviation}\label{uncountable_cofinality}
+    $\kappa$ is of uncountable cofinality iff
+        $\naturals\in\cofinality{\kappa}$.
+\end{abbreviation}
+
+\begin{theorem}\label{cofinality_of_limit_is_regular}
+    Let $\alpha$ be a limit ordinal.
+    Then $\cofinality{\alpha}$ is a regular cardinal.
+\end{theorem}
+\begin{proof}
+    $\cofinality{\alpha}$ is an infinite cardinal
+        by \obv{cofinality_of_limit_is_infinite_cardinal}.
+    $\cofinality{\cofinality{\alpha}}=\cofinality{\alpha}$
+        by \obv{cofinality_of_cofinality}.
+    Follows by \obv{regular_cardinal}.
+\end{proof}

@@ -1,0 +1,180 @@
+\section{Compactness and closed subspaces}
+
+\import{topology/compactness-filter.tex}
+\import{topology/subspace-neighbourhood-filter.tex}
+\import{topology/local-compactness.tex}
+
+A proper filter that converges while eventually remaining in a closed set
+must converge to a point of that set.  This elementary fact lets compactness
+descend to closed subspaces without changing the open-cover definition.
+
+\begin{proposition}\label{filter_limit_belongs_to_closed_eventual_set}
+    Let $X$ be a topological space.
+    Let $F$ be a proper filter on $\carrier[X]$.
+    Suppose $\filterConverges{F}{x}{X}$.
+    Suppose $C$ is closed in $X$ and $C\in F$.
+    Then $x\in C$.
+\end{proposition}
+\begin{proof}
+    $F$ is a filter on $\carrier[X]$ by
+        \obv{proper_filter_is_filter}.
+    $x\in\carrier[X]$ and $\neighbourhoods{x}{X}\subseteq F$ by
+        \obv{filter_converges}.
+    $C\subseteq\carrier[X]$ by \obv{closed_in_subseteq_carrier}.
+    Hence $C\inter\carrier[X]=C$ by
+        \obv{inter_absorb_supseteq_right}.
+    Show that $C$ is frequent along $\neighbourhoods{x}{X}$ on
+        $\carrier[X]$.
+    \begin{subproof}
+        $\neighbourhoods{x}{X}$ is a filter on $\carrier[X]$ by
+            \obv{neighbourhoods_is_filter}.
+        Show that for every $N\in\neighbourhoods{x}{X}$ we have
+            $N\inter C$ is inhabited.
+        \begin{subproof}
+            Fix $N\in\neighbourhoods{x}{X}$.
+            Hence $N\in F$ by \obv{subseteq}.
+            Thus $N\inter C\in F$ by \obv{filter}.
+            Hence $N\inter C\neq\emptyset$ by
+                \obv{proper_filter_excludes_emptyset}.
+            Follows by \obv{nonempty_inhabited}.
+        \end{subproof}
+        Follows by
+            \obv{filter_frequent_iff_intersects_every_eventual_set}.
+    \end{subproof}
+    Hence $C\inter\carrier[X]$ is frequent along
+        $\neighbourhoods{x}{X}$ on $\carrier[X]$.
+    $x\in\closure{C}{X}$ iff $C\inter\carrier[X]$ is frequent along
+        $\neighbourhoods{x}{X}$ on $\carrier[X]$ by
+        \obv{closure_iff_neighbourhood_frequent}.
+    Hence $x\in\closure{C}{X}$.
+    $C\in\closeds{X}$ by \obv{is_closed_in}.
+    Hence $\closure{C}{X}\subseteq C$ by
+        \obv{closure_is_minimal_closed_set}.
+    Follows by \obv{subseteq}.
+\end{proof}
+
+\begin{theorem}\label{closed_subspace_of_compact_is_compact}
+    Let $X$ be a topological space.
+    Suppose $X$ is compact and $C$ is closed in $X$.
+    Then $\subspaceTopology{X}{C}$ is compact.
+\end{theorem}
+\begin{proof}
+    Let $S=\subspaceTopology{X}{C}$.
+    $C\subseteq\carrier[X]$ by \obv{closed_in_subseteq_carrier}.
+    $\subspaceTopology{X}{C}$ is a topological space by
+        \obv{subspace_topology_is_topological_space}.
+    Hence $S$ is a topological space.
+    $\carrier[\subspaceTopology{X}{C}]=C$ by
+        \obv{subspace_topology_carrier_of_subset}.
+    Hence $\carrier[S]=C$.
+
+    Show that for every $U$ such that
+        $U$ is an ultrafilter on $\carrier[S]$ there exists
+        $x\in\carrier[S]$ such that $\filterConverges{U}{x}{S}$.
+    \begin{subproof}
+        Fix $U$.
+        Assume $U$ is an ultrafilter on $\carrier[S]$.
+        Hence $U$ is a proper filter on $\carrier[S]$ by
+            \auto{ultrafilter,maximalfilter}.
+        Thus $U$ is a filter on $\carrier[S]$ by
+            \obv{proper_filter_is_filter}.
+
+        Let $i=\subspaceInclusion{X}{C}$.
+        $\subspaceInclusion{X}{C}\in
+            \funs{C\inter\carrier[X]}{\carrier[X]}$ by
+            \obv{subspace_inclusion_type}.
+        $C\inter\carrier[X]=C$ by
+            \obv{inter_absorb_supseteq_right}.
+        Hence $i\in\funs{\carrier[S]}{\carrier[X]}$.
+
+        Let $P=\filterPushforward{\carrier[S]}{\carrier[X]}{i}{U}$.
+        $\filterPushforward{\carrier[S]}{\carrier[X]}{i}{U}$ is an
+            ultrafilter on $\carrier[X]$ by
+            \obv{filter_pushforward_preserves_ultrafilters}.
+        Hence $P$ is an ultrafilter on $\carrier[X]$.
+        Thus $P$ is a proper filter on $\carrier[X]$ by
+            \auto{ultrafilter,maximalfilter}.
+        Hence $P$ is a filter on $\carrier[X]$ by
+            \obv{proper_filter_is_filter}.
+
+        Take $x\in\carrier[X]$ such that
+            $\filterConverges{P}{x}{X}$ by
+            \auto{compact_iff_every_ultrafilter_converges}.
+
+        $C\in U$ by \obv{filter}.
+        $\preimg{\subspaceInclusion{X}{C}}{C}
+            =(C\inter\carrier[X])\inter C$ by
+            \obv{subspace_inclusion_preimage}.
+        Hence $\preimg{i}{C}=C$ by
+            \auto{inter_idempotent}.
+        Thus $\preimg{i}{C}\in U$.
+        Hence $C\in
+            \filterPushforward{\carrier[S]}{\carrier[X]}{i}{U}$ by
+            \auto{filter_pushforward_iff}.
+        Thus $C\in P$.
+        Hence $x\in C$ by
+            \obv{filter_limit_belongs_to_closed_eventual_set}.
+        Thus $x\in\carrier[S]$.
+
+        Show that $\neighbourhoods{x}{S}\subseteq U$.
+        \begin{subproof}
+            It suffices to show that every element of
+                $\neighbourhoods{x}{S}$ is an element of $U$ by
+                \obv{subseteq}.
+            Fix $N\in\neighbourhoods{x}{S}$.
+            Hence $N\in\neighbourhoods{x}{\subspaceTopology{X}{C}}$.
+            $x\in C\inter\carrier[X]$ by \obv{inter_intro}.
+            $\neighbourhoods{x}{\subspaceTopology{X}{C}}
+                =\filterPullback{C\inter\carrier[X]}{\carrier[X]}{
+                    \subspaceInclusion{X}{C}}{
+                    \neighbourhoods{x}{X}}$ by
+                \obv{subspace_neighbourhood_filter_is_pullback}.
+            Thus $N\in
+                \filterPullback{C\inter\carrier[X]}{\carrier[X]}{
+                    \subspaceInclusion{X}{C}}{
+                    \neighbourhoods{x}{X}}$.
+            $\neighbourhoods{x}{X}$ is a filter on $\carrier[X]$ by
+                \obv{neighbourhoods_is_filter}.
+            $N\in
+                \filterPullback{C\inter\carrier[X]}{\carrier[X]}{
+                    \subspaceInclusion{X}{C}}{
+                    \neighbourhoods{x}{X}}$ iff
+                $N\subseteq C\inter\carrier[X]$ and there exists
+                $B\in\neighbourhoods{x}{X}$ such that
+                $\preimg{\subspaceInclusion{X}{C}}{B}\subseteq N$ by
+                \obv{filter_pullback_iff}.
+            Hence $N\subseteq C\inter\carrier[X]$ and there exists
+                $B\in\neighbourhoods{x}{X}$ such that
+                $\preimg{\subspaceInclusion{X}{C}}{B}\subseteq N$.
+            Take $B\in\neighbourhoods{x}{X}$ such that
+                $\preimg{\subspaceInclusion{X}{C}}{B}\subseteq N$.
+            Hence $N\subseteq\carrier[S]$ and
+                $\preimg{i}{B}\subseteq N$.
+            $\neighbourhoods{x}{X}\subseteq P$ by
+                \obv{filter_converges}.
+            Hence $B\in P$ by \obv{subseteq}.
+            Thus $B\in
+                \filterPushforward{\carrier[S]}{\carrier[X]}{i}{U}$.
+            Hence $\preimg{i}{B}\in U$ by
+                \obv{filter_pushforward_iff}.
+            Follows by \obv{filter}.
+        \end{subproof}
+        Hence $\filterConverges{U}{x}{S}$ by
+            \obv{filter_converges}.
+    \end{subproof}
+    Hence $S$ is compact by
+        \obv{compact_iff_every_ultrafilter_converges}.
+    Thus $\subspaceTopology{X}{C}$ is compact.
+\end{proof}
+
+\begin{corollary}\label{closed_subset_of_compact_is_compact}
+    Let $X$ be a topological space.
+    Suppose $X$ is compact and $C$ is closed in $X$.
+    Then $C$ is compact in $X$.
+\end{corollary}
+\begin{proof}
+    $C\subseteq\carrier[X]$ by \obv{closed_in_subseteq_carrier}.
+    $\subspaceTopology{X}{C}$ is compact by
+        \obv{closed_subspace_of_compact_is_compact}.
+    Follows by \obv{compact_in}.
+\end{proof}

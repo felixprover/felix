@@ -1,0 +1,415 @@
+\section{Maximal almost-disjoint families}
+
+\import{set/almost-disjoint.tex}
+\import{set/finite.tex}
+\import{order/zorn.tex}
+\import{cardinal/infinite.tex}
+\import{set/equinumerosity-product.tex}
+\import{function.tex}
+
+\begin{definition}\label{maximal_almost_disjoint_family_on}
+    $F$ is a maximal almost-disjoint family on $X$ iff
+        $F$ is an almost-disjoint family on $X$ and
+        for every $G$ such that
+            $G$ is an almost-disjoint family on $X$ and
+            $F\subseteq G$
+        we have $G=F$.
+\end{definition}
+
+\begin{theorem}\label{maximal_almost_disjoint_iff_blocking}
+    Suppose $F$ is an almost-disjoint family on $X$.
+    Then $F$ is a maximal almost-disjoint family on $X$ iff
+        $F$ blocks the infinite subsets of $X$.
+\end{theorem}
+\begin{proof}
+    Show that if $F$ is a maximal almost-disjoint family on $X$,
+        then $F$ blocks the infinite subsets of $X$.
+    \begin{subproof}
+        Assume $F$ is a maximal almost-disjoint family on $X$.
+        Show that for every $B\subseteq X$ such that $B$ is infinite
+            there exists $A\in F$ such that $A\inter B$ is infinite.
+        \begin{subproof}
+            Fix $B\subseteq X$.
+            Assume $B$ is infinite.
+            Suppose not.
+            For every $A\in F$ we have $A\inter B$ is finite
+                by \auto.
+            Hence $B$ is almost disjoint from $F$ on $X$
+                by \obv{almost_disjoint_from_family_on}.
+            Hence $B\notin F$
+                by \obv{almost_disjoint_from_family_not_member}.
+            $\cons{B}{F}$ is an almost-disjoint family on $X$
+                by \auto{almost_disjoint_cons_iff}.
+            $F\subseteq\cons{B}{F}$ by \obv{subseteq_cons_self}.
+            Hence $\cons{B}{F}=F$
+                by \obv{maximal_almost_disjoint_family_on}.
+            $B\in\cons{B}{F}$ by \obv{cons_left}.
+            Hence $B\in F$.
+            Contradiction.
+        \end{subproof}
+        Follows by \obv{blocks_infinite_subsets_of}.
+    \end{subproof}
+    Show that if $F$ blocks the infinite subsets of $X$, then
+        $F$ is a maximal almost-disjoint family on $X$.
+    \begin{subproof}
+        Assume $F$ blocks the infinite subsets of $X$.
+        Show that for every $G$ such that
+            $G$ is an almost-disjoint family on $X$ and
+            $F\subseteq G$ we have $G=F$.
+        \begin{subproof}
+            Fix $G$.
+            Assume $G$ is an almost-disjoint family on $X$ and
+                $F\subseteq G$.
+            Show that every element of $G$ is an element of $F$.
+            \begin{subproof}
+                Fix $B\in G$.
+                \begin{byCase}
+                    \caseOf{$B\in F$.}
+                        Follows.
+                    \caseOf{$B\notin F$.}
+                        $B\subseteq X$
+                            by \obv{almost_disjoint_members_subset}.
+                        $B$ is infinite
+                            by \obv{almost_disjoint_members_infinite}.
+                        Take $A\in F$ such that $A\inter B$ is infinite
+                            by \obv{blocks_infinite_subsets_of}.
+                        $A\in G$ by \obv{subseteq}.
+                        $A\neq B$.
+                        Hence $A\inter B$ is finite by
+                            \obv{almost_disjoint_distinct_intersection_finite}.
+                        Contradiction.
+                \end{byCase}
+            \end{subproof}
+            Hence $G\subseteq F$ by \obv{subseteq}.
+            Follows by \obv{subseteq_antisymmetric}.
+        \end{subproof}
+        Follows by \obv{maximal_almost_disjoint_family_on}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{corollary}\label{mad_iff_blocking}
+    Suppose $F$ is an infinite almost-disjoint family on $X$.
+    Then $F$ is an infinite maximal almost-disjoint family on $X$ iff
+        $F$ blocks the infinite subsets of $X$.
+\end{corollary}
+\begin{proof}
+    $F$ is an almost-disjoint family on $X$.
+    Follows by
+        \auto{maximal_almost_disjoint_family_on,
+            maximal_almost_disjoint_iff_blocking}.
+\end{proof}
+
+\begin{theorem}\label{union_of_chain_of_almost_disjoint_families}
+    Suppose $C$ is an inclusion chain.
+    Suppose for every $G\in C$ we have
+        $G$ is an almost-disjoint family on $X$.
+    Then $\unions{C}$ is an almost-disjoint family on $X$.
+\end{theorem}
+\begin{proof}
+    Show that $\unions{C}\subseteq\pow{X}$.
+    \begin{subproof}
+        It suffices to show that every element of $\unions{C}$ is an element
+            of $\pow{X}$ by \obv{subseteq}.
+        Fix $A\in\unions{C}$.
+        Take $G\in C$ such that $A\in G$ by \obv{unions_iff}.
+        $G$ is an almost-disjoint family on $X$.
+        Hence $A\subseteq X$
+            by \obv{almost_disjoint_members_subset}.
+        Follows by \obv{pow_iff,subseteq}.
+    \end{subproof}
+    Show that for every $A\in\unions{C}$ we have $A$ is infinite.
+    \begin{subproof}
+        Fix $A\in\unions{C}$.
+        Take $G\in C$ such that $A\in G$ by \obv{unions_iff}.
+        Follows by \auto{almost_disjoint_members_infinite}.
+    \end{subproof}
+    Show that for all $A,B\in\unions{C}$ such that $A\neq B$
+        we have $A\inter B$ is finite.
+    \begin{subproof}
+        Fix $A,B\in\unions{C}$.
+        Assume $A\neq B$.
+        Take $G\in C$ such that $A\in G$ by \obv{unions_iff}.
+        Take $H\in C$ such that $B\in H$ by \obv{unions_iff}.
+        $G\subseteq H$ or $H\subseteq G$ by \obv{inclusion_chain}.
+        \begin{byCase}
+            \caseOf{$G\subseteq H$.}
+                $A\in H$ by \obv{subseteq}.
+                Follows by
+                    \auto{almost_disjoint_distinct_intersection_finite}.
+            \caseOf{$H\subseteq G$.}
+                $B\in G$ by \obv{subseteq}.
+                Follows by
+                    \auto{almost_disjoint_distinct_intersection_finite}.
+        \end{byCase}
+    \end{subproof}
+    Follows by \obv{almost_disjoint_family_on}.
+\end{proof}
+
+\begin{theorem}\label{almost_disjoint_family_has_maximal_extension}
+    Suppose $F$ is an almost-disjoint family on $X$.
+    Then there exists $M$ such that
+        $F\subseteq M$ and
+        $M$ is a maximal almost-disjoint family on $X$.
+\end{theorem}
+\begin{proof}
+    Let $P=\{G\in\pow{\pow{X}}\mid
+        \text{$F\subseteq G$ and
+            $G$ is an almost-disjoint family on $X$}\}$.
+    $F\subseteq\pow{X}$ by \obv{almost_disjoint_family_on}.
+    Hence $F\in\pow{\pow{X}}$ by \obv{pow_iff,subseteq}.
+    $F\subseteq F$ by \obv{subseteq_refl}.
+    Hence $F\subseteq F$ and
+        $F$ is an almost-disjoint family on $X$.
+    Hence $F\in P$.
+    Hence $P$ is inhabited.
+    Show that for every $C$ such that $C\subseteq P$ and $C$ is inhabited
+        and $C$ is an inclusion chain we have $\unions{C}\in P$.
+    \begin{subproof}
+        Fix $C$.
+        Assume $C\subseteq P$ and $C$ is inhabited and
+            $C$ is an inclusion chain.
+        For every $G\in C$ we have
+            $G$ is an almost-disjoint family on $X$
+            by \auto{subseteq}.
+        Hence $\unions{C}$ is an almost-disjoint family on $X$
+            by \obv{union_of_chain_of_almost_disjoint_families}.
+        Hence $\unions{C}\subseteq\pow{X}$
+            by \obv{almost_disjoint_family_on}.
+        Hence $\unions{C}\in\pow{\pow{X}}$
+            by \obv{pow_iff,subseteq}.
+        Take $G$ such that $G\in C$.
+        $G\in P$ by \obv{subseteq}.
+        Hence $F\subseteq G$.
+        $G\subseteq\unions{C}$ by \auto{unions_iff,subseteq}.
+        Hence $F\subseteq\unions{C}$ by \obv{subseteq_transitive}.
+    \end{subproof}
+    Take $M\in P$ such that for every $G\in P$ such that
+        $M\subseteq G$ we have $G=M$ by \obv{zorn_subset_family}.
+    $F\subseteq M$ and
+        $M$ is an almost-disjoint family on $X$.
+    Show that $M$ is a maximal almost-disjoint family on $X$.
+    \begin{subproof}
+        Show that for every $N$ such that
+            $N$ is an almost-disjoint family on $X$ and
+            $M\subseteq N$ we have $N=M$.
+        \begin{subproof}
+            Fix $N$.
+            Assume $N$ is an almost-disjoint family on $X$ and
+                $M\subseteq N$.
+            $N\subseteq\pow{X}$
+                by \obv{almost_disjoint_family_on}.
+            Hence $N\in\pow{\pow{X}}$ by \obv{pow_iff,subseteq}.
+            $F\subseteq N$ by \obv{subseteq_transitive}.
+            Hence $N\in P$.
+        \end{subproof}
+        Follows by \obv{maximal_almost_disjoint_family_on}.
+    \end{subproof}
+\end{proof}
+
+\begin{theorem}\label{infinite_almost_disjoint_family_has_maximal_extension}
+    Suppose $F$ is an infinite almost-disjoint family on $X$.
+    Then there exists $M$ such that
+        $F\subseteq M$ and
+        $M$ is an infinite maximal almost-disjoint family on $X$.
+\end{theorem}
+\begin{proof}
+    $F$ is an almost-disjoint family on $X$.
+    Take $M$ such that $F\subseteq M$ and
+        $M$ is a maximal almost-disjoint family on $X$
+        by \obv{almost_disjoint_family_has_maximal_extension}.
+    $F$ is infinite.
+    Hence $M$ is infinite by \obv{infinite_superset}.
+    $M$ is an almost-disjoint family on $X$
+        by \obv{maximal_almost_disjoint_family_on}.
+    Hence $M$ is an infinite almost-disjoint family on $X$.
+    Hence $M$ is an infinite maximal almost-disjoint family on $X$
+        by \obv{maximal_almost_disjoint_family_on}.
+\end{proof}
+
+\begin{proposition}\label{natural_pairing_row_subset}
+    Let $p\in\bijections{\naturals\times\naturals}{\naturals}$.
+    Let $n\in\naturals$.
+    Then $\img{p}{\{n\}\times\naturals}\subseteq\naturals$.
+\end{proposition}
+\begin{proof}
+    $p\in\funs{\naturals\times\naturals}{\naturals}$
+        by \obv{bijections_to_funs}.
+    $\{n\}\subseteq\naturals$ by \obv{singleton_subset_intro}.
+    Hence $\{n\}\times\naturals\subseteq
+        \naturals\times\naturals$ by \obv{times_subseteq_left}.
+    Follows by \obv{funs_image_subseteq}.
+\end{proof}
+
+\begin{proposition}\label{natural_pairing_row_infinite}
+    Let $p\in\bijections{\naturals\times\naturals}{\naturals}$.
+    Let $n\in\naturals$.
+    Then $\img{p}{\{n\}\times\naturals}$ is infinite.
+\end{proposition}
+\begin{proof}
+    Let $S=\{n\}\times\naturals$.
+    $p\in\funs{\naturals\times\naturals}{\naturals}$ and
+        $p$ is injective by \obv{bijections_to_funs,bijections}.
+    Hence $p$ is a function and
+        $\dom{p}=\naturals\times\naturals$
+        by \obv{funs_is_function,funs}.
+    For all $x,y\in\naturals\times\naturals$ such that $p(x)=p(y)$
+        we have $x=y$ by \auto{injective_function}.
+    Hence $p\in\inj{\naturals\times\naturals}{\naturals}$
+        by \obv{inj}.
+    $\{n\}\subseteq\naturals$ by \obv{singleton_subset_intro}.
+    Hence $S\subseteq\naturals\times\naturals$
+        by \auto{times_subseteq_left}.
+    Let $q=\restrl{p}{S}$.
+    $q\in\inj{S}{\naturals}$ by \auto{inj_restrl}.
+    $\ran{q}=\img{p}{S}$ by \auto{restrl_ran}.
+    Hence $q\in\surj{S}{\img{p}{S}}$ by \auto{inj,fun_to_surj}.
+    $q$ is a function and $\dom{q}=S$
+        by \auto{inj,funs_is_function,funs}.
+    $q$ is injective by \auto{inj,injective_function}.
+    Hence $q\in\bijections{S}{\img{p}{S}}$ by \obv{bijections}.
+    Hence $S\approx\img{p}{S}$ by \obv{equinum}.
+    $S\approx\naturals$ by \auto{times_singleton_left_equinum}.
+    Hence $\img{p}{S}\approx\naturals$
+        by \obv{equinum_sym,equinum_tran}.
+    Suppose not.
+    Hence $\img{p}{S}$ is finite.
+    Hence $\naturals$ is finite by \obv{finite_equinumerous}.
+    Contradiction by \obv{naturals_is_infinite}.
+\end{proof}
+
+\begin{proposition}\label{distinct_natural_pairing_rows_disjoint}
+    Let $p\in\bijections{\naturals\times\naturals}{\naturals}$.
+    Let $n,m\in\naturals$.
+    Suppose $n\neq m$.
+    Then $\img{p}{\{n\}\times\naturals}\inter
+        \img{p}{\{m\}\times\naturals}=\emptyset$.
+\end{proposition}
+\begin{proof}
+    $p\in\funs{\naturals\times\naturals}{\naturals}$ and
+        $p$ is injective by \obv{bijections_to_funs,bijections}.
+    Hence $p$ is a function and
+        $\dom{p}=\naturals\times\naturals$
+        by \obv{funs_is_function,funs}.
+    Show that every element of
+        $\img{p}{\{n\}\times\naturals}\inter
+            \img{p}{\{m\}\times\naturals}$
+        is an element of $\emptyset$.
+    \begin{subproof}
+        Fix $z\in
+            \img{p}{\{n\}\times\naturals}\inter
+                \img{p}{\{m\}\times\naturals}$.
+        $z\in\img{p}{\{n\}\times\naturals}$ and
+            $z\in\img{p}{\{m\}\times\naturals}$ by \obv{inter}.
+        Take $a\in\{n\}\times\naturals$ such that $(a,z)\in p$
+            by \obv{img_iff}.
+        Take $b\in\{m\}\times\naturals$ such that $(b,z)\in p$
+            by \obv{img_iff}.
+        Hence $a=b$ by \obv{injective}.
+        $\fst{a}=n$ and $\fst{b}=m$
+            by \auto{fst_type,singleton_iff}.
+        Hence $n=m$.
+        Contradiction.
+    \end{subproof}
+    Follows by \auto{subseteq_emptyset_iff,subseteq}.
+\end{proof}
+
+\begin{theorem}\label{infinite_almost_disjoint_family_on_naturals_exists}
+    There exists $F$ such that
+        $F$ is an infinite almost-disjoint family on $\naturals$.
+\end{theorem}
+\begin{proof}
+    $\naturals$ is an infinite cardinal
+        by \obv{naturals_is_infinite,naturals_is_cardinal}.
+    Hence $\naturals\times\naturals\approx\naturals$
+        by \obv{infinite_cardinal_square}.
+    Take $p$ such that
+        $p\in\bijections{\naturals\times\naturals}{\naturals}$
+        by \obv{equinum}.
+    Let $r=\{(n,\img{p}{\{n\}\times\naturals})
+        \mid n\in\naturals\}$.
+    $r$ is a relation by \auto{relation}.
+    $r$ is right-unique by \auto{rightunique,pair_eq_iff}.
+    $\dom{r}=\naturals$ by \auto{setext,dom_iff,pair_eq_iff}.
+    For every $n\in\naturals$ we have
+        $r(n)=\img{p}{\{n\}\times\naturals}$
+        by \obv{function_apply_intro}.
+    For every $n\in\naturals$ we have $r(n)\in\pow{\naturals}$
+        by \auto{natural_pairing_row_subset,pow_iff,subseteq}.
+    Hence $r$ is a function to $\pow{\naturals}$.
+    Hence $r\in\funs{\naturals}{\pow{\naturals}}$
+        by \obv{funs_intro}.
+    Show that for all $n,m\in\naturals$ such that $r(n)=r(m)$
+        we have $n=m$.
+    \begin{subproof}
+        Fix $n,m\in\naturals$.
+        Assume $r(n)=r(m)$.
+        Suppose not.
+        Hence $n\neq m$.
+        $r(n)=\img{p}{\{n\}\times\naturals}$ and
+            $r(m)=\img{p}{\{m\}\times\naturals}$
+            by \obv{function_apply_intro}.
+        $r(n)$ is infinite by \obv{natural_pairing_row_infinite}.
+        Hence $r(n)$ is inhabited by
+            \obv{emptyset_is_finite,nonempty_inhabited}.
+        Take $z$ such that $z\in r(n)$.
+        Hence $z\in r(m)$.
+        Hence $z\in r(n)\inter r(m)$ by \obv{inter}.
+        $r(n)\inter r(m)=\emptyset$
+            by \auto{distinct_natural_pairing_rows_disjoint}.
+        Hence $z\in\emptyset$.
+        Contradiction by \obv{emptyset}.
+    \end{subproof}
+    Hence $r\in\inj{\naturals}{\pow{\naturals}}$ by \obv{inj}.
+    Let $F=\ran{r}$.
+    $F\subseteq\pow{\naturals}$ by \auto{inj,funs_ran}.
+    Show that for every $A\in F$ we have $A$ is infinite.
+    \begin{subproof}
+        Fix $A\in F$.
+        Take $n\in\dom{r}$ such that $r(n)=A$ by \obv{fun_ran_iff}.
+        Hence $n\in\naturals$ by \obv{funs}.
+        Follows by \auto{natural_pairing_row_infinite}.
+    \end{subproof}
+    Show that for all $A,B\in F$ such that $A\neq B$
+        we have $A\inter B$ is finite.
+    \begin{subproof}
+        Fix $A,B\in F$.
+        Assume $A\neq B$.
+        Take $n\in\dom{r}$ such that $r(n)=A$ by \obv{fun_ran_iff}.
+        Take $m\in\dom{r}$ such that $r(m)=B$ by \obv{fun_ran_iff}.
+        Hence $n,m\in\naturals$ by \obv{funs}.
+        $n\neq m$.
+        Hence $A\inter B=\emptyset$
+            by \auto{distinct_natural_pairing_rows_disjoint}.
+        Follows by \obv{emptyset_is_finite}.
+    \end{subproof}
+    Hence $F$ is an almost-disjoint family on $\naturals$
+        by \obv{almost_disjoint_family_on}.
+    $r\in\surj{\naturals}{F}$ by \auto{inj,fun_to_surj}.
+    $r$ is a function and $\dom{r}=\naturals$
+        by \obv{inj,funs_is_function,funs}.
+    $r$ is injective by \auto{inj,injective_function}.
+    Hence $r\in\bijections{\naturals}{F}$ by \obv{bijections}.
+    Hence $\naturals\approx F$ by \obv{equinum}.
+    Hence $F\approx\naturals$ by \obv{equinum_sym}.
+    Show that $F$ is infinite.
+    \begin{subproof}
+        Suppose not.
+        Hence $F$ is finite.
+        Hence $\naturals$ is finite by \obv{finite_equinumerous}.
+        Contradiction by \obv{naturals_is_infinite}.
+    \end{subproof}
+    Hence $F$ is an infinite almost-disjoint family on $\naturals$.
+\end{proof}
+
+\begin{theorem}\label{infinite_maximal_almost_disjoint_family_on_naturals_exists}
+    There exists $M$ such that
+        $M$ is an infinite maximal almost-disjoint family on $\naturals$.
+\end{theorem}
+\begin{proof}
+    Take $F$ such that $F$ is an infinite almost-disjoint family on $\naturals$
+        by \obv{infinite_almost_disjoint_family_on_naturals_exists}.
+    Take $M$ such that $F\subseteq M$ and
+        $M$ is an infinite maximal almost-disjoint family on $\naturals$
+        by \obv{infinite_almost_disjoint_family_has_maximal_extension}.
+\end{proof}

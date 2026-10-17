@@ -1,0 +1,1062 @@
+\import{algebra/group/maps.tex}
+\import{set/indexed-family.tex}
+
+\section{Subgroups}
+
+The primary notion is a carrier predicate relative to an explicit ambient
+group.  The exact induced record is constructed separately below.
+
+\begin{definition}\label{subgroup}
+    $\subgroup{H}{G}$ iff
+        $G$ is a group and
+        $H\subseteq\carrier[G]$ and
+        $\neutral[G]\in H$ and
+        for all $x,y\in H$ we have $\mul[G](x,y)\in H$ and
+        for every $z\in H$ we have $\groupInv[G](z)\in H$.
+\end{definition}
+
+\begin{proposition}\label{subgroup_ambient_group}
+    Suppose $\subgroup{H}{G}$.
+    Then $G$ is a group.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{subgroup}.
+\end{proof}
+
+\begin{proposition}\label{subgroup_subseteq}
+    Suppose $\subgroup{H}{G}$.
+    Then $H\subseteq\carrier[G]$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{subgroup}.
+\end{proof}
+
+\begin{proposition}\label{subgroup_neutral}
+    Suppose $\subgroup{H}{G}$.
+    Then $\neutral[G]\in H$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{subgroup}.
+\end{proof}
+
+\begin{proposition}\label{subgroup_mul}
+    Suppose $\subgroup{H}{G}$.
+    Let $x,y\in H$.
+    Then $\mul[G](x,y)\in H$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{subgroup}.
+\end{proof}
+
+\begin{proposition}\label{subgroup_inv}
+    Suppose $\subgroup{H}{G}$.
+    Let $x\in H$.
+    Then $\groupInv[G](x)\in H$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{subgroup}.
+\end{proof}
+
+\begin{corollary}\label{subgroup_inhabited}
+    Suppose $\subgroup{H}{G}$.
+    Then $H$ is inhabited.
+\end{corollary}
+\begin{proof}
+    Follows by \auto{subgroup_neutral}.
+\end{proof}
+
+\begin{theorem}\label{subgroup_difference_criterion}
+    Let $G$ be a group.
+    Suppose $H\subseteq\carrier[G]$ and $H$ is inhabited.
+    Suppose for all $x,y\in H$ we have
+        $\mul[G](x,\groupInv[G](y))\in H$.
+    Then $\subgroup{H}{G}$.
+\end{theorem}
+\begin{proof}
+    Take $a$ such that $a\in H$.
+    Hence $a\in\carrier[G]$ by \obv{subseteq}.
+    $\mul[G](a,\groupInv[G](a))\in H$.
+    Hence $\neutral[G]\in H$ by \obv{group_inverse_right}.
+    Show that for every $x\in H$ we have $\groupInv[G](x)\in H$.
+    \begin{subproof}
+        Fix $x\in H$.
+        $\mul[G](\neutral[G],\groupInv[G](x))\in H$.
+        $x\in\carrier[G]$ by \obv{subseteq}.
+        $\groupInv[G](x)\in\carrier[G]$ by
+            \obv{group_inverse_type}.
+        Follows by
+            \obv{group_is_monoid,monoid_is_unital_magma,unitalmagma_left}.
+    \end{subproof}
+    Show that for all $x,y\in H$ we have $\mul[G](x,y)\in H$.
+    \begin{subproof}
+        Fix $x,y\in H$.
+        $\groupInv[G](y)\in H$.
+        Hence
+            $\mul[G](x,\groupInv[G](\groupInv[G](y)))\in H$.
+        $y\in\carrier[G]$ by \obv{subseteq}.
+        Follows by \obv{group_inverse_involutive}.
+    \end{subproof}
+    Follows by \obv{subgroup}.
+\end{proof}
+
+\begin{proposition}\label{full_carrier_subgroup}
+    Let $G$ be a group.
+    Then $\subgroup{\carrier[G]}{G}$.
+\end{proposition}
+\begin{proof}
+    $\neutral[G]\in\carrier[G]$ by \obv{unitalmagma_type}.
+    For all $x,y\in\carrier[G]$ we have
+        $\mul[G](x,y)\in\carrier[G]$ by
+        \obv{group_is_monoid,monoid_is_magma,magma_welldef}.
+    For every $x\in\carrier[G]$ we have
+        $\groupInv[G](x)\in\carrier[G]$ by
+        \obv{group_inverse_type}.
+    Follows by \obv{subgroup,subseteq_refl}.
+\end{proof}
+
+\begin{proposition}\label{trivial_carrier_subgroup}
+    Let $G$ be a group.
+    Then $\subgroup{\trivialSubgroupCarrier{G}}{G}$.
+\end{proposition}
+\begin{proof}
+    $\neutral[G]\in\carrier[G]$ by \obv{unitalmagma_type}.
+    Hence $\trivialSubgroupCarrier{G}\subseteq\carrier[G]$ by
+        \auto{trivial_subgroup_carrier,singleton_subset_intro}.
+    $\neutral[G]\in\trivialSubgroupCarrier{G}$ by
+        \obv{trivial_subgroup_carrier,singleton_intro}.
+    Show that for all $x,y\in\trivialSubgroupCarrier{G}$ we have
+        $\mul[G](x,y)\in\trivialSubgroupCarrier{G}$.
+    \begin{subproof}
+        Fix $x,y\in\trivialSubgroupCarrier{G}$.
+        Hence $x=\neutral[G]$ and $y=\neutral[G]$ by
+            \auto{trivial_subgroup_carrier,singleton_iff}.
+        $\mul[G](\neutral[G],\neutral[G])=\neutral[G]$ by
+            \obv{unitalmagma_mul_neutral_neutral}.
+        Follows by \obv{trivial_subgroup_carrier,singleton_intro}.
+    \end{subproof}
+    Show that for every $x\in\trivialSubgroupCarrier{G}$ we have
+        $\groupInv[G](x)\in\trivialSubgroupCarrier{G}$.
+    \begin{subproof}
+        Fix $x\in\trivialSubgroupCarrier{G}$.
+        Hence $x=\neutral[G]$ by
+            \auto{trivial_subgroup_carrier,singleton_iff}.
+        $\groupInv[G](\neutral[G])=\neutral[G]$ by
+            \obv{group_inverse_neutral}.
+        Follows by \obv{trivial_subgroup_carrier,singleton_intro}.
+    \end{subproof}
+    Follows by \obv{subgroup}.
+\end{proof}
+
+\begin{theorem}\label{subgroup_intersection}
+    Suppose $\subgroup{H}{G}$ and $\subgroup{K}{G}$.
+    Then $\subgroup{H\inter K}{G}$.
+\end{theorem}
+\begin{proof}
+    $H,K\subseteq\carrier[G]$ by \obv{subgroup_subseteq}.
+    Hence $H\inter K\subseteq\carrier[G]$ by
+        \obv{inter_subseteq}.
+    $\neutral[G]\in H\inter K$ by
+        \obv{subgroup_neutral,inter_intro}.
+    Show that for all $x,y\in H\inter K$ we have
+        $\mul[G](x,y)\in H\inter K$.
+    \begin{subproof}
+        Follows by
+            \obv{inter_elim_left,inter_elim_right,subgroup_mul,inter_intro}.
+    \end{subproof}
+    Show that for every $x\in H\inter K$ we have
+        $\groupInv[G](x)\in H\inter K$.
+    \begin{subproof}
+        Follows by
+            \obv{inter_elim_left,inter_elim_right,subgroup_inv,inter_intro}.
+    \end{subproof}
+    Follows by \obv{subgroup}.
+\end{proof}
+
+\begin{theorem}\label{subgroup_indexed_intersection}
+    Let $G$ be a group.
+    Let $F\in\funs{I}{\pow{\carrier[G]}}$.
+    Suppose for every $i\in I$ we have $\subgroup{F(i)}{G}$.
+    Then
+        $\subgroup{\indexedIntersection{I}{F}{\carrier[G]}}{G}$.
+\end{theorem}
+\begin{proof}
+    Let $C=\indexedIntersection{I}{F}{\carrier[G]}$.
+    $C\subseteq\carrier[G]$ by
+        \auto{indexed_intersection_subseteq}.
+    $\neutral[G]\in\carrier[G]$ by
+        \obv{group_is_monoid,monoid_is_unital_magma,unitalmagma_type}.
+    For every $i\in I$ we have $\neutral[G]\in F(i)$ by
+        \obv{subgroup_neutral}.
+    Hence $\neutral[G]\in C$ by \obv{indexed_intersection}.
+    Show that for all $x,y\in C$ we have $\mul[G](x,y)\in C$.
+    \begin{subproof}
+        Fix $x,y\in C$.
+        Hence $x,y\in\carrier[G]$ by
+            \obv{indexed_intersection}.
+        $\mul[G](x,y)\in\carrier[G]$ by
+            \obv{group_is_monoid,monoid_is_magma,magma_welldef}.
+        Show that for every $i\in I$ we have $\mul[G](x,y)\in F(i)$.
+        \begin{subproof}
+            Fix $i\in I$.
+            $x,y\in F(i)$ by \auto{indexed_intersection_iff}.
+            Follows by \obv{subgroup_mul}.
+        \end{subproof}
+        Follows by \obv{indexed_intersection}.
+    \end{subproof}
+    Show that for every $x\in C$ we have $\groupInv[G](x)\in C$.
+    \begin{subproof}
+        Fix $x\in C$.
+        Hence $x\in\carrier[G]$ by
+            \obv{indexed_intersection}.
+        $\groupInv[G](x)\in\carrier[G]$ by
+            \obv{group_inverse_type}.
+        Show that for every $i\in I$ we have
+            $\groupInv[G](x)\in F(i)$.
+        \begin{subproof}
+            Fix $i\in I$.
+            $x\in F(i)$ by \auto{indexed_intersection_iff}.
+            Follows by \obv{subgroup_inv}.
+        \end{subproof}
+        Follows by \obv{indexed_intersection}.
+    \end{subproof}
+    Follows by \obv{subgroup}.
+\end{proof}
+
+\begin{theorem}\label{subgroup_family_intersection}
+    Let $G$ be a group.
+    Suppose $C$ is inhabited.
+    Suppose for every $K\in C$ we have $\subgroup{K}{G}$.
+    Then $\subgroup{\inters{C}}{G}$.
+\end{theorem}
+\begin{proof}
+    Let $P=\inters{C}$.
+    Show that $P\subseteq\carrier[G]$.
+    \begin{subproof}
+        Take $K$ such that $K\in C$.
+        $\subgroup{K}{G}$.
+        Hence $K\subseteq\carrier[G]$ by
+            \obv{subgroup_subseteq}.
+        $P\subseteq K$ by \auto{inters_subseteq_elem}.
+        Follows by \obv{subseteq_transitive}.
+    \end{subproof}
+    Show that $\neutral[G]\in P$.
+    \begin{subproof}
+        Show that for every $K\in C$ we have $\neutral[G]\in K$.
+        \begin{subproof}
+            Follows by \obv{subgroup_neutral}.
+        \end{subproof}
+        Follows by \obv{inters_intro}.
+    \end{subproof}
+    Show that for all $x,y\in P$ we have $\mul[G](x,y)\in P$.
+    \begin{subproof}
+        Fix $x,y\in P$.
+        Show that for every $K\in C$ we have $\mul[G](x,y)\in K$.
+        \begin{subproof}
+            Fix $K\in C$.
+            $x,y\in K$ by \obv{inters_destr}.
+            Follows by \obv{subgroup_mul}.
+        \end{subproof}
+        Follows by \obv{inters_intro}.
+    \end{subproof}
+    Show that for every $x\in P$ we have $\groupInv[G](x)\in P$.
+    \begin{subproof}
+        Fix $x\in P$.
+        Show that for every $K\in C$ we have $\groupInv[G](x)\in K$.
+        \begin{subproof}
+            Fix $K\in C$.
+            $x\in K$ by \obv{inters_destr}.
+            Follows by \obv{subgroup_inv}.
+        \end{subproof}
+        Follows by \obv{inters_intro}.
+    \end{subproof}
+    Follows by \obv{subgroup}.
+\end{proof}
+
+\begin{proposition}\label{empty_indexed_intersection_is_full_carrier}
+    $\indexedIntersection{\emptyset}{F}{\carrier[G]}
+        =\carrier[G]$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{setext,indexed_intersection_iff,emptyset}.
+\end{proof}
+
+\begin{corollary}\label{empty_indexed_intersection_subgroup}
+    Let $G$ be a group.
+    Then
+        $\subgroup{
+            \indexedIntersection{\emptyset}{F}{\carrier[G]}}{G}$.
+\end{corollary}
+\begin{proof}
+    Follows by
+        \auto{empty_indexed_intersection_is_full_carrier,full_carrier_subgroup}.
+\end{proof}
+
+\begin{theorem}\label{directed_subgroup_union}
+    Let $G$ be a group.
+    Let $F\in\funs{I}{\pow{\carrier[G]}}$.
+    Suppose $I$ is inhabited.
+    Suppose for every $i\in I$ we have $\subgroup{F(i)}{G}$.
+    Suppose for all $i,j\in I$ there exists $k\in I$ such that
+        $F(i)\union F(j)\subseteq F(k)$.
+    Then $\subgroup{\unions{\ran{F}}}{G}$.
+\end{theorem}
+\begin{proof}
+    Let $U=\unions{\ran{F}}$.
+    Show that $U\subseteq\carrier[G]$.
+    \begin{subproof}
+        Show that for every $x\in U$ we have $x\in\carrier[G]$.
+        \begin{subproof}
+            Fix $x\in U$.
+            Take $A\in\ran{F}$ such that $x\in A$ by \obv{unions_iff}.
+            Take $i\in\dom{F}$ such that $F(i)=A$ by
+                \auto{fun_ran_iff,funs_is_function}.
+            Hence $i\in I$ by \obv{funs}.
+            $F(i)\subseteq\carrier[G]$ by \obv{subgroup_subseteq}.
+            Follows by \obv{subseteq}.
+        \end{subproof}
+        Follows by \obv{subseteq}.
+    \end{subproof}
+    Take $i_0$ such that $i_0\in I$.
+    $\neutral[G]\in F(i_0)$ by \obv{subgroup_neutral}.
+    $F(i_0)\in\ran{F}$ by \auto{fun_ran_iff,funs_is_function,funs}.
+    Hence $\neutral[G]\in U$ by \auto{unions_iff}.
+    Show that for every $x\in U$ we have $\groupInv[G](x)\in U$.
+    \begin{subproof}
+        Fix $x\in U$.
+        Take $A\in\ran{F}$ such that $x\in A$ by \obv{unions_iff}.
+        Take $i\in\dom{F}$ such that $F(i)=A$ by
+            \auto{fun_ran_iff,funs_is_function}.
+        Hence $i\in I$ by \obv{funs}.
+        $\groupInv[G](x)\in F(i)$ by \obv{subgroup_inv}.
+        $F(i)\in\ran{F}$ by \obv{fun_ran_iff,funs_is_function}.
+        Follows by \auto{unions_iff}.
+    \end{subproof}
+    Show that for all $x,y\in U$ we have $\mul[G](x,y)\in U$.
+    \begin{subproof}
+        Fix $x,y\in U$.
+        Take $A\in\ran{F}$ such that $x\in A$ by \obv{unions_iff}.
+        Take $i\in\dom{F}$ such that $F(i)=A$ by
+            \auto{fun_ran_iff,funs_is_function}.
+        Take $B\in\ran{F}$ such that $y\in B$ by \obv{unions_iff}.
+        Take $j\in\dom{F}$ such that $F(j)=B$ by
+            \auto{fun_ran_iff,funs_is_function}.
+        Hence $i,j\in I$ by \obv{funs}.
+        Take $k\in I$ such that $F(i)\union F(j)\subseteq F(k)$.
+        $x\in F(i)\union F(j)$ and $y\in F(i)\union F(j)$ by
+            \auto{union_iff}.
+        Hence $x,y\in F(k)$ by \obv{subseteq}.
+        $\mul[G](x,y)\in F(k)$ by \obv{subgroup_mul}.
+        $F(k)\in\ran{F}$ by
+            \auto{fun_ran_iff,funs_is_function,funs}.
+        Follows by \auto{unions_iff}.
+    \end{subproof}
+    Follows by \obv{subgroup}.
+\end{proof}
+
+\subsection{The exact induced group}
+
+\begin{proposition}\label{subgroup_mul_restriction_type}
+    Suppose $\subgroup{H}{G}$.
+    Then
+        $\restrl{\mul[G]}{H\times H}\in\funs{H\times H}{H}$.
+\end{proposition}
+\begin{proof}
+    Hence $G$ is a magma by
+        \obv{group_is_monoid,monoid_is_magma}.
+    Let $f=\mul[G]$.
+    Let $m=\restrl{f}{H\times H}$.
+    $f\in
+        \funs{\carrier[G]\times\carrier[G]}{\carrier[G]}$ by
+        \obv{magma_mul_graph}.
+    $H\subseteq\carrier[G]$ by \obv{subgroup_subseteq}.
+    $H\times H\subseteq\carrier[G]\times H$ by
+        \obv{times_subseteq_left}.
+    $\carrier[G]\times H
+        \subseteq\carrier[G]\times\carrier[G]$ by
+        \obv{times_subseteq_right}.
+    Hence $H\times H
+        \subseteq\carrier[G]\times\carrier[G]$ by
+        \obv{subseteq_transitive}.
+    Hence $H\times H\subseteq\dom{f}$ by \obv{funs}.
+    $m\in\funs{H\times H}{\carrier[G]}$ by
+        \auto{funs_restrl}.
+    Hence $m$ is a function and $H\times H=\dom{m}$ by
+        \obv{funs_elim}.
+    Show that $m$ is a function to $H$.
+    \begin{subproof}
+        Show that for every $p\in\dom{m}$ we have $m(p)\in H$.
+        \begin{subproof}
+            Fix $p\in\dom{m}$.
+            Hence $p\in H\times H$.
+            Take $x,y$ such that $x\in H$ and $y\in H$ and
+                $p=(x,y)$ by \obv{times_elem_is_tuple}.
+            $f$ is a function by \obv{funs_is_function}.
+            $m(p)=f(p)$ by \auto{restrl_of_function_apply}.
+            Hence $m(p)=\mul[G](x,y)$.
+            Follows by \auto{subgroup_mul}.
+        \end{subproof}
+    \end{subproof}
+    Follows by \auto{funs_intro}.
+\end{proof}
+
+\begin{proposition}\label{subgroup_mul_restriction_apply}
+    Suppose $\subgroup{H}{G}$.
+    Let $x,y\in H$.
+    Then
+        $(\restrl{\mul[G]}{H\times H})(x,y)=\mul[G](x,y)$.
+\end{proposition}
+\begin{proof}
+    Hence $G$ is a magma by
+        \obv{group_is_monoid,monoid_is_magma}.
+    $\mul[G]$ is a function by
+        \auto{magma_mul_graph,funs_is_function}.
+    $H\subseteq\carrier[G]$ by \obv{subgroup_subseteq}.
+    $H\times H\subseteq\carrier[G]\times H$ by
+        \obv{times_subseteq_left}.
+    $\carrier[G]\times H
+        \subseteq\carrier[G]\times\carrier[G]$ by
+        \obv{times_subseteq_right}.
+    Hence $H\times H\subseteq\dom{\mul[G]}$ by
+        \auto{subseteq_transitive,magma_mul_graph,funs}.
+    $(x,y)\in H\times H$ by \obv{times_tuple_intro}.
+    Follows by \obv{restrl_of_function_apply}.
+\end{proof}
+
+\begin{proposition}\label{subgroup_inv_restriction_type}
+    Suppose $\subgroup{H}{G}$.
+    Then $\restrl{\groupInv[G]}{H}\in\funs{H}{H}$.
+\end{proposition}
+\begin{proof}
+    $G$ is a group by \obv{subgroup_ambient_group}.
+    Let $f=\groupInv[G]$.
+    Let $v=\restrl{f}{H}$.
+    $f\in\funs{\carrier[G]}{\carrier[G]}$ by
+        \obv{group_inverse_graph}.
+    $H\subseteq\carrier[G]$ by \obv{subgroup_subseteq}.
+    Hence $H\subseteq\dom{f}$ by \obv{funs}.
+    $v\in\funs{H}{\carrier[G]}$ by \auto{funs_restrl}.
+    Hence $v$ is a function and $H=\dom{v}$ by \obv{funs_elim}.
+    Show that $v$ is a function to $H$.
+    \begin{subproof}
+        Show that for every $x\in\dom{v}$ we have $v(x)\in H$.
+        \begin{subproof}
+            Fix $x\in\dom{v}$.
+            Hence $x\in H$.
+            $f$ is a function by \obv{funs_is_function}.
+            $v(x)=f(x)$ by \auto{restrl_of_function_apply}.
+            Follows by \auto{subgroup_inv}.
+        \end{subproof}
+    \end{subproof}
+    Follows by \auto{funs_intro}.
+\end{proof}
+
+\begin{proposition}\label{subgroup_inv_restriction_apply}
+    Suppose $\subgroup{H}{G}$.
+    Let $x\in H$.
+    Then $(\restrl{\groupInv[G]}{H})(x)=\groupInv[G](x)$.
+\end{proposition}
+\begin{proof}
+    $G$ is a group by \obv{subgroup_ambient_group}.
+    $\groupInv[G]$ is a function by
+        \auto{group_inverse_graph,funs_is_function}.
+    $H\subseteq\dom{\groupInv[G]}$ by
+        \auto{subgroup_subseteq,group_inverse_graph,funs}.
+    Follows by \obv{restrl_of_function_apply}.
+\end{proof}
+
+\begin{definition}\label{subgroup_structure}
+    $\subgroupStructure{G}{H}=
+        \structure[group]{
+            \carrier=H,
+            \mul=\restrl{\mul[G]}{H\times H},
+            \neutral=\neutral[G],
+            \groupInv=\restrl{\groupInv[G]}{H}
+        }$.
+\end{definition}
+
+\begin{proposition}\label{subgroup_structure_carrier}
+    $\carrier[\subgroupStructure{G}{H}]=H$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{subgroup_structure,groupaggregateprojection_carrier}.
+\end{proof}
+
+\begin{proposition}\label{subgroup_structure_mul}
+    $\mul[\subgroupStructure{G}{H}]
+        =\restrl{\mul[G]}{H\times H}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{subgroup_structure,groupaggregateprojection_mul}.
+\end{proof}
+
+\begin{proposition}\label{subgroup_structure_neutral}
+    $\neutral[\subgroupStructure{G}{H}]=\neutral[G]$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{subgroup_structure,groupaggregateprojection_neutral}.
+\end{proof}
+
+\begin{proposition}\label{subgroup_structure_inv}
+    $\groupInv[\subgroupStructure{G}{H}]
+        =\restrl{\groupInv[G]}{H}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{subgroup_structure,groupaggregateprojection_groupInv}.
+\end{proof}
+
+\begin{proposition}\label{subgroup_structure_mul_apply}
+    Suppose $\subgroup{H}{G}$.
+    Let $x,y\in H$.
+    Then
+        $\mul[\subgroupStructure{G}{H}](x,y)=\mul[G](x,y)$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{subgroup_structure_mul,subgroup_mul_restriction_apply}.
+\end{proof}
+
+\begin{proposition}\label{subgroup_structure_inv_apply}
+    Suppose $\subgroup{H}{G}$.
+    Let $x\in H$.
+    Then
+        $\groupInv[\subgroupStructure{G}{H}](x)=\groupInv[G](x)$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{subgroup_structure_inv,subgroup_inv_restriction_apply}.
+\end{proof}
+
+\begin{theorem}\label{subgroup_structure_is_exact_group}
+    Suppose $\subgroup{H}{G}$.
+    Then $\subgroupStructure{G}{H}$ is an exact group.
+\end{theorem}
+\begin{proof}
+    Let $K=\subgroupStructure{G}{H}$.
+    $H\subseteq\carrier[G]$ by \obv{subgroup_subseteq}.
+    $\carrier[K]=H$ by \auto{subgroup_structure_carrier}.
+    $\mul[K]=\restrl{\mul[G]}{H\times H}$ by
+        \auto{subgroup_structure_mul}.
+    $\neutral[K]=\neutral[G]$ by
+        \auto{subgroup_structure_neutral}.
+    $\groupInv[K]=\restrl{\groupInv[G]}{H}$ by
+        \auto{subgroup_structure_inv}.
+    $\mul[K]\in\funs{\carrier[K]\times\carrier[K]}{\carrier[K]}$ by
+        \auto{subgroup_mul_restriction_type}.
+    $\neutral[K]\in\carrier[K]$ by \obv{subgroup_neutral}.
+    $\groupInv[K]\in\funs{\carrier[K]}{\carrier[K]}$ by
+        \auto{subgroup_inv_restriction_type}.
+    Show that for every $x\in\carrier[K]$ we have
+        $\mul[K](x,\neutral[K])=x$.
+    \begin{subproof}
+        Fix $x\in\carrier[K]$.
+        Hence $x\in H$.
+        $\mul[K](x,\neutral[K])
+            =\mul[G](x,\neutral[G])$ by
+            \auto{subgroup_structure_mul_apply,subgroup_neutral}.
+        $G$ is a unital magma by
+            \obv{subgroup_ambient_group,group_is_monoid,monoid_is_unital_magma}.
+        Follows by \obv{unitalmagma_right,subseteq}.
+    \end{subproof}
+    Show that for every $x\in\carrier[K]$ we have
+        $\mul[K](\neutral[K],x)=x$.
+    \begin{subproof}
+        Fix $x\in\carrier[K]$.
+        Hence $x\in H$.
+        $\mul[K](\neutral[K],x)
+            =\mul[G](\neutral[G],x)$ by
+            \auto{subgroup_structure_mul_apply,subgroup_neutral}.
+        $G$ is a unital magma by
+            \obv{subgroup_ambient_group,group_is_monoid,monoid_is_unital_magma}.
+        Follows by \obv{unitalmagma_left,subseteq}.
+    \end{subproof}
+    Show that for all $x,y,z\in\carrier[K]$ we have
+        $\mul[K](x,\mul[K](y,z))
+            =\mul[K](\mul[K](x,y),z)$.
+    \begin{subproof}
+        Fix $x,y,z\in\carrier[K]$.
+        Hence $x,y,z\in H$.
+        $\mul[G](x,y),\mul[G](y,z)\in H$ by
+            \obv{subgroup_mul}.
+        $\mul[K](x,\mul[K](y,z))
+            =\mul[G](x,\mul[G](y,z))$ by
+            \auto{subgroup_structure_mul_apply}.
+        $\mul[K](\mul[K](x,y),z)
+            =\mul[G](\mul[G](x,y),z)$ by
+            \auto{subgroup_structure_mul_apply}.
+        Follows by
+            \obv{subgroup_ambient_group,group_is_monoid,monoid_assoc,subseteq}.
+    \end{subproof}
+    Show that for every $x\in\carrier[K]$ we have
+        $\mul[K](x,\groupInv[K](x))=\neutral[K]$.
+    \begin{subproof}
+        Fix $x\in\carrier[K]$.
+        Hence $x\in H$.
+        $\groupInv[G](x)\in H$ by \obv{subgroup_inv}.
+        $\mul[K](x,\groupInv[K](x))
+            =\mul[G](x,\groupInv[G](x))$ by
+            \auto{subgroup_structure_mul_apply,subgroup_structure_inv_apply}.
+        Follows by
+            \obv{subgroup_ambient_group,group_inverse_right,subseteq}.
+    \end{subproof}
+    Show that for every $x\in\carrier[K]$ we have
+        $\mul[K](\groupInv[K](x),x)=\neutral[K]$.
+    \begin{subproof}
+        Fix $x\in\carrier[K]$.
+        Hence $x\in H$.
+        $\groupInv[G](x)\in H$ by \obv{subgroup_inv}.
+        $\mul[K](\groupInv[K](x),x)
+            =\mul[G](\groupInv[G](x),x)$ by
+            \auto{subgroup_structure_mul_apply,subgroup_structure_inv_apply}.
+        Follows by
+            \obv{subgroup_ambient_group,group_inverse_left,subseteq}.
+    \end{subproof}
+    Follows by
+        \auto{subgroup_structure,group,monoid,unitalmagma,magma,groupaggregateexact,groupaggregateprojection_carrier,groupaggregateprojection_mul,groupaggregateprojection_neutral,groupaggregateprojection_groupInv}.
+\end{proof}
+
+\begin{corollary}\label{subgroup_structure_is_group}
+    Suppose $\subgroup{H}{G}$.
+    Then $\subgroupStructure{G}{H}$ is a group.
+\end{corollary}
+\begin{proof}
+    Follows by \obv{subgroup_structure_is_exact_group}.
+\end{proof}
+
+\begin{theorem}\label{subgroup_structure_commutes_iff}
+    Suppose $\subgroup{H}{G}$.
+    Let $x,y\in H$.
+    Then
+        $\commutesIn{\subgroupStructure{G}{H}}{x}{y}$ iff
+        $\commutesIn{G}{x}{y}$.
+\end{theorem}
+\begin{proof}
+    $\carrier[\subgroupStructure{G}{H}]=H$ by
+        \obv{subgroup_structure_carrier}.
+    $x,y\in\carrier[G]$ by \auto{subgroup_subseteq,subseteq}.
+    $\mul[\subgroupStructure{G}{H}](x,y)=\mul[G](x,y)$ and
+        $\mul[\subgroupStructure{G}{H}](y,x)=\mul[G](y,x)$ by
+        \obv{subgroup_structure_mul_apply}.
+    Follows by \auto{commutes_in}.
+\end{proof}
+
+\begin{proposition}\label{full_subgroup_structure_mul}
+    Let $G$ be a group.
+    Then
+        $\mul[\subgroupStructure{G}{\carrier[G]}]=\mul[G]$.
+\end{proposition}
+\begin{proof}
+    $\mul[G]\in
+        \funs{\carrier[G]\times\carrier[G]}{\carrier[G]}$ by
+        \obv{group_is_monoid,monoid_is_magma,magma_mul_graph}.
+    Hence $\mul[G]$ is a function and
+        $\dom{\mul[G]}=\carrier[G]\times\carrier[G]$ by
+        \obv{funs_elim}.
+    Hence
+        $\restrl{\mul[G]}{\carrier[G]\times\carrier[G]}
+            =\mul[G]$ by \auto{restrl_by_dom}.
+    Follows by \obv{subgroup_structure_mul}.
+\end{proof}
+
+\begin{proposition}\label{full_subgroup_structure_inv}
+    Let $G$ be a group.
+    Then
+        $\groupInv[\subgroupStructure{G}{\carrier[G]}]
+            =\groupInv[G]$.
+\end{proposition}
+\begin{proof}
+    $\groupInv[G]\in\funs{\carrier[G]}{\carrier[G]}$ by
+        \obv{group_inverse_graph}.
+    Hence $\groupInv[G]$ is a function and
+        $\dom{\groupInv[G]}=\carrier[G]$ by \obv{funs_elim}.
+    Hence $\restrl{\groupInv[G]}{\carrier[G]}=\groupInv[G]$ by
+        \auto{restrl_by_dom}.
+    Follows by \obv{subgroup_structure_inv}.
+\end{proof}
+
+\begin{theorem}\label{full_subgroup_structure_eq_group_reduct}
+    Let $G$ be a group.
+    Then
+        $\subgroupStructure{G}{\carrier[G]}
+            =\reduct[group]{G}$.
+\end{theorem}
+\begin{proof}
+    $\subgroup{\carrier[G]}{G}$ by
+        \obv{full_carrier_subgroup}.
+    Hence $\subgroupStructure{G}{\carrier[G]}$ is an exact group by
+        \obv{subgroup_structure_is_exact_group}.
+    $\carrier[\subgroupStructure{G}{\carrier[G]}]
+        =\carrier[G]$ by \obv{subgroup_structure_carrier}.
+    $\neutral[\subgroupStructure{G}{\carrier[G]}]
+        =\neutral[G]$ by \obv{subgroup_structure_neutral}.
+    Follows by
+        \obv{full_subgroup_structure_mul,full_subgroup_structure_inv,exact_group_eq_group_reduct}.
+\end{proof}
+
+\begin{theorem}\label{subgroup_of_induced_group_iff}
+    Suppose $\subgroup{H}{G}$ and $K\subseteq H$.
+    Then
+        $\subgroup{K}{\subgroupStructure{G}{H}}$ iff
+        $\subgroup{K}{G}$.
+\end{theorem}
+\begin{proof}
+    Follows by
+        \auto{subgroup,subgroup_ambient_group,subgroup_subseteq,subgroup_structure_is_group,subgroup_structure_carrier,subgroup_structure_neutral,subgroup_structure_mul_apply,subgroup_structure_inv_apply,subseteq_transitive,subseteq}.
+\end{proof}
+
+\begin{theorem}\label{iterated_subgroup_structure}
+    Suppose $\subgroup{H}{G}$ and $K\subseteq H$.
+    Suppose $\subgroup{K}{G}$.
+    Then
+        $\subgroupStructure{\subgroupStructure{G}{H}}{K}
+            =\subgroupStructure{G}{K}$.
+\end{theorem}
+\begin{proof}
+    Let $S=\subgroupStructure{G}{H}$.
+    Let $A=\subgroupStructure{S}{K}$.
+    Let $B=\subgroupStructure{G}{K}$.
+    $\subgroup{K}{S}$ by \obv{subgroup_of_induced_group_iff}.
+    Hence $A$ is an exact group by
+        \auto{subgroup_structure_is_exact_group}.
+    $B$ is an exact group by
+        \auto{subgroup_structure_is_exact_group}.
+    $\carrier[A]=K=\carrier[B]$ by
+        \auto{subgroup_structure_carrier}.
+    $\neutral[A]=\neutral[S]=\neutral[G]=\neutral[B]$ by
+        \auto{subgroup_structure_neutral}.
+    $K\times K\subseteq H\times K$ by
+        \obv{times_subseteq_left}.
+    $H\times K\subseteq H\times H$ by
+        \obv{times_subseteq_right}.
+    Hence $K\times K\subseteq H\times H$ by
+        \obv{subseteq_transitive}.
+    Thus
+        $\restrl{\restrl{\mul[G]}{H\times H}}{K\times K}
+            =\restrl{\mul[G]}{K\times K}$ by
+        \obv{restrl_restrl}.
+    Hence $\mul[A]=\mul[B]$ by
+        \auto{subgroup_structure_mul}.
+    $\restrl{\restrl{\groupInv[G]}{H}}{K}
+        =\restrl{\groupInv[G]}{K}$ by
+        \obv{restrl_restrl}.
+    Hence $\groupInv[A]=\groupInv[B]$ by
+        \auto{subgroup_structure_inv}.
+    Follows by \auto{exact_group_extensionality}.
+\end{proof}
+
+\begin{definition}\label{group_substructure}
+    $\groupSubstructure{K}{G}$ iff
+        $K$ is a group and
+        $\subgroup{\carrier[K]}{G}$ and
+        $\reduct[group]{K}
+            =\subgroupStructure{G}{\carrier[K]}$.
+\end{definition}
+
+\begin{proposition}\label{group_substructure_is_group}
+    Suppose $\groupSubstructure{K}{G}$.
+    Then $K$ is a group.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{group_substructure}.
+\end{proof}
+
+\begin{proposition}\label{group_substructure_ambient_group}
+    Suppose $\groupSubstructure{K}{G}$.
+    Then $G$ is a group.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \obv{group_substructure,subgroup_ambient_group}.
+\end{proof}
+
+\begin{proposition}\label{group_substructure_carrier_subgroup}
+    Suppose $\groupSubstructure{K}{G}$.
+    Then $\subgroup{\carrier[K]}{G}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{group_substructure}.
+\end{proof}
+
+\begin{proposition}\label{group_substructure_reduct}
+    Suppose $\groupSubstructure{K}{G}$.
+    Then
+        $\reduct[group]{K}
+            =\subgroupStructure{G}{\carrier[K]}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{group_substructure}.
+\end{proof}
+
+\begin{corollary}\label{group_substructure_carrier_subseteq}
+    Suppose $\groupSubstructure{K}{G}$.
+    Then $\carrier[K]\subseteq\carrier[G]$.
+\end{corollary}
+\begin{proof}
+    Follows by
+        \obv{group_substructure_carrier_subgroup,subgroup_subseteq}.
+\end{proof}
+
+\begin{proposition}\label{group_substructure_mul_graph}
+    Suppose $\groupSubstructure{K}{G}$.
+    Then
+        $\mul[K]=
+            \restrl{\mul[G]}
+                {\carrier[K]\times\carrier[K]}$.
+\end{proposition}
+\begin{proof}
+    $\mul[\reduct[group]{K}]=\mul[K]$ by
+        \obv{groupreductprojection_mul}.
+    $\mul[\subgroupStructure{G}{\carrier[K]}]
+        =\restrl{\mul[G]}
+            {\carrier[K]\times\carrier[K]}$ by
+        \obv{subgroup_structure_mul}.
+    Follows by \obv{group_substructure_reduct}.
+\end{proof}
+
+\begin{proposition}\label{group_substructure_neutral}
+    Suppose $\groupSubstructure{K}{G}$.
+    Then $\neutral[K]=\neutral[G]$.
+\end{proposition}
+\begin{proof}
+    $\neutral[\reduct[group]{K}]=\neutral[K]$ by
+        \obv{groupreductprojection_neutral}.
+    $\neutral[\subgroupStructure{G}{\carrier[K]}]
+        =\neutral[G]$ by \obv{subgroup_structure_neutral}.
+    Follows by \obv{group_substructure_reduct}.
+\end{proof}
+
+\begin{proposition}\label{group_substructure_inv_graph}
+    Suppose $\groupSubstructure{K}{G}$.
+    Then
+        $\groupInv[K]=\restrl{\groupInv[G]}{\carrier[K]}$.
+\end{proposition}
+\begin{proof}
+    $\groupInv[\reduct[group]{K}]=\groupInv[K]$ by
+        \obv{groupreductprojection_groupInv}.
+    $\groupInv[\subgroupStructure{G}{\carrier[K]}]
+        =\restrl{\groupInv[G]}{\carrier[K]}$ by
+        \obv{subgroup_structure_inv}.
+    Follows by \obv{group_substructure_reduct}.
+\end{proof}
+
+\begin{proposition}\label{group_substructure_mul_apply}
+    Suppose $\groupSubstructure{K}{G}$.
+    Let $x,y\in\carrier[K]$.
+    Then $\mul[K](x,y)=\mul[G](x,y)$.
+\end{proposition}
+\begin{proof}
+    $\subgroup{\carrier[K]}{G}$ by
+        \obv{group_substructure_carrier_subgroup}.
+    Follows by
+        \auto{group_substructure_mul_graph,subgroup_mul_restriction_apply}.
+\end{proof}
+
+\begin{proposition}\label{group_substructure_inv_apply}
+    Suppose $\groupSubstructure{K}{G}$.
+    Let $x\in\carrier[K]$.
+    Then $\groupInv[K](x)=\groupInv[G](x)$.
+\end{proposition}
+\begin{proof}
+    $\subgroup{\carrier[K]}{G}$ by
+        \obv{group_substructure_carrier_subgroup}.
+    Follows by
+        \auto{group_substructure_inv_graph,subgroup_inv_restriction_apply}.
+\end{proof}
+
+\begin{proposition}\label{group_substructure_intro}
+    Suppose $K$ is a group and $\subgroup{\carrier[K]}{G}$.
+    Suppose
+        $\reduct[group]{K}
+            =\subgroupStructure{G}{\carrier[K]}$.
+    Then $\groupSubstructure{K}{G}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{group_substructure}.
+\end{proof}
+
+\begin{theorem}\label{induced_group_is_group_substructure}
+    Suppose $\subgroup{H}{G}$.
+    Then
+        $\groupSubstructure{\subgroupStructure{G}{H}}{G}$.
+\end{theorem}
+\begin{proof}
+    $\subgroupStructure{G}{H}$ is an exact group by
+        \obv{subgroup_structure_is_exact_group}.
+    $\carrier[\subgroupStructure{G}{H}]=H$ by
+        \obv{subgroup_structure_carrier}.
+    $\reduct[group]{\subgroupStructure{G}{H}}
+        =\subgroupStructure{G}{H}$ by
+        \obv{exact_group_reduct_eq}.
+    Follows by \obv{group_substructure_intro}.
+\end{proof}
+
+\begin{theorem}\label{group_substructure_reflexive}
+    Let $G$ be a group.
+    Then $\groupSubstructure{G}{G}$.
+\end{theorem}
+\begin{proof}
+    $\subgroup{\carrier[G]}{G}$ by
+        \obv{full_carrier_subgroup}.
+    $\reduct[group]{G}
+        =\subgroupStructure{G}{\carrier[G]}$ by
+        \obv{full_subgroup_structure_eq_group_reduct}.
+    Follows by \obv{group_substructure_intro}.
+\end{proof}
+
+\begin{theorem}\label{subgroup_structure_eq_iff_carrier_eq}
+    Suppose $\subgroup{H}{G}$ and $\subgroup{K}{G}$.
+    Then
+        $\subgroupStructure{G}{H}=\subgroupStructure{G}{K}$ iff
+        $H=K$.
+\end{theorem}
+\begin{proof}
+    Follows by \auto{subgroup_structure_carrier}.
+\end{proof}
+
+\begin{theorem}\label{subgroup_structure_group_reduct_congruence}
+    Suppose $\subgroup{K}{G}$ and $\subgroup{K}{H}$.
+    Suppose $\reduct[group]{G}=\reduct[group]{H}$.
+    Then
+        $\subgroupStructure{G}{K}=\subgroupStructure{H}{K}$.
+\end{theorem}
+\begin{proof}
+    $\subgroupStructure{G}{K}$ is an exact group and
+        $\subgroupStructure{H}{K}$ is an exact group by
+        \obv{subgroup_structure_is_exact_group}.
+    $\carrier[\subgroupStructure{G}{K}]
+        =\carrier[\subgroupStructure{H}{K}]$ by
+        \auto{subgroup_structure_carrier}.
+    $\mul[G]=\mul[H]$ by
+        \auto{groupreductprojection_mul}.
+    Hence
+        $\mul[\subgroupStructure{G}{K}]
+            =\mul[\subgroupStructure{H}{K}]$ by
+        \auto{subgroup_structure_mul}.
+    $\neutral[G]=\neutral[H]$ by
+        \auto{groupreductprojection_neutral}.
+    Hence
+        $\neutral[\subgroupStructure{G}{K}]
+            =\neutral[\subgroupStructure{H}{K}]$ by
+        \auto{subgroup_structure_neutral}.
+    $\groupInv[G]=\groupInv[H]$ by
+        \auto{groupreductprojection_groupInv}.
+    Hence
+        $\groupInv[\subgroupStructure{G}{K}]
+            =\groupInv[\subgroupStructure{H}{K}]$ by
+        \auto{subgroup_structure_inv}.
+    Follows by structure extensionality.
+\end{proof}
+
+\begin{theorem}\label{subgroup_transfer_across_group_substructure}
+    Suppose $\groupSubstructure{H}{G}$ and
+        $K\subseteq\carrier[H]$.
+    Then $\subgroup{K}{H}$ iff $\subgroup{K}{G}$.
+\end{theorem}
+\begin{proof}
+    Follows by
+        \auto{subgroup,group_substructure_is_group,group_substructure_ambient_group,group_substructure_carrier_subseteq,group_substructure_neutral,group_substructure_mul_apply,group_substructure_inv_apply,subseteq_transitive,subseteq}.
+\end{proof}
+
+\begin{theorem}\label{subgroup_structure_through_group_substructure}
+    Suppose $\groupSubstructure{H}{G}$ and $\subgroup{K}{H}$.
+    Then
+        $\subgroupStructure{H}{K}=\subgroupStructure{G}{K}$.
+\end{theorem}
+\begin{proof}
+    $K\subseteq\carrier[H]$ by \obv{subgroup_subseteq}.
+    Hence $\subgroup{K}{G}$ by
+        \obv{subgroup_transfer_across_group_substructure}.
+    $\subgroupStructure{H}{K}$ is an exact group and
+        $\subgroupStructure{G}{K}$ is an exact group by
+        \obv{subgroup_structure_is_exact_group}.
+    $\carrier[\subgroupStructure{H}{K}]
+        =\carrier[\subgroupStructure{G}{K}]$ by
+        \auto{subgroup_structure_carrier}.
+    $\neutral[\subgroupStructure{H}{K}]
+        =\neutral[\subgroupStructure{G}{K}]$ by
+        \auto{subgroup_structure_neutral,group_substructure_neutral}.
+    $K\times K\subseteq\carrier[H]\times K$ by
+        \obv{times_subseteq_left}.
+    $\carrier[H]\times K
+        \subseteq\carrier[H]\times\carrier[H]$ by
+        \obv{times_subseteq_right}.
+    Hence
+        $K\times K
+            \subseteq\carrier[H]\times\carrier[H]$ by
+        \obv{subseteq_transitive}.
+    $\restrl{\mul[H]}{K\times K}
+        =\restrl{
+            \restrl{\mul[G]}
+                {\carrier[H]\times\carrier[H]}}
+            {K\times K}$ by
+        \obv{group_substructure_mul_graph}.
+    Hence
+        $\restrl{\mul[H]}{K\times K}
+            =\restrl{\mul[G]}{K\times K}$ by
+        \auto{restrl_restrl}.
+    Thus
+        $\mul[\subgroupStructure{H}{K}]
+            =\mul[\subgroupStructure{G}{K}]$ by
+        \auto{subgroup_structure_mul}.
+    $\restrl{\groupInv[H]}{K}
+        =\restrl{\restrl{\groupInv[G]}{\carrier[H]}}{K}$ by
+        \obv{group_substructure_inv_graph}.
+    Hence
+        $\restrl{\groupInv[H]}{K}
+            =\restrl{\groupInv[G]}{K}$ by
+        \auto{restrl_restrl}.
+    Thus
+        $\groupInv[\subgroupStructure{H}{K}]
+            =\groupInv[\subgroupStructure{G}{K}]$ by
+        \auto{subgroup_structure_inv}.
+    Follows by structure extensionality.
+\end{proof}
+
+\begin{theorem}\label{group_substructure_transitive}
+    Suppose $\groupSubstructure{K}{H}$ and
+        $\groupSubstructure{H}{G}$.
+    Then $\groupSubstructure{K}{G}$.
+\end{theorem}
+\begin{proof}
+    $\subgroup{\carrier[K]}{H}$ by
+        \obv{group_substructure_carrier_subgroup}.
+    Hence $\carrier[K]\subseteq\carrier[H]$ by
+        \obv{subgroup_subseteq}.
+    Hence $\subgroup{\carrier[K]}{G}$ by
+        \obv{subgroup_transfer_across_group_substructure}.
+    $\reduct[group]{K}
+        =\subgroupStructure{H}{\carrier[K]}$ by
+        \obv{group_substructure_reduct}.
+    $\subgroupStructure{H}{\carrier[K]}
+        =\subgroupStructure{G}{\carrier[K]}$ by
+        \obv{subgroup_structure_through_group_substructure}.
+    Follows by \obv{group_substructure_intro}.
+\end{proof}
+
+\begin{definition}\label{subgroup_inclusion}
+    $\subgroupInclusion{G}{H}=\identity{H}$.
+\end{definition}
+
+\begin{proposition}\label{subgroup_inclusion_type}
+    Suppose $\subgroup{H}{G}$.
+    Then $\subgroupInclusion{G}{H}\in
+        \funs{H}{\carrier[G]}$.
+\end{proposition}
+\begin{proof}
+    $\identity{H}\in\funs{H}{H}$ by \obv{id_elem_funs}.
+    $H\subseteq\carrier[G]$ by \obv{subgroup_subseteq}.
+    Follows by
+        \auto{subgroup_inclusion,funs_weaken_codom}.
+\end{proof}
+
+\begin{proposition}\label{subgroup_inclusion_apply}
+    Suppose $\subgroup{H}{G}$.
+    Let $x\in H$.
+    Then $\apply{\subgroupInclusion{G}{H}}{x}=x$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{subgroup_inclusion,id_apply}.
+\end{proof}

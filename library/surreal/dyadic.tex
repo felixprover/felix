@@ -1,0 +1,902 @@
+\import{surreal/embedding.tex}
+\import{surreal/sign-cut.tex}
+
+\section{Dyadic surreals}
+
+\subsection{Negative powers of two}
+
+For a natural number $n$, the sign sequence $\surrealEpsilon{n}$ consists of
+one positive sign followed by $n$ negative signs.  It represents $2^{-n}$.
+
+\begin{definition}\label{surreal_epsilon}
+    $\surrealEpsilon{n}=
+        \{(\emptyset,\suc{\emptyset})\}
+        \union
+        \{(\suc{k},\emptyset)\mid k\in n\}$.
+\end{definition}
+
+\begin{proposition}\label{surreal_epsilon_iff}
+    $z\in\surrealEpsilon{n}$ iff
+        $z=(\emptyset,\suc{\emptyset})$ or
+        there exists $k\in n$ such that $z=(\suc{k},\emptyset)$.
+\end{proposition}
+\begin{proof}
+    \begin{align*}
+        z\in\surrealEpsilon{n}
+            &\iff
+                z\in\{(\emptyset,\suc{\emptyset})\}\lor
+                z\in\{(\suc{k},\emptyset)\mid k\in n\}
+                \explanation{by \auto{surreal_epsilon,union_iff}}
+            \\
+            &\iff
+                z=(\emptyset,\suc{\emptyset})\lor
+                (\exists k\in n.\ z=(\suc{k},\emptyset))
+                \explanation{by \auto{singleton_iff}}
+    \end{align*}
+    Follows by assumption.
+\end{proof}
+
+\begin{proposition}\label{surreal_epsilon_zero}
+    $\surrealEpsilon{\emptyset}=\surrealOne$.
+\end{proposition}
+\begin{proof}
+    Show that every element of $\surrealEpsilon{\emptyset}$ is an
+        element of $\surrealOne$.
+    \begin{subproof}
+        Fix $z\in\surrealEpsilon{\emptyset}$.
+        Hence $z=(\emptyset,\suc{\emptyset})$
+            by \auto{surreal_epsilon_iff,emptyset}.
+        Follows by
+            \auto{ordinal_surreal,times_tuple_intro,suc_intro_self,singleton_iff}.
+    \end{subproof}
+    Show that every element of $\surrealOne$ is an element of
+        $\surrealEpsilon{\emptyset}$.
+    \begin{subproof}
+        Fix $z\in\surrealOne$.
+        Take $a,b$ such that $z=(a,b)$ and
+            $a\in\suc{\emptyset}$ and
+            $b\in\{\suc{\emptyset}\}$
+            by \auto{ordinal_surreal,times_elem_is_tuple}.
+        Hence $a=\emptyset$ and $b=\suc{\emptyset}$
+            by \obv{suc_iff,emptyset,singleton_iff}.
+        Follows by \auto{surreal_epsilon_iff}.
+    \end{subproof}
+    Follows by \obv{setext}.
+\end{proof}
+
+\begin{lemma}\label{surreal_double_injective}
+    Suppose $\surreal{x}$ and $\surreal{y}$.
+    Suppose $\surrealAdd{x}{x}=\surrealAdd{y}{y}$.
+    Then $x=y$.
+\end{lemma}
+\begin{proof}
+    $\surrealLt{x}{y}$ or $x=y$ or $\surrealLt{y}{x}$
+        by \obv{surreal_lt_trichotomy}.
+    \begin{byCase}
+        \caseOf{$x=y$.}
+            Follows.
+        \caseOf{$x\neq y$.}
+            \begin{byCase}
+                \caseOf{$\surrealLt{x}{y}$.}
+                    $\surrealLt{\surrealAdd{x}{x}}
+                        {\surrealAdd{y}{y}}$
+                        by \obv{surreal_add_lt_both}.
+                    Contradiction by
+                        \obv{surreal_lt_irreflexive,surreal_add_is_surreal}.
+                \caseOf{not $\surrealLt{x}{y}$.}
+                    Hence $\surrealLt{y}{x}$.
+                    $\surrealLt{\surrealAdd{y}{y}}
+                        {\surrealAdd{x}{x}}$
+                        by \obv{surreal_add_lt_both}.
+                    Contradiction by
+                        \obv{surreal_lt_irreflexive,surreal_add_is_surreal}.
+            \end{byCase}
+    \end{byCase}
+\end{proof}
+
+\begin{proposition}\label{surreal_epsilon_function}
+    Let $n$ be a natural number.
+    Then $\surrealEpsilon{n}\in
+        \funs{\suc{n}}{\surrealSigns}$.
+\end{proposition}
+\begin{proof}
+    $n$ and $\suc{n}$ are ordinals
+        by \obv{natural_number_is_ordinal,suc_ordinal}.
+    Show that $\surrealEpsilon{n}$ is a relation.
+    \begin{subproof}
+        Show that for every $z\in\surrealEpsilon{n}$ there exist $a,b$
+            such that $z=(a,b)$.
+        \begin{subproof}
+            Fix $z\in\surrealEpsilon{n}$.
+            Follows by \auto{surreal_epsilon_iff}.
+        \end{subproof}
+        Follows by \obv{relation}.
+    \end{subproof}
+    Show that $\surrealEpsilon{n}$ is right-unique.
+    \begin{subproof}
+        Show that for all $a,b,c$ such that
+            $(a,b),(a,c)\in\surrealEpsilon{n}$ we have $b=c$.
+        \begin{subproof}
+            Fix $a,b,c$.
+            Assume $(a,b),(a,c)\in\surrealEpsilon{n}$.
+            Follows by \auto{surreal_epsilon_iff,pair_eq_iff,suc_neq_emptyset}.
+        \end{subproof}
+        Follows by \obv{rightunique}.
+    \end{subproof}
+
+    Show that $\dom{\surrealEpsilon{n}}\subseteq\suc{n}$.
+    \begin{subproof}
+        Show that for every $a\in\dom{\surrealEpsilon{n}}$ we have
+            $a\in\suc{n}$.
+        \begin{subproof}
+            Fix $a\in\dom{\surrealEpsilon{n}}$.
+            Take $b$ such that $(a,b)\in\surrealEpsilon{n}$
+                by \obv{dom_iff}.
+            $a=\emptyset$ or there exists $k\in n$ such that
+                $a=\suc{k}$
+                by \auto{surreal_epsilon_iff,pair_eq_iff}.
+            \begin{byCase}
+                \caseOf{$a=\emptyset$.}
+                    $\emptyset\in n$ or $\emptyset=n$
+                        by \obv{ordinal_empty_or_emptyset_elem}.
+                    Follows by \auto{suc_iff}.
+                \caseOf{$a\neq\emptyset$.}
+                    Take $k\in n$ such that $a=\suc{k}$.
+                    $k$ is an ordinal by \obv{elem_of_ordinal_is_ordinal}.
+                    $\suc{k}\subseteq n$ by \obv{ordinal_suc_subseteq}.
+                    Hence $\suc{k}\in n$ or $\suc{k}=n$
+                        by \obv{ordinal_subseteq_implies_elem_or_eq,suc_ordinal}.
+                    Follows by \auto{suc_iff}.
+            \end{byCase}
+        \end{subproof}
+        Follows by \obv{subseteq}.
+    \end{subproof}
+    Show that $\suc{n}\subseteq\dom{\surrealEpsilon{n}}$.
+    \begin{subproof}
+        Show that for every $a\in\suc{n}$ we have
+            $a\in\dom{\surrealEpsilon{n}}$.
+        \begin{subproof}
+            Fix $a\in\suc{n}$.
+            $\suc{n}$ is a natural number by \obv{omega_successor}.
+            Hence $a$ is a natural number
+                by \obv{naturals_is_transitive_set,transitiveset_iff_subseteq,subseteq}.
+            $a=\emptyset$ or there exists a natural number $k$ such that
+                $a=\suc{k}$
+                by \obv{natural_zero_or_successor}.
+            \begin{byCase}
+                \caseOf{$a=\emptyset$.}
+                    $(a,\suc{\emptyset})\in\surrealEpsilon{n}$
+                        by \auto{surreal_epsilon_iff}.
+                    Follows by \obv{dom_intro}.
+                \caseOf{$a\neq\emptyset$.}
+                    Take $k$ such that $k$ is a natural number and
+                        $a=\suc{k}$.
+                    $a\in n$ or $a=n$ by \auto{suc_iff}.
+                    $k\in a$ by \obv{suc_intro_self}.
+                    Hence $k\in n$
+                        by \obv{ordinal_transitivity}.
+                    $(a,\emptyset)\in\surrealEpsilon{n}$
+                        by \auto{surreal_epsilon_iff}.
+                    Follows by \obv{dom_intro}.
+            \end{byCase}
+        \end{subproof}
+        Follows by \obv{subseteq}.
+    \end{subproof}
+    Hence $\dom{\surrealEpsilon{n}}=\suc{n}$
+        by \obv{subseteq_antisymmetric}.
+    For every $a\in\dom{\surrealEpsilon{n}}$ we have
+        $\apply{\surrealEpsilon{n}}{a}\in\surrealSigns$
+        by \auto{function_apply_elim,surreal_epsilon_iff,pair_eq_iff,surreal_sign_members}.
+    Thus $\surrealEpsilon{n}$ is a function to $\surrealSigns$.
+    Follows by \obv{funs_intro}.
+\end{proof}
+
+\begin{proposition}\label{surreal_epsilon_at}
+    Let $n$ be a natural number.
+    Then $\surrealAt{\suc{n}}{\surrealEpsilon{n}}$.
+\end{proposition}
+\begin{proof}
+    $\suc{n}$ is an ordinal
+        by \obv{natural_number_is_ordinal,suc_ordinal}.
+    Follows by \obv{surreal_at,surreal_epsilon_function}.
+\end{proof}
+
+\begin{corollary}\label{surreal_epsilon_is_surreal}
+    Let $n$ be a natural number.
+    Then $\surreal{\surrealEpsilon{n}}$ and
+        $\birthday{\surrealEpsilon{n}}=\suc{n}$.
+\end{corollary}
+\begin{proof}
+    Follows by \obv{surreal_epsilon_at,surreal_at_implies_surreal}.
+\end{proof}
+
+\begin{proposition}\label{surreal_epsilon_positive_value}
+    Let $n$ be a natural number.
+    Let $\alpha\in\suc{n}$.
+    Then $\apply{\surrealEpsilon{n}}{\alpha}=\suc{\emptyset}$ iff
+        $\alpha=\emptyset$.
+\end{proposition}
+\begin{proof}
+    $\surrealEpsilon{n}$ is a function and
+        $\alpha\in\dom{\surrealEpsilon{n}}$
+        by \auto{surreal_epsilon_function,funs_is_function,funs_elim}.
+    $(\alpha,\apply{\surrealEpsilon{n}}{\alpha})
+        \in\surrealEpsilon{n}$
+        by \obv{function_apply_elim}.
+    $(\emptyset,\suc{\emptyset})\in\surrealEpsilon{n}$
+        by \auto{surreal_epsilon_iff}.
+    Follows by \auto{surreal_epsilon_iff,function_apply_intro,pair_eq_iff,suc_neq_emptyset}.
+\end{proof}
+
+\begin{proposition}\label{surreal_epsilon_negative_value}
+    Let $n$ be a natural number.
+    Let $\alpha\in\suc{n}$.
+    Then $\apply{\surrealEpsilon{n}}{\alpha}=\emptyset$ iff
+        there exists $k\in n$ such that $\alpha=\suc{k}$.
+\end{proposition}
+\begin{proof}
+    $\surrealEpsilon{n}$ is a function and
+        $\alpha\in\dom{\surrealEpsilon{n}}$
+        by \auto{surreal_epsilon_function,funs_is_function,funs_elim}.
+    $(\alpha,\apply{\surrealEpsilon{n}}{\alpha})
+        \in\surrealEpsilon{n}$
+        by \obv{function_apply_elim}.
+    For every $k\in n$ we have
+        $(\suc{k},\emptyset)\in\surrealEpsilon{n}$
+        by \auto{surreal_epsilon_iff}.
+    Follows by \auto{surreal_epsilon_iff,function_apply_intro,pair_eq_iff,suc_neq_emptyset}.
+\end{proof}
+
+\begin{proposition}\label{surreal_epsilon_restriction_empty}
+    $\restrl{\surrealEpsilon{n}}{\emptyset}=\emptyset$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{setext,restrl,emptyset}.
+\end{proof}
+
+\begin{proposition}\label{surreal_epsilon_restriction}
+    Let $n$ be a natural number.
+    Let $k\in n$.
+    Then $\restrl{\surrealEpsilon{n}}{\suc{k}}
+        =\surrealEpsilon{k}$.
+\end{proposition}
+\begin{proof}
+    $k$ is a natural number
+        by \obv{naturals_is_transitive_set,transitiveset_iff_subseteq,subseteq}.
+    $n$ and $k$ are ordinals by \obv{natural_number_is_ordinal}.
+    Show that every element of
+        $\restrl{\surrealEpsilon{n}}{\suc{k}}$ is an element of
+        $\surrealEpsilon{k}$.
+    \begin{subproof}
+        Fix $z\in\restrl{\surrealEpsilon{n}}{\suc{k}}$.
+        Take $a,b$ such that $z=(a,b)$ and $a\in\suc{k}$ and
+            $(a,b)\in\surrealEpsilon{n}$
+            by \auto{restrl}.
+        $z=(\emptyset,\suc{\emptyset})$ or
+            there exists $j\in n$ such that
+                $z=(\suc{j},\emptyset)$
+            by \obv{surreal_epsilon_iff}.
+        \begin{byCase}
+            \caseOf{$z=(\emptyset,\suc{\emptyset})$.}
+                Follows by \auto{surreal_epsilon_iff}.
+            \caseOf{$z\neq(\emptyset,\suc{\emptyset})$.}
+                Take $j\in n$ such that $z=(\suc{j},\emptyset)$.
+                Hence $a=\suc{j}$ by \auto{pair_eq_iff}.
+                $\suc{j}\in k$ or $\suc{j}=k$
+                    by \auto{suc_iff}.
+                $j\in\suc{j}$ by \obv{suc_intro_self}.
+                Hence $j\in k$ by \obv{ordinal_transitivity}.
+                Follows by \auto{surreal_epsilon_iff}.
+        \end{byCase}
+    \end{subproof}
+    Show that every element of $\surrealEpsilon{k}$ is an element of
+        $\restrl{\surrealEpsilon{n}}{\suc{k}}$.
+    \begin{subproof}
+        Fix $z\in\surrealEpsilon{k}$.
+        $z=(\emptyset,\suc{\emptyset})$ or
+            there exists $j\in k$ such that
+                $z=(\suc{j},\emptyset)$
+            by \obv{surreal_epsilon_iff}.
+        \begin{byCase}
+            \caseOf{$z=(\emptyset,\suc{\emptyset})$.}
+                $\emptyset\in k$ or $\emptyset=k$
+                    by \obv{ordinal_empty_or_emptyset_elem}.
+                Hence $\emptyset\in\suc{k}$ by \auto{suc_iff}.
+                $z\in\surrealEpsilon{n}$
+                    by \auto{surreal_epsilon_iff}.
+                Follows by \auto{restrl}.
+            \caseOf{$z\neq(\emptyset,\suc{\emptyset})$.}
+                Take $j\in k$ such that $z=(\suc{j},\emptyset)$.
+                $j\in n$ by \obv{ordinal_transitivity}.
+                Hence $z\in\surrealEpsilon{n}$
+                    by \auto{surreal_epsilon_iff}.
+                $j$ is an ordinal by \obv{elem_of_ordinal_is_ordinal}.
+                $\suc{j}\subseteq k$ by \obv{ordinal_suc_subseteq}.
+                Hence $\suc{j}\in k$ or $\suc{j}=k$
+                    by \obv{ordinal_subseteq_implies_elem_or_eq,suc_ordinal}.
+                Hence $\suc{j}\in\suc{k}$ by \auto{suc_iff}.
+                Follows by \auto{restrl}.
+        \end{byCase}
+    \end{subproof}
+    Follows by \obv{setext}.
+\end{proof}
+
+\begin{proposition}\label{surreal_epsilon_image_iff}
+    $x\in\{\surrealEpsilon{k}\mid k\in n\}$ iff
+        there exists $k\in n$ such that $x=\surrealEpsilon{k}$.
+\end{proposition}
+\begin{proof}
+    Follows by \auto{logical_replacement_iff}.
+\end{proof}
+
+\begin{proposition}\label{surreal_epsilon_sign_left}
+    Let $n$ be a natural number.
+    Then $\surrealSignLeft{\surrealEpsilon{n}}=\{\emptyset\}$.
+\end{proposition}
+\begin{proof}
+    Show that every element of $\surrealSignLeft{\surrealEpsilon{n}}$
+        is equal to $\emptyset$.
+    \begin{subproof}
+        Fix $l\in\surrealSignLeft{\surrealEpsilon{n}}$.
+        Take $\alpha\in\birthday{\surrealEpsilon{n}}$ such that
+            $\apply{\surrealEpsilon{n}}{\alpha}=\suc{\emptyset}$ and
+            $l=\restrl{\surrealEpsilon{n}}{\alpha}$
+            by \obv{surreal_sign_left_iff}.
+        $\birthday{\surrealEpsilon{n}}=\suc{n}$
+            by \obv{surreal_epsilon_is_surreal}.
+        Hence $\alpha=\emptyset$
+            by \obv{surreal_epsilon_positive_value}.
+        Follows by \auto{surreal_epsilon_restriction_empty}.
+    \end{subproof}
+    $\emptyset\in\suc{n}$
+        by \auto{natural_number_is_ordinal,ordinal_empty_or_emptyset_elem,suc_iff}.
+    $\apply{\surrealEpsilon{n}}{\emptyset}=\suc{\emptyset}$
+        by \auto{surreal_epsilon_positive_value}.
+    $\restrl{\surrealEpsilon{n}}{\emptyset}=\emptyset$
+        by \obv{surreal_epsilon_restriction_empty}.
+    Hence $\emptyset\in\surrealSignLeft{\surrealEpsilon{n}}$
+        by \auto{surreal_sign_left_iff,surreal_epsilon_is_surreal}.
+    Follows by \auto{setext,singleton_iff}.
+\end{proof}
+
+\begin{proposition}\label{surreal_epsilon_sign_right}
+    Let $n$ be a natural number.
+    Then $\surrealSignRight{\surrealEpsilon{n}}=
+        \{\surrealEpsilon{k}\mid k\in n\}$.
+\end{proposition}
+\begin{proof}
+    Show that every element of $\surrealSignRight{\surrealEpsilon{n}}$
+        is an element of $\{\surrealEpsilon{k}\mid k\in n\}$.
+    \begin{subproof}
+        Fix $r\in\surrealSignRight{\surrealEpsilon{n}}$.
+        Take $\alpha\in\birthday{\surrealEpsilon{n}}$ such that
+            $\apply{\surrealEpsilon{n}}{\alpha}=\emptyset$ and
+            $r=\restrl{\surrealEpsilon{n}}{\alpha}$
+            by \obv{surreal_sign_right_iff}.
+        $\birthday{\surrealEpsilon{n}}=\suc{n}$
+            by \obv{surreal_epsilon_is_surreal}.
+        Take $k\in n$ such that $\alpha=\suc{k}$
+            by \obv{surreal_epsilon_negative_value}.
+        $r=\surrealEpsilon{k}$
+            by \auto{surreal_epsilon_restriction}.
+        Follows by \auto{surreal_epsilon_image_iff}.
+    \end{subproof}
+    Show that every element of $\{\surrealEpsilon{k}\mid k\in n\}$
+        is an element of $\surrealSignRight{\surrealEpsilon{n}}$.
+    \begin{subproof}
+        Fix $r\in\{\surrealEpsilon{k}\mid k\in n\}$.
+        Take $k\in n$ such that $r=\surrealEpsilon{k}$
+            by \obv{surreal_epsilon_image_iff}.
+        $k$ is a natural number
+            by \obv{naturals_is_transitive_set,transitiveset_iff_subseteq,subseteq}.
+        $n$ and $k$ are ordinals by \obv{natural_number_is_ordinal}.
+        $\suc{k}\subseteq n$ by \obv{ordinal_suc_subseteq}.
+        Hence $\suc{k}\in n$ or $\suc{k}=n$
+            by \obv{ordinal_subseteq_implies_elem_or_eq,suc_ordinal}.
+        Hence $\suc{k}\in\suc{n}$ by \auto{suc_iff}.
+        $\birthday{\surrealEpsilon{n}}=\suc{n}$
+            by \obv{surreal_epsilon_is_surreal}.
+        $\apply{\surrealEpsilon{n}}{\suc{k}}=\emptyset$
+            by \auto{surreal_epsilon_negative_value}.
+        $\restrl{\surrealEpsilon{n}}{\suc{k}}
+            =\surrealEpsilon{k}$
+            by \obv{surreal_epsilon_restriction}.
+        Follows by \auto{surreal_sign_right_iff}.
+    \end{subproof}
+    Follows by \obv{setext}.
+\end{proof}
+
+\begin{theorem}\label{surreal_epsilon_cut_equation}
+    Let $n$ be a natural number.
+    Then $\surrealEpsilon{n}=
+        \surrealCut{\{\emptyset\}}
+            {\{\surrealEpsilon{k}\mid k\in n\}}$.
+\end{theorem}
+\begin{proof}
+    $\surreal{\surrealEpsilon{n}}$
+        by \auto{surreal_epsilon_is_surreal}.
+    $\surrealEpsilon{n}=\surrealCut
+        {\surrealSignLeft{\surrealEpsilon{n}}}
+        {\surrealSignRight{\surrealEpsilon{n}}}$
+        by \obv{surreal_sign_cut_equation}.
+    Follows by
+        \obv{surreal_epsilon_sign_left,surreal_epsilon_sign_right}.
+\end{proof}
+
+\begin{proposition}\label{surreal_epsilon_positive}
+    Let $n$ be a natural number.
+    Then $\surrealLt{\surrealZero}{\surrealEpsilon{n}}$.
+\end{proposition}
+\begin{proof}
+    $\surreal{\surrealEpsilon{n}}$ and
+        $\birthday{\surrealEpsilon{n}}=\suc{n}$
+        by \obv{surreal_epsilon_is_surreal}.
+    $\birthday{\emptyset}=\emptyset$
+        by \obv{empty_surreal}.
+    $\emptyset\in\suc{n}$
+        by \auto{natural_number_is_ordinal,ordinal_empty_or_emptyset_elem,suc_iff}.
+    $\surrealEq{\emptyset}{\emptyset}{\surrealEpsilon{n}}$
+        by \auto{surreal_eq_initial}.
+    $\apply{\surrealEpsilon{n}}{\emptyset}=\suc{\emptyset}$
+        by \auto{surreal_epsilon_positive_value}.
+    Follows by \obv{surreal_lt,surreal_lt_left_short}.
+\end{proof}
+
+\begin{theorem}\label{surreal_epsilon_decreasing}
+    Let $n$ be a natural number.
+    Let $k\in n$.
+    Then $\surrealLt{\surrealEpsilon{n}}{\surrealEpsilon{k}}$.
+\end{theorem}
+\begin{proof}
+    $k$ is a natural number
+        by \obv{naturals_is_transitive_set,transitiveset_iff_subseteq,subseteq}.
+    $n$ and $k$ are ordinals by \obv{natural_number_is_ordinal}.
+    $\suc{k}\subseteq n$ by \obv{ordinal_suc_subseteq}.
+    Hence $\suc{k}\in n$ or $\suc{k}=n$
+        by \obv{ordinal_subseteq_implies_elem_or_eq,suc_ordinal}.
+    Hence $\suc{k}\in\suc{n}$ by \auto{suc_iff}.
+    $\birthday{\surrealEpsilon{n}}=\suc{n}$ and
+        $\birthday{\surrealEpsilon{k}}=\suc{k}$
+        by \obv{surreal_epsilon_is_surreal}.
+    $\surrealEq{\suc{k}}
+        {\restrl{\surrealEpsilon{n}}{\suc{k}}}
+        {\surrealEpsilon{n}}$
+        by \obv{surreal_restriction_agrees,surreal_epsilon_is_surreal}.
+    $\restrl{\surrealEpsilon{n}}{\suc{k}}
+        =\surrealEpsilon{k}$
+        by \obv{surreal_epsilon_restriction}.
+    Hence $\surrealEq{\suc{k}}
+        {\surrealEpsilon{n}}{\surrealEpsilon{k}}$
+        by \obv{surreal_eq_initial_symmetric}.
+    $\apply{\surrealEpsilon{n}}{\suc{k}}=\emptyset$
+        by \auto{surreal_epsilon_negative_value}.
+    Follows by \obv{surreal_lt,surreal_lt_right_short}.
+\end{proof}
+
+\begin{corollary}\label{surreal_epsilon_antitone}
+    Let $m,n$ be natural numbers.
+    Suppose $m\subseteq n$.
+    Then $\surrealLe{\surrealEpsilon{n}}{\surrealEpsilon{m}}$.
+\end{corollary}
+\begin{proof}
+    $m$ and $n$ are ordinals by \obv{natural_number_is_ordinal}.
+    Hence $m\in n$ or $m=n$ by
+        \obv{ordinal_subseteq_implies_elem_or_eq}.
+    \begin{byCase}
+        \caseOf{$m\in n$.}
+            $\surrealLt{\surrealEpsilon{n}}{\surrealEpsilon{m}}$ by
+                \obv{surreal_epsilon_decreasing}.
+            Follows by
+                \obv{surreal_le,surreal_epsilon_is_surreal}.
+        \caseOf{$m\notin n$.}
+            Hence $m=n$.
+            Follows by
+                \obv{surreal_le_reflexive,surreal_epsilon_is_surreal}.
+    \end{byCase}
+\end{proof}
+
+\begin{theorem}\label{surreal_epsilon_halving}
+    Let $n$ be an ordinal.
+    Suppose $n$ is a natural number.
+    Then
+        $\surrealAdd{\surrealEpsilon{\suc{n}}}
+            {\surrealEpsilon{\suc{n}}}=\surrealEpsilon{n}$.
+\end{theorem}
+\begin{proof}[Proof by transfinite induction]
+    Let $x=\surrealEpsilon{\suc{n}}$.
+    Let $A=\{\emptyset\}$.
+    Let $B=\{\surrealEpsilon{k}\mid k\in\suc{n}\}$.
+    Let $L=\surrealAddCutLeft{A}{A}{x}{x}$.
+    Let $R=\surrealAddCutRight{B}{B}{x}{x}$.
+    Let $M=\{\emptyset\}$.
+    Let $N=\{\surrealEpsilon{k}\mid k\in n\}$.
+
+    $\suc{n}$ is a natural number by \obv{omega_successor}.
+    $\surreal{x}$ and $\surreal{\surrealEpsilon{n}}$
+        by \auto{surreal_epsilon_is_surreal}.
+    $\surrealLt{\surrealZero}{x}$
+        by \obv{surreal_epsilon_positive}.
+    $\surrealLt{x}{\surrealEpsilon{n}}$
+        by \auto{surreal_epsilon_decreasing,suc_intro_self}.
+
+    $\surrealCutPair{A}{B}$ and $x=\surrealCut{A}{B}$
+        by \auto{surreal_sign_cut_pair,surreal_epsilon_sign_left,surreal_epsilon_sign_right,surreal_epsilon_cut_equation}.
+    Hence $\surrealCutPair{L}{R}$
+        by \auto{surreal_add_general_cut_pair}.
+    \begin{align*}
+        \surrealAdd{x}{x}
+            &= \surrealAdd{\surrealCut{A}{B}}
+                {\surrealCut{A}{B}} \\
+            &= \surrealCut{
+                \surrealAddCutLeft{A}{A}
+                    {\surrealCut{A}{B}}{\surrealCut{A}{B}}}{
+                \surrealAddCutRight{B}{B}
+                    {\surrealCut{A}{B}}{\surrealCut{A}{B}}}
+                \explanation{by \obv{surreal_add_cuts_equation}}
+            \\
+            &= \surrealCut{L}{R}
+    \end{align*}
+    $\surrealCutPair{M}{N}$ and
+        $\surrealEpsilon{n}=\surrealCut{M}{N}$
+        by \auto{surreal_sign_cut_pair,surreal_epsilon_sign_left,surreal_epsilon_sign_right,surreal_epsilon_cut_equation}.
+
+    Show that for every $l\in L$ we have
+        $\surrealLt{l}{\surrealCut{M}{N}}$.
+    \begin{subproof}
+        Fix $l\in L$.
+        $(\exists a:\Set.\ a\in A\land l=\surrealAdd{a}{x})
+            \lor
+            (\exists a:\Set.\ a\in A\land l=\surrealAdd{x}{a})$
+            by \obv{surreal_add_cut_left_iff}.
+        Hence $l=x$
+            by \auto{singleton_iff,surreal_add_zero_left,surreal_add_zero_right}.
+    \end{subproof}
+
+    Show that for every $r\in R$ we have
+        $\surrealLt{\surrealCut{M}{N}}{r}$.
+    \begin{subproof}
+        Fix $r\in R$.
+        $(\exists k:\Set.\ k\in\suc{n}\land
+                r=\surrealAdd{\surrealEpsilon{k}}{x})
+            \lor
+            (\exists k:\Set.\ k\in\suc{n}\land
+                r=\surrealAdd{x}{\surrealEpsilon{k}})$
+            by \auto{surreal_add_cut_right_iff}.
+        Take $k\in\suc{n}$ such that
+            $r=\surrealAdd{\surrealEpsilon{k}}{x}$ or
+            $r=\surrealAdd{x}{\surrealEpsilon{k}}$ by \auto.
+        $k$ is a natural number
+            by \obv{naturals_is_transitive_set,transitiveset}.
+        $k\in n$ or $k=n$ by \auto{suc_iff}.
+        Show that
+            $\surrealLt{\surrealEpsilon{n}}
+                {\surrealAdd{\surrealEpsilon{k}}{x}}$.
+        \begin{subproof}
+            \begin{byCase}
+                \caseOf{$k=n$.}
+                    $\surrealLt
+                        {\surrealAdd{\surrealEpsilon{n}}{\surrealZero}}
+                        {\surrealAdd{\surrealEpsilon{n}}{x}}$
+                        by \obv{surreal_add_lt_right,empty_surreal}.
+                    Follows by
+                        \obv{surreal_add_zero_right,surreal_epsilon_is_surreal}.
+                \caseOf{$k\neq n$.}
+                    Hence $k\in n$.
+                    $\surrealLt{\surrealEpsilon{n}}{\surrealEpsilon{k}}$
+                        by \obv{surreal_epsilon_decreasing}.
+                    $\surrealLt{\surrealEpsilon{k}}
+                        {\surrealAdd{\surrealEpsilon{k}}{x}}$
+                        by \auto{surreal_add_lt_right,surreal_add_zero_right,surreal_epsilon_is_surreal,empty_surreal}.
+                    Follows by
+                        \auto{surreal_lt_transitive,surreal_add_is_surreal,surreal_epsilon_is_surreal}.
+            \end{byCase}
+        \end{subproof}
+        $\surrealAdd{\surrealEpsilon{k}}{x}
+            =\surrealAdd{x}{\surrealEpsilon{k}}$
+            by \auto{surreal_add_commutative,surreal_epsilon_is_surreal}.
+    \end{subproof}
+
+    Show that for every $m\in M$ we have
+        $\surrealLt{m}{\surrealCut{L}{R}}$.
+    \begin{subproof}
+        Fix $m\in M$.
+        Hence $m=\surrealZero$ by \obv{singleton_iff}.
+        $\surrealLt
+            {\surrealAdd{\surrealZero}{\surrealZero}}
+            {\surrealAdd{x}{x}}$
+            by \obv{surreal_add_lt_both,empty_surreal}.
+        Follows by
+            \obv{surreal_add_zero_left,empty_surreal}.
+    \end{subproof}
+
+    Show that for every $r\in N$ we have
+        $\surrealLt{\surrealCut{L}{R}}{r}$.
+    \begin{subproof}
+        Fix $r\in N$.
+        Take $k\in n$ such that $r=\surrealEpsilon{k}$
+            by \obv{surreal_epsilon_image_iff}.
+        $k$ is a natural number
+            by \obv{naturals_is_transitive_set,transitiveset}.
+        $\suc{k}$ is a natural number by \obv{omega_successor}.
+        $\suc{k}\in\suc{n}$
+            by \auto{natural_number_is_ordinal,ordinal_suc_subseteq,ordinal_subseteq_implies_elem_or_eq,suc_ordinal,suc_iff}.
+        Hence $\surrealLt{x}{\surrealEpsilon{\suc{k}}}$
+            by \auto{surreal_epsilon_decreasing}.
+        Hence
+            $\surrealLt{\surrealAdd{x}{x}}
+                {\surrealAdd{\surrealEpsilon{\suc{k}}}
+                    {\surrealEpsilon{\suc{k}}}}$
+            by \auto{surreal_add_lt_both,surreal_epsilon_is_surreal}.
+        $\surrealAdd{\surrealEpsilon{\suc{k}}}
+            {\surrealEpsilon{\suc{k}}}=\surrealEpsilon{k}$.
+    \end{subproof}
+    $\surrealCut{L}{R}=\surrealCut{M}{N}$
+        by \obv{surreal_cut_extensionality}.
+\end{proof}
+
+\begin{theorem}\label{surreal_epsilon_product}
+    Let $m$ be a natural number.
+    Let $n$ be an ordinal.
+    Suppose $n$ is a natural number.
+    Then $\surrealMul{\surrealEpsilon{m}}{\surrealEpsilon{n}}
+        =\surrealEpsilon{m+n}$.
+\end{theorem}
+\begin{proof}[Proof by transfinite induction]
+    $n=\emptyset$ or there exists a natural number $k$ such that
+        $n=\suc{k}$ by \obv{natural_zero_or_successor}.
+    \begin{byCase}
+        \caseOf{$n=\emptyset$.}
+            $m+n=m$ by \auto{num_addition_zero_right}.
+            $\surrealEpsilon{n}=\surrealOne$
+                by \obv{surreal_epsilon_zero}.
+            Follows by
+                \auto{surreal_mul_one_right,surreal_epsilon_is_surreal}.
+        \caseOf{$n\neq\emptyset$.}
+            Take $k$ such that $k$ is a natural number and
+                $n=\suc{k}$.
+            $k\in n$ by \obv{suc_intro_self}.
+            $k$ is an ordinal by \obv{natural_number_is_ordinal}.
+            $m+k$ is a natural number by \obv{num_addition_on_naturals}.
+            $m+n$ is a natural number by \obv{num_addition_on_naturals}.
+            $m+n=\suc{m+k}$
+                by \auto{num_addition_successor_right}.
+            $\surrealMul{\surrealEpsilon{m}}{\surrealEpsilon{k}}
+                =\surrealEpsilon{m+k}$.
+            $\surrealAdd{\surrealEpsilon{n}}{\surrealEpsilon{n}}
+                =\surrealEpsilon{k}$
+                by \auto{surreal_epsilon_halving}.
+            Let $a=\surrealMul{\surrealEpsilon{m}}
+                {\surrealEpsilon{n}}$.
+            Let $b=\surrealEpsilon{m+n}$.
+            $\surreal{\surrealEpsilon{m}}$ and
+                $\surreal{\surrealEpsilon{n}}$
+                by \auto{surreal_epsilon_is_surreal}.
+            Hence $\surreal{a}$ by \obv{surreal_mul_is_surreal}.
+            $\surreal{b}$ by \auto{surreal_epsilon_is_surreal}.
+            $\surrealAdd{a}{a}
+                =\surrealMul{\surrealEpsilon{m}}
+                    {\surrealAdd{\surrealEpsilon{n}}{\surrealEpsilon{n}}}$
+                by \auto{surreal_mul_distributive_left,surreal_epsilon_is_surreal}.
+            Hence $\surrealAdd{a}{a}=\surrealEpsilon{m+k}$.
+            $\surrealAdd{b}{b}=\surrealEpsilon{m+k}$
+                by \auto{surreal_epsilon_halving,natural_number_is_ordinal}.
+            Hence $\surrealAdd{a}{a}=\surrealAdd{b}{b}$.
+            Follows by \obv{surreal_double_injective}.
+    \end{byCase}
+\end{proof}
+
+\begin{theorem}\label{surreal_epsilon_integer_rescale}
+    Let $k$ be a natural number.
+    Let $z\in\surrealIntegers$.
+    Let $n$ be an ordinal.
+    Suppose $n$ is a natural number.
+    Then there exists $w\in\surrealIntegers$ such that
+        $\surrealMul{\surrealEpsilon{k}}{z}
+            =\surrealMul{\surrealEpsilon{k+n}}{w}$.
+\end{theorem}
+\begin{proof}[Proof by transfinite induction]
+    $n=\emptyset$ or there exists a natural number $j$ such that
+        $n=\suc{j}$ by \obv{natural_zero_or_successor}.
+    \begin{byCase}
+        \caseOf{$n=\emptyset$.}
+            $k+n=k$ by \auto{num_addition_zero_right}.
+        \caseOf{$n\neq\emptyset$.}
+            Take $j$ such that $j$ is a natural number and
+                $n=\suc{j}$.
+            $j\in n$ by \obv{suc_intro_self}.
+            Take $w\in\surrealIntegers$ such that
+                $\surrealMul{\surrealEpsilon{k}}{z}
+                    =\surrealMul{\surrealEpsilon{k+j}}{w}$.
+            Let $w'=\surrealAdd{w}{w}$.
+            $w'\in\surrealIntegers$
+                by \auto{surreal_integer_addition_closed}.
+            $k+j$ and $k+n$ are natural numbers
+                by \obv{num_addition_on_naturals}.
+            $k+n=\suc{k+j}$
+                by \auto{num_addition_successor_right}.
+            $\surreal{w}$ and
+                $\surreal{\surrealEpsilon{\suc{k+j}}}$
+                by \auto{surreal_integer_is_surreal,surreal_epsilon_is_surreal}.
+            $\surrealAdd{\surrealEpsilon{\suc{k+j}}}
+                {\surrealEpsilon{\suc{k+j}}}
+                =\surrealEpsilon{k+j}$
+                by \obv{surreal_epsilon_halving,natural_number_is_ordinal}.
+            $\surrealMul{\surrealEpsilon{\suc{k+j}}}{w'}
+                =\surrealAdd
+                    {\surrealMul{\surrealEpsilon{\suc{k+j}}}{w}}
+                    {\surrealMul{\surrealEpsilon{\suc{k+j}}}{w}}$
+                by \auto{surreal_mul_distributive_left}.
+            Hence
+                $\surrealMul{\surrealEpsilon{\suc{k+j}}}{w'}
+                =\surrealMul
+                    {\surrealAdd{\surrealEpsilon{\suc{k+j}}}
+                        {\surrealEpsilon{\suc{k+j}}}}{w}$
+                by \obv{surreal_mul_distributive_right}.
+            Hence
+                $\surrealMul{\surrealEpsilon{\suc{k+j}}}{w'}
+                =\surrealMul{\surrealEpsilon{k+j}}{w}$.
+            Follows by \auto.
+    \end{byCase}
+\end{proof}
+
+\begin{lemma}\label{surreal_mul_four_rearrange}
+    Suppose $\surreal{a}$ and $\surreal{b}$ and
+        $\surreal{c}$ and $\surreal{d}$.
+    Then
+        $\surrealMul{\surrealMul{a}{b}}{\surrealMul{c}{d}}
+        =\surrealMul{\surrealMul{a}{c}}{\surrealMul{b}{d}}$.
+\end{lemma}
+\begin{proof}
+    Follows by
+        \auto{surreal_mul_associative,surreal_mul_commutative,surreal_mul_is_surreal}.
+\end{proof}
+
+\subsection{The dyadic carrier}
+
+A dyadic surreal is an integer multiple of one of the canonical negative
+powers of two.  The paired replacement keeps the carrier visibly set-sized.
+
+\begin{definition}\label{surreal_dyadics}
+    $\surrealDyadics=
+        \{\surrealMul{\surrealEpsilon{\fst{p}}}{\snd{p}}
+            \mid p\in\naturals\times\surrealIntegers\}$.
+\end{definition}
+
+\begin{proposition}\label{surreal_dyadic_iff}
+    $x\in\surrealDyadics$ iff there exist $k,z$ such that
+        $k\in\naturals$ and $z\in\surrealIntegers$ and
+        $x=\surrealMul{\surrealEpsilon{k}}{z}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{surreal_dyadics,times_elem_is_tuple,times_tuple_intro,fst_eq,snd_eq}.
+\end{proof}
+
+\begin{proposition}\label{surreal_dyadic_is_surreal}
+    For every $x\in\surrealDyadics$ we have $\surreal{x}$.
+\end{proposition}
+\begin{proof}
+    Fix $x\in\surrealDyadics$.
+    Take $k,z$ such that $k\in\naturals$ and
+        $z\in\surrealIntegers$ and
+        $x=\surrealMul{\surrealEpsilon{k}}{z}$
+        by \auto{surreal_dyadic_iff}.
+    $\surreal{\surrealEpsilon{k}}$
+        by \auto{surreal_epsilon_is_surreal}.
+    $\surreal{z}$ by \obv{surreal_integer_is_surreal}.
+    Follows by \obv{surreal_mul_is_surreal}.
+\end{proof}
+
+\begin{theorem}\label{surreal_integer_is_dyadic}
+    Let $z\in\surrealIntegers$.
+    Then $z\in\surrealDyadics$.
+\end{theorem}
+\begin{proof}
+    $\emptyset\in\naturals$ by \obv{omega_empty}.
+    $\surreal{z}$ by \obv{surreal_integer_is_surreal}.
+    $\surrealMul{\surrealEpsilon{\emptyset}}{z}=z$
+        by \auto{surreal_epsilon_zero,surreal_mul_one_left}.
+    Follows by \auto{surreal_dyadic_iff}.
+\end{proof}
+
+\begin{theorem}\label{surreal_epsilon_is_dyadic}
+    Let $k$ be a natural number.
+    Then $\surrealEpsilon{k}\in\surrealDyadics$.
+\end{theorem}
+\begin{proof}
+    $\suc{\emptyset}$ is a natural number
+        by \obv{omega_empty,omega_successor}.
+    Hence $\surrealOne\in\surrealIntegers$
+        by \obv{natural_surreal_is_integer}.
+    $\surrealMul{\surrealEpsilon{k}}{\surrealOne}
+        =\surrealEpsilon{k}$
+        by \auto{surreal_mul_one_right,surreal_epsilon_is_surreal}.
+    Follows by \auto{surreal_dyadic_iff}.
+\end{proof}
+
+\begin{theorem}\label{surreal_dyadic_negation_closed}
+    Let $x\in\surrealDyadics$.
+    Then $\surrealNeg{x}\in\surrealDyadics$.
+\end{theorem}
+\begin{proof}
+    Take $k,z$ such that $k\in\naturals$ and
+        $z\in\surrealIntegers$ and
+        $x=\surrealMul{\surrealEpsilon{k}}{z}$
+        by \auto{surreal_dyadic_iff}.
+    $\surrealNeg{z}\in\surrealIntegers$
+        by \obv{surreal_integer_negation_closed}.
+    $\surreal{\surrealEpsilon{k}}$ and $\surreal{z}$
+        by \auto{surreal_epsilon_is_surreal,surreal_integer_is_surreal}.
+    $\surrealNeg{x}
+        =\surrealMul{\surrealEpsilon{k}}{\surrealNeg{z}}$
+        by \auto{surreal_mul_neg_right}.
+    Follows by \auto{surreal_dyadic_iff}.
+\end{proof}
+
+\begin{theorem}\label{surreal_dyadic_addition_closed}
+    Let $x,y\in\surrealDyadics$.
+    Then $\surrealAdd{x}{y}\in\surrealDyadics$.
+\end{theorem}
+\begin{proof}
+    Take $k,z$ such that $k\in\naturals$ and
+        $z\in\surrealIntegers$ and
+        $x=\surrealMul{\surrealEpsilon{k}}{z}$
+        by \auto{surreal_dyadic_iff}.
+    Take $l,w$ such that $l\in\naturals$ and
+        $w\in\surrealIntegers$ and
+        $y=\surrealMul{\surrealEpsilon{l}}{w}$
+        by \auto{surreal_dyadic_iff}.
+    $k$ and $l$ are ordinals by \obv{natural_number_is_ordinal}.
+    Take $a\in\surrealIntegers$ such that
+        $\surrealMul{\surrealEpsilon{k}}{z}
+            =\surrealMul{\surrealEpsilon{k+l}}{a}$
+        by \obv{surreal_epsilon_integer_rescale}.
+    Take $b\in\surrealIntegers$ such that
+        $\surrealMul{\surrealEpsilon{l}}{w}
+            =\surrealMul{\surrealEpsilon{l+k}}{b}$
+        by \obv{surreal_epsilon_integer_rescale}.
+    $k+l=l+k$ by \obv{natural_addition_commutative}.
+    Hence $y=\surrealMul{\surrealEpsilon{k+l}}{b}$
+        by \auto.
+    Hence $x=\surrealMul{\surrealEpsilon{k+l}}{a}$.
+    Let $c=\surrealAdd{a}{b}$.
+    $c\in\surrealIntegers$
+        by \auto{surreal_integer_addition_closed}.
+    $k+l$ is a natural number by \obv{num_addition_on_naturals}.
+    $\surrealAdd{x}{y}=\surrealMul{\surrealEpsilon{k+l}}{c}$
+        by \auto{surreal_mul_distributive_left,surreal_epsilon_is_surreal,surreal_integer_is_surreal}.
+    Follows by \auto{surreal_dyadic_iff}.
+\end{proof}
+
+\begin{theorem}\label{surreal_dyadic_multiplication_closed}
+    Let $x,y\in\surrealDyadics$.
+    Then $\surrealMul{x}{y}\in\surrealDyadics$.
+\end{theorem}
+\begin{proof}
+    Take $k,z$ such that $k\in\naturals$ and
+        $z\in\surrealIntegers$ and
+        $x=\surrealMul{\surrealEpsilon{k}}{z}$
+        by \auto{surreal_dyadic_iff}.
+    Take $l,w$ such that $l\in\naturals$ and
+        $w\in\surrealIntegers$ and
+        $y=\surrealMul{\surrealEpsilon{l}}{w}$
+        by \auto{surreal_dyadic_iff}.
+    Let $c=\surrealMul{z}{w}$.
+    $c\in\surrealIntegers$
+        by \auto{surreal_integer_multiplication_closed}.
+    $k+l$ is a natural number by \obv{num_addition_on_naturals}.
+    $\surreal{\surrealEpsilon{k}}$ and
+        $\surreal{\surrealEpsilon{l}}$
+        by \auto{surreal_epsilon_is_surreal}.
+    $\surreal{z}$ and $\surreal{w}$
+        by \obv{surreal_integer_is_surreal}.
+    $\surrealMul{x}{y}
+        =\surrealMul
+            {\surrealMul{\surrealEpsilon{k}}{\surrealEpsilon{l}}}
+            {c}$
+        by \auto{surreal_mul_four_rearrange}.
+    Hence $\surrealMul{x}{y}
+        =\surrealMul{\surrealEpsilon{k+l}}{c}$
+        by \auto{surreal_epsilon_product,natural_number_is_ordinal}.
+    Follows by \auto{surreal_dyadic_iff}.
+\end{proof}

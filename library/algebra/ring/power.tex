@@ -1,0 +1,307 @@
+\import{algebra/ring/reducts.tex}
+\import{algebra/monoid/power.tex}
+
+\section{Natural powers in a ring}
+
+Natural powers in a ring are exactly the generic powers in its multiplicative
+monoid.  No second recursion is introduced.
+
+\begin{definition}\label{ring_power}
+    $\ringPower{R}{x}{n}=
+        \monoidPower{\MultiplicativeMonoid{R}}{x}{n}$.
+\end{definition}
+
+\begin{proposition}\label{ring_power_zero}
+    Let $R$ be a ring.
+    Then $\ringPower{R}{x}{\emptyset}=\ringOne[R]$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{ring_power,monoid_power_zero,multiplicative_monoid_fields}.
+\end{proof}
+
+\begin{proposition}\label{ring_power_type}
+    Let $R$ be a ring.
+    Let $x\in\carrier[R]$.
+    Let $n$ be a natural number.
+    Then $\ringPower{R}{x}{n}\in\carrier[R]$.
+\end{proposition}
+\begin{proof}
+    $\MultiplicativeMonoid{R}$ is a monoid by
+        \obv{multiplicative_monoid_is_exact_monoid}.
+    $x\in\carrier[\MultiplicativeMonoid{R}]$ by
+        \auto{multiplicative_monoid_fields}.
+    $\ringPower{R}{x}{n}\in
+        \carrier[\MultiplicativeMonoid{R}]$ by
+        \auto{ring_power,monoid_power_type}.
+    Follows by \auto{multiplicative_monoid_fields}.
+\end{proof}
+
+\begin{proposition}\label{ring_power_successor}
+    Let $R$ be a ring.
+    Let $x\in\carrier[R]$.
+    Let $n$ be a natural number.
+    Then $\ringPower{R}{x}{\suc{n}}=
+        \ringMul[R](\ringPower{R}{x}{n},x)$.
+\end{proposition}
+\begin{proof}
+    $\MultiplicativeMonoid{R}$ is a monoid by
+        \obv{multiplicative_monoid_is_exact_monoid}.
+    $x\in\carrier[\MultiplicativeMonoid{R}]$ by
+        \auto{multiplicative_monoid_fields}.
+    $\ringPower{R}{x}{\suc{n}}=
+        \mul[\MultiplicativeMonoid{R}](
+            \ringPower{R}{x}{n},x)$ by
+        \auto{ring_power,monoid_power_successor}.
+    Follows by \auto{multiplicative_monoid_fields}.
+\end{proof}
+
+\begin{proposition}\label{ring_power_one}
+    Let $R$ be a ring.
+    Let $x\in\carrier[R]$.
+    Then $\ringPower{R}{x}{\suc{\emptyset}}=x$.
+\end{proposition}
+\begin{proof}
+    $\MultiplicativeMonoid{R}$ is a monoid by
+        \obv{multiplicative_monoid_is_exact_monoid}.
+    $x\in\carrier[\MultiplicativeMonoid{R}]$ by
+        \auto{multiplicative_monoid_fields}.
+    Follows by \obv{ring_power,monoid_power_one}.
+\end{proof}
+
+\begin{theorem}\label{ring_power_of_negative_one}
+    Let $R$ be a ring and $n$ be a natural number.
+    Then $\ringPower{R}{\ringNeg[R](\ringOne[R])}{n}=\ringOne[R]$ or
+        $\ringPower{R}{\ringNeg[R](\ringOne[R])}{n}
+            =\ringNeg[R](\ringOne[R])$.
+\end{theorem}
+\begin{proof}
+    $\ringOne[R]\in\carrier[R]$ by \obv{ring_one_type}.
+    Hence $\ringNeg[R](\ringOne[R])\in\carrier[R]$ by \obv{ring_neg_type}.
+    Let $C=\{k\in\naturals\mid
+        \ringPower{R}{\ringNeg[R](\ringOne[R])}{k}
+            \in\{\ringOne[R],\ringNeg[R](\ringOne[R])\}\}$.
+    $\ringPower{R}{\ringNeg[R](\ringOne[R])}{\emptyset}=\ringOne[R]$ by
+        \obv{ring_power_zero}.
+    Hence $\emptyset\in C$ by \auto{omega_empty,upair_iff}.
+    Show that for every $k\in C$ we have $\suc{k}\in C$.
+    \begin{subproof}
+        Fix $k\in C$.
+        Hence $k$ is a natural number and
+            $\ringPower{R}{\ringNeg[R](\ringOne[R])}{k}
+                \in\{\ringOne[R],\ringNeg[R](\ringOne[R])\}$.
+        Hence $\ringPower{R}{\ringNeg[R](\ringOne[R])}{k}=\ringOne[R]$ or
+            $\ringPower{R}{\ringNeg[R](\ringOne[R])}{k}
+                =\ringNeg[R](\ringOne[R])$ by \auto{upair_iff}.
+        $\ringPower{R}{\ringNeg[R](\ringOne[R])}{\suc{k}}
+            =\ringMul[R](
+                \ringPower{R}{\ringNeg[R](\ringOne[R])}{k},
+                \ringNeg[R](\ringOne[R]))$ by
+            \obv{ring_power_successor}.
+        $\suc{k}$ is a natural number by \obv{omega_successor}.
+        \begin{byCase}
+            \caseOf{$\ringPower{R}{\ringNeg[R](\ringOne[R])}{k}
+                    =\ringOne[R]$.}
+                $\ringMul[R](\ringOne[R],\ringNeg[R](\ringOne[R]))
+                    =\ringNeg[R](\ringOne[R])$ by
+                    \obv{ring_mul_one_left}.
+                Hence
+                    $\ringPower{R}{\ringNeg[R](\ringOne[R])}{\suc{k}}
+                        =\ringNeg[R](\ringOne[R])$.
+                Follows by \auto{upair_iff}.
+            \caseOf{$\ringPower{R}{\ringNeg[R](\ringOne[R])}{k}
+                    \neq\ringOne[R]$.}
+                Hence $\ringPower{R}{\ringNeg[R](\ringOne[R])}{k}
+                    =\ringNeg[R](\ringOne[R])$.
+                $\ringMul[R](\ringNeg[R](\ringOne[R]),
+                        \ringNeg[R](\ringOne[R]))
+                    =\ringNeg[R](\ringMul[R](\ringOne[R],
+                        \ringNeg[R](\ringOne[R])))$ by
+                    \obv{ring_neg_product_left}.
+                $\ringMul[R](\ringOne[R],\ringNeg[R](\ringOne[R]))
+                    =\ringNeg[R](\ringOne[R])$ by
+                    \obv{ring_mul_one_left}.
+                $\ringNeg[R](\ringNeg[R](\ringOne[R]))=\ringOne[R]$ by
+                    \obv{ring_neg_involutive}.
+                Hence
+                    $\ringPower{R}{\ringNeg[R](\ringOne[R])}{\suc{k}}
+                        =\ringOne[R]$.
+                Follows by \obv{upair_iff}.
+        \end{byCase}
+    \end{subproof}
+    Hence $C$ is an inductive set by \obv{inductive_set}.
+    Hence every natural number is an element of $C$ by
+        \obv{omega_minimal}.
+    Hence $n\in C$.
+    Follows by \auto{upair_iff}.
+\end{proof}
+
+\begin{corollary}\label{ring_power_of_negative_one_in_pair}
+    Let $R$ be a ring and $n$ be a natural number.
+    Then $\ringPower{R}{\ringNeg[R](\ringOne[R])}{n}
+        \in\{\ringOne[R],\ringNeg[R](\ringOne[R])\}$.
+\end{corollary}
+\begin{proof}
+    Follows by \auto{ring_power_of_negative_one,upair_iff}.
+\end{proof}
+
+\begin{proposition}\label{ring_power_of_one}
+    Let $R$ be a ring.
+    Let $n$ be a natural number.
+    Then $\ringPower{R}{\ringOne[R]}{n}=\ringOne[R]$.
+\end{proposition}
+\begin{proof}
+    Let $M=\MultiplicativeMonoid{R}$.
+    $M$ is a monoid by
+        \obv{multiplicative_monoid_is_exact_monoid}.
+    $\neutral[M]=\ringOne[R]$ by
+        \auto{multiplicative_monoid_fields}.
+    $\monoidPower{M}{\neutral[M]}{n}=\neutral[M]$ by
+        \obv{monoid_power_neutral}.
+    Follows by \obv{ring_power}.
+\end{proof}
+
+\begin{proposition}\label{ring_power_of_zero_positive}
+    Let $R$ be a ring.
+    Let $n$ be a natural number.
+    Suppose $n\neq\emptyset$.
+    Then $\ringPower{R}{\ringZero[R]}{n}=\ringZero[R]$.
+\end{proposition}
+\begin{proof}
+    Take a natural number $k$ such that $n=\suc{k}$ by
+        \obv{natural_zero_or_successor}.
+    $\ringZero[R]\in\carrier[R]$ by \obv{ring_zero_type}.
+    $\ringPower{R}{\ringZero[R]}{k}\in\carrier[R]$ by
+        \obv{ring_power_type}.
+    $\ringPower{R}{\ringZero[R]}{\suc{k}}
+        =\ringMul[R](\ringPower{R}{\ringZero[R]}{k},\ringZero[R])$ by
+        \obv{ring_power_successor}.
+    Hence $\ringPower{R}{\ringZero[R]}{\suc{k}}=\ringZero[R]$ by
+        \obv{ring_mul_zero_right}.
+\end{proof}
+
+\begin{theorem}\label{ring_power_addition}
+    Let $R$ be a ring.
+    Let $x\in\carrier[R]$.
+    Let $m,n$ be natural numbers.
+    Then $\ringPower{R}{x}{m+n}=
+        \ringMul[R](\ringPower{R}{x}{m},\ringPower{R}{x}{n})$.
+\end{theorem}
+\begin{proof}
+    $\MultiplicativeMonoid{R}$ is a monoid by
+        \obv{multiplicative_monoid_is_exact_monoid}.
+    $x\in\carrier[\MultiplicativeMonoid{R}]$ by
+        \auto{multiplicative_monoid_fields}.
+    $\monoidPower{\MultiplicativeMonoid{R}}{x}{m+n}=
+        \mul[\MultiplicativeMonoid{R}](
+            \monoidPower{\MultiplicativeMonoid{R}}{x}{m},
+            \monoidPower{\MultiplicativeMonoid{R}}{x}{n})$ by
+        \obv{monoid_power_addition}.
+    Follows by \auto{ring_power,multiplicative_monoid_fields}.
+\end{proof}
+
+\begin{theorem}\label{ring_power_multiplication}
+    Let $R$ be a ring.
+    Let $x\in\carrier[R]$.
+    Let $m,n$ be natural numbers.
+    Then $\ringPower{R}{x}{\naturalMul{m}{n}}=
+        \ringPower{R}{\ringPower{R}{x}{m}}{n}$.
+\end{theorem}
+\begin{proof}
+    $\MultiplicativeMonoid{R}$ is a monoid by
+        \obv{multiplicative_monoid_is_exact_monoid}.
+    $x\in\carrier[\MultiplicativeMonoid{R}]$ by
+        \auto{multiplicative_monoid_fields}.
+    $\monoidPower{\MultiplicativeMonoid{R}}{x}{
+            \naturalMul{m}{n}}=
+        \monoidPower{\MultiplicativeMonoid{R}}{
+            \monoidPower{\MultiplicativeMonoid{R}}{x}{m}}{n}$ by
+        \obv{monoid_power_multiplication}.
+    Follows by \auto{ring_power}.
+\end{proof}
+
+\begin{theorem}\label{ring_power_of_commuting_product}
+    Let $R$ be a ring and $x,y\in\carrier[R]$.
+    Suppose $\ringMul[R](x,y)=\ringMul[R](y,x)$.
+    Let $n$ be a natural number.
+    Then
+        $\ringPower{R}{\ringMul[R](x,y)}{n}
+            =\ringMul[R](\ringPower{R}{x}{n},
+                \ringPower{R}{y}{n})$.
+\end{theorem}
+\begin{proof}
+    Let $M=\MultiplicativeMonoid{R}$.
+    $M$ is a monoid by
+        \obv{multiplicative_monoid_is_exact_monoid}.
+    $\carrier[M]=\carrier[R]$ and $\mul[M]=\ringMul[R]$ by
+        \auto{multiplicative_monoid_fields}.
+    Hence $x,y\in\carrier[M]$ and
+        $\mul[M](x,y)=\mul[M](y,x)$.
+    $\monoidPower{M}{\mul[M](x,y)}{n}
+        =\mul[M](\monoidPower{M}{x}{n},
+            \monoidPower{M}{y}{n})$ by
+        \obv{monoid_power_of_commuting_product}.
+    Follows by
+        \auto{ring_power,multiplicative_monoid_fields}.
+\end{proof}
+
+\begin{corollary}\label{commutative_ring_power_of_product}
+    Let $R$ be a commutative ring and $x,y\in\carrier[R]$.
+    Let $n$ be a natural number.
+    Then
+        $\ringPower{R}{\ringMul[R](x,y)}{n}
+            =\ringMul[R](\ringPower{R}{x}{n},
+                \ringPower{R}{y}{n})$.
+\end{corollary}
+\begin{proof}
+    $R$ is a ring by \obv{commutative_ring_is_ring}.
+    $\ringMul[R](x,y)=\ringMul[R](y,x)$ by
+        \obv{commutative_ring_mul_commutative}.
+    Follows by \obv{ring_power_of_commuting_product}.
+\end{proof}
+
+\begin{theorem}\label{commutative_ring_power_after_multiplying_inverse}
+    Let $R$ be a commutative ring and $x,u,v,c\in\carrier[R]$.
+    Suppose $\ringMul[R](u,v)=\ringOne[R]$.
+    Let $n$ be a natural number.
+    Suppose $\ringPower{R}{x}{n}
+        =\ringMul[R](\ringPower{R}{u}{n},c)$.
+    Then $\ringPower{R}{\ringMul[R](x,v)}{n}=c$.
+\end{theorem}
+\begin{proof}
+    $R$ is a ring by \obv{commutative_ring_is_ring}.
+    $\ringPower{R}{x}{n},\ringPower{R}{u}{n},
+        \ringPower{R}{v}{n}\in\carrier[R]$ by
+        \obv{ring_power_type}.
+    $\ringPower{R}{\ringMul[R](x,v)}{n}
+        =\ringMul[R](\ringPower{R}{x}{n},\ringPower{R}{v}{n})$ by
+        \obv{commutative_ring_power_of_product}.
+    $\ringPower{R}{\ringMul[R](u,v)}{n}
+        =\ringMul[R](\ringPower{R}{u}{n},\ringPower{R}{v}{n})$ by
+        \obv{commutative_ring_power_of_product}.
+    $\ringPower{R}{\ringOne[R]}{n}=\ringOne[R]$ by
+        \obv{ring_power_of_one}.
+    Hence $\ringMul[R](\ringPower{R}{u}{n},\ringPower{R}{v}{n})
+        =\ringOne[R]$.
+    $\ringMul[R](\ringPower{R}{u}{n},c)
+        \in\carrier[R]$ by \obv{ring_mul_type}.
+    $\ringMul[R](\ringMul[R](\ringPower{R}{u}{n},c),
+            \ringPower{R}{v}{n})
+        =\ringMul[R](\ringPower{R}{u}{n},
+            \ringMul[R](c,\ringPower{R}{v}{n}))$ by
+        \obv{ring_mul_associative}.
+    $\ringMul[R](c,\ringPower{R}{v}{n})
+        =\ringMul[R](\ringPower{R}{v}{n},c)$ by
+        \obv{commutative_ring_mul_commutative}.
+    $\ringMul[R](\ringPower{R}{u}{n},
+            \ringMul[R](\ringPower{R}{v}{n},c))
+        =\ringMul[R](
+            \ringMul[R](\ringPower{R}{u}{n},\ringPower{R}{v}{n}),c)$ by
+        \obv{ring_mul_associative}.
+    Hence $\ringMul[R](\ringMul[R](\ringPower{R}{u}{n},c),
+            \ringPower{R}{v}{n})
+        =\ringMul[R](\ringOne[R],c)$.
+    Hence $\ringMul[R](\ringMul[R](\ringPower{R}{u}{n},c),
+            \ringPower{R}{v}{n})=c$ by
+        \obv{ring_mul_one_left}.
+\end{proof}

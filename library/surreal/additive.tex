@@ -1,0 +1,2229 @@
+\import{surreal/class-recursion.tex}
+\import{surreal/negation.tex}
+
+\section{Surreal addition}
+
+Addition is the Conway cut obtained from the four recursively available
+option families.  The typed step is kept separate from the ordinary
+first-order alias used by the arithmetic interface.
+
+\subsection{Recursive construction}
+
+\begin{definition}\label{surreal_add_step_left}
+    $\surrealAddStepLeftOp:
+        (\Set\to\Set\to\Set)\to\Set\to\Set\to\Set
+        =\fun{g:\Set\to\Set\to\Set}{
+            \fun{x,y:\Set}{
+                    \{\Apply{g}{u,y}\mid
+                        u\in\surrealLeft{x}\}
+                    \union
+                    \{\Apply{g}{x,v}\mid
+                        v\in\surrealLeft{y}\}}}$.
+\end{definition}
+
+\begin{definition}\label{surreal_add_step_right}
+    $\surrealAddStepRightOp:
+        (\Set\to\Set\to\Set)\to\Set\to\Set\to\Set
+        =\fun{g:\Set\to\Set\to\Set}{
+            \fun{x,y:\Set}{
+                    \{\Apply{g}{u,y}\mid
+                        u\in\surrealRight{x}\}
+                    \union
+                    \{\Apply{g}{x,v}\mid
+                        v\in\surrealRight{y}\}}}$.
+\end{definition}
+
+\begin{definition}\label{surreal_add_step}
+    $\surrealAddStepOp:
+        \Set\to\Set\to(\Set\to\Set\to\Set)\to\Set
+        =\fun{x,y:\Set}{
+                \fun{g:\Set\to\Set\to\Set}{
+                    \surrealCut
+                        {\Apply{\surrealAddStepLeftOp}{g,x,y}}
+                        {\Apply{\surrealAddStepRightOp}{g,x,y}}}}$.
+\end{definition}
+
+\begin{lemma}\label{logical_replacement_extensionality}
+    $\forall A:\Set.\ \forall f,g:\Set\to\Set.
+        (\forall a:\Set.\ a\in A\implies\Apply{f}{a}=\Apply{g}{a})
+        \implies
+        \{\Apply{f}{a}\mid a\in A\}
+        =\{\Apply{g}{a}\mid a\in A\}$.
+\end{lemma}
+\begin{proof}
+    Follows by \auto{setext}.
+\end{proof}
+
+\begin{lemma}\label{logical_replacement_identity}
+    $\{a\mid a\in A\}=A$.
+\end{lemma}
+\begin{proof}
+    Follows by \auto{setext}.
+\end{proof}
+
+\begin{proposition}\label{surreal_add_step_left_functional}
+    $\forall x,y:\Set.\ (\surreal{x}\land\surreal{y})\implies
+        (\forall g,h:\Set\to\Set\to\Set.
+            ((\forall u:\Set.
+                (\surreal{u}\land\birthday{u}\in\birthday{x})
+                \implies
+                (\forall v:\Set.\ \surreal{v}\implies
+                    \Apply{g}{u,v}
+                    =\Apply{h}{u,v}))
+             \land
+             (\forall v:\Set.
+                (\surreal{v}\land\birthday{v}\in\birthday{y})
+                \implies
+                \Apply{g}{x,v}
+                =\Apply{h}{x,v}))
+            \implies
+            \Apply{\surrealAddStepLeftOp}{g,x,y}
+            =\Apply{\surrealAddStepLeftOp}{h,x,y})$.
+\end{proposition}
+\begin{proof}
+    Fix $x,y$.
+    Assume $\surreal{x}\land\surreal{y}$.
+    Fix $g,h$.
+    Assume $(\forall u:\Set.
+            (\surreal{u}\land\birthday{u}\in\birthday{x})
+            \implies
+            (\forall v:\Set.\ \surreal{v}\implies
+                \Apply{g}{u,v}
+                =\Apply{h}{u,v}))
+        \land
+        (\forall v:\Set.
+            (\surreal{v}\land\birthday{v}\in\birthday{y})
+            \implies
+            \Apply{g}{x,v}
+            =\Apply{h}{x,v})$.
+    Show that for every $u\in\surrealLeft{x}$ we have
+        $\Apply{g}{u,y}=\Apply{h}{u,y}$.
+    \begin{subproof}
+        Fix $u\in\surrealLeft{x}$.
+        $\surreal{u}$ and $\birthday{u}\in\birthday{x}$
+            by \auto{surreal_left_elim}.
+    \end{subproof}
+    Hence $\{\Apply{g}{u,y}\mid u\in\surrealLeft{x}\}
+        =\{\Apply{h}{u,y}\mid u\in\surrealLeft{x}\}$
+        by \auto{logical_replacement_extensionality}.
+    Show that for every $v\in\surrealLeft{y}$ we have
+        $\Apply{g}{x,v}=\Apply{h}{x,v}$.
+    \begin{subproof}
+        Fix $v\in\surrealLeft{y}$.
+        $\surreal{v}$ and $\birthday{v}\in\birthday{y}$
+            by \auto{surreal_left_elim}.
+    \end{subproof}
+    Hence $\{\Apply{g}{x,v}\mid v\in\surrealLeft{y}\}
+        =\{\Apply{h}{x,v}\mid v\in\surrealLeft{y}\}$
+        by \obv{logical_replacement_extensionality}.
+    Follows by \obv{surreal_add_step_left}.
+\end{proof}
+
+\begin{proposition}\label{surreal_add_step_right_functional}
+    $\forall x,y:\Set.\ (\surreal{x}\land\surreal{y})\implies
+        (\forall g,h:\Set\to\Set\to\Set.
+            ((\forall u:\Set.
+                (\surreal{u}\land\birthday{u}\in\birthday{x})
+                \implies
+                (\forall v:\Set.\ \surreal{v}\implies
+                    \Apply{g}{u,v}
+                    =\Apply{h}{u,v}))
+             \land
+             (\forall v:\Set.
+                (\surreal{v}\land\birthday{v}\in\birthday{y})
+                \implies
+                \Apply{g}{x,v}
+                =\Apply{h}{x,v}))
+            \implies
+            \Apply{\surrealAddStepRightOp}{g,x,y}
+            =\Apply{\surrealAddStepRightOp}{h,x,y})$.
+\end{proposition}
+\begin{proof}
+    Fix $x,y$.
+    Assume $\surreal{x}\land\surreal{y}$.
+    Fix $g,h$.
+    Assume $(\forall u:\Set.
+            (\surreal{u}\land\birthday{u}\in\birthday{x})
+            \implies
+            (\forall v:\Set.\ \surreal{v}\implies
+                \Apply{g}{u,v}
+                =\Apply{h}{u,v}))
+        \land
+        (\forall v:\Set.
+            (\surreal{v}\land\birthday{v}\in\birthday{y})
+            \implies
+            \Apply{g}{x,v}
+            =\Apply{h}{x,v})$.
+    Show that for every $u\in\surrealRight{x}$ we have
+        $\Apply{g}{u,y}=\Apply{h}{u,y}$.
+    \begin{subproof}
+        Fix $u\in\surrealRight{x}$.
+        $\surreal{u}$ and $\birthday{u}\in\birthday{x}$
+            by \auto{surreal_right_elim}.
+    \end{subproof}
+    Hence $\{\Apply{g}{u,y}\mid u\in\surrealRight{x}\}
+        =\{\Apply{h}{u,y}\mid u\in\surrealRight{x}\}$
+        by \auto{logical_replacement_extensionality}.
+    Show that for every $v\in\surrealRight{y}$ we have
+        $\Apply{g}{x,v}=\Apply{h}{x,v}$.
+    \begin{subproof}
+        Fix $v\in\surrealRight{y}$.
+        $\surreal{v}$ and $\birthday{v}\in\birthday{y}$
+            by \auto{surreal_right_elim}.
+    \end{subproof}
+    Hence $\{\Apply{g}{x,v}\mid v\in\surrealRight{y}\}
+        =\{\Apply{h}{x,v}\mid v\in\surrealRight{y}\}$
+        by \obv{logical_replacement_extensionality}.
+    Follows by \obv{surreal_add_step_right}.
+\end{proof}
+
+\begin{proposition}\label{surreal_add_step_functional}
+    $\Apply{\surrealBinaryRecFunctionalOp}{\surrealAddStepOp}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{surreal_binary_recursion_functional,surreal_add_step,surreal_add_step_left_functional,surreal_add_step_right_functional}.
+\end{proof}
+
+\begin{definition}\label{surreal_add_typed}
+    $\surrealAddOp:\Set\to\Set\to\Set
+        =\Apply{\surrealBinaryRecOp}{\surrealAddStepOp}$.
+\end{definition}
+
+\begin{definition}\label{surreal_add}
+    $\surrealAdd{x}{y}=\Apply{\surrealAddOp}{x,y}$.
+\end{definition}
+
+\begin{definition}\label{surreal_add_left_options}
+    $\surrealAddLeft{x}{y}=
+        \{\surrealAdd{u}{y}\mid u\in\surrealLeft{x}\}
+        \union
+        \{\surrealAdd{x}{v}\mid v\in\surrealLeft{y}\}$.
+\end{definition}
+
+\begin{definition}\label{surreal_add_right_options}
+    $\surrealAddRight{x}{y}=
+        \{\surrealAdd{u}{y}\mid u\in\surrealRight{x}\}
+        \union
+        \{\surrealAdd{x}{v}\mid v\in\surrealRight{y}\}$.
+\end{definition}
+
+\begin{proposition}\label{surreal_add_left_options_iff}
+    $a\in\surrealAddLeft{x}{y}$ iff
+        (there exists $u\in\surrealLeft{x}$ such that
+            $a=\surrealAdd{u}{y}$) or
+        (there exists $v\in\surrealLeft{y}$ such that
+            $a=\surrealAdd{x}{v}$).
+\end{proposition}
+\begin{proof}
+    Follows by \auto{surreal_add_left_options,union}.
+\end{proof}
+
+\begin{proposition}\label{surreal_add_right_options_iff}
+    $a\in\surrealAddRight{x}{y}$ iff
+        (there exists $u\in\surrealRight{x}$ such that
+            $a=\surrealAdd{u}{y}$) or
+        (there exists $v\in\surrealRight{y}$ such that
+            $a=\surrealAdd{x}{v}$).
+\end{proposition}
+\begin{proof}
+    Follows by \auto{surreal_add_right_options,union}.
+\end{proof}
+
+\begin{definition}\label{surreal_add_property}
+    $\surrealAddPropertyOp:\Set\to\Set\to\Prop
+        =\fun{x,y:\Set}{
+            \surreal{\surrealAdd{x}{y}}
+            \land
+            (\forall u:\Set.\ u\in\surrealLeft{x}\implies
+                \surrealLt{\surrealAdd{u}{y}}{\surrealAdd{x}{y}})
+            \land
+            (\forall u:\Set.\ u\in\surrealRight{x}\implies
+                \surrealLt{\surrealAdd{x}{y}}{\surrealAdd{u}{y}})
+            \land
+            (\forall v:\Set.\ v\in\surrealLeft{y}\implies
+                \surrealLt{\surrealAdd{x}{v}}{\surrealAdd{x}{y}})
+            \land
+            (\forall v:\Set.\ v\in\surrealRight{y}\implies
+                \surrealLt{\surrealAdd{x}{y}}{\surrealAdd{x}{v}})
+            \land
+            \surrealCutPair{\surrealAddLeft{x}{y}}
+                {\surrealAddRight{x}{y}}}$.
+\end{definition}
+
+\begin{lemma}\label{surreal_add_first_monotone_from_properties}
+    Suppose $\surreal{u}$ and $\surreal{v}$ and $\surreal{y}$.
+    Suppose $\surrealLt{u}{v}$.
+    Suppose $\Apply{\surrealAddPropertyOp}{u,y}
+        \land\Apply{\surrealAddPropertyOp}{v,y}$.
+    Suppose $\forall q:\Set.\ (\surreal{q}\land
+        \birthday{q}\in\birthday{u}\inter\birthday{v})\implies
+        \Apply{\surrealAddPropertyOp}{q,y}$.
+    Then $\surrealLt{\surrealAdd{u}{y}}{\surrealAdd{v}{y}}$.
+\end{lemma}
+\begin{proof}
+    $(\exists q:\Set.\ \surreal{q}\land
+            \birthday{q}\in\birthday{u}\inter\birthday{v}\land
+            \surrealLt{u}{q}\land\surrealLt{q}{v})
+        \lor u\in\surrealLeft{v}
+        \lor v\in\surrealRight{u}$
+        by \obv{surreal_lt_elimination}.
+    Show that if $\exists q:\Set.\ \surreal{q}\land
+            \birthday{q}\in\birthday{u}\inter\birthday{v}\land
+            \surrealLt{u}{q}\land\surrealLt{q}{v}$, then
+        $\surrealLt{\surrealAdd{u}{y}}{\surrealAdd{v}{y}}$.
+    \begin{subproof}
+        Assume $\exists q:\Set.\ \surreal{q}\land
+            \birthday{q}\in\birthday{u}\inter\birthday{v}\land
+            \surrealLt{u}{q}\land\surrealLt{q}{v}$.
+        Take $q$ such that $\surreal{q}$ and
+            $\birthday{q}\in\birthday{u}\inter\birthday{v}$ and
+            $\surrealLt{u}{q}$ and $\surrealLt{q}{v}$.
+        $q\in\surrealRight{u}$
+            by \obv{surreal_right_intro,inter}.
+        Hence $\surrealLt{\surrealAdd{u}{y}}{\surrealAdd{q}{y}}$
+            by \obv{surreal_add_property}.
+        $q\in\surrealLeft{v}$
+            by \obv{surreal_left_intro,inter}.
+        Hence $\surrealLt{\surrealAdd{q}{y}}{\surrealAdd{v}{y}}$
+            by \obv{surreal_add_property}.
+        $\Apply{\surrealAddPropertyOp}{q,y}$.
+        $\surreal{\surrealAdd{u}{y}}$ and
+            $\surreal{\surrealAdd{q}{y}}$ and
+            $\surreal{\surrealAdd{v}{y}}$
+            by \obv{surreal_add_property}.
+        Follows by \obv{surreal_lt_transitive}.
+    \end{subproof}
+    If $u\in\surrealLeft{v}$, then
+        $\surrealLt{\surrealAdd{u}{y}}{\surrealAdd{v}{y}}$
+        by \obv{surreal_add_property}.
+    If $v\in\surrealRight{u}$, then
+        $\surrealLt{\surrealAdd{u}{y}}{\surrealAdd{v}{y}}$
+        by \obv{surreal_add_property}.
+\end{proof}
+
+\begin{lemma}\label{surreal_add_second_monotone_from_properties}
+    Suppose $\surreal{x}$ and $\surreal{u}$ and $\surreal{v}$.
+    Suppose $\surrealLt{u}{v}$.
+    Suppose $\Apply{\surrealAddPropertyOp}{x,u}
+        \land\Apply{\surrealAddPropertyOp}{x,v}$.
+    Suppose $\forall q:\Set.\ (\surreal{q}\land
+        \birthday{q}\in\birthday{u}\inter\birthday{v})\implies
+        \Apply{\surrealAddPropertyOp}{x,q}$.
+    Then $\surrealLt{\surrealAdd{x}{u}}{\surrealAdd{x}{v}}$.
+\end{lemma}
+\begin{proof}
+    $(\exists q:\Set.\ \surreal{q}\land
+            \birthday{q}\in\birthday{u}\inter\birthday{v}\land
+            \surrealLt{u}{q}\land\surrealLt{q}{v})
+        \lor u\in\surrealLeft{v}
+        \lor v\in\surrealRight{u}$
+        by \obv{surreal_lt_elimination}.
+    Show that if $\exists q:\Set.\ \surreal{q}\land
+            \birthday{q}\in\birthday{u}\inter\birthday{v}\land
+            \surrealLt{u}{q}\land\surrealLt{q}{v}$, then
+        $\surrealLt{\surrealAdd{x}{u}}{\surrealAdd{x}{v}}$.
+    \begin{subproof}
+        Assume $\exists q:\Set.\ \surreal{q}\land
+            \birthday{q}\in\birthday{u}\inter\birthday{v}\land
+            \surrealLt{u}{q}\land\surrealLt{q}{v}$.
+        Take $q$ such that $\surreal{q}$ and
+            $\birthday{q}\in\birthday{u}\inter\birthday{v}$ and
+            $\surrealLt{u}{q}$ and $\surrealLt{q}{v}$.
+        $q\in\surrealRight{u}$
+            by \obv{surreal_right_intro,inter}.
+        Hence $\surrealLt{\surrealAdd{x}{u}}{\surrealAdd{x}{q}}$
+            by \obv{surreal_add_property}.
+        $q\in\surrealLeft{v}$
+            by \obv{surreal_left_intro,inter}.
+        Hence $\surrealLt{\surrealAdd{x}{q}}{\surrealAdd{x}{v}}$
+            by \obv{surreal_add_property}.
+        $\Apply{\surrealAddPropertyOp}{x,q}$.
+        $\surreal{\surrealAdd{x}{u}}$ and
+            $\surreal{\surrealAdd{x}{q}}$ and
+            $\surreal{\surrealAdd{x}{v}}$
+            by \obv{surreal_add_property}.
+        Follows by \obv{surreal_lt_transitive}.
+    \end{subproof}
+    If $u\in\surrealLeft{v}$, then
+        $\surrealLt{\surrealAdd{x}{u}}{\surrealAdd{x}{v}}$
+        by \obv{surreal_add_property}.
+    If $v\in\surrealRight{u}$, then
+        $\surrealLt{\surrealAdd{x}{u}}{\surrealAdd{x}{v}}$
+        by \obv{surreal_add_property}.
+\end{proof}
+
+\begin{theorem}\label{surreal_add_equation}
+    Suppose $\surreal{x}$ and $\surreal{y}$.
+    Then $\surrealAdd{x}{y}=
+        \surrealCut{\surrealAddLeft{x}{y}}{\surrealAddRight{x}{y}}$.
+\end{theorem}
+\begin{proof}
+    $\Apply{\surrealAddOp}{x,y}
+        =\Apply{\surrealAddStepOp}
+            {x,y,\surrealAddOp}$
+        by \auto{surreal_add_typed,surreal_binary_recursion_equation,surreal_add_step_functional}.
+    Follows by
+        \auto{surreal_add,surreal_add_step,surreal_add_step_left,surreal_add_step_right,surreal_add_left_options,surreal_add_right_options}.
+\end{proof}
+
+\begin{theorem}\label{surreal_add_properties}
+    $\forall x,y:\Set.\ (\surreal{x}\land\surreal{y})\implies
+        \Apply{\surrealAddPropertyOp}{x,y}$.
+\end{theorem}
+\begin{proof}
+    Show that $\forall x,y:\Set.\ (\surreal{x}\land\surreal{y})\implies
+        (((\forall u:\Set.
+                (\surreal{u}\land\birthday{u}\in\birthday{x})
+                \implies
+                (\forall v:\Set.\ \surreal{v}\implies
+                    \Apply{\surrealAddPropertyOp}{u,v}))
+          \land
+          (\forall v:\Set.
+                (\surreal{v}\land\birthday{v}\in\birthday{y})
+                \implies
+                \Apply{\surrealAddPropertyOp}{x,v}))
+         \implies\Apply{\surrealAddPropertyOp}{x,y})$.
+    \begin{subproof}
+        Fix $x,y$.
+        Assume $\surreal{x}\land\surreal{y}$.
+        Assume $(\forall u:\Set.
+                (\surreal{u}\land\birthday{u}\in\birthday{x})
+                \implies
+                (\forall v:\Set.\ \surreal{v}\implies
+                    \Apply{\surrealAddPropertyOp}{u,v}))
+            \land
+            (\forall v:\Set.
+                (\surreal{v}\land\birthday{v}\in\birthday{y})
+                \implies
+                \Apply{\surrealAddPropertyOp}{x,v})$.
+        Show that for every $a\in\surrealAddLeft{x}{y}$ we have
+            $\surreal{a}$.
+        \begin{subproof}
+            Fix $a\in\surrealAddLeft{x}{y}$.
+            $(\exists u:\Set.\ u\in\surrealLeft{x}\land
+                    a=\surrealAdd{u}{y})
+                \lor
+                (\exists v:\Set.\ v\in\surrealLeft{y}\land
+                    a=\surrealAdd{x}{v})$
+                by \auto{surreal_add_left_options_iff}.
+            Show that if $\exists u:\Set.\ u\in\surrealLeft{x}\land
+                    a=\surrealAdd{u}{y}$, then $\surreal{a}$.
+            \begin{subproof}
+                Assume $\exists u:\Set.\ u\in\surrealLeft{x}\land
+                    a=\surrealAdd{u}{y}$.
+                Take $u\in\surrealLeft{x}$ such that
+                    $a=\surrealAdd{u}{y}$.
+                $\surreal{u}$ and $\birthday{u}\in\birthday{x}$
+                    by \auto{surreal_left_elim}.
+                $\Apply{\surrealAddPropertyOp}{u,y}$.
+                Follows by \obv{surreal_add_property}.
+            \end{subproof}
+            Show that if $\exists v:\Set.\ v\in\surrealLeft{y}\land
+                    a=\surrealAdd{x}{v}$, then $\surreal{a}$.
+            \begin{subproof}
+                Assume $\exists v:\Set.\ v\in\surrealLeft{y}\land
+                    a=\surrealAdd{x}{v}$.
+                Take $v\in\surrealLeft{y}$ such that
+                    $a=\surrealAdd{x}{v}$.
+                $\surreal{v}$ and $\birthday{v}\in\birthday{y}$
+                    by \auto{surreal_left_elim}.
+                $\Apply{\surrealAddPropertyOp}{x,v}$.
+                Follows by \obv{surreal_add_property}.
+            \end{subproof}
+        \end{subproof}
+        Show that for every $b\in\surrealAddRight{x}{y}$ we have
+            $\surreal{b}$.
+        \begin{subproof}
+            Fix $b\in\surrealAddRight{x}{y}$.
+            $(\exists u:\Set.\ u\in\surrealRight{x}\land
+                    b=\surrealAdd{u}{y})
+                \lor
+                (\exists v:\Set.\ v\in\surrealRight{y}\land
+                    b=\surrealAdd{x}{v})$
+                by \auto{surreal_add_right_options_iff}.
+            Show that if $\exists u:\Set.\ u\in\surrealRight{x}\land
+                    b=\surrealAdd{u}{y}$, then $\surreal{b}$.
+            \begin{subproof}
+                Assume $\exists u:\Set.\ u\in\surrealRight{x}\land
+                    b=\surrealAdd{u}{y}$.
+                Take $u\in\surrealRight{x}$ such that
+                    $b=\surrealAdd{u}{y}$.
+                $\surreal{u}$ and $\birthday{u}\in\birthday{x}$
+                    by \auto{surreal_right_elim}.
+                $\Apply{\surrealAddPropertyOp}{u,y}$.
+                Follows by \obv{surreal_add_property}.
+            \end{subproof}
+            Show that if $\exists v:\Set.\ v\in\surrealRight{y}\land
+                    b=\surrealAdd{x}{v}$, then $\surreal{b}$.
+            \begin{subproof}
+                Assume $\exists v:\Set.\ v\in\surrealRight{y}\land
+                    b=\surrealAdd{x}{v}$.
+                Take $v\in\surrealRight{y}$ such that
+                    $b=\surrealAdd{x}{v}$.
+                $\surreal{v}$ and $\birthday{v}\in\birthday{y}$
+                    by \auto{surreal_right_elim}.
+                $\Apply{\surrealAddPropertyOp}{x,v}$.
+                Follows by \obv{surreal_add_property}.
+            \end{subproof}
+        \end{subproof}
+        Show that for all $a,b$ such that
+            $a\in\surrealAddLeft{x}{y}$ and
+            $b\in\surrealAddRight{x}{y}$ we have $\surrealLt{a}{b}$.
+        \begin{subproof}
+            Fix $a,b$.
+            Assume $a\in\surrealAddLeft{x}{y}$ and
+                $b\in\surrealAddRight{x}{y}$.
+            $(\exists u:\Set.\ u\in\surrealLeft{x}\land
+                    a=\surrealAdd{u}{y})
+                \lor
+                (\exists l:\Set.\ l\in\surrealLeft{y}\land
+                    a=\surrealAdd{x}{l})$
+                by \auto{surreal_add_left_options_iff}.
+            \begin{byCase}
+                \caseOf{$\exists u:\Set.\ u\in\surrealLeft{x}\land
+                        a=\surrealAdd{u}{y}$.}
+                    Take $u\in\surrealLeft{x}$ such that
+                        $a=\surrealAdd{u}{y}$.
+                    $\surreal{u}$ and
+                        $\birthday{u}\in\birthday{x}$ and
+                        $\surrealLt{u}{x}$
+                        by \obv{surreal_left_elim}.
+                    $\Apply{\surrealAddPropertyOp}{u,y}$.
+                    $(\exists v:\Set.\ v\in\surrealRight{x}\land
+                            b=\surrealAdd{v}{y})
+                        \lor
+                        (\exists r:\Set.\ r\in\surrealRight{y}\land
+                            b=\surrealAdd{x}{r})$
+                        by \obv{surreal_add_right_options_iff}.
+                    \begin{byCase}
+                        \caseOf{$\exists v:\Set.\ v\in\surrealRight{x}\land
+                                b=\surrealAdd{v}{y}$.}
+                            Take $v\in\surrealRight{x}$ such that
+                                $b=\surrealAdd{v}{y}$.
+                            $\surreal{v}$ and
+                                $\birthday{v}\in\birthday{x}$ and
+                                $\surrealLt{x}{v}$
+                                by \obv{surreal_right_elim}.
+                            $\Apply{\surrealAddPropertyOp}{v,y}$.
+                            $\surrealLt{u}{v}$
+                                by \obv{surreal_lt_transitive}.
+                            Show that $\forall q:\Set.\ (\surreal{q}\land
+                                \birthday{q}\in
+                                    \birthday{u}\inter\birthday{v})
+                                \implies
+                                \Apply{\surrealAddPropertyOp}{q,y}$.
+                            \begin{subproof}
+                                Fix $q$.
+                                Assume $\surreal{q}$ and
+                                    $\birthday{q}\in
+                                        \birthday{u}\inter\birthday{v}$.
+                                $\birthday{q}\in\birthday{x}$
+                                    by \auto{inter,ordinal_transitivity,surreal_birthday_ordinal}.
+                            \end{subproof}
+                            Follows by
+                                \auto{surreal_add_first_monotone_from_properties}.
+                        \caseOf{$\lnot(\exists v:\Set.
+                                v\in\surrealRight{x}\land
+                                b=\surrealAdd{v}{y})$.}
+                            Take $r\in\surrealRight{y}$ such that
+                                $b=\surrealAdd{x}{r}$.
+                            $\surreal{r}$ and
+                                $\birthday{r}\in\birthday{y}$ and
+                                $\surrealLt{y}{r}$
+                                by \obv{surreal_right_elim}.
+                            $\Apply{\surrealAddPropertyOp}{u,r}$.
+                            Show that $\forall q:\Set.\ (\surreal{q}\land
+                                \birthday{q}\in
+                                    \birthday{y}\inter\birthday{r})
+                                \implies
+                                \Apply{\surrealAddPropertyOp}{u,q}$.
+                            \begin{subproof}
+                            \end{subproof}
+                            $\surrealLt{\surrealAdd{u}{y}}
+                                {\surrealAdd{u}{r}}$
+                                by \obv{surreal_add_second_monotone_from_properties}.
+                            $\Apply{\surrealAddPropertyOp}{x,r}$.
+                            $\surrealLt{\surrealAdd{u}{r}}
+                                {\surrealAdd{x}{r}}$
+                                by \obv{surreal_add_property}.
+                            $\surreal{\surrealAdd{u}{y}}$ and
+                                $\surreal{\surrealAdd{u}{r}}$ and
+                                $\surreal{\surrealAdd{x}{r}}$
+                                by \obv{surreal_add_property}.
+                            Follows by \auto{surreal_lt_transitive}.
+                    \end{byCase}
+                \caseOf{$\lnot(\exists u:\Set.
+                        u\in\surrealLeft{x}\land
+                        a=\surrealAdd{u}{y})$.}
+                    Take $l\in\surrealLeft{y}$ such that
+                        $a=\surrealAdd{x}{l}$.
+                    $\surreal{l}$ and
+                        $\birthday{l}\in\birthday{y}$ and
+                        $\surrealLt{l}{y}$
+                        by \obv{surreal_left_elim}.
+                    $\Apply{\surrealAddPropertyOp}{x,l}$.
+                    $(\exists v:\Set.\ v\in\surrealRight{x}\land
+                            b=\surrealAdd{v}{y})
+                        \lor
+                        (\exists r:\Set.\ r\in\surrealRight{y}\land
+                            b=\surrealAdd{x}{r})$
+                        by \obv{surreal_add_right_options_iff}.
+                    \begin{byCase}
+                        \caseOf{$\exists v:\Set.\ v\in\surrealRight{x}\land
+                                b=\surrealAdd{v}{y}$.}
+                            Take $v\in\surrealRight{x}$ such that
+                                $b=\surrealAdd{v}{y}$.
+                            $\surreal{v}$ and
+                                $\birthday{v}\in\birthday{x}$ and
+                                $\surrealLt{x}{v}$
+                                by \obv{surreal_right_elim}.
+                            $\Apply{\surrealAddPropertyOp}{v,l}
+                                \land
+                                \Apply{\surrealAddPropertyOp}{v,y}$.
+                            Show that $\forall q:\Set.\ (\surreal{q}\land
+                                \birthday{q}\in
+                                    \birthday{x}\inter\birthday{v})
+                                \implies
+                                \Apply{\surrealAddPropertyOp}{q,l}$.
+                            \begin{subproof}
+                                Fix $q$.
+                                Assume $\surreal{q}$ and
+                                    $\birthday{q}\in
+                                        \birthday{x}\inter\birthday{v}$.
+                                $\birthday{q}\in\birthday{x}$
+                                    by \obv{inter}.
+                            \end{subproof}
+                            $\surrealLt{\surrealAdd{x}{l}}
+                                {\surrealAdd{v}{l}}$
+                                by \obv{surreal_add_first_monotone_from_properties}.
+                            $\surrealLt{\surrealAdd{v}{l}}
+                                {\surrealAdd{v}{y}}$
+                                by \obv{surreal_add_property}.
+                            $\surreal{\surrealAdd{x}{l}}$ and
+                                $\surreal{\surrealAdd{v}{l}}$ and
+                                $\surreal{\surrealAdd{v}{y}}$
+                                by \obv{surreal_add_property}.
+                            Follows by \auto{surreal_lt_transitive}.
+                        \caseOf{$\lnot(\exists v:\Set.
+                                v\in\surrealRight{x}\land
+                                b=\surrealAdd{v}{y})$.}
+                            Take $r\in\surrealRight{y}$ such that
+                                $b=\surrealAdd{x}{r}$.
+                            $\surreal{r}$ and
+                                $\birthday{r}\in\birthday{y}$ and
+                                $\surrealLt{y}{r}$
+                                by \obv{surreal_right_elim}.
+                            $\Apply{\surrealAddPropertyOp}{x,r}$.
+                            $\surrealLt{l}{r}$
+                                by \obv{surreal_lt_transitive}.
+                            Show that $\forall q:\Set.\ (\surreal{q}\land
+                                \birthday{q}\in
+                                    \birthday{l}\inter\birthday{r})
+                                \implies
+                                \Apply{\surrealAddPropertyOp}{x,q}$.
+                            \begin{subproof}
+                                Fix $q$.
+                                Assume $\surreal{q}$ and
+                                    $\birthday{q}\in
+                                        \birthday{l}\inter\birthday{r}$.
+                                $\birthday{q}\in\birthday{y}$
+                                    by \auto{inter,ordinal_transitivity,surreal_birthday_ordinal}.
+                            \end{subproof}
+                            Follows by
+                                \auto{surreal_add_second_monotone_from_properties}.
+                    \end{byCase}
+            \end{byCase}
+        \end{subproof}
+        Hence $\surrealCutPair{\surrealAddLeft{x}{y}}
+            {\surrealAddRight{x}{y}}$
+            by \obv{surreal_cut_pair}.
+        $\surrealAdd{x}{y}=
+            \surrealCut{\surrealAddLeft{x}{y}}{\surrealAddRight{x}{y}}$
+            by \obv{surreal_add_equation}.
+        Hence $\surreal{\surrealAdd{x}{y}}$
+            by \obv{surreal_cut_pair_is_surreal}.
+        For every $u\in\surrealLeft{x}$ we have
+            $\surrealLt{\surrealAdd{u}{y}}{\surrealAdd{x}{y}}$
+            by \auto{surreal_add_left_options_iff,surreal_cut_pair_left}.
+        For every $u\in\surrealRight{x}$ we have
+            $\surrealLt{\surrealAdd{x}{y}}{\surrealAdd{u}{y}}$
+            by \auto{surreal_add_right_options_iff,surreal_cut_pair_right}.
+        For every $v\in\surrealLeft{y}$ we have
+            $\surrealLt{\surrealAdd{x}{v}}{\surrealAdd{x}{y}}$
+            by \auto{surreal_add_left_options_iff,surreal_cut_pair_left}.
+        For every $v\in\surrealRight{y}$ we have
+            $\surrealLt{\surrealAdd{x}{y}}{\surrealAdd{x}{v}}$
+            by \auto{surreal_add_right_options_iff,surreal_cut_pair_right}.
+        Follows by \obv{surreal_add_property}.
+    \end{subproof}
+    Follows by \obv{surreal_binary_induction}.
+\end{proof}
+
+\begin{corollary}\label{surreal_add_is_surreal}
+    Suppose $\surreal{x}$ and $\surreal{y}$.
+    Then $\surreal{\surrealAdd{x}{y}}$.
+\end{corollary}
+\begin{proof}
+    Follows by \auto{surreal_add_properties,surreal_add_property}.
+\end{proof}
+
+\begin{corollary}\label{surreal_add_cut_pair}
+    Suppose $\surreal{x}$ and $\surreal{y}$.
+    Then $\surrealCutPair{\surrealAddLeft{x}{y}}
+        {\surrealAddRight{x}{y}}$.
+\end{corollary}
+\begin{proof}
+    Follows by \auto{surreal_add_properties,surreal_add_property}.
+\end{proof}
+
+\subsection{Compatibility with order}
+
+\begin{theorem}\label{surreal_add_lt_left}
+    Suppose $\surreal{x}$ and $\surreal{y}$ and $\surreal{z}$.
+    Suppose $\surrealLt{x}{z}$.
+    Then $\surrealLt{\surrealAdd{x}{y}}{\surrealAdd{z}{y}}$.
+\end{theorem}
+\begin{proof}
+    $\Apply{\surrealAddPropertyOp}{x,y}\land
+        \Apply{\surrealAddPropertyOp}{z,y}$
+        by \obv{surreal_add_properties}.
+    $\forall q:\Set.\ (\surreal{q}\land
+        \birthday{q}\in\birthday{x}\inter\birthday{z})\implies
+        \Apply{\surrealAddPropertyOp}{q,y}$
+        by \obv{surreal_add_properties}.
+    Follows by \obv{surreal_add_first_monotone_from_properties}.
+\end{proof}
+
+\begin{theorem}\label{surreal_add_lt_right}
+    Suppose $\surreal{x}$ and $\surreal{y}$ and $\surreal{z}$.
+    Suppose $\surrealLt{y}{z}$.
+    Then $\surrealLt{\surrealAdd{x}{y}}{\surrealAdd{x}{z}}$.
+\end{theorem}
+\begin{proof}
+    $\Apply{\surrealAddPropertyOp}{x,y}\land
+        \Apply{\surrealAddPropertyOp}{x,z}$
+        by \obv{surreal_add_properties}.
+    $\forall q:\Set.\ (\surreal{q}\land
+        \birthday{q}\in\birthday{y}\inter\birthday{z})\implies
+        \Apply{\surrealAddPropertyOp}{x,q}$
+        by \obv{surreal_add_properties}.
+    Follows by \obv{surreal_add_second_monotone_from_properties}.
+\end{proof}
+
+\begin{corollary}\label{surreal_add_le_left}
+    Suppose $\surreal{x}$ and $\surreal{y}$ and $\surreal{z}$.
+    Suppose $\surrealLe{x}{z}$.
+    Then $\surrealLe{\surrealAdd{x}{y}}{\surrealAdd{z}{y}}$.
+\end{corollary}
+\begin{proof}
+    Follows by \auto{surreal_le,surreal_add_lt_left}.
+\end{proof}
+
+\begin{corollary}\label{surreal_add_le_right}
+    Suppose $\surreal{x}$ and $\surreal{y}$ and $\surreal{z}$.
+    Suppose $\surrealLe{y}{z}$.
+    Then $\surrealLe{\surrealAdd{x}{y}}{\surrealAdd{x}{z}}$.
+\end{corollary}
+\begin{proof}
+    Follows by \auto{surreal_le,surreal_add_lt_right}.
+\end{proof}
+
+\begin{corollary}\label{surreal_add_lt_le}
+    Suppose $\surreal{x}$ and $\surreal{y}$ and
+        $\surreal{z}$ and $\surreal{w}$.
+    Suppose $\surrealLt{x}{z}$ and $\surrealLe{y}{w}$.
+    Then $\surrealLt{\surrealAdd{x}{y}}{\surrealAdd{z}{w}}$.
+\end{corollary}
+\begin{proof}
+    $\surreal{\surrealAdd{z}{y}}$
+        by \obv{surreal_add_is_surreal}.
+    $\surrealLt{\surrealAdd{x}{y}}{\surrealAdd{z}{y}}$
+        by \obv{surreal_add_lt_left}.
+    $\surrealLe{\surrealAdd{z}{y}}{\surrealAdd{z}{w}}$
+        by \obv{surreal_add_le_right}.
+    $\surreal{\surrealAdd{x}{y}}$ and
+        $\surreal{\surrealAdd{z}{w}}$ by \obv{surreal_add_is_surreal}.
+    Follows by \obv{surreal_lt_le_transitive}.
+\end{proof}
+
+\begin{corollary}\label{surreal_add_le_lt}
+    Suppose $\surreal{x}$ and $\surreal{y}$ and
+        $\surreal{z}$ and $\surreal{w}$.
+    Suppose $\surrealLe{x}{z}$ and $\surrealLt{y}{w}$.
+    Then $\surrealLt{\surrealAdd{x}{y}}{\surrealAdd{z}{w}}$.
+\end{corollary}
+\begin{proof}
+    $\surreal{\surrealAdd{z}{y}}$
+        by \obv{surreal_add_is_surreal}.
+    $\surrealLe{\surrealAdd{x}{y}}{\surrealAdd{z}{y}}$
+        by \obv{surreal_add_le_left}.
+    $\surrealLt{\surrealAdd{z}{y}}{\surrealAdd{z}{w}}$
+        by \obv{surreal_add_lt_right}.
+    Follows by \auto{surreal_le_lt_transitive,surreal_add_is_surreal}.
+\end{proof}
+
+\begin{corollary}\label{surreal_add_lt_both}
+    Suppose $\surreal{x}$ and $\surreal{y}$ and
+        $\surreal{z}$ and $\surreal{w}$.
+    Suppose $\surrealLt{x}{z}$ and $\surrealLt{y}{w}$.
+    Then $\surrealLt{\surrealAdd{x}{y}}{\surrealAdd{z}{w}}$.
+\end{corollary}
+\begin{proof}
+    Follows by \obv{surreal_add_lt_le,surreal_le}.
+\end{proof}
+
+\begin{corollary}\label{surreal_add_le_both}
+    Suppose $\surreal{x}$ and $\surreal{y}$ and
+        $\surreal{z}$ and $\surreal{w}$.
+    Suppose $\surrealLe{x}{z}$ and $\surrealLe{y}{w}$.
+    Then $\surrealLe{\surrealAdd{x}{y}}{\surrealAdd{z}{w}}$.
+\end{corollary}
+\begin{proof}
+    $\surreal{\surrealAdd{z}{y}}$
+        by \obv{surreal_add_is_surreal}.
+    $\surrealLe{\surrealAdd{x}{y}}{\surrealAdd{z}{y}}$
+        by \obv{surreal_add_le_left}.
+    $\surrealLe{\surrealAdd{z}{y}}{\surrealAdd{z}{w}}$
+        by \obv{surreal_add_le_right}.
+    Follows by \auto{surreal_le_transitive,surreal_add_is_surreal}.
+\end{proof}
+
+\subsection{Commutative-group laws}
+
+\begin{theorem}\label{surreal_add_commutative}
+    Suppose $\surreal{x}$ and $\surreal{y}$.
+    Then $\surrealAdd{x}{y}=\surrealAdd{y}{x}$.
+\end{theorem}
+\begin{proof}
+    Let $P:\Set\to\Set\to\Prop=\fun{u,v:\Set}{
+        \surrealAdd{u}{v}=\surrealAdd{v}{u}}$.
+    Show that $\forall u,v:\Set.\ (\surreal{u}\land\surreal{v})\implies
+        (((\forall a:\Set.
+                (\surreal{a}\land\birthday{a}\in\birthday{u})
+                \implies
+                (\forall b:\Set.\ \surreal{b}\implies
+                    \Apply{P}{a,b}))
+          \land
+          (\forall b:\Set.
+                (\surreal{b}\land\birthday{b}\in\birthday{v})
+                \implies\Apply{P}{u,b}))
+         \implies\Apply{P}{u,v})$.
+    \begin{subproof}
+        Fix $u,v$.
+        Assume $\surreal{u}\land\surreal{v}$.
+        Assume $(\forall a:\Set.
+                (\surreal{a}\land\birthday{a}\in\birthday{u})
+                \implies
+                (\forall b:\Set.\ \surreal{b}\implies
+                    \Apply{P}{a,b}))
+            \land
+            (\forall b:\Set.
+                (\surreal{b}\land\birthday{b}\in\birthday{v})
+                \implies\Apply{P}{u,b})$.
+        Show that for every $a\in\surrealLeft{u}$ we have
+            $\surrealAdd{a}{v}=\surrealAdd{v}{a}$.
+        \begin{subproof}
+            Fix $a\in\surrealLeft{u}$.
+            $\surreal{a}$ and $\birthday{a}\in\birthday{u}$
+                by \auto{surreal_left_elim}.
+            $\Apply{P}{a,v}$.
+        \end{subproof}
+        Hence $\{\surrealAdd{a}{v}\mid a\in\surrealLeft{u}\}
+            =\{\surrealAdd{v}{a}\mid a\in\surrealLeft{u}\}$
+            by \auto{logical_replacement_extensionality}.
+        Show that for every $b\in\surrealLeft{v}$ we have
+            $\surrealAdd{u}{b}=\surrealAdd{b}{u}$.
+        \begin{subproof}
+            Fix $b\in\surrealLeft{v}$.
+            $\surreal{b}$ and $\birthday{b}\in\birthday{v}$
+                by \auto{surreal_left_elim}.
+            $\Apply{P}{u,b}$.
+        \end{subproof}
+        Hence $\{\surrealAdd{u}{b}\mid b\in\surrealLeft{v}\}
+            =\{\surrealAdd{b}{u}\mid b\in\surrealLeft{v}\}$
+            by \auto{logical_replacement_extensionality}.
+        $\surrealAddLeft{u}{v}=\surrealAddLeft{v}{u}$
+            by \auto{surreal_add_left_options,union_comm}.
+        Show that for every $a\in\surrealRight{u}$ we have
+            $\surrealAdd{a}{v}=\surrealAdd{v}{a}$.
+        \begin{subproof}
+            Fix $a\in\surrealRight{u}$.
+            $\surreal{a}$ and $\birthday{a}\in\birthday{u}$
+                by \auto{surreal_right_elim}.
+            $\Apply{P}{a,v}$.
+            Follows by \auto.
+        \end{subproof}
+        Hence $\{\surrealAdd{a}{v}\mid a\in\surrealRight{u}\}
+            =\{\surrealAdd{v}{a}\mid a\in\surrealRight{u}\}$
+            by \auto{logical_replacement_extensionality}.
+        Show that for every $b\in\surrealRight{v}$ we have
+            $\surrealAdd{u}{b}=\surrealAdd{b}{u}$.
+        \begin{subproof}
+            Fix $b\in\surrealRight{v}$.
+            $\surreal{b}$ and $\birthday{b}\in\birthday{v}$
+                by \auto{surreal_right_elim}.
+            $\Apply{P}{u,b}$.
+            Follows by \auto.
+        \end{subproof}
+        Hence $\{\surrealAdd{u}{b}\mid b\in\surrealRight{v}\}
+            =\{\surrealAdd{b}{u}\mid b\in\surrealRight{v}\}$
+            by \auto{logical_replacement_extensionality}.
+        $\surrealAddRight{u}{v}=\surrealAddRight{v}{u}$
+            by \auto{surreal_add_right_options,union_comm}.
+        $\surrealAdd{u}{v}=
+            \surrealCut{\surrealAddLeft{u}{v}}{\surrealAddRight{u}{v}}$
+            by \obv{surreal_add_equation}.
+        $\surrealAdd{v}{u}=
+            \surrealCut{\surrealAddLeft{v}{u}}{\surrealAddRight{v}{u}}$
+            by \obv{surreal_add_equation}.
+        Hence $\surrealAdd{u}{v}=\surrealAdd{v}{u}$ by \auto.
+    \end{subproof}
+    Follows by \auto{surreal_binary_induction}.
+\end{proof}
+
+\begin{proposition}\label{empty_surreal_left}
+    $\surrealLeft{\emptyset}=\emptyset$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{setext,surreal_left,surreal_stage,empty_surreal,emptyset}.
+\end{proof}
+
+\begin{proposition}\label{empty_surreal_right}
+    $\surrealRight{\emptyset}=\emptyset$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{setext,surreal_right,surreal_stage,empty_surreal,emptyset}.
+\end{proof}
+
+\begin{theorem}\label{surreal_add_zero_left}
+    Suppose $\surreal{x}$.
+    Then $\surrealAdd{\emptyset}{x}=x$.
+\end{theorem}
+\begin{proof}
+    Let $P:\Set\to\Prop=\fun{u:\Set}{
+        \surrealAdd{\emptyset}{u}=u}$.
+    Show that $\forall u:\Set.\ \surreal{u}\implies
+        ((\forall v:\Set.
+            (\surreal{v}\land\birthday{v}\in\birthday{u})
+            \implies\Apply{P}{v})
+         \implies\Apply{P}{u})$.
+    \begin{subproof}
+        Fix $u$.
+        Assume $\surreal{u}$.
+        Assume $\forall v:\Set.
+            (\surreal{v}\land\birthday{v}\in\birthday{u})
+            \implies\Apply{P}{v}$.
+        Show that for every $v\in\surrealLeft{u}$ we have
+            $\surrealAdd{\emptyset}{v}=v$.
+        \begin{subproof}
+            Fix $v\in\surrealLeft{u}$.
+            $\surreal{v}$ and $\birthday{v}\in\birthday{u}$
+                by \auto{surreal_left_elim}.
+            $\Apply{P}{v}$.
+        \end{subproof}
+        Hence $\{\surrealAdd{\emptyset}{v}\mid
+                v\in\surrealLeft{u}\}
+            =\{v\mid v\in\surrealLeft{u}\}$
+            by \auto{logical_replacement_extensionality}.
+        Hence $\{\surrealAdd{\emptyset}{v}\mid
+                v\in\surrealLeft{u}\}=\surrealLeft{u}$
+            by \auto{logical_replacement_identity}.
+        $\{\surrealAdd{v}{u}\mid v\in\surrealLeft{\emptyset}\}
+            =\emptyset$
+            by \auto{empty_surreal_left,setext,emptyset}.
+        $\surrealAddLeft{\emptyset}{u}=\surrealLeft{u}$
+            by \auto{surreal_add_left_options,empty_surreal_left,union_emptyset,union_comm}.
+        Show that for every $v\in\surrealRight{u}$ we have
+            $\surrealAdd{\emptyset}{v}=v$.
+        \begin{subproof}
+            Fix $v\in\surrealRight{u}$.
+            $\surreal{v}$ and $\birthday{v}\in\birthday{u}$
+                by \auto{surreal_right_elim}.
+            $\Apply{P}{v}$.
+            Follows by \auto.
+        \end{subproof}
+        Hence $\{\surrealAdd{\emptyset}{v}\mid
+                v\in\surrealRight{u}\}
+            =\{v\mid v\in\surrealRight{u}\}$
+            by \auto{logical_replacement_extensionality}.
+        Hence $\{\surrealAdd{\emptyset}{v}\mid
+                v\in\surrealRight{u}\}=\surrealRight{u}$
+            by \auto{logical_replacement_identity}.
+        $\{\surrealAdd{v}{u}\mid v\in\surrealRight{\emptyset}\}
+            =\emptyset$
+            by \auto{empty_surreal_right,setext,emptyset}.
+        $\surrealAddRight{\emptyset}{u}=\surrealRight{u}$
+            by \auto{surreal_add_right_options,empty_surreal_right,union_emptyset,union_comm}.
+        $\surrealAdd{\emptyset}{u}=
+            \surrealCut{\surrealAddLeft{\emptyset}{u}}
+                {\surrealAddRight{\emptyset}{u}}$
+            by \obv{surreal_add_equation,empty_surreal}.
+        Hence $\surrealAdd{\emptyset}{u}=
+            \surrealCut{\surrealLeft{u}}{\surrealRight{u}}$
+            by \auto.
+        Hence $\surrealAdd{\emptyset}{u}=u$
+            by \auto{surreal_eta}.
+    \end{subproof}
+    Follows by \auto{surreal_induction}.
+\end{proof}
+
+\begin{corollary}\label{surreal_add_zero_right}
+    Suppose $\surreal{x}$.
+    Then $\surrealAdd{x}{\emptyset}=x$.
+\end{corollary}
+\begin{proof}
+    Follows by
+        \auto{empty_surreal,surreal_add_commutative,surreal_add_zero_left}.
+\end{proof}
+
+\begin{theorem}\label{surreal_add_inverse_left}
+    Suppose $\surreal{x}$.
+    Then $\surrealAdd{\surrealNeg{x}}{x}=\emptyset$.
+\end{theorem}
+\begin{proof}
+    Let $P:\Set\to\Prop=\fun{u:\Set}{
+        \surrealAdd{\surrealNeg{u}}{u}=\emptyset}$.
+    Show that $\forall u:\Set.\ \surreal{u}\implies
+        ((\forall v:\Set.
+            (\surreal{v}\land\birthday{v}\in\birthday{u})
+            \implies\Apply{P}{v})
+         \implies\Apply{P}{u})$.
+    \begin{subproof}
+        Fix $u$.
+        Assume $\surreal{u}$.
+        Assume $\forall v:\Set.
+            (\surreal{v}\land\birthday{v}\in\birthday{u})
+            \implies\Apply{P}{v}$.
+        $\surreal{\surrealNeg{u}}$
+            by \obv{surreal_negation_is_surreal}.
+        $\surrealCutPair{\surrealAddLeft{\surrealNeg{u}}{u}}
+            {\surrealAddRight{\surrealNeg{u}}{u}}$
+            by \obv{surreal_add_cut_pair}.
+        Show that for every
+            $a\in\surrealAddLeft{\surrealNeg{u}}{u}$ we have
+            $\surrealLt{a}{\emptyset}$.
+        \begin{subproof}
+            Fix $a\in\surrealAddLeft{\surrealNeg{u}}{u}$.
+            $(\exists v:\Set.\ v\in\surrealLeft{\surrealNeg{u}}\land
+                    a=\surrealAdd{v}{u})
+                \lor
+                (\exists l:\Set.\ l\in\surrealLeft{u}\land
+                    a=\surrealAdd{\surrealNeg{u}}{l})$
+                by \auto{surreal_add_left_options_iff}.
+            \begin{byCase}
+                \caseOf{$\exists v:\Set.
+                        v\in\surrealLeft{\surrealNeg{u}}\land
+                        a=\surrealAdd{v}{u}$.}
+                    Take $v\in\surrealLeft{\surrealNeg{u}}$ such that
+                        $a=\surrealAdd{v}{u}$.
+                    Take $r\in\surrealRight{u}$ such that
+                        $v=\surrealNeg{r}$
+                        by \auto{surreal_left_negation,surreal_negation_set_iff}.
+                    $\surreal{r}$ and
+                        $\birthday{r}\in\birthday{u}$ and
+                        $\surrealLt{u}{r}$
+                        by \obv{surreal_right_elim}.
+                    $\Apply{P}{r}$.
+                    Hence $\surrealAdd{\surrealNeg{r}}{r}=\emptyset$.
+                    $\surreal{\surrealNeg{r}}$
+                        by \obv{surreal_negation_is_surreal}.
+                    Hence $\surreal{v}$.
+                    $\surrealLt{\surrealAdd{v}{u}}
+                        {\surrealAdd{v}{r}}$
+                        by \obv{surreal_add_lt_right}.
+                    Hence $\surrealLt{a}{\surrealAdd{v}{r}}$.
+                    \begin{align*}
+                        \surrealAdd{v}{r}
+                            &= \surrealAdd{\surrealNeg{r}}{r}
+                            \\
+                            &= \emptyset
+                    \end{align*}
+                \caseOf{$\lnot(\exists v:\Set.
+                        v\in\surrealLeft{\surrealNeg{u}}\land
+                        a=\surrealAdd{v}{u})$.}
+                    Take $l\in\surrealLeft{u}$ such that
+                        $a=\surrealAdd{\surrealNeg{u}}{l}$.
+                    $\surreal{l}$ and
+                        $\birthday{l}\in\birthday{u}$ and
+                        $\surrealLt{l}{u}$
+                        by \obv{surreal_left_elim}.
+                    $\Apply{P}{l}$.
+                    Hence $\surrealAdd{\surrealNeg{l}}{l}=\emptyset$.
+                    $\surrealLt{\surrealNeg{u}}{\surrealNeg{l}}$
+                        by \obv{surreal_negation_lt_reverses}.
+                    $\surrealLt{\surrealAdd{\surrealNeg{u}}{l}}
+                        {\surrealAdd{\surrealNeg{l}}{l}}$
+                        by \obv{surreal_add_lt_left,surreal_negation_is_surreal}.
+            \end{byCase}
+        \end{subproof}
+        Show that for every
+            $b\in\surrealAddRight{\surrealNeg{u}}{u}$ we have
+            $\surrealLt{\emptyset}{b}$.
+        \begin{subproof}
+            Fix $b\in\surrealAddRight{\surrealNeg{u}}{u}$.
+            $(\exists v:\Set.\ v\in\surrealRight{\surrealNeg{u}}\land
+                    b=\surrealAdd{v}{u})
+                \lor
+                (\exists r:\Set.\ r\in\surrealRight{u}\land
+                    b=\surrealAdd{\surrealNeg{u}}{r})$
+                by \auto{surreal_add_right_options_iff}.
+            \begin{byCase}
+                \caseOf{$\exists v:\Set.
+                        v\in\surrealRight{\surrealNeg{u}}\land
+                        b=\surrealAdd{v}{u}$.}
+                    Take $v\in\surrealRight{\surrealNeg{u}}$ such that
+                        $b=\surrealAdd{v}{u}$.
+                    Take $l\in\surrealLeft{u}$ such that
+                        $v=\surrealNeg{l}$
+                        by \auto{surreal_right_negation,surreal_negation_set_iff}.
+                    $\surreal{l}$ and
+                        $\birthday{l}\in\birthday{u}$ and
+                        $\surrealLt{l}{u}$
+                        by \obv{surreal_left_elim}.
+                    $\Apply{P}{l}$.
+                    Hence $\surrealAdd{\surrealNeg{l}}{l}=\emptyset$.
+                    $\surreal{\surrealNeg{l}}$
+                        by \obv{surreal_negation_is_surreal}.
+                    Hence $\surreal{v}$.
+                    $\surrealLt{\surrealAdd{v}{l}}
+                        {\surrealAdd{v}{u}}$
+                        by \obv{surreal_add_lt_right}.
+                    \begin{align*}
+                        \emptyset
+                            &= \surrealAdd{\surrealNeg{l}}{l}
+                            \\
+                            &= \surrealAdd{v}{l}
+                    \end{align*}
+                    Hence $\surrealLt{\emptyset}{\surrealAdd{v}{u}}$.
+                \caseOf{$\lnot(\exists v:\Set.
+                        v\in\surrealRight{\surrealNeg{u}}\land
+                        b=\surrealAdd{v}{u})$.}
+                    Take $r\in\surrealRight{u}$ such that
+                        $b=\surrealAdd{\surrealNeg{u}}{r}$.
+                    $\surreal{r}$ and
+                        $\birthday{r}\in\birthday{u}$ and
+                        $\surrealLt{u}{r}$
+                        by \obv{surreal_right_elim}.
+                    $\Apply{P}{r}$.
+                    Hence $\surrealAdd{\surrealNeg{r}}{r}=\emptyset$.
+                    $\surrealLt{\surrealNeg{r}}{\surrealNeg{u}}$
+                        by \obv{surreal_negation_lt_reverses}.
+                    $\surrealLt{\surrealAdd{\surrealNeg{r}}{r}}
+                        {\surrealAdd{\surrealNeg{u}}{r}}$
+                        by \obv{surreal_add_lt_left,surreal_negation_is_surreal}.
+            \end{byCase}
+        \end{subproof}
+        Show that for every $w$ such that $\surreal{w}$ and
+            (for every $a\in\surrealAddLeft{\surrealNeg{u}}{u}$ we have
+                $\surrealLt{a}{w}$) and
+            (for every $b\in\surrealAddRight{\surrealNeg{u}}{u}$ we have
+                $\surrealLt{w}{b}$)
+            we have $\birthday{\emptyset}\subseteq\birthday{w}$ and
+                $\surrealEq{\birthday{\emptyset}}{\emptyset}{w}$.
+        \begin{subproof}
+            Follows by \auto{empty_surreal,emptyset,subseteq,surreal_eq_initial}.
+        \end{subproof}
+        Hence $\surrealCutCandidate
+            {\surrealAddLeft{\surrealNeg{u}}{u}}
+            {\surrealAddRight{\surrealNeg{u}}{u}}{\emptyset}$
+            by \obv{surreal_cut_candidate,empty_surreal}.
+        $\surrealCutCandidate
+            {\surrealAddLeft{\surrealNeg{u}}{u}}
+            {\surrealAddRight{\surrealNeg{u}}{u}}
+            {\surrealCut{\surrealAddLeft{\surrealNeg{u}}{u}}
+                {\surrealAddRight{\surrealNeg{u}}{u}}}$
+            by \obv{surreal_cut_pair_specification}.
+        Hence $\surrealCut{\surrealAddLeft{\surrealNeg{u}}{u}}
+            {\surrealAddRight{\surrealNeg{u}}{u}}=\emptyset$
+            by \obv{surreal_cut_candidate_unique}.
+        $\surrealAdd{\surrealNeg{u}}{u}=
+            \surrealCut{\surrealAddLeft{\surrealNeg{u}}{u}}
+                {\surrealAddRight{\surrealNeg{u}}{u}}$
+            by \obv{surreal_add_equation}.
+        Hence $\surrealAdd{\surrealNeg{u}}{u}=\emptyset$.
+    \end{subproof}
+    Follows by \auto{surreal_induction}.
+\end{proof}
+
+\begin{corollary}\label{surreal_add_inverse_right}
+    Suppose $\surreal{x}$.
+    Then $\surrealAdd{x}{\surrealNeg{x}}=\emptyset$.
+\end{corollary}
+\begin{proof}
+    Follows by
+        \auto{surreal_negation_is_surreal,surreal_add_commutative,surreal_add_inverse_left}.
+\end{proof}
+
+\begin{lemma}\label{surreal_add_left_below_without_interpolant}
+    Suppose $\surreal{x}$ and $\surreal{y}$ and $\surreal{u}$.
+    Suppose not $((\exists v:\Set.\ v\in\surrealLeft{x}\land
+            \surrealLe{u}{\surrealAdd{v}{y}})
+        \lor(\exists v:\Set.\ v\in\surrealLeft{y}\land
+            \surrealLe{u}{\surrealAdd{x}{v}}))$.
+    Then for every $a\in\surrealAddLeft{x}{y}$ we have
+        $\surrealLt{a}{u}$.
+\end{lemma}
+\begin{proof}
+    Fix $a\in\surrealAddLeft{x}{y}$.
+    $(\exists v:\Set.\ v\in\surrealLeft{x}\land
+            a=\surrealAdd{v}{y})
+        \lor
+        (\exists v:\Set.\ v\in\surrealLeft{y}\land
+            a=\surrealAdd{x}{v})$
+        by \auto{surreal_add_left_options_iff}.
+    Show that if $\exists v:\Set.\ v\in\surrealLeft{x}\land
+            a=\surrealAdd{v}{y}$, then $\surrealLt{a}{u}$.
+    \begin{subproof}
+        Assume $\exists v:\Set.\ v\in\surrealLeft{x}\land
+            a=\surrealAdd{v}{y}$.
+        Take $v\in\surrealLeft{x}$ such that
+            $a=\surrealAdd{v}{y}$.
+        $\surreal{v}$ by \auto{surreal_left_elim}.
+        $\surreal{a}$ by \obv{surreal_add_is_surreal}.
+        Not $\surrealLe{u}{a}$ by \auto.
+        $\surrealLe{a}{u}$
+            by \obv{surreal_le_total}.
+        Follows by \auto{surreal_le}.
+    \end{subproof}
+    Show that if $\exists v:\Set.\ v\in\surrealLeft{y}\land
+            a=\surrealAdd{x}{v}$, then $\surrealLt{a}{u}$.
+    \begin{subproof}
+        Assume $\exists v:\Set.\ v\in\surrealLeft{y}\land
+            a=\surrealAdd{x}{v}$.
+        Take $v\in\surrealLeft{y}$ such that
+            $a=\surrealAdd{x}{v}$.
+        $\surreal{v}$ by \auto{surreal_left_elim}.
+        $\surreal{a}$ by \obv{surreal_add_is_surreal}.
+        Not $\surrealLe{u}{a}$ by \auto.
+        $\surrealLe{a}{u}$
+            by \obv{surreal_le_total}.
+        Follows by \auto{surreal_le}.
+    \end{subproof}
+\end{proof}
+
+\begin{lemma}\label{surreal_add_right_above_without_interpolant}
+    Suppose $\surreal{x}$ and $\surreal{y}$ and $\surreal{u}$.
+    Suppose not $((\exists v:\Set.\ v\in\surrealRight{x}\land
+            \surrealLe{\surrealAdd{v}{y}}{u})
+        \lor(\exists v:\Set.\ v\in\surrealRight{y}\land
+            \surrealLe{\surrealAdd{x}{v}}{u}))$.
+    Then for every $a\in\surrealAddRight{x}{y}$ we have
+        $\surrealLt{u}{a}$.
+\end{lemma}
+\begin{proof}
+    Fix $a\in\surrealAddRight{x}{y}$.
+    $(\exists v:\Set.\ v\in\surrealRight{x}\land
+            a=\surrealAdd{v}{y})
+        \lor
+        (\exists v:\Set.\ v\in\surrealRight{y}\land
+            a=\surrealAdd{x}{v})$
+        by \auto{surreal_add_right_options_iff}.
+    Show that if $\exists v:\Set.\ v\in\surrealRight{x}\land
+            a=\surrealAdd{v}{y}$, then $\surrealLt{u}{a}$.
+    \begin{subproof}
+        Assume $\exists v:\Set.\ v\in\surrealRight{x}\land
+            a=\surrealAdd{v}{y}$.
+        Take $v\in\surrealRight{x}$ such that
+            $a=\surrealAdd{v}{y}$.
+        $\surreal{v}$ by \auto{surreal_right_elim}.
+        $\surreal{a}$ by \obv{surreal_add_is_surreal}.
+        Not $\surrealLe{a}{u}$ by \auto.
+        $\surrealLe{u}{a}$
+            by \obv{surreal_le_total}.
+        Follows by \auto{surreal_le}.
+    \end{subproof}
+    Show that if $\exists v:\Set.\ v\in\surrealRight{y}\land
+            a=\surrealAdd{x}{v}$, then $\surrealLt{u}{a}$.
+    \begin{subproof}
+        Assume $\exists v:\Set.\ v\in\surrealRight{y}\land
+            a=\surrealAdd{x}{v}$.
+        Take $v\in\surrealRight{y}$ such that
+            $a=\surrealAdd{x}{v}$.
+        $\surreal{v}$ by \auto{surreal_right_elim}.
+        $\surreal{a}$ by \obv{surreal_add_is_surreal}.
+        Not $\surrealLe{a}{u}$ by \auto.
+        $\surrealLe{u}{a}$
+            by \obv{surreal_le_total}.
+        Follows by \auto{surreal_le}.
+    \end{subproof}
+\end{proof}
+
+\subsection{Interpolation and associativity}
+
+\begin{theorem}\label{surreal_add_left_interpolation}
+    Suppose $\surreal{x}$ and $\surreal{y}$.
+    Let $u\in\surrealLeft{\surrealAdd{x}{y}}$.
+    Then $(\exists v:\Set.\ v\in\surrealLeft{x}\land
+            \surrealLe{u}{\surrealAdd{v}{y}})
+        \lor(\exists v:\Set.\ v\in\surrealLeft{y}\land
+            \surrealLe{u}{\surrealAdd{x}{v}})$.
+\end{theorem}
+\begin{proof}
+    Let $c=\surrealAdd{x}{y}$.
+    $\surreal{c}$ by \obv{surreal_add_is_surreal}.
+    Let $P:\Set\to\Prop=\fun{w:\Set}{
+        (\birthday{w}\in\birthday{c}\land\surrealLt{w}{c})
+        \implies
+        ((\exists v:\Set.\ v\in\surrealLeft{x}\land
+            \surrealLe{w}{\surrealAdd{v}{y}})
+         \lor
+         (\exists v:\Set.\ v\in\surrealLeft{y}\land
+            \surrealLe{w}{\surrealAdd{x}{v}}))}$.
+    Show that $\forall w:\Set.\ \surreal{w}\implies
+        ((\forall z:\Set.
+            (\surreal{z}\land\birthday{z}\in\birthday{w})
+            \implies\Apply{P}{z})
+         \implies\Apply{P}{w})$.
+    \begin{subproof}
+        Fix $w$.
+        Assume $\surreal{w}$.
+        Assume $\forall z:\Set.
+            (\surreal{z}\land\birthday{z}\in\birthday{w})
+            \implies\Apply{P}{z}$.
+        Show that if $\birthday{w}\in\birthday{c}$ and
+                $\surrealLt{w}{c}$, then
+            $(\exists v:\Set.\ v\in\surrealLeft{x}\land
+                \surrealLe{w}{\surrealAdd{v}{y}})
+            \lor
+            (\exists v:\Set.\ v\in\surrealLeft{y}\land
+                \surrealLe{w}{\surrealAdd{x}{v}})$.
+        \begin{subproof}
+        Assume $\birthday{w}\in\birthday{c}$ and $\surrealLt{w}{c}$.
+        Suppose not.
+        For every $a\in\surrealAddLeft{x}{y}$ we have
+            $\surrealLt{a}{w}$
+            by \obv{surreal_add_left_below_without_interpolant}.
+        Show that for every $r\in\surrealRight{w}$ we have
+            $\surrealLt{c}{r}$.
+        \begin{subproof}
+            Fix $r\in\surrealRight{w}$.
+            $\surreal{r}$ and $\birthday{r}\in\birthday{w}$ and
+                $\surrealLt{w}{r}$
+                by \obv{surreal_right_elim}.
+            \begin{byCase}
+                \caseOf{$\surrealLt{c}{r}$.}
+                    Follows.
+                \caseOf{Not $\surrealLt{c}{r}$.}
+                    $c=r$ or $\surrealLt{r}{c}$
+                        by \auto{surreal_lt_trichotomy}.
+                    \begin{byCase}
+                        \caseOf{$c=r$.}
+                            $\birthday{r}\in\birthday{c}$
+                                by \auto{ordinal_transitivity,surreal_birthday_ordinal}.
+                            $\birthday{r}=\birthday{c}$.
+                            Contradiction by \auto{in_irrefl}.
+                        \caseOf{$c\neq r$.}
+                            $\surrealLt{r}{c}$.
+                            $\birthday{r}\in\birthday{c}$
+                                by \auto{ordinal_transitivity,surreal_birthday_ordinal}.
+                            $\Apply{P}{r}$.
+                            Hence $(\exists v:\Set.
+                                    v\in\surrealLeft{x}\land
+                                    \surrealLe{r}{\surrealAdd{v}{y}})
+                                \lor
+                                (\exists v:\Set.
+                                    v\in\surrealLeft{y}\land
+                                    \surrealLe{r}{\surrealAdd{x}{v}})$.
+                            Show that if $\exists v:\Set.
+                                    v\in\surrealLeft{x}\land
+                                    \surrealLe{r}{\surrealAdd{v}{y}}$, then
+                                $\exists v:\Set.\ v\in\surrealLeft{x}\land
+                                    \surrealLe{w}{\surrealAdd{v}{y}}$.
+                            \begin{subproof}
+                                Assume $\exists v:\Set.
+                                    v\in\surrealLeft{x}\land
+                                    \surrealLe{r}{\surrealAdd{v}{y}}$.
+                                Take $v\in\surrealLeft{x}$ such that
+                                    $\surrealLe{r}{\surrealAdd{v}{y}}$.
+                                $\surrealLt{w}{\surrealAdd{v}{y}}$
+                                    by \auto{surreal_left_elim,surreal_add_is_surreal,surreal_lt_le_transitive}.
+                                Follows by \auto{surreal_le}.
+                            \end{subproof}
+                            Show that if $\exists v:\Set.
+                                    v\in\surrealLeft{y}\land
+                                    \surrealLe{r}{\surrealAdd{x}{v}}$, then
+                                $\exists v:\Set.\ v\in\surrealLeft{y}\land
+                                    \surrealLe{w}{\surrealAdd{x}{v}}$.
+                            \begin{subproof}
+                                Assume $\exists v:\Set.
+                                    v\in\surrealLeft{y}\land
+                                    \surrealLe{r}{\surrealAdd{x}{v}}$.
+                                Take $v\in\surrealLeft{y}$ such that
+                                    $\surrealLe{r}{\surrealAdd{x}{v}}$.
+                                $\surrealLt{w}{\surrealAdd{x}{v}}$
+                                    by \auto{surreal_left_elim,surreal_add_is_surreal,surreal_lt_le_transitive}.
+                                Follows by \auto{surreal_le}.
+                            \end{subproof}
+                            Contradiction.
+                    \end{byCase}
+            \end{byCase}
+        \end{subproof}
+        $\surrealCutPair{\surrealAddLeft{x}{y}}
+            {\surrealAddRight{x}{y}}$
+            by \obv{surreal_add_cut_pair}.
+        $\surrealCutPair{\surrealLeft{w}}{\surrealRight{w}}$
+            by \obv{surreal_options_form_cut_pair}.
+        $c=\surrealCut{\surrealAddLeft{x}{y}}
+            {\surrealAddRight{x}{y}}$
+            by \obv{surreal_add_equation}.
+        $\surrealCut{\surrealLeft{w}}{\surrealRight{w}}=w$
+            by \obv{surreal_eta}.
+        Hence $\surrealLe{c}{w}$
+            by \auto{surreal_cut_le}.
+        $\surrealLt{w}{w}$
+            by \auto{surreal_lt_le_transitive}.
+        Contradiction by \obv{surreal_lt_irreflexive}.
+        \end{subproof}
+    \end{subproof}
+    $\forall w:\Set.\ \surreal{w}\implies\Apply{P}{w}$
+        by \auto{surreal_induction}.
+    $\surreal{u}$ and $\birthday{u}\in\birthday{c}$ and
+        $\surrealLt{u}{c}$
+        by \auto{surreal_left_elim}.
+    $\Apply{P}{u}$.
+\end{proof}
+
+\begin{theorem}\label{surreal_add_right_interpolation}
+    Suppose $\surreal{x}$ and $\surreal{y}$.
+    Let $u\in\surrealRight{\surrealAdd{x}{y}}$.
+    Then $(\exists v:\Set.\ v\in\surrealRight{x}\land
+            \surrealLe{\surrealAdd{v}{y}}{u})
+        \lor(\exists v:\Set.\ v\in\surrealRight{y}\land
+            \surrealLe{\surrealAdd{x}{v}}{u})$.
+\end{theorem}
+\begin{proof}
+    Let $c=\surrealAdd{x}{y}$.
+    $\surreal{c}$ by \obv{surreal_add_is_surreal}.
+    Let $P:\Set\to\Prop=\fun{w:\Set}{
+        (\birthday{w}\in\birthday{c}\land\surrealLt{c}{w})
+        \implies
+        ((\exists v:\Set.\ v\in\surrealRight{x}\land
+            \surrealLe{\surrealAdd{v}{y}}{w})
+         \lor
+         (\exists v:\Set.\ v\in\surrealRight{y}\land
+            \surrealLe{\surrealAdd{x}{v}}{w}))}$.
+    Show that $\forall w:\Set.\ \surreal{w}\implies
+        ((\forall z:\Set.
+            (\surreal{z}\land\birthday{z}\in\birthday{w})
+            \implies\Apply{P}{z})
+         \implies\Apply{P}{w})$.
+    \begin{subproof}
+        Fix $w$.
+        Assume $\surreal{w}$.
+        Assume $\forall z:\Set.
+            (\surreal{z}\land\birthday{z}\in\birthday{w})
+            \implies\Apply{P}{z}$.
+        Show that if $\birthday{w}\in\birthday{c}$ and
+                $\surrealLt{c}{w}$, then
+            $(\exists v:\Set.\ v\in\surrealRight{x}\land
+                \surrealLe{\surrealAdd{v}{y}}{w})
+            \lor
+            (\exists v:\Set.\ v\in\surrealRight{y}\land
+                \surrealLe{\surrealAdd{x}{v}}{w})$.
+        \begin{subproof}
+        Assume $\birthday{w}\in\birthday{c}$ and $\surrealLt{c}{w}$.
+        Suppose not.
+        For every $a\in\surrealAddRight{x}{y}$ we have
+            $\surrealLt{w}{a}$
+            by \obv{surreal_add_right_above_without_interpolant}.
+        Show that for every $l\in\surrealLeft{w}$ we have
+            $\surrealLt{l}{c}$.
+        \begin{subproof}
+            Fix $l\in\surrealLeft{w}$.
+            $\surreal{l}$ and $\birthday{l}\in\birthday{w}$ and
+                $\surrealLt{l}{w}$
+                by \obv{surreal_left_elim}.
+            \begin{byCase}
+                \caseOf{$\surrealLt{l}{c}$.}
+                    Follows.
+                \caseOf{Not $\surrealLt{l}{c}$.}
+                    $l=c$ or $\surrealLt{c}{l}$
+                        by \auto{surreal_lt_trichotomy}.
+                    \begin{byCase}
+                        \caseOf{$l=c$.}
+                            $\birthday{l}\in\birthday{c}$
+                                by \auto{ordinal_transitivity,surreal_birthday_ordinal}.
+                            $\birthday{l}=\birthday{c}$.
+                            Contradiction by \auto{in_irrefl}.
+                        \caseOf{$l\neq c$.}
+                            $\surrealLt{c}{l}$.
+                            $\birthday{l}\in\birthday{c}$
+                                by \auto{ordinal_transitivity,surreal_birthday_ordinal}.
+                            $\Apply{P}{l}$.
+                            Hence $(\exists v:\Set.
+                                    v\in\surrealRight{x}\land
+                                    \surrealLe{\surrealAdd{v}{y}}{l})
+                                \lor
+                                (\exists v:\Set.
+                                    v\in\surrealRight{y}\land
+                                    \surrealLe{\surrealAdd{x}{v}}{l})$.
+                            Show that if $\exists v:\Set.
+                                    v\in\surrealRight{x}\land
+                                    \surrealLe{\surrealAdd{v}{y}}{l}$, then
+                                $\exists v:\Set.\ v\in\surrealRight{x}\land
+                                    \surrealLe{\surrealAdd{v}{y}}{w}$.
+                            \begin{subproof}
+                                Assume $\exists v:\Set.
+                                    v\in\surrealRight{x}\land
+                                    \surrealLe{\surrealAdd{v}{y}}{l}$.
+                                Take $v\in\surrealRight{x}$ such that
+                                    $\surrealLe{\surrealAdd{v}{y}}{l}$.
+                                $\surrealLt{\surrealAdd{v}{y}}{w}$
+                                    by \auto{surreal_right_elim,surreal_add_is_surreal,surreal_le_lt_transitive}.
+                                Follows by \auto{surreal_le}.
+                            \end{subproof}
+                            Show that if $\exists v:\Set.
+                                    v\in\surrealRight{y}\land
+                                    \surrealLe{\surrealAdd{x}{v}}{l}$, then
+                                $\exists v:\Set.\ v\in\surrealRight{y}\land
+                                    \surrealLe{\surrealAdd{x}{v}}{w}$.
+                            \begin{subproof}
+                                Assume $\exists v:\Set.
+                                    v\in\surrealRight{y}\land
+                                    \surrealLe{\surrealAdd{x}{v}}{l}$.
+                                Take $v\in\surrealRight{y}$ such that
+                                    $\surrealLe{\surrealAdd{x}{v}}{l}$.
+                                $\surrealLt{\surrealAdd{x}{v}}{w}$
+                                    by \auto{surreal_right_elim,surreal_add_is_surreal,surreal_le_lt_transitive}.
+                                Follows by \auto{surreal_le}.
+                            \end{subproof}
+                            Contradiction.
+                    \end{byCase}
+            \end{byCase}
+        \end{subproof}
+        $\surrealCutPair{\surrealLeft{w}}{\surrealRight{w}}$
+            by \obv{surreal_options_form_cut_pair}.
+        $\surrealCutPair{\surrealAddLeft{x}{y}}
+            {\surrealAddRight{x}{y}}$
+            by \obv{surreal_add_cut_pair}.
+        $\surrealCut{\surrealLeft{w}}{\surrealRight{w}}=w$
+            by \obv{surreal_eta}.
+        $c=\surrealCut{\surrealAddLeft{x}{y}}
+            {\surrealAddRight{x}{y}}$
+            by \obv{surreal_add_equation}.
+        Hence $\surrealLe{w}{c}$
+            by \auto{surreal_cut_le}.
+        $\surrealLt{c}{c}$
+            by \auto{surreal_lt_le_transitive}.
+        Contradiction by \obv{surreal_lt_irreflexive}.
+        \end{subproof}
+    \end{subproof}
+    $\forall w:\Set.\ \surreal{w}\implies\Apply{P}{w}$
+        by \auto{surreal_induction}.
+    $\surreal{u}$ and $\birthday{u}\in\birthday{c}$ and
+        $\surrealLt{c}{u}$
+        by \auto{surreal_right_elim}.
+    $\Apply{P}{u}$.
+\end{proof}
+
+\begin{theorem}[Associativity of surreal addition]\label{surreal_add_associative}
+    Suppose $\surreal{x}$ and $\surreal{y}$ and $\surreal{z}$.
+    Then $\surrealAdd{x}{\surrealAdd{y}{z}}=
+        \surrealAdd{\surrealAdd{x}{y}}{z}$.
+\end{theorem}
+
+The proof is a simultaneous induction on the birthdays of the three
+arguments. We compare the cuts defining $a+(b+d)$ and $(a+b)+d$.
+For each of the four left- and right-option families, interpolation
+reduces the comparison to a smaller triple, where the induction
+hypothesis applies.
+
+\begin{proof}
+    Let $P:\Set\to\Set\to\Set\to\Prop=
+        \fun{a,b,d:\Set}{
+            \surrealAdd{a}{\surrealAdd{b}{d}}=
+                \surrealAdd{\surrealAdd{a}{b}}{d}}$.
+    Show that $\forall a,b,d:\Set.
+        (\surreal{a}\land\surreal{b}\land\surreal{d})\implies
+        (((\forall a':\Set.
+                (\surreal{a'}\land\birthday{a'}\in\birthday{a})
+                \implies
+                (\forall b',d':\Set.
+                    (\surreal{b'}\land\surreal{d'})\implies
+                    \Apply{P}{a',b',d'}))
+          \land
+          (\forall b':\Set.
+                (\surreal{b'}\land\birthday{b'}\in\birthday{b})
+                \implies
+                (\forall d':\Set.\ \surreal{d'}\implies
+                    \Apply{P}{a,b',d'}))
+          \land
+          (\forall d':\Set.
+                (\surreal{d'}\land\birthday{d'}\in\birthday{d})
+                \implies\Apply{P}{a,b,d'}))
+         \implies\Apply{P}{a,b,d})$.
+    \begin{subproof}
+        Fix $a,b,d$.
+        Assume $\surreal{a}\land\surreal{b}\land\surreal{d}$.
+        Assume $(\forall a':\Set.
+                (\surreal{a'}\land\birthday{a'}\in\birthday{a})
+                \implies
+                (\forall b',d':\Set.
+                    (\surreal{b'}\land\surreal{d'})\implies
+                    \Apply{P}{a',b',d'}))
+            \land
+            (\forall b':\Set.
+                (\surreal{b'}\land\birthday{b'}\in\birthday{b})
+                \implies
+                (\forall d':\Set.\ \surreal{d'}\implies
+                    \Apply{P}{a,b',d'}))
+            \land
+            (\forall d':\Set.
+                (\surreal{d'}\land\birthday{d'}\in\birthday{d})
+                \implies\Apply{P}{a,b,d'})$.
+        $\surreal{\surrealAdd{b}{d}}$ and
+            $\surreal{\surrealAdd{a}{b}}$
+            by \obv{surreal_add_is_surreal}.
+        $\surrealCutPair{\surrealAddLeft{a}{\surrealAdd{b}{d}}}
+            {\surrealAddRight{a}{\surrealAdd{b}{d}}}$
+            by \obv{surreal_add_cut_pair}.
+        $\surrealCutPair{\surrealAddLeft{\surrealAdd{a}{b}}{d}}
+            {\surrealAddRight{\surrealAdd{a}{b}}{d}}$
+            by \obv{surreal_add_cut_pair}.
+        Show that for every
+            $p\in\surrealAddLeft{a}{\surrealAdd{b}{d}}$ we have
+            $\surrealLt{p}{\surrealAdd{\surrealAdd{a}{b}}{d}}$.
+        \begin{subproof}
+            Fix $p\in\surrealAddLeft{a}{\surrealAdd{b}{d}}$.
+            $(\exists u:\Set.\ u\in\surrealLeft{a}\land
+                    p=\surrealAdd{u}{\surrealAdd{b}{d}})
+                \lor
+                (\exists t:\Set.\ t\in\surrealLeft{\surrealAdd{b}{d}}\land
+                    p=\surrealAdd{a}{t})$
+                by \auto{surreal_add_left_options_iff}.
+            \begin{byCase}
+                \caseOf{$\exists u:\Set.\ u\in\surrealLeft{a}\land
+                        p=\surrealAdd{u}{\surrealAdd{b}{d}}$.}
+                    Take $u\in\surrealLeft{a}$ such that
+                        $p=\surrealAdd{u}{\surrealAdd{b}{d}}$.
+                    $\surreal{u}$ and $\birthday{u}\in\birthday{a}$ and
+                        $\surrealLt{u}{a}$
+                        by \obv{surreal_left_elim}.
+                    $\Apply{P}{u,b,d}$.
+                    Hence $\surrealAdd{u}{\surrealAdd{b}{d}}=
+                        \surrealAdd{\surrealAdd{u}{b}}{d}$.
+                    $\surrealLt{\surrealAdd{u}{b}}
+                        {\surrealAdd{a}{b}}$
+                        by \obv{surreal_add_lt_left}.
+                    $\surrealLt{\surrealAdd{\surrealAdd{u}{b}}{d}}
+                        {\surrealAdd{\surrealAdd{a}{b}}{d}}$
+                        by \obv{surreal_add_lt_left,surreal_add_is_surreal}.
+                    Follows by \auto.
+                \caseOf{$\lnot(\exists u:\Set.
+                        u\in\surrealLeft{a}\land
+                        p=\surrealAdd{u}{\surrealAdd{b}{d}})$.}
+                    Take $t\in\surrealLeft{\surrealAdd{b}{d}}$ such that
+                        $p=\surrealAdd{a}{t}$.
+                    $\surreal{t}$ by
+                        \auto{surreal_left_elim,surreal_add_is_surreal}.
+                    $(\exists v:\Set.\ v\in\surrealLeft{b}\land
+                            \surrealLe{t}{\surrealAdd{v}{d}})
+                        \lor
+                        (\exists w:\Set.\ w\in\surrealLeft{d}\land
+                            \surrealLe{t}{\surrealAdd{b}{w}})$
+                        by \obv{surreal_add_left_interpolation}.
+                    Show that if $\exists v:\Set.
+                            v\in\surrealLeft{b}\land
+                            \surrealLe{t}{\surrealAdd{v}{d}}$, then
+                        $\surrealLt{p}{\surrealAdd{\surrealAdd{a}{b}}{d}}$.
+                    \begin{subproof}
+                        Assume $\exists v:\Set.\ v\in\surrealLeft{b}\land
+                            \surrealLe{t}{\surrealAdd{v}{d}}$.
+                        Take $v\in\surrealLeft{b}$ such that
+                            $\surrealLe{t}{\surrealAdd{v}{d}}$.
+                        $\surreal{v}$ and $\birthday{v}\in\birthday{b}$ and
+                            $\surrealLt{v}{b}$
+                            by \obv{surreal_left_elim}.
+                        $\surrealLe{\surrealAdd{a}{t}}
+                            {\surrealAdd{a}{\surrealAdd{v}{d}}}$
+                            by \obv{surreal_add_le_right,surreal_add_is_surreal}.
+                        $\Apply{P}{a,v,d}$.
+                        Hence $\surrealAdd{a}{\surrealAdd{v}{d}}=
+                            \surrealAdd{\surrealAdd{a}{v}}{d}$.
+                        $\surrealLt{\surrealAdd{a}{v}}
+                            {\surrealAdd{a}{b}}$
+                            by \obv{surreal_add_lt_right}.
+                        $\surrealLt{\surrealAdd{\surrealAdd{a}{v}}{d}}
+                            {\surrealAdd{\surrealAdd{a}{b}}{d}}$
+                            by \obv{surreal_add_lt_left,surreal_add_is_surreal}.
+                        Follows by \auto{surreal_le_lt_transitive,surreal_add_is_surreal}.
+                    \end{subproof}
+                    Show that if $\exists w:\Set.
+                            w\in\surrealLeft{d}\land
+                            \surrealLe{t}{\surrealAdd{b}{w}}$, then
+                        $\surrealLt{p}{\surrealAdd{\surrealAdd{a}{b}}{d}}$.
+                    \begin{subproof}
+                        Assume $\exists w:\Set.\ w\in\surrealLeft{d}\land
+                            \surrealLe{t}{\surrealAdd{b}{w}}$.
+                        Take $w\in\surrealLeft{d}$ such that
+                            $\surrealLe{t}{\surrealAdd{b}{w}}$.
+                        $\surreal{w}$ and $\birthday{w}\in\birthday{d}$ and
+                            $\surrealLt{w}{d}$
+                            by \obv{surreal_left_elim}.
+                        $\surrealLe{\surrealAdd{a}{t}}
+                            {\surrealAdd{a}{\surrealAdd{b}{w}}}$
+                            by \obv{surreal_add_le_right,surreal_add_is_surreal}.
+                        $\Apply{P}{a,b,w}$.
+                        Hence $\surrealAdd{a}{\surrealAdd{b}{w}}=
+                            \surrealAdd{\surrealAdd{a}{b}}{w}$.
+                        $\surrealLt{\surrealAdd{\surrealAdd{a}{b}}{w}}
+                            {\surrealAdd{\surrealAdd{a}{b}}{d}}$
+                            by \obv{surreal_add_lt_right,surreal_add_is_surreal}.
+                        Follows by \auto{surreal_le_lt_transitive,surreal_add_is_surreal}.
+                    \end{subproof}
+            \end{byCase}
+        \end{subproof}
+        Show that for every
+            $p\in\surrealAddRight{a}{\surrealAdd{b}{d}}$ we have
+            $\surrealLt{\surrealAdd{\surrealAdd{a}{b}}{d}}{p}$.
+        \begin{subproof}
+            Fix $p\in\surrealAddRight{a}{\surrealAdd{b}{d}}$.
+            $(\exists u:\Set.\ u\in\surrealRight{a}\land
+                    p=\surrealAdd{u}{\surrealAdd{b}{d}})
+                \lor
+                (\exists t:\Set.\ t\in\surrealRight{\surrealAdd{b}{d}}\land
+                    p=\surrealAdd{a}{t})$
+                by \auto{surreal_add_right_options_iff}.
+            \begin{byCase}
+                \caseOf{$\exists u:\Set.\ u\in\surrealRight{a}\land
+                        p=\surrealAdd{u}{\surrealAdd{b}{d}}$.}
+                    Take $u\in\surrealRight{a}$ such that
+                        $p=\surrealAdd{u}{\surrealAdd{b}{d}}$.
+                    $\surreal{u}$ and $\birthday{u}\in\birthday{a}$ and
+                        $\surrealLt{a}{u}$
+                        by \obv{surreal_right_elim}.
+                    $\Apply{P}{u,b,d}$.
+                    Hence $\surrealAdd{u}{\surrealAdd{b}{d}}=
+                        \surrealAdd{\surrealAdd{u}{b}}{d}$.
+                    $\surrealLt{\surrealAdd{a}{b}}
+                        {\surrealAdd{u}{b}}$
+                        by \obv{surreal_add_lt_left}.
+                    $\surrealLt{\surrealAdd{\surrealAdd{a}{b}}{d}}
+                        {\surrealAdd{\surrealAdd{u}{b}}{d}}$
+                        by \obv{surreal_add_lt_left,surreal_add_is_surreal}.
+                    Follows by \auto.
+                \caseOf{$\lnot(\exists u:\Set.
+                        u\in\surrealRight{a}\land
+                        p=\surrealAdd{u}{\surrealAdd{b}{d}})$.}
+                    Take $t\in\surrealRight{\surrealAdd{b}{d}}$ such that
+                        $p=\surrealAdd{a}{t}$.
+                    $\surreal{t}$ by
+                        \auto{surreal_right_elim,surreal_add_is_surreal}.
+                    $(\exists v:\Set.\ v\in\surrealRight{b}\land
+                            \surrealLe{\surrealAdd{v}{d}}{t})
+                        \lor
+                        (\exists w:\Set.\ w\in\surrealRight{d}\land
+                            \surrealLe{\surrealAdd{b}{w}}{t})$
+                        by \obv{surreal_add_right_interpolation}.
+                    Show that if $\exists v:\Set.
+                            v\in\surrealRight{b}\land
+                            \surrealLe{\surrealAdd{v}{d}}{t}$, then
+                        $\surrealLt{\surrealAdd{\surrealAdd{a}{b}}{d}}{p}$.
+                    \begin{subproof}
+                        Assume $\exists v:\Set.\ v\in\surrealRight{b}\land
+                            \surrealLe{\surrealAdd{v}{d}}{t}$.
+                        Take $v\in\surrealRight{b}$ such that
+                            $\surrealLe{\surrealAdd{v}{d}}{t}$.
+                        $\surreal{v}$ and $\birthday{v}\in\birthday{b}$ and
+                            $\surrealLt{b}{v}$
+                            by \obv{surreal_right_elim}.
+                        $\surrealLt{\surrealAdd{a}{b}}
+                            {\surrealAdd{a}{v}}$
+                            by \obv{surreal_add_lt_right}.
+                        $\surrealLt{\surrealAdd{\surrealAdd{a}{b}}{d}}
+                            {\surrealAdd{\surrealAdd{a}{v}}{d}}$
+                            by \obv{surreal_add_lt_left,surreal_add_is_surreal}.
+                        $\Apply{P}{a,v,d}$.
+                        Hence $\surrealAdd{\surrealAdd{a}{v}}{d}=
+                            \surrealAdd{a}{\surrealAdd{v}{d}}$.
+                        $\surrealLe{\surrealAdd{a}{\surrealAdd{v}{d}}}
+                            {\surrealAdd{a}{t}}$
+                            by \obv{surreal_add_le_right,surreal_add_is_surreal}.
+                        Follows by \auto{surreal_lt_le_transitive,surreal_add_is_surreal}.
+                    \end{subproof}
+                    Show that if $\exists w:\Set.
+                            w\in\surrealRight{d}\land
+                            \surrealLe{\surrealAdd{b}{w}}{t}$, then
+                        $\surrealLt{\surrealAdd{\surrealAdd{a}{b}}{d}}{p}$.
+                    \begin{subproof}
+                        Assume $\exists w:\Set.\ w\in\surrealRight{d}\land
+                            \surrealLe{\surrealAdd{b}{w}}{t}$.
+                        Take $w\in\surrealRight{d}$ such that
+                            $\surrealLe{\surrealAdd{b}{w}}{t}$.
+                        $\surreal{w}$ and $\birthday{w}\in\birthday{d}$ and
+                            $\surrealLt{d}{w}$
+                            by \obv{surreal_right_elim}.
+                        $\surrealLt{\surrealAdd{\surrealAdd{a}{b}}{d}}
+                            {\surrealAdd{\surrealAdd{a}{b}}{w}}$
+                            by \obv{surreal_add_lt_right,surreal_add_is_surreal}.
+                        $\Apply{P}{a,b,w}$.
+                        Hence $\surrealAdd{\surrealAdd{a}{b}}{w}=
+                            \surrealAdd{a}{\surrealAdd{b}{w}}$.
+                        $\surrealLe{\surrealAdd{a}{\surrealAdd{b}{w}}}
+                            {\surrealAdd{a}{t}}$
+                            by \obv{surreal_add_le_right,surreal_add_is_surreal}.
+                        Follows by \auto{surreal_lt_le_transitive,surreal_add_is_surreal}.
+                    \end{subproof}
+            \end{byCase}
+        \end{subproof}
+        Show that for every
+            $p\in\surrealAddLeft{\surrealAdd{a}{b}}{d}$ we have
+            $\surrealLt{p}{\surrealAdd{a}{\surrealAdd{b}{d}}}$.
+        \begin{subproof}
+            Fix $p\in\surrealAddLeft{\surrealAdd{a}{b}}{d}$.
+            $(\exists t:\Set.\ t\in\surrealLeft{\surrealAdd{a}{b}}\land
+                    p=\surrealAdd{t}{d})
+                \lor
+                (\exists w:\Set.\ w\in\surrealLeft{d}\land
+                    p=\surrealAdd{\surrealAdd{a}{b}}{w})$
+                by \auto{surreal_add_left_options_iff}.
+            \begin{byCase}
+                \caseOf{$\exists t:\Set.
+                        t\in\surrealLeft{\surrealAdd{a}{b}}\land
+                        p=\surrealAdd{t}{d}$.}
+                    Take $t\in\surrealLeft{\surrealAdd{a}{b}}$ such that
+                        $p=\surrealAdd{t}{d}$.
+                    $\surreal{t}$ by
+                        \auto{surreal_left_elim,surreal_add_is_surreal}.
+                    $(\exists u:\Set.\ u\in\surrealLeft{a}\land
+                            \surrealLe{t}{\surrealAdd{u}{b}})
+                        \lor
+                        (\exists v:\Set.\ v\in\surrealLeft{b}\land
+                            \surrealLe{t}{\surrealAdd{a}{v}})$
+                        by \obv{surreal_add_left_interpolation}.
+                    Show that if $\exists u:\Set.
+                            u\in\surrealLeft{a}\land
+                            \surrealLe{t}{\surrealAdd{u}{b}}$, then
+                        $\surrealLt{p}{\surrealAdd{a}{\surrealAdd{b}{d}}}$.
+                    \begin{subproof}
+                        Assume $\exists u:\Set.\ u\in\surrealLeft{a}\land
+                            \surrealLe{t}{\surrealAdd{u}{b}}$.
+                        Take $u\in\surrealLeft{a}$ such that
+                            $\surrealLe{t}{\surrealAdd{u}{b}}$.
+                        $\surreal{u}$ and $\birthday{u}\in\birthday{a}$ and
+                            $\surrealLt{u}{a}$
+                            by \obv{surreal_left_elim}.
+                        $\surrealLe{\surrealAdd{t}{d}}
+                            {\surrealAdd{\surrealAdd{u}{b}}{d}}$
+                            by \obv{surreal_add_le_left,surreal_add_is_surreal}.
+                        $\Apply{P}{u,b,d}$.
+                        Hence $\surrealAdd{\surrealAdd{u}{b}}{d}=
+                            \surrealAdd{u}{\surrealAdd{b}{d}}$.
+                        $\surrealLt{\surrealAdd{u}{\surrealAdd{b}{d}}}
+                            {\surrealAdd{a}{\surrealAdd{b}{d}}}$
+                            by \obv{surreal_add_lt_left,surreal_add_is_surreal}.
+                        Follows by \auto{surreal_le_lt_transitive,surreal_add_is_surreal}.
+                    \end{subproof}
+                    Show that if $\exists v:\Set.
+                            v\in\surrealLeft{b}\land
+                            \surrealLe{t}{\surrealAdd{a}{v}}$, then
+                        $\surrealLt{p}{\surrealAdd{a}{\surrealAdd{b}{d}}}$.
+                    \begin{subproof}
+                        Assume $\exists v:\Set.\ v\in\surrealLeft{b}\land
+                            \surrealLe{t}{\surrealAdd{a}{v}}$.
+                        Take $v\in\surrealLeft{b}$ such that
+                            $\surrealLe{t}{\surrealAdd{a}{v}}$.
+                        $\surreal{v}$ and $\birthday{v}\in\birthday{b}$ and
+                            $\surrealLt{v}{b}$
+                            by \obv{surreal_left_elim}.
+                        $\surrealLe{\surrealAdd{t}{d}}
+                            {\surrealAdd{\surrealAdd{a}{v}}{d}}$
+                            by \obv{surreal_add_le_left,surreal_add_is_surreal}.
+                        $\Apply{P}{a,v,d}$.
+                        Hence $\surrealAdd{\surrealAdd{a}{v}}{d}=
+                            \surrealAdd{a}{\surrealAdd{v}{d}}$.
+                        $\surrealLt{\surrealAdd{v}{d}}
+                            {\surrealAdd{b}{d}}$
+                            by \obv{surreal_add_lt_left}.
+                        $\surrealLt{\surrealAdd{a}{\surrealAdd{v}{d}}}
+                            {\surrealAdd{a}{\surrealAdd{b}{d}}}$
+                            by \obv{surreal_add_lt_right,surreal_add_is_surreal}.
+                        Follows by \auto{surreal_le_lt_transitive,surreal_add_is_surreal}.
+                    \end{subproof}
+                \caseOf{$\lnot(\exists t:\Set.
+                        t\in\surrealLeft{\surrealAdd{a}{b}}\land
+                        p=\surrealAdd{t}{d})$.}
+                    Take $w\in\surrealLeft{d}$ such that
+                        $p=\surrealAdd{\surrealAdd{a}{b}}{w}$.
+                    $\surreal{w}$ and $\birthday{w}\in\birthday{d}$ and
+                        $\surrealLt{w}{d}$
+                        by \obv{surreal_left_elim}.
+                    $\Apply{P}{a,b,w}$.
+                    Hence $\surrealAdd{\surrealAdd{a}{b}}{w}=
+                        \surrealAdd{a}{\surrealAdd{b}{w}}$.
+                    $\surrealLt{\surrealAdd{b}{w}}
+                        {\surrealAdd{b}{d}}$
+                        by \obv{surreal_add_lt_right}.
+                    $\surrealLt{\surrealAdd{a}{\surrealAdd{b}{w}}}
+                        {\surrealAdd{a}{\surrealAdd{b}{d}}}$
+                        by \obv{surreal_add_lt_right,surreal_add_is_surreal}.
+                    Follows by \auto.
+            \end{byCase}
+        \end{subproof}
+        Show that for every
+            $p\in\surrealAddRight{\surrealAdd{a}{b}}{d}$ we have
+            $\surrealLt{\surrealAdd{a}{\surrealAdd{b}{d}}}{p}$.
+        \begin{subproof}
+            Fix $p\in\surrealAddRight{\surrealAdd{a}{b}}{d}$.
+            $(\exists t:\Set.\ t\in\surrealRight{\surrealAdd{a}{b}}\land
+                    p=\surrealAdd{t}{d})
+                \lor
+                (\exists w:\Set.\ w\in\surrealRight{d}\land
+                    p=\surrealAdd{\surrealAdd{a}{b}}{w})$
+                by \auto{surreal_add_right_options_iff}.
+            \begin{byCase}
+                \caseOf{$\exists t:\Set.
+                        t\in\surrealRight{\surrealAdd{a}{b}}\land
+                        p=\surrealAdd{t}{d}$.}
+                    Take $t\in\surrealRight{\surrealAdd{a}{b}}$ such that
+                        $p=\surrealAdd{t}{d}$.
+                    $\surreal{t}$ by
+                        \auto{surreal_right_elim,surreal_add_is_surreal}.
+                    $(\exists u:\Set.\ u\in\surrealRight{a}\land
+                            \surrealLe{\surrealAdd{u}{b}}{t})
+                        \lor
+                        (\exists v:\Set.\ v\in\surrealRight{b}\land
+                            \surrealLe{\surrealAdd{a}{v}}{t})$
+                        by \obv{surreal_add_right_interpolation}.
+                    Show that if $\exists u:\Set.
+                            u\in\surrealRight{a}\land
+                            \surrealLe{\surrealAdd{u}{b}}{t}$, then
+                        $\surrealLt{\surrealAdd{a}{\surrealAdd{b}{d}}}{p}$.
+                    \begin{subproof}
+                        Assume $\exists u:\Set.\ u\in\surrealRight{a}\land
+                            \surrealLe{\surrealAdd{u}{b}}{t}$.
+                        Take $u\in\surrealRight{a}$ such that
+                            $\surrealLe{\surrealAdd{u}{b}}{t}$.
+                        $\surreal{u}$ and $\birthday{u}\in\birthday{a}$ and
+                            $\surrealLt{a}{u}$
+                            by \obv{surreal_right_elim}.
+                        $\surrealLt{\surrealAdd{a}{\surrealAdd{b}{d}}}
+                            {\surrealAdd{u}{\surrealAdd{b}{d}}}$
+                            by \obv{surreal_add_lt_left,surreal_add_is_surreal}.
+                        $\Apply{P}{u,b,d}$.
+                        Hence $\surrealAdd{u}{\surrealAdd{b}{d}}=
+                            \surrealAdd{\surrealAdd{u}{b}}{d}$.
+                        $\surrealLe{\surrealAdd{\surrealAdd{u}{b}}{d}}
+                            {\surrealAdd{t}{d}}$
+                            by \obv{surreal_add_le_left,surreal_add_is_surreal}.
+                        Follows by \auto{surreal_lt_le_transitive,surreal_add_is_surreal}.
+                    \end{subproof}
+                    Show that if $\exists v:\Set.
+                            v\in\surrealRight{b}\land
+                            \surrealLe{\surrealAdd{a}{v}}{t}$, then
+                        $\surrealLt{\surrealAdd{a}{\surrealAdd{b}{d}}}{p}$.
+                    \begin{subproof}
+                        Assume $\exists v:\Set.\ v\in\surrealRight{b}\land
+                            \surrealLe{\surrealAdd{a}{v}}{t}$.
+                        Take $v\in\surrealRight{b}$ such that
+                            $\surrealLe{\surrealAdd{a}{v}}{t}$.
+                        $\surreal{v}$ and $\birthday{v}\in\birthday{b}$ and
+                            $\surrealLt{b}{v}$
+                            by \obv{surreal_right_elim}.
+                        $\surrealLt{\surrealAdd{b}{d}}
+                            {\surrealAdd{v}{d}}$
+                            by \obv{surreal_add_lt_left}.
+                        $\surrealLt{\surrealAdd{a}{\surrealAdd{b}{d}}}
+                            {\surrealAdd{a}{\surrealAdd{v}{d}}}$
+                            by \obv{surreal_add_lt_right,surreal_add_is_surreal}.
+                        $\Apply{P}{a,v,d}$.
+                        Hence $\surrealAdd{a}{\surrealAdd{v}{d}}=
+                            \surrealAdd{\surrealAdd{a}{v}}{d}$.
+                        $\surrealLe{\surrealAdd{\surrealAdd{a}{v}}{d}}
+                            {\surrealAdd{t}{d}}$
+                            by \obv{surreal_add_le_left,surreal_add_is_surreal}.
+                        Follows by \auto{surreal_lt_le_transitive,surreal_add_is_surreal}.
+                    \end{subproof}
+                \caseOf{$\lnot(\exists t:\Set.
+                        t\in\surrealRight{\surrealAdd{a}{b}}\land
+                        p=\surrealAdd{t}{d})$.}
+                    Take $w\in\surrealRight{d}$ such that
+                        $p=\surrealAdd{\surrealAdd{a}{b}}{w}$.
+                    $\surreal{w}$ and $\birthday{w}\in\birthday{d}$ and
+                        $\surrealLt{d}{w}$
+                        by \obv{surreal_right_elim}.
+                    $\surrealLt{\surrealAdd{b}{d}}
+                        {\surrealAdd{b}{w}}$
+                        by \obv{surreal_add_lt_right}.
+                    $\surrealLt{\surrealAdd{a}{\surrealAdd{b}{d}}}
+                        {\surrealAdd{a}{\surrealAdd{b}{w}}}$
+                        by \obv{surreal_add_lt_right,surreal_add_is_surreal}.
+                    $\Apply{P}{a,b,w}$.
+                    Hence $\surrealAdd{a}{\surrealAdd{b}{w}}=
+                        \surrealAdd{\surrealAdd{a}{b}}{w}$.
+                    Follows by \auto.
+            \end{byCase}
+        \end{subproof}
+        $\surrealAdd{a}{\surrealAdd{b}{d}}=
+            \surrealCut{\surrealAddLeft{a}{\surrealAdd{b}{d}}}
+                {\surrealAddRight{a}{\surrealAdd{b}{d}}}$
+            by \obv{surreal_add_equation}.
+        $\surrealAdd{\surrealAdd{a}{b}}{d}=
+            \surrealCut{\surrealAddLeft{\surrealAdd{a}{b}}{d}}
+                {\surrealAddRight{\surrealAdd{a}{b}}{d}}$
+            by \obv{surreal_add_equation}.
+        Hence $\surrealAdd{a}{\surrealAdd{b}{d}}=
+            \surrealAdd{\surrealAdd{a}{b}}{d}$
+            by \auto{surreal_cut_extensionality}.
+    \end{subproof}
+    Follows by \auto{surreal_ternary_induction}.
+\end{proof}
+
+\subsection{Cancellation and negation}
+
+\begin{corollary}\label{surreal_add_cancel_left}
+    Suppose $\surreal{x}$ and $\surreal{y}$ and $\surreal{z}$.
+    Suppose $\surrealAdd{x}{y}=\surrealAdd{x}{z}$.
+    Then $y=z$.
+\end{corollary}
+\begin{proof}
+    $\surreal{\surrealNeg{x}}$
+        by \obv{surreal_negation_is_surreal}.
+    $\surrealAdd{\surrealNeg{x}}{\surrealAdd{x}{y}}
+        =\surrealAdd{\surrealNeg{x}}{\surrealAdd{x}{z}}$.
+    Follows by
+        \auto{surreal_add_associative,surreal_add_inverse_left,surreal_add_zero_left}.
+\end{proof}
+
+\begin{corollary}\label{surreal_add_cancel_right}
+    Suppose $\surreal{x}$ and $\surreal{y}$ and $\surreal{z}$.
+    Suppose $\surrealAdd{x}{y}=\surrealAdd{z}{y}$.
+    Then $x=z$.
+\end{corollary}
+\begin{proof}
+    $\surrealAdd{y}{x}=\surrealAdd{y}{z}$
+        by \auto{surreal_add_commutative}.
+    Follows by \auto{surreal_add_cancel_left}.
+\end{proof}
+
+\begin{corollary}\label{surreal_add_inverse_cancel_right}
+    Suppose $\surreal{x}$ and $\surreal{y}$.
+    Then $\surrealAdd{\surrealAdd{x}{y}}{\surrealNeg{y}}=x$.
+\end{corollary}
+\begin{proof}
+    Follows by
+        \auto{surreal_negation_is_surreal,surreal_add_associative,surreal_add_inverse_right,surreal_add_zero_right}.
+\end{proof}
+
+\begin{corollary}\label{surreal_add_negated_cancel_right}
+    Suppose $\surreal{x}$ and $\surreal{y}$.
+    Then $\surrealAdd{\surrealAdd{x}{\surrealNeg{y}}}{y}=x$.
+\end{corollary}
+\begin{proof}
+    Follows by
+        \auto{surreal_negation_is_surreal,surreal_add_associative,surreal_add_inverse_left,surreal_add_zero_right}.
+\end{proof}
+
+\begin{corollary}\label{surreal_add_inverse_cancel_left}
+    Suppose $\surreal{x}$ and $\surreal{y}$.
+    Then $\surrealAdd{\surrealNeg{x}}{\surrealAdd{x}{y}}=y$.
+\end{corollary}
+\begin{proof}
+    Follows by
+        \auto{surreal_negation_is_surreal,surreal_add_associative,surreal_add_inverse_left,surreal_add_zero_left}.
+\end{proof}
+
+\begin{corollary}\label{surreal_add_negated_cancel_left}
+    Suppose $\surreal{x}$ and $\surreal{y}$.
+    Then $\surrealAdd{x}{\surrealAdd{\surrealNeg{x}}{y}}=y$.
+\end{corollary}
+\begin{proof}
+    Follows by
+        \auto{surreal_negation_is_surreal,surreal_add_associative,surreal_add_inverse_right,surreal_add_zero_left}.
+\end{proof}
+
+\begin{theorem}\label{surreal_negation_additive}
+    Suppose $\surreal{x}$ and $\surreal{y}$.
+    Then $\surrealNeg{\surrealAdd{x}{y}}
+        =\surrealAdd{\surrealNeg{x}}{\surrealNeg{y}}$.
+\end{theorem}
+\begin{proof}
+    $\surreal{\surrealNeg{x}}$ and $\surreal{\surrealNeg{y}}$ and
+        $\surreal{\surrealAdd{x}{y}}$
+        by \obv{surreal_negation_is_surreal,surreal_add_is_surreal}.
+    $\surreal{\surrealNeg{\surrealAdd{x}{y}}}$ and
+        $\surreal{\surrealAdd{\surrealNeg{x}}{\surrealNeg{y}}}$
+        by \obv{surreal_negation_is_surreal,surreal_add_is_surreal}.
+    $\surrealAdd{\surrealAdd{x}{y}}
+        {\surrealAdd{\surrealNeg{x}}{\surrealNeg{y}}}=\emptyset$
+        by
+        \auto{surreal_add_associative,surreal_add_commutative,surreal_add_inverse_right,surreal_add_zero_left,surreal_add_zero_right}.
+    $\surrealAdd{\surrealAdd{x}{y}}
+        {\surrealNeg{\surrealAdd{x}{y}}}=\emptyset$
+        by \obv{surreal_add_inverse_right}.
+    Follows by \auto{surreal_add_cancel_left}.
+\end{proof}
+
+\begin{corollary}\label{surreal_add_lt_cancel_left}
+    Suppose $\surreal{x}$ and $\surreal{y}$ and $\surreal{z}$.
+    Suppose $\surrealLt{\surrealAdd{x}{y}}{\surrealAdd{x}{z}}$.
+    Then $\surrealLt{y}{z}$.
+\end{corollary}
+\begin{proof}
+    $\surreal{\surrealNeg{x}}$
+        by \obv{surreal_negation_is_surreal}.
+    $\surrealLt
+        {\surrealAdd{\surrealNeg{x}}{\surrealAdd{x}{y}}}
+        {\surrealAdd{\surrealNeg{x}}{\surrealAdd{x}{z}}}$
+        by \obv{surreal_add_lt_right,surreal_add_is_surreal}.
+    Follows by \obv{surreal_add_inverse_cancel_left}.
+\end{proof}
+
+\begin{corollary}\label{surreal_add_lt_cancel_right}
+    Suppose $\surreal{x}$ and $\surreal{y}$ and $\surreal{z}$.
+    Suppose $\surrealLt{\surrealAdd{x}{y}}{\surrealAdd{z}{y}}$.
+    Then $\surrealLt{x}{z}$.
+\end{corollary}
+\begin{proof}
+    $\surrealLt{\surrealAdd{y}{x}}{\surrealAdd{y}{z}}$
+        by \obv{surreal_add_commutative}.
+    Follows by \obv{surreal_add_lt_cancel_left}.
+\end{proof}
+
+\begin{corollary}\label{surreal_add_le_cancel_left}
+    Suppose $\surreal{x}$ and $\surreal{y}$ and $\surreal{z}$.
+    Suppose $\surrealLe{\surrealAdd{x}{y}}{\surrealAdd{x}{z}}$.
+    Then $\surrealLe{y}{z}$.
+\end{corollary}
+\begin{proof}
+    Follows by \auto{surreal_le,surreal_add_lt_cancel_left,surreal_add_cancel_left}.
+\end{proof}
+
+\begin{corollary}\label{surreal_add_le_cancel_right}
+    Suppose $\surreal{x}$ and $\surreal{y}$ and $\surreal{z}$.
+    Suppose $\surrealLe{\surrealAdd{x}{y}}{\surrealAdd{z}{y}}$.
+    Then $\surrealLe{x}{z}$.
+\end{corollary}
+\begin{proof}
+    Follows by \auto{surreal_le,surreal_add_lt_cancel_right,surreal_add_cancel_right}.
+\end{proof}
+
+\begin{lemma}\label{surreal_add_cross_cancel}
+    Suppose $\surreal{a}$ and $\surreal{b}$ and $\surreal{c}$ and
+        $\surreal{d}$ and $\surreal{u}$ and $\surreal{v}$.
+    Suppose $\surrealLt{\surrealAdd{a}{u}}{\surrealAdd{c}{v}}$.
+    Suppose $\surrealLt{\surrealAdd{b}{v}}{\surrealAdd{d}{u}}$.
+    Then $\surrealLt{\surrealAdd{a}{b}}{\surrealAdd{c}{d}}$.
+\end{lemma}
+\begin{proof}
+    $\surrealLt
+        {\surrealAdd{\surrealAdd{a}{u}}{\surrealAdd{b}{v}}}
+        {\surrealAdd{\surrealAdd{c}{v}}{\surrealAdd{d}{u}}}$
+        by \obv{surreal_add_lt_both,surreal_add_is_surreal}.
+    Hence $\surrealLt
+        {\surrealAdd{\surrealAdd{a}{b}}{\surrealAdd{u}{v}}}
+        {\surrealAdd{\surrealAdd{c}{d}}{\surrealAdd{u}{v}}}$
+        by
+        \auto{surreal_add_associative,surreal_add_commutative,surreal_add_is_surreal}.
+    Follows by \auto{surreal_add_lt_cancel_right,surreal_add_is_surreal}.
+\end{proof}
+
+\begin{lemma}\label{surreal_subtract_lt_add}
+    Suppose $\surreal{a}$ and $\surreal{b}$ and $\surreal{c}$.
+    Suppose $\surrealLt{\surrealAdd{a}{\surrealNeg{b}}}{c}$.
+    Then $\surrealLt{a}{\surrealAdd{c}{b}}$.
+\end{lemma}
+\begin{proof}
+    $\surrealLt
+        {\surrealAdd{\surrealAdd{a}{\surrealNeg{b}}}{b}}
+        {\surrealAdd{c}{b}}$
+        by
+        \obv{surreal_add_lt_left,surreal_add_is_surreal,surreal_negation_is_surreal}.
+    Follows by
+        \auto{surreal_add_associative,surreal_add_inverse_left,surreal_add_zero_right,surreal_negation_is_surreal}.
+\end{proof}
+
+\begin{lemma}\label{surreal_lt_subtract_add}
+    Suppose $\surreal{a}$ and $\surreal{b}$ and $\surreal{c}$.
+    Suppose $\surrealLt{c}{\surrealAdd{a}{\surrealNeg{b}}}$.
+    Then $\surrealLt{\surrealAdd{c}{b}}{a}$.
+\end{lemma}
+\begin{proof}
+    $\surrealLt
+        {\surrealAdd{c}{b}}
+        {\surrealAdd{\surrealAdd{a}{\surrealNeg{b}}}{b}}$
+        by
+        \obv{surreal_add_lt_left,surreal_add_is_surreal,surreal_negation_is_surreal}.
+    Follows by
+        \auto{surreal_add_associative,surreal_add_inverse_left,surreal_add_zero_right,surreal_negation_is_surreal}.
+\end{proof}
+
+\begin{lemma}\label{surreal_add_four_balance}
+    Suppose $\surreal{a}$ and $\surreal{b}$ and $\surreal{c}$ and
+        $\surreal{d}$ and $\surreal{e}$ and $\surreal{f}$ and
+        $\surreal{g}$ and $\surreal{h}$ and $\surreal{t}$.
+    Suppose $\surrealLt{\surrealAdd{a}{t}}{\surrealAdd{e}{h}}$.
+    Suppose $\surrealLt{\surrealAdd{b}{t}}{\surrealAdd{f}{g}}$.
+    Suppose $\surrealLt{\surrealAdd{e}{f}}{\surrealAdd{c}{t}}$.
+    Suppose $\surrealLt{\surrealAdd{g}{h}}{\surrealAdd{d}{t}}$.
+    Then $\surrealLt{\surrealAdd{a}{b}}{\surrealAdd{c}{d}}$.
+\end{lemma}
+\begin{proof}
+    $\surrealLt
+        {\surrealAdd{\surrealAdd{a}{t}}{\surrealAdd{b}{t}}}
+        {\surrealAdd{\surrealAdd{e}{h}}{\surrealAdd{f}{g}}}$
+        by \obv{surreal_add_lt_both,surreal_add_is_surreal}.
+    Hence $\surrealLt
+        {\surrealAdd{\surrealAdd{a}{b}}{\surrealAdd{t}{t}}}
+        {\surrealAdd{\surrealAdd{e}{f}}{\surrealAdd{g}{h}}}$
+        by
+        \auto{surreal_add_associative,surreal_add_commutative,surreal_add_is_surreal}.
+    $\surrealLt
+        {\surrealAdd{\surrealAdd{e}{f}}{\surrealAdd{g}{h}}}
+        {\surrealAdd{\surrealAdd{c}{t}}{\surrealAdd{d}{t}}}$
+        by \obv{surreal_add_lt_both,surreal_add_is_surreal}.
+    Hence $\surrealLt
+        {\surrealAdd{\surrealAdd{a}{b}}{\surrealAdd{t}{t}}}
+        {\surrealAdd{\surrealAdd{c}{d}}{\surrealAdd{t}{t}}}$
+        by
+        \auto{surreal_lt_transitive,surreal_add_associative,surreal_add_commutative,surreal_add_is_surreal}.
+    Follows by \auto{surreal_add_lt_cancel_right,surreal_add_is_surreal}.
+\end{proof}
+
+\begin{lemma}\label{surreal_add_subtract_lt}
+    Suppose $\surreal{a}$ and $\surreal{b}$ and
+        $\surreal{c}$ and $\surreal{d}$.
+    Suppose $\surrealLt{\surrealAdd{a}{d}}{\surrealAdd{c}{b}}$.
+    Then $\surrealLt
+        {\surrealAdd{a}{\surrealNeg{b}}}
+        {\surrealAdd{c}{\surrealNeg{d}}}$.
+\end{lemma}
+\begin{proof}
+    $\surreal{\surrealNeg{b}}$ and $\surreal{\surrealNeg{d}}$ and
+        $\surreal{\surrealAdd{\surrealNeg{b}}{\surrealNeg{d}}}$
+        by \obv{surreal_negation_is_surreal,surreal_add_is_surreal}.
+    $\surrealLt
+        {\surrealAdd{\surrealAdd{a}{d}}
+            {\surrealAdd{\surrealNeg{b}}{\surrealNeg{d}}}}
+        {\surrealAdd{\surrealAdd{c}{b}}
+            {\surrealAdd{\surrealNeg{b}}{\surrealNeg{d}}}}$
+        by \obv{surreal_add_lt_left,surreal_add_is_surreal}.
+    Follows by
+        \auto{surreal_add_associative,surreal_add_commutative,surreal_add_inverse_right,surreal_add_zero_right}.
+\end{proof}
+
+\begin{lemma}\label{surreal_add_three_balance}
+    Suppose $\surreal{a}$ and $\surreal{b}$ and $\surreal{c}$ and
+        $\surreal{d}$ and $\surreal{e}$ and $\surreal{f}$ and
+        $\surreal{t}$.
+    Suppose $\surrealLt{\surrealAdd{a}{t}}{\surrealAdd{c}{b}}$.
+    Suppose $\surrealLt{\surrealAdd{d}{e}}{\surrealAdd{f}{t}}$.
+    Then $\surrealLt
+        {\surrealAdd{\surrealAdd{a}{d}}{e}}
+        {\surrealAdd{\surrealAdd{c}{f}}{b}}$.
+\end{lemma}
+\begin{proof}
+    $\surrealLt
+        {\surrealAdd{\surrealAdd{a}{t}}{\surrealAdd{d}{e}}}
+        {\surrealAdd{\surrealAdd{c}{b}}{\surrealAdd{f}{t}}}$
+        by \obv{surreal_add_lt_both,surreal_add_is_surreal}.
+    Hence $\surrealLt
+        {\surrealAdd{\surrealAdd{\surrealAdd{a}{d}}{e}}{t}}
+        {\surrealAdd{\surrealAdd{\surrealAdd{c}{f}}{b}}{t}}$
+        by
+        \auto{surreal_add_associative,surreal_add_commutative,surreal_add_is_surreal}.
+    Follows by \auto{surreal_add_lt_cancel_right,surreal_add_is_surreal}.
+\end{proof}

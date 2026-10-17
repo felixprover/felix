@@ -1,0 +1,356 @@
+\section{Refinement of filters}
+
+\import{set/filter-basis.tex}
+
+A filter refines another when it contains at least the same large sets.  The
+named relation keeps this orientation visible in statements.
+
+\begin{definition}\label{filter_refines}
+    $F$ refines $G$ on $S$ iff
+        $F$ is a filter on $S$ and $G$ is a filter on $S$ and $G\subseteq F$.
+\end{definition}
+
+\begin{proposition}\label{filter_refines_reflexive}
+    Let $F$ be a filter on $S$.
+    Then $F$ refines $F$ on $S$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{filter_refines,subseteq_refl}.
+\end{proof}
+
+\begin{proposition}\label{filter_refines_transitive}
+    Suppose $F$ refines $G$ on $S$ and $G$ refines $H$ on $S$.
+    Then $F$ refines $H$ on $S$.
+\end{proposition}
+\begin{proof}
+    $F$ and $H$ are filters on $S$ by \obv{filter_refines}.
+    $H\subseteq G\subseteq F$ by \obv{filter_refines}.
+    Hence $H\subseteq F$ by \obv{subseteq_transitive}.
+    Follows by \obv{filter_refines}.
+\end{proof}
+
+\begin{proposition}\label{filter_refines_antisymmetric}
+    Suppose $F$ refines $G$ on $S$ and $G$ refines $F$ on $S$.
+    Then $F=G$.
+\end{proposition}
+\begin{proof}
+    $G\subseteq F$ and $F\subseteq G$ by \obv{filter_refines}.
+    Follows by \obv{subseteq_antisymmetric}.
+\end{proof}
+
+\begin{proposition}\label{improper_filter_refines_every_filter}
+    Let $F$ be a filter on $S$.
+    Then $\pow{S}$ refines $F$ on $S$.
+\end{proposition}
+\begin{proof}
+    $\pow{S}$ is a filter on $S$ by \obv{powerset_is_filter}.
+    $F\subseteq\pow{S}$ by \auto{filter,pow_iff,subseteq}.
+    Follows by \obv{filter_refines}.
+\end{proof}
+
+\begin{proposition}\label{every_filter_refines_carrier_principal_filter}
+    Let $F$ be a filter on $S$.
+    Then $F$ refines $\principalfilter{S}{S}$ on $S$.
+\end{proposition}
+\begin{proof}
+    $\principalfilter{S}{S}$ is a filter on $S$ by
+        \obv{principalfilter_is_filter,subseteq_refl}.
+    Show that $\principalfilter{S}{S}\subseteq F$.
+    \begin{subproof}
+        It suffices to show that every element of
+            $\principalfilter{S}{S}$ is an element of $F$ by
+            \obv{subseteq}.
+        Fix $A\in\principalfilter{S}{S}$.
+        $A\subseteq S$ and $S\subseteq A$ by
+            \obv{principalfilter,pow_iff,subseteq}.
+        Hence $A=S$ by \obv{subseteq_antisymmetric}.
+        Follows by \obv{filter}.
+    \end{subproof}
+    Follows by \obv{filter_refines}.
+\end{proof}
+
+\subsection{Common refinements and coarsenings}
+
+\begin{definition}\label{common_filter_refinement}
+    $\commonFilterRefinement{S}{C}
+        =\generatedFilter{S}{\unions{C}}$.
+\end{definition}
+
+\begin{definition}\label{common_filter_coarsening}
+    $\commonFilterCoarsening{S}{C}
+        =\boundedIntersection{\pow{S}}{C}$.
+\end{definition}
+
+\begin{proposition}\label{union_of_filters_is_family}
+    Suppose $C\subseteq\filtersOn{S}$.
+    Then $\unions{C}$ is a family of subsets of $S$.
+\end{proposition}
+\begin{proof}
+    Show that every element of $\unions{C}$ is a subset of $S$.
+    \begin{subproof}
+        Fix $A\in\unions{C}$.
+        Take $F\in C$ such that $A\in F$ by \obv{unions_iff}.
+        $F\in\filtersOn{S}$ by \obv{subseteq}.
+        Hence $F$ is a filter on $S$ by
+            \obv{filters_on_member_is_filter}.
+        Follows by \obv{filter}.
+    \end{subproof}
+\end{proof}
+
+\begin{classification}\label{common_filter_refinement_is_filter}
+    Suppose $C\subseteq\filtersOn{S}$.
+    Then $\commonFilterRefinement{S}{C}$ is a filter on $S$.
+\end{classification}
+\begin{proof}
+    $\unions{C}$ is a family of subsets of $S$ by
+        \obv{union_of_filters_is_family}.
+    Follows by \auto{common_filter_refinement,generated_filter_is_filter}.
+\end{proof}
+
+\begin{classification}\label{common_filter_coarsening_is_filter}
+    Suppose $C\subseteq\filtersOn{S}$.
+    Then $\commonFilterCoarsening{S}{C}$ is a filter on $S$.
+\end{classification}
+\begin{proof}
+    Follows by
+        \auto{common_filter_coarsening,bounded_intersection_of_filters_is_filter}.
+\end{proof}
+
+\begin{theorem}\label{common_filter_refinement_refines_members}
+    Suppose $C\subseteq\filtersOn{S}$ and $F\in C$.
+    Then $\commonFilterRefinement{S}{C}$ refines $F$ on $S$.
+\end{theorem}
+\begin{proof}
+    $F\in\filtersOn{S}$ by \obv{subseteq}.
+    Hence $F$ is a filter on $S$ by \obv{filters_on_member_is_filter}.
+    $\commonFilterRefinement{S}{C}$ is a filter on $S$ by
+        \obv{common_filter_refinement_is_filter}.
+    $F\subseteq\unions{C}$ by \auto{unions_iff,subseteq}.
+    $\unions{C}$ is a family of subsets of $S$ by
+        \obv{union_of_filters_is_family}.
+    $\unions{C}\subseteq\generatedFilter{S}{\unions{C}}$ by
+        \obv{generated_filter_contains}.
+    Hence $F\subseteq\commonFilterRefinement{S}{C}$ by
+        \obv{common_filter_refinement,subseteq_transitive}.
+    Follows by \obv{filter_refines}.
+\end{proof}
+
+\begin{theorem}\label{common_filter_refinement_least}
+    Suppose $C\subseteq\filtersOn{S}$ and $H$ is a filter on $S$.
+    Suppose for every $F\in C$ we have $H$ refines $F$ on $S$.
+    Then $H$ refines $\commonFilterRefinement{S}{C}$ on $S$.
+\end{theorem}
+\begin{proof}
+    $\unions{C}$ is a family of subsets of $S$ by
+        \obv{union_of_filters_is_family}.
+    Show that $\unions{C}\subseteq H$.
+    \begin{subproof}
+        It suffices to show that every element of $\unions{C}$ is an
+            element of $H$ by \obv{subseteq}.
+        Fix $A\in\unions{C}$.
+        Take $F\in C$ such that $A\in F$ by \obv{unions_iff}.
+        $H$ refines $F$ on $S$.
+        Hence $F\subseteq H$ by \obv{filter_refines}.
+        Follows by \obv{subseteq}.
+    \end{subproof}
+    Hence $\generatedFilter{S}{\unions{C}}\subseteq H$ by
+        \obv{generated_filter_least}.
+    Hence $\commonFilterRefinement{S}{C}\subseteq H$ by
+        \obv{common_filter_refinement}.
+    $\commonFilterRefinement{S}{C}$ is a filter on $S$ by
+        \obv{common_filter_refinement_is_filter}.
+    Follows by \obv{filter_refines}.
+\end{proof}
+
+\begin{theorem}\label{members_refine_common_filter_coarsening}
+    Suppose $C\subseteq\filtersOn{S}$ and $F\in C$.
+    Then $F$ refines $\commonFilterCoarsening{S}{C}$ on $S$.
+\end{theorem}
+\begin{proof}
+    $F\in\filtersOn{S}$ by \obv{subseteq}.
+    Hence $F$ is a filter on $S$ by \obv{filters_on_member_is_filter}.
+    $\commonFilterCoarsening{S}{C}$ is a filter on $S$ by
+        \obv{common_filter_coarsening_is_filter}.
+    Show that $\commonFilterCoarsening{S}{C}\subseteq F$.
+    \begin{subproof}
+        It suffices to show that every element of
+            $\commonFilterCoarsening{S}{C}$ is an element of $F$ by
+            \obv{subseteq}.
+        Fix $A\in\commonFilterCoarsening{S}{C}$.
+        $A\in\boundedIntersection{\pow{S}}{C}$ by
+            \obv{common_filter_coarsening}.
+        Follows by \obv{bounded_intersection_iff}.
+    \end{subproof}
+    Follows by \obv{filter_refines}.
+\end{proof}
+
+\begin{theorem}\label{common_filter_coarsening_greatest}
+    Suppose $C\subseteq\filtersOn{S}$ and $H$ is a filter on $S$.
+    Suppose for every $F\in C$ we have $F$ refines $H$ on $S$.
+    Then $\commonFilterCoarsening{S}{C}$ refines $H$ on $S$.
+\end{theorem}
+\begin{proof}
+    $\commonFilterCoarsening{S}{C}$ is a filter on $S$ by
+        \obv{common_filter_coarsening_is_filter}.
+    Show that $H\subseteq\commonFilterCoarsening{S}{C}$.
+    \begin{subproof}
+        It suffices to show that every element of $H$ is an element of
+            $\commonFilterCoarsening{S}{C}$ by \obv{subseteq}.
+        Fix $A\in H$.
+        $A\subseteq S$ by \obv{filter}.
+        Hence $A\in\pow{S}$ by \obv{powerset_intro}.
+        Show that for every $F\in C$ we have $A\in F$.
+        \begin{subproof}
+            Fix $F\in C$.
+            $F$ refines $H$ on $S$.
+            Hence $H\subseteq F$ by \obv{filter_refines}.
+            Follows by \obv{subseteq}.
+        \end{subproof}
+        $A\in\boundedIntersection{\pow{S}}{C}$ by
+            \obv{bounded_intersection_iff}.
+        Follows by \obv{common_filter_coarsening}.
+    \end{subproof}
+    Follows by \obv{filter_refines}.
+\end{proof}
+
+\begin{proposition}\label{empty_common_filter_refinement}
+    $\commonFilterRefinement{S}{\emptyset}
+        =\principalfilter{S}{S}$.
+\end{proposition}
+\begin{proof}
+    $\unions{\emptyset}=\emptyset$ by \obv{unions_emptyset}.
+    $\emptyset$ is a family of subsets of $S$ by \auto{emptyset}.
+    $\generatedFilter{S}{\emptyset}$ is a filter on $S$ by
+        \obv{generated_filter_is_filter}.
+    $\principalfilter{S}{S}$ is a filter on $S$ by
+        \obv{principalfilter_is_filter,subseteq_refl}.
+    $\emptyset\subseteq\principalfilter{S}{S}$ by
+        \obv{emptyset_subseteq}.
+    Hence $\generatedFilter{S}{\emptyset}
+        \subseteq\principalfilter{S}{S}$ by
+        \obv{generated_filter_least}.
+    Show that $\principalfilter{S}{S}
+        \subseteq\generatedFilter{S}{\emptyset}$.
+    \begin{subproof}
+        It suffices to show that every element of
+            $\principalfilter{S}{S}$ is an element of
+            $\generatedFilter{S}{\emptyset}$ by \obv{subseteq}.
+        Fix $A\in\principalfilter{S}{S}$.
+        $A\subseteq S$ and $S\subseteq A$ by
+            \obv{principalfilter,pow_iff,subseteq}.
+        Hence $A=S$ by \obv{subseteq_antisymmetric}.
+        Follows by \obv{filter}.
+    \end{subproof}
+    Hence $\generatedFilter{S}{\emptyset}
+        =\principalfilter{S}{S}$ by \obv{subseteq_antisymmetric}.
+    Follows by \obv{common_filter_refinement}.
+\end{proof}
+
+\begin{proposition}\label{empty_common_filter_coarsening}
+    $\commonFilterCoarsening{S}{\emptyset}=\pow{S}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \obv{common_filter_coarsening,bounded_intersection_empty}.
+\end{proof}
+
+\subsection{Binary operations}
+
+\begin{definition}\label{binary_common_filter_refinement}
+    $\binaryCommonFilterRefinement{S}{F}{G}
+        =\generatedFilter{S}{F\union G}$.
+\end{definition}
+
+\begin{definition}\label{binary_common_filter_coarsening}
+    $\binaryCommonFilterCoarsening{S}{F}{G}=F\inter G$.
+\end{definition}
+
+\begin{classification}\label{binary_common_filter_refinement_is_filter}
+    Let $F,G$ be filters on $S$.
+    Then $\binaryCommonFilterRefinement{S}{F}{G}$ is a filter on $S$.
+\end{classification}
+\begin{proof}
+    $F\union G$ is a family of subsets of $S$ by
+        \auto{filter,union_iff,subseteq}.
+    Follows by
+        \auto{binary_common_filter_refinement,generated_filter_is_filter}.
+\end{proof}
+
+\begin{classification}\label{binary_common_filter_coarsening_is_filter}
+    Let $F,G$ be filters on $S$.
+    Then $\binaryCommonFilterCoarsening{S}{F}{G}$ is a filter on $S$.
+\end{classification}
+\begin{proof}
+    $F\inter G$ is a family of subsets of $S$ by
+        \obv{filter,inter,subseteq}.
+    $S\in F\inter G$ by \obv{filter,inter}.
+    Show that $F\inter G$ is closed under binary intersections.
+    \begin{subproof}
+        Fix $A,B\in F\inter G$.
+        $A,B\in F$ and $A,B\in G$ by \obv{inter}.
+        Hence $A\inter B\in F$ and $A\inter B\in G$ by
+            \obv{filter}.
+        Follows by \obv{inter_intro}.
+    \end{subproof}
+    Show that $F\inter G$ is upward-closed in $S$.
+    \begin{subproof}
+        Fix $A,B$.
+        Assume $A\subseteq B\subseteq S$ and $A\in F\inter G$.
+        $A\in F$ and $A\in G$ by \obv{inter}.
+        Hence $B\in F$ and $B\in G$ by \obv{filter}.
+        Follows by \obv{inter_intro}.
+    \end{subproof}
+    Hence $F\inter G$ is a filter on $S$ by \obv{filter}.
+    $\binaryCommonFilterCoarsening{S}{F}{G}=F\inter G$ by
+        \obv{binary_common_filter_coarsening}.
+\end{proof}
+
+\begin{theorem}\label{binary_common_filter_refinement_universal}
+    Let $F,G,H$ be filters on $S$.
+    Then $H$ refines $\binaryCommonFilterRefinement{S}{F}{G}$ on $S$ iff
+        $H$ refines $F$ on $S$ and $H$ refines $G$ on $S$.
+\end{theorem}
+\begin{proof}
+    $F\union G$ is a family of subsets of $S$ by
+        \auto{filter,union_iff,subseteq}.
+    $\binaryCommonFilterRefinement{S}{F}{G}$ is a filter on $S$ by
+        \obv{binary_common_filter_refinement_is_filter}.
+    Show that if $H$ refines $\binaryCommonFilterRefinement{S}{F}{G}$ on $S$,
+        then $H$ refines $F$ on $S$ and $H$ refines $G$ on $S$.
+    \begin{subproof}
+        Assume $H$ refines $\binaryCommonFilterRefinement{S}{F}{G}$ on $S$.
+        $\generatedFilter{S}{F\union G}\subseteq H$ by
+            \obv{filter_refines,binary_common_filter_refinement}.
+        $F\union G\subseteq\generatedFilter{S}{F\union G}$ by
+            \obv{generated_filter_contains}.
+        Hence $F\subseteq H$ and $G\subseteq H$ by
+            \auto{union_iff,subseteq,subseteq_transitive}.
+        Follows by \obv{filter_refines}.
+    \end{subproof}
+    Show that if $H$ refines $F$ on $S$ and $H$ refines $G$ on $S$, then
+        $H$ refines $\binaryCommonFilterRefinement{S}{F}{G}$ on $S$.
+    \begin{subproof}
+        Assume $H$ refines $F$ on $S$ and $H$ refines $G$ on $S$.
+        $F\subseteq H$ and $G\subseteq H$ by \obv{filter_refines}.
+        Hence $F\union G\subseteq H$ by \auto{union_iff,subseteq}.
+        Hence $\generatedFilter{S}{F\union G}\subseteq H$ by
+            \obv{generated_filter_least}.
+        Hence $\binaryCommonFilterRefinement{S}{F}{G}\subseteq H$ by
+            \obv{binary_common_filter_refinement}.
+        Follows by \obv{filter_refines}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}
+
+\begin{theorem}\label{binary_common_filter_coarsening_universal}
+    Let $F,G,H$ be filters on $S$.
+    Then $\binaryCommonFilterCoarsening{S}{F}{G}$ refines $H$ on $S$ iff
+        $F$ refines $H$ on $S$ and $G$ refines $H$ on $S$.
+\end{theorem}
+\begin{proof}
+    $\binaryCommonFilterCoarsening{S}{F}{G}$ is a filter on $S$ by
+        \obv{binary_common_filter_coarsening_is_filter}.
+    Follows by
+        \auto{filter_refines,binary_common_filter_coarsening,
+            subseteq,inter}.
+\end{proof}

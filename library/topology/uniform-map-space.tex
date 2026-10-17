@@ -1,0 +1,500 @@
+\import{topology/uniform.tex}
+\import{set/filter-basis.tex}
+
+\section{Uniform spaces of maps}
+
+Let $Y$ be a uniform space and $D$ be a set.  Two maps from $D$ to $Y$
+are uniformly close when their values are pointwise related by one common
+entourage of $Y$.  Lifting all entourages in this way gives a uniformity on
+the full function set $\funs{D}{\carrier[Y]}$.  No nonemptiness assumption on
+$D$ or on $\carrier[Y]$ is needed.
+
+\begin{definition}\label{uniform_map_entourage}
+    $\uniformMapEntourage{Y}{D}{U}=
+        \{p\in
+            \funs{D}{\carrier[Y]}\times\funs{D}{\carrier[Y]}\mid
+            \text{for every $x\in D$ we have
+                $(\apply{\fst{p}}{x},\apply{\snd{p}}{x})\in U$}\}$.
+\end{definition}
+
+\begin{proposition}\label{uniform_map_entourage_iff}
+    $(f,g)\in\uniformMapEntourage{Y}{D}{U}$ iff
+        $f,g\in\funs{D}{\carrier[Y]}$ and for every $x\in D$ we have
+            $(f(x),g(x))\in U$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{uniform_map_entourage,times_tuple_intro,times_tuple_elim,
+            fst_eq,snd_eq}.
+\end{proof}
+
+\begin{proposition}\label{uniform_map_entourage_type}
+    $\uniformMapEntourage{Y}{D}{U}\subseteq
+        \funs{D}{\carrier[Y]}\times\funs{D}{\carrier[Y]}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{uniform_map_entourage,subseteq}.
+\end{proof}
+
+\begin{proposition}\label{uniform_map_entourage_monotone}
+    Suppose $U\subseteq V$.
+    Then $\uniformMapEntourage{Y}{D}{U}\subseteq
+        \uniformMapEntourage{Y}{D}{V}$.
+\end{proposition}
+\begin{proof}
+    It suffices to show that every element of
+        $\uniformMapEntourage{Y}{D}{U}$ is an element of
+        $\uniformMapEntourage{Y}{D}{V}$ by \obv{subseteq}.
+    Fix $p\in\uniformMapEntourage{Y}{D}{U}$.
+    $p\in\funs{D}{\carrier[Y]}\times\funs{D}{\carrier[Y]}$ and for every
+        $x\in D$ we have
+        $(\apply{\fst{p}}{x},\apply{\snd{p}}{x})\in U$ by
+        \obv{uniform_map_entourage}.
+    Hence for every $x\in D$ we have
+        $(\apply{\fst{p}}{x},\apply{\snd{p}}{x})\in V$ by \obv{subseteq}.
+    Follows by \obv{uniform_map_entourage}.
+\end{proof}
+
+\begin{proposition}\label{uniform_map_entourage_intersection}
+    $\uniformMapEntourage{Y}{D}{U\inter V}=
+        \uniformMapEntourage{Y}{D}{U}\inter
+            \uniformMapEntourage{Y}{D}{V}$.
+\end{proposition}
+\begin{proof}
+    Show that every element of $\uniformMapEntourage{Y}{D}{U\inter V}$ is
+        an element of $\uniformMapEntourage{Y}{D}{U}\inter
+            \uniformMapEntourage{Y}{D}{V}$.
+    \begin{subproof}
+        Fix $p\in\uniformMapEntourage{Y}{D}{U\inter V}$.
+        $p\in\funs{D}{\carrier[Y]}\times\funs{D}{\carrier[Y]}$ and for
+            every $x\in D$ we have
+            $(\apply{\fst{p}}{x},\apply{\snd{p}}{x})\in U\inter V$ by
+            \obv{uniform_map_entourage}.
+        Show that for every $x\in D$ we have
+            $(\apply{\fst{p}}{x},\apply{\snd{p}}{x})\in U$.
+        \begin{subproof}
+            Fix $x\in D$.
+            $(\apply{\fst{p}}{x},\apply{\snd{p}}{x})\in U\inter V$.
+            Follows by \obv{inter}.
+        \end{subproof}
+        Show that for every $x\in D$ we have
+            $(\apply{\fst{p}}{x},\apply{\snd{p}}{x})\in V$.
+        \begin{subproof}
+            Fix $x\in D$.
+            $(\apply{\fst{p}}{x},\apply{\snd{p}}{x})\in U\inter V$.
+            Follows by \obv{inter}.
+        \end{subproof}
+        Hence $p\in\uniformMapEntourage{Y}{D}{U}$ and
+            $p\in\uniformMapEntourage{Y}{D}{V}$ by
+            \obv{uniform_map_entourage}.
+        Follows by \obv{inter}.
+    \end{subproof}
+    Show that every element of $\uniformMapEntourage{Y}{D}{U}\inter
+        \uniformMapEntourage{Y}{D}{V}$ is an element of
+        $\uniformMapEntourage{Y}{D}{U\inter V}$.
+    \begin{subproof}
+        Fix $p\in\uniformMapEntourage{Y}{D}{U}\inter
+            \uniformMapEntourage{Y}{D}{V}$.
+        $p\in\uniformMapEntourage{Y}{D}{U}$ and
+            $p\in\uniformMapEntourage{Y}{D}{V}$ by \obv{inter}.
+        Hence $p\in\funs{D}{\carrier[Y]}\times\funs{D}{\carrier[Y]}$.
+        Show that for every $x\in D$ we have
+            $(\apply{\fst{p}}{x},\apply{\snd{p}}{x})\in U\inter V$.
+        \begin{subproof}
+            Fix $x\in D$.
+            $(\apply{\fst{p}}{x},\apply{\snd{p}}{x})\in U$ by
+                \obv{uniform_map_entourage}.
+            $(\apply{\fst{p}}{x},\apply{\snd{p}}{x})\in V$ by
+                \obv{uniform_map_entourage}.
+            Follows by \obv{inter}.
+        \end{subproof}
+        Follows by \obv{uniform_map_entourage}.
+    \end{subproof}
+    Follows by set extensionality.
+\end{proof}
+
+\begin{proposition}\label{uniform_map_entourage_diagonal}
+    Let $Y$ be a uniform space and $U\in\uniformity[Y]$.
+    Then $\identity{\funs{D}{\carrier[Y]}}\subseteq
+        \uniformMapEntourage{Y}{D}{U}$.
+\end{proposition}
+\begin{proof}
+    Show that every element of $\identity{\funs{D}{\carrier[Y]}}$ is an
+        element of $\uniformMapEntourage{Y}{D}{U}$.
+    \begin{subproof}
+        Fix $p\in\identity{\funs{D}{\carrier[Y]}}$.
+        Take $f\in\funs{D}{\carrier[Y]}$ such that $p=(f,f)$
+            by \obv{id_elem_inspect}.
+        Show that for every $x\in D$ we have $(f(x),f(x))\in U$.
+        \begin{subproof}
+            Fix $x\in D$.
+            $f(x)\in\carrier[Y]$ by \obv{funs_type_apply}.
+            Follows by \obv{uniform_entourage_reflexive}.
+        \end{subproof}
+        Follows by \auto{uniform_map_entourage_iff}.
+    \end{subproof}
+    Follows by \obv{subseteq}.
+\end{proof}
+
+\begin{proposition}\label{uniform_map_entourage_converse}
+    Let $Y$ be a uniform space and $U\in\uniformity[Y]$.
+    Then $\converse{\uniformMapEntourage{Y}{D}{U}}=
+        \uniformMapEntourage{Y}{D}{\converse{U}}$.
+\end{proposition}
+\begin{proof}
+    $U\subseteq\carrier[Y]\times\carrier[Y]$
+        by \obv{uniform_entourage_type}.
+
+    Show that every element of
+        $\converse{\uniformMapEntourage{Y}{D}{U}}$ is an element of
+        $\uniformMapEntourage{Y}{D}{\converse{U}}$.
+    \begin{subproof}
+        Fix $p\in\converse{\uniformMapEntourage{Y}{D}{U}}$.
+        Take $f,g$ such that $p=(f,g)$
+            by \auto{converse_is_relation,relation}.
+        $(g,f)\in\uniformMapEntourage{Y}{D}{U}$
+            by \auto{converse_iff}.
+        Hence $f,g\in\funs{D}{\carrier[Y]}$ and for every $x\in D$ we
+            have $(g(x),f(x))\in U$ by
+            \auto{uniform_map_entourage_iff}.
+        Show that for every $x\in D$ we have
+            $(f(x),g(x))\in\converse{U}$.
+        \begin{subproof}
+            Fix $x\in D$.
+            $(g(x),f(x))\in U$.
+            Follows by \obv{converse_iff}.
+        \end{subproof}
+        Follows by \auto{uniform_map_entourage_iff}.
+    \end{subproof}
+
+    Show that every element of
+        $\uniformMapEntourage{Y}{D}{\converse{U}}$ is an element of
+        $\converse{\uniformMapEntourage{Y}{D}{U}}$.
+    \begin{subproof}
+        Fix $p\in\uniformMapEntourage{Y}{D}{\converse{U}}$.
+        Take $f,g\in\funs{D}{\carrier[Y]}$ such that $p=(f,g)$ by
+            \obv{uniform_map_entourage_type,times_elem_is_tuple,subseteq}.
+        For every $x\in D$ we have $(f(x),g(x))\in\converse{U}$ by
+            \auto{uniform_map_entourage_iff}.
+        Show that for every $x\in D$ we have $(g(x),f(x))\in U$.
+        \begin{subproof}
+            Fix $x\in D$.
+            $(f(x),g(x))\in\converse{U}$.
+            Follows by \obv{converse_iff}.
+        \end{subproof}
+        Hence $(g,f)\in\uniformMapEntourage{Y}{D}{U}$ by
+            \auto{uniform_map_entourage_iff}.
+        Follows by \auto{converse_iff}.
+    \end{subproof}
+    Follows by set extensionality.
+\end{proof}
+
+\begin{proposition}\label{uniform_map_entourage_square}
+    Let $Y$ be a uniform space and $U,V\in\uniformity[Y]$.
+    Suppose $V\circ V\subseteq U$.
+    Then $\uniformMapEntourage{Y}{D}{V}\circ
+            \uniformMapEntourage{Y}{D}{V}
+        \subseteq\uniformMapEntourage{Y}{D}{U}$.
+\end{proposition}
+\begin{proof}
+    It suffices to show that every element of
+        $\uniformMapEntourage{Y}{D}{V}\circ
+            \uniformMapEntourage{Y}{D}{V}$ is an element of
+        $\uniformMapEntourage{Y}{D}{U}$ by \obv{subseteq}.
+    Fix $p\in\uniformMapEntourage{Y}{D}{V}\circ
+        \uniformMapEntourage{Y}{D}{V}$.
+    Take $f,h$ such that $p=(f,h)$ by \auto{circ_is_relation,relation}.
+    Take $g$ such that $(f,g)\in\uniformMapEntourage{Y}{D}{V}$ and
+        $(g,h)\in\uniformMapEntourage{Y}{D}{V}$ by \auto{circ_iff}.
+    Hence $f,g,h\in\funs{D}{\carrier[Y]}$ and for every $x\in D$ we have
+        $(f(x),g(x))\in V$ and $(g(x),h(x))\in V$ by
+        \auto{uniform_map_entourage_iff}.
+    Show that for every $x\in D$ we have $(f(x),h(x))\in U$.
+    \begin{subproof}
+        Fix $x\in D$.
+        $(f(x),g(x))\in V$ and $(g(x),h(x))\in V$.
+        Hence $(f(x),h(x))\in V\circ V$ by \auto{circ_iff}.
+        Follows by \obv{subseteq}.
+    \end{subproof}
+    Follows by \auto{uniform_map_entourage_iff}.
+\end{proof}
+
+\subsection{The entourage basis}
+
+\begin{definition}\label{uniform_map_entourage_basis}
+    $\uniformMapEntourageBasis{Y}{D}=
+        \{\uniformMapEntourage{Y}{D}{U}\mid U\in\uniformity[Y]\}$.
+\end{definition}
+
+\begin{proposition}\label{uniform_map_entourage_basis_iff}
+    $E\in\uniformMapEntourageBasis{Y}{D}$ iff there exists
+        $U\in\uniformity[Y]$ such that
+        $E=\uniformMapEntourage{Y}{D}{U}$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{uniform_map_entourage_basis}.
+\end{proof}
+
+\begin{theorem}\label{uniform_map_entourage_basis_is_filter_basis}
+    Let $Y$ be a uniform space.
+    Then $\uniformMapEntourageBasis{Y}{D}$ is a filter basis on
+        $\funs{D}{\carrier[Y]}\times\funs{D}{\carrier[Y]}$.
+\end{theorem}
+\begin{proof}
+    Show that $\uniformMapEntourageBasis{Y}{D}$ is a family of subsets of
+        $\funs{D}{\carrier[Y]}\times\funs{D}{\carrier[Y]}$.
+    \begin{subproof}
+        Show that every element of $\uniformMapEntourageBasis{Y}{D}$ is a
+            subset of
+            $\funs{D}{\carrier[Y]}\times\funs{D}{\carrier[Y]}$.
+        \begin{subproof}
+            Fix $E\in\uniformMapEntourageBasis{Y}{D}$.
+            Take $U\in\uniformity[Y]$ such that
+                $E=\uniformMapEntourage{Y}{D}{U}$ by
+                \obv{uniform_map_entourage_basis_iff}.
+            $\uniformMapEntourage{Y}{D}{U}\subseteq
+                \funs{D}{\carrier[Y]}\times\funs{D}{\carrier[Y]}$ by
+                \obv{uniform_map_entourage_type}.
+        \end{subproof}
+    \end{subproof}
+
+    $\carrier[Y]\times\carrier[Y]\in\uniformity[Y]$ by
+        \obv{uniform_top_entourage}.
+    Hence $\uniformMapEntourage{Y}{D}
+        {\carrier[Y]\times\carrier[Y]}
+        \in\uniformMapEntourageBasis{Y}{D}$ by
+        \obv{uniform_map_entourage_basis_iff}.
+    Hence $\uniformMapEntourageBasis{Y}{D}$ is inhabited.
+
+    Show that for all $E,H$ such that
+        $E\in\uniformMapEntourageBasis{Y}{D}$ and
+        $H\in\uniformMapEntourageBasis{Y}{D}$ there exists
+        $K\in\uniformMapEntourageBasis{Y}{D}$ such that
+        $K\subseteq E\inter H$.
+    \begin{subproof}
+        Fix $E,H$.
+        Assume $E\in\uniformMapEntourageBasis{Y}{D}$ and
+            $H\in\uniformMapEntourageBasis{Y}{D}$.
+        Take $U\in\uniformity[Y]$ such that
+            $E=\uniformMapEntourage{Y}{D}{U}$ by
+            \obv{uniform_map_entourage_basis_iff}.
+        Take $V\in\uniformity[Y]$ such that
+            $H=\uniformMapEntourage{Y}{D}{V}$ by
+            \obv{uniform_map_entourage_basis_iff}.
+        $U\inter V\in\uniformity[Y]$ by
+            \obv{uniform_entourage_intersection}.
+        Hence $\uniformMapEntourage{Y}{D}{U\inter V}
+            \in\uniformMapEntourageBasis{Y}{D}$ by
+            \obv{uniform_map_entourage_basis_iff}.
+        $\uniformMapEntourage{Y}{D}{U\inter V}=
+            \uniformMapEntourage{Y}{D}{U}\inter
+                \uniformMapEntourage{Y}{D}{V}$ by
+            \obv{uniform_map_entourage_intersection}.
+        Hence $\uniformMapEntourage{Y}{D}{U\inter V}=E\inter H$.
+        $\uniformMapEntourage{Y}{D}{U\inter V}
+            \subseteq\uniformMapEntourage{Y}{D}{U\inter V}$ by
+            \obv{subseteq_refl}.
+        Hence $\uniformMapEntourage{Y}{D}{U\inter V}\subseteq E\inter H$.
+    \end{subproof}
+    Follows by \obv{filter_basis}.
+\end{proof}
+
+\subsection{The generated uniformity}
+
+\begin{proposition}\label{uniform_map_generated_uniformity_iff}
+    Let $Y$ be a uniform space.
+    $E\in\generatedFilter
+        {\funs{D}{\carrier[Y]}\times\funs{D}{\carrier[Y]}}
+        {\uniformMapEntourageBasis{Y}{D}}$ iff
+        $E\subseteq\funs{D}{\carrier[Y]}\times\funs{D}{\carrier[Y]}$ and
+        there exists $U\in\uniformity[Y]$ such that
+            $\uniformMapEntourage{Y}{D}{U}\subseteq E$.
+\end{proposition}
+\begin{proof}
+    $\uniformMapEntourageBasis{Y}{D}$ is a filter basis on
+        $\funs{D}{\carrier[Y]}\times\funs{D}{\carrier[Y]}$ by
+        \obv{uniform_map_entourage_basis_is_filter_basis}.
+    Follows by
+        \auto{generated_filter_iff,uniform_map_entourage_basis_iff}.
+\end{proof}
+
+\begin{theorem}\label{uniform_map_generated_uniformity_is_filter}
+    Let $Y$ be a uniform space.
+    Then $\generatedFilter
+        {\funs{D}{\carrier[Y]}\times\funs{D}{\carrier[Y]}}
+        {\uniformMapEntourageBasis{Y}{D}}$ is a filter on
+        $\funs{D}{\carrier[Y]}\times\funs{D}{\carrier[Y]}$.
+\end{theorem}
+\begin{proof}
+    $\uniformMapEntourageBasis{Y}{D}$ is a filter basis on
+        $\funs{D}{\carrier[Y]}\times\funs{D}{\carrier[Y]}$ by
+        \obv{uniform_map_entourage_basis_is_filter_basis}.
+    Follows by \obv{generated_filter_is_filter}.
+\end{proof}
+
+\begin{proposition}\label{uniform_map_generated_uniformity_diagonal}
+    Let $Y$ be a uniform space and
+        $E\in\generatedFilter
+            {\funs{D}{\carrier[Y]}\times\funs{D}{\carrier[Y]}}
+            {\uniformMapEntourageBasis{Y}{D}}$.
+    Then $\identity{\funs{D}{\carrier[Y]}}\subseteq E$.
+\end{proposition}
+\begin{proof}
+    Take $U\in\uniformity[Y]$ such that
+        $\uniformMapEntourage{Y}{D}{U}\subseteq E$ by
+        \auto{uniform_map_generated_uniformity_iff}.
+    $\identity{\funs{D}{\carrier[Y]}}\subseteq
+        \uniformMapEntourage{Y}{D}{U}$ by
+        \obv{uniform_map_entourage_diagonal}.
+    Follows by \obv{subseteq_transitive}.
+\end{proof}
+
+\begin{proposition}\label{uniform_map_generated_uniformity_converse}
+    Let $Y$ be a uniform space and
+        $E\in\generatedFilter
+            {\funs{D}{\carrier[Y]}\times\funs{D}{\carrier[Y]}}
+            {\uniformMapEntourageBasis{Y}{D}}$.
+    Then $\converse{E}\in\generatedFilter
+        {\funs{D}{\carrier[Y]}\times\funs{D}{\carrier[Y]}}
+        {\uniformMapEntourageBasis{Y}{D}}$.
+\end{proposition}
+\begin{proof}
+    $E\subseteq\funs{D}{\carrier[Y]}\times\funs{D}{\carrier[Y]}$ by
+        \auto{uniform_map_generated_uniformity_iff}.
+    Hence $\converse{E}\subseteq
+        \funs{D}{\carrier[Y]}\times\funs{D}{\carrier[Y]}$ by
+        \obv{converse_type}.
+    Take $U\in\uniformity[Y]$ such that
+        $\uniformMapEntourage{Y}{D}{U}\subseteq E$ by
+        \auto{uniform_map_generated_uniformity_iff}.
+    $\uniformMapEntourage{Y}{D}{U}$ is a relation by
+        \auto{uniform_map_entourage_type,relation,subseteq,
+            times_elem_is_tuple}.
+    Hence $\converse{\uniformMapEntourage{Y}{D}{U}}
+        \subseteq\converse{E}$ by \obv{converse_subseteq_intro}.
+    $\converse{U}\in\uniformity[Y]$ by \obv{uniformity_converse}.
+    $\converse{\uniformMapEntourage{Y}{D}{U}}=
+        \uniformMapEntourage{Y}{D}{\converse{U}}$ by
+        \obv{uniform_map_entourage_converse}.
+    Hence $\uniformMapEntourage{Y}{D}{\converse{U}}
+        \subseteq\converse{E}$.
+    Follows by \auto{uniform_map_generated_uniformity_iff}.
+\end{proof}
+
+\begin{proposition}\label{uniform_map_generated_uniformity_square}
+    Let $Y$ be a uniform space and
+        $E\in\generatedFilter
+            {\funs{D}{\carrier[Y]}\times\funs{D}{\carrier[Y]}}
+            {\uniformMapEntourageBasis{Y}{D}}$.
+    Then there exists $H\in\generatedFilter
+        {\funs{D}{\carrier[Y]}\times\funs{D}{\carrier[Y]}}
+        {\uniformMapEntourageBasis{Y}{D}}$ such that
+        $H\circ H\subseteq E$.
+\end{proposition}
+\begin{proof}
+    Take $U\in\uniformity[Y]$ such that
+        $\uniformMapEntourage{Y}{D}{U}\subseteq E$ by
+        \auto{uniform_map_generated_uniformity_iff}.
+    Take $V\in\uniformity[Y]$ such that $V\circ V\subseteq U$ by
+        \obv{uniformity_square}.
+    $\uniformMapEntourage{Y}{D}{V}\subseteq
+        \funs{D}{\carrier[Y]}\times\funs{D}{\carrier[Y]}$ by
+        \obv{uniform_map_entourage_type}.
+    Hence $\uniformMapEntourage{Y}{D}{V}\in\generatedFilter
+        {\funs{D}{\carrier[Y]}\times\funs{D}{\carrier[Y]}}
+        {\uniformMapEntourageBasis{Y}{D}}$ by
+        \auto{uniform_map_generated_uniformity_iff,subseteq_refl}.
+    $\uniformMapEntourage{Y}{D}{V}\circ
+            \uniformMapEntourage{Y}{D}{V}
+        \subseteq\uniformMapEntourage{Y}{D}{U}$ by
+        \obv{uniform_map_entourage_square}.
+    Hence $\uniformMapEntourage{Y}{D}{V}\circ
+        \uniformMapEntourage{Y}{D}{V}\subseteq E$ by
+        \obv{subseteq_transitive}.
+\end{proof}
+
+\subsection{The uniform map space}
+
+\begin{definition}\label{uniform_map_space}
+    $\uniformMapSpace{Y}{D}=
+        \structure[uniform space]{
+            \carrier=\funs{D}{\carrier[Y]},
+            \uniformity=\generatedFilter
+                {\funs{D}{\carrier[Y]}\times\funs{D}{\carrier[Y]}}
+                {\uniformMapEntourageBasis{Y}{D}}
+        }$.
+\end{definition}
+
+\begin{theorem}\label{uniform_map_space_is_uniform_space}
+    Let $Y$ be a uniform space.
+    Then $\uniformMapSpace{Y}{D}$ is a uniform space.
+\end{theorem}
+\begin{proof}
+    $\generatedFilter
+        {\funs{D}{\carrier[Y]}\times\funs{D}{\carrier[Y]}}
+        {\uniformMapEntourageBasis{Y}{D}}$ is a filter on
+        $\funs{D}{\carrier[Y]}\times\funs{D}{\carrier[Y]}$ by
+        \obv{uniform_map_generated_uniformity_is_filter}.
+    For every $E\in\generatedFilter
+        {\funs{D}{\carrier[Y]}\times\funs{D}{\carrier[Y]}}
+        {\uniformMapEntourageBasis{Y}{D}}$ we have
+        $\identity{\funs{D}{\carrier[Y]}}\subseteq E$ by
+        \obv{uniform_map_generated_uniformity_diagonal}.
+    For every $E\in\generatedFilter
+        {\funs{D}{\carrier[Y]}\times\funs{D}{\carrier[Y]}}
+        {\uniformMapEntourageBasis{Y}{D}}$ we have
+        $\converse{E}\in\generatedFilter
+            {\funs{D}{\carrier[Y]}\times\funs{D}{\carrier[Y]}}
+            {\uniformMapEntourageBasis{Y}{D}}$ by
+        \obv{uniform_map_generated_uniformity_converse}.
+    For every $E\in\generatedFilter
+        {\funs{D}{\carrier[Y]}\times\funs{D}{\carrier[Y]}}
+        {\uniformMapEntourageBasis{Y}{D}}$ there exists
+        $H\in\generatedFilter
+            {\funs{D}{\carrier[Y]}\times\funs{D}{\carrier[Y]}}
+            {\uniformMapEntourageBasis{Y}{D}}$ such that
+        $H\circ H\subseteq E$ by
+        \obv{uniform_map_generated_uniformity_square}.
+    Follows by \auto{uniform_map_space,uniform_space_from_filter}.
+\end{proof}
+
+\begin{proposition}\label{uniform_map_space_carrier}
+    $\carrier[\uniformMapSpace{Y}{D}]=\funs{D}{\carrier[Y]}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{uniform_map_space,uniform_spaceaggregateprojection_carrier}.
+\end{proof}
+
+\begin{proposition}\label{uniform_map_space_uniformity}
+    $\uniformity[\uniformMapSpace{Y}{D}]=
+        \generatedFilter
+            {\funs{D}{\carrier[Y]}\times\funs{D}{\carrier[Y]}}
+            {\uniformMapEntourageBasis{Y}{D}}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{uniform_map_space,uniform_spaceaggregateprojection_uniformity}.
+\end{proof}
+
+\begin{proposition}\label{uniform_map_space_uniformity_iff}
+    Let $Y$ be a uniform space.
+    $E\in\uniformity[\uniformMapSpace{Y}{D}]$ iff
+        $E\subseteq\funs{D}{\carrier[Y]}\times\funs{D}{\carrier[Y]}$ and
+        there exists $U\in\uniformity[Y]$ such that
+            $\uniformMapEntourage{Y}{D}{U}\subseteq E$.
+\end{proposition}
+\begin{proof}
+    $\uniformity[\uniformMapSpace{Y}{D}]=
+        \generatedFilter
+            {\funs{D}{\carrier[Y]}\times\funs{D}{\carrier[Y]}}
+            {\uniformMapEntourageBasis{Y}{D}}$ by
+        \obv{uniform_map_space_uniformity}.
+    $E\in\generatedFilter
+            {\funs{D}{\carrier[Y]}\times\funs{D}{\carrier[Y]}}
+            {\uniformMapEntourageBasis{Y}{D}}$ iff
+        $E\subseteq\funs{D}{\carrier[Y]}\times\funs{D}{\carrier[Y]}$ and
+        there exists $U\in\uniformity[Y]$ such that
+            $\uniformMapEntourage{Y}{D}{U}\subseteq E$ by
+        \obv{uniform_map_generated_uniformity_iff}.
+\end{proof}

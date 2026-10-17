@@ -1,0 +1,341 @@
+\section{The order of topologies}
+
+\import{topology/generated.tex}
+\import{topology/continuity.tex}
+
+A topology is finer when it declares more subsets open.  Thus refinement is
+reverse inclusion of open families, just as filter refinement is reverse
+inclusion of large-set families.
+
+\begin{definition}\label{topology_refines}
+    $T$ refines $U$ as topologies on $S$ iff
+        $T$ is a topology on $S$ and $U$ is a topology on $S$ and
+        $U\subseteq T$.
+\end{definition}
+
+\begin{proposition}\label{topology_refines_reflexive}
+    Suppose $T$ is a topology on $S$.
+    Then $T$ refines $T$ as topologies on $S$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{topology_refines,subseteq_refl}.
+\end{proof}
+
+\begin{proposition}\label{topology_refines_transitive}
+    Suppose $T$ refines $U$ as topologies on $S$ and
+        $U$ refines $V$ as topologies on $S$.
+    Then $T$ refines $V$ as topologies on $S$.
+\end{proposition}
+\begin{proof}
+    $T$ is a topology on $S$ and $V$ is a topology on $S$ by
+        \obv{topology_refines}.
+    $V\subseteq U\subseteq T$ by \obv{topology_refines}.
+    Hence $V\subseteq T$ by \obv{subseteq_transitive}.
+    Follows by \obv{topology_refines}.
+\end{proof}
+
+\begin{proposition}\label{topology_refines_antisymmetric}
+    Suppose $T$ refines $U$ as topologies on $S$ and
+        $U$ refines $T$ as topologies on $S$.
+    Then $T=U$.
+\end{proposition}
+\begin{proof}
+    $U\subseteq T$ and $T\subseteq U$ by \obv{topology_refines}.
+    Follows by \obv{subseteq_antisymmetric}.
+\end{proof}
+
+\begin{theorem}\label{topology_equal_iff_mutually_refine}
+    Suppose $T$ is a topology on $S$ and $U$ is a topology on $S$.
+    Then $T=U$ iff $T$ refines $U$ as topologies on $S$ and
+        $U$ refines $T$ as topologies on $S$.
+\end{theorem}
+\begin{proof}
+    If $T=U$, then $T$ refines $U$ as topologies on $S$ and
+        $U$ refines $T$ as topologies on $S$ by
+        \obv{topology_refines,subseteq_refl}.
+    If $T$ refines $U$ as topologies on $S$ and
+        $U$ refines $T$ as topologies on $S$, then $T=U$ by
+        \obv{topology_refines_antisymmetric}.
+    Follows by \auto.
+\end{proof}
+
+\begin{definition}\label{topologically_finer}
+    Let $X,Y$ be topological spaces.
+    $X$ is topologically finer than $Y$ iff
+        $\carrier[X]=\carrier[Y]$ and $\opens[Y]\subseteq\opens[X]$.
+\end{definition}
+
+\begin{proposition}\label{topologically_finer_reflexive}
+    Let $X$ be a topological space.
+    Then $X$ is topologically finer than $X$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{topologically_finer,subseteq_refl}.
+\end{proof}
+
+\begin{proposition}\label{topologically_finer_transitive}
+    Let $X,Y,Z$ be topological spaces.
+    Suppose $X$ is topologically finer than $Y$ and
+        $Y$ is topologically finer than $Z$.
+    Then $X$ is topologically finer than $Z$.
+\end{proposition}
+\begin{proof}
+    $\carrier[X]=\carrier[Y]=\carrier[Z]$ by
+        \obv{topologically_finer}.
+    $\opens[Z]\subseteq\opens[Y]\subseteq\opens[X]$ by
+        \obv{topologically_finer}.
+    Hence $\opens[Z]\subseteq\opens[X]$ by
+        \obv{subseteq_transitive}.
+    Follows by \obv{topologically_finer}.
+\end{proof}
+
+\begin{proposition}\label{topologically_finer_antisymmetric}
+    Let $X,Y$ be topological spaces.
+    Suppose $X$ is topologically finer than $Y$ and
+        $Y$ is topologically finer than $X$.
+    Then $\carrier[X]=\carrier[Y]$ and $\opens[X]=\opens[Y]$.
+\end{proposition}
+\begin{proof}
+    $\carrier[X]=\carrier[Y]$ by \obv{topologically_finer}.
+    $\opens[Y]\subseteq\opens[X]$ and
+        $\opens[X]\subseteq\opens[Y]$ by \obv{topologically_finer}.
+    Hence $\opens[X]=\opens[Y]$ by \obv{subseteq_antisymmetric}.
+\end{proof}
+
+\begin{corollary}\label{exact_topologically_finer_antisymmetric}
+    Let $X,Y$ be topological spaces.
+    Suppose $X$ is an exact topological space and
+        $Y$ is an exact topological space.
+    Suppose $X$ is topologically finer than $Y$ and
+        $Y$ is topologically finer than $X$.
+    Then $X=Y$.
+\end{corollary}
+\begin{proof}
+    $\carrier[X]=\carrier[Y]$ and $\opens[X]=\opens[Y]$ by
+        \obv{topologically_finer_antisymmetric}.
+    Follows by structure extensionality.
+\end{proof}
+
+\subsection{Common refinements and coarsenings}
+
+\begin{definition}\label{common_topology_refinement}
+    $\commonTopologyRefinement{S}{C}
+        =\generatedOpens{S}{\unions{C}}$.
+\end{definition}
+
+\begin{definition}\label{common_topology_coarsening}
+    $\commonTopologyCoarsening{S}{C}
+        =\boundedIntersection{\pow{S}}{C}$.
+\end{definition}
+
+\begin{proposition}\label{union_of_topologies_is_family}
+    Suppose $C\subseteq\topologiesOn{S}$.
+    Then $\unions{C}$ is a family of subsets of $S$.
+\end{proposition}
+\begin{proof}
+    Show that every element of $\unions{C}$ is a subset of $S$.
+    \begin{subproof}
+        Fix $A\in\unions{C}$.
+        Take $T\in C$ such that $A\in T$ by \obv{unions_iff}.
+        $T\in\topologiesOn{S}$ by \obv{subseteq}.
+        Hence $T$ is a topology on $S$ by
+            \obv{topologies_on_member_is_topology}.
+        Follows by \obv{topology_family_members_subset_carrier}.
+    \end{subproof}
+\end{proof}
+
+\begin{classification}\label{common_topology_refinement_is_topology}
+    Suppose $C\subseteq\topologiesOn{S}$.
+    Then $\commonTopologyRefinement{S}{C}$ is a topology on $S$.
+\end{classification}
+\begin{proof}
+    $\unions{C}$ is a family of subsets of $S$ by
+        \obv{union_of_topologies_is_family}.
+    Follows by
+        \auto{common_topology_refinement,generated_opens_is_topology}.
+\end{proof}
+
+\begin{classification}\label{common_topology_coarsening_is_topology}
+    Suppose $C\subseteq\topologiesOn{S}$.
+    Then $\commonTopologyCoarsening{S}{C}$ is a topology on $S$.
+\end{classification}
+\begin{proof}
+    Follows by
+        \auto{common_topology_coarsening,
+            bounded_intersection_of_topologies_is_topology}.
+\end{proof}
+
+\begin{theorem}\label{common_topology_refinement_refines_members}
+    Suppose $C\subseteq\topologiesOn{S}$ and $T\in C$.
+    Then $\commonTopologyRefinement{S}{C}$ refines $T$
+        as topologies on $S$.
+\end{theorem}
+\begin{proof}
+    $T\in\topologiesOn{S}$ by \obv{subseteq}.
+    Hence $T$ is a topology on $S$ by
+        \obv{topologies_on_member_is_topology}.
+    $\commonTopologyRefinement{S}{C}$ is a topology on $S$ by
+        \obv{common_topology_refinement_is_topology}.
+    $T\subseteq\unions{C}$ by \auto{unions_iff,subseteq}.
+    $\unions{C}\subseteq\generatedOpens{S}{\unions{C}}$ by
+        \obv{generated_opens_contains,union_of_topologies_is_family}.
+    Hence $T\subseteq\commonTopologyRefinement{S}{C}$ by
+        \obv{common_topology_refinement,subseteq_transitive}.
+    Follows by \obv{topology_refines}.
+\end{proof}
+
+\begin{theorem}\label{common_topology_refinement_least}
+    Suppose $C\subseteq\topologiesOn{S}$ and $H$ is a topology on $S$.
+    Suppose for every $T\in C$ we have
+        $H$ refines $T$ as topologies on $S$.
+    Then $H$ refines $\commonTopologyRefinement{S}{C}$
+        as topologies on $S$.
+\end{theorem}
+\begin{proof}
+    $\unions{C}$ is a family of subsets of $S$ by
+        \obv{union_of_topologies_is_family}.
+    Show that $\unions{C}\subseteq H$.
+    \begin{subproof}
+        It suffices to show that every element of $\unions{C}$ is an
+            element of $H$ by \obv{subseteq}.
+        Fix $A\in\unions{C}$.
+        Take $T\in C$ such that $A\in T$ by \obv{unions_iff}.
+        $H$ refines $T$ as topologies on $S$.
+        Hence $T\subseteq H$ by \obv{topology_refines}.
+        Follows by \obv{subseteq}.
+    \end{subproof}
+    Hence $\generatedOpens{S}{\unions{C}}\subseteq H$ by
+        \obv{generated_opens_least}.
+    Hence $\commonTopologyRefinement{S}{C}\subseteq H$ by
+        \obv{common_topology_refinement}.
+    $\commonTopologyRefinement{S}{C}$ is a topology on $S$ by
+        \obv{common_topology_refinement_is_topology}.
+    Follows by \obv{topology_refines}.
+\end{proof}
+
+\begin{theorem}\label{members_refine_common_topology_coarsening}
+    Suppose $C\subseteq\topologiesOn{S}$ and $T\in C$.
+    Then $T$ refines $\commonTopologyCoarsening{S}{C}$
+        as topologies on $S$.
+\end{theorem}
+\begin{proof}
+    $T\in\topologiesOn{S}$ by \obv{subseteq}.
+    Hence $T$ is a topology on $S$ by
+        \obv{topologies_on_member_is_topology}.
+    $\commonTopologyCoarsening{S}{C}$ is a topology on $S$ by
+        \obv{common_topology_coarsening_is_topology}.
+    Show that $\commonTopologyCoarsening{S}{C}\subseteq T$.
+    \begin{subproof}
+        It suffices to show that every element of
+            $\commonTopologyCoarsening{S}{C}$ is an element of $T$ by
+            \obv{subseteq}.
+        Fix $A\in\commonTopologyCoarsening{S}{C}$.
+        $A\in\boundedIntersection{\pow{S}}{C}$ by
+            \obv{common_topology_coarsening}.
+        Follows by \obv{bounded_intersection_iff}.
+    \end{subproof}
+    Follows by \obv{topology_refines}.
+\end{proof}
+
+\begin{theorem}\label{common_topology_coarsening_greatest}
+    Suppose $C\subseteq\topologiesOn{S}$ and $H$ is a topology on $S$.
+    Suppose for every $T\in C$ we have
+        $T$ refines $H$ as topologies on $S$.
+    Then $\commonTopologyCoarsening{S}{C}$ refines $H$
+        as topologies on $S$.
+\end{theorem}
+\begin{proof}
+    $\commonTopologyCoarsening{S}{C}$ is a topology on $S$ by
+        \obv{common_topology_coarsening_is_topology}.
+    Show that $H\subseteq\commonTopologyCoarsening{S}{C}$.
+    \begin{subproof}
+        It suffices to show that every element of $H$ is an element of
+            $\commonTopologyCoarsening{S}{C}$ by \obv{subseteq}.
+        Fix $A\in H$.
+        $A\subseteq S$ by \obv{topology_family_members_subset_carrier}.
+        Hence $A\in\pow{S}$ by \obv{powerset_intro}.
+        Show that for every $T\in C$ we have $A\in T$.
+        \begin{subproof}
+            Fix $T\in C$.
+            $T$ refines $H$ as topologies on $S$.
+            Hence $H\subseteq T$ by \obv{topology_refines}.
+            Follows by \obv{subseteq}.
+        \end{subproof}
+        Hence $A\in\boundedIntersection{\pow{S}}{C}$ by
+            \obv{bounded_intersection_iff}.
+        Follows by \obv{common_topology_coarsening}.
+    \end{subproof}
+    Follows by \obv{topology_refines}.
+\end{proof}
+
+\begin{proposition}\label{empty_common_topology_refinement}
+    $\commonTopologyRefinement{S}{\emptyset}=\indiscreteOpens{S}$.
+\end{proposition}
+\begin{proof}
+    $\unions{\emptyset}=\emptyset$ by \obv{unions_emptyset}.
+    Follows by
+        \auto{common_topology_refinement,
+            empty_family_generates_indiscrete_opens}.
+\end{proof}
+
+\begin{proposition}\label{empty_common_topology_coarsening}
+    $\commonTopologyCoarsening{S}{\emptyset}=\pow{S}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \obv{common_topology_coarsening,bounded_intersection_empty}.
+\end{proof}
+
+\subsection{Fineness and identity maps}
+
+\begin{theorem}\label{topologically_finer_iff_identity_continuous}
+    Let $X,Y$ be topological spaces.
+    Suppose $\carrier[X]=\carrier[Y]$.
+    Then $X$ is topologically finer than $Y$ iff
+        $\identity{\carrier[X]}$ is continuous from $X$ to $Y$.
+\end{theorem}
+\begin{proof}
+    Show that if $X$ is topologically finer than $Y$, then
+        $\identity{\carrier[X]}$ is continuous from $X$ to $Y$.
+    \begin{subproof}
+        Assume $X$ is topologically finer than $Y$.
+        $\identity{\carrier[X]}\in
+            \funs{\carrier[X]}{\carrier[X]}$ by
+            \obv{id_elem_funs}.
+        Hence $\identity{\carrier[X]}\in
+            \funs{\carrier[X]}{\carrier[Y]}$.
+        Show that for every $V\in\opens[Y]$ we have
+            $\preimg{\identity{\carrier[X]}}{V}\in\opens[X]$.
+        \begin{subproof}
+            Fix $V\in\opens[Y]$.
+            $V\subseteq\carrier[Y]$ by \obv{opens_type}.
+            Hence $V\subseteq\carrier[X]$.
+            $\preimg{\identity{\carrier[X]}}{V}=V$ by
+                \auto{setext,preimg_iff,id_iff,subseteq}.
+            $\opens[Y]\subseteq\opens[X]$ by
+                \obv{topologically_finer}.
+            Hence $V\in\opens[X]$ by \obv{subseteq}.
+        \end{subproof}
+        Follows by \obv{continuous_map}.
+    \end{subproof}
+
+    Show that if $\identity{\carrier[X]}$ is continuous from $X$ to $Y$,
+        then $X$ is topologically finer than $Y$.
+    \begin{subproof}
+        Assume $\identity{\carrier[X]}$ is continuous from $X$ to $Y$.
+        Show that $\opens[Y]\subseteq\opens[X]$.
+        \begin{subproof}
+            It suffices to show that every element of $\opens[Y]$ is an
+                element of $\opens[X]$ by \obv{subseteq}.
+            Fix $V\in\opens[Y]$.
+            $V\subseteq\carrier[Y]$ by \obv{opens_type}.
+            Hence $V\subseteq\carrier[X]$.
+            $\preimg{\identity{\carrier[X]}}{V}=V$ by
+                \auto{setext,preimg_iff,id_iff,subseteq}.
+            $\preimg{\identity{\carrier[X]}}{V}\in\opens[X]$ by
+                \obv{continuous_map}.
+        \end{subproof}
+        Follows by \obv{topologically_finer}.
+    \end{subproof}
+    Follows by \auto.
+\end{proof}

@@ -1,0 +1,937 @@
+\section{Uniform step maps on finite open chains}
+
+\import{topology/urysohn/cells.tex}
+\import{surreal/real-structure.tex}
+\import{surreal/absolute-value.tex}
+
+At level $n$, assign to each point one minus its entry rank multiplied by
+the mesh $\surrealEpsilon{n}=2^{-n}$. The step count doubles as the mesh
+halves, so their product remains one. The resulting values lie between zero
+and one, and refinement can only increase them.
+
+\subsection{Step count and mesh}
+
+\begin{theorem}\label{open_chain_mesh_identity}
+    Let $X$ be a topological space.
+    Let $h$ be a normal shrinker for $X$.
+    Let $U,W\in\opens[X]$.
+    Suppose $\closure{U}{X}\subseteq W$.
+    Let $n$ be a natural number.
+    Then
+        $\surrealMul{
+            \ordinalSurreal{\openChainStepCount{X}{h}{U}{W}{n}}}
+            {\surrealEpsilon{n}}=\surrealOne$.
+\end{theorem}
+\begin{proof}
+    Let $C=\{k\in\naturals\mid
+        \surrealMul{
+            \ordinalSurreal{\openChainStepCount{X}{h}{U}{W}{k}}}
+            {\surrealEpsilon{k}}=\surrealOne\}$.
+    Show that $\emptyset\in C$.
+    \begin{subproof}
+        $\openChainStepCount{X}{h}{U}{W}{\emptyset}
+            =\suc{\emptyset}$
+            by \obv{open_chain_step_count_zero}.
+        $\ordinalSurreal{\suc{\emptyset}}=\surrealOne$.
+        $\surrealEpsilon{\emptyset}=\surrealOne$
+            by \obv{surreal_epsilon_zero}.
+        $\surreal{\surrealOne}$ by \obv{surreal_one_is_surreal}.
+        Hence $\surrealMul{\surrealOne}{\surrealOne}=\surrealOne$
+            by \obv{surreal_mul_one_left}.
+        Follows by \obv{omega_empty}.
+    \end{subproof}
+    Show that for every $k\in C$ we have $\suc{k}\in C$.
+    \begin{subproof}
+        Fix $k\in C$.
+        Then $k$ is a natural number and
+            $\surrealMul{
+                \ordinalSurreal{\openChainStepCount{X}{h}{U}{W}{k}}}
+                {\surrealEpsilon{k}}=\surrealOne$.
+        Let $r=\openChainStepCount{X}{h}{U}{W}{k}$.
+        Let $a=\ordinalSurreal{r}$.
+        Let $e=\surrealEpsilon{\suc{k}}$.
+        $r$ is a natural number by \auto{open_chain_level_components}.
+        $\openChainLevel{X}{h}{U}{W}{k}
+            \in\openChainStates{X}{U}{W}$
+            by \obv{open_chain_level_is_state}.
+        $\openChainStepCount{X}{h}{U}{W}{\suc{k}}=r+r$
+            by \auto{open_chain_step_count_successor}.
+        $\surrealAdd{a}{a}=\ordinalSurreal{r+r}$
+            by \auto{natural_surreal_addition_compatibility}.
+        $\surrealAdd{e}{e}=\surrealEpsilon{k}$
+            by \auto{surreal_epsilon_halving,natural_number_is_ordinal}.
+        $\surreal{a}$ by
+            \obv{ordinal_surreal_is_surreal,natural_number_is_ordinal}.
+        $\suc{k}$ is a natural number by \obv{omega_successor}.
+        Hence $\surreal{e}$ by \auto{surreal_epsilon_is_surreal}.
+        $\surrealMul{\surrealAdd{a}{a}}{e}
+            =\surrealAdd{\surrealMul{a}{e}}{\surrealMul{a}{e}}$
+            by \obv{surreal_mul_distributive_right}.
+        $\surrealMul{a}{\surrealAdd{e}{e}}
+            =\surrealAdd{\surrealMul{a}{e}}{\surrealMul{a}{e}}$
+            by \obv{surreal_mul_distributive_left}.
+        Hence $\surrealMul{\ordinalSurreal{r+r}}{e}
+            =\surrealMul{a}{\surrealEpsilon{k}}$.
+        Hence $\surrealMul{\ordinalSurreal{r+r}}{e}=\surrealOne$.
+        $\suc{k}$ is a natural number.
+        Follows by \auto.
+    \end{subproof}
+    Hence $C$ is an inductive set by \obv{inductive_set}.
+    Hence every natural number is an element of $C$
+        by \obv{omega_minimal}.
+    Thus $n\in C$.
+\end{proof}
+
+\subsection{From entry ranks to step values}
+
+The ordinal embedding below interprets the natural entry rank as a real
+number. Subtracting its mesh-scaled value from one gives the desired step
+value: one on the first entry and zero at the last rank when the step count
+times the mesh is one.
+
+\begin{definition}\label{uniform_step_value}
+    $\uniformStepValue{c}{r}{n}{x}
+        =\surrealAdd{\surrealOne}{
+            \surrealNeg{
+                \surrealMul{
+                    \ordinalSurreal{\entryRank{c}{r}{x}}}
+                    {\surrealEpsilon{n}}}}$.
+\end{definition}
+
+\begin{definition}\label{uniform_step_value_op}
+    $\uniformStepValueOp:\Set\to\Set\to\Set\to\Set\to\Set
+        =\fun{c,r,n,x:\Set}{
+            \uniformStepValue{c}{r}{n}{x}}$.
+\end{definition}
+
+\begin{definition}\label{uniform_step_graph}
+    $\uniformStepGraph{D}{c}{r}{n}
+        =\Apply{\graphOnDomainOp}
+            {D,\Apply{\uniformStepValueOp}{c,r,n}}$.
+\end{definition}
+
+The graph has exactly the prescribed domain and is defined for arbitrary
+parameters. Natural indices ensure that its values are real.
+
+\begin{proposition}\label{uniform_step_graph_apply}
+    Let $x\in D$.
+    Then $\apply{\uniformStepGraph{D}{c}{r}{n}}{x}
+        =\uniformStepValue{c}{r}{n}{x}$.
+\end{proposition}
+\begin{proof}
+    $\apply{\uniformStepGraph{D}{c}{r}{n}}{x}
+        =\Apply{\uniformStepValueOp}{c,r,n,x}$
+        by \auto{uniform_step_graph,logical_graph_on_domain_apply}.
+    Follows by \obv{uniform_step_value_op}.
+\end{proof}
+
+\begin{proposition}\label{uniform_step_value_is_real}
+    Let $r,n$ be natural numbers.
+    Then $\uniformStepValue{c}{r}{n}{x}\in\reals$.
+\end{proposition}
+\begin{proof}
+    $\entryRank{c}{r}{x}$ is a natural number
+        by \obv{entry_rank_is_natural}.
+    Hence $\ordinalSurreal{\entryRank{c}{r}{x}}\in\reals$
+        by \obv{natural_ordinal_surreal_is_real}.
+    $\surrealEpsilon{n}\in\reals$
+        by \obv{surreal_epsilon_is_real}.
+    Hence
+        $\surrealMul{\ordinalSurreal{\entryRank{c}{r}{x}}}
+            {\surrealEpsilon{n}}\in\reals$
+        by \obv{surreal_real_multiplication_closed}.
+    Thus
+        $\surrealNeg{
+            \surrealMul{\ordinalSurreal{\entryRank{c}{r}{x}}}
+                {\surrealEpsilon{n}}}\in\reals$
+        by \obv{surreal_real_negation_closed}.
+    $\surrealOne\in\reals$ by \obv{surreal_one_is_real}.
+    Follows by
+        \auto{uniform_step_value,surreal_real_addition_closed}.
+\end{proof}
+
+\begin{theorem}\label{uniform_step_graph_typed}
+    Let $r,n$ be natural numbers.
+    Then $\uniformStepGraph{D}{c}{r}{n}\in\funs{D}{\reals}$.
+\end{theorem}
+\begin{proof}
+    Show that $\forall x:\Set.\ x\in D\implies
+        \Apply{\uniformStepValueOp}{c,r,n,x}
+            \in\reals$.
+    \begin{subproof}
+        Fix $x:\Set$.
+        Assume $x\in D$.
+        $\Apply{\uniformStepValueOp}{c,r,n,x}
+            =\uniformStepValue{c}{r}{n}{x}$
+            by \obv{uniform_step_value_op}.
+        Follows by \auto{uniform_step_value_is_real}.
+    \end{subproof}
+    Follows by
+        \auto{uniform_step_graph,logical_graph_on_domain_type}.
+\end{proof}
+
+\begin{proposition}\label{uniform_step_value_between_zero_and_one}
+    Let $r,n$ be natural numbers.
+    Suppose
+        $\surrealMul{\ordinalSurreal{r}}{\surrealEpsilon{n}}
+            =\surrealOne$.
+    Then $\surrealLe{\surrealZero}{\uniformStepValue{c}{r}{n}{x}}$ and
+        $\surrealLe{\uniformStepValue{c}{r}{n}{x}}{\surrealOne}$.
+\end{proposition}
+\begin{proof}
+    $\surrealZero=\emptyset$.
+    Let $q=\entryRank{c}{r}{x}$.
+    Let $a=\ordinalSurreal{q}$.
+    Let $b=\ordinalSurreal{r}$.
+    Let $e=\surrealEpsilon{n}$.
+    Let $p=\surrealMul{a}{e}$.
+    $q$ is a natural number by \auto{entry_rank_is_natural}.
+    Hence $q$ is an ordinal by \obv{natural_number_is_ordinal}.
+    $r$ is an ordinal by \obv{natural_number_is_ordinal}.
+    $q\subseteq r$ by \auto{entry_rank_subseteq_sentinel}.
+    Hence $\surrealLe{a}{b}$ by \auto{ordinal_surreal_le_iff}.
+    $\surrealLt{\surrealZero}{e}$
+        by \obv{surreal_epsilon_positive,natural_number_is_ordinal}.
+    Hence $\surrealLe{\surrealZero}{e}$ by \obv{surreal_le}.
+    Hence $\surrealLe{\emptyset}{e}$.
+    $\surrealLe{\ordinalSurreal{\emptyset}}{a}$
+        by
+        \auto{ordinal_surreal_le_iff,emptyset_is_ordinal,emptyset_subseteq}.
+    Hence $\surrealLe{\surrealZero}{a}$
+        by \obv{empty_ordinal_surreal}.
+    Hence $\surrealLe{\emptyset}{a}$.
+    $\surreal{a}$ and $\surreal{b}$ and $\surreal{e}$
+        by
+        \auto{ordinal_surreal_is_surreal,natural_number_is_ordinal,surreal_epsilon_is_surreal}.
+    $\surreal{\emptyset}$ by \obv{empty_surreal}.
+    Hence $\surrealLe{p}{\surrealMul{b}{e}}$
+        by \auto{surreal_nonneg_mul_le_right}.
+    Thus $\surrealLe{p}{\surrealOne}$.
+    $\surrealLe{\surrealMul{a}{\emptyset}}{\surrealMul{a}{e}}$
+        by \obv{surreal_nonneg_mul_le_left,empty_surreal}.
+    Hence $\surrealLe{\surrealZero}{p}$
+        by \obv{surreal_mul_zero_right}.
+    $\surreal{p}$ by \obv{surreal_mul_is_surreal}.
+    $\surreal{\surrealOne}$ by \obv{surreal_one_is_surreal}.
+    Hence
+        $\surrealLe{
+            \surrealAdd{\surrealOne}{\surrealNeg{\surrealOne}}}
+            {\surrealAdd{\surrealOne}{\surrealNeg{p}}}$
+        by
+        \obv{surreal_negation_le_reverses,surreal_add_le_right,surreal_negation_is_surreal}.
+    Hence
+        $\surrealLe{\surrealZero}
+            {\surrealAdd{\surrealOne}{\surrealNeg{p}}}$
+        by \obv{surreal_add_inverse_right}.
+    $\surrealLe{\surrealNeg{p}}{\surrealNeg{\surrealZero}}$
+        by \obv{surreal_negation_le_reverses}.
+    Hence $\surrealLe{\surrealNeg{p}}{\surrealZero}$
+        by \obv{surreal_negation_empty}.
+    $\surrealLe{
+            \surrealAdd{\surrealOne}{\surrealNeg{p}}}
+            {\surrealAdd{\surrealOne}{\surrealZero}}$
+        by \obv{surreal_add_le_right,surreal_negation_is_surreal}.
+    Hence
+        $\surrealLe{
+            \surrealAdd{\surrealOne}{\surrealNeg{p}}}
+            {\surrealOne}$
+        by \obv{surreal_add_zero_right}.
+    Follows by \auto{uniform_step_value}.
+\end{proof}
+
+\begin{proposition}\label{uniform_step_value_at_zero_rank}
+    Let $n$ be a natural number.
+    Suppose $\entryRank{c}{r}{x}=\emptyset$.
+    Then $\uniformStepValue{c}{r}{n}{x}=\surrealOne$.
+\end{proposition}
+\begin{proof}
+    $\ordinalSurreal{\entryRank{c}{r}{x}}=\surrealZero$
+        by \obv{empty_ordinal_surreal}.
+    $\surreal{\surrealEpsilon{n}}$
+        by \auto{surreal_epsilon_is_surreal,natural_number_is_ordinal}.
+    Hence
+        $\surrealMul{\ordinalSurreal{\entryRank{c}{r}{x}}}
+            {\surrealEpsilon{n}}=\surrealZero$
+        by \auto{surreal_mul_zero_left}.
+    $\surrealNeg{\surrealZero}=\surrealZero$
+        by \obv{surreal_negation_empty}.
+    Follows by
+        \auto{uniform_step_value,surreal_add_zero_right,surreal_one_is_surreal}.
+\end{proof}
+
+\begin{proposition}\label{uniform_step_value_at_sentinel}
+    Let $r,n$ be natural numbers.
+    Suppose $\entryRank{c}{r}{x}=r$ and
+        $\surrealMul{\ordinalSurreal{r}}{\surrealEpsilon{n}}
+            =\surrealOne$.
+    Then $\uniformStepValue{c}{r}{n}{x}=\surrealZero$.
+\end{proposition}
+\begin{proof}
+    $\surrealNeg{
+        \surrealMul{\ordinalSurreal{\entryRank{c}{r}{x}}}
+            {\surrealEpsilon{n}}}
+        =\surrealNeg{\surrealOne}$.
+    Follows by
+        \auto{uniform_step_value,surreal_add_inverse_right,surreal_one_is_surreal}.
+\end{proof}
+
+\begin{lemma}\label{dyadic_inserted_rank_product}
+    Let $j,n$ be natural numbers.
+    Then
+        $\surrealAdd{
+            \surrealMul{\ordinalSurreal{\suc{j+j}}}
+                {\surrealEpsilon{\suc{n}}}}
+            {\surrealEpsilon{\suc{n}}}
+        =\surrealMul{\ordinalSurreal{\suc{j}}}
+            {\surrealEpsilon{n}}$.
+\end{lemma}
+\begin{proof}
+    Let $a=\ordinalSurreal{j}$.
+    Let $e=\surrealEpsilon{\suc{n}}$.
+    $j+j$ is a natural number by \obv{num_addition_on_naturals}.
+    $\suc{n}$ is a natural number by \obv{omega_successor}.
+    $j+j$ and $j$ are ordinals by \obv{natural_number_is_ordinal}.
+    $\surreal{a}$ and $\surreal{e}$
+        by
+        \auto{ordinal_surreal_is_surreal,surreal_epsilon_is_surreal,natural_number_is_ordinal}.
+    $\surreal{\surrealOne}$ by \obv{surreal_one_is_surreal}.
+    $\ordinalSurreal{j+j}=\surrealAdd{a}{a}$
+        by \auto{natural_surreal_addition_compatibility}.
+    $\ordinalSurreal{\suc{j}}
+        =\surrealAdd{a}{\surrealOne}$
+        by \auto{ordinal_surreal_successor_addition}.
+    $\ordinalSurreal{\suc{j+j}}
+        =\surrealAdd{\surrealAdd{a}{a}}{\surrealOne}$
+        by \auto{ordinal_surreal_successor_addition}.
+    $\surrealEpsilon{n}=\surrealAdd{e}{e}$
+        by \auto{surreal_epsilon_halving,natural_number_is_ordinal}.
+    $\surrealMul{\surrealOne}{e}=e$
+        by \obv{surreal_mul_one_left}.
+    Follows by
+        \auto{surreal_mul_distributive_right,surreal_mul_distributive_left,surreal_add_associative,surreal_add_commutative,surreal_add_is_surreal,surreal_mul_is_surreal,surreal_mul_one_left}.
+\end{proof}
+
+\begin{lemma}\label{dyadic_after_inserted_rank_product}
+    Let $j,n$ be natural numbers.
+    Then
+        $\surrealMul{\ordinalSurreal{\suc{\suc{j+j}}}}
+            {\surrealEpsilon{\suc{n}}}
+        =\surrealMul{\ordinalSurreal{\suc{j}}}
+            {\surrealEpsilon{n}}$.
+\end{lemma}
+\begin{proof}
+    Let $a=\ordinalSurreal{j}$.
+    Let $e=\surrealEpsilon{\suc{n}}$.
+    $j+j$ is a natural number by \obv{num_addition_on_naturals}.
+    $\suc{j+j}$ and $\suc{\suc{j+j}}$ are natural numbers
+        by \obv{omega_successor}.
+    $\suc{j}$ and $\suc{n}$ are natural numbers
+        by \obv{omega_successor}.
+    Hence $j+j$ and $\suc{j+j}$ are ordinals
+        by \obv{natural_number_is_ordinal}.
+    $j$ is an ordinal by \obv{natural_number_is_ordinal}.
+    $\surreal{a}$ and $\surreal{e}$
+        by
+        \auto{ordinal_surreal_is_surreal,surreal_epsilon_is_surreal,natural_number_is_ordinal}.
+    $\surreal{\surrealOne}$ by \obv{surreal_one_is_surreal}.
+    $\ordinalSurreal{j+j}=\surrealAdd{a}{a}$
+        by \auto{natural_surreal_addition_compatibility}.
+    $\ordinalSurreal{\suc{j}}
+        =\surrealAdd{a}{\surrealOne}$
+        by \auto{ordinal_surreal_successor_addition}.
+    $\ordinalSurreal{\suc{j+j}}
+        =\surrealAdd{\surrealAdd{a}{a}}{\surrealOne}$
+        by \auto{ordinal_surreal_successor_addition}.
+    $\ordinalSurreal{\suc{\suc{j+j}}}
+        =\surrealAdd{
+            \surrealAdd{\surrealAdd{a}{a}}{\surrealOne}}
+            {\surrealOne}$
+        by \auto{ordinal_surreal_successor_addition}.
+    $\surrealEpsilon{n}=\surrealAdd{e}{e}$
+        by \auto{surreal_epsilon_halving,natural_number_is_ordinal}.
+    Follows by
+        \auto{surreal_mul_distributive_right,surreal_mul_distributive_left,surreal_add_associative,surreal_add_commutative,surreal_add_is_surreal,surreal_mul_is_surreal}.
+\end{proof}
+
+\begin{proposition}\label{uniform_step_value_after_inserted_rank}
+    Let $j,n$ be natural numbers.
+    Suppose $\entryRank{c}{r}{x}=\suc{j}$ and
+        $\entryRank{d}{R}{x}=\suc{\suc{j+j}}$.
+    Then
+        $\uniformStepValue{d}{R}{\suc{n}}{x}
+        =\uniformStepValue{c}{r}{n}{x}$.
+\end{proposition}
+\begin{proof}
+    $\surrealMul{\ordinalSurreal{\entryRank{d}{R}{x}}}
+            {\surrealEpsilon{\suc{n}}}
+        =\surrealMul{\ordinalSurreal{\entryRank{c}{r}{x}}}
+            {\surrealEpsilon{n}}$
+        by \auto{dyadic_after_inserted_rank_product}.
+    Follows by \obv{uniform_step_value}.
+\end{proof}
+
+\begin{proposition}\label{uniform_step_value_at_inserted_rank}
+    Let $j,n$ be natural numbers.
+    Suppose $\entryRank{c}{r}{x}=\suc{j}$ and
+        $\entryRank{d}{R}{x}=\suc{j+j}$.
+    Then
+        $\uniformStepValue{d}{R}{\suc{n}}{x}
+        =\surrealAdd{\uniformStepValue{c}{r}{n}{x}}
+            {\surrealEpsilon{\suc{n}}}$.
+\end{proposition}
+\begin{proof}
+    Let $p=\surrealMul{
+        \ordinalSurreal{\entryRank{d}{R}{x}}}
+        {\surrealEpsilon{\suc{n}}}$.
+    Let $q=\surrealMul{
+        \ordinalSurreal{\entryRank{c}{r}{x}}}
+        {\surrealEpsilon{n}}$.
+    Let $e=\surrealEpsilon{\suc{n}}$.
+    $\surrealAdd{p}{e}=q$
+        by \auto{dyadic_inserted_rank_product}.
+    $j+j$ is a natural number by \obv{num_addition_on_naturals}.
+    Hence $\suc{j}$ and $\suc{j+j}$ are natural numbers
+        by \obv{omega_successor}.
+    Hence $\surreal{\ordinalSurreal{\entryRank{c}{r}{x}}}$ and
+        $\surreal{\ordinalSurreal{\entryRank{d}{R}{x}}}$
+        by \obv{ordinal_surreal_is_surreal,natural_number_is_ordinal}.
+    $\suc{n}$ is a natural number by \obv{omega_successor}.
+    Hence $\surreal{\surrealEpsilon{\suc{n}}}$
+        by \auto{surreal_epsilon_is_surreal}.
+    Hence $\surreal{e}$.
+    $\surreal{\surrealEpsilon{n}}$
+        by \auto{surreal_epsilon_is_surreal}.
+    Hence $\surreal{p}$ and $\surreal{q}$
+        by \obv{surreal_mul_is_surreal}.
+    Follows by
+        \auto{uniform_step_value,surreal_negation_additive,surreal_negation_is_surreal,surreal_add_associative,surreal_add_inverse_left,surreal_add_inverse_right,surreal_add_zero_right,surreal_one_is_surreal}.
+\end{proof}
+
+\begin{proposition}\label{uniform_step_value_at_successive_ranks}
+    Let $k,n$ be natural numbers.
+    Suppose $\entryRank{c}{r}{x}=k$ and
+        $\entryRank{c}{r}{y}=\suc{k}$.
+    Then
+        $\uniformStepValue{c}{r}{n}{x}
+        =\surrealAdd{\uniformStepValue{c}{r}{n}{y}}
+            {\surrealEpsilon{n}}$.
+\end{proposition}
+\begin{proof}
+    Let $a=\ordinalSurreal{k}$.
+    Let $e=\surrealEpsilon{n}$.
+    Let $p=\surrealMul{a}{e}$.
+    Let $q=\surrealMul{\ordinalSurreal{\suc{k}}}{e}$.
+    $k$ is an ordinal by \obv{natural_number_is_ordinal}.
+    $\suc{k}$ is a natural number by \obv{omega_successor}.
+    Hence $\suc{k}$ is an ordinal by \obv{natural_number_is_ordinal}.
+    $\surreal{a}$ and $\surreal{e}$
+        by \auto{ordinal_surreal_is_surreal,surreal_epsilon_is_surreal}.
+    $\surreal{\ordinalSurreal{\suc{k}}}$
+        by \obv{ordinal_surreal_is_surreal}.
+    $\surreal{\surrealOne}$ by \obv{surreal_one_is_surreal}.
+    $\ordinalSurreal{\suc{k}}=\surrealAdd{a}{\surrealOne}$
+        by \auto{ordinal_surreal_successor_addition}.
+    Hence $q=\surrealAdd{p}{e}$
+        by
+        \auto{surreal_mul_distributive_right,surreal_mul_one_left}.
+    $\surreal{p}$ and $\surreal{q}$
+        by \auto{surreal_mul_is_surreal}.
+    Follows by
+        \auto{uniform_step_value,surreal_negation_additive,surreal_negation_is_surreal,surreal_add_associative,surreal_add_inverse_left,surreal_add_inverse_right,surreal_add_zero_right,surreal_one_is_surreal}.
+\end{proof}
+
+\begin{lemma}\label{surreal_abs_difference_le_from_unit_update}
+    Suppose $\surreal{a}$ and $\surreal{b}$ and $\surreal{e}$.
+    Suppose $\surrealLe{\surrealZero}{e}$.
+    Suppose $a=b$ or $a=\surrealAdd{b}{e}$ or
+        $b=\surrealAdd{a}{e}$.
+    Then
+        $\surrealLe{
+            \abs{\surrealAdd{a}{\surrealNeg{b}}}}{e}$.
+\end{lemma}
+\begin{proof}
+    \begin{byCase}
+    \caseOf{$a=b$.}
+        $\surrealAdd{a}{\surrealNeg{b}}=\surrealZero$
+            by \auto{surreal_add_inverse_right}.
+        Follows by \obv{surreal_abs_zero}.
+    \caseOf{$a\neq b$.}
+        Hence $a=\surrealAdd{b}{e}$ or
+            $b=\surrealAdd{a}{e}$.
+        \begin{byCase}
+        \caseOf{$a=\surrealAdd{b}{e}$.}
+            $\surrealAdd{a}{\surrealNeg{b}}=e$
+                by
+                \auto{surreal_add_associative,surreal_add_commutative,surreal_add_inverse_right,surreal_add_zero_left,surreal_negation_is_surreal}.
+            $\abs{e}=e$ by \obv{surreal_abs_nonnegative}.
+            Follows by \auto{surreal_le_reflexive}.
+        \caseOf{$a\neq\surrealAdd{b}{e}$.}
+            Hence $b=\surrealAdd{a}{e}$.
+            $\surrealAdd{a}{\surrealNeg{b}}=\surrealNeg{e}$
+                by
+                \auto{surreal_negation_additive,surreal_add_associative,surreal_add_inverse_right,surreal_add_zero_left,surreal_negation_is_surreal}.
+            $\abs{\surrealNeg{e}}=\abs{e}$
+                by \obv{surreal_abs_negation}.
+            $\abs{e}=e$ by \obv{surreal_abs_nonnegative}.
+            Follows by \auto{surreal_le_reflexive}.
+        \end{byCase}
+    \end{byCase}
+\end{proof}
+
+\begin{proposition}\label{uniform_step_value_rank_cell_oscillation}
+    Let $r,n,k$ be natural numbers.
+    Suppose $\entryRank{c}{r}{x}=k$ or
+        $\entryRank{c}{r}{x}=\suc{k}$.
+    Suppose $\entryRank{c}{r}{y}=k$ or
+        $\entryRank{c}{r}{y}=\suc{k}$.
+    Then
+        $\surrealLe{
+            \abs{\surrealAdd{
+                \uniformStepValue{c}{r}{n}{x}}
+                {\surrealNeg{\uniformStepValue{c}{r}{n}{y}}}}}
+            {\surrealEpsilon{n}}$.
+\end{proposition}
+\begin{proof}
+    Let $a=\uniformStepValue{c}{r}{n}{x}$.
+    Let $b=\uniformStepValue{c}{r}{n}{y}$.
+    Let $e=\surrealEpsilon{n}$.
+    $a,b\in\reals$ by \auto{uniform_step_value_is_real}.
+    Hence $\surreal{a}$ and $\surreal{b}$
+        by \obv{surreal_real_is_surreal}.
+    $\surreal{e}$ by \auto{surreal_epsilon_is_surreal}.
+    $\surrealLt{\surrealZero}{e}$
+        by \obv{surreal_epsilon_positive,natural_number_is_ordinal}.
+    Hence $\surrealLe{\surrealZero}{e}$ by \obv{surreal_le}.
+    Show that $a=b$ or $a=\surrealAdd{b}{e}$ or
+        $b=\surrealAdd{a}{e}$.
+    \begin{subproof}
+        \begin{byCase}
+        \caseOf{$\entryRank{c}{r}{x}=k$.}
+            \begin{byCase}
+            \caseOf{$\entryRank{c}{r}{y}=k$.}
+                Hence $a=b$ by \obv{uniform_step_value}.
+            \caseOf{$\entryRank{c}{r}{y}\neq k$.}
+                Hence $\entryRank{c}{r}{y}=\suc{k}$.
+                Thus $a=\surrealAdd{b}{e}$
+                    by \auto{uniform_step_value_at_successive_ranks}.
+                Follows by \auto.
+            \end{byCase}
+        \caseOf{$\entryRank{c}{r}{x}\neq k$.}
+            Hence $\entryRank{c}{r}{x}=\suc{k}$.
+            \begin{byCase}
+            \caseOf{$\entryRank{c}{r}{y}=k$.}
+                Hence $b=\surrealAdd{a}{e}$
+                    by \auto{uniform_step_value_at_successive_ranks}.
+                Follows by \auto.
+            \caseOf{$\entryRank{c}{r}{y}\neq k$.}
+                Hence $\entryRank{c}{r}{y}=\suc{k}$.
+                Thus $a=b$ by \obv{uniform_step_value}.
+            \end{byCase}
+        \end{byCase}
+    \end{subproof}
+    Follows by \auto{surreal_abs_difference_le_from_unit_update}.
+\end{proof}
+
+\subsection{Step maps of the iterated open chain}
+
+Apply the step-value construction to each successive refinement. Each step
+map has the carrier of the space as its exact domain. These graphs are total
+terms; the following theorems establish their real values and endpoint
+properties under the nested-open and normal-shrinker hypotheses.
+
+\begin{definition}\label{open_chain_step_map}
+    $\openChainStepMap{X}{h}{U}{W}{n}
+        =\uniformStepGraph{\carrier[X]}
+            {\openChainAtLevel{X}{h}{U}{W}{n}}
+            {\openChainStepCount{X}{h}{U}{W}{n}}{n}$.
+\end{definition}
+
+\begin{proposition}\label{open_chain_step_map_apply}
+    Let $x\in\carrier[X]$.
+    Then $\apply{\openChainStepMap{X}{h}{U}{W}{n}}{x}
+        =\uniformStepValue{
+            \openChainAtLevel{X}{h}{U}{W}{n}}
+            {\openChainStepCount{X}{h}{U}{W}{n}}{n}{x}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{open_chain_step_map,uniform_step_graph_apply}.
+\end{proof}
+
+\begin{theorem}\label{open_chain_step_map_typed}
+    Let $X$ be a topological space.
+    Let $h$ be a normal shrinker for $X$.
+    Let $U,W\in\opens[X]$.
+    Suppose $\closure{U}{X}\subseteq W$.
+    Let $n$ be a natural number.
+    Then $\openChainStepMap{X}{h}{U}{W}{n}
+        \in\funs{\carrier[X]}{\reals}$.
+\end{theorem}
+\begin{proof}
+    $\openChainStepCount{X}{h}{U}{W}{n}$ is a natural number
+        by \auto{open_chain_level_components}.
+    Follows by
+        \auto{open_chain_step_map,uniform_step_graph_typed}.
+\end{proof}
+
+\begin{corollary}\label{open_chain_step_map_between_zero_and_one}
+    Let $X$ be a topological space.
+    Let $h$ be a normal shrinker for $X$.
+    Let $U,W\in\opens[X]$.
+    Suppose $\closure{U}{X}\subseteq W$.
+    Let $n$ be a natural number.
+    Let $x\in\carrier[X]$.
+    Then
+        $\surrealLe{\surrealZero}
+            {\apply{\openChainStepMap{X}{h}{U}{W}{n}}{x}}$ and
+        $\surrealLe{\apply{\openChainStepMap{X}{h}{U}{W}{n}}{x}}
+            {\surrealOne}$.
+\end{corollary}
+\begin{proof}
+    Let $r=\openChainStepCount{X}{h}{U}{W}{n}$.
+    Let $c=\openChainAtLevel{X}{h}{U}{W}{n}$.
+    $r$ is a natural number by \auto{open_chain_level_components}.
+    $\surrealMul{\ordinalSurreal{r}}{\surrealEpsilon{n}}
+        =\surrealOne$ by \auto{open_chain_mesh_identity}.
+    $\surrealLe{\surrealZero}{\uniformStepValue{c}{r}{n}{x}}$ and
+        $\surrealLe{\uniformStepValue{c}{r}{n}{x}}{\surrealOne}$
+        by \auto{uniform_step_value_between_zero_and_one}.
+    $\apply{\openChainStepMap{X}{h}{U}{W}{n}}{x}
+        =\uniformStepValue{c}{r}{n}{x}$
+        by \auto{open_chain_step_map_apply}.
+    Follows by \auto.
+\end{proof}
+
+\begin{proposition}\label{open_chain_step_map_one_on_first}
+    Let $X$ be a topological space.
+    Let $h$ be a normal shrinker for $X$.
+    Let $U,W\in\opens[X]$.
+    Suppose $\closure{U}{X}\subseteq W$.
+    Let $n$ be a natural number.
+    Let $x\in U$.
+    Then $\apply{\openChainStepMap{X}{h}{U}{W}{n}}{x}=\surrealOne$.
+\end{proposition}
+\begin{proof}
+    Let $r=\openChainStepCount{X}{h}{U}{W}{n}$.
+    Let $c=\openChainAtLevel{X}{h}{U}{W}{n}$.
+    $r$ is a natural number and $r\neq\emptyset$ and
+        $c$ is a finite open chain with $r$ steps in $X$ and
+        $c(\emptyset)=U$
+        by \auto{open_chain_level_components}.
+    $\emptyset\in r$ by \obv{natural_nonzero_contains_zero}.
+    Hence $\entryRank{c}{r}{x}=\emptyset$
+        by \auto{entry_rank_eq_zero_iff}.
+    $U\subseteq\carrier[X]$ by \obv{opens_type,subseteq}.
+    Hence $x\in\carrier[X]$ by \obv{subseteq}.
+    $\apply{\openChainStepMap{X}{h}{U}{W}{n}}{x}
+        =\uniformStepValue{c}{r}{n}{x}$
+        by \auto{open_chain_step_map_apply}.
+    $\uniformStepValue{c}{r}{n}{x}=\surrealOne$
+        by \obv{uniform_step_value_at_zero_rank}.
+\end{proof}
+
+\begin{proposition}\label{open_chain_step_map_zero_outside_last}
+    Let $X$ be a topological space.
+    Let $h$ be a normal shrinker for $X$.
+    Let $U,W\in\opens[X]$.
+    Suppose $\closure{U}{X}\subseteq W$.
+    Let $n$ be a natural number.
+    Let $x\in\carrier[X]\setminus W$.
+    Then $\apply{\openChainStepMap{X}{h}{U}{W}{n}}{x}=\surrealZero$.
+\end{proposition}
+\begin{proof}
+    Let $r=\openChainStepCount{X}{h}{U}{W}{n}$.
+    Let $c=\openChainAtLevel{X}{h}{U}{W}{n}$.
+    $r$ is a natural number and $r\neq\emptyset$ and
+        $c$ is a finite open chain with $r$ steps in $X$ and
+        $c(r)=W$
+        by \auto{open_chain_level_components}.
+    $c\in\funs{\suc{r}}{\opens[X]}$
+        by \obv{finite_open_chain_type}.
+    Show that for every $i\in r$ we have $c(i)\subseteq c(r)$.
+    \begin{subproof}
+        Fix $i\in r$.
+        $i\in\suc{r}$ and $r\in\suc{r}$
+            by \obv{suc_intro_in,suc_intro_self}.
+        $r$ is an ordinal by \obv{natural_number_is_ordinal}.
+        Hence $i$ is an ordinal by \obv{elem_of_ordinal_is_ordinal}.
+        $i\subseteq r$
+            by \obv{ordinal_elem_implies_subseteq}.
+        Follows by \obv{finite_open_chain_monotone}.
+    \end{subproof}
+    $x\notin W$ by \obv{setminus}.
+    Hence $\entryRank{c}{r}{x}=r$
+        by \auto{entry_rank_eq_sentinel_outside_last}.
+    $\surrealMul{\ordinalSurreal{r}}{\surrealEpsilon{n}}
+        =\surrealOne$ by \auto{open_chain_mesh_identity}.
+    Thus $\uniformStepValue{c}{r}{n}{x}=\surrealZero$
+        by \obv{uniform_step_value_at_sentinel}.
+    $x\in\carrier[X]$ by \obv{setminus}.
+    $\apply{\openChainStepMap{X}{h}{U}{W}{n}}{x}
+        =\uniformStepValue{c}{r}{n}{x}$
+        by \auto{open_chain_step_map_apply}.
+\end{proof}
+
+\subsection{Successive values}
+
+\begin{theorem}\label{open_chain_step_map_successor_value}
+    Let $X$ be a topological space.
+    Let $h$ be a normal shrinker for $X$.
+    Let $U,W\in\opens[X]$.
+    Suppose $\closure{U}{X}\subseteq W$.
+    Let $n$ be a natural number.
+    Let $x\in\carrier[X]$.
+    Then
+        $\apply{\openChainStepMap{X}{h}{U}{W}{\suc{n}}}{x}
+            =\apply{\openChainStepMap{X}{h}{U}{W}{n}}{x}$ or
+        $\apply{\openChainStepMap{X}{h}{U}{W}{\suc{n}}}{x}
+            =\surrealAdd{
+                \apply{\openChainStepMap{X}{h}{U}{W}{n}}{x}}
+                {\surrealEpsilon{\suc{n}}}$.
+\end{theorem}
+\begin{proof}
+    Let $r=\openChainStepCount{X}{h}{U}{W}{n}$.
+    Let $c=\openChainAtLevel{X}{h}{U}{W}{n}$.
+    Let $m=\openChainInsertions{X}{h}{r}{c}$.
+    Let $R=r+r$.
+    Let $d=\finiteInterleave{c}{m}$.
+    $r$ is a natural number and
+        $c$ is a finite open chain with $r$ steps in $X$
+        by \auto{open_chain_level_components}.
+    Hence $c\in\funs{\suc{r}}{\opens[X]}$
+        by \obv{finite_open_chain_type}.
+    $m\in\funs{r}{\opens[X]}$
+        by \auto{open_chain_insertions_typed}.
+    $\suc{n}$ is a natural number by \obv{omega_successor}.
+    $\openChainLevel{X}{h}{U}{W}{n}
+        \in\openChainStates{X}{U}{W}$
+        by \auto{open_chain_level_is_state}.
+    $\openChainStepCount{X}{h}{U}{W}{\suc{n}}=R$
+        by \auto{open_chain_step_count_successor}.
+    $\openChainAtLevel{X}{h}{U}{W}{\suc{n}}=d$
+        by
+        \auto{open_chain_at_level_successor,open_chain_refinement}.
+    $\apply{\openChainStepMap{X}{h}{U}{W}{n}}{x}
+        =\uniformStepValue{c}{r}{n}{x}$ and
+        $\apply{\openChainStepMap{X}{h}{U}{W}{\suc{n}}}{x}
+        =\uniformStepValue{d}{R}{\suc{n}}{x}$
+        by \auto{open_chain_step_map_apply}.
+    Show that for every $i\in r$ we have
+        $c(i)\subseteq m(i)$ and $m(i)\subseteq c(\suc{i})$.
+    \begin{subproof}
+        Fix $i\in r$.
+        $i\in\suc{r}$ by \obv{suc_intro_in}.
+        Hence $c(i)\in\opens[X]$ by \obv{funs_type_apply}.
+        Hence $c(i)\subseteq\carrier[X]$
+            by \obv{opens_type,subseteq}.
+        Thus $c(i)\subseteq\closure{c(i)}{X}$
+            by \obv{set_is_subseteq_to_closure_of_the_set}.
+        $m(i)=\apply{\openChainInsertions{X}{h}{r}{c}}{i}$.
+        $\closure{c(i)}{X}
+            \subseteq\apply{\openChainInsertions{X}{h}{r}{c}}{i}$ and
+            $\apply{\openChainInsertions{X}{h}{r}{c}}{i}
+            \subseteq\closure{
+                \apply{\openChainInsertions{X}{h}{r}{c}}{i}}{X}$
+            by \auto{open_chain_insertions_apply}.
+        $\closure{\apply{\openChainInsertions{X}{h}{r}{c}}{i}}{X}
+            \subseteq c(\suc{i})$
+            by \auto{open_chain_insertions_apply}.
+        Hence $\closure{c(i)}{X}\subseteq m(i)$ and
+            $m(i)\subseteq c(\suc{i})$
+            by \auto{subseteq_transitive}.
+        Follows by \obv{subseteq_transitive}.
+    \end{subproof}
+    Let $q=\entryRank{c}{r}{x}$.
+    $q$ is a natural number by \auto{entry_rank_is_natural}.
+    \begin{byCase}
+    \caseOf{$q=\emptyset$.}
+        $\entryRank{d}{R}{x}=\emptyset$
+            by \auto{entry_rank_interleave_zero}.
+        $\uniformStepValue{c}{r}{n}{x}=\surrealOne$ and
+            $\uniformStepValue{d}{R}{\suc{n}}{x}=\surrealOne$
+            by \obv{uniform_step_value_at_zero_rank}.
+    \caseOf{$q\neq\emptyset$.}
+        Take a natural number $j$ such that $q=\suc{j}$
+            by \obv{natural_zero_or_successor}.
+        $\entryRank{d}{R}{x}=\suc{j+j}$ or
+            $\entryRank{d}{R}{x}=\suc{\suc{j+j}}$
+            by \auto{entry_rank_under_finite_interleave}.
+        \begin{byCase}
+        \caseOf{$\entryRank{d}{R}{x}=\suc{j+j}$.}
+            $\uniformStepValue{d}{R}{\suc{n}}{x}
+                =\surrealAdd{\uniformStepValue{c}{r}{n}{x}}
+                    {\surrealEpsilon{\suc{n}}}$
+                by \auto{uniform_step_value_at_inserted_rank}.
+            Follows by \auto.
+        \caseOf{$\entryRank{d}{R}{x}\neq\suc{j+j}$.}
+            Hence $\entryRank{d}{R}{x}=\suc{\suc{j+j}}$
+                by \auto.
+            $\uniformStepValue{d}{R}{\suc{n}}{x}
+                =\uniformStepValue{c}{r}{n}{x}$
+                by \auto{uniform_step_value_after_inserted_rank}.
+        \end{byCase}
+    \end{byCase}
+\end{proof}
+
+\begin{corollary}\label{open_chain_step_map_successor_bounds}
+    Let $X$ be a topological space.
+    Let $h$ be a normal shrinker for $X$.
+    Let $U,W\in\opens[X]$.
+    Suppose $\closure{U}{X}\subseteq W$.
+    Let $n$ be a natural number.
+    Let $x\in\carrier[X]$.
+    Then
+        $\surrealLe{
+            \apply{\openChainStepMap{X}{h}{U}{W}{n}}{x}}
+            {\apply{\openChainStepMap{X}{h}{U}{W}{\suc{n}}}{x}}$ and
+        $\surrealLe{
+            \apply{\openChainStepMap{X}{h}{U}{W}{\suc{n}}}{x}}
+            {\surrealAdd{
+                \apply{\openChainStepMap{X}{h}{U}{W}{n}}{x}}
+                {\surrealEpsilon{\suc{n}}}}$.
+\end{corollary}
+\begin{proof}
+    Let $a=\apply{\openChainStepMap{X}{h}{U}{W}{n}}{x}$.
+    Let $b=\apply{\openChainStepMap{X}{h}{U}{W}{\suc{n}}}{x}$.
+    Let $e=\surrealEpsilon{\suc{n}}$.
+    $\openChainStepMap{X}{h}{U}{W}{n}
+        \in\funs{\carrier[X]}{\reals}$
+        by \obv{open_chain_step_map_typed}.
+    Hence $a\in\reals$ by \auto{funs_type_apply}.
+    Hence $\surreal{a}$ by \obv{surreal_real_is_surreal}.
+    $\suc{n}$ is a natural number by \obv{omega_successor}.
+    Hence $\openChainStepMap{X}{h}{U}{W}{\suc{n}}
+        \in\funs{\carrier[X]}{\reals}$
+        by \obv{open_chain_step_map_typed}.
+    Hence $b\in\reals$ by \auto{funs_type_apply}.
+    Hence $\surreal{b}$ by \obv{surreal_real_is_surreal}.
+    $\surreal{e}$ by \auto{surreal_epsilon_is_surreal}.
+    $\surrealLt{\surrealZero}{e}$
+        by \auto{surreal_epsilon_positive,natural_number_is_ordinal}.
+    Hence $\surrealLe{\surrealZero}{e}$ by \obv{surreal_le}.
+    $\surrealLe{\surrealAdd{a}{\surrealZero}}{\surrealAdd{a}{e}}$
+        by \obv{surreal_add_le_right,empty_surreal}.
+    Hence $\surrealLe{a}{\surrealAdd{a}{e}}$
+        by \auto{surreal_add_zero_right}.
+    We have $b=a$ or $b=\surrealAdd{a}{e}$
+        by \auto{open_chain_step_map_successor_value}.
+    Follows by \auto{surreal_le_reflexive}.
+\end{proof}
+
+\subsection{The sequence of step maps}
+
+\begin{definition}\label{open_chain_step_maps}
+    $\openChainStepMaps{X}{h}{U}{W}
+        =\Apply{\graphOnDomainOp}
+            {\naturals,\fun{n:\Set}{\openChainStepMap{X}{h}{U}{W}{n}}}$.
+\end{definition}
+
+\begin{proposition}\label{open_chain_step_maps_apply}
+    Let $n$ be a natural number.
+    Then
+        $\apply{\openChainStepMaps{X}{h}{U}{W}}{n}
+            =\openChainStepMap{X}{h}{U}{W}{n}$.
+\end{proposition}
+\begin{proof}
+    Follows by
+        \auto{open_chain_step_maps,logical_graph_on_domain_apply}.
+\end{proof}
+
+\begin{theorem}\label{open_chain_step_maps_typed}
+    Let $X$ be a topological space.
+    Let $h$ be a normal shrinker for $X$.
+    Let $U,W\in\opens[X]$.
+    Suppose $\closure{U}{X}\subseteq W$.
+    Then
+        $\openChainStepMaps{X}{h}{U}{W}
+        \in\funs{\naturals}{\funs{\carrier[X]}{\reals}}$.
+\end{theorem}
+\begin{proof}
+    For every $n\in\naturals$ we have
+        $\openChainStepMap{X}{h}{U}{W}{n}
+            \in\funs{\carrier[X]}{\reals}$
+        by \auto{open_chain_step_map_typed}.
+    Follows by
+        \auto{open_chain_step_maps,logical_graph_on_domain_type}.
+\end{proof}
+
+\subsection{Oscillation on open rank cells}
+
+Two points in the same cell have equal or adjacent entry ranks. Their step
+values therefore differ by at most one mesh. The step maps themselves need
+not be continuous; this local estimate will give continuity of their limit.
+
+\begin{theorem}[Step-map oscillation on a cell]\label{open_chain_step_map_cell_oscillation}
+    Let $X$ be a topological space.
+    Let $h$ be a normal shrinker for $X$.
+    Let $U,W\in\opens[X]$.
+    Suppose $\closure{U}{X}\subseteq W$.
+    Let $n$ be a natural number.
+    Let $r=\openChainStepCount{X}{h}{U}{W}{n}$.
+    Let $c=\openChainAtLevel{X}{h}{U}{W}{n}$.
+    Let $D=\openChainRankCells{X}{c}{r}$.
+    Let $g=\openChainStepMap{X}{h}{U}{W}{n}$.
+    Let $d=\surrealEpsilon{n}$.
+    Let $k\in\suc{r}$.
+    Let $x,y\in D(k)$.
+    Then $\surrealLe{\abs{\surrealAdd{g(x)}{\surrealNeg{g(y)}}}}{d}$.
+\end{theorem}
+\begin{proof}
+    $r$ is a natural number and $r\neq\emptyset$ and
+        $c$ is a finite open chain with $r$ steps in $X$
+        by \auto{open_chain_level_components}.
+    $D\in\funs{\suc{r}}{\opens[X]}$
+        by \auto{open_chain_rank_cells_typed}.
+    Hence $D(k)\in\opens[X]$ by \auto{funs_type_apply}.
+    Hence $D(k)\subseteq\carrier[X]$
+        by \obv{opens_type,subseteq}.
+    Thus $x,y\in\carrier[X]$ by \auto{subseteq}.
+    $\suc{r}$ is a natural number by \obv{omega_successor}.
+    Hence $k$ is a natural number
+        by
+        \auto{naturals_is_transitive_set,transitiveset_iff_subseteq,subseteq}.
+    Show that
+        ($\entryRank{c}{r}{x}=k$ or
+            $\entryRank{c}{r}{x}=\suc{k}$) and
+        ($\entryRank{c}{r}{y}=k$ or
+            $\entryRank{c}{r}{y}=\suc{k}$).
+    \begin{subproof}
+        \begin{byCase}
+        \caseOf{$k=\emptyset$.}
+            $\entryRank{c}{r}{x}=\emptyset$ or
+                $\entryRank{c}{r}{x}=\suc{\emptyset}$
+                by \auto{open_chain_entry_rank_on_zero_cell}.
+            $\entryRank{c}{r}{y}=\emptyset$ or
+                $\entryRank{c}{r}{y}=\suc{\emptyset}$
+                by \auto{open_chain_entry_rank_on_zero_cell}.
+            Follows by \auto.
+        \caseOf{$k\neq\emptyset$.}
+            \begin{byCase}
+            \caseOf{$k=r$.}
+                $\entryRank{c}{r}{x}=r$ and
+                    $\entryRank{c}{r}{y}=r$
+                    by \auto{open_chain_entry_rank_on_last_cell}.
+            \caseOf{$k\neq r$.}
+                Hence $k\in r$ by \auto{suc_iff}.
+                $\entryRank{c}{r}{x}=k$ or
+                    $\entryRank{c}{r}{x}=\suc{k}$
+                    by \auto{open_chain_entry_rank_on_interior_cell}.
+                $\entryRank{c}{r}{y}=k$ or
+                    $\entryRank{c}{r}{y}=\suc{k}$
+                    by \auto{open_chain_entry_rank_on_interior_cell}.
+            \end{byCase}
+        \end{byCase}
+    \end{subproof}
+    $\surrealLe{
+        \abs{\surrealAdd{
+            \uniformStepValue{c}{r}{n}{x}}
+            {\surrealNeg{\uniformStepValue{c}{r}{n}{y}}}}}
+        {\surrealEpsilon{n}}$
+        by \auto{uniform_step_value_rank_cell_oscillation}.
+    $g(x)
+        =\uniformStepValue{c}{r}{n}{x}$ and
+        $g(y)
+        =\uniformStepValue{c}{r}{n}{y}$
+        by \auto{open_chain_step_map_apply}.
+    Follows by \auto.
+\end{proof}
