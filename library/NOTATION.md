@@ -246,9 +246,26 @@ assert that their relation argument is a relation.
 | `\gchPoints{\kappa}` | GCH points strictly below `\kappa` | set; bounded by `\kappa` | `silver/power-closure.tex` |
 | `\powerClosedBelow{\nu}{\kappa}` | every cardinal `\mu<\kappa` satisfies `\mu^\nu<\kappa` | proposition; the two parameters remain independent | `silver/power-closure.tex` |
 | `\eventuallyDifferent{f}{g}{\lambda}`, `\eventuallyDifferentFamily{F}{\lambda}` | the equality set is bounded in `\lambda`, pointwise for distinct members of `F` | raw bounded-agreement propositions; function and ordinal typing is supplied by consuming theorems | `silver/almost-disjoint.tex` |
-| `\silverCodeSpace{c}{\lambda}` | the indexed sum of support/function codes `\sum_{j<\lambda}(\mathcal P(\lambda)\times{}^\lambda c(j))` | set; the explicit common codomain for the P18 injection | `silver/almost-disjoint.tex` |
+| `\silverEventualEqualitySet{f}{g}{\lambda}` | indices below `\lambda` at which `f` and `g` agree | set; bounded by `\lambda` | `silver/almost-disjoint.tex` |
+| `\silverLimitSupport{T}{\lambda}` | limit-ordinal indices in `T` below `\lambda` | set; stationary when `T` is stationary in an uncountable regular `\lambda` | `silver/almost-disjoint.tex` |
+| `\silverRankCandidates{E}{c}{f}{i}` | indices `j<i` with `(E(i))(f(i))<c(j)` | total bounded set term; existence of a candidate uses continuity at `i` | `silver/almost-disjoint.tex` |
+| `\silverRankMap{E}{c}{f}{T}` | sends `i` to its least candidate rank | total set-coded graph; regressive under the coordinate-injection and limit-support hypotheses | `silver/almost-disjoint.tex` |
+| `\silverStationaryRanks{E}{c}{f}{T}{\lambda}` | ranks whose fibre is stationary in `\lambda` | set; bounded by `\lambda` | `silver/almost-disjoint.tex` |
+| `\silverRankIndex{E}{c}{f}{T}{\lambda}`, `\silverSupport{E}{c}{f}{T}{\lambda}` | least stationary rank and its fibre | total set terms; the least-rank and stationarity laws require the stated Fodor hypotheses | `silver/almost-disjoint.tex` |
+| `\silverPartialCode{E}{f}{S}`, `\silverTotalCode{E}{f}{S}{\lambda}` | coordinate values on `S`, and their extension by zero to `\lambda` | set-coded graphs; function-space membership has separate typing lemmas | `silver/almost-disjoint.tex` |
+| `\silverCode{E}{c}{f}{T}{\lambda}` | chosen rank, stationary support, and extended coordinate function | total nested ordered-pair term | `silver/almost-disjoint.tex` |
+| `\silverCodeFibres{c}{\lambda}` | sends `j` to `\mathcal P(\lambda)\times{}^\lambda c(j)` | set-coded function on `\lambda` | `silver/almost-disjoint.tex` |
+| `\silverCodeMap{E}{c}{F}{T}{\lambda}` | sends each `f\in F` to its stationary-support code | set-coded graph; injective under the eventually different family hypotheses | `silver/almost-disjoint.tex` |
+| `\silverCodeSpace{c}{\lambda}` | the indexed sum of support/function codes `\sum_{j<\lambda}(\mathcal P(\lambda)\times{}^\lambda c(j))` | set; the common codomain for stationary-support coding | `silver/almost-disjoint.tex` |
 | `\stationarySubsetsOf{T}{\lambda}` | stationary subsets of the fixed support `T` in `\lambda` | set; bounded by `\mathcal P(T)` | `silver/last-lemma.tex` |
-| `\silverNeighbourhood{E}{F}{f}{T}{\lambda}` | members of `F` coordinatewise below `f` on some stationary subset of `T`, after applying `E` | set; a subset of `F` | `silver/last-lemma.tex` |
+| `\silverNeighbourhood{E}{F}{f}{T}{\lambda}` | members of `F` coordinatewise at or below `f` on some stationary subset of `T`, after applying `E` | set; a subset of `F` | `silver/last-lemma.tex` |
+| `\silverBoundedOn{E}{f}{g}{S}` | `g` lies at or below `f` on `S` after applying the coordinate maps `E(i)` | proposition comparing the encoded values by inclusion | `silver/last-lemma.tex` |
+| `\silverSupportNeighbourhood{E}{F}{f}{S}` | members of `F` lying at or below `f` on the fixed support `S` | set; a subset of `F` | `silver/last-lemma.tex` |
+| `\silverSupportNeighbourhoodFamily{E}{F}{f}{T}{\lambda}` | neighbourhoods indexed by stationary subsets of `T` | set-coded function; its range union is the full lower neighbourhood | `silver/last-lemma.tex` |
+| `\silverCoordinateRange{G}{i}`, `\silverCoordinateFamily{G}{\lambda}` | values at coordinate `i` of members of `G`, and their indexed family | set and set-coded function on `\lambda` | `silver/last-lemma.tex` |
+| `\silverLessSet{E}{f}{g}{R}` | indices in `R` where the encoded value of `f` is strictly below that of `g` | set; bounded by `R` | `silver/last-lemma.tex` |
+| `\silverNeighbourhoodAssignment{E}{F}{T}{\lambda}` | sends each member of `F` to its stationary lower neighbourhood | set-coded function on `F` | `silver/last-lemma.tex` |
+| `\silverNeighbourhoodCover{N}{b}{I}` | the family `i\mapsto N(b(i))` of selected neighbourhoods | set-coded function on `I` | `silver/last-lemma.tex` |
 | `\silverPowersetFibres{c}{\lambda}` | the index-keyed family `i\mapsto\mathcal P(c(i))` | set-coded function on `\lambda` | `silver/theorem.tex` |
 | `\silverIntersectionCode{c}{X}{\lambda}` | the code `i\mapsto X\cap c(i)` | set-coded member of the corresponding dependent product | `silver/theorem.tex` |
 | `\silverIntersectionMap{c}{\kappa}{\lambda}` | sends every `X\subseteq\kappa` to its intersection code | set-coded injection into the dependent product when `c` is cofinal in the limit ordinal `\kappa` | `silver/theorem.tex` |
@@ -258,6 +275,12 @@ assert that their relation argument is a relation.
 
 Cardinal arithmetic cardinalizes its representing set. It does not identify a
 tagged sum, product, or function space with an initial ordinal.
+
+The Silver HTML notation places fixed data in subscripts: for example,
+`\silverIntersectionCode{c}{X}{\lambda}` displays as `\Phi_{c,\lambda}(X)`
+and `\silverNeighbourhood{E}{F}{f}{T}{\lambda}` as
+`N_{E,F,T,\lambda}(f)`. Every source argument remains visible.
+These display templates do not change the definitions or their hypotheses.
 
 ## Structures and algebra
 

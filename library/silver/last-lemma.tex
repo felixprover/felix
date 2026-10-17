@@ -2,15 +2,41 @@
 
 \import{silver/almost-disjoint.tex}
 
-The argument in this section uses neighbourhoods indexed by stationary
-supports.  All such supports are subsets of the fixed set $T$, and all
-neighbourhoods are subsets of the fixed family $F$.
+Identify each coordinate set with $\cardSucc{c(i)}$, where $c(i)$ is
+infinite. The lower neighbourhood of $f$ consists of functions whose values
+are at or below those of $f$ on some stationary subset of $T$.
+
+\subsection{Stationary lower neighbourhoods}
+
+The comparisons use bijections $E(i)$ from the coordinate sets to
+$\cardSucc{c(i)}$.
+In $\silverBoundedOn{E}{f}{g}{S}$, the function $g$ lies at or below $f$ on $S$.
 
 \begin{definition}\label{stationary_subsets_of}
     $\stationarySubsetsOf{T}{\lambda}
         =\{S\in\pow{T}\mid
             \text{$S$ is stationary in $\lambda$}\}$.
 \end{definition}
+
+\begin{proposition}\label{stationary_subsets_of_elim}
+    Let $S\in\stationarySubsetsOf{T}{\lambda}$.
+    Then $S\subseteq T$ and $S$ is stationary in $\lambda$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{stationary_subsets_of,powerset_elim}.
+\end{proof}
+
+\begin{proposition}\label{stationary_subsets_of_subseteq_powerset}
+    Suppose $T\subseteq\lambda$.
+    Then $\stationarySubsetsOf{T}{\lambda}\subseteq\pow{\lambda}$.
+\end{proposition}
+\begin{proof}
+    Every element of $\stationarySubsetsOf{T}{\lambda}$ is a subset of $T$
+        by \obv{stationary_subsets_of_elim}.
+    Hence every element of $\stationarySubsetsOf{T}{\lambda}$
+        is a subset of $\lambda$ by \obv{subseteq_transitive}.
+    Follows by \obv{subseteq,powerset_intro}.
+\end{proof}
 
 \begin{definition}\label{silver_bounded_on}
     $\silverBoundedOn{E}{f}{g}{S}$ iff
@@ -23,11 +49,41 @@ neighbourhoods are subsets of the fixed family $F$.
         =\{g\in F\mid \silverBoundedOn{E}{f}{g}{S}\}$.
 \end{definition}
 
+\begin{proposition}\label{silver_support_neighbourhood_subseteq}
+    $\silverSupportNeighbourhood{E}{F}{f}{S}\subseteq F$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{silver_support_neighbourhood,subseteq}.
+\end{proof}
+
 \begin{definition}\label{silver_support_neighbourhood_family}
     $\silverSupportNeighbourhoodFamily{E}{F}{f}{T}{\lambda}
         =\{(S,\silverSupportNeighbourhood{E}{F}{f}{S})
             \mid S\in\stationarySubsetsOf{T}{\lambda}\}$.
 \end{definition}
+
+\begin{proposition}\label{silver_support_neighbourhood_family_type}
+    Let $I=\stationarySubsetsOf{T}{\lambda}$.
+    Let $H=\silverSupportNeighbourhoodFamily{E}{F}{f}{T}{\lambda}$.
+    Then $H$ is a function on $I$ and
+        for every $S\in I$ we have
+            $H(S)=\silverSupportNeighbourhood{E}{F}{f}{S}$.
+\end{proposition}
+\begin{proof}
+    $H$ is a relation
+        by \auto{relation,silver_support_neighbourhood_family}.
+    $H$ is right-unique by
+        \auto{rightunique,silver_support_neighbourhood_family,pair_eq_iff}.
+    $\dom{H}=I$ by
+        \auto{setext,dom_iff,silver_support_neighbourhood_family,pair_eq_iff}.
+    Hence $H$ is a function on $I$.
+    For every $S\in I$ we have
+        $(S,\silverSupportNeighbourhood{E}{F}{f}{S})\in H$
+        by \auto{silver_support_neighbourhood_family}.
+    Hence for every $S\in I$ we have
+        $H(S)=\silverSupportNeighbourhood{E}{F}{f}{S}$
+        by \obv{function_apply_intro}.
+\end{proof}
 
 \begin{definition}\label{silver_neighbourhood}
     $\silverNeighbourhood{E}{F}{f}{T}{\lambda}
@@ -35,15 +91,60 @@ neighbourhoods are subsets of the fixed family $F$.
             \silverSupportNeighbourhoodFamily{E}{F}{f}{T}{\lambda}}}$.
 \end{definition}
 
-\begin{definition}\label{silver_neighbourhood_assignment}
-    $\silverNeighbourhoodAssignment{E}{F}{T}{\lambda}
-        =\{(f,\silverNeighbourhood{E}{F}{f}{T}{\lambda})\mid f\in F\}$.
-\end{definition}
+\begin{proposition}\label{silver_neighbourhood_iff}
+    Let $H=\silverSupportNeighbourhoodFamily{E}{F}{f}{T}{\lambda}$.
+    Then $g\in\silverNeighbourhood{E}{F}{f}{T}{\lambda}$ iff
+        there exists $S\in\stationarySubsetsOf{T}{\lambda}$ such that
+            $g\in\silverSupportNeighbourhood{E}{F}{f}{S}$.
+\end{proposition}
+\begin{proof}
+    $H$ is a function on $\stationarySubsetsOf{T}{\lambda}$ and
+        for every $S\in\stationarySubsetsOf{T}{\lambda}$ we have
+            $H(S)=\silverSupportNeighbourhood{E}{F}{f}{S}$
+        by \auto{silver_support_neighbourhood_family_type}.
+    Follows by \auto{silver_neighbourhood,unions_iff,fun_ran_iff}.
+\end{proof}
 
-\begin{definition}\label{silver_less_set}
-    $\silverLessSet{E}{f}{g}{R}
-        =\{i\in R\mid (E(i))(f(i))\in(E(i))(g(i))\}$.
-\end{definition}
+\begin{proposition}\label{silver_neighbourhood_subseteq}
+    $\silverNeighbourhood{E}{F}{f}{T}{\lambda}\subseteq F$.
+\end{proposition}
+\begin{proof}
+    Show that every element of $\silverNeighbourhood{E}{F}{f}{T}{\lambda}$
+        is an element of $F$.
+    \begin{subproof}
+        Fix $g\in\silverNeighbourhood{E}{F}{f}{T}{\lambda}$.
+        Take $S\in\stationarySubsetsOf{T}{\lambda}$ such that
+            $g\in\silverSupportNeighbourhood{E}{F}{f}{S}$
+            by \auto{silver_neighbourhood_iff}.
+        Follows by \obv{silver_support_neighbourhood_subseteq,subseteq}.
+    \end{subproof}
+    Follows by \obv{subseteq}.
+\end{proof}
+
+\begin{proposition}\label{silver_neighbourhood_reflexive}
+    Suppose $T$ is stationary in $\lambda$.
+    Let $f\in F$.
+    Then $f\in\silverNeighbourhood{E}{F}{f}{T}{\lambda}$.
+\end{proposition}
+\begin{proof}
+    $T\subseteq\lambda$ by \obv{stationary_in_elim}.
+    Hence $T\in\pow{T}$ by \obv{powerset_intro,subseteq_refl}.
+    Hence $T\in\stationarySubsetsOf{T}{\lambda}$
+        by \obv{stationary_subsets_of}.
+    For every $i\in T$ we have
+        $(E(i))(f(i))\subseteq(E(i))(f(i))$
+        by \obv{subseteq_refl}.
+    Hence $\silverBoundedOn{E}{f}{f}{T}$
+        by \obv{silver_bounded_on}.
+    Hence $f\in\silverSupportNeighbourhood{E}{F}{f}{T}$
+        by \obv{silver_support_neighbourhood}.
+    Follows by \auto{silver_neighbourhood_iff}.
+\end{proof}
+
+\subsection{Bounding a neighbourhood}
+
+The inclusive initial segment ending at $(E(i))(f(i))$ has cardinality
+at most $c(i)$. Thus the first bound applies on each stationary support.
 
 \begin{definition}\label{silver_coordinate_range}
     $\silverCoordinateRange{G}{i}=\{g(i)\mid g\in G\}$.
@@ -53,19 +154,6 @@ neighbourhoods are subsets of the fixed family $F$.
     $\silverCoordinateFamily{G}{\lambda}
         =\{(i,\silverCoordinateRange{G}{i})\mid i\in\lambda\}$.
 \end{definition}
-
-\begin{definition}\label{silver_neighbourhood_cover}
-    $\silverNeighbourhoodCover{N}{b}{I}
-        =\{(i,N(b(i)))\mid i\in I\}$.
-\end{definition}
-
-\begin{proposition}\label{stationary_subsets_of_elim}
-    Let $S\in\stationarySubsetsOf{T}{\lambda}$.
-    Then $S\subseteq T$ and $S$ is stationary in $\lambda$.
-\end{proposition}
-\begin{proof}
-    Follows by \obv{stationary_subsets_of,powerset_elim}.
-\end{proof}
 
 \begin{proposition}\label{silver_coordinate_family_type}
     Let $B=\silverCoordinateFamily{G}{\lambda}$.
@@ -86,65 +174,6 @@ neighbourhoods are subsets of the fixed family $F$.
     Hence for every $i\in\lambda$ we have
         $B(i)=\silverCoordinateRange{G}{i}$
         by \obv{function_apply_intro}.
-\end{proof}
-
-\begin{proposition}\label{silver_less_sets_partition_difference}
-    Suppose $\cardinalSequenceValues{c}{\lambda}$.
-    Suppose $T\subseteq\lambda$.
-    Suppose $A$ is a function on $\lambda$.
-    Suppose $E$ is a function on $T$.
-    Suppose for every $u\in T$ we have
-        $E(u)\in\bijections{A(u)}{\cardSucc{c(u)}}$.
-    Let $f\in\dependentProduct{\lambda}{A}$.
-    Let $g\in\dependentProduct{\lambda}{A}$.
-    Let $R=T\setminus\silverEventualEqualitySet{f}{g}{\lambda}$.
-    Let $L=\silverLessSet{E}{f}{g}{R}$.
-    Let $M=\silverLessSet{E}{g}{f}{R}$.
-    Then $R=L\union M$.
-\end{proposition}
-\begin{proof}
-    $L\subseteq R$ and $M\subseteq R$
-        by \auto{silver_less_set,subseteq}.
-    Hence $L\union M\subseteq R$ by \obv{subseteq_union_iff}.
-    Show that every element of $R$ is an element of $L\union M$.
-    \begin{subproof}
-        Fix $i\in R$.
-        Hence $i\in T$ and
-            $i\notin\silverEventualEqualitySet{f}{g}{\lambda}$
-            by \auto{setminus_elim_left,setminus_elim_right}.
-        Hence $i\in\lambda$ by \obv{subseteq}.
-        Hence $f(i)\neq g(i)$
-            by \auto{silver_eventual_equality_set}.
-        Hence $E(i)\in\bijections{A(i)}{\cardSucc{c(i)}}$.
-        Hence $E(i)\in\funs{A(i)}{\cardSucc{c(i)}}$
-            by \obv{bijections_to_funs}.
-        $f(i)\in A(i)$ by \obv{dependent_product_coordinate}.
-        $g(i)\in A(i)$ by \obv{dependent_product_coordinate}.
-        Hence $(E(i))(f(i))\in\cardSucc{c(i)}$
-            by \obv{funs_type_apply}.
-        Hence $(E(i))(g(i))\in\cardSucc{c(i)}$
-            by \obv{funs_type_apply}.
-        $E(i)\in\inj{A(i)}{\cardSucc{c(i)}}$ by
-            \auto{bijections_to_funs,bijection_is_function,bijections_dom,bijections,inj,injective_function}.
-        Show that $(E(i))(f(i))\neq(E(i))(g(i))$.
-        \begin{subproof}
-            Suppose $(E(i))(f(i))=(E(i))(g(i))$.
-            Hence $f(i)=g(i)$ by \obv{inj}.
-            Contradiction.
-        \end{subproof}
-        $c(i)$ is a cardinal by \obv{cardinal_sequence_values}.
-        Hence $\cardSucc{c(i)}$ is an ordinal
-            by \auto{cardinal_successor_is_cardinal,cardinal,initial_ordinal}.
-        Hence $(E(i))(f(i))$ and $(E(i))(g(i))$ are ordinals
-            by \obv{elem_of_ordinal_is_ordinal}.
-        Hence $(E(i))(f(i))\in(E(i))(g(i))$ or
-            $(E(i))(g(i))\in(E(i))(f(i))$
-            by \obv{ordinal_elem_connex}.
-        Hence $i\in L$ or $i\in M$ by \auto{silver_less_set}.
-        Follows by \obv{union_iff}.
-    \end{subproof}
-    Hence $R\subseteq L\union M$ by \obv{subseteq}.
-    Follows by \obv{subseteq_antisymmetric}.
 \end{proof}
 
 \begin{proposition}\label{silver_coordinate_range_iff}
@@ -193,119 +222,7 @@ neighbourhoods are subsets of the fixed family $F$.
         by \obv{subseteq}.
 \end{proof}
 
-\begin{proposition}\label{stationary_subsets_of_subseteq_powerset}
-    Suppose $T\subseteq\lambda$.
-    Then $\stationarySubsetsOf{T}{\lambda}\subseteq\pow{\lambda}$.
-\end{proposition}
-\begin{proof}
-    Every element of $\stationarySubsetsOf{T}{\lambda}$ is a subset of $T$
-        by \obv{stationary_subsets_of_elim}.
-    Hence every element of $\stationarySubsetsOf{T}{\lambda}$
-        is a subset of $\lambda$ by \obv{subseteq_transitive}.
-    Follows by \obv{subseteq,powerset_intro}.
-\end{proof}
-
-\begin{proposition}\label{silver_support_neighbourhood_subseteq}
-    $\silverSupportNeighbourhood{E}{F}{f}{S}\subseteq F$.
-\end{proposition}
-\begin{proof}
-    Follows by \obv{silver_support_neighbourhood,subseteq}.
-\end{proof}
-
-\begin{proposition}\label{silver_support_neighbourhood_family_type}
-    Let $I=\stationarySubsetsOf{T}{\lambda}$.
-    Let $H=\silverSupportNeighbourhoodFamily{E}{F}{f}{T}{\lambda}$.
-    Then $H$ is a function on $I$ and
-        for every $S\in I$ we have
-            $H(S)=\silverSupportNeighbourhood{E}{F}{f}{S}$.
-\end{proposition}
-\begin{proof}
-    $H$ is a relation
-        by \auto{relation,silver_support_neighbourhood_family}.
-    $H$ is right-unique by
-        \auto{rightunique,silver_support_neighbourhood_family,pair_eq_iff}.
-    $\dom{H}=I$ by
-        \auto{setext,dom_iff,silver_support_neighbourhood_family,pair_eq_iff}.
-    Hence $H$ is a function on $I$.
-    For every $S\in I$ we have
-        $(S,\silverSupportNeighbourhood{E}{F}{f}{S})\in H$
-        by \auto{silver_support_neighbourhood_family}.
-    Hence for every $S\in I$ we have
-        $H(S)=\silverSupportNeighbourhood{E}{F}{f}{S}$
-        by \obv{function_apply_intro}.
-\end{proof}
-
-\begin{proposition}\label{silver_neighbourhood_iff}
-    Let $H=\silverSupportNeighbourhoodFamily{E}{F}{f}{T}{\lambda}$.
-    Then $g\in\silverNeighbourhood{E}{F}{f}{T}{\lambda}$ iff
-        there exists $S\in\stationarySubsetsOf{T}{\lambda}$ such that
-            $g\in\silverSupportNeighbourhood{E}{F}{f}{S}$.
-\end{proposition}
-\begin{proof}
-    $H$ is a function on $\stationarySubsetsOf{T}{\lambda}$ and
-        for every $S\in\stationarySubsetsOf{T}{\lambda}$ we have
-            $H(S)=\silverSupportNeighbourhood{E}{F}{f}{S}$
-        by \auto{silver_support_neighbourhood_family_type}.
-    Follows by \auto{silver_neighbourhood,unions_iff,fun_ran_iff}.
-\end{proof}
-
-\begin{proposition}\label{silver_neighbourhood_subseteq}
-    $\silverNeighbourhood{E}{F}{f}{T}{\lambda}\subseteq F$.
-\end{proposition}
-\begin{proof}
-    Show that every element of $\silverNeighbourhood{E}{F}{f}{T}{\lambda}$
-        is an element of $F$.
-    \begin{subproof}
-        Fix $g\in\silverNeighbourhood{E}{F}{f}{T}{\lambda}$.
-        Take $S\in\stationarySubsetsOf{T}{\lambda}$ such that
-            $g\in\silverSupportNeighbourhood{E}{F}{f}{S}$
-            by \auto{silver_neighbourhood_iff}.
-        Follows by \obv{silver_support_neighbourhood_subseteq,subseteq}.
-    \end{subproof}
-    Follows by \obv{subseteq}.
-\end{proof}
-
-\begin{proposition}\label{silver_neighbourhood_assignment_type}
-    Let $N=\silverNeighbourhoodAssignment{E}{F}{T}{\lambda}$.
-    Then $N$ is a function on $F$ and for every $f\in F$ we have
-        $N(f)=\silverNeighbourhood{E}{F}{f}{T}{\lambda}$.
-\end{proposition}
-\begin{proof}
-    $N$ is a relation by \auto{relation,silver_neighbourhood_assignment}.
-    $N$ is right-unique
-        by \auto{rightunique,silver_neighbourhood_assignment,pair_eq_iff}.
-    $\dom{N}=F$
-        by \auto{setext,dom_iff,silver_neighbourhood_assignment,pair_eq_iff}.
-    Hence $N$ is a function on $F$.
-    For every $f\in F$ we have
-        $(f,\silverNeighbourhood{E}{F}{f}{T}{\lambda})\in N$
-        by \obv{silver_neighbourhood_assignment}.
-    Hence for every $f\in F$ we have
-        $N(f)=\silverNeighbourhood{E}{F}{f}{T}{\lambda}$
-        by \obv{function_apply_intro}.
-\end{proof}
-
-\begin{proposition}\label{silver_neighbourhood_reflexive}
-    Suppose $T$ is stationary in $\lambda$.
-    Let $f\in F$.
-    Then $f\in\silverNeighbourhood{E}{F}{f}{T}{\lambda}$.
-\end{proposition}
-\begin{proof}
-    $T\subseteq\lambda$ by \obv{stationary_in_elim}.
-    Hence $T\in\pow{T}$ by \obv{powerset_intro,subseteq_refl}.
-    Hence $T\in\stationarySubsetsOf{T}{\lambda}$
-        by \obv{stationary_subsets_of}.
-    For every $i\in T$ we have
-        $(E(i))(f(i))\subseteq(E(i))(f(i))$
-        by \obv{subseteq_refl}.
-    Hence $\silverBoundedOn{E}{f}{f}{T}$
-        by \obv{silver_bounded_on}.
-    Hence $f\in\silverSupportNeighbourhood{E}{F}{f}{T}$
-        by \obv{silver_support_neighbourhood}.
-    Follows by \auto{silver_neighbourhood_iff}.
-\end{proof}
-
-\begin{theorem}\label{silver_support_neighbourhood_cardinal_bound}
+\begin{theorem}[The bound on a fixed support]\label{silver_support_neighbourhood_cardinal_bound}
     Let $\kappa$ be a singular cardinal.
     Let $\lambda=\cofinality{\kappa}$.
     Suppose $\naturals\in\lambda$.
@@ -422,7 +339,10 @@ neighbourhoods are subsets of the fixed family $F$.
     Follows by \auto{silver_first_almost_disjoint_bound}.
 \end{proof}
 
-\begin{theorem}\label{silver_neighbourhood_cardinal_bound}
+Since $\card{\pow{\lambda}}<\kappa$, the union over stationary supports
+still has size at most $\kappa$.
+
+\begin{theorem}[The bound for a neighbourhood]\label{silver_neighbourhood_cardinal_bound}
     Let $\kappa$ be a singular cardinal.
     Let $\lambda=\cofinality{\kappa}$.
     Suppose $\naturals\in\lambda$.
@@ -472,7 +392,76 @@ neighbourhoods are subsets of the fixed family $F$.
         by \obv{silver_neighbourhood}.
 \end{proof}
 
-\begin{theorem}\label{silver_neighbourhood_orientation}
+\subsection{Comparing two functions}
+
+Outside their bounded agreement set, two functions are strictly comparable
+coordinatewise. One of the two comparison sets is stationary.
+
+\begin{definition}\label{silver_less_set}
+    $\silverLessSet{E}{f}{g}{R}
+        =\{i\in R\mid (E(i))(f(i))\in(E(i))(g(i))\}$.
+\end{definition}
+
+\begin{proposition}\label{silver_less_sets_partition_difference}
+    Suppose $\cardinalSequenceValues{c}{\lambda}$.
+    Suppose $T\subseteq\lambda$.
+    Suppose $A$ is a function on $\lambda$.
+    Suppose $E$ is a function on $T$.
+    Suppose for every $u\in T$ we have
+        $E(u)\in\bijections{A(u)}{\cardSucc{c(u)}}$.
+    Let $f\in\dependentProduct{\lambda}{A}$.
+    Let $g\in\dependentProduct{\lambda}{A}$.
+    Let $R=T\setminus\silverEventualEqualitySet{f}{g}{\lambda}$.
+    Let $L=\silverLessSet{E}{f}{g}{R}$.
+    Let $M=\silverLessSet{E}{g}{f}{R}$.
+    Then $R=L\union M$.
+\end{proposition}
+\begin{proof}
+    $L\subseteq R$ and $M\subseteq R$
+        by \auto{silver_less_set,subseteq}.
+    Hence $L\union M\subseteq R$ by \obv{subseteq_union_iff}.
+    Show that every element of $R$ is an element of $L\union M$.
+    \begin{subproof}
+        Fix $i\in R$.
+        Hence $i\in T$ and
+            $i\notin\silverEventualEqualitySet{f}{g}{\lambda}$
+            by \auto{setminus_elim_left,setminus_elim_right}.
+        Hence $i\in\lambda$ by \obv{subseteq}.
+        Hence $f(i)\neq g(i)$
+            by \auto{silver_eventual_equality_set}.
+        Hence $E(i)\in\bijections{A(i)}{\cardSucc{c(i)}}$.
+        Hence $E(i)\in\funs{A(i)}{\cardSucc{c(i)}}$
+            by \obv{bijections_to_funs}.
+        $f(i)\in A(i)$ by \obv{dependent_product_coordinate}.
+        $g(i)\in A(i)$ by \obv{dependent_product_coordinate}.
+        Hence $(E(i))(f(i))\in\cardSucc{c(i)}$
+            by \obv{funs_type_apply}.
+        Hence $(E(i))(g(i))\in\cardSucc{c(i)}$
+            by \obv{funs_type_apply}.
+        $E(i)\in\inj{A(i)}{\cardSucc{c(i)}}$ by
+            \auto{bijections_to_funs,bijection_is_function,bijections_dom,bijections,inj,injective_function}.
+        Show that $(E(i))(f(i))\neq(E(i))(g(i))$.
+        \begin{subproof}
+            Suppose $(E(i))(f(i))=(E(i))(g(i))$.
+            Hence $f(i)=g(i)$ by \obv{inj}.
+            Contradiction.
+        \end{subproof}
+        $c(i)$ is a cardinal by \obv{cardinal_sequence_values}.
+        Hence $\cardSucc{c(i)}$ is an ordinal
+            by \auto{cardinal_successor_is_cardinal,cardinal,initial_ordinal}.
+        Hence $(E(i))(f(i))$ and $(E(i))(g(i))$ are ordinals
+            by \obv{elem_of_ordinal_is_ordinal}.
+        Hence $(E(i))(f(i))\in(E(i))(g(i))$ or
+            $(E(i))(g(i))\in(E(i))(f(i))$
+            by \obv{ordinal_elem_connex}.
+        Hence $i\in L$ or $i\in M$ by \auto{silver_less_set}.
+        Follows by \obv{union_iff}.
+    \end{subproof}
+    Hence $R\subseteq L\union M$ by \obv{subseteq}.
+    Follows by \obv{subseteq_antisymmetric}.
+\end{proof}
+
+\begin{theorem}[Comparison on a stationary set]\label{silver_neighbourhood_orientation}
     Let $\lambda$ be a regular cardinal.
     Suppose $\naturals\in\lambda$.
     Suppose $\cardinalSequenceValues{c}{\lambda}$.
@@ -599,7 +588,18 @@ neighbourhoods are subsets of the fixed family $F$.
     \end{byCase}
 \end{proof}
 
-\begin{theorem}\label{oriented_neighbourhood_successor_bound}
+\subsection{Covering the family}
+
+Any $\cardSucc{\kappa}$ distinct members cover the family by their
+neighbourhoods: otherwise an uncovered member would have all of them in
+its own neighbourhood, contradicting the bound $\kappa$.
+
+\begin{definition}\label{silver_neighbourhood_cover}
+    $\silverNeighbourhoodCover{N}{b}{I}
+        =\{(i,N(b(i)))\mid i\in I\}$.
+\end{definition}
+
+\begin{theorem}[The neighbourhood covering lemma]\label{oriented_neighbourhood_successor_bound}
     Let $\kappa$ be an infinite cardinal.
     Suppose $N$ is a function on $F$.
     Suppose for every $x\in F$ we have $N(x)\subseteq F$ and
@@ -614,137 +614,108 @@ neighbourhoods are subsets of the fixed family $F$.
     $K$ is a cardinal by \obv{cardinal_successor_is_cardinal}.
     Hence $K$ is an initial ordinal by \obv{cardinal}.
     Hence $K$ is an ordinal by \obv{initial_ordinal}.
+    $\card{K}=K$ by \obv{card_of_cardinal}.
     $\card{F}$ is an initial ordinal
         by \obv{card_is_initial_ordinal}.
     Hence $\card{F}$ is an ordinal by \obv{initial_ordinal}.
     \begin{byCase}
         \caseOf{$\card{F}\subseteq K$.}
-            $\card{K}=K$ by \obv{card_of_cardinal}.
             Hence $\card{F}\subseteq\card{K}$.
             Follows by \obv{card_subseteq_iff_cardinal_le}.
         \caseOf{$\lnot(\card{F}\subseteq K)$.}
             $K\subseteq\card{F}$
                 by \obv{ordinal_subseteq_or_subseteq}.
-            $K\neq\card{F}$.
-            Hence $K\in\card{F}$
-                by \obv{ordinal_subseteq_implies_elem_or_eq}.
-            Hence $K\subseteq\card{F}$
-                by \obv{ordinal_elem_implies_subseteq}.
-            $\card{F}\approx F$ by \obv{card_equinumerous}.
-            Take $b$ such that $b\in\bijections{\card{F}}{F}$
-                by \obv{equinum}.
-            Hence $b\in\funs{\card{F}}{F}$
-                by \obv{bijections_to_funs}.
-            Hence $b$ is a function and $\dom{b}=\card{F}$
+            Hence $\card{K}\subseteq\card{F}$.
+            Hence $\cardLe{K}{F}$ by \obv{card_subseteq_iff_cardinal_le}.
+            Take $b$ such that $b\in\inj{K}{F}$ by \auto{cardinal_le}.
+            Hence $b\in\funs{K}{F}$ by \obv{inj}.
+            Hence $b$ is a function and $\dom{b}=K$
                 by \obv{funs_is_function,funs}.
-            $b$ is injective by \obv{bijections}.
-            $\ran{b}=F$ by \auto{bijections,surj,ran_of_surj}.
-            $b\in\inj{\card{F}}{F}$ by
-                \auto{bijections_to_funs,bijection_is_function,bijections_dom,bijections,inj,injective_function}.
-            Let $r=\restrl{b}{K}$.
-            Hence $r\in\inj{K}{F}$ by \auto{inj_restrl}.
-            Hence $r$ is a function and $\dom{r}=K$ and
-                $r$ is injective
-                by \auto{inj,funs_is_function,funs,injective_function}.
+            $b$ is injective by \auto{inj,injective_function}.
             Let $H=\silverNeighbourhoodCover{N}{b}{K}$.
             $H$ is a relation
                 by \auto{relation,silver_neighbourhood_cover}.
             $H$ is right-unique by
                 \auto{rightunique,silver_neighbourhood_cover,pair_eq_iff}.
-            Hence $H$ is a function.
             $\dom{H}=K$ by
                 \auto{setext,dom_iff,silver_neighbourhood_cover,pair_eq_iff}.
             Hence $H$ is a function on $K$.
             For every $i\in K$ we have $b(i)\in F$
-                by \obv{funs_type_apply,subseteq}.
-            Hence for every $i\in K$ we have
-                $H(i)=N(b(i))$
+                by \obv{funs_type_apply}.
+            Hence for every $i\in K$ we have $H(i)=N(b(i))$
                 by \auto{silver_neighbourhood_cover,function_apply_intro}.
-            Show that $F\subseteq\unions{\ran{H}}$.
+            Show that every element of $F$ is an element of
+                $\unions{\ran{H}}$.
             \begin{subproof}
-                Show that every element of $F$ is an element of
-                    $\unions{\ran{H}}$.
+                Fix $x\in F$.
+                Suppose not.
+                Show that for every $i\in K$ we have $b(i)\in N(x)$.
                 \begin{subproof}
-                    Fix $x\in F$.
-                    Hence $x\in\ran{b}$.
-                    Take $\alpha\in\dom{b}$ such that $b(\alpha)=x$
-                        by \auto{fun_ran_iff}.
-                    Hence $\alpha\in\card{F}$ by \auto.
-                    \begin{byCase}
-                        \caseOf{$\alpha\in K$.}
-                            Hence $H(\alpha)=N(b(\alpha))$.
-                            Hence $x\in H(\alpha)$ by \auto.
-                            $H(\alpha)\in\ran{H}$
-                                by \auto{fun_ran_iff}.
-                            Follows by \auto{unions_iff}.
-                        \caseOf{$\alpha\notin K$.}
-                            Suppose not.
-                            Show that $r\in\inj{K}{N(x)}$.
-                            \begin{subproof}
-                                Show that for every $i\in K$ we have
-                                    $r(i)\in N(x)$.
-                                \begin{subproof}
-                                    Fix $i\in K$.
-                                    Hence $H(i)=N(b(i))$.
-                                    $H(i)\in\ran{H}$
-                                        by \auto{fun_ran_iff}.
-                                    Hence $x\notin H(i)$
-                                        by \auto{unions_iff}.
-                                    Hence $x\notin N(b(i))$.
-                                    Show that $b(i)\neq x$.
-                                    \begin{subproof}
-                                        Suppose $b(i)=x$.
-                                        Hence $b(i)=b(\alpha)$.
-                                        Hence $i=\alpha$
-                                            by \obv{injective_function}.
-                                        Contradiction.
-                                    \end{subproof}
-                                    $b(i)\in F$.
-                                    Hence $b(i)\in N(x)$ or
-                                        $x\in N(b(i))$.
-                                    Hence $b(i)\in N(x)$.
-                                    $r(i)=b(i)$
-                                        by \auto{restrl_of_function_apply}.
-                                \end{subproof}
-                                Hence $r$ is a function to $N(x)$
-                                    by \auto.
-                                Hence $r\in\funs{K}{N(x)}$
-                                    by \obv{funs_intro}.
-                                Follows by \auto{inj,injective_function}.
-                            \end{subproof}
-                            Hence $\cardLe{K}{N(x)}$ by \auto{cardinal_le}.
-                            $\cardLe{N(x)}{\kappa}$ by \auto.
-                            Hence $\cardLe{K}{\kappa}$
-                                by \obv{cardinal_le_transitive}.
-                            Take $e$ such that $e\in\inj{K}{\kappa}$
-                                by \auto{cardinal_le}.
-                            $K=\hartogs{\kappa}$
-                                by \obv{cardinal_successor}.
-                            Contradiction by \auto{hartogs_theorem}.
-                    \end{byCase}
+                    Fix $i\in K$.
+                    $H(i)=N(b(i))$.
+                    $H(i)\in\ran{H}$ by \auto{fun_ran_iff}.
+                    Hence $x\notin H(i)$ by \auto{unions_iff}.
+                    Hence $x\notin N(b(i))$.
+                    $b(i)\in F$.
+                    Hence $b(i)\in N(b(i))$.
+                    Hence $b(i)\neq x$.
+                    Hence $b(i)\in N(x)$ or $x\in N(b(i))$.
+                    Hence $b(i)\in N(x)$.
                 \end{subproof}
-                Follows by \obv{subseteq}.
+                Hence $b$ is a function to $N(x)$.
+                Hence $b\in\funs{K}{N(x)}$ by \obv{funs_intro}.
+                Hence $b\in\inj{K}{N(x)}$ by \obv{inj,injective_function}.
+                Hence $\cardLe{K}{N(x)}$ by \obv{cardinal_le}.
+                $\cardLe{N(x)}{\kappa}$.
+                Hence $\cardLe{K}{\kappa}$ by \obv{cardinal_le_transitive}.
+                Take $e$ such that $e\in\inj{K}{\kappa}$ by \auto{cardinal_le}.
+                $K=\hartogs{\kappa}$ by \obv{cardinal_successor}.
+                Contradiction by \auto{hartogs_theorem}.
             \end{subproof}
+            Hence $F\subseteq\unions{\ran{H}}$ by \obv{subseteq}.
             $K$ is a regular cardinal
                 by \auto{infinite_cardinal_successor_is_regular}.
-            Hence $K$ is an infinite cardinal
-                by \obv{regular_cardinal}.
+            Hence $K$ is an infinite cardinal by \obv{regular_cardinal}.
             $\kappa\in K$ by \obv{cardinal_belongs_to_successor}.
-            Hence $\kappa\subseteq K$
-                by \obv{ordinal_elem_implies_subseteq}.
-            Hence $\cardLe{\kappa}{K}$
-                by \obv{subseteq_cardinal_le}.
+            Hence $\kappa\subseteq K$ by \obv{ordinal_elem_implies_subseteq}.
+            Hence $\cardLe{\kappa}{K}$ by \obv{subseteq_cardinal_le}.
             For every $i\in K$ we have $\cardLe{H(i)}{\kappa}$
                 by \auto.
             Hence for every $i\in K$ we have $\cardLe{H(i)}{K}$
                 by \auto{cardinal_le_transitive}.
-            $\cardLe{K}{K}$
-                by \obv{subseteq_refl,subseteq_cardinal_le}.
+            $\cardLe{K}{K}$ by \obv{subseteq_refl,subseteq_cardinal_le}.
             Follows by \auto{indexed_cover_infinite_cardinal_bound}.
     \end{byCase}
 \end{proof}
 
-\begin{theorem}\label{silver_second_almost_disjoint_bound}
+\subsection{The successor bound}
+
+\begin{definition}\label{silver_neighbourhood_assignment}
+    $\silverNeighbourhoodAssignment{E}{F}{T}{\lambda}
+        =\{(f,\silverNeighbourhood{E}{F}{f}{T}{\lambda})\mid f\in F\}$.
+\end{definition}
+
+\begin{proposition}\label{silver_neighbourhood_assignment_type}
+    Let $N=\silverNeighbourhoodAssignment{E}{F}{T}{\lambda}$.
+    Then $N$ is a function on $F$ and for every $f\in F$ we have
+        $N(f)=\silverNeighbourhood{E}{F}{f}{T}{\lambda}$.
+\end{proposition}
+\begin{proof}
+    $N$ is a relation by \auto{relation,silver_neighbourhood_assignment}.
+    $N$ is right-unique
+        by \auto{rightunique,silver_neighbourhood_assignment,pair_eq_iff}.
+    $\dom{N}=F$
+        by \auto{setext,dom_iff,silver_neighbourhood_assignment,pair_eq_iff}.
+    Hence $N$ is a function on $F$.
+    For every $f\in F$ we have
+        $(f,\silverNeighbourhood{E}{F}{f}{T}{\lambda})\in N$
+        by \obv{silver_neighbourhood_assignment}.
+    Hence for every $f\in F$ we have
+        $N(f)=\silverNeighbourhood{E}{F}{f}{T}{\lambda}$
+        by \obv{function_apply_intro}.
+\end{proof}
+
+\begin{theorem}[The successor bound for eventually different families]\label{silver_second_almost_disjoint_bound}
     Let $\kappa$ be a singular cardinal.
     Let $\lambda=\cofinality{\kappa}$.
     Suppose $\naturals\in\lambda$.
@@ -763,7 +734,7 @@ neighbourhoods are subsets of the fixed family $F$.
 \begin{proof}
     $\cardinalSequenceValues{c}{\lambda}$
         by \obv{infinite_cardinal_sequence_values_are_cardinal_values}.
-    Hence $\kappa$ is a limit ordinal
+    $\kappa$ is a limit ordinal
         by \obv{infinite_cardinal_is_limit_ordinal}.
     $\cofinality{\kappa}$ is a regular cardinal
         by \obv{cofinality_of_limit_is_regular}.

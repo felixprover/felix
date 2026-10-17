@@ -4,10 +4,7 @@
 \import{stationary/fodor.tex}
 \import{cardinal/families.tex}
 
-The next three definitions are deliberately raw bounded-agreement helpers.
-They inspect equality only at indices in $\lambda$; they do not themselves
-assert that $\lambda$ is an ordinal or that the compared sets are functions.
-The typed theorems below supply those hypotheses where they are needed.
+\subsection{Agreement and stationary supports}
 
 \begin{definition}\label{silver_eventual_equality_set}
     $\silverEventualEqualitySet{f}{g}{\lambda}
@@ -35,10 +32,62 @@ The typed theorems below supply those hypotheses where they are needed.
     Follows by \obv{eventually_different_family,subseteq}.
 \end{proof}
 
+\begin{proposition}\label{silver_eventual_equality_set_subseteq}
+    $\silverEventualEqualitySet{f}{g}{\lambda}\subseteq\lambda$.
+\end{proposition}
+\begin{proof}
+    Follows by \obv{silver_eventual_equality_set,subseteq}.
+\end{proof}
+
+\begin{proposition}\label{eventually_different_agreement_set_nonstationary}
+    Let $\lambda$ be a limit ordinal.
+    Suppose $S\subseteq\lambda$.
+    Suppose $\eventuallyDifferent{f}{g}{\lambda}$.
+    Suppose for every $i\in S$ we have $f(i)=g(i)$.
+    Then $\nonstationaryIn{S}{\lambda}$.
+\end{proposition}
+\begin{proof}
+    Take $\beta\in\lambda$ such that
+        $\silverEventualEqualitySet{f}{g}{\lambda}\subseteq\beta$
+        by \auto{eventually_different,ordinal_bounded}.
+    $S\subseteq\silverEventualEqualitySet{f}{g}{\lambda}$
+        by \obv{subseteq,silver_eventual_equality_set}.
+    Hence $S\subseteq\beta$ by \obv{subseteq_transitive}.
+    Hence $\ordinalBounded{S}{\lambda}$
+        by \obv{ordinal_bounded}.
+    Follows by \obv{bounded_is_nonstationary}.
+\end{proof}
+
+We restrict the support to limit indices of the normal sequence, where
+continuity gives regressive ranks.
+
 \begin{definition}\label{silver_limit_support}
     $\silverLimitSupport{T}{\lambda}
         =T\inter\limitOrdinalsBelow{\lambda}$.
 \end{definition}
+
+\begin{theorem}\label{silver_limit_support_is_stationary}
+    Let $\lambda$ be a regular cardinal.
+    Suppose $\naturals\in\lambda$.
+    Suppose $T$ is stationary in $\lambda$.
+    Then $\silverLimitSupport{T}{\lambda}$ is stationary in $\lambda$.
+\end{theorem}
+\begin{proof}
+    $\lambda$ is an infinite cardinal and
+        $\cofinality{\lambda}=\lambda$ by \obv{regular_cardinal}.
+    Hence $\naturals\in\cofinality{\lambda}$.
+    $\clubIn{\limitOrdinalsBelow{\lambda}}{\lambda}$
+        by \obv{limit_ordinals_below_is_club}.
+    $T\inter\limitOrdinalsBelow{\lambda}$ is stationary in $\lambda$
+        by \obv{stationary_intersection_club}.
+    Follows by \obv{silver_limit_support}.
+\end{proof}
+
+\subsection{Pressing down the coordinate ranks}
+
+Choose coordinate injections $E(i)$ from $A(i)$ into $c(i)$ on the support.
+At a limit index $i$, the ordinal $(E(i))(f(i))$ belongs to some $c(j)$
+with $j<i$. The rank of $f$ at $i$ is the least such $j$.
 
 \begin{definition}\label{silver_rank_candidates}
     $\silverRankCandidates{E}{c}{f}{i}
@@ -50,6 +99,137 @@ The typed theorems below supply those hypotheses where they are needed.
         =\{(i,\inters{\silverRankCandidates{E}{c}{f}{i}})
             \mid i\in T\}$.
 \end{definition}
+
+\begin{proposition}\label{silver_rank_candidates_inhabited}
+    Suppose $\normalMap{c}{\lambda}{\kappa}$.
+    Suppose $T\subseteq\limitOrdinalsBelow{\lambda}$.
+    Suppose $A$ is a function on $\lambda$.
+    Suppose $E$ is a function on $T$.
+    Suppose for every $j\in T$ we have
+        $E(j)\in\inj{A(j)}{c(j)}$.
+    Let $f\in\dependentProduct{\lambda}{A}$.
+    Let $i\in T$.
+    Then $\silverRankCandidates{E}{c}{f}{i}$ is inhabited.
+\end{proposition}
+\begin{proof}
+    $i\in\limitOrdinalsBelow{\lambda}$ by \obv{subseteq}.
+    Hence $i\in\lambda$ by \obv{limit_ordinals_below}.
+    Hence $i$ is a limit ordinal by \obv{limit_ordinals_below}.
+    $\lambda$ is an ordinal by \auto{normal_map_type}.
+    $c\in\funs{\lambda}{\kappa}$
+        by \obv{normal_map_type}.
+    Hence $c$ is a function and $\dom{c}=\lambda$
+        by \obv{funs_is_function,funs}.
+    $f(i)\in A(i)$ by \obv{dependent_product_coordinate}.
+    $E(i)\in\inj{A(i)}{c(i)}$.
+    Hence $(E(i))(f(i))\in c(i)$ by \auto{inj,funs_type_apply}.
+    $c(i)=\unions{\ran{\restrl{c}{i}}}$
+        by \obv{normal_map_continuous_elim}.
+    Let $r=\restrl{c}{i}$.
+    Hence $c(i)=\unions{\ran{r}}$.
+    Hence $(E(i))(f(i))\in\unions{\ran{r}}$.
+    Take $z\in\ran{r}$ such that $(E(i))(f(i))\in z$
+        by \obv{unions_iff}.
+    $r$ is a function by \obv{restrl_of_function_is_function}.
+    $i\subseteq\lambda$ by \obv{ordinal_elem_implies_subseteq}.
+    Hence $\dom{r}=i$
+        by \auto{dom_of_restrl_eq_inter,inter_absorb_supseteq_left}.
+    Take $j\in\dom{r}$ such that $r(j)=z$
+        by \obv{fun_ran_iff}.
+    Hence $j\in i$.
+    $r(j)=c(j)$ by \auto{restrl_of_function_apply}.
+    Hence $(E(i))(f(i))\in c(j)$.
+    Hence $j\in\silverRankCandidates{E}{c}{f}{i}$
+        by \obv{silver_rank_candidates}.
+\end{proof}
+
+\begin{proposition}\label{silver_rank_value_properties}
+    Suppose $\normalMap{c}{\lambda}{\kappa}$.
+    Suppose $T\subseteq\limitOrdinalsBelow{\lambda}$.
+    Suppose $A$ is a function on $\lambda$.
+    Suppose $E$ is a function on $T$.
+    Suppose for every $j\in T$ we have
+        $E(j)\in\inj{A(j)}{c(j)}$.
+    Let $f\in\dependentProduct{\lambda}{A}$.
+    Let $i\in T$.
+    Let $R=\silverRankCandidates{E}{c}{f}{i}$.
+    Then $\inters{R}\in i$ and $(E(i))(f(i))\in c(\inters{R})$.
+\end{proposition}
+\begin{proof}
+    $R$ is inhabited by \auto{silver_rank_candidates_inhabited}.
+    $i\in\limitOrdinalsBelow{\lambda}$ by \obv{subseteq}.
+    Hence $i$ is a limit ordinal by \obv{limit_ordinals_below}.
+    Hence $i$ is an ordinal by \obv{limit_ordinal}.
+    For every $j\in R$ we have $j\in i$
+        by \auto{silver_rank_candidates}.
+    Hence for every $j\in R$ we have $j$ is an ordinal
+        by \obv{elem_of_ordinal_is_ordinal}.
+    $\inters{R}\in R$ by \obv{inters_of_ordinals_elem}.
+    Hence $\inters{R}\in i$ and $(E(i))(f(i))\in c(\inters{R})$
+        by \auto{silver_rank_candidates}.
+\end{proof}
+
+\begin{theorem}[The rank map is regressive]\label{silver_rank_map_type_and_regressive}
+    Suppose $\normalMap{c}{\lambda}{\kappa}$.
+    Suppose $T\subseteq\limitOrdinalsBelow{\lambda}$.
+    Suppose $A$ is a function on $\lambda$.
+    Suppose $E$ is a function on $T$.
+    Suppose for every $j\in T$ we have
+        $E(j)\in\inj{A(j)}{c(j)}$.
+    Let $f\in\dependentProduct{\lambda}{A}$.
+    Let $r=\silverRankMap{E}{c}{f}{T}$.
+    Then $r\in\funs{T}{\lambda}$ and $r$ is regressive on $T$.
+\end{theorem}
+\begin{proof}
+    $\lambda$ is an ordinal by \auto{normal_map_type}.
+    $r$ is a relation by \auto{relation,silver_rank_map}.
+    $r$ is right-unique
+        by \auto{rightunique,silver_rank_map,pair_eq_iff}.
+    $\dom{r}=T$
+        by \auto{setext,dom_iff,silver_rank_map,pair_eq_iff}.
+    Show that for every $i\in T$ we have $r(i)\in i$ and
+        $r(i)\in\lambda$.
+    \begin{subproof}
+        Fix $i\in T$.
+        Let $R=\silverRankCandidates{E}{c}{f}{i}$.
+        $\inters{R}\in i$ by \auto{silver_rank_value_properties}.
+        $(i,\inters{R})\in r$ by \obv{silver_rank_map}.
+        Hence $r(i)=\inters{R}$ by \obv{function_apply_intro}.
+        $i\in\limitOrdinalsBelow{\lambda}$ by \obv{subseteq}.
+        Hence $i\in\lambda$ by \obv{limit_ordinals_below}.
+        Hence $r(i)\in\lambda$ by \obv{ordinal_transitivity}.
+    \end{subproof}
+    Hence $r$ is a function to $\lambda$.
+    Hence $r\in\funs{T}{\lambda}$ by \obv{funs_intro}.
+    For every $i\in T\setminus\{\emptyset\}$ we have $r(i)\in i$
+        by \obv{setminus_elim_left}.
+    Hence $r$ is regressive on $T$ by \obv{regressive_on}.
+\end{proof}
+
+\begin{proposition}\label{silver_rank_map_codes_value}
+    Suppose $\normalMap{c}{\lambda}{\kappa}$.
+    Suppose $T\subseteq\limitOrdinalsBelow{\lambda}$.
+    Suppose $A$ is a function on $\lambda$.
+    Suppose $E$ is a function on $T$.
+    Suppose for every $j\in T$ we have
+        $E(j)\in\inj{A(j)}{c(j)}$.
+    Let $f\in\dependentProduct{\lambda}{A}$.
+    Let $i\in T$.
+    Let $r=\silverRankMap{E}{c}{f}{T}$.
+    Then $(E(i))(f(i))\in c(r(i))$.
+\end{proposition}
+\begin{proof}
+    $r$ is a function by
+        \auto{silver_rank_map_type_and_regressive,funs_is_function}.
+    Let $R=\silverRankCandidates{E}{c}{f}{i}$.
+    $(i,\inters{R})\in r$ by \obv{silver_rank_map}.
+    Hence $r(i)=\inters{R}$ by \obv{function_apply_intro}.
+    $(E(i))(f(i))\in c(\inters{R})$
+        by \auto{silver_rank_value_properties}.
+\end{proof}
+
+Choose the least rank whose fibre is stationary; that fibre will be the
+support of the code.
 
 \begin{definition}\label{silver_stationary_ranks}
     $\silverStationaryRanks{E}{c}{f}{T}{\lambda}
@@ -68,6 +248,92 @@ The typed theorems below supply those hypotheses where they are needed.
         =\fibre{\silverRankMap{E}{c}{f}{T}}
             {\silverRankIndex{E}{c}{f}{T}{\lambda}}$.
 \end{definition}
+
+\begin{theorem}\label{silver_stationary_ranks_inhabited}
+    Let $\lambda$ be a regular cardinal.
+    Suppose $\naturals\in\lambda$.
+    Suppose $\normalMap{c}{\lambda}{\kappa}$.
+    Suppose $T\subseteq\limitOrdinalsBelow{\lambda}$.
+    Suppose $T$ is stationary in $\lambda$.
+    Suppose $A$ is a function on $\lambda$.
+    Suppose $E$ is a function on $T$.
+    Suppose for every $j\in T$ we have
+        $E(j)\in\inj{A(j)}{c(j)}$.
+    Let $f\in\dependentProduct{\lambda}{A}$.
+    Then $\silverStationaryRanks{E}{c}{f}{T}{\lambda}$ is inhabited.
+\end{theorem}
+\begin{proof}
+    Let $r=\silverRankMap{E}{c}{f}{T}$.
+    $r\in\funs{T}{\lambda}$ and $r$ is regressive on $T$
+        by \obv{silver_rank_map_type_and_regressive}.
+    Take $j\in\lambda$ such that
+        $\fibre{r}{j}$ is stationary in $\lambda$ by \obv{fodor}.
+    $j\in\silverStationaryRanks{E}{c}{f}{T}{\lambda}$
+        by \obv{silver_stationary_ranks}.
+\end{proof}
+
+\begin{theorem}[A stationary support with bounded coordinate values]\label{silver_support_properties}
+    Let $\lambda$ be a regular cardinal.
+    Suppose $\naturals\in\lambda$.
+    Suppose $\normalMap{c}{\lambda}{\kappa}$.
+    Suppose $T\subseteq\limitOrdinalsBelow{\lambda}$.
+    Suppose $T$ is stationary in $\lambda$.
+    Suppose $A$ is a function on $\lambda$.
+    Suppose $E$ is a function on $T$.
+    Suppose for every $u\in T$ we have
+        $E(u)\in\inj{A(u)}{c(u)}$.
+    Let $f\in\dependentProduct{\lambda}{A}$.
+    Let $m=\silverRankIndex{E}{c}{f}{T}{\lambda}$.
+    Let $S=\silverSupport{E}{c}{f}{T}{\lambda}$.
+    Then $m\in\lambda$ and $S\subseteq T$ and
+        $S$ is stationary in $\lambda$ and
+        for every $i\in S$ we have $(E(i))(f(i))\in c(m)$.
+\end{theorem}
+\begin{proof}
+    $\lambda$ is a limit ordinal
+        by \obv{infinite_cardinal_is_limit_ordinal}.
+    Hence $\lambda$ is an ordinal by \obv{limit_ordinal}.
+    Let $R=\silverStationaryRanks{E}{c}{f}{T}{\lambda}$.
+    $R$ is inhabited by \auto{silver_stationary_ranks_inhabited}.
+    For every $q\in R$ we have $q\in\lambda$
+        by \auto{silver_stationary_ranks}.
+    Hence for every $q\in R$ we have $q$ is an ordinal
+        by \obv{elem_of_ordinal_is_ordinal}.
+    $\inters{R}\in R$ by \obv{inters_of_ordinals_elem}.
+    $m=\inters{R}$ by \auto{silver_rank_index}.
+    Hence $m\in R$.
+    Hence $m\in\lambda$ and
+        $\fibre{\silverRankMap{E}{c}{f}{T}}{m}$ is stationary in $\lambda$
+        by \obv{silver_stationary_ranks}.
+    $S=\fibre{\silverRankMap{E}{c}{f}{T}}{m}$
+        by \auto{silver_support}.
+    Hence $S$ is stationary in $\lambda$.
+    Let $r=\silverRankMap{E}{c}{f}{T}$.
+    $r\in\funs{T}{\lambda}$
+        by \auto{silver_rank_map_type_and_regressive}.
+    Hence $r$ is a function and $\dom{r}=T$
+        by \obv{funs_is_function,funs}.
+    $S\subseteq\dom{r}$
+        by \auto{subseteq,function_fibre_iff}.
+    Hence $S\subseteq T$.
+    Show that for every $i\in S$ we have $(E(i))(f(i))\in c(m)$.
+    \begin{subproof}
+        Fix $i\in S$.
+        Hence $i\in\fibre{r}{m}$.
+        Hence $i\in\dom{r}$ and $r(i)=m$
+            by \obv{function_fibre_iff}.
+        Hence $i\in T$.
+        $(E(i))(f(i))\in c(r(i))$
+            by \obv{silver_rank_map_codes_value}.
+    \end{subproof}
+\end{proof}
+
+\subsection{Coding on the stationary support}
+
+On the chosen support $S$, record the values $(E(i))(f(i))$ and extend by
+zero off $S$. If the chosen rank is $m$, this gives a function from $\lambda$
+to $c(m)$. The code records $m$, the support $S$, and this function.
+Recording $S$ ensures that equal codes agree on the same stationary set.
 
 \begin{definition}\label{silver_partial_code}
     $\silverPartialCode{E}{f}{S}
@@ -103,13 +369,6 @@ The typed theorems below supply those hypotheses where they are needed.
     $\silverCodeMap{E}{c}{F}{T}{\lambda}
         =\{(f,\silverCode{E}{c}{f}{T}{\lambda})\mid f\in F\}$.
 \end{definition}
-
-\begin{proposition}\label{silver_eventual_equality_set_subseteq}
-    $\silverEventualEqualitySet{f}{g}{\lambda}\subseteq\lambda$.
-\end{proposition}
-\begin{proof}
-    Follows by \obv{silver_eventual_equality_set,subseteq}.
-\end{proof}
 
 \begin{proposition}\label{silver_partial_code_type}
     Suppose for every $u\in S$ we have $(E(u))(f(u))\in B$.
@@ -205,249 +464,6 @@ The typed theorems below supply those hypotheses where they are needed.
         by \auto{function_domain_extension_off_range}.
 \end{proof}
 
-\begin{proposition}\label{eventually_different_agreement_set_nonstationary}
-    Let $\lambda$ be a limit ordinal.
-    Suppose $S\subseteq\lambda$.
-    Suppose $\eventuallyDifferent{f}{g}{\lambda}$.
-    Suppose for every $i\in S$ we have $f(i)=g(i)$.
-    Then $\nonstationaryIn{S}{\lambda}$.
-\end{proposition}
-\begin{proof}
-    Take $\beta\in\lambda$ such that
-        $\silverEventualEqualitySet{f}{g}{\lambda}\subseteq\beta$
-        by \auto{eventually_different,ordinal_bounded}.
-    $S\subseteq\silverEventualEqualitySet{f}{g}{\lambda}$
-        by \obv{subseteq,silver_eventual_equality_set}.
-    Hence $S\subseteq\beta$ by \obv{subseteq_transitive}.
-    Hence $\ordinalBounded{S}{\lambda}$
-        by \obv{ordinal_bounded}.
-    Follows by \obv{bounded_is_nonstationary}.
-\end{proof}
-
-\begin{theorem}\label{silver_limit_support_is_stationary}
-    Let $\lambda$ be a regular cardinal.
-    Suppose $\naturals\in\lambda$.
-    Suppose $T$ is stationary in $\lambda$.
-    Then $\silverLimitSupport{T}{\lambda}$ is stationary in $\lambda$.
-\end{theorem}
-\begin{proof}
-    $\lambda$ is an infinite cardinal and
-        $\cofinality{\lambda}=\lambda$ by \obv{regular_cardinal}.
-    Hence $\naturals\in\cofinality{\lambda}$.
-    $\clubIn{\limitOrdinalsBelow{\lambda}}{\lambda}$
-        by \obv{limit_ordinals_below_is_club}.
-    $T\inter\limitOrdinalsBelow{\lambda}$ is stationary in $\lambda$
-        by \obv{stationary_intersection_club}.
-    Follows by \obv{silver_limit_support}.
-\end{proof}
-
-\begin{proposition}\label{silver_rank_candidates_inhabited}
-    Suppose $\normalMap{c}{\lambda}{\kappa}$.
-    Suppose $T\subseteq\limitOrdinalsBelow{\lambda}$.
-    Suppose $A$ is a function on $\lambda$.
-    Suppose $E$ is a function on $T$.
-    Suppose for every $j\in T$ we have
-        $E(j)\in\inj{A(j)}{c(j)}$.
-    Let $f\in\dependentProduct{\lambda}{A}$.
-    Let $i\in T$.
-    Then $\silverRankCandidates{E}{c}{f}{i}$ is inhabited.
-\end{proposition}
-\begin{proof}
-    $i\in\limitOrdinalsBelow{\lambda}$ by \obv{subseteq}.
-    Hence $i\in\lambda$ by \obv{limit_ordinals_below}.
-    Hence $i$ is a limit ordinal by \obv{limit_ordinals_below}.
-    $\lambda$ is an ordinal by \auto{normal_map_type}.
-    $c\in\funs{\lambda}{\kappa}$
-        by \obv{normal_map_type}.
-    Hence $c$ is a function and $\dom{c}=\lambda$
-        by \obv{funs_is_function,funs}.
-    $f(i)\in A(i)$ by \obv{dependent_product_coordinate}.
-    $E(i)\in\inj{A(i)}{c(i)}$.
-    Hence $(E(i))(f(i))\in c(i)$ by \auto{inj,funs_type_apply}.
-    $c(i)=\unions{\ran{\restrl{c}{i}}}$
-        by \obv{normal_map_continuous_elim}.
-    Let $r=\restrl{c}{i}$.
-    Hence $c(i)=\unions{\ran{r}}$.
-    Hence $(E(i))(f(i))\in\unions{\ran{r}}$.
-    Take $z\in\ran{r}$ such that $(E(i))(f(i))\in z$
-        by \obv{unions_iff}.
-    $r$ is a function by \obv{restrl_of_function_is_function}.
-    $i\subseteq\lambda$ by \obv{ordinal_elem_implies_subseteq}.
-    Hence $\dom{r}=i$
-        by \auto{dom_of_restrl_eq_inter,inter_absorb_supseteq_left}.
-    Take $j\in\dom{r}$ such that $r(j)=z$
-        by \obv{fun_ran_iff}.
-    Hence $j\in i$.
-    $r(j)=c(j)$ by \auto{restrl_of_function_apply}.
-    Hence $(E(i))(f(i))\in c(j)$.
-    Hence $j\in\silverRankCandidates{E}{c}{f}{i}$
-        by \obv{silver_rank_candidates}.
-\end{proof}
-
-\begin{proposition}\label{silver_rank_value_properties}
-    Suppose $\normalMap{c}{\lambda}{\kappa}$.
-    Suppose $T\subseteq\limitOrdinalsBelow{\lambda}$.
-    Suppose $A$ is a function on $\lambda$.
-    Suppose $E$ is a function on $T$.
-    Suppose for every $j\in T$ we have
-        $E(j)\in\inj{A(j)}{c(j)}$.
-    Let $f\in\dependentProduct{\lambda}{A}$.
-    Let $i\in T$.
-    Let $R=\silverRankCandidates{E}{c}{f}{i}$.
-    Then $\inters{R}\in i$ and $(E(i))(f(i))\in c(\inters{R})$.
-\end{proposition}
-\begin{proof}
-    $R$ is inhabited by \auto{silver_rank_candidates_inhabited}.
-    $i\in\limitOrdinalsBelow{\lambda}$ by \obv{subseteq}.
-    Hence $i$ is a limit ordinal by \obv{limit_ordinals_below}.
-    Hence $i$ is an ordinal by \obv{limit_ordinal}.
-    For every $j\in R$ we have $j\in i$
-        by \auto{silver_rank_candidates}.
-    Hence for every $j\in R$ we have $j$ is an ordinal
-        by \obv{elem_of_ordinal_is_ordinal}.
-    $\inters{R}\in R$ by \obv{inters_of_ordinals_elem}.
-    Hence $\inters{R}\in i$ and $(E(i))(f(i))\in c(\inters{R})$
-        by \auto{silver_rank_candidates}.
-\end{proof}
-
-\begin{theorem}\label{silver_rank_map_type_and_regressive}
-    Suppose $\normalMap{c}{\lambda}{\kappa}$.
-    Suppose $T\subseteq\limitOrdinalsBelow{\lambda}$.
-    Suppose $A$ is a function on $\lambda$.
-    Suppose $E$ is a function on $T$.
-    Suppose for every $j\in T$ we have
-        $E(j)\in\inj{A(j)}{c(j)}$.
-    Let $f\in\dependentProduct{\lambda}{A}$.
-    Let $r=\silverRankMap{E}{c}{f}{T}$.
-    Then $r\in\funs{T}{\lambda}$ and $r$ is regressive on $T$.
-\end{theorem}
-\begin{proof}
-    $\lambda$ is an ordinal by \auto{normal_map_type}.
-    $r$ is a relation by \auto{relation,silver_rank_map}.
-    $r$ is right-unique
-        by \auto{rightunique,silver_rank_map,pair_eq_iff}.
-    $\dom{r}=T$
-        by \auto{setext,dom_iff,silver_rank_map,pair_eq_iff}.
-    Show that for every $i\in T$ we have $r(i)\in i$ and
-        $r(i)\in\lambda$.
-    \begin{subproof}
-        Fix $i\in T$.
-        Let $R=\silverRankCandidates{E}{c}{f}{i}$.
-        $\inters{R}\in i$ by \auto{silver_rank_value_properties}.
-        $(i,\inters{R})\in r$ by \obv{silver_rank_map}.
-        Hence $r(i)=\inters{R}$ by \obv{function_apply_intro}.
-        $i\in\limitOrdinalsBelow{\lambda}$ by \obv{subseteq}.
-        Hence $i\in\lambda$ by \obv{limit_ordinals_below}.
-        Hence $r(i)\in\lambda$ by \obv{ordinal_transitivity}.
-    \end{subproof}
-    Hence $r$ is a function to $\lambda$.
-    Hence $r\in\funs{T}{\lambda}$ by \obv{funs_intro}.
-    For every $i\in T\setminus\{\emptyset\}$ we have $r(i)\in i$
-        by \obv{setminus_elim_left}.
-    Hence $r$ is regressive on $T$ by \obv{regressive_on}.
-\end{proof}
-
-\begin{proposition}\label{silver_rank_map_codes_value}
-    Suppose $\normalMap{c}{\lambda}{\kappa}$.
-    Suppose $T\subseteq\limitOrdinalsBelow{\lambda}$.
-    Suppose $A$ is a function on $\lambda$.
-    Suppose $E$ is a function on $T$.
-    Suppose for every $j\in T$ we have
-        $E(j)\in\inj{A(j)}{c(j)}$.
-    Let $f\in\dependentProduct{\lambda}{A}$.
-    Let $i\in T$.
-    Let $r=\silverRankMap{E}{c}{f}{T}$.
-    Then $(E(i))(f(i))\in c(r(i))$.
-\end{proposition}
-\begin{proof}
-    $r$ is a function by
-        \auto{silver_rank_map_type_and_regressive,funs_is_function}.
-    Let $R=\silverRankCandidates{E}{c}{f}{i}$.
-    $(i,\inters{R})\in r$ by \obv{silver_rank_map}.
-    Hence $r(i)=\inters{R}$ by \obv{function_apply_intro}.
-    $(E(i))(f(i))\in c(\inters{R})$
-        by \auto{silver_rank_value_properties}.
-\end{proof}
-
-\begin{theorem}\label{silver_stationary_ranks_inhabited}
-    Let $\lambda$ be a regular cardinal.
-    Suppose $\naturals\in\lambda$.
-    Suppose $\normalMap{c}{\lambda}{\kappa}$.
-    Suppose $T\subseteq\limitOrdinalsBelow{\lambda}$.
-    Suppose $T$ is stationary in $\lambda$.
-    Suppose $A$ is a function on $\lambda$.
-    Suppose $E$ is a function on $T$.
-    Suppose for every $j\in T$ we have
-        $E(j)\in\inj{A(j)}{c(j)}$.
-    Let $f\in\dependentProduct{\lambda}{A}$.
-    Then $\silverStationaryRanks{E}{c}{f}{T}{\lambda}$ is inhabited.
-\end{theorem}
-\begin{proof}
-    Let $r=\silverRankMap{E}{c}{f}{T}$.
-    $r\in\funs{T}{\lambda}$ and $r$ is regressive on $T$
-        by \obv{silver_rank_map_type_and_regressive}.
-    Take $j\in\lambda$ such that
-        $\fibre{r}{j}$ is stationary in $\lambda$ by \obv{fodor}.
-    $j\in\silverStationaryRanks{E}{c}{f}{T}{\lambda}$
-        by \obv{silver_stationary_ranks}.
-\end{proof}
-
-\begin{theorem}\label{silver_support_properties}
-    Let $\lambda$ be a regular cardinal.
-    Suppose $\naturals\in\lambda$.
-    Suppose $\normalMap{c}{\lambda}{\kappa}$.
-    Suppose $T\subseteq\limitOrdinalsBelow{\lambda}$.
-    Suppose $T$ is stationary in $\lambda$.
-    Suppose $A$ is a function on $\lambda$.
-    Suppose $E$ is a function on $T$.
-    Suppose for every $u\in T$ we have
-        $E(u)\in\inj{A(u)}{c(u)}$.
-    Let $f\in\dependentProduct{\lambda}{A}$.
-    Let $m=\silverRankIndex{E}{c}{f}{T}{\lambda}$.
-    Let $S=\silverSupport{E}{c}{f}{T}{\lambda}$.
-    Then $m\in\lambda$ and $S\subseteq T$ and
-        $S$ is stationary in $\lambda$ and
-        for every $i\in S$ we have $(E(i))(f(i))\in c(m)$.
-\end{theorem}
-\begin{proof}
-    Hence $\lambda$ is a limit ordinal
-        by \obv{infinite_cardinal_is_limit_ordinal}.
-    Hence $\lambda$ is an ordinal by \obv{limit_ordinal}.
-    Let $R=\silverStationaryRanks{E}{c}{f}{T}{\lambda}$.
-    $R$ is inhabited by \auto{silver_stationary_ranks_inhabited}.
-    For every $q\in R$ we have $q\in\lambda$
-        by \auto{silver_stationary_ranks}.
-    Hence for every $q\in R$ we have $q$ is an ordinal
-        by \obv{elem_of_ordinal_is_ordinal}.
-    $\inters{R}\in R$ by \obv{inters_of_ordinals_elem}.
-    $m=\inters{R}$ by \auto{silver_rank_index}.
-    Hence $m\in R$.
-    Hence $m\in\lambda$ and
-        $\fibre{\silverRankMap{E}{c}{f}{T}}{m}$ is stationary in $\lambda$
-        by \obv{silver_stationary_ranks}.
-    $S=\fibre{\silverRankMap{E}{c}{f}{T}}{m}$
-        by \auto{silver_support}.
-    Hence $S$ is stationary in $\lambda$.
-    Let $r=\silverRankMap{E}{c}{f}{T}$.
-    $r\in\funs{T}{\lambda}$
-        by \auto{silver_rank_map_type_and_regressive}.
-    Hence $r$ is a function and $\dom{r}=T$
-        by \obv{funs_is_function,funs}.
-    $S\subseteq\dom{r}$
-        by \auto{subseteq,function_fibre_iff}.
-    Hence $S\subseteq T$.
-    Show that for every $i\in S$ we have $(E(i))(f(i))\in c(m)$.
-    \begin{subproof}
-        Fix $i\in S$.
-        Hence $i\in\fibre{r}{m}$.
-        Hence $i\in\dom{r}$ and $r(i)=m$
-            by \obv{function_fibre_iff}.
-        Hence $i\in T$.
-        $(E(i))(f(i))\in c(r(i))$
-            by \obv{silver_rank_map_codes_value}.
-    \end{subproof}
-\end{proof}
-
 \begin{theorem}\label{silver_code_in_space}
     Let $\lambda$ be a regular cardinal.
     Suppose $\naturals\in\lambda$.
@@ -490,6 +506,9 @@ The typed theorems below supply those hypotheses where they are needed.
     Follows by \obv{silver_code_space}.
 \end{proof}
 
+Equal codes force agreement on a stationary set, hence equality within
+the eventually different family.
+
 \begin{theorem}\label{silver_equal_codes_imply_equal_functions}
     Let $\lambda$ be a regular cardinal.
     Suppose $\naturals\in\lambda$.
@@ -509,7 +528,7 @@ The typed theorems below supply those hypotheses where they are needed.
     Then $f=g$.
 \end{theorem}
 \begin{proof}
-    Hence $\lambda$ is a limit ordinal
+    $\lambda$ is a limit ordinal
         by \obv{infinite_cardinal_is_limit_ordinal}.
     Suppose not.
     Let $m=\silverRankIndex{E}{c}{f}{T}{\lambda}$.
@@ -561,7 +580,7 @@ The typed theorems below supply those hypotheses where they are needed.
     Contradiction by \auto{nonstationary_iff_not_stationary}.
 \end{proof}
 
-\begin{theorem}\label{silver_code_map_is_injection}
+\begin{theorem}[The coding map is injective]\label{silver_code_map_is_injection}
     Let $\lambda$ be a regular cardinal.
     Suppose $\naturals\in\lambda$.
     Suppose $\normalMap{c}{\lambda}{\kappa}$.
@@ -602,11 +621,9 @@ The typed theorems below supply those hypotheses where they are needed.
         by \obv{funs_intro}.
     Show that $H$ is injective.
     \begin{subproof}
-        Show that for all $f,g$ such that $f\in\dom{H}$ and
-            $g\in\dom{H}$ and $H(f)=H(g)$ we have $f=g$.
+        Show that for all $f,g\in\dom{H}$ such that $H(f)=H(g)$ we have $f=g$.
         \begin{subproof}
-            Fix $f,g$.
-            Assume $f\in\dom{H}$ and $g\in\dom{H}$ and $H(f)=H(g)$.
+            Fix $f,g\in\dom{H}$ such that $H(f)=H(g)$.
             Hence $f,g\in F$.
             Hence $f,g\in\dependentProduct{\lambda}{A}$
                 by \obv{subseteq}.
@@ -630,6 +647,8 @@ The typed theorems below supply those hypotheses where they are needed.
     Hence $H\in\inj{F}{\silverCodeSpace{c}{\lambda}}$
         by \auto{inj,injective_function}.
 \end{proof}
+
+\subsection{Counting the codes}
 
 \begin{theorem}\label{silver_code_fibre_cardinal_bound}
     Let $\kappa$ be an infinite cardinal.
@@ -677,7 +696,7 @@ The typed theorems below supply those hypotheses where they are needed.
     Follows by \obv{cardinal_le_transitive}.
 \end{proof}
 
-\begin{theorem}\label{silver_code_space_cardinal_bound}
+\begin{theorem}[Counting the codes]\label{silver_code_space_cardinal_bound}
     Let $\kappa$ be an infinite cardinal.
     Suppose $\lambda\in\kappa$.
     Suppose $\ordinalMap{c}{\lambda}{\kappa}$.
@@ -686,7 +705,7 @@ The typed theorems below supply those hypotheses where they are needed.
     Then $\cardLe{\silverCodeSpace{c}{\lambda}}{\kappa}$.
 \end{theorem}
 \begin{proof}
-    Hence $\lambda\subseteq\kappa$
+    $\lambda\subseteq\kappa$
         by \obv{ordinal_elem_implies_subseteq}.
     Hence $\cardLe{\lambda}{\kappa}$
         by \obv{subseteq_cardinal_le}.
@@ -702,7 +721,9 @@ The typed theorems below supply those hypotheses where they are needed.
     Follows by \auto{silver_code_space}.
 \end{proof}
 
-\begin{theorem}\label{silver_first_almost_disjoint_bound}
+\subsection{The first bound}
+
+\begin{theorem}[The first bound for eventually different families]\label{silver_first_almost_disjoint_bound}
     Let $\kappa$ be a singular cardinal.
     Let $\lambda=\cofinality{\kappa}$.
     Suppose $\naturals\in\lambda$.
@@ -718,7 +739,7 @@ The typed theorems below supply those hypotheses where they are needed.
     Then $\cardLe{F}{\kappa}$.
 \end{theorem}
 \begin{proof}
-    Hence $\kappa$ is a limit ordinal
+    $\kappa$ is a limit ordinal
         by \obv{infinite_cardinal_is_limit_ordinal}.
     $\cofinality{\kappa}$ is a regular cardinal
         by \obv{cofinality_of_limit_is_regular}.

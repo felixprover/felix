@@ -4,9 +4,11 @@
 \import{cardinal/normal-sequence.tex}
 \import{set/symdiff.tex}
 
-The final coding sends a subset of the singular cardinal to its intersections
-with a normal cofinal sequence.  Each graph below is a set obtained by bounded
-Replacement; no class-valued cardinal enumeration is used.
+We prove the stationary form of Silver's theorem. Coding subsets of
+$\kappa$ by their initial segments along a normal cofinal sequence gives
+an eventually different family to which the successor bound applies.
+
+\subsection{Coding by initial segments}
 
 \begin{definition}\label{silver_powerset_fibres}
     $\silverPowersetFibres{c}{\lambda}
@@ -119,42 +121,19 @@ Replacement; no class-valued cardinal enumeration is used.
         by \obv{funs_intro}.
 \end{proof}
 
+\subsection{Distinct subsets give eventually different codes}
+
 \begin{proposition}\label{distinct_subsets_have_symmetric_difference}
     Suppose $X\subseteq\kappa$ and $Y\subseteq\kappa$.
     Suppose $X\neq Y$.
     Then $X\symdiff Y$ is inhabited and $X\symdiff Y\subseteq\kappa$.
 \end{proposition}
 \begin{proof}
-    Show that $X\symdiff Y$ is inhabited.
-    \begin{subproof}
-        Suppose not.
-        Show that every element of $X$ is an element of $Y$.
-        \begin{subproof}
-            Fix $a\in X$.
-            Show that $a\in Y$.
-            \begin{subproof}
-                Suppose not.
-                Hence $a\in X\setminus Y$ by \obv{setminus}.
-                Hence $a\in X\symdiff Y$ by \auto{symdiff,union_iff}.
-                Contradiction by \auto.
-            \end{subproof}
-        \end{subproof}
-        Hence $X\subseteq Y$ by \obv{subseteq}.
-        Show that every element of $Y$ is an element of $X$.
-        \begin{subproof}
-            Fix $a\in Y$.
-            Show that $a\in X$.
-            \begin{subproof}
-                Suppose not.
-                Hence $a\in Y\setminus X$ by \obv{setminus}.
-                Hence $a\in X\symdiff Y$ by \auto{symdiff,union_iff}.
-                Contradiction by \auto.
-            \end{subproof}
-        \end{subproof}
-        Hence $Y\subseteq X$ by \obv{subseteq}.
-        Hence $X=Y$ by \obv{subseteq_antisymmetric}.
-        Contradiction.
-    \end{subproof}
+    Take $a$ such that either $a\in X$ and $a\notin Y$
+        or $a\notin X$ and $a\in Y$ by \obv{neq_witness}.
+    Hence either $a\in X$ or $a\in Y$.
+    Hence $a\in X\symdiff Y$ by \obv{xor_in_implies_symdiff}.
+    Hence $X\symdiff Y$ is inhabited.
     $X\setminus Y\subseteq X$ and $Y\setminus X\subseteq Y$
         by \obv{setminus_subseteq}.
     Hence $X\setminus Y\subseteq\kappa$ and
@@ -188,8 +167,7 @@ Replacement; no class-valued cardinal enumeration is used.
                 Hence $a\in Y\inter c(i)$.
                 Hence $a\in Y$ by \obv{inter_elim_left}.
                 Contradiction.
-            \caseOf{$a\notin X\setminus Y$.}
-                Hence $a\in Y\setminus X$.
+            \caseOf{$a\in Y\setminus X$.}
                 Hence $a\in Y$ and $a\notin X$ by \obv{setminus}.
                 Hence $a\in Y\inter c(i)$ by \obv{inter_intro}.
                 Hence $a\in X\inter c(i)$.
@@ -199,7 +177,7 @@ Replacement; no class-valued cardinal enumeration is used.
     \end{subproof}
 \end{proof}
 
-\begin{theorem}\label{silver_intersection_map_injection}
+\begin{theorem}[The coding map is injective]\label{silver_intersection_map_injection}
     Let $\kappa$ be a limit ordinal.
     Suppose $\cofinalMap{c}{\lambda}{\kappa}$.
     Let $A=\silverPowersetFibres{c}{\lambda}$.
@@ -248,7 +226,7 @@ Replacement; no class-valued cardinal enumeration is used.
     Follows by \obv{inj}.
 \end{proof}
 
-\begin{theorem}\label{silver_intersection_range_is_eventually_different}
+\begin{theorem}[The codes are eventually different]\label{silver_intersection_range_is_eventually_different}
     Let $\lambda$ be a limit ordinal.
     Let $\kappa$ be a limit ordinal.
     Suppose $\normalCofinalMap{c}{\lambda}{\kappa}$.
@@ -350,6 +328,11 @@ Replacement; no class-valued cardinal enumeration is used.
         by \obv{eventually_different_family}.
 \end{proof}
 
+\subsection{Applying the successor bound}
+
+At a GCH point $c(i)$, the coordinate set $\pow{c(i)}$ has cardinality
+$\cardSucc{c(i)}$.
+
 \begin{proposition}\label{silver_powerset_fibre_at_gch_point}
     Suppose $c$ is a function on $\lambda$.
     Let $i\in\lambda$.
@@ -358,22 +341,20 @@ Replacement; no class-valued cardinal enumeration is used.
     Then $\card{A(i)}=\cardSucc{c(i)}$.
 \end{proposition}
 \begin{proof}
-    $A(i)=\pow{c(i)}$ by \auto{silver_powerset_fibres_type}.
-    $\cardPower{\cardTwo}{c(i)}=\cardSucc{c(i)}$
-        by \obv{gch_point_elim}.
-    $\cardPower{\cardTwo}{c(i)}=\card{\pow{c(i)}}$
-        by \obv{cardinal_power_two_is_powerset_cardinal}.
     \begin{align*}
         \card{A(i)}
             &= \card{\pow{c(i)}}
+                \explanation{by \auto{silver_powerset_fibres_type}}
             \\
             &= \cardPower{\cardTwo}{c(i)}
+                \explanation{by \obv{cardinal_power_two_is_powerset_cardinal}}
             \\
             &= \cardSucc{c(i)}
+                \explanation{by \obv{gch_point_elim}}
     \end{align*}
 \end{proof}
 
-\begin{theorem}\label{silver_powerset_upper_bound}
+\begin{theorem}[The power-set upper bound]\label{silver_powerset_upper_bound}
     Let $\kappa$ be a singular cardinal of uncountable cofinality.
     Suppose $\gchPoints{\kappa}$ is stationary in $\kappa$.
     Then $\cardLe{\pow{\kappa}}{\cardSucc{\kappa}}$.
@@ -432,17 +413,17 @@ Replacement; no class-valued cardinal enumeration is used.
         by \obv{silver_second_almost_disjoint_bound}.
     $e\in\inj{\pow{\kappa}}{\dependentProduct{\lambda}{A}}$
         by \obv{silver_intersection_map_injection}.
-    Hence $e\in\funs{\pow{\kappa}}{\dependentProduct{\lambda}{A}}$
-        by \obv{inj}.
-    Hence $e\in\surj{\pow{\kappa}}{F}$ by \auto{fun_to_surj}.
-    Hence $e\in\funs{\pow{\kappa}}{F}$ by \obv{surj_to_fun}.
-    For all $X,Y\in\pow{\kappa}$ such that $e(X)=e(Y)$ we have $X=Y$
-        by \obv{inj}.
-    Hence $e\in\inj{\pow{\kappa}}{F}$
-        by \obv{inj}.
-    Hence $\cardLe{\pow{\kappa}}{F}$ by \obv{cardinal_le}.
+    Hence $e$ is a function and $e$ is injective and $\dom{e}=\pow{\kappa}$
+        by \auto{inj,funs_is_function,funs,injective_function}.
+    Hence $e\in\bijections{\dom{e}}{\ran{e}}$
+        by \obv{injective_function_bijection_to_range}.
+    Hence $e\in\bijections{\pow{\kappa}}{F}$.
+    Hence $\pow{\kappa}\approx F$ by \obv{equinum}.
+    Hence $\cardLe{\pow{\kappa}}{F}$ by \obv{equinum_cardinal_le}.
     Follows by \obv{cardinal_le_transitive}.
 \end{proof}
+
+\subsection{Silver's theorem and the usual corollary}
 
 \begin{theorem}[Silver]\label{silver_theorem_stationary}
     Let $\kappa$ be a singular cardinal of uncountable cofinality.
@@ -481,7 +462,7 @@ Replacement; no class-valued cardinal enumeration is used.
     Follows by \auto{cardinal_power_two_is_powerset_cardinal}.
 \end{proof}
 
-\begin{corollary}\label{silver_theorem_from_gch_below}
+\begin{corollary}[The usual form]\label{silver_theorem_from_gch_below}
     Let $\kappa$ be a singular cardinal of uncountable cofinality.
     Suppose for every infinite cardinal $\mu\in\kappa$ we have
         $\cardPower{\cardTwo}{\mu}=\cardSucc{\mu}$.
@@ -489,7 +470,7 @@ Replacement; no class-valued cardinal enumeration is used.
 \end{corollary}
 \begin{proof}
     Let $\lambda=\cofinality{\kappa}$.
-    Hence $\kappa$ is a limit ordinal
+    $\kappa$ is a limit ordinal
         by \obv{infinite_cardinal_is_limit_ordinal}.
     $\lambda$ is a cardinal by \obv{cofinality_is_cardinal}.
     Take $c$ such that

@@ -122,6 +122,9 @@ The main development can be read in the following order.
    regular cardinal splits into exactly that many pairwise-disjoint
    stationary sets.
 
+   [`silver/theorem.tex`](silver/theorem.tex) proves Silver's theorem in its
+   stationary form, with the usual form as a corollary.
+
 6. **Abstract structures.** The `algebra/` modules define magmas, groups,
    rings, ordered fields, modules, and vector spaces. Magma and monoid
    homomorphisms, embeddings, surjections, and isomorphisms use ordinary
